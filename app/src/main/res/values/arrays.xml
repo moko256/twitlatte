@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="choose_account_number_entries">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+    <string-array name="choose_account_number_entries_value">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+    <string-array name="choose_night_mode_entries">
+        <item>@string/mode_night_no</item>
+        <item>@string/mode_night_auto</item>
+        <item>@string/mode_night_follow_system</item>
+        <item>@string/mode_night_yes</item>
+    </string-array>
+    <string-array name="choose_night_mode_entries_value">
+        <item>mode_night_no</item>
+        <item>mode_night_auto</item>
+        <item>mode_night_follow_system</item>
+        <item>mode_night_yes</item>
+    </string-array>
+
+</resources>
