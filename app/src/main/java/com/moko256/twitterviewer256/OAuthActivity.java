@@ -21,41 +21,17 @@ import twitter4j.conf.ConfigurationContext;
  * Created by moko256 on GitHub on 2016/04/29.
  */
 public class OAuthActivity extends AppCompatActivity {
-    RequestToken req=null;
+    public static RequestToken req;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        Configuration conf = ConfigurationContext.getInstance();
-        final OAuthAuthorization oauth =new OAuthAuthorization(conf);
-
-        oauth.setOAuthConsumer(Static.consumerKey,Static.consumerSecret);
-
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            public Void doInBackground(Void... params) {
-                try {
-                    req = oauth.getOAuthRequestToken("twv256://OAuthActivity");
-                } catch (TwitterException e) {
-                    e.printStackTrace();
-                }
-                return null;
-            }
-
-            @Override
-            public void onPostExecute(Void n) {
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(req.getAuthorizationURL())));
-            }
-        }.execute();
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        OAuthAuthorization oauth;
-        Uri uri=data.getData();
+        Uri uri=getIntent().getData();
         if(uri != null && uri.toString().startsWith("twv256://OAuthActivity")){
+            OAuthAuthorization oauth;
+
             Configuration conf = ConfigurationContext.getInstance();
             oauth =new OAuthAuthorization(conf);
             String verifier = uri.getQueryParameter("oauth_verifier");
@@ -80,7 +56,28 @@ public class OAuthActivity extends AppCompatActivity {
                             ()->{}
                     );
         }
-        else return;
-        super.onActivityResult(requestCode, resultCode, data);
+        else {
+            Configuration conf = ConfigurationContext.getInstance();
+            final OAuthAuthorization oauth =new OAuthAuthorization(conf);
+
+            oauth.setOAuthConsumer(Static.consumerKey,Static.consumerSecret);
+
+            new AsyncTask<Void, Void, Void>() {
+                @Override
+                public Void doInBackground(Void... params) {
+                    try {
+                        req = oauth.getOAuthRequestToken("twv256://OAuthActivity");
+                    } catch (TwitterException e) {
+                        e.printStackTrace();
+                    }
+                    return null;
+                }
+
+                @Override
+                public void onPostExecute(Void n) {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(req.getAuthorizationURL())));
+                }
+            }.execute();
+        }
     }
 }

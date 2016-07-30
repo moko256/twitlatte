@@ -20,8 +20,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".LoginActivity"
-            android:noHistory="true"></activity>
+            android:name=".LoginActivity" />
         <activity
             android:name=".SendTweetActivity"
             android:label="@string/tweet">
@@ -103,8 +102,7 @@
         </activity>
         <activity android:name=".ShowTweetImageActivity"/>
         <activity
-            android:name=".OAuthActivity"
-            android:noHistory="true">
+            android:name=".OAuthActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 

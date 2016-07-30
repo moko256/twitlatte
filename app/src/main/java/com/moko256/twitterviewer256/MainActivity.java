@@ -30,15 +30,15 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
+        setTheme(R.style.MainActivityTheme);
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
         if (Static.twitter == null) {
             finish();
             startActivity(new Intent(this, XAuthActivity.class));
             return;
         }
-
-        setTheme(R.style.MainActivityTheme);
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
 
         Observable
                 .create(subscriber->{
