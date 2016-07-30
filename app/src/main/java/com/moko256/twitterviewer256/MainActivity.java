@@ -11,6 +11,8 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -30,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (Static.twitter == null) {
             finish();
-            startActivity(new Intent(this, OAuthActivity.class));
+            startActivity(new Intent(this, XAuthActivity.class));
             return;
         }
 
@@ -78,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
+        drawer.addDrawerListener(toggle);
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -131,6 +133,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_main_toolbar,menu);
+        //SearchView searchView=(SearchView) menu.findItem(R.id.action_search).getActionView();
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.action_search:
+                startFragment(new SearchFragment());
+        }
+        return true;
+    }
+
+    @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
@@ -138,7 +156,6 @@ public class MainActivity extends AppCompatActivity {
         } else {
             super.onBackPressed();
         }
-
     }
 
     private void startMyUserActivity() {
@@ -150,7 +167,7 @@ public class MainActivity extends AppCompatActivity {
     private void startFragment(Fragment fragment){
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.mainLayout, fragment)
+                .add(R.id.mainLayout, fragment)
                 .addToBackStack(null)
                 .commit();
     }

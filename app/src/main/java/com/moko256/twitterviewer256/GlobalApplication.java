@@ -5,7 +5,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatDelegate;
 
-import java.util.Objects;
+import java.util.Set;
 
 import twitter4j.TwitterFactory;
 import twitter4j.auth.AccessToken;
@@ -19,7 +19,9 @@ public class GlobalApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-        switch(PreferenceManager.getDefaultSharedPreferences(this).getString("nightModeType","mode_night_no_value")){
+        SharedPreferences defaultSharedPreferences=PreferenceManager.getDefaultSharedPreferences(this);
+
+        switch(defaultSharedPreferences.getString("nightModeType","mode_night_no_value")){
             case "mode_night_no":AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);break;
             case "mode_night_auto":AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_AUTO);break;
             case "mode_night_follow_system":AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);break;
@@ -27,41 +29,26 @@ public class GlobalApplication extends Application {
             default:AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         }
 
-        //if (Static.twitter == null) {
+        int nowAccountPoint=Integer.valueOf(defaultSharedPreferences.getString("AccountPoint","-1"));
 
-            String nowUserNumStr=PreferenceManager.getDefaultSharedPreferences(this).getString("nowUserDataFileInt","-1");
+        Set<String> accountsIdLongStrSet=defaultSharedPreferences.getStringSet("AccountsList",null);
 
-            if(!Objects.equals(nowUserNumStr, "-1")){
-                Static.nowUserDataFile="user_token_file_"+nowUserNumStr;
+        if (accountsIdLongStrSet==null)return;
+        if (accountsIdLongStrSet.size()==0)return;
 
-                SharedPreferences sp = getSharedPreferences(Static.nowUserDataFile,MODE_PRIVATE);
-                Static.token = sp.getString("token", null);
-                Static.tokenSecret = sp.getString("token_secret", null);
+        String nowUserLongIdStr=(String) accountsIdLongStrSet.toArray()[nowAccountPoint];
 
-                if ((Static.token != null) && (Static.tokenSecret != null)) {
+        SharedPreferences sp = getSharedPreferences(nowUserLongIdStr, MODE_PRIVATE);
+        String token = sp.getString("token", null);
+        String tokenSecret = sp.getString("token_secret", null);
 
-                    Static.twitter = new TwitterFactory().getInstance();
+        if (!((token != null) && (tokenSecret != null)))return;
 
-                    AccessToken at = new AccessToken(Static.token, Static.tokenSecret);
+        Static.twitter = new TwitterFactory().getInstance();
+        Static.twitter.setOAuthConsumer(Static.consumerKey, Static.consumerSecret);
+        Static.twitter.setOAuthAccessToken(
+                new AccessToken(token, tokenSecret)
+        );
 
-                    Static.twitter.setOAuthConsumer(Static.consumerKey, Static.consumerSecret);
-
-                    Static.twitter.setOAuthAccessToken(at);
-
-                }
-                else{
-                    PreferenceManager.getDefaultSharedPreferences(this)
-                            .edit()
-                            .putString("nowUserDataFileInt","0")
-                            .apply();
-                }
-            }
-            else{
-                PreferenceManager.getDefaultSharedPreferences(this)
-                        .edit()
-                        .putString("nowUserDataFileInt","0")
-                        .apply();
-            }
-        //}
     }
 }

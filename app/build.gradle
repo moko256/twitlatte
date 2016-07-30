@@ -8,7 +8,7 @@ android {
     defaultConfig {
         applicationId "com.github.moko256.twitterviewer256"
         minSdkVersion 19
-        targetSdkVersion 'N'
+        targetSdkVersion 24
         versionCode 1
         versionName "1.0"
 

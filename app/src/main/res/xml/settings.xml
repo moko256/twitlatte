@@ -3,12 +3,9 @@
     <PreferenceCategory android:title="@string/app_settings">
         <ListPreference
             android:key="nowUserDataFileInt"
-            android:defaultValue="0"
             android:title="@string/account"
             android:summary="%s"
-            android:dialogTitle="@string/account"
-            android:entries="@array/choose_account_number_entries"
-            android:entryValues="@array/choose_account_number_entries_value"/>
+            android:dialogTitle="@string/account"/>
         <ListPreference
             android:key="nightModeType"
             android:defaultValue="mode_night_no"

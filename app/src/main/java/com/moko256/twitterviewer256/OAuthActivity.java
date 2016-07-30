@@ -6,6 +6,11 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
+import java.io.Serializable;
+
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import twitter4j.TwitterException;
 import twitter4j.auth.OAuthAuthorization;
 import twitter4j.auth.RequestToken;
@@ -16,34 +21,66 @@ import twitter4j.conf.ConfigurationContext;
  * Created by moko256 on GitHub on 2016/04/29.
  */
 public class OAuthActivity extends AppCompatActivity {
+    RequestToken req=null;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_splash);
+        setContentView(R.layout.activity_login);
 
         Configuration conf = ConfigurationContext.getInstance();
         final OAuthAuthorization oauth =new OAuthAuthorization(conf);
 
         oauth.setOAuthConsumer(Static.consumerKey,Static.consumerSecret);
 
-        new AsyncTask<Void, Void, RequestToken>() {
-
+        new AsyncTask<Void, Void, Void>() {
             @Override
-            protected RequestToken doInBackground(Void... params) {
-                RequestToken _req=null;
+            public Void doInBackground(Void... params) {
                 try {
-                    _req = oauth.getOAuthRequestToken("twv256://CallBackActivity");
+                    req = oauth.getOAuthRequestToken("twv256://OAuthActivity");
                 } catch (TwitterException e) {
                     e.printStackTrace();
                 }
-                return _req;
+                return null;
             }
 
             @Override
-            protected void onPostExecute(RequestToken _req) {
-                CallBackActivity.req=_req;
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(_req.getAuthorizationURL())));
+            public void onPostExecute(Void n) {
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(req.getAuthorizationURL())));
             }
         }.execute();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        OAuthAuthorization oauth;
+        Uri uri=data.getData();
+        if(uri != null && uri.toString().startsWith("twv256://OAuthActivity")){
+            Configuration conf = ConfigurationContext.getInstance();
+            oauth =new OAuthAuthorization(conf);
+            String verifier = uri.getQueryParameter("oauth_verifier");
+            Observable
+                    .create(subscriber -> {
+                        try {
+                            subscriber.onNext(oauth.getOAuthAccessToken(req,verifier));
+                            subscriber.onCompleted();
+                        } catch (TwitterException e) {
+                            subscriber.onError(e);
+                        }
+                    })
+                    .subscribeOn(Schedulers.newThread())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(
+                            result->{
+                                Intent intent=new Intent(OAuthActivity.this,LoginActivity.class);
+                                intent.putExtra("AccessToken",(Serializable) result);
+                                startActivity(intent);
+                            },
+                            Throwable::printStackTrace,
+                            ()->{}
+                    );
+        }
+        else return;
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }

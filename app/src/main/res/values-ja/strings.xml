@@ -2,6 +2,7 @@
 <resources>
     <string name="app_name">ツイッタービューワー</string>
     <string name="action_settings">設定</string>
+    <string name="action_search">検索</string>
     <string name="navigation_drawer_close"/>
     <string name="TL">タイムライン</string>
     <string name="tweet">ツイート</string>
