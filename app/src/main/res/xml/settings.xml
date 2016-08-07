@@ -2,10 +2,16 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory android:title="@string/app_settings">
         <ListPreference
-            android:key="nowUserDataFileInt"
+            android:key="AccountPoint"
+            android:defaultValue=""
             android:title="@string/account"
             android:summary="%s"
-            android:dialogTitle="@string/account"/>
+            android:dialogTitle="@string/account"
+            android:entries="@array/choose_account_number_entries"
+            android:entryValues="@array/choose_account_number_entries_value"/>
+        <Preference
+            android:key="logout"
+            android:title="@string/logout"/>
         <ListPreference
             android:key="nightModeType"
             android:defaultValue="mode_night_no"

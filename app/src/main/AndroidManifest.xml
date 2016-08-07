@@ -12,15 +12,14 @@
         android:label="@string/app_name"
         android:resizeableActivity="true"
         android:theme="@style/AppTheme">
+
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".LoginActivity" />
+
         <activity
             android:name=".SendTweetActivity"
             android:label="@string/tweet">
@@ -47,6 +46,7 @@
                 <data android:pathPattern="/?message=.*&amp;in_reply_to_status_id=.*" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".ShowTweetActivity"
             android:label="@string/tweet">
@@ -73,6 +73,7 @@
                 <data android:pathPattern="/?id=.*" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".ShowUserActivity"
             android:label="">
@@ -101,8 +102,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".ShowTweetImageActivity"/>
-        <activity
-            android:name=".OAuthActivity">
+        <activity android:name=".OAuthActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -112,7 +112,6 @@
                 <data android:scheme="twv256" />
             </intent-filter>
         </activity>
-        <activity android:name=".XAuthActivity"/>
         <activity
             android:name=".SettingsActivity"
             android:label="@string/action_settings"

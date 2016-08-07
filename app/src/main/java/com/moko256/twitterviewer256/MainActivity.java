@@ -7,7 +7,6 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -36,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (Static.twitter == null) {
             finish();
-            startActivity(new Intent(this, XAuthActivity.class));
+            startActivity(new Intent(this, OAuthActivity.class));
             return;
         }
 
@@ -57,13 +56,12 @@ public class MainActivity extends AppCompatActivity {
                             Static.user=user;
 
                             ((TextView)findViewById(R.id.user_name)).setText(user.getName());
-                            ((TextView)findViewById(R.id.user_id)).setText(Static.plusAtMark(user.getScreenName()));
+                            ((TextView)findViewById(R.id.user_id)).setText(TwitterStringUtil.plusAtMark(user.getScreenName()));
 
                             ImageView userImage=(ImageView)findViewById(R.id.user_image);
                             ImageView userBackgroundImage=(ImageView)findViewById(R.id.user_bg_image);
 
                             userImage.setOnClickListener(v -> startMyUserActivity());
-                            userBackgroundImage.setOnClickListener(v -> startMyUserActivity());
 
                             Glide.with(MainActivity.this).load(user.getBiggerProfileImageURL()).into(userImage);
                             Glide.with(MainActivity.this).load(user.getProfileBannerRetinaURL()).into(userBackgroundImage);
@@ -74,8 +72,6 @@ public class MainActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        ActionBar actionBar=getSupportActionBar();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -118,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
         TabLayout tabLayout=(TabLayout) findViewById(R.id.toolbar_tab);
 
         getSupportFragmentManager()
-                .addOnBackStackChangedListener(() -> onFragmentBackStackChanged(actionBar,navigationView,tabLayout));
+                .addOnBackStackChangedListener(() -> onFragmentBackStackChanged(navigationView,tabLayout));
 
         if(savedInstanceState==null){
             startFragment(new TimeLineFragment());
@@ -129,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        onFragmentBackStackChanged(getSupportActionBar(),(NavigationView) findViewById(R.id.nav_view),(TabLayout)findViewById(R.id.toolbar_tab));
+        onFragmentBackStackChanged((NavigationView) findViewById(R.id.nav_view),(TabLayout)findViewById(R.id.toolbar_tab));
     }
 
     @Override
@@ -167,17 +163,17 @@ public class MainActivity extends AppCompatActivity {
     private void startFragment(Fragment fragment){
         getSupportFragmentManager()
                 .beginTransaction()
-                .add(R.id.mainLayout, fragment)
-                .addToBackStack(null)
+                .replace(R.id.mainLayout, fragment)
+                .addToBackStack(fragment.getClass().getName())
                 .commit();
     }
 
-    private void onFragmentBackStackChanged(ActionBar actionBar, NavigationView navigationView, TabLayout tabLayout){
+    private void onFragmentBackStackChanged(NavigationView navigationView, TabLayout tabLayout){
         Fragment fragment=getSupportFragmentManager()
                 .findFragmentById(R.id.mainLayout);
         if (fragment != null) {
             if(fragment instanceof ToolbarTitleInterface && fragment instanceof NavigationPositionInterface){
-                actionBar.setTitle(((ToolbarTitleInterface)fragment).getTitleResourceId());
+                setTitle(((ToolbarTitleInterface)fragment).getTitleResourceId());
                 navigationView.setCheckedItem(((NavigationPositionInterface)fragment).getNavigationPosition());
             }
 

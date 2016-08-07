@@ -11,8 +11,4 @@ public class Static {
     static User user;
     static final String consumerKey=BuildConfig.CONSUMER_KEY;
     static final String consumerSecret=BuildConfig.CONSUMER_SECRET;
-
-    public static String plusAtMark(String string){
-        return "@"+string;
-    }
 }

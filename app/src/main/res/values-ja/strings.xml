@@ -4,7 +4,7 @@
     <string name="action_settings">設定</string>
     <string name="action_search">検索</string>
     <string name="navigation_drawer_close"/>
-    <string name="TL">タイムライン</string>
+    <string name="timeline">タイムライン</string>
     <string name="tweet">ツイート</string>
     <string name="like">お気に入り</string>
     <string name="navigation_drawer_open"/>
@@ -15,8 +15,9 @@
     <string name="follow_and_follower">フォロー・フォロワー</string>
     <string name="theme">テーマ</string>
     <string name="retweet_by">%sさんがリツイートしました</string>
-
     <string name="app_settings">アプリケーションの設定</string>
+    <string name="add_account">他のアカウントを追加</string>
+    <string name="logout">ログアウトする</string>
 
     <string name="mode_night_no">使用しない</string>
     <string name="mode_night_yes">使用する</string>

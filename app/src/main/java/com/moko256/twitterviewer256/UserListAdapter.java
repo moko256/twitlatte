@@ -42,7 +42,7 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.ViewHo
         Glide.with(mContext).load(item.getProfileImageURL()).into(viewHolder.userUserImage);
 
         viewHolder.userUserName.setText(item.getName());
-        viewHolder.userUserId.setText(Static.plusAtMark(item.getScreenName()));
+        viewHolder.userUserId.setText(TwitterStringUtil.plusAtMark(item.getScreenName()));
         viewHolder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(mContext,ShowUserActivity.class);
             intent.putExtra("user",item);

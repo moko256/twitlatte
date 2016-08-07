@@ -3,6 +3,7 @@ package com.moko256.twitterviewer256;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
+import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,8 +54,9 @@ public class TweetListAdapter extends RecyclerView.Adapter<TweetListAdapter.View
         Glide.with(mContext).load(item.getUser().getBiggerProfileImageURL()).into(viewHolder.tweetUserImage);
 
         viewHolder.tweetUserName.setText(item.getUser().getName());
-        viewHolder.tweetUserId.setText(Static.plusAtMark(item.getUser().getScreenName()));
-        viewHolder.tweetContext.setText(item.getText());
+        viewHolder.tweetUserId.setText(TwitterStringUtil.plusAtMark(item.getUser().getScreenName()));
+        viewHolder.tweetContext.setText(TwitterStringUtil.getLinkedSequence(item,mContext));
+        viewHolder.tweetContext.setMovementMethod(LinkMovementMethod.getInstance());
         viewHolder.tweetUserImage.setOnClickListener(v->{
             Intent intent = new Intent(mContext,ShowUserActivity.class);
             intent.putExtra("user",item.getUser());

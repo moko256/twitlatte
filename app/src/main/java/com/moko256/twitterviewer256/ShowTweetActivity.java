@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.method.LinkMovementMethod;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -56,8 +57,10 @@ public class ShowTweetActivity extends AppCompatActivity {
                 Glide.with(ShowTweetActivity.this).load(item.getUser().getProfileImageURL()).into(userImage);
 
                 ((TextView) findViewById(R.id.tweet_show_user_name)).setText(item.getUser().getName());
-                ((TextView) findViewById(R.id.tweet_show_user_id)).setText(Static.plusAtMark(item.getUser().getScreenName()));
-                ((TextView) findViewById(R.id.tweet_show_content)).setText(item.getText());
+                ((TextView) findViewById(R.id.tweet_show_user_id)).setText(TwitterStringUtil.plusAtMark(item.getUser().getScreenName()));
+                TextView contentText=(TextView) findViewById(R.id.tweet_show_content);
+                contentText.setText(TwitterStringUtil.getLinkedSequence(item,ShowTweetActivity.this));
+                contentText.setMovementMethod(LinkMovementMethod.getInstance());
 
                 userImage.setOnClickListener(v->{
                     Intent intent = new Intent(ShowTweetActivity.this,ShowUserActivity.class);

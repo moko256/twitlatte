@@ -1,12 +1,16 @@
 <resources>
     <string name="app_name">TwitterViewer</string>
 
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string
+        name="navigation_drawer_open"
+        translatable="false">Open navigation drawer</string>
+    <string
+        name="navigation_drawer_close"
+        translatable="false">Close navigation drawer</string>
 
     <string name="action_settings">Settings…</string>
     <string name="action_search">Search…</string>
-    <string name="TL">TimeLine</string>
+    <string name="timeline">TimeLine</string>
     <string name="tweet">Tweet</string>
     <string name="follow">follow</string>
     <string name="follower">follower</string>
@@ -16,8 +20,9 @@
     <string name="theme">Theme</string>
     <string name="follow_and_follower">Follow and Followers</string>
     <string name="retweet_by">Retweeted By %s</string>
-
     <string name="app_settings">Application Settings</string>
+    <string name="add_account">add other account</string>
+    <string name="logout">Logout</string>
 
     <string name="mode_night_no">Not Use</string>
     <string name="mode_night_yes">Use</string>

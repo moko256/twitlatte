@@ -17,7 +17,7 @@ public class TimeLineFragment extends BaseTweetListFragment implements ToolbarTi
 
     @Override
     public int getTitleResourceId() {
-        return R.string.TL;
+        return R.string.timeline;
     }
 
     @Override

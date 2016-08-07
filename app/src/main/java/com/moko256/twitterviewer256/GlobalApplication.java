@@ -5,8 +5,6 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatDelegate;
 
-import java.util.Set;
-
 import twitter4j.TwitterFactory;
 import twitter4j.auth.AccessToken;
 
@@ -31,17 +29,14 @@ public class GlobalApplication extends Application {
 
         int nowAccountPoint=Integer.valueOf(defaultSharedPreferences.getString("AccountPoint","-1"));
 
-        Set<String> accountsIdLongStrSet=defaultSharedPreferences.getStringSet("AccountsList",null);
+        if (nowAccountPoint==-1)return;
 
-        if (accountsIdLongStrSet==null)return;
-        if (accountsIdLongStrSet.size()==0)return;
+        TokenSQLiteOpenHelper tokenOpenHelper = new TokenSQLiteOpenHelper(this);
+        AccessToken accessToken=tokenOpenHelper.getAccessToken(nowAccountPoint);
+        tokenOpenHelper.close();
 
-        String nowUserLongIdStr=(String) accountsIdLongStrSet.toArray()[nowAccountPoint];
-
-        SharedPreferences sp = getSharedPreferences(nowUserLongIdStr, MODE_PRIVATE);
-        String token = sp.getString("token", null);
-        String tokenSecret = sp.getString("token_secret", null);
-
+        String token = accessToken.getToken();
+        String tokenSecret = accessToken.getTokenSecret();
         if (!((token != null) && (tokenSecret != null)))return;
 
         Static.twitter = new TwitterFactory().getInstance();

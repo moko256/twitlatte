@@ -1,17 +1,19 @@
 package com.moko256.twitterviewer256;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
-
-import java.io.Serializable;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import twitter4j.TwitterException;
+import twitter4j.TwitterFactory;
+import twitter4j.auth.AccessToken;
 import twitter4j.auth.OAuthAuthorization;
 import twitter4j.auth.RequestToken;
 import twitter4j.conf.Configuration;
@@ -48,9 +50,29 @@ public class OAuthActivity extends AppCompatActivity {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
                             result->{
-                                Intent intent=new Intent(OAuthActivity.this,LoginActivity.class);
-                                intent.putExtra("AccessToken",(Serializable) result);
-                                startActivity(intent);
+                                AccessToken accessToken=(AccessToken) result;
+                                SharedPreferences defaultSharedPreferences= PreferenceManager.getDefaultSharedPreferences(this);
+
+                                String token = accessToken.getToken();
+                                String tokenSecret = accessToken.getTokenSecret();
+
+                                TokenSQLiteOpenHelper tokenOpenHelper = new TokenSQLiteOpenHelper(this);
+                                long nowAccountPoint=tokenOpenHelper.setAccessToken(accessToken)-1;
+                                tokenOpenHelper.close();
+
+                                defaultSharedPreferences
+                                        .edit()
+                                        .putString("AccountPoint",String.valueOf(nowAccountPoint))
+                                        .apply();
+
+                                Static.twitter = new TwitterFactory().getInstance();
+                                Static.twitter.setOAuthConsumer(Static.consumerKey, Static.consumerSecret);
+                                Static.twitter.setOAuthAccessToken(
+                                        new AccessToken(token, tokenSecret)
+                                );
+
+                                finish();
+                                startActivity(new Intent(this,MainActivity.class));
                             },
                             Throwable::printStackTrace,
                             ()->{}

@@ -7,7 +7,7 @@
         <item
             android:id="@+id/nav_TL"
             android:icon="@drawable/ic_home_black_24dp"
-            android:title="@string/TL" />
+            android:title="@string/timeline" />
 
         <item
             android:id="@+id/nav_account"
