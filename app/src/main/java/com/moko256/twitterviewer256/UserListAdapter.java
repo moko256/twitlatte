@@ -1,7 +1,9 @@
 package com.moko256.twitterviewer256;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -46,7 +48,7 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.ViewHo
         viewHolder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(mContext,ShowUserActivity.class);
             intent.putExtra("user",item);
-            mContext.startActivity(intent);
+            mContext.startActivity(intent, ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) mContext,viewHolder.userUserImage,"tweet_user_image").toBundle());
         });
 
     }

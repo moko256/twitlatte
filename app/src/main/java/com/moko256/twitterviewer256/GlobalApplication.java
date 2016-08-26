@@ -27,7 +27,7 @@ public class GlobalApplication extends Application {
             default:AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         }
 
-        int nowAccountPoint=Integer.valueOf(defaultSharedPreferences.getString("AccountPoint","-1"));
+        int nowAccountPoint=Integer.parseInt(defaultSharedPreferences.getString("AccountPoint","-1"),10);
 
         if (nowAccountPoint==-1)return;
 
@@ -35,15 +35,9 @@ public class GlobalApplication extends Application {
         AccessToken accessToken=tokenOpenHelper.getAccessToken(nowAccountPoint);
         tokenOpenHelper.close();
 
-        String token = accessToken.getToken();
-        String tokenSecret = accessToken.getTokenSecret();
-        if (!((token != null) && (tokenSecret != null)))return;
-
         Static.twitter = new TwitterFactory().getInstance();
         Static.twitter.setOAuthConsumer(Static.consumerKey, Static.consumerSecret);
-        Static.twitter.setOAuthAccessToken(
-                new AccessToken(token, tokenSecret)
-        );
+        Static.twitter.setOAuthAccessToken(accessToken);
 
     }
 }

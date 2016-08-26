@@ -42,7 +42,7 @@ public class TokenSQLiteOpenHelper extends SQLiteOpenHelper {
 
             @Override
             public long getUserId() {
-                return Long.valueOf(c.getString(1));
+                return Long.parseLong(c.getString(1),10);
             }
         };
 
