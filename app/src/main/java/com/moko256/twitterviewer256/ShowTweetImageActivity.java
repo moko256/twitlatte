@@ -2,9 +2,14 @@ package com.moko256.twitterviewer256;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.MediaController;
+import android.widget.VideoView;
 
 import com.bumptech.glide.Glide;
+
+import twitter4j.ExtendedMediaEntity;
 
 /**
  * Created by moko256 on GitHub on 2016/06/26.
@@ -15,6 +20,30 @@ public class ShowTweetImageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_tweet_image);
 
-        Glide.with(this).load(getIntent().getStringExtra("TweetImageUrl")).into((ImageView)findViewById(R.id.tweet_image_show_image_view));
+        ExtendedMediaEntity mediaEntity=(ExtendedMediaEntity) getIntent().getSerializableExtra("TweetMediaEntity");
+        ImageView imageView;
+        VideoView videoView;
+
+        switch (mediaEntity.getType()){
+            case "video":
+                videoView=(VideoView) findViewById(R.id.tweet_image_show_video_view);
+                videoView.setVisibility(View.VISIBLE);
+                videoView.setVideoPath(mediaEntity.getVideoVariants()[0].getUrl());
+                videoView.setMediaController(new MediaController(this));
+                break;
+
+            case "animated_gif":
+                imageView=(ImageView)findViewById(R.id.tweet_image_show_image_view);
+                imageView.setVisibility(View.VISIBLE);
+                Glide.with(this).load(mediaEntity.getMediaURLHttps()+":orig").asGif().into(imageView);
+                break;
+
+            case "photo":
+            default:
+                imageView=(ImageView)findViewById(R.id.tweet_image_show_image_view);
+                imageView.setVisibility(View.VISIBLE);
+                Glide.with(this).load(mediaEntity.getMediaURLHttps()+":orig").into(imageView);
+                break;
+        }
     }
 }
