@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
@@ -60,11 +61,13 @@ public class TweetListAdapter extends RecyclerView.Adapter<TweetListAdapter.View
         viewHolder.tweetContext.setText(TwitterStringUtil.getLinkedSequence(item,mContext));
         viewHolder.tweetContext.setMovementMethod(LinkMovementMethod.getInstance());
         viewHolder.tweetUserImage.setOnClickListener(v->{
+            ViewCompat.setTransitionName(viewHolder.tweetUserImage,"tweet_user_image");
             Intent intent = new Intent(mContext,ShowUserActivity.class);
             intent.putExtra("user",item.getUser());
             mContext.startActivity(intent, ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) mContext,viewHolder.tweetUserImage,"tweet_user_image").toBundle());
         });
         viewHolder.itemView.setOnClickListener(v -> {
+            ViewCompat.setTransitionName(viewHolder.tweetUserImage,"tweet_user_image");
             Intent intent = new Intent(mContext,ShowTweetActivity.class);
             intent.putExtra("status",item);
             mContext.startActivity(intent, ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) mContext,viewHolder.tweetUserImage,"tweet_user_image").toBundle());

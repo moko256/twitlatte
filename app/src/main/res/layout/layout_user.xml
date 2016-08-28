@@ -10,8 +10,7 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginRight="8dp"
-        android:id="@+id/user_user_image"
-        android:transitionName="tweet_user_image"/>
+        android:id="@+id/user_user_image"/>
 
     <TextView
         android:id="@+id/user_user_name"

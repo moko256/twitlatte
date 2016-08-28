@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -46,6 +47,7 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.ViewHo
         viewHolder.userUserName.setText(item.getName());
         viewHolder.userUserId.setText(TwitterStringUtil.plusAtMark(item.getScreenName()));
         viewHolder.itemView.setOnClickListener(v -> {
+            ViewCompat.setTransitionName(viewHolder.userUserImage,"tweet_user_image");
             Intent intent = new Intent(mContext,ShowUserActivity.class);
             intent.putExtra("user",item);
             mContext.startActivity(intent, ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) mContext,viewHolder.userUserImage,"tweet_user_image").toBundle());

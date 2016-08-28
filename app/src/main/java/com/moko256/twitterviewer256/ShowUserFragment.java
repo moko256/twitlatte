@@ -52,8 +52,11 @@ public class ShowUserFragment extends BaseTweetListFragment {
                             Glide.with(getContext()).load(user.getBiggerProfileImageURL()).into((ImageView) view.findViewById(R.id.show_user_image));
                             Glide.with(getContext()).load(user.getProfileBannerRetinaURL()).into((ImageView)view.findViewById(R.id.show_user_bgimage));
 
+                            ((TextView)view.findViewById(R.id.show_user_name)).setText(user.getName());
+                            ((TextView)view.findViewById(R.id.show_user_id)).setText(TwitterStringUtil.plusAtMark(user.getScreenName()));
+                            getActivity().setTitle(user.getName());
                             ((TextView)view.findViewById(R.id.show_user_bio)).setText(user.getDescription());
-                            //((Toolbar) getActivity().findViewById(R.id.show_user_tool_bar)).setTitle(user.getName());
+
                             super.initializationProcess(view);
 
                         },
