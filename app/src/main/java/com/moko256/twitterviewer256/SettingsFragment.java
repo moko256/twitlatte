@@ -31,13 +31,13 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
         TokenSQLiteOpenHelper helper=new TokenSQLiteOpenHelper(getContext());
         SQLiteDatabase database=helper.getReadableDatabase();
-        Cursor c=database.query("AccountTokenList",new String[]{"id","userName","userId","token","tokenSecret"},null,null,null,null,null);
+        Cursor c=database.query("AccountTokenList",new String[]{"userName","userId","token","tokenSecret"},null,null,null,null,null);
 
         CharSequence[] entries=new CharSequence[(int) DatabaseUtils.queryNumEntries(database,"AccountTokenList")+1];
         CharSequence[] entryValues=new CharSequence[(int) DatabaseUtils.queryNumEntries(database,"AccountTokenList")+1];
 
         while (c.moveToNext()){
-            entries[c.getPosition()]=c.getString(1);
+            entries[c.getPosition()]=c.getString(0);
             entryValues[c.getPosition()]=String.valueOf(c.getPosition());
         }
 

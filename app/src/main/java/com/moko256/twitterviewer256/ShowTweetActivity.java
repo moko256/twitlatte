@@ -5,7 +5,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.text.method.LinkMovementMethod;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -23,9 +22,6 @@ public class ShowTweetActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_tweet);
-
-        Toolbar toolbar=(Toolbar)findViewById(R.id.tweet_show_tool_bar);
-        setSupportActionBar(toolbar);
 
         ActionBar actionBar=getSupportActionBar();
         if (actionBar!=null) {

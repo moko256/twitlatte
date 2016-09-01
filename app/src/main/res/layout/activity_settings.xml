@@ -5,24 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.design.widget.AppBarLayout
-        android:id="@+id/appbar_settings"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar_settings"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
-
-    </android.support.design.widget.AppBarLayout>
-
     <fragment
+        android:id="@+id/settings_fragment_id"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        class="com.moko256.twitterviewer256.SettingsFragment"
-        android:id="@+id/settings_fragment_id" />
+        class="com.moko256.twitterviewer256.SettingsFragment" />
 </LinearLayout>

@@ -101,8 +101,12 @@
                 <data android:pathPattern="/?id=.*" />
             </intent-filter>
         </activity>
-        <activity android:name=".ShowTweetImageActivity"/>
-        <activity android:name=".OAuthActivity">
+        <activity
+            android:name=".ShowTweetImageActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".OAuthActivity"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -115,7 +119,7 @@
         <activity
             android:name=".SettingsActivity"
             android:label="@string/action_settings"
-            android:theme="@style/SettingsTheme" />
+            android:theme="@style/SettingsActivityTheme" />
     </application>
 
 </manifest>

@@ -3,7 +3,6 @@ package com.moko256.twitterviewer256;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 
 /**
  * Created by moko256 on GitHub on 2016/03/11.
@@ -19,9 +18,6 @@ public class ShowUserActivity extends AppCompatActivity {
                 .beginTransaction()
                 .add(R.id.show_user_fragment_container, new ShowUserFragment())
                 .commit();
-
-        Toolbar toolbar=(Toolbar) findViewById(R.id.show_user_tool_bar);
-        setSupportActionBar(toolbar);
 
         ActionBar actionBar=getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
