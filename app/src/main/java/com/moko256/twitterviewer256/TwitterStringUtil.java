@@ -31,15 +31,6 @@ public class TwitterStringUtil {
             int tweetLength = tweet.length();
             int tweetCodePointCount = tweet.codePointCount(0, tweetLength);
 
-            int charPositions[] = new int[tweetCodePointCount + 1];
-            charPositions[0] = 0;
-            int ii = 1;
-            for (int i = 1, cp; i < tweetLength + 1; i += Character.charCount(cp)) {
-                cp = tweet.codePointAt(i - 1);
-                charPositions[ii] = i;
-                ii++;
-            }
-
             SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(tweet);
 
             for (SymbolEntity symbolEntity : item.getSymbolEntities()) {
@@ -48,7 +39,7 @@ public class TwitterStringUtil {
                     public void onClick(View view) {
                         Toast.makeText(mContext, symbolEntity.toString(), Toast.LENGTH_SHORT).show();
                     }
-                }, charPositions[symbolEntity.getStart()], charPositions[symbolEntity.getEnd()], Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+                }, tweet.offsetByCodePoints(0,symbolEntity.getStart()), tweet.offsetByCodePoints(0,symbolEntity.getEnd()), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
             }
 
             for (HashtagEntity hashtagEntity : item.getHashtagEntities()) {
@@ -57,7 +48,7 @@ public class TwitterStringUtil {
                     public void onClick(View view) {
                         Toast.makeText(mContext, hashtagEntity.toString(), Toast.LENGTH_SHORT).show();
                     }
-                }, charPositions[hashtagEntity.getStart()], charPositions[hashtagEntity.getEnd()], Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+                }, tweet.offsetByCodePoints(0,hashtagEntity.getStart()), tweet.offsetByCodePoints(0,hashtagEntity.getEnd()), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
             }
 
             for (UserMentionEntity userMentionEntity : item.getUserMentionEntities()) {
@@ -68,7 +59,7 @@ public class TwitterStringUtil {
                         intent.putExtra("userName", userMentionEntity.getScreenName());
                         mContext.startActivity(intent);
                     }
-                }, charPositions[userMentionEntity.getStart()], charPositions[userMentionEntity.getEnd()], Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+                }, tweet.offsetByCodePoints(0,userMentionEntity.getStart()), tweet.offsetByCodePoints(0,userMentionEntity.getEnd()), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
             }
 
             int sp = 0;
@@ -78,8 +69,8 @@ public class TwitterStringUtil {
                 int urlLength = url.codePointCount(0, url.length());
                 int displayUreLength = displayUrl.codePointCount(0, displayUrl.length());
                 int dusp = displayUreLength - urlLength;
-                spannableStringBuilder.replace(charPositions[entity.getStart()] + sp, charPositions[entity.getEnd()] + sp, entity.getDisplayURL());
-                spannableStringBuilder.setSpan(new URLSpan(entity.getExpandedURL()), charPositions[entity.getStart()] + sp, charPositions[entity.getEnd()] + sp + dusp, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+                spannableStringBuilder.replace(tweet.offsetByCodePoints(0,entity.getStart()) + sp, tweet.offsetByCodePoints(0,entity.getEnd()) + sp, entity.getDisplayURL());
+                spannableStringBuilder.setSpan(new URLSpan(entity.getExpandedURL()), tweet.offsetByCodePoints(0,entity.getStart()) + sp, tweet.offsetByCodePoints(0,entity.getEnd()) + sp + dusp, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
             }
 
             return spannableStringBuilder;

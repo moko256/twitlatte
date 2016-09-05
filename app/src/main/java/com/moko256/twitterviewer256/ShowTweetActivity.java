@@ -1,6 +1,7 @@
 package com.moko256.twitterviewer256;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -32,16 +33,25 @@ public class ShowTweetActivity extends AppCompatActivity {
         new AsyncTask<Void,Void,Status>(){
             @Override
             public twitter4j.Status doInBackground(Void... str){
-                Long statusId=(Long) getIntent().getSerializableExtra("statusId");
-                twitter4j.Status status=null;
-                if(statusId!=null){
+                Long statusId;
+                twitter4j.Status status=status=(twitter4j.Status) getIntent().getSerializableExtra("status");
+                if(status==null) {
+                    statusId = (Long) getIntent().getSerializableExtra("statusId");
+                    if (statusId == null) {
+                        Uri data = getIntent().getData();
+                        if (data.getScheme().equals("https")||data.getScheme().equals("http")) {
+                            statusId = Long.parseLong(data.getPathSegments().get(2), 10);
+                        } else if (data.getScheme().equals("twitter")) {
+                            statusId = Long.parseLong(data.getQueryParameter("id"), 10);
+                        } else {
+                            ShowTweetActivity.this.finish();
+                        }
+                    }
                     try {
-                        status=Static.twitter.showStatus(statusId);
+                        status = Static.twitter.showStatus(statusId);
                     } catch (TwitterException e) {
                         e.printStackTrace();
                     }
-                }else {
-                    status=(twitter4j.Status) getIntent().getSerializableExtra("status");
                 }
                 return status;
             }

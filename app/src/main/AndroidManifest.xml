@@ -57,7 +57,6 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data android:scheme="https" />
-                <data android:scheme="http" />
                 <data android:host="twitter.com" />
                 <data android:host="mobile.twitter.com" />
                 <data android:pathPattern="/.*/status/.*" />
@@ -70,7 +69,7 @@
 
                 <data android:scheme="twitter" />
                 <data android:host="status" />
-                <data android:pathPattern="/?id=.*" />
+                <data android:pathPattern="\?id=.*" />
             </intent-filter>
         </activity>
 
@@ -87,7 +86,7 @@
                 <data android:scheme="http" />
                 <data android:host="twitter.com" />
                 <data android:host="mobile.twitter.com" />
-                <data android:pathPattern="/.*" />
+                <data android:pathPattern="/.*/" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />

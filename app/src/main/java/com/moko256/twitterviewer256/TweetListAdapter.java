@@ -5,7 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.view.ViewCompat;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.text.format.DateUtils;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -60,13 +62,24 @@ public class TweetListAdapter extends RecyclerView.Adapter<TweetListAdapter.View
         viewHolder.tweetUserId.setText(TwitterStringUtil.plusAtMark(item.getUser().getScreenName()));
         viewHolder.tweetContext.setText(TwitterStringUtil.getLinkedSequence(item,mContext));
         viewHolder.tweetContext.setMovementMethod(LinkMovementMethod.getInstance());
+        viewHolder.tweetContext.setFocusable(false);
+
+        long createdTime=item.getCreatedAt().getTime();
+        String timeStamp;
+        if(DateUtils.isToday(createdTime)){
+            timeStamp=DateUtils.formatDateTime(mContext,createdTime,DateUtils.FORMAT_SHOW_TIME);
+        }
+        else{
+            timeStamp=DateUtils.formatDateTime(mContext,createdTime,DateUtils.FORMAT_SHOW_DATE);
+        }
+        viewHolder.tweetTimeStampText.setText(timeStamp);
         viewHolder.tweetUserImage.setOnClickListener(v->{
             ViewCompat.setTransitionName(viewHolder.tweetUserImage,"tweet_user_image");
             Intent intent = new Intent(mContext,ShowUserActivity.class);
             intent.putExtra("user",item.getUser());
             mContext.startActivity(intent, ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) mContext,viewHolder.tweetUserImage,"tweet_user_image").toBundle());
         });
-        viewHolder.itemView.setOnClickListener(v -> {
+        viewHolder.tweetCardView.setOnClickListener(v -> {
             ViewCompat.setTransitionName(viewHolder.tweetUserImage,"tweet_user_image");
             Intent intent = new Intent(mContext,ShowTweetActivity.class);
             intent.putExtra("status",item);
@@ -76,11 +89,11 @@ public class TweetListAdapter extends RecyclerView.Adapter<TweetListAdapter.View
         ExtendedMediaEntity mediaEntities[]=item.getExtendedMediaEntities();
 
         if (mediaEntities.length!=0){
-            viewHolder.tweetImageRecyclerView.setVisibility(View.VISIBLE);
-            viewHolder.tweetImageRecyclerView.setTwitterMediaEntities(mediaEntities);
+            viewHolder.tweetImageTableView.setVisibility(View.VISIBLE);
+            viewHolder.tweetImageTableView.setTwitterMediaEntities(mediaEntities);
         }
         else{
-            viewHolder.tweetImageRecyclerView.setVisibility(View.GONE);
+            viewHolder.tweetImageTableView.setVisibility(View.GONE);
         }
 
     }
@@ -96,21 +109,25 @@ public class TweetListAdapter extends RecyclerView.Adapter<TweetListAdapter.View
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
+        CardView tweetCardView;
         ImageView tweetUserImage;
         TextView tweetRetweetUserName;
         TextView tweetUserName;
         TextView tweetUserId;
         TextView tweetContext;
-        TweetImageTableView tweetImageRecyclerView;
+        TextView tweetTimeStampText;
+        TweetImageTableView tweetImageTableView;
 
         public ViewHolder(final View itemView) {
             super(itemView);
+            tweetCardView=(CardView) itemView.findViewById(R.id.tweet_card_view);
             tweetUserImage=(ImageView) itemView.findViewById(R.id.TLimage);
             tweetRetweetUserName=(TextView) itemView.findViewById(R.id.tweet_retweet_user_name);
             tweetUserId=(TextView) itemView.findViewById(R.id.tweet_user_id);
             tweetUserName=(TextView) itemView.findViewById(R.id.tweet_user_name);
             tweetContext=(TextView) itemView.findViewById(R.id.tweet_content);
-            tweetImageRecyclerView=(TweetImageTableView) itemView.findViewById(R.id.tweet_image_container);
+            tweetTimeStampText=(TextView) itemView.findViewById(R.id.tweet_time_stamp_text);
+            tweetImageTableView=(TweetImageTableView) itemView.findViewById(R.id.tweet_image_container);
         }
     }
 }
