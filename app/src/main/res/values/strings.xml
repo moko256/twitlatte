@@ -11,6 +11,7 @@
     <string name="action_settings">Settings…</string>
     <string name="action_search">Search…</string>
     <string name="timeline">TimeLine</string>
+    <string name="mentions">Mentions</string>
     <string name="tweet">Tweet</string>
     <string name="follow">follow</string>
     <string name="follower">follower</string>

@@ -10,6 +10,11 @@
             android:title="@string/timeline" />
 
         <item
+            android:id="@+id/nav_mentions"
+            android:icon="@drawable/ic_mentions_black_24dp"
+            android:title="@string/mentions" />
+
+        <item
             android:id="@+id/nav_account"
             android:icon="@drawable/ic_account_box_black_24dp"
             android:title="@string/account" />

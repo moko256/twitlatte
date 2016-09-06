@@ -88,6 +88,9 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.nav_TL:
                         startFragment(new TimeLineFragment());
                         break;
+                    case R.id.nav_mentions:
+                        startFragment(new MentionsFragment());
+                        break;
                     case R.id.nav_account:
                         startMyUserActivity();
                         break;

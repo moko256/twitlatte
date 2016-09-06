@@ -5,6 +5,7 @@
     <string name="action_search">検索</string>
     <string name="navigation_drawer_close"/>
     <string name="timeline">タイムライン</string>
+    <string name="mentions">メンション</string>
     <string name="tweet">ツイート</string>
     <string name="like">お気に入り</string>
     <string name="navigation_drawer_open"/>
