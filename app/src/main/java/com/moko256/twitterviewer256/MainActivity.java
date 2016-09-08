@@ -1,6 +1,7 @@
 package com.moko256.twitterviewer256;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -28,8 +29,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-
-        setTheme(R.style.MainActivityTheme);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -37,6 +36,10 @@ public class MainActivity extends AppCompatActivity {
             finish();
             startActivity(new Intent(this, OAuthActivity.class));
             return;
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setStatusBarColor(0x00000000);
         }
 
         Observable
@@ -134,17 +137,40 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_main_toolbar,menu);
+        Fragment fragment=getSupportFragmentManager()
+                .findFragmentById(R.id.mainLayout);
+        if (fragment instanceof HasMenuInterface){
+            getMenuInflater().inflate(((HasMenuInterface)fragment).getMenuResourceId(),menu);
+        }
         //SearchView searchView=(SearchView) menu.findItem(R.id.action_search).getActionView();
-        return true;
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        Fragment fragment=getSupportFragmentManager()
+                .findFragmentById(R.id.mainLayout);
+        if (fragment instanceof HasMenuInterface){
+            getMenuInflater().inflate(((HasMenuInterface)fragment).getMenuResourceId(),menu);
+        }
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        boolean result;
+        switch (item.getItemId()) {
             case R.id.action_search:
                 startFragment(new SearchFragment());
+                result = true;
+                break;
+            default:
+                Fragment fragment = getSupportFragmentManager()
+                        .findFragmentById(R.id.mainLayout);
+                result = !(fragment instanceof HasMenuInterface) || ((HasMenuInterface) fragment).onItemSelected(item);
+                break;
         }
-        return true;
+        return result;
     }
 
     @Override

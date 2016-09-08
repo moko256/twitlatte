@@ -13,6 +13,8 @@ import twitter4j.ExtendedMediaEntity;
 
 /**
  * Created by moko256 on GitHub on 2016/06/26.
+ *
+ * @author moko256
  */
 public class ShowTweetImageActivity extends AppCompatActivity {
     @Override
@@ -33,9 +35,11 @@ public class ShowTweetImageActivity extends AppCompatActivity {
                 break;
 
             case "animated_gif":
-                imageView=(ImageView)findViewById(R.id.tweet_image_show_image_view);
-                imageView.setVisibility(View.VISIBLE);
-                Glide.with(this).load(mediaEntity.getMediaURLHttps()+":orig").asGif().into(imageView);
+                videoView=(VideoView) findViewById(R.id.tweet_image_show_video_view);
+                videoView.setVisibility(View.VISIBLE);
+                videoView.setVideoPath(mediaEntity.getVideoVariants()[0].getUrl());
+                videoView.setOnPreparedListener(mediaPlayer -> mediaPlayer.setLooping(true));
+                videoView.start();
                 break;
 
             case "photo":
