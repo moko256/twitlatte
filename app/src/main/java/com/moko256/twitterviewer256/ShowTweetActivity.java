@@ -6,6 +6,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Html;
+import android.text.format.DateUtils;
 import android.text.method.LinkMovementMethod;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -17,6 +19,9 @@ import twitter4j.TwitterException;
 
 /**
  * Created by moko256 on GitHub on 2016/03/10.
+ * This Activity is to show a tweet.
+ *
+ * @author moko256
  */
 public class ShowTweetActivity extends AppCompatActivity {
     @Override
@@ -34,7 +39,7 @@ public class ShowTweetActivity extends AppCompatActivity {
             @Override
             public twitter4j.Status doInBackground(Void... str){
                 Long statusId;
-                twitter4j.Status status=status=(twitter4j.Status) getIntent().getSerializableExtra("status");
+                twitter4j.Status status=(twitter4j.Status) getIntent().getSerializableExtra("status");
                 if(status==null) {
                     statusId = (Long) getIntent().getSerializableExtra("statusId");
                     if (statusId == null) {
@@ -75,6 +80,12 @@ public class ShowTweetActivity extends AppCompatActivity {
                 });
 
                 ((TweetImageTableView)findViewById(R.id.tweet_show_images)).setTwitterMediaEntities(item.getExtendedMediaEntities());
+                ((TextView)findViewById(R.id.tweet_show_timestamp)).setText(DateUtils.formatDateTime(
+                        ShowTweetActivity.this,item.getCreatedAt().getTime(),DateUtils.FORMAT_ABBREV_RELATIVE)
+                );
+                TextView viaText=(TextView)findViewById(R.id.tweet_show_via);
+                viaText.setText(Html.fromHtml(item.getSource()));
+                viaText.setMovementMethod(new LinkMovementMethod());
             }
         }.execute();
 

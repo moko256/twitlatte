@@ -102,7 +102,7 @@
                 android:layout_marginLeft="40dp"
                 android:layout_below="@id/tweet_content"
                 android:visibility="gone"
-                android:src="@drawable/ic_like"/>
+                android:src="@drawable/ic_like_black_24dp"/>
 
             <ImageButton
                 android:id="@+id/tweet_content_retweet_button"
@@ -112,7 +112,7 @@
                 android:layout_below="@id/tweet_content"
                 android:layout_toRightOf="@+id/tweet_content_like_button"
                 android:visibility="gone"
-                android:src="@drawable/ic_like"/>
+                android:src="@drawable/ic_like_black_24dp"/>
 
             -->
 

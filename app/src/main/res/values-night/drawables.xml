@@ -1,0 +1,3 @@
+<resources>
+    <item name="ic_like" type="drawable">@drawable/ic_star_white50_24dp</item>
+</resources>
