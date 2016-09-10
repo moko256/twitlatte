@@ -8,7 +8,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 /**
- * Created by moko256 on GitHub on 2016/05/28.
+ * Created by moko256 on 2016/05/28.
+ *
+ * @author moko256
  */
 public class MyFollowFollowerFragment extends Fragment implements ToolbarTitleInterface,NavigationPositionInterface,UseTabsInterface {
     ViewPager viewPager;

@@ -12,7 +12,7 @@ import com.bumptech.glide.Glide;
 import twitter4j.ExtendedMediaEntity;
 
 /**
- * Created by moko256 on GitHub on 2016/06/26.
+ * Created by moko256 on 2016/06/26.
  *
  * @author moko256
  */

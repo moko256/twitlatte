@@ -4,7 +4,9 @@ import twitter4j.Twitter;
 import twitter4j.User;
 
 /**
- * Created by moko256 on GitHub on 2016/02/02.
+ * Created by moko256 on 2016/02/02.
+ *
+ * @author moko256
  */
 public class Static {
     static Twitter twitter;

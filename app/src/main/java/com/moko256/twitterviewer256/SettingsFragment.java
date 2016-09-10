@@ -14,7 +14,9 @@ import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.preference.PreferenceManager;
 
 /**
- * Created by moko256 on GitHub on 2016/03/28.
+ * Created by moko256 on 2016/03/28.
+ *
+ * @author moko256
  */
 public class SettingsFragment extends PreferenceFragmentCompat {
 

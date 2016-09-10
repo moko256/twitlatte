@@ -2,6 +2,7 @@ package com.moko256.twitterviewer256;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.ClickableSpan;
@@ -16,9 +17,14 @@ import twitter4j.URLEntity;
 import twitter4j.UserMentionEntity;
 
 /**
- * Created by moko256 on GitHub on 2016/08/06.
+ * Created by moko256 on 2016/08/06.
+ *
+ * @author moko256
  */
+
 public class TwitterStringUtil {
+
+    @NonNull
     public static String plusAtMark(String string){
         return (new StringBuilder("@")).append(string).toString();
     }
@@ -28,8 +34,6 @@ public class TwitterStringUtil {
         try {
 
             String tweet = item.getText();
-            int tweetLength = tweet.length();
-            int tweetCodePointCount = tweet.codePointCount(0, tweetLength);
 
             SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(tweet);
 

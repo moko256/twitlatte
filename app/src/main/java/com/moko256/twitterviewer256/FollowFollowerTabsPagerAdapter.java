@@ -8,7 +8,9 @@ import android.support.v4.app.FragmentPagerAdapter;
 import java.util.ArrayList;
 
 /**
- * Created by moko256 on GitHub on 2016/05/28.
+ * Created by moko256 on 2016/05/28.
+ *
+ * @author moko256
  */
 public class FollowFollowerTabsPagerAdapter extends FragmentPagerAdapter {
     ArrayList<Fragment> mFragments;

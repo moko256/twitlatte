@@ -5,7 +5,9 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 
 /**
- * Created by moko256 on GitHub on 2016/03/27.
+ * Created by moko256 on 2016/03/27.
+ *
+ * @author moko256
  */
 public class SettingsActivity extends AppCompatActivity {
 

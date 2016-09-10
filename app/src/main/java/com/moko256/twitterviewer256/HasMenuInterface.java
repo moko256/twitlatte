@@ -4,7 +4,7 @@ import android.support.annotation.MenuRes;
 import android.view.MenuItem;
 
 /**
- * Created by moko256 on GitHub on 2016/09/08.
+ * Created by moko256 on 2016/09/08.
  *
  * @author moko256
  */

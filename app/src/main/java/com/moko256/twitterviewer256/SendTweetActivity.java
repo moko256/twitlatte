@@ -16,7 +16,9 @@ import com.twitter.Validator;
 import twitter4j.TwitterException;
 
 /**
- * Created by moko256 on GitHub on 2015/11/08.
+ * Created by moko256 on 2015/11/08.
+ *
+ * @author moko256
  */
 public class SendTweetActivity extends AppCompatActivity {
 

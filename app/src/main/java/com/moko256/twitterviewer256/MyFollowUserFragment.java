@@ -5,7 +5,9 @@ import twitter4j.TwitterException;
 import twitter4j.User;
 
 /**
- * Created by moko256 on GitHub on 2016/03/29.
+ * Created by moko256 on 2016/03/29.
+ *
+ * @author moko256
  */
 public class MyFollowUserFragment extends BaseUserListFragment implements ToolbarTitleInterface,NavigationPositionInterface {
 

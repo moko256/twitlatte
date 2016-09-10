@@ -20,7 +20,9 @@ import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationContext;
 
 /**
- * Created by moko256 on GitHub on 2016/04/29.
+ * Created by moko256 on 2016/04/29.
+ *
+ * @author moko256
  */
 public class OAuthActivity extends AppCompatActivity {
     public static RequestToken req;

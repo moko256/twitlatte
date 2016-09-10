@@ -18,21 +18,23 @@ import twitter4j.Status;
 import twitter4j.TwitterException;
 
 /**
- * Created by moko256 on GitHub on 2016/03/27.
+ * Created by moko256 on 2016/03/27.
+ *
+ * @author moko256
  */
 public abstract class BaseTweetListFragment extends BaseTwitterListFragment {
     TweetListAdapter listAdapter;
-    RecyclerView listView;
+    RecyclerView recyclerView;
     ArrayList<Status> homeTl;
 
     @Override
     public void startProcess(View view) {
         homeTl=new ArrayList<>();
         listAdapter = new TweetListAdapter(getContext(),homeTl,null);
-        listView = (RecyclerView) view.findViewById(R.id.TLlistView);
-        listView.setAdapter(listAdapter);
-        listView.setLayoutManager(new LinearLayoutManager(getContext()));
-        listView.addOnScrollListener(new LoadScrollListener((LinearLayoutManager)listView.getLayoutManager()) {
+        recyclerView = (RecyclerView) view.findViewById(R.id.TLlistView);
+        recyclerView.setAdapter(listAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.addOnScrollListener(new LoadScrollListener((LinearLayoutManager) recyclerView.getLayoutManager()) {
             @Override
             public void load(int page) {
                 if(homeTl.size()!=0){
@@ -45,8 +47,10 @@ public abstract class BaseTweetListFragment extends BaseTwitterListFragment {
                                     result -> {
                                         int size = result.size();
                                         if (size > 0) {
+                                            int l=homeTl.size();
                                             result.remove(0);
                                             homeTl.addAll(result);
+                                            listAdapter.notifyItemRangeInserted(l,size);
                                         }
                                     },
                                     e -> {
@@ -57,9 +61,7 @@ public abstract class BaseTweetListFragment extends BaseTwitterListFragment {
                                                 })
                                                 .show();
                                     },
-                                    () -> {
-                                        listAdapter.notifyDataSetChanged();
-                                    }
+                                    () -> {}
                             );
                 }
             }
@@ -131,7 +133,7 @@ public abstract class BaseTweetListFragment extends BaseTwitterListFragment {
                     }
                 }
         );
-    };
+    }
 
     public abstract ResponseList<Status> getResponseList(Paging paging) throws TwitterException;
 

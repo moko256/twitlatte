@@ -10,7 +10,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 import twitter4j.auth.AccessToken;
 
 /**
- * Created by moko256 on GitHub on 2016/07/31.
+ * Created by moko256 on 2016/07/31.
+ *
+ * @author moko256
  */
 public class TokenSQLiteOpenHelper extends SQLiteOpenHelper {
     public TokenSQLiteOpenHelper(Context context){

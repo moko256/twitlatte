@@ -23,7 +23,9 @@ import twitter4j.ExtendedMediaEntity;
 import twitter4j.Status;
 
 /**
- * Created by moko256 on GitHub on 2016/02/11.
+ * Created by moko256 on 2016/02/11.
+ *
+ * @author moko256
  */
 public class TweetListAdapter extends RecyclerView.Adapter<TweetListAdapter.ViewHolder> {
 

@@ -18,7 +18,7 @@ import twitter4j.Status;
 import twitter4j.TwitterException;
 
 /**
- * Created by moko256 on GitHub on 2016/03/10.
+ * Created by moko256 on 2016/03/10.
  * This Activity is to show a tweet.
  *
  * @author moko256

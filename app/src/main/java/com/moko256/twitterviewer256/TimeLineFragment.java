@@ -6,7 +6,9 @@ import twitter4j.Status;
 import twitter4j.TwitterException;
 
 /**
- * Created by moko256 on GitHub on 2016/03/23.
+ * Created by moko256 on 2016/03/23.
+ *
+ * @author moko256
  */
 public class TimeLineFragment extends BaseTweetListFragment implements ToolbarTitleInterface,NavigationPositionInterface {
 
