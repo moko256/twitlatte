@@ -5,7 +5,9 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.View;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -112,7 +114,12 @@ public abstract class BaseTweetListFragment extends BaseTwitterListFragment {
                                     })
                                     .show();
                         },
-                        () -> swipeRefreshLayout.setRefreshing(false)
+                        () -> {
+                            swipeRefreshLayout.setRefreshing(false);
+                            Toast
+                                    .makeText(getContext(),"New Tweet",Toast.LENGTH_LONG)
+                                    .setGravity(Gravity.TOP|Gravity.CENTER,0,0);
+                        }
                 );
     }
 

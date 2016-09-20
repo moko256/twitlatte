@@ -47,7 +47,6 @@ public abstract class BaseUserListFragment extends BaseTwitterListFragment {
                                         int size = result.size();
                                         if (size > 0) {
                                             int l=homeTl.size();
-                                            result.remove(0);
                                             homeTl.addAll(result);
                                             listAdapter.notifyItemRangeInserted(l,size);
                                         }

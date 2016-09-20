@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
@@ -93,28 +93,35 @@
                 android:layout_marginTop="0dp"
                 android:layout_marginBottom="2dp" />
 
-            <!--
+            <ImageButton
+                android:id="@+id/tweet_content_retweet_button"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_below="@id/tweet_image_container"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="10dp"
+                android:background="@android:color/transparent"
+                android:src="@drawable/ic_like"/>
 
             <ImageButton
                 android:id="@+id/tweet_content_like_button"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_marginLeft="40dp"
-                android:layout_below="@id/tweet_content"
-                android:visibility="gone"
-                android:src="@drawable/ic_like_black_24dp"/>
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_below="@id/tweet_image_container"
+                android:layout_toLeftOf="@+id/tweet_content_retweet_button"
+                android:layout_marginRight="10dp"
+                android:background="@android:color/transparent"
+                android:src="@drawable/ic_like"/>
 
             <ImageButton
-                android:id="@+id/tweet_content_retweet_button"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_marginLeft="20dp"
-                android:layout_below="@id/tweet_content"
-                android:layout_toRightOf="@+id/tweet_content_like_button"
-                android:visibility="gone"
-                android:src="@drawable/ic_like_black_24dp"/>
-
-            -->
+                android:id="@+id/tweet_content_reply_button"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_below="@id/tweet_image_container"
+                android:layout_toLeftOf="@+id/tweet_content_like_button"
+                android:layout_marginRight="10dp"
+                android:background="@android:color/transparent"
+                android:src="@drawable/ic_like"/>
 
         </RelativeLayout>
 
