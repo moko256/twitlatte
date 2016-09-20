@@ -1,8 +1,10 @@
 package com.moko256.twitterviewer256;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -51,14 +53,16 @@ public class ShowUserFragment extends BaseTweetListFragment {
                 .subscribe(
                         result->{
                             user=(User)result;
-                            Glide.with(getContext()).load(user.getBiggerProfileImageURL()).into((ImageView) view.findViewById(R.id.show_user_image));
-                            Glide.with(getContext()).load(user.getProfileBannerRetinaURL()).into((ImageView)view.findViewById(R.id.show_user_bgimage));
+                            LinearLayout headerLayout=(LinearLayout) LayoutInflater.from(getContext()).inflate(R.layout.layout_show_user_list_header,null,true);
+                            Glide.with(getContext()).load(user.getBiggerProfileImageURL()).into((ImageView) headerLayout.findViewById(R.id.show_user_image));
+                            Glide.with(getContext()).load(user.getProfileBannerRetinaURL()).into((ImageView)headerLayout.findViewById(R.id.show_user_bgimage));
 
-                            ((TextView)view.findViewById(R.id.show_user_name)).setText(user.getName());
-                            ((TextView)view.findViewById(R.id.show_user_id)).setText(TwitterStringUtil.plusAtMark(user.getScreenName()));
+                            ((TextView)headerLayout.findViewById(R.id.show_user_name)).setText(user.getName());
+                            ((TextView)headerLayout.findViewById(R.id.show_user_id)).setText(TwitterStringUtil.plusAtMark(user.getScreenName()));
                             getActivity().setTitle(user.getName());
-                            ((TextView)view.findViewById(R.id.show_user_bio)).setText(user.getDescription());
+                            ((TextView)headerLayout.findViewById(R.id.show_user_bio)).setText(user.getDescription());
 
+                            getListAdapter().setHeaderView(headerLayout);
                             super.initializationProcess(view);
 
                         },

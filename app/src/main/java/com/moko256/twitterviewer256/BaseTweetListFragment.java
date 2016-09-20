@@ -32,7 +32,7 @@ public abstract class BaseTweetListFragment extends BaseTwitterListFragment {
     @Override
     public void startProcess(View view) {
         homeTl=new ArrayList<>();
-        listAdapter = new TweetListAdapter(getContext(),homeTl,null);
+        listAdapter = new TweetListAdapter(getContext(),homeTl);
         recyclerView = (RecyclerView) view.findViewById(R.id.TLlistView);
         recyclerView.setAdapter(listAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -52,7 +52,7 @@ public abstract class BaseTweetListFragment extends BaseTwitterListFragment {
                                             int l=homeTl.size();
                                             result.remove(0);
                                             homeTl.addAll(result);
-                                            listAdapter.notifyItemRangeInserted(l,size);
+                                            listAdapter.notifyItemRangeInserted(listAdapter.getHeaderCount()+l,size);
                                         }
                                     },
                                     e -> {
@@ -103,7 +103,7 @@ public abstract class BaseTweetListFragment extends BaseTwitterListFragment {
                             int size = result.size();
                             if (size > 0) {
                                 homeTl.addAll(0, result);
-                                listAdapter.notifyItemRangeInserted(0,size);
+                                listAdapter.notifyItemRangeInserted(listAdapter.getHeaderCount(),size);
                             }
                         },
                         e -> {
@@ -118,7 +118,7 @@ public abstract class BaseTweetListFragment extends BaseTwitterListFragment {
                             swipeRefreshLayout.setRefreshing(false);
                             Toast
                                     .makeText(getContext(),"New Tweet",Toast.LENGTH_LONG)
-                                    .setGravity(Gravity.TOP|Gravity.CENTER,0,0);
+                                    .setGravity(Gravity.TOP|Gravity.CENTER,0,500);
                         }
                 );
     }
@@ -144,6 +144,8 @@ public abstract class BaseTweetListFragment extends BaseTwitterListFragment {
 
     public abstract ResponseList<Status> getResponseList(Paging paging) throws TwitterException;
 
+    public TweetListAdapter getListAdapter() {
+        return listAdapter;
+    }
+
 }
-
-
