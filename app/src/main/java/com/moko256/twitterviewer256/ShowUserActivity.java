@@ -25,50 +25,6 @@ public class ShowUserActivity extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeAsUpIndicator(R.drawable.ic_back_white_24dp);
 
-        /*
-        listAdapter = new TweetListAdapter(ShowUserActivity.this,userTweet,null);
-        recyclerView = (RecyclerView) findViewById(R.id.show_user_tweet);
-        recyclerView.setAdapter(listAdapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        new AsyncTask<Void,Void, User>(){
-            @Override
-            public User doInBackground(Void... str){
-                String userId=(String) getIntent().getSerializableExtra("userName");
-                User user=null;
-                if(userId!=null){
-                    try {
-                        user=Static.twitter.showUser(userId);
-                    } catch (TwitterException e) {
-                        e.printStackTrace();
-                    }
-                }else {
-                    user=(User) getIntent().getSerializableExtra("user");
-                }
-                return user;
-            }
-
-            @Override
-            public void onPostExecute(User item){
-
-                Glide.with(ShowUserActivity.this).load(item.getBiggerProfileImageURL()).into((ImageView) findViewById(R.id.show_user_image));
-                Glide.with(ShowUserActivity.this).load(item.getProfileBannerRetinaURL()).into((ImageView)findViewById(R.id.show_user_bgimage));
-
-                ((TextView) findViewById(R.id.show_user_bio)).setText(item.getDescription());
-                ((Toolbar) findViewById(R.id.show_user_tool_bar)).setTitle(item.getName());
-
-                getApi(item.getId(),new Paging(1,20))
-                        .subscribeOn(Schedulers.newThread())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(
-                                result-> userTweet.addAll(result),
-                                Throwable::printStackTrace,
-                                ()->listAdapter.notifyDataSetChanged()
-                        );
-
-            }
-        }.execute();
-        */
     }
 
     @Override
@@ -76,20 +32,5 @@ public class ShowUserActivity extends AppCompatActivity {
         finish();
         return false;
     }
-
-    /*
-    private Observable<ResponseList<Status>> getApi(Long userId,Paging paging){
-        return Observable.create(
-                subscriber->{
-                    try {
-                        subscriber.onNext(Static.twitter.getUserTimeline(userId,paging));
-                        subscriber.onCompleted();
-                    } catch (TwitterException e) {
-                        subscriber.onError(e);
-                    }
-                }
-        );
-    }
-    */
 
 }

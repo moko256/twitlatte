@@ -27,21 +27,21 @@ import twitter4j.TwitterException;
 public abstract class BaseTweetListFragment extends BaseTwitterListFragment {
     TweetListAdapter listAdapter;
     RecyclerView recyclerView;
-    ArrayList<Status> homeTl;
+    ArrayList<Status> statuses;
 
     @Override
     public void startProcess(View view) {
-        homeTl=new ArrayList<>();
-        listAdapter = new TweetListAdapter(getContext(),homeTl);
+        statuses =new ArrayList<>();
+        listAdapter = new TweetListAdapter(getContext(), statuses);
         recyclerView = (RecyclerView) view.findViewById(R.id.TLlistView);
         recyclerView.setAdapter(listAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.addOnScrollListener(new LoadScrollListener((LinearLayoutManager) recyclerView.getLayoutManager()) {
             @Override
             public void load(int page) {
-                if(homeTl.size()!=0){
+                if(statuses.size()!=0){
                     Paging paging=new Paging();
-                    paging.maxId(homeTl.get(homeTl.size()-1).getId());
+                    paging.maxId(statuses.get(statuses.size()-1).getId());
                     getResponseObservable(paging)
                             .subscribeOn(Schedulers.newThread())
                             .observeOn(AndroidSchedulers.mainThread())
@@ -49,18 +49,16 @@ public abstract class BaseTweetListFragment extends BaseTwitterListFragment {
                                     result -> {
                                         int size = result.size();
                                         if (size > 0) {
-                                            int l=homeTl.size();
+                                            int l= statuses.size();
                                             result.remove(0);
-                                            homeTl.addAll(result);
+                                            statuses.addAll(result);
                                             listAdapter.notifyItemRangeInserted(listAdapter.getHeaderCount()+l,size);
                                         }
                                     },
                                     e -> {
                                         e.printStackTrace();
                                         Snackbar.make(view, "Error", Snackbar.LENGTH_INDEFINITE)
-                                                .setAction("Try", v -> {
-                                                    this.load(page);
-                                                })
+                                                .setAction("Try", v -> this.load(page))
                                                 .show();
                                     },
                                     () -> {}
@@ -74,7 +72,7 @@ public abstract class BaseTweetListFragment extends BaseTwitterListFragment {
     public void restoreProcess(View view,Bundle savedInstanceState) {
         ArrayList<Status> list=(ArrayList<Status>) savedInstanceState.getSerializable("list");
         if(list!=null){
-            homeTl.addAll(list);
+            statuses.addAll(list);
             listAdapter.notifyDataSetChanged();
         }
         else initializationProcess(view);
@@ -86,14 +84,14 @@ public abstract class BaseTweetListFragment extends BaseTwitterListFragment {
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        result-> homeTl.addAll(result),
+                        result-> statuses.addAll(result),
                         Throwable::printStackTrace,
                         ()-> listAdapter.notifyDataSetChanged()
                 );
     }
 
     public void updateProcess(View view, SwipeRefreshLayout swipeRefreshLayout) {
-        Paging paging=homeTl.size()!=0?new Paging(homeTl.get(0).getId()):new Paging(1,20);
+        Paging paging= statuses.size()!=0?new Paging(statuses.get(0).getId()):new Paging(1,20);
 
         getResponseObservable(paging)
                 .subscribeOn(Schedulers.newThread())
@@ -102,7 +100,7 @@ public abstract class BaseTweetListFragment extends BaseTwitterListFragment {
                         result -> {
                             int size = result.size();
                             if (size > 0) {
-                                homeTl.addAll(0, result);
+                                statuses.addAll(0, result);
                                 listAdapter.notifyItemRangeInserted(listAdapter.getHeaderCount(),size);
                             }
                         },
@@ -116,9 +114,9 @@ public abstract class BaseTweetListFragment extends BaseTwitterListFragment {
                         },
                         () -> {
                             swipeRefreshLayout.setRefreshing(false);
-                            Toast
-                                    .makeText(getContext(),"New Tweet",Toast.LENGTH_LONG)
-                                    .setGravity(Gravity.TOP|Gravity.CENTER,0,500);
+                            Toast t=Toast.makeText(getContext(),"New Tweet",Toast.LENGTH_LONG);
+                            t.setGravity(Gravity.TOP|Gravity.CENTER,0,0);
+                            t.show();
                         }
                 );
     }
@@ -126,7 +124,7 @@ public abstract class BaseTweetListFragment extends BaseTwitterListFragment {
     @Override
     public void onSaveInstanceState(Bundle outState){
         super.onSaveInstanceState(outState);
-        outState.putSerializable("list", (ArrayList) homeTl);
+        outState.putSerializable("list", (ArrayList) statuses);
     }
 
     public Observable<ResponseList<Status>> getResponseObservable(Paging paging) {

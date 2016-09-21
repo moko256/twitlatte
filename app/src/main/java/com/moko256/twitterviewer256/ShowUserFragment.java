@@ -87,6 +87,6 @@ public class ShowUserFragment extends BaseTweetListFragment {
 
     @Override
     public int getLayoutResource() {
-        return R.layout.fragment_show_user;
+        return R.layout.fragment_base_list;
     }
 }
