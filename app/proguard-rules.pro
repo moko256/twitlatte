@@ -15,3 +15,10 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+
+-dontwarn twitter4j.**
+-keep class twitter4j.** { *; }
+
+-keep public class * implements com.bumptech.glide.module.GlideModule
+
+-keep public class
