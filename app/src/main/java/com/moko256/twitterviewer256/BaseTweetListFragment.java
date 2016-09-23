@@ -5,6 +5,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Toast;
@@ -102,22 +103,26 @@ public abstract class BaseTweetListFragment extends BaseTwitterListFragment {
                             if (size > 0) {
                                 statuses.addAll(0, result);
                                 listAdapter.notifyItemRangeInserted(listAdapter.getHeaderCount(),size);
+                                TypedValue value=new TypedValue();
+                                Toast t=Toast.makeText(getContext(),"New Tweet",Toast.LENGTH_SHORT);
+                                t.setGravity(
+                                        Gravity.TOP|Gravity.CENTER,
+                                        0,
+                                        getContext().getTheme().resolveAttribute(R.attr.actionBarSize, value, true)?
+                                                TypedValue.complexToDimensionPixelOffset(value.data, getResources().getDisplayMetrics()):
+                                                0
+                                );
+                                t.show();
                             }
                         },
                         e -> {
                             e.printStackTrace();
                             swipeRefreshLayout.setRefreshing(false);
                             Snackbar.make(view, "Error", Snackbar.LENGTH_INDEFINITE)
-                                    .setAction("Try", v -> {
-                                    })
+                                    .setAction("Try", v -> updateProcess(view,swipeRefreshLayout))
                                     .show();
                         },
-                        () -> {
-                            swipeRefreshLayout.setRefreshing(false);
-                            Toast t=Toast.makeText(getContext(),"New Tweet",Toast.LENGTH_LONG);
-                            t.setGravity(Gravity.TOP|Gravity.CENTER,0,0);
-                            t.show();
-                        }
+                        () -> swipeRefreshLayout.setRefreshing(false)
                 );
     }
 
