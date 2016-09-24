@@ -75,6 +75,7 @@ public class TwitterStringUtil {
                 int dusp = displayUreLength - urlLength;
                 spannableStringBuilder.replace(tweet.offsetByCodePoints(0,entity.getStart()) + sp, tweet.offsetByCodePoints(0,entity.getEnd()) + sp, entity.getDisplayURL());
                 spannableStringBuilder.setSpan(new URLSpan(entity.getExpandedURL()), tweet.offsetByCodePoints(0,entity.getStart()) + sp, tweet.offsetByCodePoints(0,entity.getEnd()) + sp + dusp, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+                sp+=dusp;
             }
 
             return spannableStringBuilder;
