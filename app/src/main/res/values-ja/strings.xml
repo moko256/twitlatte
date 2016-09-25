@@ -7,6 +7,7 @@
     <string name="timeline">タイムライン</string>
     <string name="mentions">メンション</string>
     <string name="tweet">ツイート</string>
+    <string name="reply">返信</string>
     <string name="like">お気に入り</string>
     <string name="navigation_drawer_open"/>
     <string name="follower">フォロワー</string>

@@ -4,7 +4,9 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
 
     <ImageView
         android:layout_width="40dp"
@@ -67,5 +69,23 @@
         android:layout_marginTop="0dp"
         android:layout_marginBottom="2dp"
         android:textColor="#808080"/>
+
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/tweet_show_tweet_reply_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:text="@string/reply"/>
+
+    <android.support.v7.widget.AppCompatEditText
+        android:id="@+id/tweet_show_tweet_reply_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_toLeftOf="@id/tweet_show_tweet_reply_button"
+        android:minLines="2"
+        android:maxLines="3"/>
 
 </RelativeLayout>

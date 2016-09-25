@@ -6,15 +6,23 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.AppCompatButton;
+import android.support.v7.widget.AppCompatEditText;
 import android.text.Html;
 import android.text.format.DateUtils;
 import android.text.method.LinkMovementMethod;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import twitter4j.Status;
+import twitter4j.StatusUpdate;
 import twitter4j.TwitterException;
 
 /**
@@ -79,13 +87,53 @@ public class ShowTweetActivity extends AppCompatActivity {
                     startActivity(intent);
                 });
 
-                ((TweetImageTableView)findViewById(R.id.tweet_show_images)).setTwitterMediaEntities(item.getExtendedMediaEntities());
+
+                TweetImageTableView tableView=(TweetImageTableView) findViewById(R.id.tweet_show_images);
+                if(item.getExtendedMediaEntities().length!=0){
+                    tableView.setVisibility(View.VISIBLE);
+                    tableView.setTwitterMediaEntities(item.getExtendedMediaEntities());
+                }else{
+                    tableView.setVisibility(View.GONE);
+                }
+
                 ((TextView)findViewById(R.id.tweet_show_timestamp)).setText(DateUtils.formatDateTime(
                         ShowTweetActivity.this,item.getCreatedAt().getTime(),DateUtils.FORMAT_ABBREV_RELATIVE)
                 );
                 TextView viaText=(TextView)findViewById(R.id.tweet_show_via);
-                viaText.setText(Html.fromHtml(item.getSource()));
+                viaText.setText(Html.fromHtml("via:"+item.getSource()));
                 viaText.setMovementMethod(new LinkMovementMethod());
+
+                AppCompatEditText replyText=(AppCompatEditText) findViewById(R.id.tweet_show_tweet_reply_text);
+                AppCompatButton replyButton=(AppCompatButton) findViewById(R.id.tweet_show_tweet_reply_button);
+                replyButton.setOnClickListener(v -> {
+                    StatusUpdate update=new StatusUpdate(TwitterStringUtil.plusAtMark(item.getUser().getScreenName())+" "+replyText.getText().toString());
+                    update.inReplyToStatusId(item.getId());
+                    replyButton.setEnabled(false);
+                    Observable
+                            .create(subscriber -> {
+                                try {
+                                    subscriber.onNext(Static.twitter.updateStatus(update));
+                                    subscriber.onCompleted();
+                                } catch (TwitterException e) {
+                                    subscriber.onError(e);
+                                }
+                            })
+                            .subscribeOn(Schedulers.newThread())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(
+                                    it->{},
+                                    e->{
+                                        e.printStackTrace();
+                                        Toast.makeText(ShowTweetActivity.this,"error",Toast.LENGTH_SHORT).show();
+                                        replyButton.setEnabled(true);
+                                    },
+                                    ()-> {
+                                        replyText.setText("");
+                                        replyButton.setEnabled(true);
+                                        Toast.makeText(ShowTweetActivity.this,"completed",Toast.LENGTH_SHORT).show();
+                                    }
+                            );
+                });
             }
         }.execute();
 

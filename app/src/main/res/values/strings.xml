@@ -13,6 +13,7 @@
     <string name="timeline">TimeLine</string>
     <string name="mentions">Mentions</string>
     <string name="tweet">Tweet</string>
+    <string name="reply">Reply</string>
     <string name="follow">follow</string>
     <string name="follower">follower</string>
     <string name="like">Like</string>
