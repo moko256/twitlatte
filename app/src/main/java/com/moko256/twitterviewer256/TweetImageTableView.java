@@ -3,6 +3,7 @@ package com.moko256.twitterviewer256;
 import android.content.Context;
 import android.content.Intent;
 import android.util.AttributeSet;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.widget.ImageView;
 
@@ -104,6 +105,7 @@ public class TweetImageTableView extends android.support.v7.widget.GridLayout {
         LayoutParams params=new LayoutParams();
         params.rowSpec=spec(row,rowSpan,1F);
         params.columnSpec=spec(column,colSpan,1F);
+        params.setGravity(Gravity.FILL);
         return params;
     }
 }

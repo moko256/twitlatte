@@ -10,7 +10,11 @@ import android.text.style.URLSpan;
 import android.view.View;
 import android.widget.Toast;
 
+import java.util.List;
+
+import rx.Observable;
 import twitter4j.HashtagEntity;
+import twitter4j.MediaEntity;
 import twitter4j.Status;
 import twitter4j.SymbolEntity;
 import twitter4j.URLEntity;
@@ -66,14 +70,21 @@ public class TwitterStringUtil {
                 }, tweet.offsetByCodePoints(0,userMentionEntity.getStart()), tweet.offsetByCodePoints(0,userMentionEntity.getEnd()), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
             }
 
+            List<URLEntity> urlEntities=Observable
+                    .concat(Observable.from(item.getURLEntities()),Observable.from(item.getMediaEntities()))
+                    .toSortedList((i1,i2)->i1.getStart()-i2.getStart())
+                    .toBlocking()
+                    .single();
+
             int sp = 0;
-            for (URLEntity entity : item.getURLEntities()) {
+            for (URLEntity entity : urlEntities) {
                 String url = entity.getURL();
-                String displayUrl = entity.getDisplayURL();
+                String displayUrl = entity instanceof MediaEntity ? "": entity.getDisplayURL();
+
                 int urlLength = url.codePointCount(0, url.length());
                 int displayUreLength = displayUrl.codePointCount(0, displayUrl.length());
                 int dusp = displayUreLength - urlLength;
-                spannableStringBuilder.replace(tweet.offsetByCodePoints(0,entity.getStart()) + sp, tweet.offsetByCodePoints(0,entity.getEnd()) + sp, entity.getDisplayURL());
+                spannableStringBuilder.replace(tweet.offsetByCodePoints(0,entity.getStart()) + sp, tweet.offsetByCodePoints(0,entity.getEnd()) + sp, displayUrl);
                 spannableStringBuilder.setSpan(new URLSpan(entity.getExpandedURL()), tweet.offsetByCodePoints(0,entity.getStart()) + sp, tweet.offsetByCodePoints(0,entity.getEnd()) + sp + dusp, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
                 sp+=dusp;
             }

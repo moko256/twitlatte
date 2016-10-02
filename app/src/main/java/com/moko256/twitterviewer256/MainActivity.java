@@ -137,40 +137,20 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_main_toolbar,menu);
-        Fragment fragment=getSupportFragmentManager()
-                .findFragmentById(R.id.mainLayout);
-        if (fragment instanceof HasMenuInterface){
-            getMenuInflater().inflate(((HasMenuInterface)fragment).getMenuResourceId(),menu);
-        }
         //SearchView searchView=(SearchView) menu.findItem(R.id.action_search).getActionView();
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        Fragment fragment=getSupportFragmentManager()
-                .findFragmentById(R.id.mainLayout);
-        if (fragment instanceof HasMenuInterface){
-            getMenuInflater().inflate(((HasMenuInterface)fragment).getMenuResourceId(),menu);
-        }
-        return super.onPrepareOptionsMenu(menu);
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        boolean result;
         switch (item.getItemId()) {
             case R.id.action_search:
                 startFragment(new SearchFragment());
-                result = true;
                 break;
             default:
-                Fragment fragment = getSupportFragmentManager()
-                        .findFragmentById(R.id.mainLayout);
-                result = !(fragment instanceof HasMenuInterface) || ((HasMenuInterface) fragment).onItemSelected(item);
                 break;
         }
-        return result;
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
