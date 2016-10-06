@@ -9,6 +9,8 @@ import android.widget.VideoView;
 
 import com.bumptech.glide.Glide;
 
+import java.util.Objects;
+
 import twitter4j.ExtendedMediaEntity;
 
 /**
@@ -30,7 +32,13 @@ public class ShowTweetImageActivity extends AppCompatActivity {
             case "video":
                 videoView=(VideoView) findViewById(R.id.tweet_image_show_video_view);
                 videoView.setVisibility(View.VISIBLE);
-                videoView.setVideoPath(mediaEntity.getVideoVariants()[0].getUrl());
+                String videoPath="";
+                for(ExtendedMediaEntity.Variant variant : mediaEntity.getVideoVariants()){
+                    if(Objects.equals(variant.getContentType(), "application/x-mpegURL")){
+                        videoPath=variant.getUrl();
+                    }
+                }
+                videoView.setVideoPath(videoPath);
                 videoView.setMediaController(new MediaController(this));
                 break;
 

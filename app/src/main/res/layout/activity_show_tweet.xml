@@ -48,7 +48,7 @@
         android:id="@+id/tweet_show_images"
         android:layout_below="@id/tweet_show_content"
         android:layout_width="match_parent"
-        android:layout_height="0dp"/>
+        android:layout_height="wrap_content"/>
 
     <TextView
         android:id="@+id/tweet_show_via"

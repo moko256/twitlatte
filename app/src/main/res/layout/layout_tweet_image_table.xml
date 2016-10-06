@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.GridLayout
+<GridLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    app:columnCount="2"
-    app:rowCount="2">
+    android:columnCount="2"
+    android:rowCount="2">
     <ImageView android:id="@+id/layout_tweet_image_1"/>
     <ImageView android:id="@+id/layout_tweet_image_2"/>
     <ImageView android:id="@+id/layout_tweet_image_3"/>
     <ImageView android:id="@+id/layout_tweet_image_4"/>
-</android.support.v7.widget.GridLayout>
+</GridLayout>

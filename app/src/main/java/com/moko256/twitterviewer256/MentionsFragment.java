@@ -24,7 +24,7 @@ public class MentionsFragment extends BaseTweetListFragment implements ToolbarTi
 
     @Override
     public int getNavigationPosition() {
-        return R.id.nav_TL;
+        return R.id.nav_mentions;
     }
 
 }
