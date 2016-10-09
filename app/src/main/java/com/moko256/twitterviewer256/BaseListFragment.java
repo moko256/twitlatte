@@ -61,9 +61,9 @@ public abstract class BaseListFragment<A extends BaseListAdapter<LI,? extends Re
         });
 
         if (savedInstanceState != null){
-            ArrayList<LI> list=(ArrayList<LI>) savedInstanceState.getSerializable("list");
-            if(list!=null){
-                list.addAll(list);
+            ArrayList<LI> l=(ArrayList<LI>) savedInstanceState.getSerializable("list");
+            if(l!=null){
+                list.addAll(l);
                 adapter.notifyDataSetChanged();
             }
             else onInitializeList();
