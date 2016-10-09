@@ -12,14 +12,14 @@ import java.util.ArrayList;
  *
  * @author moko256
  */
-public class FollowFollowerTabsPagerAdapter extends FragmentPagerAdapter {
-    ArrayList<Fragment> mFragments;
-    Context mContext;
+class FollowFollowerTabsPagerAdapter extends FragmentPagerAdapter {
+    private ArrayList<Fragment> mFragments;
+    private Context mContext;
 
-    public FollowFollowerTabsPagerAdapter(FragmentManager fm , Context context) {
+    FollowFollowerTabsPagerAdapter(FragmentManager fm, Context context) {
         super(fm);
 
-        ArrayList<BaseTwitterListFragment> baseTwitterListFragments=new ArrayList<>();
+        ArrayList<BaseListFragment> baseTwitterListFragments=new ArrayList<>();
 
         baseTwitterListFragments.add(new MyFollowUserFragment());
         baseTwitterListFragments.add(new MyFollowerUserFragment());

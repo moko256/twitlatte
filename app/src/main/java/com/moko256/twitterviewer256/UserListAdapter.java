@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -23,44 +22,38 @@ import twitter4j.User;
  *
  * @author moko256
  */
-public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.ViewHolder> {
+class UserListAdapter extends BaseListAdapter<User,UserListAdapter.ViewHolder> {
 
-    private LayoutInflater mInflater;
-    private ArrayList<User> mData;
-    private Context mContext;
-
-    public UserListAdapter(Context context, ArrayList<User> data, RecyclerView.RecyclerListener listener) {
-        mInflater = LayoutInflater.from(context);
-        mContext = context;
-        mData = data;
+    UserListAdapter(Context context, ArrayList<User> data) {
+        super(context, data);
     }
 
     @Override
     public UserListAdapter.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        return new ViewHolder(mInflater.inflate(R.layout.layout_user, viewGroup, false));
+        return new ViewHolder(inflater.inflate(R.layout.layout_user, viewGroup, false));
     }
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int i) {
-        User item=mData.get(i);
+        User item=data.get(i);
 
-        Glide.with(mContext).load(item.getProfileImageURL()).into(viewHolder.userUserImage);
+        Glide.with(context).load(item.getProfileImageURL()).into(viewHolder.userUserImage);
 
         viewHolder.userUserName.setText(item.getName());
         viewHolder.userUserId.setText(TwitterStringUtil.plusAtMark(item.getScreenName()));
         viewHolder.itemView.setOnClickListener(v -> {
             ViewCompat.setTransitionName(viewHolder.userUserImage,"tweet_user_image");
-            Intent intent = new Intent(mContext,ShowUserActivity.class);
+            Intent intent = new Intent(context,ShowUserActivity.class);
             intent.putExtra("user",item);
-            mContext.startActivity(intent, ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) mContext,viewHolder.userUserImage,"tweet_user_image").toBundle());
+            context.startActivity(intent, ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) context,viewHolder.userUserImage,"tweet_user_image").toBundle());
         });
 
     }
 
     @Override
     public int getItemCount() {
-        if (mData != null) {
-            return mData.size();
+        if (data != null) {
+            return data.size();
         } else {
             return 0;
         }
@@ -72,7 +65,7 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.ViewHo
         TextView userUserName;
         TextView userUserId;
 
-        public ViewHolder(final View itemView) {
+        ViewHolder(final View itemView) {
             super(itemView);
             userUserImage=(ImageView) itemView.findViewById(R.id.user_user_image);
             userUserId=(TextView) itemView.findViewById(R.id.user_user_id);

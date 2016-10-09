@@ -1,13 +1,9 @@
 package com.moko256.twitterviewer256;
 
-import android.os.Bundle;
+import android.content.Context;
 import android.support.design.widget.Snackbar;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
 import android.view.Gravity;
-import android.view.View;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -25,74 +21,36 @@ import twitter4j.TwitterException;
  *
  * @author moko256
  */
-public abstract class BaseTweetListFragment extends BaseTwitterListFragment {
-    TweetListAdapter listAdapter;
-    RecyclerView recyclerView;
-    ArrayList<Status> statuses;
+public abstract class BaseTweetListFragment extends BaseListFragment<TweetListAdapter,Status> {
+
 
     @Override
-    public void startProcess(View view) {
-        statuses =new ArrayList<>();
-        listAdapter = new TweetListAdapter(getContext(), statuses);
-        recyclerView = (RecyclerView) view.findViewById(R.id.TLlistView);
-        recyclerView.setAdapter(listAdapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerView.addOnScrollListener(new LoadScrollListener((LinearLayoutManager) recyclerView.getLayoutManager()) {
-            @Override
-            public void load(int page) {
-                if(statuses.size()!=0){
-                    Paging paging=new Paging();
-                    paging.maxId(statuses.get(statuses.size()-1).getId());
-                    getResponseObservable(paging)
-                            .subscribeOn(Schedulers.newThread())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(
-                                    result -> {
-                                        int size = result.size();
-                                        if (size > 0) {
-                                            int l= statuses.size();
-                                            result.remove(0);
-                                            statuses.addAll(result);
-                                            listAdapter.notifyItemRangeInserted(listAdapter.getHeaderCount()+l,size);
-                                        }
-                                    },
-                                    e -> {
-                                        e.printStackTrace();
-                                        Snackbar.make(view, "Error", Snackbar.LENGTH_INDEFINITE)
-                                                .setAction("Try", v -> this.load(page))
-                                                .show();
-                                    },
-                                    () -> {}
-                            );
-                }
-            }
-        });
-    }
+    protected void onInitializeList() {
+        if(!getSwipeRefreshLayout().isRefreshing())getSwipeRefreshLayout().setRefreshing(false);
 
-    @Override
-    public void restoreProcess(View view,Bundle savedInstanceState) {
-        ArrayList<Status> list=(ArrayList<Status>) savedInstanceState.getSerializable("list");
-        if(list!=null){
-            statuses.addAll(list);
-            listAdapter.notifyDataSetChanged();
-        }
-        else initializationProcess(view);
-    }
-
-    @Override
-    public void initializationProcess(View view) {
         getResponseObservable(new Paging(1,20))
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        result-> statuses.addAll(result),
-                        Throwable::printStackTrace,
-                        ()-> listAdapter.notifyDataSetChanged()
+                        result-> {
+                            getContentList().addAll(result);
+                            getListAdapter().notifyDataSetChanged();
+                        },
+                        e -> {
+                            e.printStackTrace();
+                            Snackbar.make(getView(), "Error", Snackbar.LENGTH_INDEFINITE)
+                                    .setAction("Try", v -> onInitializeList())
+                                    .show();
+                        },
+                        ()-> getSwipeRefreshLayout().setRefreshing(false)
                 );
     }
 
-    public void updateProcess(View view, SwipeRefreshLayout swipeRefreshLayout) {
-        Paging paging= statuses.size()!=0?new Paging(statuses.get(0).getId()):new Paging(1,20);
+    @Override
+    protected void onUpdateList() {
+        if(!getSwipeRefreshLayout().isRefreshing())getSwipeRefreshLayout().setRefreshing(false);
+
+        Paging paging=new Paging(getContentList().get(0).getId());
 
         getResponseObservable(paging)
                 .subscribeOn(Schedulers.newThread())
@@ -101,8 +59,8 @@ public abstract class BaseTweetListFragment extends BaseTwitterListFragment {
                         result -> {
                             int size = result.size();
                             if (size > 0) {
-                                statuses.addAll(0, result);
-                                listAdapter.notifyItemRangeInserted(listAdapter.getHeaderCount(),size);
+                                getContentList().addAll(0, result);
+                                getListAdapter().notifyItemRangeInserted(getListAdapter().getHeaderCount(),size);
                                 TypedValue value=new TypedValue();
                                 Toast t=Toast.makeText(getContext(),"New Tweet",Toast.LENGTH_SHORT);
                                 t.setGravity(
@@ -117,19 +75,50 @@ public abstract class BaseTweetListFragment extends BaseTwitterListFragment {
                         },
                         e -> {
                             e.printStackTrace();
-                            swipeRefreshLayout.setRefreshing(false);
-                            Snackbar.make(view, "Error", Snackbar.LENGTH_INDEFINITE)
-                                    .setAction("Try", v -> updateProcess(view,swipeRefreshLayout))
+                            getSwipeRefreshLayout().setRefreshing(false);
+                            Snackbar.make(getView(), "Error", Snackbar.LENGTH_INDEFINITE)
+                                    .setAction("Try", v -> onUpdateList())
                                     .show();
                         },
-                        () -> swipeRefreshLayout.setRefreshing(false)
+                        () -> getSwipeRefreshLayout().setRefreshing(false)
                 );
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState){
-        super.onSaveInstanceState(outState);
-        outState.putSerializable("list", (ArrayList) statuses);
+    protected void onLoadMoreList() {
+        Paging paging=new Paging();
+        paging.maxId(getContentList().get(getContentList().size()-1).getId());
+        getResponseObservable(paging)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        result -> {
+                            int size = result.size();
+                            if (size > 0) {
+                                int l= getContentList().size();
+                                result.remove(0);
+                                getContentList().addAll(result);
+                                getListAdapter().notifyItemRangeInserted(getListAdapter().getHeaderCount()+l,size);
+                            }
+                        },
+                        e -> {
+                            e.printStackTrace();
+                            Snackbar.make(getView(), "Error", Snackbar.LENGTH_INDEFINITE)
+                                    .setAction("Try", v -> onLoadMoreList())
+                                    .show();
+                        },
+                        () -> {}
+                );
+    }
+
+    @Override
+    protected boolean isInitializedList() {
+        return getContentList().size()!=0;
+    }
+
+    @Override
+    protected TweetListAdapter getAdapterInstance(Context context, ArrayList<Status> data) {
+        return new TweetListAdapter(context,data);
     }
 
     public Observable<ResponseList<Status>> getResponseObservable(Paging paging) {
@@ -146,9 +135,5 @@ public abstract class BaseTweetListFragment extends BaseTwitterListFragment {
     }
 
     public abstract ResponseList<Status> getResponseList(Paging paging) throws TwitterException;
-
-    public TweetListAdapter getListAdapter() {
-        return listAdapter;
-    }
 
 }

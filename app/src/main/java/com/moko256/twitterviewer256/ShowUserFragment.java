@@ -2,7 +2,6 @@ package com.moko256.twitterviewer256;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -28,7 +27,7 @@ public class ShowUserFragment extends BaseTweetListFragment {
     User user;
 
     @Override
-    public void initializationProcess(View view) {
+    public void onInitializeList() {
         Observable
                 .create(
                         subscriber->{
@@ -63,7 +62,7 @@ public class ShowUserFragment extends BaseTweetListFragment {
                             ((TextView)headerLayout.findViewById(R.id.show_user_bio)).setText(user.getDescription());
 
                             getListAdapter().setHeaderView(headerLayout);
-                            super.initializationProcess(view);
+                            super.onInitializeList();
 
                         },
                         throwable->{
@@ -86,7 +85,7 @@ public class ShowUserFragment extends BaseTweetListFragment {
     }
 
     @Override
-    public int getLayoutResource() {
+    public int getLayoutResourceId() {
         return R.layout.fragment_base_list;
     }
 }

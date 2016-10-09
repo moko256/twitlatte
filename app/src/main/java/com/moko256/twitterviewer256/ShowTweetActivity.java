@@ -71,6 +71,10 @@ public class ShowTweetActivity extends AppCompatActivity {
 
             @Override
             public void onPostExecute(twitter4j.Status item){
+                if (item == null) {
+                    finish();
+                    return;
+                }
                 ImageView userImage=(ImageView) findViewById(R.id.tweet_show_image);
 
                 Glide.with(ShowTweetActivity.this).load(item.getUser().getProfileImageURL()).into(userImage);
