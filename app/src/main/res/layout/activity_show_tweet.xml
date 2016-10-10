@@ -76,7 +76,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/tweet_show_quote_tweet_user_name"
-            android:lines="5"
+            android:maxLines="5"
             android:ellipsize="end"
             android:textSize="16sp"/>
     </RelativeLayout>
