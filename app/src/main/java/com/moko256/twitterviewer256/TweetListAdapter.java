@@ -11,6 +11,7 @@ import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -26,130 +27,97 @@ import twitter4j.util.TimeSpanConverter;
  *
  * @author moko256
  */
-class TweetListAdapter extends BaseListAdapter<Status,RecyclerView.ViewHolder> {
-
-    private View headerView;
-
-    private int headerCount=0;
+class TweetListAdapter extends BaseListAdapter<Status,TweetListAdapter.ViewHolder> {
 
     TweetListAdapter(Context context, ArrayList<Status> data) {
         super(context,data);
-        headerView=new View(context);
     }
 
     @Override
-    public int getItemViewType(int position) {
-        if (position==getHeaderCount()-1){
-            return 1;
+    public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+        return new ViewHolder(inflater.inflate(R.layout.layout_tweet, viewGroup, false));
+    }
+
+    @Override
+    public void onBindViewHolder(ViewHolder viewHolder, final int i) {
+        Status status=data.get(i);
+
+        final Status item = status.isRetweet()?status.getRetweetedStatus():status;
+
+        if (status.isRetweet()){
+            if(viewHolder.tweetRetweetUserName.getVisibility()!=View.VISIBLE){
+                viewHolder.tweetRetweetUserName.setVisibility(View.VISIBLE);
+            }
+            viewHolder.tweetRetweetUserName.setText(context.getString(R.string.retweet_by,status.getUser().getName()));
         }
         else{
-            return 0;
+            if(viewHolder.tweetRetweetUserName.getVisibility()!=View.GONE){
+                viewHolder.tweetRetweetUserName.setVisibility(View.GONE);
+            }
         }
-    }
 
-    @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        if (i==1){
-            headerView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-            return new HeaderViewHolder(headerView);
-        }
-        else {
-            return new ContentViewHolder(inflater.inflate(R.layout.layout_tweet, viewGroup, false));
-        }
-    }
+        Glide.with(context).load(item.getUser().getBiggerProfileImageURL()).into(viewHolder.tweetUserImage);
 
-    @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, final int ii) {
-        final int i=ii-getHeaderCount();
-        if (viewHolder instanceof HeaderViewHolder){
-            onBindHeaderViewHolder((HeaderViewHolder) viewHolder,i);
+        viewHolder.tweetUserName.setText(item.getUser().getName());
+        viewHolder.tweetUserId.setText(TwitterStringUtil.plusAtMark(item.getUser().getScreenName()));
+        viewHolder.tweetContext.setText(TwitterStringUtil.getLinkedSequence(item,context));
+        viewHolder.tweetContext.setMovementMethod(LinkMovementMethod.getInstance());
+        viewHolder.tweetContext.setFocusable(false);
+
+        viewHolder.tweetTimeStampText.setText((new TimeSpanConverter()).toTimeSpanString(item.getCreatedAt().getTime()));
+        viewHolder.tweetUserImage.setOnClickListener(v->{
+            ViewCompat.setTransitionName(viewHolder.tweetUserImage,"tweet_user_image");
+            Intent intent = new Intent(context,ShowUserActivity.class);
+            intent.putExtra("user",item.getUser());
+            context.startActivity(intent, ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) context, viewHolder.tweetUserImage,"tweet_user_image").toBundle());
+        });
+        viewHolder.tweetCardView.setOnClickListener(v -> {
+            ViewCompat.setTransitionName(viewHolder.tweetUserImage,"tweet_user_image");
+            Intent intent = new Intent(context,ShowTweetActivity.class);
+            intent.putExtra("status",item);
+            context.startActivity(intent, ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) context, viewHolder.tweetUserImage,"tweet_user_image").toBundle());
+        });
+
+        Status quotedStatus=item.getQuotedStatus();
+        if(quotedStatus!=null){
+            if (viewHolder.tweetQuoteTweetLayout.getVisibility() != View.VISIBLE) {
+                viewHolder.tweetQuoteTweetLayout.setVisibility(View.VISIBLE);
+            }
+            viewHolder.tweetQuoteTweetLayout.setOnClickListener(v -> {
+                Intent intent = new Intent(context,ShowTweetActivity.class);
+                intent.putExtra("statusId",(Long)quotedStatus.getId());
+                context.startActivity(intent);
+            });
+            viewHolder.tweetQuoteTweetUserName.setText(quotedStatus.getUser().getName());
+            viewHolder.tweetQuoteTweetUserId.setText(TwitterStringUtil.plusAtMark(quotedStatus.getUser().getScreenName()));
+            viewHolder.tweetQuoteTweetContext.setText(quotedStatus.getText());
+        }else{
+            if (viewHolder.tweetQuoteTweetLayout.getVisibility() != View.GONE) {
+                viewHolder.tweetQuoteTweetLayout.setVisibility(View.GONE);
+            }
         }
-        else if (viewHolder instanceof ContentViewHolder){
-            onBindContentViewHolder((ContentViewHolder) viewHolder,i);
+
+        ExtendedMediaEntity mediaEntities[]=item.getExtendedMediaEntities();
+
+        if (mediaEntities.length!=0){
+            viewHolder.tweetImageTableView.setVisibility(View.VISIBLE);
+            viewHolder.tweetImageTableView.setTwitterMediaEntities(mediaEntities);
+        }
+        else{
+            viewHolder.tweetImageTableView.setVisibility(View.GONE);
         }
     }
 
     @Override
     public int getItemCount() {
         if (data != null) {
-            return getHeaderCount()+data.size();
+            return data.size();
         } else {
-            return getHeaderCount();
+            return 0;
         }
     }
 
-    public int getHeaderCount() {
-        return headerCount;
-    }
-
-    public void setHeaderView(View headerView) {
-        this.headerView = headerView;
-        if(getHeaderCount()==0){
-            headerCount=1;
-            notifyItemRangeInserted(0,1);
-        }
-        else{
-            notifyItemChanged(0);
-        }
-    }
-
-    private void onBindHeaderViewHolder(HeaderViewHolder headerViewHolder, final int i){
-
-    }
-
-    private void onBindContentViewHolder(ContentViewHolder contentViewHolder,final int i){
-        Status status=data.get(i);
-
-        final Status item = status.isRetweet()?status.getRetweetedStatus():status;
-
-        if (status.isRetweet()){
-            contentViewHolder.tweetRetweetUserName.setVisibility(View.VISIBLE);
-            contentViewHolder.tweetRetweetUserName.setText(context.getString(R.string.retweet_by,status.getUser().getName()));
-        }
-        else{
-            contentViewHolder.tweetRetweetUserName.setVisibility(View.GONE);
-        }
-
-        Glide.with(context).load(item.getUser().getBiggerProfileImageURL()).into(contentViewHolder.tweetUserImage);
-
-        contentViewHolder.tweetUserName.setText(item.getUser().getName());
-        contentViewHolder.tweetUserId.setText(TwitterStringUtil.plusAtMark(item.getUser().getScreenName()));
-        contentViewHolder.tweetContext.setText(TwitterStringUtil.getLinkedSequence(item,context));
-        contentViewHolder.tweetContext.setMovementMethod(LinkMovementMethod.getInstance());
-        contentViewHolder.tweetContext.setFocusable(false);
-
-        contentViewHolder.tweetTimeStampText.setText((new TimeSpanConverter()).toTimeSpanString(item.getCreatedAt().getTime()));
-        contentViewHolder.tweetUserImage.setOnClickListener(v->{
-            ViewCompat.setTransitionName(contentViewHolder.tweetUserImage,"tweet_user_image");
-            Intent intent = new Intent(context,ShowUserActivity.class);
-            intent.putExtra("user",item.getUser());
-            context.startActivity(intent, ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) context, contentViewHolder.tweetUserImage,"tweet_user_image").toBundle());
-        });
-        contentViewHolder.tweetCardView.setOnClickListener(v -> {
-            ViewCompat.setTransitionName(contentViewHolder.tweetUserImage,"tweet_user_image");
-            Intent intent = new Intent(context,ShowTweetActivity.class);
-            intent.putExtra("status",item);
-            context.startActivity(intent, ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) context, contentViewHolder.tweetUserImage,"tweet_user_image").toBundle());
-        });
-
-        ExtendedMediaEntity mediaEntities[]=item.getExtendedMediaEntities();
-
-        if (mediaEntities.length!=0){
-            contentViewHolder.tweetImageTableView.setVisibility(View.VISIBLE);
-            contentViewHolder.tweetImageTableView.setTwitterMediaEntities(mediaEntities);
-        }
-        else{
-            contentViewHolder.tweetImageTableView.setVisibility(View.GONE);
-        }
-    }
-
-    class HeaderViewHolder extends RecyclerView.ViewHolder {
-        HeaderViewHolder(final View itemView){
-            super(itemView);
-        }
-    }
-
-    class ContentViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder {
 
         CardView tweetCardView;
         ImageView tweetUserImage;
@@ -158,9 +126,13 @@ class TweetListAdapter extends BaseListAdapter<Status,RecyclerView.ViewHolder> {
         TextView tweetUserId;
         TextView tweetContext;
         TextView tweetTimeStampText;
+        RelativeLayout tweetQuoteTweetLayout;
+        TextView tweetQuoteTweetUserName;
+        TextView tweetQuoteTweetUserId;
+        TextView tweetQuoteTweetContext;
         TweetImageTableView tweetImageTableView;
 
-        ContentViewHolder(final View itemView) {
+        ViewHolder(final View itemView) {
             super(itemView);
             tweetCardView=(CardView) itemView.findViewById(R.id.tweet_card_view);
             tweetUserImage=(ImageView) itemView.findViewById(R.id.TLimage);
@@ -169,6 +141,10 @@ class TweetListAdapter extends BaseListAdapter<Status,RecyclerView.ViewHolder> {
             tweetUserName=(TextView) itemView.findViewById(R.id.tweet_user_name);
             tweetContext=(TextView) itemView.findViewById(R.id.tweet_content);
             tweetTimeStampText=(TextView) itemView.findViewById(R.id.tweet_time_stamp_text);
+            tweetQuoteTweetLayout=(RelativeLayout) itemView.findViewById(R.id.tweet_quote_tweet);
+            tweetQuoteTweetUserName=(TextView) itemView.findViewById(R.id.tweet_quote_tweet_user_name);
+            tweetQuoteTweetUserId=(TextView) itemView.findViewById(R.id.tweet_quote_tweet_user_id);
+            tweetQuoteTweetContext=(TextView) itemView.findViewById(R.id.tweet_quote_tweet_content);
             tweetImageTableView=(TweetImageTableView) itemView.findViewById(R.id.tweet_image_container);
         }
     }

@@ -24,7 +24,7 @@ public class TimeLineFragment extends BaseTweetListFragment implements ToolbarTi
 
     @Override
     public int getNavigationPosition() {
-        return R.id.nav_TL;
+        return R.id.nav_timeline;
     }
 
 }

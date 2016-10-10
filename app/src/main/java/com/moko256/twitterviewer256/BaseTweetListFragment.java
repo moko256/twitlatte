@@ -60,7 +60,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment<TweetListAd
                             int size = result.size();
                             if (size > 0) {
                                 getContentList().addAll(0, result);
-                                getListAdapter().notifyItemRangeInserted(getListAdapter().getHeaderCount(),size);
+                                getListAdapter().notifyItemRangeInserted(0,size);
                                 TypedValue value=new TypedValue();
                                 Toast t=Toast.makeText(getContext(),"New Tweet",Toast.LENGTH_SHORT);
                                 t.setGravity(
@@ -98,7 +98,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment<TweetListAd
                                 int l= getContentList().size();
                                 result.remove(0);
                                 getContentList().addAll(result);
-                                getListAdapter().notifyItemRangeInserted(getListAdapter().getHeaderCount()+l,size);
+                                getListAdapter().notifyItemRangeInserted(l,size);
                             }
                         },
                         e -> {

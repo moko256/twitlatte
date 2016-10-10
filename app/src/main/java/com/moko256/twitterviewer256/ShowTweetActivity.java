@@ -13,6 +13,7 @@ import android.text.format.DateUtils;
 import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -91,6 +92,26 @@ public class ShowTweetActivity extends AppCompatActivity {
                     startActivity(intent);
                 });
 
+                RelativeLayout tweetQuoteTweetLayout=(RelativeLayout) findViewById(R.id.tweet_show_quote_tweet);
+
+                twitter4j.Status quotedStatus=item.getQuotedStatus();
+                if(quotedStatus!=null){
+                    if (tweetQuoteTweetLayout.getVisibility() != View.VISIBLE) {
+                        tweetQuoteTweetLayout.setVisibility(View.VISIBLE);
+                    }
+                    tweetQuoteTweetLayout.setOnClickListener(v -> {
+                        Intent intent = new Intent(ShowTweetActivity.this,ShowTweetActivity.class);
+                        intent.putExtra("statusId",(Long)quotedStatus.getId());
+                        startActivity(intent);
+                    });
+                    ((TextView) findViewById(R.id.tweet_show_quote_tweet_user_name)).setText(quotedStatus.getUser().getName());
+                    ((TextView) findViewById(R.id.tweet_show_quote_tweet_user_id)).setText(TwitterStringUtil.plusAtMark(quotedStatus.getUser().getScreenName()));
+                    ((TextView) findViewById(R.id.tweet_show_quote_tweet_content)).setText(quotedStatus.getText());
+                }else{
+                    if (tweetQuoteTweetLayout.getVisibility() != View.GONE) {
+                        tweetQuoteTweetLayout.setVisibility(View.GONE);
+                    }
+                }
 
                 TweetImageTableView tableView=(TweetImageTableView) findViewById(R.id.tweet_show_images);
                 if(item.getExtendedMediaEntities().length!=0){

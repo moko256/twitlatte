@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
 
             if(!item.isChecked()){
                 switch(id){
-                    case R.id.nav_TL:
+                    case R.id.nav_timeline:
                         startFragment(new TimeLineFragment());
                         break;
                     case R.id.nav_mentions:
@@ -190,11 +190,15 @@ public class MainActivity extends AppCompatActivity {
             }
 
             if(fragment instanceof UseTabsInterface) {
-                tabLayout.setVisibility(View.VISIBLE);
+                if(tabLayout.getVisibility()!=View.VISIBLE){
+                    tabLayout.setVisibility(View.VISIBLE);
+                }
                 tabLayout.setupWithViewPager(((UseTabsInterface)fragment).getTabsViewPager());
             }
             else{
-                tabLayout.setVisibility(View.GONE);
+                if(tabLayout.getVisibility()!=View.GONE) {
+                    tabLayout.setVisibility(View.GONE);
+                }
             }
         }
         else {

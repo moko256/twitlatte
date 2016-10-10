@@ -85,11 +85,48 @@
                 android:textSize="16sp"
                 android:gravity="right"/>
 
+            <RelativeLayout
+                android:id="@+id/tweet_quote_tweet"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tweet_content"
+                android:layout_toRightOf="@id/TLimage"
+                android:background="@drawable/border_frame"
+                android:layout_marginTop="2dp"
+                android:padding="2dp">
+                <TextView
+                    android:id="@+id/tweet_quote_tweet_user_name"
+                    android:ellipsize="end"
+                    android:textSize="16sp"
+                    android:lines="1"
+                    android:layout_marginRight="8dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="2dp"/>
+                <TextView
+                    android:id="@+id/tweet_quote_tweet_user_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/tweet_quote_tweet_user_name"
+                    android:lines="1"
+                    android:ellipsize="end"
+                    android:textSize="16sp"
+                    android:textColor="#808080"/>
+                <TextView
+                    android:id="@+id/tweet_quote_tweet_content"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tweet_quote_tweet_user_name"
+                    android:lines="5"
+                    android:ellipsize="end"
+                    android:textSize="16sp"/>
+            </RelativeLayout>
+
             <com.moko256.twitterviewer256.TweetImageTableView
                 android:id="@+id/tweet_image_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/tweet_content"
+                android:layout_below="@id/tweet_quote_tweet"
                 android:layout_marginTop="0dp"
                 android:layout_marginBottom="2dp" />
 

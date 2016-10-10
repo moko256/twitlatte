@@ -44,9 +44,46 @@
         android:layout_below="@id/tweet_show_image"
         android:textSize="16sp"/>
 
+    <RelativeLayout
+        android:id="@+id/tweet_show_quote_tweet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tweet_show_content"
+        android:background="@drawable/border_frame"
+        android:layout_marginTop="2dp"
+        android:visibility="gone"
+        android:padding="2dp">
+        <TextView
+            android:id="@+id/tweet_show_quote_tweet_user_name"
+            android:ellipsize="end"
+            android:textSize="16sp"
+            android:lines="1"
+            android:layout_marginRight="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="2dp"/>
+        <TextView
+            android:id="@+id/tweet_show_quote_tweet_user_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/tweet_show_quote_tweet_user_name"
+            android:lines="1"
+            android:ellipsize="end"
+            android:textSize="16sp"
+            android:textColor="#808080"/>
+        <TextView
+            android:id="@+id/tweet_show_quote_tweet_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tweet_show_quote_tweet_user_name"
+            android:lines="5"
+            android:ellipsize="end"
+            android:textSize="16sp"/>
+    </RelativeLayout>
+
     <com.moko256.twitterviewer256.TweetImageTableView
         android:id="@+id/tweet_show_images"
-        android:layout_below="@id/tweet_show_content"
+        android:layout_below="@id/tweet_show_quote_tweet"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
