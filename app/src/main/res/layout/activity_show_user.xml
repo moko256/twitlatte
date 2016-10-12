@@ -24,21 +24,26 @@
             app:expandedTitleMarginStart="48dp"
             app:expandedTitleMarginBottom="192dp">
 
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:id="@+id/show_user_bgimage"
+                app:layout_collapseMode="parallax"/>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layout_collapseMode="parallax">
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="200dp"
-                    android:id="@+id/show_user_bgimage"/>
+                android:layout_marginTop="200dp"
+                app:layout_collapseMode="none">
+
                 <ImageView
                     android:layout_width="42dp"
                     android:layout_height="42dp"
                     android:id="@+id/show_user_image"
                     android:layout_gravity="center"
-                    android:transitionName="tweet_user_image"/>
+                    android:transitionName="tweet_user_image" />
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -49,6 +54,7 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/show_user_bio"
                     android:gravity="center"/>
+
             </LinearLayout>
 
             <android.support.v7.widget.Toolbar
