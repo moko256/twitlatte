@@ -18,6 +18,7 @@
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/user_user_image"
         android:ellipsize="end"
+        android:lines="1"
         android:layout_marginRight="8dp"
         android:textSize="16sp"/>
 
@@ -26,7 +27,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ellipsize="end"
+        android:lines="1"
         android:layout_toRightOf="@id/user_user_name"
+        android:layout_alignParentRight="true"
         android:textSize="16sp"
         android:textColor="#808080"/>
 
