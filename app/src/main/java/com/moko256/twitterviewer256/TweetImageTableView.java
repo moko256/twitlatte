@@ -9,7 +9,6 @@ import android.widget.GridLayout;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 
 import twitter4j.ExtendedMediaEntity;
 
@@ -20,7 +19,16 @@ import twitter4j.ExtendedMediaEntity;
  */
 public class TweetImageTableView extends GridLayout {
 
-    private GlideDrawableImageViewTarget imageViewTargets[];
+    private ImageView imageViews[];
+    private ExtendedMediaEntity mediaEntities[];
+
+    /* {row,column,rowSpan,colSpan} */
+    private int params[][][]={
+            {{0,0,2,2},{},{},{}},
+            {{0,0,2,1},{0,1,2,1},{},{}},
+            {{0,0,2,1},{0,1,1,1},{1,1,1,1},{}},
+            {{0,0,1,1},{0,1,1,1},{1,0,1,1},{1,1,1,1}}
+    };
 
     public TweetImageTableView(Context context) {
         this(context, null);
@@ -42,53 +50,19 @@ public class TweetImageTableView extends GridLayout {
 
         LayoutInflater.from(getContext()).inflate(R.layout.layout_tweet_image_table,this);
 
-        imageViewTargets=new GlideDrawableImageViewTarget[4];
-
+        imageViews=new ImageView[4];
 
         for(int i=0;i<ids.length;i++){
-            imageViewTargets[i]=new GlideDrawableImageViewTarget((ImageView) findViewById(ids[i]));
+            ImageView imageView;
+            imageView=(ImageView) findViewById(ids[i]);
+            int finalI = i;
+            imageView.setOnClickListener(v->{
+                Intent intent=new Intent(getContext(),ShowTweetImageActivity.class);
+                intent.putExtra("TweetMediaEntity",mediaEntities[finalI]);
+                getContext().startActivity(intent);
+            });
+            imageViews[i]=imageView;
         }
-    }
-
-    public void setTwitterMediaEntities(ExtendedMediaEntity mediaEntities[]){
-
-        /* {row,column,rowSpan,colSpan} */
-        int params[][][]={
-                {{0,0,2,2},{},{},{}},
-                {{0,0,2,1},{0,1,2,1},{},{}},
-                {{0,0,2,1},{0,1,1,1},{1,1,1,1},{}},
-                {{0,0,1,1},{0,1,1,1},{1,0,1,1},{1,1,1,1}}
-        };
-
-        for(int i=0;i<4;i++){
-
-            GlideDrawableImageViewTarget imageViewTarget=imageViewTargets[i];
-            ImageView imageView=imageViewTarget.getView();
-
-            if(i<mediaEntities.length){
-                ExtendedMediaEntity mediaEntity=mediaEntities[i];
-                String urlText=mediaEntity.getMediaURLHttps()+":orig";
-
-                int param[]=params[mediaEntities.length-1][i];
-
-                imageView.setVisibility(VISIBLE);
-                imageView.setLayoutParams(makeGridLayoutParams(param[0],param[1],param[2],param[3]));
-                imageView.setOnClickListener(v->{
-                    Intent intent=new Intent(getContext(),ShowTweetImageActivity.class);
-                    intent.putExtra("TweetMediaEntity",mediaEntity);
-                    getContext().startActivity(intent);
-                });
-                Glide.with(getContext()).load(urlText).centerCrop().into(imageViewTarget);
-            }else{
-                imageView.setLayoutParams(makeGridLayoutParams(0,0,0,0));
-                imageView.setVisibility(GONE);
-            }
-
-        }
-
-        requestLayout();
-        invalidate();
-
     }
 
     @Override
@@ -117,6 +91,39 @@ public class TweetImageTableView extends GridLayout {
         super.onMeasure(measuredWidthSpec, measuredHeightSpec);
     }
 
+    public void setTwitterMediaEntities(ExtendedMediaEntity mMediaEntities[]){
+        mediaEntities=mMediaEntities;
+
+        for(int i=0;i<4;i++){
+
+            ImageView imageView=imageViews[i];
+
+            if(i<mediaEntities.length){
+                ExtendedMediaEntity mediaEntity=mediaEntities[i];
+                String urlText=mediaEntity.getMediaURLHttps()+":orig";
+
+                int param[]=params[mediaEntities.length-1][i];
+
+                imageView.setVisibility(VISIBLE);
+                imageView.setLayoutParams(makeGridLayoutParams(param[0],param[1],param[2],param[3]));
+
+                Glide.with(getContext()).load(urlText).placeholder(R.drawable.border_frame).centerCrop().into(imageView);
+            }else{
+                imageView.setLayoutParams(makeGridLayoutParams(0,0,0,0));
+                imageView.setVisibility(GONE);
+            }
+
+        }
+
+        invalidate();
+        forceLayout();
+    }
+
+    public void onRecycled(){
+        for (ImageView imageView : imageViews){
+            Glide.clear(imageView);
+        }
+    }
 
     private LayoutParams makeGridLayoutParams(int row, int column, int rowSpan, int colSpan){
         LayoutParams params=new LayoutParams(new ViewGroup.LayoutParams(getMeasuredWidth()/2*colSpan,getMeasuredHeight()/2*rowSpan));

@@ -109,6 +109,12 @@ class TweetListAdapter extends BaseListAdapter<Status,TweetListAdapter.ViewHolde
     }
 
     @Override
+    public void onViewRecycled(ViewHolder holder) {
+        super.onViewRecycled(holder);
+        holder.tweetImageTableView.onRecycled();
+    }
+
+    @Override
     public int getItemCount() {
         if (data != null) {
             return data.size();

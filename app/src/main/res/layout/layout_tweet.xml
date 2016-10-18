@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -17,18 +17,19 @@
         android:layout_marginLeft="16dp"/>
 
     <android.support.v7.widget.CardView
-        xmlns:card_view="http://schemas.android.com/apk/res-auto"
         android:id="@+id/tweet_card_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/tweet_retweet_user_name"
         android:layout_marginLeft="@dimen/layout_tweet_card_side_margin"
         android:layout_marginRight="@dimen/layout_tweet_card_side_margin"
+        android:clipToPadding="false"
+        android:clipChildren="false"
         android:foreground="?android:attr/selectableItemBackground"
-        card_view:cardCornerRadius="@dimen/layout_tweet_card_corner"
-        card_view:cardElevation="2dp"
-        card_view:cardUseCompatPadding="true"
-        card_view:contentPadding="16dp">
+        app:cardCornerRadius="@dimen/layout_tweet_card_corner"
+        app:cardElevation="2dp"
+        app:cardUseCompatPadding="true"
+        app:contentPadding="16dp">
         <RelativeLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
@@ -42,9 +43,21 @@
                 android:id="@+id/TLimage"/>
 
             <TextView
+                android:id="@+id/tweet_time_stamp_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:textColor="#808080"
+                android:lines="1"
+                android:textSize="16sp"
+                android:gravity="right"/>
+
+            <TextView
                 android:id="@+id/tweet_user_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_toLeftOf="@id/tweet_time_stamp_text"
                 android:layout_toRightOf="@id/TLimage"
                 android:ellipsize="end"
                 android:textSize="16sp"
@@ -74,18 +87,6 @@
                 android:layout_marginTop="0dp"
                 android:layout_marginBottom="2dp"
                 android:textSize="16sp"/>
-
-            <TextView
-                android:id="@+id/tweet_time_stamp_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentRight="true"
-                android:layout_toRightOf="@id/tweet_user_id"
-                android:textColor="#808080"
-                android:lines="1"
-                android:textSize="16sp"
-                android:gravity="right"/>
 
             <RelativeLayout
                 android:id="@+id/tweet_quote_tweet"
@@ -128,7 +129,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tweet_quote_tweet"
-                android:layout_marginTop="0dp"
+                android:layout_marginLeft="-16dp"
+                android:layout_marginRight="-16dp"
                 android:layout_marginBottom="2dp" />
 
             <!--

@@ -76,20 +76,19 @@ public class TwitterStringUtil {
 
         int sp = 0;
         boolean isQuoted=item.getQuotedStatusId()!=-1;
-        String empty="";
 
         for (URLEntity entity : urlEntities) {
             String url = entity.getURL();
             String expandedUrl = entity.getExpandedURL();
             boolean isQuotedStatusUrl=isQuoted && expandedUrl.equals("https://twitter.com/" + item.getQuotedStatus().getUser().getScreenName() + "/status/" + item.getQuotedStatusId());
-            String displayUrl =((entity instanceof MediaEntity)||isQuotedStatusUrl)? empty : entity.getDisplayURL();
+            String displayUrl =((entity instanceof MediaEntity)||isQuotedStatusUrl)? "" : entity.getDisplayURL();
 
 
             int urlLength = url.codePointCount(0, url.length());
             int displayUrlLength = displayUrl.codePointCount(0, displayUrl.length());
             int dusp = displayUrlLength - urlLength;
             spannableStringBuilder.replace(tweet.offsetByCodePoints(0,entity.getStart()) + sp, tweet.offsetByCodePoints(0,entity.getEnd()) + sp, displayUrl);
-            if(!displayUrl.equals(empty)){
+            if(!displayUrl.equals("")){
                 spannableStringBuilder.setSpan(new URLSpan(expandedUrl), tweet.offsetByCodePoints(0,entity.getStart()) + sp, tweet.offsetByCodePoints(0,entity.getEnd()) + sp + dusp, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
             }
             sp+=dusp;
