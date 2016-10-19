@@ -91,23 +91,21 @@ public class TweetImageTableView extends GridLayout {
         super.onMeasure(measuredWidthSpec, measuredHeightSpec);
     }
 
-    public void setTwitterMediaEntities(ExtendedMediaEntity mMediaEntities[]){
-        mediaEntities=mMediaEntities;
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+
+        int l=(mediaEntities==null)?0:mediaEntities.length;
 
         for(int i=0;i<4;i++){
 
             ImageView imageView=imageViews[i];
 
-            if(i<mediaEntities.length){
-                ExtendedMediaEntity mediaEntity=mediaEntities[i];
-                String urlText=mediaEntity.getMediaURLHttps()+":orig";
+            if(i<l){
 
-                int param[]=params[mediaEntities.length-1][i];
+                int param[]=params[l-1][i];
 
                 imageView.setVisibility(VISIBLE);
                 imageView.setLayoutParams(makeGridLayoutParams(param[0],param[1],param[2],param[3]));
-
-                Glide.with(getContext()).load(urlText).placeholder(R.drawable.border_frame).centerCrop().into(imageView);
             }else{
                 imageView.setLayoutParams(makeGridLayoutParams(0,0,0,0));
                 imageView.setVisibility(GONE);
@@ -115,8 +113,25 @@ public class TweetImageTableView extends GridLayout {
 
         }
 
-        invalidate();
-        forceLayout();
+        super.onLayout(changed, left, top, right, bottom);
+    }
+
+    public void setTwitterMediaEntities(ExtendedMediaEntity mMediaEntities[]){
+
+        mediaEntities=mMediaEntities;
+
+        requestLayout();
+
+        for(int i=0;i<mMediaEntities.length;i++){
+
+            Glide.with(getContext())
+                    .load(mMediaEntities[i].getMediaURLHttps()+":orig")
+                    .placeholder(R.drawable.border_frame)
+                    .centerCrop()
+                    .into(imageViews[i]);
+
+        }
+
     }
 
     public void onRecycled(){
