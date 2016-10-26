@@ -9,7 +9,7 @@ import twitter4j.User;
  *
  * @author moko256
  */
-public class MyFollowUserFragment extends BaseUserListFragment implements ToolbarTitleInterface,NavigationPositionInterface {
+public class MyFollowUserFragment extends BaseUsersFragment implements ToolbarTitleInterface,NavigationPositionInterface {
 
     @Override
     public PagableResponseList<User> getResponseList(long cursor) throws TwitterException {

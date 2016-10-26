@@ -27,9 +27,9 @@ import twitter4j.util.TimeSpanConverter;
  *
  * @author moko256
  */
-class TweetListAdapter extends BaseListAdapter<Status,TweetListAdapter.ViewHolder> {
+class StatusesAdapter extends BaseListAdapter<Status,StatusesAdapter.ViewHolder> {
 
-    TweetListAdapter(Context context, ArrayList<Status> data) {
+    StatusesAdapter(Context context, ArrayList<Status> data) {
         super(context,data);
     }
 
@@ -64,7 +64,7 @@ class TweetListAdapter extends BaseListAdapter<Status,TweetListAdapter.ViewHolde
         viewHolder.tweetContext.setMovementMethod(LinkMovementMethod.getInstance());
         viewHolder.tweetContext.setFocusable(false);
 
-        viewHolder.tweetTimeStampText.setText((new TimeSpanConverter()).toTimeSpanString(item.getCreatedAt().getTime()));
+        viewHolder.tweetTimeStampText.setText(viewHolder.timeSpanConverter.toTimeSpanString(item.getCreatedAt().getTime()));
         viewHolder.tweetUserImage.setOnClickListener(v->{
             ViewCompat.setTransitionName(viewHolder.tweetUserImage,"tweet_user_image");
             Intent intent = new Intent(context,ShowUserActivity.class);
@@ -138,6 +138,8 @@ class TweetListAdapter extends BaseListAdapter<Status,TweetListAdapter.ViewHolde
         TextView tweetQuoteTweetContext;
         TweetImageTableView tweetImageTableView;
 
+        TimeSpanConverter timeSpanConverter;
+
         ViewHolder(final View itemView) {
             super(itemView);
             tweetCardView=(CardView) itemView.findViewById(R.id.tweet_card_view);
@@ -152,6 +154,8 @@ class TweetListAdapter extends BaseListAdapter<Status,TweetListAdapter.ViewHolde
             tweetQuoteTweetUserId=(TextView) itemView.findViewById(R.id.tweet_quote_tweet_user_id);
             tweetQuoteTweetContext=(TextView) itemView.findViewById(R.id.tweet_quote_tweet_content);
             tweetImageTableView=(TweetImageTableView) itemView.findViewById(R.id.tweet_image_container);
+
+            timeSpanConverter=new TimeSpanConverter();
         }
     }
 }

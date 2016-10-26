@@ -27,10 +27,12 @@ public class ShowUserActivity extends AppCompatActivity implements ShowUserFragm
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_user);
 
-        getSupportFragmentManager()
-                .beginTransaction()
-                .add(R.id.show_user_fragment_container, new ShowUserFragment())
-                .commit();
+        if (savedInstanceState == null) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.show_user_fragment_container, new ShowUserFragment())
+                    .commit();
+        }
 
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar_show_user));
         ActionBar actionBar=getSupportActionBar();

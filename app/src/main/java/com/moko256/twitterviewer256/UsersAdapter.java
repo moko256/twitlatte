@@ -22,14 +22,14 @@ import twitter4j.User;
  *
  * @author moko256
  */
-class UserListAdapter extends BaseListAdapter<User,UserListAdapter.ViewHolder> {
+class UsersAdapter extends BaseListAdapter<User,UsersAdapter.ViewHolder> {
 
-    UserListAdapter(Context context, ArrayList<User> data) {
+    UsersAdapter(Context context, ArrayList<User> data) {
         super(context, data);
     }
 
     @Override
-    public UserListAdapter.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+    public UsersAdapter.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         return new ViewHolder(inflater.inflate(R.layout.layout_user, viewGroup, false));
     }
 

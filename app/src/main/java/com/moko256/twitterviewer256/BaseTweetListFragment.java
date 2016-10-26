@@ -21,7 +21,7 @@ import twitter4j.TwitterException;
  *
  * @author moko256
  */
-public abstract class BaseTweetListFragment extends BaseListFragment<TweetListAdapter,Status> {
+public abstract class BaseTweetListFragment extends BaseListFragment<StatusesAdapter,Status> {
 
 
     @Override
@@ -117,8 +117,8 @@ public abstract class BaseTweetListFragment extends BaseListFragment<TweetListAd
     }
 
     @Override
-    protected TweetListAdapter getAdapterInstance(Context context, ArrayList<Status> data) {
-        return new TweetListAdapter(context,data);
+    protected StatusesAdapter getAdapterInstance(Context context, ArrayList<Status> data) {
+        return new StatusesAdapter(context,data);
     }
 
     public Observable<ResponseList<Status>> getResponseObservable(Paging paging) {

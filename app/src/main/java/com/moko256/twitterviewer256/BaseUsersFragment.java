@@ -18,7 +18,7 @@ import twitter4j.User;
  *
  * @author moko256
  */
-public abstract class BaseUserListFragment extends BaseListFragment<UserListAdapter,User> {
+public abstract class BaseUsersFragment extends BaseListFragment<UsersAdapter,User> {
 
     long next_cursor;
 
@@ -80,8 +80,8 @@ public abstract class BaseUserListFragment extends BaseListFragment<UserListAdap
     }
 
     @Override
-    protected UserListAdapter getAdapterInstance(Context context, ArrayList<User> data) {
-        return new UserListAdapter(context,data);
+    protected UsersAdapter getAdapterInstance(Context context, ArrayList<User> data) {
+        return new UsersAdapter(context,data);
     }
 
     @Override
