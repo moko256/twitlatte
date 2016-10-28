@@ -1,7 +1,6 @@
 package com.moko256.twitterviewer256;
 
 import android.content.Context;
-import android.content.Intent;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -56,11 +55,7 @@ public class TweetImageTableView extends GridLayout {
             ImageView imageView;
             imageView=(ImageView) findViewById(ids[i]);
             int finalI = i;
-            imageView.setOnClickListener(v->{
-                Intent intent=new Intent(getContext(),ShowTweetImageActivity.class);
-                intent.putExtra("TweetMediaEntity",mediaEntities[finalI]);
-                getContext().startActivity(intent);
-            });
+            imageView.setOnClickListener(v-> getContext().startActivity(ShowImageActivity.getIntent(getContext(),mediaEntities,finalI)));
             imageViews[i]=imageView;
         }
     }

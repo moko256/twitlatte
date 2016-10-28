@@ -72,8 +72,11 @@ public class ShowUserActivity extends AppCompatActivity implements ShowUserFragm
 
     @Override
     public void updateHeader(User user) {
-        Glide.with(this).load(user.getBiggerProfileImageURL()).into((ImageView) findViewById(R.id.show_user_image));
-        Glide.with(this).load(user.getProfileBannerRetinaURL()).into((ImageView) findViewById(R.id.show_user_bgimage));
+        ImageView header=(ImageView) findViewById(R.id.show_user_bgimage);
+        ImageView icon=(ImageView) findViewById(R.id.show_user_image);
+
+        Glide.with(this).load(user.getProfileBannerRetinaURL()).into(header);
+        Glide.with(this).load(user.getBiggerProfileImageURL()).into(icon);
 
         ((TextView) findViewById(R.id.show_user_id)).setText(TwitterStringUtil.plusAtMark(user.getScreenName()));
         setTitle(user.getName());

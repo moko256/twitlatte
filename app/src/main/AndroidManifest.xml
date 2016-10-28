@@ -104,7 +104,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ShowTweetImageActivity"
+            android:name=".ShowImageActivity"
             android:theme="@style/ShowTweetImageActivityTheme"/>
         <activity
             android:name=".OAuthActivity"

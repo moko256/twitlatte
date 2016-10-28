@@ -1,8 +1,11 @@
 package com.moko256.twitterviewer256;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.MediaController;
 import android.widget.VideoView;
@@ -14,23 +17,32 @@ import java.util.Objects;
 import twitter4j.ExtendedMediaEntity;
 
 /**
- * Created by moko256 on 2016/06/26.
+ * Created by moko256 on 2016/10/29.
  *
  * @author moko256
  */
-public class ShowTweetImageActivity extends AppCompatActivity {
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_show_tweet_image);
 
-        ExtendedMediaEntity mediaEntity=(ExtendedMediaEntity) getIntent().getSerializableExtra("TweetMediaEntity");
+public class ImagePagerChildFragment extends Fragment {
+
+    private static String FRAG_MEDIA_ENTITY="media_entity";
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view=inflater.inflate(R.layout.fragment_image_pager_child, null);
+
+        ExtendedMediaEntity mediaEntity=(ExtendedMediaEntity) getArguments().getSerializable(FRAG_MEDIA_ENTITY);
+
+        if (mediaEntity == null) {
+            return view;
+        }
+
         ImageView imageView;
         VideoView videoView;
 
         switch (mediaEntity.getType()){
             case "video":
-                videoView=(VideoView) findViewById(R.id.tweet_image_show_video_view);
+                videoView=(VideoView) view.findViewById(R.id.fragment_image_pager_video);
                 videoView.setVisibility(View.VISIBLE);
                 String videoPath="";
                 for(ExtendedMediaEntity.Variant variant : mediaEntity.getVideoVariants()){
@@ -39,11 +51,11 @@ public class ShowTweetImageActivity extends AppCompatActivity {
                     }
                 }
                 videoView.setVideoPath(videoPath);
-                videoView.setMediaController(new MediaController(this));
+                videoView.setMediaController(new MediaController(getContext()));
                 break;
 
             case "animated_gif":
-                videoView=(VideoView) findViewById(R.id.tweet_image_show_video_view);
+                videoView=(VideoView) view.findViewById(R.id.fragment_image_pager_video);
                 videoView.setVisibility(View.VISIBLE);
                 videoView.setVideoPath(mediaEntity.getVideoVariants()[0].getUrl());
                 videoView.setOnPreparedListener(mediaPlayer -> mediaPlayer.setLooping(true));
@@ -52,10 +64,19 @@ public class ShowTweetImageActivity extends AppCompatActivity {
 
             case "photo":
             default:
-                imageView=(ImageView)findViewById(R.id.tweet_image_show_image_view);
+                imageView=(ImageView) view.findViewById(R.id.fragment_image_pager_image);
                 imageView.setVisibility(View.VISIBLE);
                 Glide.with(this).load(mediaEntity.getMediaURLHttps()+":orig").into(imageView);
                 break;
         }
+        return view;
+    }
+
+    public static ImagePagerChildFragment getInstance(ExtendedMediaEntity entity){
+        ImagePagerChildFragment fragment=new ImagePagerChildFragment();
+        Bundle bundle=new Bundle();
+        bundle.putSerializable(FRAG_MEDIA_ENTITY,entity);
+        fragment.setArguments(bundle);
+        return fragment;
     }
 }
