@@ -1,7 +1,7 @@
 TwitterViewer256
 ====
 
-This　application is the simple Twitter's client for Android\.
+This application is the simple Twitter's client for Android\.
 
 ## Description
 
