@@ -1,7 +1,10 @@
 package com.moko256.twitterviewer256;
 
+import android.content.ClipData;
+import android.content.ClipDescription;
 import android.graphics.Color;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -9,6 +12,8 @@ import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatEditText;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.DragEvent;
+import android.view.View;
 import android.widget.TextView;
 
 import com.twitter.Validator;
@@ -33,6 +38,36 @@ public class SendTweetActivity extends AppCompatActivity {
 
         TextView counterTextView=(TextView)findViewById(R.id.tweet_text_edit_counter);
         AppCompatEditText editText=(AppCompatEditText)findViewById(R.id.tweet_text_edit);
+        editText.setOnLongClickListener(view -> {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                editText.startDragAndDrop(
+                        new ClipData(
+                                "text",
+                                new String[]{ClipDescription.MIMETYPE_TEXT_PLAIN},
+                                new ClipData.Item(editText.getText().subSequence(editText.getSelectionStart(), editText.getSelectionEnd()))
+                        ),
+                        new View.DragShadowBuilder(editText),
+                        null,
+                        View.DRAG_FLAG_GLOBAL);
+            }
+            return true;
+        });
+        editText.setOnDragListener((view, dragEvent) -> {
+            switch(dragEvent.getAction()){
+                case DragEvent.ACTION_DROP:
+                    if(dragEvent.getClipDescription().hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)){
+                        editText.setText(
+                                editText.getText().replace(
+                                        editText.getSelectionStart(),
+                                        editText.getSelectionEnd(),
+                                        dragEvent.getClipData().getItemAt(0).getText()
+                                )
+                        );
+                    }
+                    break;
+            }
+            return true;
+        });
         onEditTextChanged(editText.getText(),counterTextView);
         editText.addTextChangedListener(new TextWatcher() {
             @Override
