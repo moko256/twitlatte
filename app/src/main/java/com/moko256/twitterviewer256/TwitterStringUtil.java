@@ -75,7 +75,7 @@ public class TwitterStringUtil {
                 .single();
 
         int sp = 0;
-        boolean isQuoted=item.getQuotedStatusId()!=-1;
+        boolean isQuoted=(item.getQuotedStatusId()!=-1)&&item.getQuotedStatus()!=null;
 
         for (URLEntity entity : urlEntities) {
             String url = entity.getURL();
