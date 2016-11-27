@@ -122,6 +122,10 @@
             android:name=".SettingsActivity"
             android:label="@string/action_settings"
             android:theme="@style/SettingsActivityTheme" />
+        <activity
+            android:name=".LicensesActivity"
+            android:label="@string/license"
+            android:theme="@style/SettingsActivityTheme" />
     </application>
 
 </manifest>

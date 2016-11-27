@@ -63,6 +63,12 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 }
         );
 
+        Preference license=findPreference("license");
+        license.setOnPreferenceClickListener(preference -> {
+            startActivity(new Intent(getContext(),LicensesActivity.class));
+            return false;
+        });
+
         Preference logout= findPreference("logout");
         logout.setOnPreferenceClickListener(preference -> {
             new AlertDialog.Builder(getContext())

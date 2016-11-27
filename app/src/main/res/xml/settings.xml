@@ -21,4 +21,11 @@
             android:entries="@array/choose_night_mode_entries"
             android:entryValues="@array/choose_night_mode_entries_value"/>
     </PreferenceCategory>
+    <PreferenceCategory
+        android:title="@string/other">
+        <Preference
+            android:key="license"
+            android:title="@string/license"
+            android:summary="Show License Text" />
+    </PreferenceCategory>
 </PreferenceScreen>

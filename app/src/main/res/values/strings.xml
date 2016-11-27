@@ -25,6 +25,8 @@
     <string name="app_settings">Application Settings</string>
     <string name="add_account">add other account</string>
     <string name="logout">Logout</string>
+    <string name="other">Others</string>
+    <string name="license">License</string>
 
     <string name="mode_night_no">Not Use</string>
     <string name="mode_night_yes">Use</string>
