@@ -26,6 +26,7 @@
         android:clipToPadding="false"
         android:clipChildren="false"
         android:foreground="?android:attr/selectableItemBackground"
+        android:focusable="true"
         app:cardCornerRadius="@dimen/layout_tweet_card_corner"
         app:cardElevation="2dp"
         app:cardUseCompatPadding="true"

@@ -4,6 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:foreground="?android:attr/selectableItemBackground"
+    android:focusable="true"
+    android:clickable="true"
     android:padding="16dp">
 
     <ImageView
