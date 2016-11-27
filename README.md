@@ -24,6 +24,7 @@ This application is built using these libraries\:
 * Android Compatibility Library v14
 * Android Design Support Library
 * Glide
+* OkHttp
 * Twitter4J
 * twitter-text
 * RxJava
