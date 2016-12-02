@@ -134,26 +134,27 @@
                 android:layout_marginRight="-16dp"
                 android:layout_marginBottom="2dp" />
 
-            <!--
-            <ImageButton
+            <ToggleButton
                 android:id="@+id/tweet_content_retweet_button"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
                 android:layout_below="@id/tweet_image_container"
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="10dp"
-                android:background="@android:color/transparent"
-                android:src="@drawable/ic_like"/>
+                android:textOn=""
+                android:textOff=""
+                android:background="@drawable/retweet_button_stateful"/>
 
-            <ImageButton
+            <ToggleButton
                 android:id="@+id/tweet_content_like_button"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
                 android:layout_below="@id/tweet_image_container"
                 android:layout_toLeftOf="@+id/tweet_content_retweet_button"
                 android:layout_marginRight="10dp"
-                android:background="@android:color/transparent"
-                android:src="@drawable/ic_like"/>
+                android:textOn=""
+                android:textOff=""
+                android:background="@drawable/like_button_stateful"/>
 
             <ImageButton
                 android:id="@+id/tweet_content_reply_button"
@@ -161,10 +162,8 @@
                 android:layout_height="36dp"
                 android:layout_below="@id/tweet_image_container"
                 android:layout_toLeftOf="@+id/tweet_content_like_button"
-                android:layout_marginRight="10dp"
-                android:background="@android:color/transparent"
-                android:src="@drawable/ic_like"/>
--->
+                android:layout_marginRight="10dp" />
+
         </RelativeLayout>
 
     </android.support.v7.widget.CardView>

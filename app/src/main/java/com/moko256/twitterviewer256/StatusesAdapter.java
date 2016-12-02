@@ -13,13 +13,19 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import twitter4j.ExtendedMediaEntity;
 import twitter4j.Status;
+import twitter4j.TwitterException;
 import twitter4j.util.TimeSpanConverter;
 
 /**
@@ -106,6 +112,69 @@ class StatusesAdapter extends BaseListAdapter<Status,StatusesAdapter.ViewHolder>
         else{
             viewHolder.tweetImageTableView.setVisibility(View.GONE);
         }
+
+        viewHolder.tweetLikeButton.setOnCheckedChangeListener((compoundButton, b) -> Observable
+                .create(subscriber->{
+                    try {
+                        if(b&&(!item.isFavorited())){
+                            subscriber.onNext(Static.twitter.createFavorite(item.getId()));
+                        }
+                        else if((!b)&&item.isFavorited()){
+                            subscriber.onNext(Static.twitter.destroyFavorite(item.getId()));
+                        }
+                        subscriber.onCompleted();
+                    } catch (TwitterException e) {
+                        subscriber.onError(e);
+                    }
+                })
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        result->{
+                            data.set(i,(Status)result);
+                            Toast.makeText(context,"succeed",Toast.LENGTH_SHORT).show();
+                        },
+                        throwable -> {
+                            throwable.printStackTrace();
+                            Toast.makeText(context,"error",Toast.LENGTH_SHORT).show();
+                        },
+                        ()->{}
+                )
+        );
+        viewHolder.tweetLikeButton.setChecked(item.isFavorited());
+
+        /*
+        viewHolder.tweetRetweetButton.setOnCheckedChangeListener((compoundButton, b) -> Observable
+                .create(subscriber->{
+                    try {
+                        if(b&&(!item.isRetweetedByMe())){
+                            subscriber.onNext(Static.twitter.retweetStatus(item.getId()));
+                        }
+                        else if((!b)&&item.isRetweetedByMe()){
+                            //I don't know!!!!!
+                        }
+                        subscriber.onCompleted();
+                    } catch (TwitterException e) {
+                        subscriber.onError(e);
+                    }
+                })
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        result->{
+                            data.set(i,(Status)result);
+                            Toast.makeText(context,"succeed",Toast.LENGTH_SHORT).show();
+                        },
+                        throwable -> {
+                            throwable.printStackTrace();
+                            Toast.makeText(context,"error",Toast.LENGTH_SHORT).show();
+                        },
+                        ()->{}
+                )
+        );
+        */
+        viewHolder.tweetRetweetButton.setEnabled(!item.getUser().isProtected());
+        viewHolder.tweetRetweetButton.setChecked(item.isRetweetedByMe());
     }
 
     @Override
@@ -137,6 +206,8 @@ class StatusesAdapter extends BaseListAdapter<Status,StatusesAdapter.ViewHolder>
         TextView tweetQuoteTweetUserId;
         TextView tweetQuoteTweetContext;
         TweetImageTableView tweetImageTableView;
+        ToggleButton tweetLikeButton;
+        ToggleButton tweetRetweetButton;
 
         TimeSpanConverter timeSpanConverter;
 
@@ -154,6 +225,8 @@ class StatusesAdapter extends BaseListAdapter<Status,StatusesAdapter.ViewHolder>
             tweetQuoteTweetUserId=(TextView) itemView.findViewById(R.id.tweet_quote_tweet_user_id);
             tweetQuoteTweetContext=(TextView) itemView.findViewById(R.id.tweet_quote_tweet_content);
             tweetImageTableView=(TweetImageTableView) itemView.findViewById(R.id.tweet_image_container);
+            tweetLikeButton=(ToggleButton) itemView.findViewById(R.id.tweet_content_like_button);
+            tweetRetweetButton=(ToggleButton) itemView.findViewById(R.id.tweet_content_retweet_button);
 
             timeSpanConverter=new TimeSpanConverter();
         }
