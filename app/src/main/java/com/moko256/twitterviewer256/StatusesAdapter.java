@@ -132,6 +132,7 @@ class StatusesAdapter extends BaseListAdapter<Status,StatusesAdapter.ViewHolder>
                 .subscribe(
                         result->{
                             data.set(i,(Status)result);
+                            notifyItemChanged(i);
                             Toast.makeText(context,"succeed",Toast.LENGTH_SHORT).show();
                         },
                         throwable -> {
@@ -143,15 +144,14 @@ class StatusesAdapter extends BaseListAdapter<Status,StatusesAdapter.ViewHolder>
         );
         viewHolder.tweetLikeButton.setChecked(item.isFavorited());
 
-        /*
         viewHolder.tweetRetweetButton.setOnCheckedChangeListener((compoundButton, b) -> Observable
                 .create(subscriber->{
                     try {
-                        if(b&&(!item.isRetweetedByMe())){
+                        if(b&&(!item.isRetweeted())){
                             subscriber.onNext(Static.twitter.retweetStatus(item.getId()));
                         }
-                        else if((!b)&&item.isRetweetedByMe()){
-                            //I don't know!!!!!
+                        else if((!b)&&item.isRetweeted()){
+                            subscriber.onNext(Static.twitter.destroyStatus(item.getCurrentUserRetweetId()));
                         }
                         subscriber.onCompleted();
                     } catch (TwitterException e) {
@@ -162,7 +162,8 @@ class StatusesAdapter extends BaseListAdapter<Status,StatusesAdapter.ViewHolder>
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         result->{
-                            data.set(i,(Status)result);
+                            //data.set(i,(Status)result);
+                            //notifyItemChanged(i);
                             Toast.makeText(context,"succeed",Toast.LENGTH_SHORT).show();
                         },
                         throwable -> {
@@ -172,9 +173,8 @@ class StatusesAdapter extends BaseListAdapter<Status,StatusesAdapter.ViewHolder>
                         ()->{}
                 )
         );
-        */
+        viewHolder.tweetRetweetButton.setChecked(item.isRetweeted());
         viewHolder.tweetRetweetButton.setEnabled(!item.getUser().isProtected());
-        viewHolder.tweetRetweetButton.setChecked(item.isRetweetedByMe());
     }
 
     @Override
