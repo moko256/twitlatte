@@ -117,7 +117,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment<StatusesAda
     }
 
     @Override
-    protected StatusesAdapter getAdapterInstance(Context context, ArrayList<Status> data) {
+    protected StatusesAdapter initializeListAdapter(Context context, ArrayList<Status> data) {
         return new StatusesAdapter(context,data);
     }
 

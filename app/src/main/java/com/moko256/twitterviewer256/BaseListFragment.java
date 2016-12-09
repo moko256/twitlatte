@@ -34,10 +34,10 @@ public abstract class BaseListFragment<A extends BaseListAdapter<LI,? extends Re
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         super.onCreateView(inflater,container,savedInstanceState);
 
-        View view=inflater.inflate(getLayoutResourceId(), null);
+        View view=inflater.inflate(getLayoutResourceId(), container ,false);
 
         list=new ArrayList<>();
-        adapter=getAdapterInstance(getContext(),list);
+        adapter= initializeListAdapter(getContext(),list);
         recyclerView=(RecyclerView) view.findViewById(R.id.TLlistView);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -50,7 +50,7 @@ public abstract class BaseListFragment<A extends BaseListAdapter<LI,? extends Re
             }
         });
 
-        swipeRefreshLayout=(SwipeRefreshLayout)view.findViewById(R.id.srl);
+        swipeRefreshLayout=initializeSwipeRefreshLayout(view);
         swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
         swipeRefreshLayout.setOnRefreshListener(()->{
             if (isInitializedList()){
@@ -86,7 +86,11 @@ public abstract class BaseListFragment<A extends BaseListAdapter<LI,? extends Re
 
     protected abstract boolean isInitializedList();
 
-    protected abstract A getAdapterInstance(Context context,ArrayList<LI> data);
+    protected abstract A initializeListAdapter(Context context, ArrayList<LI> data);
+
+    protected SwipeRefreshLayout initializeSwipeRefreshLayout(View parent){
+        return (SwipeRefreshLayout)parent.findViewById(R.id.srl);
+    }
 
     @LayoutRes
     public int getLayoutResourceId(){

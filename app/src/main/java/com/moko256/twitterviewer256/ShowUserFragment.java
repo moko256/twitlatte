@@ -1,6 +1,8 @@
 package com.moko256.twitterviewer256;
 
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.view.View;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
@@ -53,7 +55,12 @@ public class ShowUserFragment extends BaseTweetListFragment {
 
     @Override
     public int getLayoutResourceId() {
-        return R.layout.fragment_base_list;
+        return R.layout.fragment_show_user_list;
+    }
+
+    @Override
+    protected SwipeRefreshLayout initializeSwipeRefreshLayout(View parent) {
+        return (SwipeRefreshLayout) getActivity().findViewById(R.id.show_user_fragment_container);
     }
 
     public interface HasUserActivity{

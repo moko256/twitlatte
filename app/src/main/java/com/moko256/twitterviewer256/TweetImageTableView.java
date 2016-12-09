@@ -115,12 +115,12 @@ public class TweetImageTableView extends GridLayout {
 
         mediaEntities=mMediaEntities;
 
-        requestLayout();
+        forceLayout();
 
         for(int i=0;i<mMediaEntities.length;i++){
 
             Glide.with(getContext())
-                    .load(mMediaEntities[i].getMediaURLHttps()+":orig")
+                    .load(mMediaEntities[i].getMediaURLHttps())
                     .placeholder(R.drawable.border_frame)
                     .centerCrop()
                     .into(imageViews[i]);

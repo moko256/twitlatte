@@ -44,11 +44,18 @@ public class MainActivity extends AppCompatActivity {
 
         Observable
                 .create(subscriber->{
-                    try {
-                        subscriber.onNext(Static.twitter.verifyCredentials());
+                    if(Static.user==null){
+                        try {
+                            User u=Static.twitter.verifyCredentials();
+                            Static.user=u;
+                            subscriber.onNext(u);
+                            subscriber.onCompleted();
+                        } catch (TwitterException e) {
+                            subscriber.onError(e);
+                        }
+                    }else{
+                        subscriber.onNext(Static.user);
                         subscriber.onCompleted();
-                    } catch (TwitterException e) {
-                        subscriber.onError(e);
                     }
                 })
                 .subscribeOn(Schedulers.newThread())
@@ -56,7 +63,6 @@ public class MainActivity extends AppCompatActivity {
                 .subscribe(
                         result->{
                             User user=(User) result;
-                            Static.user=user;
 
                             ((TextView)findViewById(R.id.user_name)).setText(user.getName());
                             ((TextView)findViewById(R.id.user_id)).setText(TwitterStringUtil.plusAtMark(user.getScreenName()));
@@ -66,8 +72,8 @@ public class MainActivity extends AppCompatActivity {
 
                             userImage.setOnClickListener(v -> startMyUserActivity());
 
-                            Glide.with(MainActivity.this).load(user.getBiggerProfileImageURL()).into(userImage);
-                            Glide.with(MainActivity.this).load(user.getProfileBannerRetinaURL()).into(userBackgroundImage);
+                            Glide.with(this).load(user.getBiggerProfileImageURL()).into(userImage);
+                            Glide.with(this).load(user.getProfileBannerRetinaURL()).into(userBackgroundImage);
                         },
                         Throwable::printStackTrace,
                         ()->{}
@@ -77,8 +83,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
@@ -104,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
                         startFragment(new LikeMeFragment());
                         break;
                     case R.id.nav_settings:
-                        startActivity(new Intent(MainActivity.this,SettingsActivity.class));
+                        startActivity(new Intent(this,SettingsActivity.class));
                         break;
                 }
             }
@@ -115,12 +120,11 @@ public class MainActivity extends AppCompatActivity {
 
         });
 
-        findViewById(R.id.fab).setOnClickListener(v -> startActivity(new Intent(MainActivity.this , SendTweetActivity.class)));
+        findViewById(R.id.fab).setOnClickListener(v -> startActivity(new Intent(this , SendTweetActivity.class)));
 
         TabLayout tabLayout=(TabLayout) findViewById(R.id.toolbar_tab);
 
-        getSupportFragmentManager()
-                .addOnBackStackChangedListener(() -> onFragmentBackStackChanged(navigationView,tabLayout));
+        getSupportFragmentManager().addOnBackStackChangedListener(() -> onFragmentBackStackChanged(navigationView,tabLayout));
 
         if(savedInstanceState==null){
             startFragment(new TimeLineFragment());
@@ -168,21 +172,20 @@ public class MainActivity extends AppCompatActivity {
 
     private void startMyUserActivity() {
         if (Static.user!=null){
-            startActivity(new Intent(MainActivity.this, ShowUserActivity.class).putExtra("user", Static.user));
+            startActivity(new Intent(this, ShowUserActivity.class).putExtra("user", Static.user));
         }
     }
 
     private void startFragment(Fragment fragment){
         getSupportFragmentManager()
                 .beginTransaction()
+                .addToBackStack(null)
                 .replace(R.id.mainLayout, fragment)
-                .addToBackStack(fragment.getClass().getName())
                 .commit();
     }
 
     private void onFragmentBackStackChanged(NavigationView navigationView, TabLayout tabLayout){
-        Fragment fragment=getSupportFragmentManager()
-                .findFragmentById(R.id.mainLayout);
+        Fragment fragment=getSupportFragmentManager().findFragmentById(R.id.mainLayout);
         if (fragment != null) {
             if(fragment instanceof ToolbarTitleInterface && fragment instanceof NavigationPositionInterface){
                 setTitle(((ToolbarTitleInterface)fragment).getTitleResourceId());
@@ -200,9 +203,6 @@ public class MainActivity extends AppCompatActivity {
                     tabLayout.setVisibility(View.GONE);
                 }
             }
-        }
-        else {
-            finish();
         }
     }
 

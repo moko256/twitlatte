@@ -80,7 +80,7 @@ public abstract class BaseUsersFragment extends BaseListFragment<UsersAdapter,Us
     }
 
     @Override
-    protected UsersAdapter getAdapterInstance(Context context, ArrayList<User> data) {
+    protected UsersAdapter initializeListAdapter(Context context, ArrayList<User> data) {
         return new UsersAdapter(context,data);
     }
 
