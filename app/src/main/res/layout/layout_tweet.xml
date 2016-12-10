@@ -21,13 +21,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/tweet_retweet_user_name"
-        android:layout_marginLeft="@dimen/layout_tweet_card_side_margin"
-        android:layout_marginRight="@dimen/layout_tweet_card_side_margin"
         android:clipToPadding="false"
         android:clipChildren="false"
         android:foreground="?android:attr/selectableItemBackground"
         android:focusable="true"
-        app:cardCornerRadius="@dimen/layout_tweet_card_corner"
+        app:cardCornerRadius="2dp"
         app:cardElevation="2dp"
         app:cardUseCompatPadding="true"
         app:contentPadding="16dp">
@@ -125,7 +123,7 @@
                     android:textSize="16sp"/>
             </RelativeLayout>
 
-            <com.moko256.twitterviewer256.TweetImageTableView
+            <com.github.moko256.twitlatte.TweetImageTableView
                 android:id="@+id/tweet_image_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

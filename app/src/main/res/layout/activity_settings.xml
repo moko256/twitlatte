@@ -8,5 +8,5 @@
         android:id="@+id/settings_fragment_id"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        class="com.moko256.twitterviewer256.SettingsFragment" />
+        class="com.github.moko256.twitlatte.SettingsFragment" />
 </FrameLayout>

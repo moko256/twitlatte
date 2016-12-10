@@ -6,7 +6,7 @@ android {
     buildToolsVersion "25"
 
     defaultConfig {
-        applicationId "com.github.moko256.twitterviewer256"
+        applicationId "com.github.moko256.twitlatte"
         minSdkVersion 19
         targetSdkVersion 25
         versionCode 1

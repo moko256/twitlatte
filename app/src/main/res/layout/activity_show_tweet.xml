@@ -81,7 +81,7 @@
             android:textSize="16sp"/>
     </RelativeLayout>
 
-    <com.moko256.twitterviewer256.TweetImageTableView
+    <com.github.moko256.twitlatte.TweetImageTableView
         android:id="@+id/tweet_show_images"
         android:layout_below="@id/tweet_show_quote_tweet"
         android:layout_width="match_parent"
