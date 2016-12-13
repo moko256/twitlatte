@@ -123,7 +123,7 @@
                     android:textSize="16sp"/>
             </RelativeLayout>
 
-            <com.github.moko256.twitlatte.TweetImageTableView
+            <com.github.moko256.twicalico.TweetImageTableView
                 android:id="@+id/tweet_image_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -8,5 +8,5 @@
         android:id="@+id/license_fragment_id"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        class="com.github.moko256.twitlatte.LicensesFragment" />
+        class="com.github.moko256.twicalico.LicensesFragment" />
 </FrameLayout>

@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="false"
-        tools:context="com.github.moko256.twitlatte.MainActivity">
+        tools:context="com.github.moko256.twicalico.MainActivity">
 
         <android.support.design.widget.AppBarLayout
             android:id="@+id/appbar"

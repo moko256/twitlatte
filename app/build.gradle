@@ -3,10 +3,10 @@ apply plugin: 'me.tatarka.retrolambda'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "25"
+    buildToolsVersion "25.0.2"
 
     defaultConfig {
-        applicationId "com.github.moko256.twitlatte"
+        applicationId "com.github.moko256.twicailco"
         minSdkVersion 19
         targetSdkVersion 25
         versionCode 1

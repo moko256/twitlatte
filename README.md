@@ -1,4 +1,4 @@
-twitlatte
+twicalico
 ====
 
 This application is the simple Twitter client for Android\.
@@ -42,7 +42,7 @@ and, built using these tools\:
 ## License
 
 ~~~~
-Copyright 2016 The twitlatte authors
+Copyright 2016 The twicalico authors
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
