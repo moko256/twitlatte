@@ -112,7 +112,7 @@ public class SendTweetActivity extends AppCompatActivity {
     }
 
     private void onEditTextChanged(CharSequence s,TextView counterTextView){
-        int textLength=(new Validator()).getTweetLength(s.toString());
+        int textLength=new Validator().getTweetLength(s.toString());
         int maxLength=Validator.MAX_TWEET_LENGTH;
         counterTextView.setText(String.valueOf(textLength)+"/"+String.valueOf(maxLength));
         if (textLength>=maxLength){
