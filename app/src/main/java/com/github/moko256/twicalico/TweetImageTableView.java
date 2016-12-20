@@ -19,9 +19,9 @@ public class TweetImageTableView extends GridLayout {
 
     /* {row,column,rowSpan,colSpan} */
     private final int params[][][]={
-            {{0,0,2,2},{},{},{}},
-            {{0,0,2,1},{0,1,2,1},{},{}},
-            {{0,0,2,1},{0,1,1,1},{1,1,1,1},{}},
+            {{0,0,2,2},{0,0,0,0},{0,0,0,0},{0,0,0,0}},
+            {{0,0,2,1},{0,1,2,1},{0,0,0,0},{0,0,0,0}},
+            {{0,0,2,1},{0,1,1,1},{1,1,1,1},{0,0,0,0}},
             {{0,0,1,1},{0,1,1,1},{1,0,1,1},{1,1,1,1}}
     };
 
@@ -81,21 +81,19 @@ public class TweetImageTableView extends GridLayout {
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
 
-        for(int i=0;i<4;i++){
-
-            ImageView imageView=imageViews[i];
-
-            if(i<imageNum){
-
-                int param[]=params[imageNum-1][i];
-
+        for (int i = 0; i < 4; i++) {
+            ImageView imageView = imageViews[i];
+            if (i < imageNum) {
                 imageView.setVisibility(VISIBLE);
-                imageView.setLayoutParams(makeGridLayoutParams(param[0],param[1],param[2],param[3]));
-            }else{
-                imageView.setLayoutParams(makeGridLayoutParams(0,0,0,0));
+            } else {
                 imageView.setVisibility(GONE);
             }
+        }
 
+        for(int i=0;i<4;i++){
+            ImageView imageView=imageViews[i];
+            int param[]=params[imageNum-1][i];
+            imageView.setLayoutParams(makeGridLayoutParams(param[0],param[1],param[2],param[3]));
         }
 
         super.onLayout(changed, left, top, right, bottom);

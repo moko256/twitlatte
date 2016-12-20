@@ -14,7 +14,6 @@ import java.util.List;
 
 import rx.Observable;
 import twitter4j.HashtagEntity;
-import twitter4j.MediaEntity;
 import twitter4j.Status;
 import twitter4j.SymbolEntity;
 import twitter4j.URLEntity;
@@ -30,7 +29,7 @@ public class TwitterStringUtil {
 
     @NonNull
     public static String plusAtMark(String string){
-        return (new StringBuilder("@")).append(string).toString();
+        return "@" + string;
     }
 
     public static CharSequence getLinkedSequence(Status item, Context mContext){
@@ -75,22 +74,18 @@ public class TwitterStringUtil {
                 .single();
 
         int sp = 0;
-        boolean isQuoted=(item.getQuotedStatusId()!=-1)&&item.getQuotedStatus()!=null;
 
         for (URLEntity entity : urlEntities) {
             String url = entity.getURL();
             String expandedUrl = entity.getExpandedURL();
-            boolean isQuotedStatusUrl=isQuoted && expandedUrl.equals("https://twitter.com/" + item.getQuotedStatus().getUser().getScreenName() + "/status/" + item.getQuotedStatusId());
-            String displayUrl =((entity instanceof MediaEntity)||isQuotedStatusUrl)? "" : entity.getDisplayURL();
-
+            String displayUrl = entity.getDisplayURL();
 
             int urlLength = url.codePointCount(0, url.length());
             int displayUrlLength = displayUrl.codePointCount(0, displayUrl.length());
             int dusp = displayUrlLength - urlLength;
             spannableStringBuilder.replace(tweet.offsetByCodePoints(0,entity.getStart()) + sp, tweet.offsetByCodePoints(0,entity.getEnd()) + sp, displayUrl);
-            if(!displayUrl.equals("")){
-                spannableStringBuilder.setSpan(new URLSpan(expandedUrl), tweet.offsetByCodePoints(0,entity.getStart()) + sp, tweet.offsetByCodePoints(0,entity.getEnd()) + sp + dusp, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
-            }
+            spannableStringBuilder.setSpan(new URLSpan(expandedUrl), tweet.offsetByCodePoints(0,entity.getStart()) + sp, tweet.offsetByCodePoints(0,entity.getEnd()) + sp + dusp, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+
             sp+=dusp;
         }
 

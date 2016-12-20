@@ -1,174 +1,166 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<android.support.v7.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginLeft="8dp"
     android:layout_marginRight="8dp"
-    android:layout_marginBottom="8dp">
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/tweet_retweet_user_name"
-        android:textSize="16sp"
-        android:layout_marginTop="2dp"
-        android:layout_marginBottom="2dp"
-        android:layout_marginLeft="16dp"/>
-
-    <android.support.v7.widget.CardView
-        android:id="@+id/tweet_card_view"
+    android:layout_marginBottom="8dp"
+    android:clipToPadding="false"
+    android:clipChildren="false"
+    android:foreground="?android:attr/selectableItemBackground"
+    android:focusable="true"
+    app:cardCornerRadius="2dp"
+    app:cardElevation="2dp"
+    app:cardUseCompatPadding="true"
+    app:contentPadding="16dp">
+    <RelativeLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/tweet_retweet_user_name"
-        android:clipToPadding="false"
-        android:clipChildren="false"
-        android:foreground="?android:attr/selectableItemBackground"
-        android:focusable="true"
-        app:cardCornerRadius="2dp"
-        app:cardElevation="2dp"
-        app:cardUseCompatPadding="true"
-        app:contentPadding="16dp">
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/tweet_retweet_user_name"
+            android:textSize="14sp"
+            android:layout_marginBottom="12dp"
+            android:layout_marginLeft="16dp"/>
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginRight="8dp"
+            android:id="@+id/TLimage"
+            android:layout_below="@+id/tweet_retweet_user_name"/>
+
+        <TextView
+            android:id="@+id/tweet_time_stamp_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tweet_retweet_user_name"
+            android:layout_alignParentRight="true"
+            android:textColor="#808080"
+            android:lines="1"
+            android:textSize="16sp"
+            android:gravity="right"/>
+
+        <TextView
+            android:id="@+id/tweet_user_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tweet_retweet_user_name"
+            android:layout_toLeftOf="@id/tweet_time_stamp_text"
+            android:layout_toRightOf="@id/TLimage"
+            android:ellipsize="end"
+            android:textSize="16sp"
+            android:lines="1"
+            android:layout_marginTop="0dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="2dp"/>
+
+        <TextView
+            android:id="@+id/tweet_user_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:lines="1"
+            android:ellipsize="end"
+            android:layout_below="@id/tweet_user_name"
+            android:layout_toRightOf="@id/TLimage"
+            android:textSize="16sp"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="2dp"
+            android:textColor="#808080"/>
+
+        <TextView
+            android:id="@+id/tweet_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tweet_user_id"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="2dp"
+            android:textSize="16sp"/>
+
         <RelativeLayout
-            android:orientation="vertical"
+            android:id="@+id/tweet_quote_tweet"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_marginBottom="8dp"
-                android:layout_marginRight="8dp"
-                android:id="@+id/TLimage"/>
-
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tweet_content"
+            android:background="@drawable/border_frame"
+            android:layout_marginTop="2dp"
+            android:padding="8dp">
             <TextView
-                android:id="@+id/tweet_time_stamp_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentRight="true"
-                android:textColor="#808080"
-                android:lines="1"
-                android:textSize="16sp"
-                android:gravity="right"/>
-
-            <TextView
-                android:id="@+id/tweet_user_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_toLeftOf="@id/tweet_time_stamp_text"
-                android:layout_toRightOf="@id/TLimage"
+                android:id="@+id/tweet_quote_tweet_user_name"
                 android:ellipsize="end"
                 android:textSize="16sp"
                 android:lines="1"
-                android:layout_marginTop="0dp"
                 android:layout_marginRight="8dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginBottom="2dp"/>
-
             <TextView
-                android:id="@+id/tweet_user_id"
+                android:id="@+id/tweet_quote_tweet_user_id"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/tweet_quote_tweet_user_name"
                 android:lines="1"
                 android:ellipsize="end"
-                android:layout_below="@id/tweet_user_name"
-                android:layout_toRightOf="@id/TLimage"
                 android:textSize="16sp"
-                android:layout_marginTop="0dp"
-                android:layout_marginBottom="2dp"
                 android:textColor="#808080"/>
-
             <TextView
-                android:id="@+id/tweet_content"
+                android:id="@+id/tweet_quote_tweet_content"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/tweet_user_id"
-                android:layout_marginTop="0dp"
-                android:layout_marginBottom="2dp"
+                android:layout_below="@id/tweet_quote_tweet_user_name"
+                android:maxLines="5"
+                android:ellipsize="end"
                 android:textSize="16sp"/>
-
-            <RelativeLayout
-                android:id="@+id/tweet_quote_tweet"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/tweet_content"
-                android:background="@drawable/border_frame"
-                android:layout_marginTop="2dp"
-                android:padding="8dp">
-                <TextView
-                    android:id="@+id/tweet_quote_tweet_user_name"
-                    android:ellipsize="end"
-                    android:textSize="16sp"
-                    android:lines="1"
-                    android:layout_marginRight="8dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="2dp"/>
-                <TextView
-                    android:id="@+id/tweet_quote_tweet_user_id"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/tweet_quote_tweet_user_name"
-                    android:lines="1"
-                    android:ellipsize="end"
-                    android:textSize="16sp"
-                    android:textColor="#808080"/>
-                <TextView
-                    android:id="@+id/tweet_quote_tweet_content"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/tweet_quote_tweet_user_name"
-                    android:maxLines="5"
-                    android:ellipsize="end"
-                    android:textSize="16sp"/>
-            </RelativeLayout>
-
-            <com.github.moko256.twicalico.TweetImageTableView
-                android:id="@+id/tweet_image_container"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/tweet_quote_tweet"
-                android:layout_marginLeft="-16dp"
-                android:layout_marginRight="-16dp"
-                android:layout_marginBottom="2dp" />
-
-            <ToggleButton
-                android:id="@+id/tweet_content_retweet_button"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:layout_below="@id/tweet_image_container"
-                android:layout_alignParentRight="true"
-                android:layout_marginRight="10dp"
-                android:textOn=""
-                android:textOff=""
-                android:background="@drawable/retweet_button_stateful"/>
-
-            <ToggleButton
-                android:id="@+id/tweet_content_like_button"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:layout_below="@id/tweet_image_container"
-                android:layout_toLeftOf="@+id/tweet_content_retweet_button"
-                android:layout_marginRight="10dp"
-                android:textOn=""
-                android:textOff=""
-                android:background="@drawable/like_button_stateful"/>
-
-            <android.support.v7.widget.AppCompatImageButton
-                android:id="@+id/tweet_content_reply_button"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:layout_below="@id/tweet_image_container"
-                android:layout_toLeftOf="@+id/tweet_content_like_button"
-                android:layout_marginRight="10dp"
-                android:background="@android:color/transparent"
-                app:srcCompat="@drawable/ic_reply_black_24dp"
-                android:tint="@android:color/darker_gray"/>
-
         </RelativeLayout>
 
-    </android.support.v7.widget.CardView>
+        <com.github.moko256.twicalico.TweetImageTableView
+            android:id="@+id/tweet_image_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tweet_quote_tweet"
+            android:layout_marginLeft="-16dp"
+            android:layout_marginRight="-16dp"
+            android:layout_marginBottom="2dp" />
 
-</RelativeLayout>
+        <ToggleButton
+            android:id="@+id/tweet_content_retweet_button"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_below="@id/tweet_image_container"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            android:textOn=""
+            android:textOff=""
+            android:background="@drawable/retweet_button_stateful"/>
+
+        <ToggleButton
+            android:id="@+id/tweet_content_like_button"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_below="@id/tweet_image_container"
+            android:layout_toLeftOf="@+id/tweet_content_retweet_button"
+            android:layout_marginRight="10dp"
+            android:textOn=""
+            android:textOff=""
+            android:background="@drawable/like_button_stateful"/>
+
+        <android.support.v7.widget.AppCompatImageButton
+            android:id="@+id/tweet_content_reply_button"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_below="@id/tweet_image_container"
+            android:layout_toLeftOf="@+id/tweet_content_like_button"
+            android:layout_marginRight="10dp"
+            android:background="@android:color/transparent"
+            app:srcCompat="@drawable/ic_reply_black_24dp"
+            android:tint="@android:color/darker_gray"/>
+
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>

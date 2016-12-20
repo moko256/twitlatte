@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.view.ViewCompat;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.text.method.LinkMovementMethod;
 import android.view.View;
@@ -75,7 +74,7 @@ class StatusesAdapter extends BaseListAdapter<Status,StatusesAdapter.ViewHolder>
             intent.putExtra("user",item.getUser());
             context.startActivity(intent, ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) context, viewHolder.tweetUserImage,"tweet_user_image").toBundle());
         });
-        viewHolder.tweetCardView.setOnClickListener(v -> {
+        viewHolder.itemView.setOnClickListener(v -> {
             ViewCompat.setTransitionName(viewHolder.tweetUserImage,"tweet_user_image");
             Intent intent = new Intent(context,ShowTweetActivity.class);
             intent.putExtra("status",item);
@@ -192,7 +191,6 @@ class StatusesAdapter extends BaseListAdapter<Status,StatusesAdapter.ViewHolder>
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
-        CardView tweetCardView;
         ImageView tweetUserImage;
         TextView tweetRetweetUserName;
         TextView tweetUserName;
@@ -211,7 +209,6 @@ class StatusesAdapter extends BaseListAdapter<Status,StatusesAdapter.ViewHolder>
 
         ViewHolder(final View itemView) {
             super(itemView);
-            tweetCardView=(CardView) itemView.findViewById(R.id.tweet_card_view);
             tweetUserImage=(ImageView) itemView.findViewById(R.id.TLimage);
             tweetRetweetUserName=(TextView) itemView.findViewById(R.id.tweet_retweet_user_name);
             tweetUserId=(TextView) itemView.findViewById(R.id.tweet_user_id);

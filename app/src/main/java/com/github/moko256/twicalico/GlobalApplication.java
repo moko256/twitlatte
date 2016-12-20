@@ -3,7 +3,13 @@ package com.github.moko256.twicalico;
 import android.app.Application;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.AppCompatDelegate;
+import android.support.v7.app.NotificationCompat;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.Date;
 
 import twitter4j.TwitterFactory;
 import twitter4j.auth.AccessToken;
@@ -17,6 +23,35 @@ public class GlobalApplication extends Application {
 
     @Override
     public void onCreate() {
+        final Thread.UncaughtExceptionHandler defaultUnCaughtExceptionHandler=Thread.getDefaultUncaughtExceptionHandler();
+        Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
+            try {
+                StringWriter stringWriter=new StringWriter();
+                PrintWriter printWriter=new PrintWriter(stringWriter);
+                e.printStackTrace(printWriter);
+                printWriter.flush();
+                stringWriter.flush();
+                printWriter.close();
+                stringWriter.close();
+                NotificationCompat.InboxStyle inboxStyle=new NotificationCompat.InboxStyle(
+                        new NotificationCompat.Builder(getApplicationContext())
+                                .setSmallIcon(R.mipmap.ic_launcher)
+                                .setWhen(new Date().getTime())
+                                .setShowWhen(true))
+                        .setBigContentTitle("Error : "+e.toString())
+                        .setSummaryText("Error occurred.");
+                String[] lines=stringWriter.toString().split("\n");
+                for(String s : lines){
+                    inboxStyle.addLine(s);
+                }
+                NotificationManagerCompat.from(getApplicationContext()).notify(NotificationManagerCompat.IMPORTANCE_HIGH, inboxStyle.build());
+            }catch (Throwable fe){
+                fe.printStackTrace();
+            } finally {
+                defaultUnCaughtExceptionHandler.uncaughtException(t,e);
+            }
+        });
+
         super.onCreate();
 
         SharedPreferences defaultSharedPreferences=PreferenceManager.getDefaultSharedPreferences(this);
