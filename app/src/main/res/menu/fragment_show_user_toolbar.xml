@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_share"
+        android:title="@string/share"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_add_list"
+        android:title="@string/add_list"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_show_list"
+        android:title="@string/show_list"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_create_follow"
+        android:title="@string/create_mute"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_destroy_follow"
+        android:title="@string/destroy_mute"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_create_mute"
+        android:title="@string/create_mute"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_destroy_mute"
+        android:title="@string/destroy_mute"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_create_block"
+        android:title="@string/create_block"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_destroy_block"
+        android:title="@string/destroy_block"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_destroy_follow_follower"
+        android:title="@string/destroy_follow_follower"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_spam_report"
+        android:title="@string/spam_report"
+        app:showAsAction="never" />
+</menu>

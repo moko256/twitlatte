@@ -26,6 +26,15 @@
     <string name="add_account">add other account</string>
     <string name="logout">Logout</string>
     <string name="other">Others</string>
+    <string name="share">Share…</string>
+    <string name="add_list">Add list</string>
+    <string name="show_list">Show lists</string>
+    <string name="create_mute">Mute</string>
+    <string name="destroy_mute">Cancel Mute</string>
+    <string name="create_block">Block</string>
+    <string name="destroy_block">Cancel Block</string>
+    <string name="destroy_follow_follower">Cancel Follow-Follower</string>
+    <string name="spam_report">Report this Account as a spam</string>
     <string name="license">License</string>
 
     <string name="mode_night_no">Not Use</string>

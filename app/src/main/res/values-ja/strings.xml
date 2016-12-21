@@ -18,6 +18,15 @@
     <string name="add_account">他のアカウントを追加</string>
     <string name="logout">ログアウトする</string>
     <string name="other">その他</string>
+    <string name="share">共有する</string>
+    <string name="add_list">リストに追加</string>
+    <string name="show_list">リストを見る</string>
+    <string name="create_mute">ミュートする</string>
+    <string name="destroy_mute">ミュートを解除する</string>
+    <string name="create_block">ブロック</string>
+    <string name="destroy_block">ブロックを解除する</string>
+    <string name="destroy_follow_follower">FF解除</string>
+    <string name="spam_report">スパムとして報告する</string>
     <string name="license">ライセンス</string>
 
     <string name="mode_night_no">使用しない</string>
