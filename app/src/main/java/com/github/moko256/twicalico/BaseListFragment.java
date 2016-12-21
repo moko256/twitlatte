@@ -76,8 +76,8 @@ public abstract class BaseListFragment<A extends BaseListAdapter<LI,? extends Re
 
     @Override
     public void onSaveInstanceState(Bundle outState){
-        super.onSaveInstanceState(outState);
         outState.putSerializable("list", (ArrayList) list);
+        super.onSaveInstanceState(outState);
     }
 
     protected abstract void onInitializeList();

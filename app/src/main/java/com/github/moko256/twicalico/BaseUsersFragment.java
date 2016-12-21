@@ -95,6 +95,7 @@ public abstract class BaseUsersFragment extends BaseListFragment<UsersAdapter,Us
     @Override
     public void onSaveInstanceState(Bundle outState){
         outState.putLong("next_cursor",next_cursor);
+        super.onSaveInstanceState(outState);
     }
 
     public Observable<PagableResponseList<User>> getResponseObservable(long cursor) {
