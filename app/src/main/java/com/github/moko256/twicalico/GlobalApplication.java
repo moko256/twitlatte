@@ -21,6 +21,9 @@ import twitter4j.auth.AccessToken;
  */
 public class GlobalApplication extends Application {
 
+    public UserCacheMap userCache=new UserCacheMap();
+    public StatusCacheMap statusCache=new StatusCacheMap(userCache);
+
     @Override
     public void onCreate() {
         final Thread.UncaughtExceptionHandler defaultUnCaughtExceptionHandler=Thread.getDefaultUncaughtExceptionHandler();
