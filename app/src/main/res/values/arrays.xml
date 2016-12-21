@@ -25,4 +25,17 @@
         <item>mode_night_yes</item>
     </string-array>
 
+    <string-array name="license_entries">
+        <item>Android Compatibility Library v4</item>
+        <item>Android Compatibility Library v7</item>
+        <item>Android Compatibility Library v14</item>
+        <item>Android Design Support Library</item>
+        <item>Glide</item>
+        <item>OkHttp</item>
+        <item>Twitter4J</item>
+        <item>twitter-text</item>
+        <item>RxJava</item>
+        <item>RxAndroid</item>
+    </string-array>
+
 </resources>

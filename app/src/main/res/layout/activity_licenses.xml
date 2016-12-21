@@ -1,12 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<android.support.v7.widget.RecyclerView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/activity_licenses_list"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <fragment
-        android:id="@+id/license_fragment_id"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        class="com.github.moko256.twicalico.LicensesFragment" />
-</FrameLayout>
+    android:layout_height="match_parent"
+    android:scrollbars="vertical"/>
