@@ -13,6 +13,8 @@ import java.util.Date;
 
 import twitter4j.TwitterFactory;
 import twitter4j.auth.AccessToken;
+import twitter4j.conf.Configuration;
+import twitter4j.conf.ConfigurationBuilder;
 
 /**
  * Created by moko256 on 2016/04/30.
@@ -52,17 +54,28 @@ public class GlobalApplication extends Application {
             }
         });
 
-        super.onCreate();
-
         SharedPreferences defaultSharedPreferences=PreferenceManager.getDefaultSharedPreferences(this);
 
+        @AppCompatDelegate.NightMode
+        int mode=AppCompatDelegate.MODE_NIGHT_NO;
+
         switch(defaultSharedPreferences.getString("nightModeType","mode_night_no_value")){
-            case "mode_night_no":AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);break;
-            case "mode_night_auto":AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_AUTO);break;
-            case "mode_night_follow_system":AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);break;
-            case "mode_night_yes":AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);break;
-            default:AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+
+            case "mode_night_no":
+                mode=AppCompatDelegate.MODE_NIGHT_NO;
+                break;
+            case "mode_night_auto":
+                mode=AppCompatDelegate.MODE_NIGHT_AUTO;
+                break;
+            case "mode_night_follow_system":
+                mode=AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM;
+                break;
+            case "mode_night_yes":
+                mode=AppCompatDelegate.MODE_NIGHT_YES;
+                break;
         }
+
+        AppCompatDelegate.setDefaultNightMode(mode);
 
         int nowAccountPoint=Integer.parseInt(defaultSharedPreferences.getString("AccountPoint","-1"),10);
 
@@ -72,9 +85,14 @@ public class GlobalApplication extends Application {
         AccessToken accessToken=tokenOpenHelper.getAccessToken(nowAccountPoint);
         tokenOpenHelper.close();
 
-        Static.twitter = new TwitterFactory().getInstance();
+        Configuration conf=new ConfigurationBuilder()
+                .setTweetModeExtended(true)
+                .build();
+
+        Static.twitter = new TwitterFactory(conf).getInstance();
         Static.twitter.setOAuthConsumer(Static.consumerKey, Static.consumerSecret);
         Static.twitter.setOAuthAccessToken(accessToken);
 
+        super.onCreate();
     }
 }

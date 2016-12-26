@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
-import twitter4j.ExtendedMediaEntity;
+import twitter4j.MediaEntity;
 import twitter4j.Status;
 import twitter4j.TwitterException;
 import twitter4j.util.TimeSpanConverter;
@@ -100,7 +100,7 @@ class StatusesAdapter extends BaseListAdapter<Status,StatusesAdapter.ViewHolder>
             }
         }
 
-        ExtendedMediaEntity mediaEntities[]=item.getExtendedMediaEntities();
+        MediaEntity mediaEntities[]=item.getMediaEntities();
 
         if (mediaEntities.length!=0){
             viewHolder.tweetImageTableView.setVisibility(View.VISIBLE);

@@ -68,7 +68,15 @@ public class TwitterStringUtil {
         }
 
         List<URLEntity> urlEntities=Observable
-                .concat(Observable.from(item.getURLEntities()),Observable.from(item.getMediaEntities()))
+                .concat(Observable.from(item.getURLEntities()),
+                        Observable.create(
+                                subscriber -> {
+                                    if(item.getMediaEntities().length>0){
+                                        subscriber.onNext(item.getMediaEntities()[0]);
+                                    }
+                                    subscriber.onCompleted();
+                                }
+                        ))
                 .toSortedList((i1,i2)->i1.getStart()-i2.getStart())
                 .toBlocking()
                 .single();

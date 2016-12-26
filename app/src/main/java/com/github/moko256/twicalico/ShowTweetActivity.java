@@ -23,7 +23,7 @@ import com.bumptech.glide.RequestManager;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
-import twitter4j.ExtendedMediaEntity;
+import twitter4j.MediaEntity;
 import twitter4j.Status;
 import twitter4j.StatusUpdate;
 import twitter4j.TwitterException;
@@ -117,7 +117,7 @@ public class ShowTweetActivity extends AppCompatActivity {
                     }
                 }
 
-                ExtendedMediaEntity mediaEntities[]=item.getExtendedMediaEntities();
+                MediaEntity mediaEntities[]=item.getMediaEntities();
 
                 TweetImageTableView tableView=(TweetImageTableView) findViewById(R.id.tweet_show_images);
                 if(mediaEntities.length!=0){
