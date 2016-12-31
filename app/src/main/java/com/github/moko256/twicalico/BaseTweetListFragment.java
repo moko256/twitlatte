@@ -51,6 +51,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment<StatusesAda
         if(!getSwipeRefreshLayout().isRefreshing())getSwipeRefreshLayout().setRefreshing(false);
 
         Paging paging=new Paging(getContentList().get(0).getId());
+        paging.count(50);
 
         getResponseObservable(paging)
                 .subscribeOn(Schedulers.newThread())
@@ -87,7 +88,8 @@ public abstract class BaseTweetListFragment extends BaseListFragment<StatusesAda
     @Override
     protected void onLoadMoreList() {
         Paging paging=new Paging();
-        paging.maxId(getContentList().get(getContentList().size()-1).getId());
+        paging.maxId(getContentList().get(getContentList().size()-1).getId()-1L);
+        paging.count(50);
         getResponseObservable(paging)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -95,10 +97,8 @@ public abstract class BaseTweetListFragment extends BaseListFragment<StatusesAda
                         result -> {
                             int size = result.size();
                             if (size > 0) {
-                                int l= getContentList().size();
-                                result.remove(0);
                                 getContentList().addAll(result);
-                                getListAdapter().notifyItemRangeInserted(l,size);
+                                getListAdapter().notifyItemRangeInserted(getContentList().size(),size);
                             }
                         },
                         e -> {
