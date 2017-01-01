@@ -12,6 +12,9 @@ import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.preference.PreferenceManager;
+import android.widget.Toast;
+
+import java.util.Date;
 
 /**
  * Created by moko256 on 2016/03/28.
@@ -63,14 +66,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 }
         );
 
-        Preference license=findPreference("license");
-        license.setOnPreferenceClickListener(preference -> {
-            startActivity(new Intent(getContext(),LicensesActivity.class));
-            return false;
-        });
-
-        Preference logout= findPreference("logout");
-        logout.setOnPreferenceClickListener(preference -> {
+        findPreference("logout").setOnPreferenceClickListener(preference -> {
             new AlertDialog.Builder(getContext())
                     .setTitle(R.string.logout)
                     .setMessage("Logout?")
@@ -98,6 +94,19 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                     return true;
                 }
         );
+
+        findPreference("license").setOnPreferenceClickListener(preference -> {
+            startActivity(new Intent(getContext(),LicensesActivity.class));
+            return false;
+        });
+
+        Preference version=findPreference("app_version");
+        version.setSummary("Version "+ BuildConfig.VERSION_NAME);
+        version.setOnPreferenceClickListener(preference -> {
+            Date birthday=new Date(1446956982000L);
+            Toast.makeText(getContext(), "This application was born on "+birthday.toString(), Toast.LENGTH_SHORT).show();
+            return false;
+        });
 
     }
 }

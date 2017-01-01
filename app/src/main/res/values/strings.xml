@@ -29,16 +29,19 @@
     <string name="share">Share…</string>
     <string name="add_list">Add list</string>
     <string name="show_list">Show lists</string>
+    <string name="create_follow">Follow</string>
+    <string name="destroy_follow">Cancel Follow</string>
     <string name="create_mute">Mute</string>
     <string name="destroy_mute">Cancel Mute</string>
     <string name="create_block">Block</string>
     <string name="destroy_block">Cancel Block</string>
     <string name="destroy_follow_follower">Cancel Follow-Follower</string>
     <string name="spam_report">Report this Account as a spam</string>
+    <string name="about">About</string>
     <string name="license">License</string>
 
     <string name="mode_night_no">Not Use</string>
     <string name="mode_night_yes">Use</string>
     <string name="mode_night_follow_system">Follow system(enable Android 7.0 later)</string>
-    <string name="mode_night_auto">Automatically(use now time)</string>
+    <string name="mode_night_auto">Automatically(use device's date)</string>
 </resources>

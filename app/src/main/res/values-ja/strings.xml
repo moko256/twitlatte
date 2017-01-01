@@ -21,17 +21,20 @@
     <string name="share">共有する</string>
     <string name="add_list">リストに追加</string>
     <string name="show_list">リストを見る</string>
+    <string name="create_follow">フォロー</string>
+    <string name="destroy_follow">フォロー解除</string>
     <string name="create_mute">ミュートする</string>
     <string name="destroy_mute">ミュートを解除する</string>
     <string name="create_block">ブロック</string>
     <string name="destroy_block">ブロックを解除する</string>
     <string name="destroy_follow_follower">FF解除</string>
     <string name="spam_report">スパムとして報告する</string>
+    <string name="about">概要</string>
     <string name="license">ライセンス</string>
 
     <string name="mode_night_no">使用しない</string>
     <string name="mode_night_yes">使用する</string>
     <string name="mode_night_follow_system">システムの設定に従う(Android 7.0以降で有効)</string>
-    <string name="mode_night_auto">自動(現在時刻を使用)</string>
+    <string name="mode_night_auto">自動(端末の時刻を使用)</string>
 
 </resources>

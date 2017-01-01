@@ -92,7 +92,7 @@
                 <data android:scheme="http" />
                 <data android:host="twitter.com" />
                 <data android:host="mobile.twitter.com" />
-                <data android:pathPattern="/.*/" />
+                <data android:pathPattern="/.*" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -128,7 +128,7 @@
         <activity
             android:name=".LicensesActivity"
             android:label="@string/license"
-            android:theme="@style/SettingsActivityTheme" />
+            android:theme="@style/AppTheme" />
     </application>
 
 </manifest>

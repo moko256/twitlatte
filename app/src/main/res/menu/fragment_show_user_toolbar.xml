@@ -16,11 +16,11 @@
         app:showAsAction="never" />
     <item
         android:id="@+id/action_create_follow"
-        android:title="@string/create_mute"
+        android:title="@string/create_follow"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_destroy_follow"
-        android:title="@string/destroy_mute"
+        android:title="@string/destroy_follow"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_create_mute"

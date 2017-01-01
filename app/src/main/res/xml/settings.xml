@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <PreferenceCategory android:title="@string/app_settings">
+    <PreferenceCategory android:title="@string/account">
         <ListPreference
             android:key="AccountPoint"
             android:defaultValue=""
@@ -12,6 +12,9 @@
         <Preference
             android:key="logout"
             android:title="@string/logout"/>
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:title="@string/app_settings">
         <ListPreference
             android:key="nightModeType"
             android:defaultValue="mode_night_no"
@@ -22,10 +25,13 @@
             android:entryValues="@array/choose_night_mode_entries_value"/>
     </PreferenceCategory>
     <PreferenceCategory
-        android:title="@string/other">
+        android:title="@string/about">
         <Preference
             android:key="license"
             android:title="@string/license"
             android:summary="Show License Text" />
+        <Preference
+            android:key="app_version"
+            android:title="@string/app_name"/>
     </PreferenceCategory>
 </PreferenceScreen>
