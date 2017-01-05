@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.view.ViewCompat;
+import android.support.v7.widget.AppCompatCheckBox;
 import android.support.v7.widget.RecyclerView;
 import android.text.method.LinkMovementMethod;
 import android.view.View;
@@ -13,7 +14,6 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import java.util.ArrayList;
 
@@ -202,8 +202,8 @@ class StatusesAdapter extends BaseListAdapter<Status,StatusesAdapter.ViewHolder>
         TextView tweetQuoteTweetUserId;
         TextView tweetQuoteTweetContext;
         TweetImageTableView tweetImageTableView;
-        ToggleButton tweetLikeButton;
-        ToggleButton tweetRetweetButton;
+        AppCompatCheckBox tweetLikeButton;
+        AppCompatCheckBox tweetRetweetButton;
 
         TimeSpanConverter timeSpanConverter;
 
@@ -220,8 +220,8 @@ class StatusesAdapter extends BaseListAdapter<Status,StatusesAdapter.ViewHolder>
             tweetQuoteTweetUserId=(TextView) itemView.findViewById(R.id.tweet_quote_tweet_user_id);
             tweetQuoteTweetContext=(TextView) itemView.findViewById(R.id.tweet_quote_tweet_content);
             tweetImageTableView=(TweetImageTableView) itemView.findViewById(R.id.tweet_image_container);
-            tweetLikeButton=(ToggleButton) itemView.findViewById(R.id.tweet_content_like_button);
-            tweetRetweetButton=(ToggleButton) itemView.findViewById(R.id.tweet_content_retweet_button);
+            tweetLikeButton=(AppCompatCheckBox) itemView.findViewById(R.id.tweet_content_like_button);
+            tweetRetweetButton=(AppCompatCheckBox) itemView.findViewById(R.id.tweet_content_retweet_button);
 
             timeSpanConverter=new TimeSpanConverter();
         }
