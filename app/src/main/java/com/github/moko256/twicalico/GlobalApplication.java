@@ -11,7 +11,9 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Date;
 
+import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
+import twitter4j.User;
 import twitter4j.auth.AccessToken;
 import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
@@ -22,6 +24,13 @@ import twitter4j.conf.ConfigurationBuilder;
  * @author moko256
  */
 public class GlobalApplication extends Application {
+
+    static final String consumerKey=BuildConfig.CONSUMER_KEY;
+    static final String consumerSecret=BuildConfig.CONSUMER_SECRET;
+
+    static Twitter twitter;
+    static User user;
+
 
     @Override
     public void onCreate() {
@@ -89,9 +98,9 @@ public class GlobalApplication extends Application {
                 .setTweetModeExtended(true)
                 .build();
 
-        Static.twitter = new TwitterFactory(conf).getInstance();
-        Static.twitter.setOAuthConsumer(Static.consumerKey, Static.consumerSecret);
-        Static.twitter.setOAuthAccessToken(accessToken);
+        twitter = new TwitterFactory(conf).getInstance();
+        twitter.setOAuthConsumer(consumerKey, consumerSecret);
+        twitter.setOAuthAccessToken(accessToken);
 
         super.onCreate();
     }

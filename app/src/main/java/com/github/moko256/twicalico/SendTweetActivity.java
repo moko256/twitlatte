@@ -93,7 +93,7 @@ public class SendTweetActivity extends AppCompatActivity {
             @Override
             public Void doInBackground(String... str){
                 try {
-                    Static.twitter.updateStatus(str[0]);
+                    GlobalApplication.twitter.updateStatus(str[0]);
                     finish();
                 } catch (TwitterException e) {
                     e.printStackTrace();

@@ -14,7 +14,7 @@ public class LikeMeFragment extends BaseTweetListFragment implements ToolbarTitl
 
     @Override
     public ResponseList<Status> getResponseList(Paging paging) throws TwitterException {
-        return Static.twitter.getFavorites(paging);
+        return GlobalApplication.twitter.getFavorites(paging);
     }
 
     @Override

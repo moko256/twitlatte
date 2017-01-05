@@ -120,10 +120,10 @@ class StatusesAdapter extends BaseListAdapter<Status,StatusesAdapter.ViewHolder>
                 .create(subscriber->{
                     try {
                         if(b&&(!item.isFavorited())){
-                            subscriber.onNext(Static.twitter.createFavorite(item.getId()));
+                            subscriber.onNext(GlobalApplication.twitter.createFavorite(item.getId()));
                         }
                         else if((!b)&&item.isFavorited()){
-                            subscriber.onNext(Static.twitter.destroyFavorite(item.getId()));
+                            subscriber.onNext(GlobalApplication.twitter.destroyFavorite(item.getId()));
                         }
                         subscriber.onCompleted();
                     } catch (TwitterException e) {
@@ -151,10 +151,10 @@ class StatusesAdapter extends BaseListAdapter<Status,StatusesAdapter.ViewHolder>
                 .create(subscriber->{
                     try {
                         if(b&&(!item.isRetweeted())){
-                            subscriber.onNext(Static.twitter.retweetStatus(item.getId()));
+                            subscriber.onNext(GlobalApplication.twitter.retweetStatus(item.getId()));
                         }
                         else if((!b)&&item.isRetweeted()){
-                            subscriber.onNext(Static.twitter.destroyStatus(item.getCurrentUserRetweetId()));
+                            subscriber.onNext(GlobalApplication.twitter.destroyStatus(item.getCurrentUserRetweetId()));
                         }
                         subscriber.onCompleted();
                     } catch (TwitterException e) {

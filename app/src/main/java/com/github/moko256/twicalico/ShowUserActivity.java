@@ -74,7 +74,7 @@ public class ShowUserActivity extends AppCompatActivity implements ShowUserFragm
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         ThrowableFunc throwableFunc=null;
-        Twitter twitter = Static.twitter;
+        Twitter twitter = GlobalApplication.twitter;
 
         switch (item.getItemId()){
             case R.id.action_share:
@@ -109,7 +109,7 @@ public class ShowUserActivity extends AppCompatActivity implements ShowUserFragm
                 };
                 break;
             case R.id.action_spam_report:
-                throwableFunc=()->Static.twitter.reportSpam(user.getId());
+                throwableFunc=()->GlobalApplication.twitter.reportSpam(user.getId());
                 break;
         }
 
@@ -176,7 +176,7 @@ public class ShowUserActivity extends AppCompatActivity implements ShowUserFragm
                             if(!(user!=null&& Objects.equals(user.getScreenName(), userName))){
                                 if(userName!=null){
                                     try {
-                                        user=Static.twitter.showUser(userName);
+                                        user=GlobalApplication.twitter.showUser(userName);
                                     } catch (TwitterException e) {
                                         subscriber.onError(e);
                                     }

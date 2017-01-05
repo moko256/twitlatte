@@ -67,9 +67,9 @@ public class OAuthActivity extends AppCompatActivity {
                                         .putString("AccountPoint",String.valueOf(nowAccountPoint))
                                         .apply();
 
-                                Static.twitter = new TwitterFactory().getInstance();
-                                Static.twitter.setOAuthConsumer(Static.consumerKey, Static.consumerSecret);
-                                Static.twitter.setOAuthAccessToken(
+                                GlobalApplication.twitter = new TwitterFactory().getInstance();
+                                GlobalApplication.twitter.setOAuthConsumer(GlobalApplication.consumerKey, GlobalApplication.consumerSecret);
+                                GlobalApplication.twitter.setOAuthAccessToken(
                                         new AccessToken(token, tokenSecret)
                                 );
 
@@ -84,7 +84,7 @@ public class OAuthActivity extends AppCompatActivity {
             Configuration conf = ConfigurationContext.getInstance();
             final OAuthAuthorization oauth =new OAuthAuthorization(conf);
 
-            oauth.setOAuthConsumer(Static.consumerKey,Static.consumerSecret);
+            oauth.setOAuthConsumer(GlobalApplication.consumerKey,GlobalApplication.consumerSecret);
 
             new AsyncTask<Void, Void, Void>() {
                 @Override

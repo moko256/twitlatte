@@ -64,7 +64,7 @@ public class ShowTweetActivity extends AppCompatActivity {
                         }
                     }
                     try {
-                        status = Static.twitter.showStatus(statusId);
+                        status = GlobalApplication.twitter.showStatus(statusId);
                     } catch (TwitterException e) {
                         e.printStackTrace();
                     }
@@ -149,7 +149,7 @@ public class ShowTweetActivity extends AppCompatActivity {
                     Observable
                             .create(subscriber -> {
                                 try {
-                                    subscriber.onNext(Static.twitter.updateStatus(update));
+                                    subscriber.onNext(GlobalApplication.twitter.updateStatus(update));
                                     subscriber.onCompleted();
                                 } catch (TwitterException e) {
                                     subscriber.onError(e);

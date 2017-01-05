@@ -43,7 +43,7 @@ public class ShowUserFragment extends BaseTweetListFragment {
 
     @Override
     public ResponseList<Status> getResponseList(Paging paging) throws TwitterException {
-        return Static.twitter.getUserTimeline(user.getId(),paging);
+        return GlobalApplication.twitter.getUserTimeline(user.getId(),paging);
     }
 
     @Override

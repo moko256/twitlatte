@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        if (Static.twitter == null) {
+        if (GlobalApplication.twitter == null) {
             finish();
             startActivity(new Intent(this, OAuthActivity.class));
             return;
@@ -47,12 +47,12 @@ public class MainActivity extends AppCompatActivity {
             getWindow().setStatusBarColor(0x00000000);
         }
 
-        if (Static.user == null) {
+        if (GlobalApplication.user == null) {
             Observable
                     .create(subscriber->{
                         try {
-                            Static.user=Static.twitter.verifyCredentials();
-                            subscriber.onNext(Static.user);
+                            GlobalApplication.user=GlobalApplication.twitter.verifyCredentials();
+                            subscriber.onNext(GlobalApplication.user);
                             subscriber.onCompleted();
                         } catch (TwitterException e) {
                             subscriber.onError(e);
@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
                             ()->{}
                     );
         } else {
-            setDrawerHeader(Static.user);
+            setDrawerHeader(GlobalApplication.user);
         }
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -148,8 +148,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startMyUserActivity() {
-        if (Static.user!=null){
-            startActivity(new Intent(this, ShowUserActivity.class).putExtra("user", Static.user));
+        if (GlobalApplication.user!=null){
+            startActivity(new Intent(this, ShowUserActivity.class).putExtra("user", GlobalApplication.user));
         }
     }
 

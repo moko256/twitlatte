@@ -73,7 +73,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                     .setCancelable(true)
                     .setPositiveButton(android.R.string.ok,
                             (dialog, i) ->
-                                    nowAccountList.getOnPreferenceChangeListener().onPreferenceChange(preference,String.valueOf(helper.deleteAccessToken(Static.user.getId())-1))
+                                    nowAccountList.getOnPreferenceChangeListener().onPreferenceChange(preference,String.valueOf(helper.deleteAccessToken(GlobalApplication.user.getId())-1))
                     )
                     .setNegativeButton(android.R.string.cancel,(dialog, i) -> dialog.cancel())
                     .show();

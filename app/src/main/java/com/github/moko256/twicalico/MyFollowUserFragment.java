@@ -13,7 +13,7 @@ public class MyFollowUserFragment extends BaseUsersFragment implements ToolbarTi
 
     @Override
     public PagableResponseList<User> getResponseList(long cursor) throws TwitterException {
-        return Static.twitter.getFriendsList(Static.user.getScreenName(),cursor);
+        return GlobalApplication.twitter.getFriendsList(GlobalApplication.user.getScreenName(),cursor);
     }
 
     @Override
