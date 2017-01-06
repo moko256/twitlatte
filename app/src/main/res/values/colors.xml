@@ -3,4 +3,10 @@
     <color name="colorPrimary">#795548</color>
     <color name="colorPrimaryDark">#5D4037</color>
     <color name="colorAccent">#FF9100</color>
+
+    <color name="imageToggleEnable">#999999</color>
+    <color name="imageToggleDisable">@android:color/darker_gray</color>
+
+    <color name="likeToggleCheckedColor">#F44336</color>
+    <color name="retweetToggleCheckedColor">@android:color/holo_green_dark</color>
 </resources>

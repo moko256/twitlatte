@@ -215,13 +215,17 @@ class StatusesAdapter extends BaseListAdapter<Status,StatusesAdapter.ViewHolder>
             tweetUserName=(TextView) itemView.findViewById(R.id.tweet_user_name);
             tweetContext=(TextView) itemView.findViewById(R.id.tweet_content);
             tweetTimeStampText=(TextView) itemView.findViewById(R.id.tweet_time_stamp_text);
-            tweetQuoteTweetLayout=(RelativeLayout) itemView.findViewById(R.id.tweet_quote_tweet);
+            tweetQuoteTweetLayout=(RelativeLayout)  itemView.findViewById(R.id.tweet_quote_tweet);
             tweetQuoteTweetUserName=(TextView) itemView.findViewById(R.id.tweet_quote_tweet_user_name);
             tweetQuoteTweetUserId=(TextView) itemView.findViewById(R.id.tweet_quote_tweet_user_id);
             tweetQuoteTweetContext=(TextView) itemView.findViewById(R.id.tweet_quote_tweet_content);
             tweetImageTableView=(TweetImageTableView) itemView.findViewById(R.id.tweet_image_container);
+
             tweetLikeButton=(AppCompatCheckBox) itemView.findViewById(R.id.tweet_content_like_button);
+            tweetLikeButton.setButtonDrawable(R.drawable.ic_heart_black_36dp);
+
             tweetRetweetButton=(AppCompatCheckBox) itemView.findViewById(R.id.tweet_content_retweet_button);
+            tweetRetweetButton.setButtonDrawable(R.drawable.ic_retweet_black_36dp);
 
             timeSpanConverter=new TimeSpanConverter();
         }
