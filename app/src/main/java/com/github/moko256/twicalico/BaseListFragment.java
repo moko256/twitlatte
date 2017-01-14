@@ -28,6 +28,18 @@ public abstract class BaseListFragment<A extends BaseListAdapter<LI,? extends Re
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
+
+        list=new ArrayList<>();
+        if (savedInstanceState != null){
+            ArrayList<LI> l=(ArrayList<LI>) savedInstanceState.getSerializable("list");
+            if(l!=null){
+                list.addAll(l);
+            }else{
+                onInitializeList();
+            }
+        }else{
+            onInitializeList();
+        }
     }
 
     @Override
@@ -36,7 +48,6 @@ public abstract class BaseListFragment<A extends BaseListAdapter<LI,? extends Re
 
         View view=inflater.inflate(getLayoutResourceId(), container ,false);
 
-        list=new ArrayList<>();
         adapter= initializeListAdapter(getContext(),list);
         recyclerView=(RecyclerView) view.findViewById(R.id.TLlistView);
         recyclerView.setAdapter(adapter);
@@ -49,6 +60,9 @@ public abstract class BaseListFragment<A extends BaseListAdapter<LI,? extends Re
                 }
             }
         });
+        if(list.size()>0){
+            adapter.notifyDataSetChanged();
+        }
 
         swipeRefreshLayout=initializeSwipeRefreshLayout(view);
         swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
@@ -60,18 +74,24 @@ public abstract class BaseListFragment<A extends BaseListAdapter<LI,? extends Re
             }
         });
 
-        if (savedInstanceState != null){
-            ArrayList<LI> l=(ArrayList<LI>) savedInstanceState.getSerializable("list");
-            if(l!=null){
-                list.addAll(l);
-                adapter.notifyDataSetChanged();
-            }
-            else onInitializeList();
-        }else{
-            onInitializeList();
-        }
-
         return view;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        swipeRefreshLayout=null;
+        recyclerView=null;
+        adapter=null;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        list.clear();
+        list=null;
     }
 
     @Override

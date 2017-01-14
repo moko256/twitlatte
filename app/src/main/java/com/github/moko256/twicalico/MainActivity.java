@@ -125,6 +125,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        GlobalApplication.user=null;
+    }
+
+    @Override
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         attachFragment(getMainFragment(), (NavigationView) findViewById(R.id.nav_view), (TabLayout) findViewById(R.id.toolbar_tab));
@@ -164,8 +170,8 @@ public class MainActivity extends AppCompatActivity {
         getSupportFragmentManager()
                 .beginTransaction()
                 .addToBackStack(null)
+                .setCustomAnimations(android.R.anim.fade_in,android.R.anim.fade_out,android.R.anim.fade_in,android.R.anim.fade_out)
                 .replace(R.id.mainLayout, fragment)
-                .setCustomAnimations(android.R.anim.fade_in,android.R.anim.fade_out)
                 .commit();
     }
 

@@ -26,8 +26,6 @@ public abstract class BaseTweetListFragment extends BaseListFragment<StatusesAda
 
     @Override
     protected void onInitializeList() {
-        if(!getSwipeRefreshLayout().isRefreshing())getSwipeRefreshLayout().setRefreshing(false);
-
         getResponseObservable(new Paging(1,20))
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -48,8 +46,6 @@ public abstract class BaseTweetListFragment extends BaseListFragment<StatusesAda
 
     @Override
     protected void onUpdateList() {
-        if(!getSwipeRefreshLayout().isRefreshing())getSwipeRefreshLayout().setRefreshing(false);
-
         Paging paging=new Paging(getContentList().get(0).getId());
         paging.count(50);
 

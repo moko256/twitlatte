@@ -24,8 +24,6 @@ public abstract class BaseUsersFragment extends BaseListFragment<UsersAdapter,Us
 
     @Override
     protected void onInitializeList() {
-        if(!getSwipeRefreshLayout().isRefreshing())getSwipeRefreshLayout().setRefreshing(false);
-
         getResponseObservable(-1)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -51,7 +49,6 @@ public abstract class BaseUsersFragment extends BaseListFragment<UsersAdapter,Us
 
     @Override
     protected void onLoadMoreList() {
-
         getResponseObservable(next_cursor)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
