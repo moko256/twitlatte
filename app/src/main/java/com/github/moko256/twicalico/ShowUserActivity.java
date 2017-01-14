@@ -2,17 +2,15 @@ package com.github.moko256.twicalico;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import com.bumptech.glide.Glide;
 
 import java.util.Objects;
 
@@ -28,7 +26,7 @@ import twitter4j.User;
  *
  * @author moko256
  */
-public class ShowUserActivity extends AppCompatActivity implements ShowUserFragment.HasUserActivity {
+public class ShowUserActivity extends AppCompatActivity implements ActivityHasUserObservable {
 
     User user;
 
@@ -37,12 +35,7 @@ public class ShowUserActivity extends AppCompatActivity implements ShowUserFragm
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_user);
 
-        if (savedInstanceState == null) {
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .add(R.id.show_user_fragment_container, new ShowUserFragment())
-                    .commit();
-        } else {
+        if (savedInstanceState != null) {
             user=(User)savedInstanceState.getSerializable("user");
         }
 
@@ -51,6 +44,12 @@ public class ShowUserActivity extends AppCompatActivity implements ShowUserFragm
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeAsUpIndicator(R.drawable.ic_back_white_24dp);
 
+        ViewPager viewPager=(ViewPager) findViewById(R.id.show_user_view_pager);
+        viewPager.setAdapter(new ShowUserFragmentsPagerAdapter(getSupportFragmentManager(),this));
+        viewPager.setOffscreenPageLimit(1);
+
+        TabLayout tabLayout=(TabLayout) findViewById(R.id.tab_show_user);
+        tabLayout.setupWithViewPager(viewPager);
     }
 
     @Override
@@ -188,18 +187,5 @@ public class ShowUserActivity extends AppCompatActivity implements ShowUserFragm
                             subscriber.onCompleted();
                         }
                 );
-    }
-
-    @Override
-    public void updateHeader(User user) {
-        ImageView header=(ImageView) findViewById(R.id.show_user_bgimage);
-        ImageView icon=(ImageView) findViewById(R.id.show_user_image);
-
-        Glide.with(this).load(user.getProfileBannerRetinaURL()).into(header);
-        Glide.with(this).load(user.getBiggerProfileImageURL()).into(icon);
-
-        ((TextView) findViewById(R.id.show_user_id)).setText(TwitterStringUtil.plusAtMark(user.getScreenName()));
-        setTitle(user.getName());
-        ((TextView) findViewById(R.id.show_user_bio)).setText(user.getDescription());
     }
 }

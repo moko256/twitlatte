@@ -1,9 +1,5 @@
 package com.github.moko256.twicalico;
 
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.view.View;
-
-import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import twitter4j.Paging;
@@ -17,20 +13,19 @@ import twitter4j.User;
  *
  * @author moko256
  */
-public class ShowUserFragment extends BaseTweetListFragment {
+public class ShowUserTimelineFragment extends BaseTweetListFragment implements ToolbarTitleInterface {
 
     User user;
 
     @Override
     public void onInitializeList() {
-        HasUserActivity activity=(HasUserActivity)getActivity();
+        ActivityHasUserObservable activity=(ActivityHasUserObservable)getActivity();
         activity.getUserObservable()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         result->{
                             user=result;
-                            activity.updateHeader(result);
                             super.onInitializeList();
                         },
                         throwable->{
@@ -47,17 +42,7 @@ public class ShowUserFragment extends BaseTweetListFragment {
     }
 
     @Override
-    public int getLayoutResourceId() {
-        return R.layout.fragment_show_user_list;
-    }
-
-    @Override
-    protected SwipeRefreshLayout initializeSwipeRefreshLayout(View parent) {
-        return (SwipeRefreshLayout) getActivity().findViewById(R.id.show_user_fragment_container);
-    }
-
-    public interface HasUserActivity{
-        Observable<User> getUserObservable();
-        void updateHeader(User user);
+    public int getTitleResourceId() {
+        return R.string.tweet;
     }
 }
