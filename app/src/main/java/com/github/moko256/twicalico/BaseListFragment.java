@@ -90,7 +90,6 @@ public abstract class BaseListFragment<A extends BaseListAdapter<LI,? extends Re
     public void onDestroy() {
         super.onDestroy();
 
-        list.clear();
         list=null;
     }
 
