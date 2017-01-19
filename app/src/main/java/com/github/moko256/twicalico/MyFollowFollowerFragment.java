@@ -21,6 +21,7 @@ public class MyFollowFollowerFragment extends Fragment implements ToolbarTitleIn
         View view=inflater.inflate(R.layout.fragment_follow_follower, null);
 
         viewPager=(ViewPager) view.findViewById(R.id.follow_follower_pager);
+        viewPager.setOffscreenPageLimit(0);
         viewPager.setAdapter(new FollowFollowerTabsPagerAdapter(getChildFragmentManager(),getContext()));
 
         return view;

@@ -30,6 +30,10 @@ public class ShowUserActivity extends AppCompatActivity implements ActivityHasUs
 
     User user;
 
+    ActionBar actionBar;
+    ViewPager viewPager;
+    TabLayout tabLayout;
+
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -40,16 +44,28 @@ public class ShowUserActivity extends AppCompatActivity implements ActivityHasUs
         }
 
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar_show_user));
-        ActionBar actionBar=getSupportActionBar();
+
+        actionBar=getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeAsUpIndicator(R.drawable.ic_back_white_24dp);
 
-        ViewPager viewPager=(ViewPager) findViewById(R.id.show_user_view_pager);
+        viewPager=(ViewPager) findViewById(R.id.show_user_view_pager);
+        viewPager.setOffscreenPageLimit(0);
         viewPager.setAdapter(new ShowUserFragmentsPagerAdapter(getSupportFragmentManager(),this));
-        viewPager.setOffscreenPageLimit(1);
 
-        TabLayout tabLayout=(TabLayout) findViewById(R.id.tab_show_user);
+        tabLayout=(TabLayout) findViewById(R.id.tab_show_user);
         tabLayout.setupWithViewPager(viewPager);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        tabLayout=null;
+        viewPager=null;
+        actionBar=null;
+
+        user=null;
     }
 
     @Override
@@ -162,7 +178,6 @@ public class ShowUserActivity extends AppCompatActivity implements ActivityHasUs
     }
     private interface Func{
         void call();
-
     }
 
 
