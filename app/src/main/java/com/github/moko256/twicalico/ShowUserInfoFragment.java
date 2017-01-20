@@ -92,8 +92,8 @@ public class ShowUserInfoFragment extends Fragment implements ToolbarTitleInterf
         getActivity().setTitle(user.getName());
         userBioText.setText(user.getDescription());
 
-        userTweetsCount.setText("Tweets: "+String.valueOf(user.getStatusesCount()));
-        userFollowCount.setText("Follow: "+String.valueOf(user.getFriendsCount()));
-        userFollowerCount.setText("Followers: "+String.valueOf(user.getFollowersCount()));
+        userTweetsCount.setText(getContext().getString(R.string.tweet_counts_is,String.valueOf(user.getStatusesCount())));
+        userFollowCount.setText(getContext().getString(R.string.follow_counts_is,String.valueOf(user.getFriendsCount())));
+        userFollowerCount.setText(getContext().getString(R.string.follower_counts_is,String.valueOf(user.getFollowersCount())));
     }
 }

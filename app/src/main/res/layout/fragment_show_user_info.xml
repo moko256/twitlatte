@@ -4,59 +4,72 @@
     android:scrollbars="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <ImageView
+        android:layout_height="wrap_content">
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:id="@+id/show_user_bgimage"/>
+            android:layout_height="wrap_content">
 
-        <ImageView
-            android:layout_width="42dp"
-            android:layout_height="42dp"
-            android:id="@+id/show_user_image"
-            android:layout_gravity="center"
-            android:transitionName="tweet_user_image" />
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:id="@+id/show_user_bgimage"/>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/show_user_name"
-            android:gravity="center"/>
+            <ImageView
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:id="@+id/show_user_image"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:transitionName="tweet_user_image" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/show_user_id"
-            android:gravity="center"/>
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/show_user_bio"
-            android:gravity="center"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/show_user_name"
+                android:layout_below="@id/show_user_bgimage"
+                android:layout_centerHorizontal="true"
+                android:textAppearance="@style/TextAppearance.AppCompat.Title"/>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/show_user_tweets_count"
-            android:gravity="center"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/show_user_id"
+                android:layout_below="@id/show_user_name"
+                android:layout_centerHorizontal="true"
+                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"/>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/show_user_follow_count"
-            android:gravity="center"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/show_user_bio"
+                android:layout_below="@id/show_user_id"
+                android:layout_centerHorizontal="true"
+                android:gravity="center"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/show_user_follower_count"
-            android:gravity="center"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/show_user_follow_count"
+                android:layout_below="@id/show_user_bio"
+                android:layout_centerHorizontal="true"/>
 
-    </LinearLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/show_user_tweets_count"
+                android:layout_below="@id/show_user_bio"
+                android:layout_toLeftOf="@id/show_user_follow_count"/>
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/show_user_follower_count"
+                android:layout_below="@id/show_user_bio"
+                android:layout_toRightOf="@id/show_user_follow_count"/>
+
+        </RelativeLayout>
+    </ScrollView>
 </android.support.v4.widget.NestedScrollView>

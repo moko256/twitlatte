@@ -25,6 +25,9 @@
     <string name="app_settings">Application Settings</string>
     <string name="add_account">add other account</string>
     <string name="logout">Logout</string>
+    <string name="tweet_counts_is">Tweets: %s</string>
+    <string name="follow_counts_is">Follows: %s</string>
+    <string name="follower_counts_is">Followers: %s</string>
     <string name="other">Others</string>
     <string name="share">Share…</string>
     <string name="add_list">Add list</string>
