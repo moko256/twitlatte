@@ -46,7 +46,9 @@ public class GlobalApplication extends Application {
                 stringWriter.close();
                 NotificationCompat.InboxStyle inboxStyle=new NotificationCompat.InboxStyle(
                         new NotificationCompat.Builder(getApplicationContext())
-                                .setSmallIcon(R.mipmap.ic_launcher)
+                                .setSmallIcon(android.R.drawable.stat_notify_error)
+                                .setContentTitle("Error : "+e.toString())
+                                .setContentText(e.toString())
                                 .setWhen(new Date().getTime())
                                 .setShowWhen(true))
                         .setBigContentTitle("Error : "+e.toString())
