@@ -2,7 +2,7 @@
     <shortcut
         android:shortcutId="tweet"
         android:enabled="true"
-        android:icon="@drawable/ic_add_white_24dp"
+        android:icon="@drawable/app_shortcut_tweet"
         android:shortcutShortLabel="@string/tweet"
         android:shortcutLongLabel="@string/tweet">
         <intent
