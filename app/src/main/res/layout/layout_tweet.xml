@@ -137,33 +137,33 @@
          -->
 
         <android.support.v7.widget.AppCompatCheckBox
-            android:id="@+id/tweet_content_retweet_button"
+            android:id="@+id/tweet_content_like_button"
             android:layout_width="36dp"
             android:layout_height="36dp"
             android:layout_below="@id/tweet_image_container"
             android:layout_alignParentRight="true"
             android:layout_marginRight="10dp"
             android:background="?android:attr/selectableItemBackground"
-            app:buttonTint="@color/retweet_button_color_stateful"/>
+            app:buttonTint="@color/like_button_color_stateful"/>
 
         <android.support.v7.widget.AppCompatCheckBox
-            android:id="@+id/tweet_content_like_button"
+            android:id="@+id/tweet_content_retweet_button"
             android:layout_width="36dp"
             android:layout_height="36dp"
             android:layout_below="@id/tweet_image_container"
-            android:layout_toLeftOf="@+id/tweet_content_retweet_button"
+            android:layout_toLeftOf="@+id/tweet_content_like_button"
             android:layout_marginRight="10dp"
             android:background="?android:attr/selectableItemBackground"
-            app:buttonTint="@color/like_button_color_stateful"/>
+            app:buttonTint="@color/retweet_button_color_stateful"/>
 
         <android.support.v7.widget.AppCompatImageButton
             android:id="@+id/tweet_content_reply_button"
             android:layout_width="36dp"
             android:layout_height="36dp"
             android:layout_below="@id/tweet_image_container"
-            android:layout_toLeftOf="@+id/tweet_content_like_button"
+            android:layout_toLeftOf="@+id/tweet_content_retweet_button"
             android:layout_marginRight="10dp"
-            android:background="@android:color/transparent"
+            android:background="?android:attr/selectableItemBackground"
             app:srcCompat="@drawable/ic_reply_black_24dp"
             android:tint="@android:color/darker_gray"/>
 
