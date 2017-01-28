@@ -1,6 +1,7 @@
 package com.github.moko256.twicalico;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.SearchView;
 import android.view.Menu;
@@ -24,6 +25,12 @@ import twitter4j.TwitterException;
 public class SearchFragment extends BaseListFragment<StatusesAdapter,Status> {
 
     private String searchText="";
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
 
     @Override
     protected void onInitializeList() {
