@@ -122,6 +122,14 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".SearchActivity"
+            android:label="@string/action_search"
+            android:theme="@style/AppTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+        </activity>
+        <activity
             android:name=".SettingsActivity"
             android:label="@string/action_settings"
             android:theme="@style/SettingsActivityTheme" />
