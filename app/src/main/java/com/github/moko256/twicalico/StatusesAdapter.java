@@ -222,10 +222,10 @@ class StatusesAdapter extends BaseListAdapter<Status,StatusesAdapter.ViewHolder>
             tweetImageTableView=(TweetImageTableView) itemView.findViewById(R.id.tweet_image_container);
 
             tweetLikeButton=(AppCompatCheckBox) itemView.findViewById(R.id.tweet_content_like_button);
-            tweetLikeButton.setButtonDrawable(R.drawable.ic_heart_black_36dp);
+            tweetLikeButton.setButtonDrawable(R.drawable.ic_heart_black_24dp);
 
             tweetRetweetButton=(AppCompatCheckBox) itemView.findViewById(R.id.tweet_content_retweet_button);
-            tweetRetweetButton.setButtonDrawable(R.drawable.ic_retweet_black_36dp);
+            tweetRetweetButton.setButtonDrawable(R.drawable.ic_retweet_black_24dp);
 
             timeSpanConverter=new TimeSpanConverter();
         }
