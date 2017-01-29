@@ -76,7 +76,9 @@ public class SearchFragment extends BaseListFragment<StatusesAdapter,Status> {
         return Observable.create(
                 subscriber->{
                     try {
-                        subscriber.onNext(GlobalApplication.twitter.search().search(new Query(searchText)).getTweets());
+                        if (!searchText.equals(""){
+                            subscriber.onNext(GlobalApplication.twitter.search().search(new Query(searchText)).getTweets());
+                        }
                         subscriber.onCompleted();
                     } catch (TwitterException e) {
                         subscriber.onError(e);
@@ -89,9 +91,18 @@ public class SearchFragment extends BaseListFragment<StatusesAdapter,Status> {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.activity_search_toolbar,menu);
         SearchView searchView=(SearchView) menu.findItem(R.id.action_search).getActionView();
-        searchView.setOnSearchClickListener(v -> {
-            searchText=searchView.getQuery().toString();
-            onInitializeList();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String searchWord) {
+                searchText=searchWord;
+                onInitializeList();
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
         });
         super.onCreateOptionsMenu(menu,inflater);
     }
