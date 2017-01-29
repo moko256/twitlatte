@@ -35,13 +35,15 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
+        super.onCreate(savedInstanceState);
+
         if (GlobalApplication.twitter == null) {
             finish();
             startActivity(new Intent(this, OAuthActivity.class));
             return;
         }
 
-        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
