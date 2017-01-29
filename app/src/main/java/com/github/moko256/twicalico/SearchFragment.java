@@ -76,7 +76,7 @@ public class SearchFragment extends BaseListFragment<StatusesAdapter,Status> {
         return Observable.create(
                 subscriber->{
                     try {
-                        if (!searchText.equals(""){
+                        if (!searchText.equals("")){
                             subscriber.onNext(GlobalApplication.twitter.search().search(new Query(searchText)).getTweets());
                         }
                         subscriber.onCompleted();
