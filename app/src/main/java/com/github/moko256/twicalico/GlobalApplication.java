@@ -1,6 +1,8 @@
 package com.github.moko256.twicalico;
 
 import android.app.Application;
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationManagerCompat;
@@ -50,7 +52,19 @@ public class GlobalApplication extends Application {
                                 .setContentTitle("Error : "+e.toString())
                                 .setContentText(e.toString())
                                 .setWhen(new Date().getTime())
-                                .setShowWhen(true))
+                                .setShowWhen(true)
+                                .addAction(
+                                        android.R.drawable.ic_menu_share,
+                                        "SHARE",
+                                        PendingIntent.getActivity(
+                                                this,
+                                                401,
+                                                new Intent(Intent.ACTION_SEND)
+                                                        .setType("text/plain")
+                                                        .putExtra(Intent.EXTRA_TEXT,stringWriter.toString()),
+                                                PendingIntent.FLAG_UPDATE_CURRENT
+                                        )
+                                ))
                         .setBigContentTitle("Error : "+e.toString())
                         .setSummaryText("Error occurred.");
                 String[] lines=stringWriter.toString().split("\n");
