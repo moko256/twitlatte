@@ -32,6 +32,7 @@
     <string name="destroy_block">ブロックを解除する</string>
     <string name="destroy_follow_follower">FF解除</string>
     <string name="spam_report">スパムとして報告する</string>
+    <string name="save_image">この画像を保存する</string>
     <string name="about">概要</string>
     <string name="license">ライセンス</string>
 

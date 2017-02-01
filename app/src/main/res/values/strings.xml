@@ -40,6 +40,7 @@
     <string name="destroy_block">Cancel Block</string>
     <string name="destroy_follow_follower">Cancel Follow-Follower</string>
     <string name="spam_report">Report this Account as a spam</string>
+    <string name="save_image">Save this image</string>
     <string name="about">About</string>
     <string name="license">License</string>
 
