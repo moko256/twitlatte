@@ -4,9 +4,9 @@
     <color name="colorPrimaryDark">#5D4037</color>
     <color name="colorAccent">#FF9100</color>
 
-    <color name="imageToggleEnable">#999999</color>
-    <color name="imageToggleDisable">@android:color/darker_gray</color>
+    <color name="imageToggleEnable">#8A000000</color>
+    <color name="imageToggleDisable">#42000000</color>
 
-    <color name="likeToggleCheckedColor">#F44336</color>
-    <color name="retweetToggleCheckedColor">@android:color/holo_green_dark</color>
+    <color name="likeToggleCheckedColor">#E91E63</color>
+    <color name="retweetToggleCheckedColor">#430A47</color>
 </resources>
