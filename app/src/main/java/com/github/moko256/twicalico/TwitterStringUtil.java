@@ -1,5 +1,6 @@
 package com.github.moko256.twicalico;
 
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -8,7 +9,6 @@ import android.text.Spanned;
 import android.text.style.ClickableSpan;
 import android.text.style.URLSpan;
 import android.view.View;
-import android.widget.Toast;
 
 import java.util.List;
 
@@ -42,7 +42,10 @@ public class TwitterStringUtil {
             spannableStringBuilder.setSpan(new ClickableSpan() {
                 @Override
                 public void onClick(View view) {
-                    Toast.makeText(mContext, symbolEntity.toString(), Toast.LENGTH_SHORT).show();
+                    mContext.startActivity(new Intent(mContext,SearchActivity.class)
+                            .setAction(Intent.ACTION_SEARCH)
+                            .putExtra(SearchManager.QUERY,symbolEntity.getText())
+                    );
                 }
             }, tweet.offsetByCodePoints(0,symbolEntity.getStart()), tweet.offsetByCodePoints(0,symbolEntity.getEnd()), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
         }
@@ -51,7 +54,10 @@ public class TwitterStringUtil {
             spannableStringBuilder.setSpan(new ClickableSpan() {
                 @Override
                 public void onClick(View view) {
-                    Toast.makeText(mContext, hashtagEntity.toString(), Toast.LENGTH_SHORT).show();
+                    mContext.startActivity(new Intent(mContext,SearchActivity.class)
+                            .setAction(Intent.ACTION_SEARCH)
+                            .putExtra(SearchManager.QUERY,"#"+hashtagEntity.getText())
+                    );
                 }
             }, tweet.offsetByCodePoints(0,hashtagEntity.getStart()), tweet.offsetByCodePoints(0,hashtagEntity.getEnd()), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
         }
