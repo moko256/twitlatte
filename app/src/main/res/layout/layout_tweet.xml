@@ -143,7 +143,6 @@
             android:layout_below="@id/tweet_image_container"
             android:layout_alignParentRight="true"
             android:layout_margin="12dp"
-            android:background="?android:attr/selectableItemBackground"
             app:buttonTint="@color/like_button_color_stateful"/>
 
         <android.support.v7.widget.AppCompatCheckBox
@@ -153,19 +152,18 @@
             android:layout_below="@id/tweet_image_container"
             android:layout_toLeftOf="@+id/tweet_content_like_button"
             android:layout_margin="12dp"
-            android:background="?android:attr/selectableItemBackground"
             app:buttonTint="@color/retweet_button_color_stateful"/>
 
         <android.support.v7.widget.AppCompatImageButton
             android:id="@+id/tweet_content_reply_button"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:layout_below="@id/tweet_image_container"
             android:layout_toLeftOf="@+id/tweet_content_retweet_button"
-            android:padding="12dp"
-            android:background="?android:attr/selectableItemBackground"
+            android:layout_margin="12dp"
+            android:background="?attr/controlBackground"
             app:srcCompat="@drawable/ic_reply_black_24dp"
-            android:tint="@android:color/darker_gray"/>
+            android:tint="@color/imageToggleEnable"/>
 
     </RelativeLayout>
 
