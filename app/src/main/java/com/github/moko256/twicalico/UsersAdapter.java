@@ -41,9 +41,10 @@ class UsersAdapter extends BaseListAdapter<User,UsersAdapter.ViewHolder> {
         viewHolder.userUserId.setText(TwitterStringUtil.plusAtMark(item.getScreenName()));
         viewHolder.itemView.setOnClickListener(v -> {
             ViewCompat.setTransitionName(viewHolder.userUserImage,"tweet_user_image");
-            Intent intent = new Intent(context,ShowUserActivity.class);
-            intent.putExtra("user",item);
-            context.startActivity(intent, ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) context,viewHolder.userUserImage,"tweet_user_image").toBundle());
+            context.startActivity(
+                    new Intent(context,ShowUserActivity.class).putExtra("user",item),
+                    ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) context,viewHolder.userUserImage,"tweet_user_image").toBundle()
+            );
         });
 
     }

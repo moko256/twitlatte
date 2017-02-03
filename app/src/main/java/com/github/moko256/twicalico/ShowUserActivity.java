@@ -93,11 +93,12 @@ public class ShowUserActivity extends AppCompatActivity implements ActivityHasUs
 
         switch (item.getItemId()){
             case R.id.action_share:
-                Intent intent=new Intent();
-                intent.setAction(Intent.ACTION_SEND);
-                intent.setType("text/plain");
-                intent.putExtra(Intent.EXTRA_TEXT,"https://twitter.com/"+user.getScreenName());
-                startActivity(intent);
+                startActivity(
+                        new Intent()
+                                .setAction(Intent.ACTION_SEND)
+                                .setType("text/plain")
+                                .putExtra(Intent.EXTRA_TEXT,"https://twitter.com/"+user.getScreenName())
+                );
                 break;
             case R.id.action_create_follow:
                 throwableFunc=()->twitter.createFriendship(user.getId());

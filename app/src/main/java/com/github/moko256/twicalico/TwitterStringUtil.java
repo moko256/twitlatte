@@ -66,9 +66,10 @@ public class TwitterStringUtil {
             spannableStringBuilder.setSpan(new ClickableSpan() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent = new Intent(mContext, ShowUserActivity.class);
-                    intent.putExtra("userName", userMentionEntity.getScreenName());
-                    mContext.startActivity(intent);
+                    mContext.startActivity(
+                            new Intent(mContext, ShowUserActivity.class)
+                                    .putExtra("userName", userMentionEntity.getScreenName())
+                    );
                 }
             }, tweet.offsetByCodePoints(0,userMentionEntity.getStart()), tweet.offsetByCodePoints(0,userMentionEntity.getEnd()), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
         }

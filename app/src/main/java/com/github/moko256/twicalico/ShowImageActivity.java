@@ -120,9 +120,8 @@ public class ShowImageActivity extends AppCompatActivity {
     }
 
     public static Intent getIntent(Context context, MediaEntity[] entities , int position){
-        Intent intent=new Intent(context,ShowImageActivity.class);
-        intent.putExtra(FRAG_MEDIA_ENTITIES,entities);
-        intent.putExtra(FRAG_POSITION,position);
-        return intent;
+        return new Intent(context,ShowImageActivity.class)
+                .putExtra(FRAG_MEDIA_ENTITIES,entities)
+                .putExtra(FRAG_POSITION,position);
     }
 }

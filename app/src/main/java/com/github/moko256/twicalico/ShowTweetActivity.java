@@ -90,11 +90,9 @@ public class ShowTweetActivity extends AppCompatActivity {
                 contentText.setText(TwitterStringUtil.getLinkedSequence(item,ShowTweetActivity.this));
                 contentText.setMovementMethod(LinkMovementMethod.getInstance());
 
-                userImage.setOnClickListener(v->{
-                    Intent intent = new Intent(ShowTweetActivity.this,ShowUserActivity.class);
-                    intent.putExtra("user",item.getUser());
-                    startActivity(intent);
-                });
+                userImage.setOnClickListener(v-> startActivity(
+                        new Intent(ShowTweetActivity.this,ShowUserActivity.class).putExtra("user",item.getUser())
+                    ));
 
                 RelativeLayout tweetQuoteTweetLayout=(RelativeLayout) findViewById(R.id.tweet_show_quote_tweet);
 
@@ -104,9 +102,9 @@ public class ShowTweetActivity extends AppCompatActivity {
                         tweetQuoteTweetLayout.setVisibility(View.VISIBLE);
                     }
                     tweetQuoteTweetLayout.setOnClickListener(v -> {
-                        Intent intent = new Intent(ShowTweetActivity.this,ShowTweetActivity.class);
-                        intent.putExtra("statusId",(Long)quotedStatus.getId());
-                        startActivity(intent);
+                        startActivity(
+                                new Intent(ShowTweetActivity.this,ShowTweetActivity.class).putExtra("statusId",(Long)quotedStatus.getId())
+                        );
                     });
                     ((TextView) findViewById(R.id.tweet_show_quote_tweet_user_name)).setText(quotedStatus.getUser().getName());
                     ((TextView) findViewById(R.id.tweet_show_quote_tweet_user_id)).setText(TwitterStringUtil.plusAtMark(quotedStatus.getUser().getScreenName()));
