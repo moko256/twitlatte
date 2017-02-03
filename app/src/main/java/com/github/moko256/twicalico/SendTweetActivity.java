@@ -49,8 +49,7 @@ public class SendTweetActivity extends AppCompatActivity {
         editText=(AppCompatEditText)findViewById(R.id.tweet_text_edit);
         editText.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -58,8 +57,7 @@ public class SendTweetActivity extends AppCompatActivity {
             }
 
             @Override
-            public void afterTextChanged(Editable s) {
-            }
+            public void afterTextChanged(Editable s) {}
         });
 
         onEditTextChanged(editText.getText(),counterTextView);
@@ -100,7 +98,7 @@ public class SendTweetActivity extends AppCompatActivity {
     private void onEditTextChanged(CharSequence s,TextView counterTextView){
         int textLength=twitterTextValidator.getTweetLength(s.toString());
         int maxLength=Validator.MAX_TWEET_LENGTH;
-        counterTextView.setText(String.valueOf(textLength)+"/"+String.valueOf(maxLength));
+        counterTextView.setText(String.valueOf(textLength)+" / "+String.valueOf(maxLength));
         if (textLength>=maxLength){
             counterTextView.setTextColor(Color.RED);
         }
