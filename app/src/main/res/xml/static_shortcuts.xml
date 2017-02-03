@@ -1,1 +1,14 @@
-<shortcuts/>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="tweet"
+        android:enabled="true"
+        android:icon="@drawable/app_shortcut_tweet"
+        android:shortcutShortLabel="@string/tweet"
+        android:shortcutLongLabel="@string/tweet">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.github.moko256.twicailco"
+            android:targetClass="com.github.moko256.twicalico.SendTweetActivity"/>
+        <categories android:name="android.shortcut.conversation"/>
+    </shortcut>
+</shortcuts>
