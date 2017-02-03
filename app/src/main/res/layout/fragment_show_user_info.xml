@@ -29,18 +29,18 @@
                     android:id="@+id/show_user_bgimage"/>
 
                 <ImageView
-                    android:layout_width="42dp"
-                    android:layout_height="42dp"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
                     android:id="@+id/show_user_image"
                     android:layout_centerHorizontal="true"
-                    android:layout_marginTop="100dp"
+                    android:layout_marginTop="168dp"
                     android:transitionName="tweet_user_image" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/show_user_name"
-                    android:layout_below="@id/show_user_bgimage"
+                    android:layout_below="@id/show_user_image"
                     android:layout_centerHorizontal="true"
                     android:textAppearance="@style/TextAppearance.AppCompat.Title"/>
 
@@ -52,11 +52,21 @@
                     android:layout_centerHorizontal="true"
                     android:textAppearance="@style/TextAppearance.AppCompat.Subhead"/>
 
+                <Button
+                    android:id="@+id/show_user_follow_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/show_user_id"
+                    android:layout_margin="16dp"
+                    android:text="@string/create_follow"
+                    android:layout_centerHorizontal="true"
+                    style="@style/Widget.AppCompat.Button.Colored"/>
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/show_user_bio"
-                    android:layout_below="@id/show_user_id"
+                    android:layout_below="@id/show_user_follow_button"
                     android:layout_centerHorizontal="true"
                     android:gravity="center"
                     android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
