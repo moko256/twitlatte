@@ -129,8 +129,7 @@
             android:layout_marginBottom="2dp" />
 
         <!--
-         Please call AppCompatCheckBox#setButtonDrawable
-         and, set button image.
+         Please set button image.
 
          drawable/ic_heart_black_24dp
          drawable/ic_retweet_black_24dp
@@ -154,6 +153,10 @@
             android:layout_margin="12dp"
             app:buttonTint="@color/retweet_button_color_stateful"/>
 
+        <!--
+         Please set image : drawable/ic_reply_black_24dp
+         and, set tint : color/reply_button_color_stateful
+         -->
         <android.support.v7.widget.AppCompatImageButton
             android:id="@+id/tweet_content_reply_button"
             android:layout_width="24dp"
@@ -161,9 +164,7 @@
             android:layout_below="@id/tweet_image_container"
             android:layout_toLeftOf="@+id/tweet_content_retweet_button"
             android:layout_margin="12dp"
-            android:background="?attr/controlBackground"
-            app:srcCompat="@drawable/ic_reply_black_24dp"
-            android:tint="@color/imageToggleEnable"/>
+            android:background="?attr/controlBackground"/>
 
     </RelativeLayout>
 

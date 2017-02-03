@@ -3,9 +3,12 @@ package com.github.moko256.twicalico;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.AppCompatCheckBox;
+import android.support.v7.widget.AppCompatImageButton;
 import android.support.v7.widget.RecyclerView;
 import android.text.method.LinkMovementMethod;
 import android.view.View;
@@ -70,15 +73,17 @@ class StatusesAdapter extends BaseListAdapter<Status,StatusesAdapter.ViewHolder>
         viewHolder.tweetTimeStampText.setText(viewHolder.timeSpanConverter.toTimeSpanString(item.getCreatedAt().getTime()));
         viewHolder.tweetUserImage.setOnClickListener(v->{
             ViewCompat.setTransitionName(viewHolder.tweetUserImage,"tweet_user_image");
-            Intent intent = new Intent(context,ShowUserActivity.class);
-            intent.putExtra("user",item.getUser());
-            context.startActivity(intent, ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) context, viewHolder.tweetUserImage,"tweet_user_image").toBundle());
+            context.startActivity(
+                    new Intent(context, ShowUserActivity.class).putExtra("user",item.getUser()),
+                    ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) context, viewHolder.tweetUserImage, "tweet_user_image").toBundle()
+            );
         });
         viewHolder.itemView.setOnClickListener(v -> {
             ViewCompat.setTransitionName(viewHolder.tweetUserImage,"tweet_user_image");
-            Intent intent = new Intent(context,ShowTweetActivity.class);
-            intent.putExtra("status",item);
-            context.startActivity(intent, ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) context, viewHolder.tweetUserImage,"tweet_user_image").toBundle());
+            context.startActivity(
+                    new Intent(context,ShowTweetActivity.class).putExtra("status",item),
+                    ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) context, viewHolder.tweetUserImage,"tweet_user_image").toBundle()
+            );
         });
 
         Status quotedStatus=item.getQuotedStatus();
@@ -87,9 +92,7 @@ class StatusesAdapter extends BaseListAdapter<Status,StatusesAdapter.ViewHolder>
                 viewHolder.tweetQuoteTweetLayout.setVisibility(View.VISIBLE);
             }
             viewHolder.tweetQuoteTweetLayout.setOnClickListener(v -> {
-                Intent intent = new Intent(context,ShowTweetActivity.class);
-                intent.putExtra("statusId",(Long)quotedStatus.getId());
-                context.startActivity(intent);
+                context.startActivity(new Intent(context,ShowTweetActivity.class).putExtra("statusId",(Long)quotedStatus.getId()));
             });
             viewHolder.tweetQuoteTweetUserName.setText(quotedStatus.getUser().getName());
             viewHolder.tweetQuoteTweetUserId.setText(TwitterStringUtil.plusAtMark(quotedStatus.getUser().getScreenName()));
@@ -204,6 +207,7 @@ class StatusesAdapter extends BaseListAdapter<Status,StatusesAdapter.ViewHolder>
         TweetImageTableView tweetImageTableView;
         AppCompatCheckBox tweetLikeButton;
         AppCompatCheckBox tweetRetweetButton;
+        AppCompatImageButton tweetReplyButton;
 
         TimeSpanConverter timeSpanConverter;
 
@@ -226,6 +230,11 @@ class StatusesAdapter extends BaseListAdapter<Status,StatusesAdapter.ViewHolder>
 
             tweetRetweetButton=(AppCompatCheckBox) itemView.findViewById(R.id.tweet_content_retweet_button);
             tweetRetweetButton.setButtonDrawable(R.drawable.ic_retweet_black_24dp);
+
+            tweetReplyButton=(AppCompatImageButton) itemView.findViewById(R.id.tweet_content_reply_button);
+            Drawable replyIcon= DrawableCompat.wrap(context.getResources().getDrawable(R.drawable.ic_reply_black_24dp));
+            DrawableCompat.setTintList(replyIcon,context.getResources().getColorStateList(R.color.reply_button_color_stateful));
+            tweetReplyButton.setImageDrawable(replyIcon);
 
             timeSpanConverter=new TimeSpanConverter();
         }
