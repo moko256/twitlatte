@@ -3,7 +3,7 @@
     <string-array name="choose_timeline_image_load_mode_entries">
         <item>@string/mode_image_level_none</item>
         <item>@string/mode_image_level_low</item>
-        <item>@string/mode_image_level_none</item>
+        <item>@string/mode_image_level_normal</item>
         <item>@string/mode_image_level_full</item>
     </string-array>
     <string-array name="choose_timeline_image_load_mode_entries_value">
