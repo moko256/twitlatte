@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="choose_timeline_image_load_mode_entries">
-        <item>NONE</item>
-        <item>LOW</item>
-        <item>NORMAL</item>
-        <item>FULL</item>
+        <item>@string/mode_image_level_none</item>
+        <item>@string/mode_image_level_low</item>
+        <item>@string/mode_image_level_none</item>
+        <item>@string/mode_image_level_full</item>
     </string-array>
     <string-array name="choose_timeline_image_load_mode_entries_value">
         <item>mode_none</item>

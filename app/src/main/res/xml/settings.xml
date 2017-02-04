@@ -11,58 +11,58 @@
             android:title="@string/logout"/>
     </PreferenceCategory>
     <PreferenceCategory
-        android:title="High Power Mute">
+        android:title="@string/high_power_mute">
         <SwitchPreference
             android:key="patternTweetMuteEnabled"
             android:defaultValue="false"
-            android:title="Use tweet mute"
-            android:summaryOn="enable"
-            android:summaryOff="disable"/>
+            android:title="@string/use_tweet_regex_mute"
+            android:summaryOn="@string/enable"
+            android:summaryOff="@string/disable"/>
         <EditTextPreference
             android:key="tweetMutePattern"
             android:defaultValue=""
-            android:title="tweet mute pattern"
+            android:title="@string/tweet_mute_regex_pattern"
             android:summary="%s"
-            android:dialogTitle="Tweet mute Regex pattern"/>
+            android:dialogTitle="@string/edit_pattern"/>
 
         <SwitchPreference
             android:key="patternUserScreenNameMuteEnabled"
             android:defaultValue="false"
-            android:title="Use user screen name mute"
-            android:summaryOn="enable"
-            android:summaryOff="disable"/>
+            android:title="@string/use_user_screen_name_regex_mute"
+            android:summaryOn="@string/enable"
+            android:summaryOff="@string/disable"/>
         <EditTextPreference
             android:key="userScreenNameMutePattern"
             android:defaultValue=""
-            android:title="user screen name mute pattern"
+            android:title="@string/user_screen_name_mute_regex_pattern"
             android:summary="%s"
-            android:dialogTitle="Tweet user screen name mute Regex pattern"/>
+            android:dialogTitle="@string/edit_pattern"/>
 
         <SwitchPreference
             android:key="patternUserNameMuteEnabled"
             android:defaultValue="false"
-            android:title="Use user name mute"
-            android:summaryOn="enable"
-            android:summaryOff="disable"/>
+            android:title="@string/use_user_name_regex_mute"
+            android:summaryOn="@string/enable"
+            android:summaryOff="@string/disable"/>
         <EditTextPreference
             android:key="tweetUserNamePattern"
             android:defaultValue=""
-            android:title="user name mute pattern"
+            android:title="@string/user_name_mute_regex_pattern"
             android:summary="%s"
-            android:dialogTitle="Tweet user name mute Regex pattern"/>
+            android:dialogTitle="@string/edit_pattern"/>
 
         <SwitchPreference
             android:key="patternTweetSourceMuteEnabled"
             android:defaultValue="false"
-            android:title="Use client mute with"
-            android:summaryOn="enable"
-            android:summaryOff="disable"/>
+            android:title="@string/use_tweet_source_mute"
+            android:summaryOn="@string/enable"
+            android:summaryOff="@string/disable"/>
         <EditTextPreference
             android:key="tweetSourceMutePattern"
             android:defaultValue=""
-            android:title="client mute pattern"
+            android:title="@string/tweet_source_mute_regex_pattern"
             android:summary="%s"
-            android:dialogTitle="Client mute Regex pattern"/>
+            android:dialogTitle="@string/edit_pattern"/>
     </PreferenceCategory>
     <PreferenceCategory
         android:title="@string/app_settings">
