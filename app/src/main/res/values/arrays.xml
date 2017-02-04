@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="choose_account_number_entries">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
+    <string-array name="choose_timeline_image_load_mode_entries">
+        <item>NONE</item>
+        <item>LOW</item>
+        <item>NORMAL</item>
+        <item>FULL</item>
     </string-array>
-    <string-array name="choose_account_number_entries_value">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
+    <string-array name="choose_timeline_image_load_mode_entries_value">
+        <item>mode_none</item>
+        <item>mode_low</item>
+        <item>mode_normal</item>
+        <item>mode_full</item>
     </string-array>
+
     <string-array name="choose_night_mode_entries">
         <item>@string/mode_night_no</item>
         <item>@string/mode_night_auto</item>

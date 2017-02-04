@@ -3,12 +3,9 @@
     <PreferenceCategory android:title="@string/account">
         <ListPreference
             android:key="AccountPoint"
-            android:defaultValue=""
             android:title="@string/account"
             android:summary="%s"
-            android:dialogTitle="@string/account"
-            android:entries="@array/choose_account_number_entries"
-            android:entryValues="@array/choose_account_number_entries_value"/>
+            android:dialogTitle="@string/account"/>
         <Preference
             android:key="logout"
             android:title="@string/logout"/>
@@ -77,6 +74,14 @@
             android:dialogTitle="@string/theme"
             android:entries="@array/choose_night_mode_entries"
             android:entryValues="@array/choose_night_mode_entries_value"/>
+        <ListPreference
+            android:key="timelineImageLoadType"
+            android:defaultValue="mode_normal"
+            android:title="@string/theme"
+            android:summary="%s"
+            android:dialogTitle="@string/theme"
+            android:entries="@array/choose_timeline_image_load_mode_entries"
+            android:entryValues="@array/choose_timeline_image_load_mode_entries_value"/>
     </PreferenceCategory>
     <PreferenceCategory
         android:title="@string/about">

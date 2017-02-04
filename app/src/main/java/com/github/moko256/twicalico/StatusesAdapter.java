@@ -84,7 +84,13 @@ class StatusesAdapter extends BaseListAdapter<Status,StatusesAdapter.ViewHolder>
             }
         }
 
-        imageRequestManager.load(item.getUser().getBiggerProfileImageURL()).into(viewHolder.tweetUserImage);
+        String profileImageUrl;
+        if (GlobalApplication.configuration.getTimelineImageLoadMode()<=AppConfiguration.IMAGE_LOAD_MODE_LOW){
+            profileImageUrl=item.getUser().getProfileImageURLHttps();
+        } else {
+            profileImageUrl=item.getUser().getBiggerProfileImageURLHttps();
+        }
+        imageRequestManager.load(profileImageUrl).into(viewHolder.tweetUserImage);
 
         viewHolder.tweetUserName.setText(item.getUser().getName());
         viewHolder.tweetUserId.setText(TwitterStringUtil.plusAtMark(item.getUser().getScreenName()));
@@ -134,7 +140,30 @@ class StatusesAdapter extends BaseListAdapter<Status,StatusesAdapter.ViewHolder>
                 ImageView imageView=viewHolder.tweetImageTableView.getImageView(ii);
                 int finalIi = ii;
                 imageView.setOnClickListener(v-> context.startActivity(ShowImageActivity.getIntent(context,mediaEntities, finalIi)));
-                imageRequestManager.load(mediaEntities[ii].getMediaURLHttps()).placeholder(R.drawable.border_frame).centerCrop().into(imageView);
+
+                int loadMode=GlobalApplication.configuration.getTimelineImageLoadMode();
+
+                if (loadMode!=AppConfiguration.IMAGE_LOAD_MODE_NONE){
+                    String mediaUrlPrefix;
+                    switch (loadMode){
+                        case AppConfiguration.IMAGE_LOAD_MODE_LOW:
+                            mediaUrlPrefix="small";
+                            break;
+                        case AppConfiguration.IMAGE_LOAD_MODE_FULL:
+                            mediaUrlPrefix="large";
+                            break;
+                        default:
+                            mediaUrlPrefix="medium";
+                    }
+                    imageRequestManager
+                            .load(mediaEntities[ii].getMediaURLHttps()+":"+mediaUrlPrefix)
+                            .centerCrop()
+                            .into(imageView);
+                } else {
+                    imageRequestManager
+                            .load(R.drawable.border_frame)
+                            .into(imageView);
+                }
             }
         }
         else{

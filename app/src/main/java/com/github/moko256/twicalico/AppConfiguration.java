@@ -20,6 +20,12 @@ public class AppConfiguration {
     private boolean patternTweetSourceMuteEnabled;
     private String tweetSourceMutePattern;
 
+    final public static int IMAGE_LOAD_MODE_NONE=0;
+    final public static int IMAGE_LOAD_MODE_LOW=1;
+    final public static int IMAGE_LOAD_MODE_NORMAL=2;
+    final public static int IMAGE_LOAD_MODE_FULL=3;
+    private int timelineImageLoadMode;
+
     public boolean isPatternTweetMuteEnabled() {
         return patternTweetMuteEnabled;
     }
@@ -82,5 +88,13 @@ public class AppConfiguration {
 
     public void setTweetSourceMutePattern(String tweetSourceMutePattern) {
         this.tweetSourceMutePattern = tweetSourceMutePattern;
+    }
+
+    public void setTimelineImageLoadMode(int timelineImageLoadMode) {
+        this.timelineImageLoadMode = timelineImageLoadMode;
+    }
+
+    public int getTimelineImageLoadMode() {
+        return timelineImageLoadMode;
     }
 }
