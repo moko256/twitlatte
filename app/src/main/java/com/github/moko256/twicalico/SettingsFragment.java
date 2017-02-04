@@ -105,6 +105,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         version.setOnPreferenceClickListener(preference -> {
             Date birthday=new Date(1446956982000L);
             Toast.makeText(getContext(), "This application was born on "+birthday.toString(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "This application is "+String.valueOf((int)Math.floor((new Date().getTime()-birthday.getTime())/(31557600000L)))+" old.", Toast.LENGTH_SHORT).show();
             return false;
         });
 
