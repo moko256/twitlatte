@@ -33,6 +33,8 @@ public class GlobalApplication extends Application {
     static Twitter twitter;
     static User user;
 
+    static AppConfiguration configuration;
+
 
     @Override
     public void onCreate() {
@@ -80,6 +82,28 @@ public class GlobalApplication extends Application {
         });
 
         SharedPreferences defaultSharedPreferences=PreferenceManager.getDefaultSharedPreferences(this);
+
+        configuration=new AppConfiguration();
+
+        configuration.setPatternTweetMuteEnabled(defaultSharedPreferences.getBoolean("patternTweetMuteEnabled",false));
+        if(configuration.isPatternTweetMuteEnabled()){
+            configuration.setTweetMutePattern(defaultSharedPreferences.getString("tweetMutePattern",""));
+        }
+
+        configuration.setPatternUserScreenNameMuteEnabled(defaultSharedPreferences.getBoolean("patternUserScreenNameMuteEnabled",false));
+        if(configuration.isPatternUserScreenNameMuteEnabled()){
+            configuration.setUserScreenNameMutePattern(defaultSharedPreferences.getString("userScreenNameMutePattern",""));
+        }
+
+        configuration.setPatternUserNameMuteEnabled(defaultSharedPreferences.getBoolean("patternUserNameMuteEnabled",false));
+        if(configuration.isPatternUserNameMuteEnabled()){
+            configuration.setUserNameMutePattern(defaultSharedPreferences.getString("userNameMutePattern",""));
+        }
+
+        configuration.setPatternTweetSourceMuteEnabled(defaultSharedPreferences.getBoolean("patternTweetSourceMuteEnabled",false));
+        if(configuration.isPatternTweetSourceMuteEnabled()){
+            configuration.setTweetSourceMutePattern(defaultSharedPreferences.getString("tweetSourceMutePattern",""));
+        }
 
         @AppCompatDelegate.NightMode
         int mode=AppCompatDelegate.MODE_NIGHT_NO;

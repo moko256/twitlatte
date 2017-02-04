@@ -3,6 +3,7 @@ package com.github.moko256.twicalico;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
@@ -40,7 +41,28 @@ class StatusesAdapter extends BaseListAdapter<Status,StatusesAdapter.ViewHolder>
     }
 
     @Override
+    public int getItemViewType(int position) {
+        Status status=data.get(position);
+        Status item = status.isRetweet()?status.getRetweetedStatus():status;
+        AppConfiguration conf=GlobalApplication.configuration;
+        if((conf.isPatternTweetMuteEnabled() && item.getText().matches(conf.getTweetMutePattern())) ||
+                (conf.isPatternUserScreenNameMuteEnabled() && item.getUser().getScreenName().matches(conf.getUserScreenNameMutePattern())) ||
+                (conf.isPatternUserNameMuteEnabled() && item.getUser().getName().matches(conf.getUserNameMutePattern())) ||
+                (conf.isPatternTweetSourceMuteEnabled() && item.getSource().matches(conf.getTweetSourceMutePattern()))
+                ){
+            return 1;
+        }
+        return super.getItemViewType(position);
+    }
+
+    @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+        if (i==1){
+            ViewHolder vh=new ViewHolder(inflater.inflate(R.layout.layout_tweet, viewGroup, false));
+            vh.tweetContext.setTextColor(context.getResources().getColor(R.color.imageToggleDisable));
+            vh.tweetContext.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+            return vh;
+        }
         return new ViewHolder(inflater.inflate(R.layout.layout_tweet, viewGroup, false));
     }
 
@@ -91,9 +113,9 @@ class StatusesAdapter extends BaseListAdapter<Status,StatusesAdapter.ViewHolder>
             if (viewHolder.tweetQuoteTweetLayout.getVisibility() != View.VISIBLE) {
                 viewHolder.tweetQuoteTweetLayout.setVisibility(View.VISIBLE);
             }
-            viewHolder.tweetQuoteTweetLayout.setOnClickListener(v -> {
-                context.startActivity(new Intent(context,ShowTweetActivity.class).putExtra("statusId",(Long)quotedStatus.getId()));
-            });
+            viewHolder.tweetQuoteTweetLayout.setOnClickListener(v -> context.startActivity(
+                    new Intent(context,ShowTweetActivity.class).putExtra("statusId",(Long)quotedStatus.getId()))
+            );
             viewHolder.tweetQuoteTweetUserName.setText(quotedStatus.getUser().getName());
             viewHolder.tweetQuoteTweetUserId.setText(TwitterStringUtil.plusAtMark(quotedStatus.getUser().getScreenName()));
             viewHolder.tweetQuoteTweetContext.setText(quotedStatus.getText());

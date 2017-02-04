@@ -2,6 +2,8 @@ package com.github.moko256.twicalico;
 
 import android.content.Context;
 import android.support.design.widget.Snackbar;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.widget.Toast;
@@ -115,6 +117,15 @@ public abstract class BaseTweetListFragment extends BaseListFragment<StatusesAda
     @Override
     protected StatusesAdapter initializeListAdapter(Context context, ArrayList<Status> data) {
         return new StatusesAdapter(context,data);
+    }
+
+    @Override
+    protected RecyclerView.LayoutManager initializeRecyclerViewLayoutManager() {
+        if (getContext().getResources().getConfiguration().smallestScreenWidthDp>=600){
+            return new LinearLayoutManager(getContext());
+        } else {
+            return new LinearLayoutManager(getContext());
+        }
     }
 
     public Observable<ResponseList<Status>> getResponseObservable(Paging paging) {

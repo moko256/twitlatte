@@ -51,7 +51,7 @@ public abstract class BaseListFragment<A extends BaseListAdapter<LI,? extends Re
         adapter= initializeListAdapter(getContext(),list);
         recyclerView=(RecyclerView) view.findViewById(R.id.TLlistView);
         recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setLayoutManager(initializeRecyclerViewLayoutManager());
         recyclerView.addOnScrollListener(new LoadScrollListener((LinearLayoutManager) recyclerView.getLayoutManager()) {
             @Override
             public void load(int page) {
@@ -109,6 +109,10 @@ public abstract class BaseListFragment<A extends BaseListAdapter<LI,? extends Re
 
     protected SwipeRefreshLayout initializeSwipeRefreshLayout(View parent){
         return (SwipeRefreshLayout)parent.findViewById(R.id.srl);
+    }
+
+    protected RecyclerView.LayoutManager initializeRecyclerViewLayoutManager(){
+        return new LinearLayoutManager(getContext());
     }
 
     @LayoutRes
