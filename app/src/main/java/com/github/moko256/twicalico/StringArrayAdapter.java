@@ -9,6 +9,8 @@ import android.widget.TextView;
 
 /**
  * Created by moko256 on 2016/12/21.
+ *
+ * @author moko256
  */
 
 public class StringArrayAdapter extends RecyclerView.Adapter<StringArrayAdapter.ViewHolder> {
