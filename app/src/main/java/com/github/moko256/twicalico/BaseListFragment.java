@@ -1,6 +1,5 @@
 package com.github.moko256.twicalico;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.v4.app.Fragment;
@@ -11,17 +10,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.ArrayList;
-
 /**
  * Created by moko256 on 2016/10/09.
  *
  * @author moko256
  */
-public abstract class BaseListFragment<A extends BaseListAdapter<LI,? extends RecyclerView.ViewHolder>,LI> extends Fragment {
+public abstract class BaseListFragment extends Fragment {
 
-    private A adapter;
-    private ArrayList<LI> list;
     private RecyclerView recyclerView;
     private SwipeRefreshLayout swipeRefreshLayout;
 
@@ -29,15 +24,11 @@ public abstract class BaseListFragment<A extends BaseListAdapter<LI,? extends Re
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
 
-        list=new ArrayList<>();
-        if (savedInstanceState != null){
-            ArrayList<LI> l=(ArrayList<LI>) savedInstanceState.getSerializable("list");
-            if(l!=null){
-                list.addAll(l);
-            }else{
-                onInitializeList();
-            }
-        }else{
+        if (savedInstanceState!=null){
+            onRestoreInstanceState(savedInstanceState);
+        }
+
+        if (!isInitializedList()){
             onInitializeList();
         }
     }
@@ -48,23 +39,18 @@ public abstract class BaseListFragment<A extends BaseListAdapter<LI,? extends Re
 
         View view=inflater.inflate(getLayoutResourceId(), container ,false);
 
-        adapter= initializeListAdapter(getContext(),list);
         recyclerView=(RecyclerView) view.findViewById(R.id.TLlistView);
-        recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(initializeRecyclerViewLayoutManager());
         recyclerView.addOnScrollListener(new LoadScrollListener((LinearLayoutManager) recyclerView.getLayoutManager()) {
             @Override
-            public void load(int page) {
+            public void load() {
                 if(isInitializedList()){
                     onLoadMoreList();
                 }
             }
         });
-        if(list.size()>0){
-            adapter.notifyDataSetChanged();
-        }
 
-        swipeRefreshLayout=initializeSwipeRefreshLayout(view);
+        swipeRefreshLayout=(SwipeRefreshLayout) view.findViewById(R.id.srl);
         swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
         swipeRefreshLayout.setOnRefreshListener(()->{
             if (isInitializedList()){
@@ -83,33 +69,15 @@ public abstract class BaseListFragment<A extends BaseListAdapter<LI,? extends Re
 
         swipeRefreshLayout=null;
         recyclerView=null;
-        adapter=null;
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-
-        list=null;
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState){
-        outState.putSerializable("list", (ArrayList) list);
-        super.onSaveInstanceState(outState);
-    }
+    public void onRestoreInstanceState(Bundle savedInstanceState){}
 
     protected abstract void onInitializeList();
     protected abstract void onUpdateList();
     protected abstract void onLoadMoreList();
 
     protected abstract boolean isInitializedList();
-
-    protected abstract A initializeListAdapter(Context context, ArrayList<LI> data);
-
-    protected SwipeRefreshLayout initializeSwipeRefreshLayout(View parent){
-        return (SwipeRefreshLayout)parent.findViewById(R.id.srl);
-    }
 
     protected RecyclerView.LayoutManager initializeRecyclerViewLayoutManager(){
         return new LinearLayoutManager(getContext());
@@ -120,16 +88,16 @@ public abstract class BaseListFragment<A extends BaseListAdapter<LI,? extends Re
         return R.layout.fragment_base_list;
     }
 
-    public A getListAdapter(){
-        return adapter;
-    }
-
-    public ArrayList<LI> getContentList() {
-        return list;
-    }
-
     public SwipeRefreshLayout getSwipeRefreshLayout() {
         return swipeRefreshLayout;
+    }
+
+    protected RecyclerView.Adapter getAdapter() {
+        return recyclerView.getAdapter();
+    }
+
+    protected void setAdapter(RecyclerView.Adapter adapter) {
+        recyclerView.setAdapter(adapter);
     }
 }
 

@@ -10,24 +10,22 @@ import android.support.v7.widget.RecyclerView;
  */
 public abstract class LoadScrollListener extends RecyclerView.OnScrollListener{
 
-    int firstVisibleItem, visibleItemCount, totalItemCount;
     private int previousTotal = 0;
     private boolean loading = true;
-    private int current_page = 1;
 
-    private LinearLayoutManager mLinearLayoutManager;
+    private LinearLayoutManager linearLayoutManager;
 
     public LoadScrollListener(LinearLayoutManager linearLayoutManager) {
-        this.mLinearLayoutManager=linearLayoutManager;
+        this.linearLayoutManager = linearLayoutManager;
     }
 
     @Override
     public void onScrolled(RecyclerView recyclerView,int dx, int dy) {
         super.onScrolled(recyclerView,dx,dy);
 
-        visibleItemCount = recyclerView.getChildCount();
-        totalItemCount = mLinearLayoutManager.getItemCount();
-        firstVisibleItem = mLinearLayoutManager.findFirstVisibleItemPosition();
+        int visibleItemCount = recyclerView.getChildCount();
+        int totalItemCount = linearLayoutManager.getItemCount();
+        int firstVisibleItem = linearLayoutManager.findFirstVisibleItemPosition();
 
         if (loading) {
             if (totalItemCount > previousTotal) {
@@ -37,13 +35,12 @@ public abstract class LoadScrollListener extends RecyclerView.OnScrollListener{
         }
 
         if (!loading && (totalItemCount - visibleItemCount) <= (firstVisibleItem + 1)) {
-            current_page++;
-            load(current_page);
+            load();
             loading = true;
         }
 
     }
 
-    public abstract void load(int page);
+    public abstract void load();
 
 }

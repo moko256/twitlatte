@@ -1,11 +1,14 @@
 package com.github.moko256.twicalico;
 
-import android.content.Context;
+import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -23,8 +26,58 @@ import twitter4j.TwitterException;
  *
  * @author moko256
  */
-public abstract class BaseTweetListFragment extends BaseListFragment<StatusesAdapter,Status> {
+public abstract class BaseTweetListFragment extends BaseListFragment {
 
+    StatusesAdapter adapter;
+    ArrayList<Status> list;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        list=new ArrayList<>();
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view=super.onCreateView(inflater, container, savedInstanceState);
+
+        adapter=new StatusesAdapter(getContext(), list);
+        setAdapter(adapter);
+        if (!isInitializedList()){
+            adapter.notifyDataSetChanged();
+        }
+
+        return view;
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        if (savedInstanceState != null){
+            ArrayList<Status> l=(ArrayList<Status>) savedInstanceState.getSerializable("list");
+            if(l!=null){
+                list.addAll(l);
+            }
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState){
+        super.onSaveInstanceState(outState);
+        outState.putSerializable("list", (ArrayList) list);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        adapter=null;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        list=null;
+    }
 
     @Override
     protected void onInitializeList() {
@@ -33,8 +86,8 @@ public abstract class BaseTweetListFragment extends BaseListFragment<StatusesAda
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         result-> {
-                            getContentList().addAll(result);
-                            getListAdapter().notifyDataSetChanged();
+                            list.addAll(result);
+                            adapter.notifyDataSetChanged();
                         },
                         e -> {
                             e.printStackTrace();
@@ -48,7 +101,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment<StatusesAda
 
     @Override
     protected void onUpdateList() {
-        Paging paging=new Paging(getContentList().get(0).getId());
+        Paging paging=new Paging(list.get(0).getId());
         paging.count(50);
 
         getResponseObservable(paging)
@@ -58,8 +111,8 @@ public abstract class BaseTweetListFragment extends BaseListFragment<StatusesAda
                         result -> {
                             int size = result.size();
                             if (size > 0) {
-                                getContentList().addAll(0, result);
-                                getListAdapter().notifyItemRangeInserted(0,size);
+                                list.addAll(0, result);
+                                adapter.notifyItemRangeInserted(0,size);
                                 TypedValue value=new TypedValue();
                                 Toast t=Toast.makeText(getContext(),"New Tweet",Toast.LENGTH_SHORT);
                                 t.setGravity(
@@ -86,7 +139,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment<StatusesAda
     @Override
     protected void onLoadMoreList() {
         Paging paging=new Paging();
-        paging.maxId(getContentList().get(getContentList().size()-1).getId()-1L);
+        paging.maxId(list.get(list.size()-1).getId()-1L);
         paging.count(50);
         getResponseObservable(paging)
                 .subscribeOn(Schedulers.newThread())
@@ -95,8 +148,8 @@ public abstract class BaseTweetListFragment extends BaseListFragment<StatusesAda
                         result -> {
                             int size = result.size();
                             if (size > 0) {
-                                getContentList().addAll(result);
-                                getListAdapter().notifyItemRangeInserted(getContentList().size(),size);
+                                list.addAll(result);
+                                adapter.notifyItemRangeInserted(list.size(),size);
                             }
                         },
                         e -> {
@@ -111,12 +164,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment<StatusesAda
 
     @Override
     protected boolean isInitializedList() {
-        return getContentList().size()!=0;
-    }
-
-    @Override
-    protected StatusesAdapter initializeListAdapter(Context context, ArrayList<Status> data) {
-        return new StatusesAdapter(context,data);
+        return !list.isEmpty();
     }
 
     @Override

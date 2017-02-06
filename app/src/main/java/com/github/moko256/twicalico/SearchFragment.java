@@ -1,14 +1,16 @@
 package com.github.moko256.twicalico;
 
 import android.app.SearchManager;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.SearchView;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,14 +27,17 @@ import twitter4j.TwitterException;
  *
  * @author moko256
  */
-public class SearchFragment extends BaseListFragment<StatusesAdapter,Status> {
+public class SearchFragment extends BaseListFragment {
 
     private static String BUNDLE_KEY_SEARCH_QUERY="query";
 
+    private ArrayList<Status> list;
     private String searchText="";
+    private StatusesAdapter adapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        list=new ArrayList<>();
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
@@ -42,9 +47,50 @@ public class SearchFragment extends BaseListFragment<StatusesAdapter,Status> {
                 searchText=intent.getStringExtra(SearchManager.QUERY);
                 onInitializeList();
             }
-        } else {
-           searchText=savedInstanceState.getString(BUNDLE_KEY_SEARCH_QUERY,"");
         }
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view=super.onCreateView(inflater, container, savedInstanceState);
+
+        adapter=new StatusesAdapter(getContext(), list);
+        setAdapter(adapter);
+        if (!isInitializedList()){
+            adapter.notifyDataSetChanged();
+        }
+
+        return view;
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        ArrayList<Status> l=(ArrayList<Status>) savedInstanceState.getSerializable("list");
+        if(l!=null){
+            list.addAll(l);
+        }
+        searchText=savedInstanceState.getString(BUNDLE_KEY_SEARCH_QUERY,"");
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState){
+        super.onSaveInstanceState(outState);
+        outState.putSerializable("list", (ArrayList) list);
+        outState.putString(BUNDLE_KEY_SEARCH_QUERY,searchText);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        adapter=null;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        list=null;
+        searchText=null;
     }
 
     @Override
@@ -75,21 +121,15 @@ public class SearchFragment extends BaseListFragment<StatusesAdapter,Status> {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
-        outState.putString(BUNDLE_KEY_SEARCH_QUERY,searchText);
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
     protected void onInitializeList() {
         getResponseObservable()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         result-> {
-                            getContentList().clear();
-                            getContentList().addAll(result);
-                            getListAdapter().notifyDataSetChanged();
+                            list.clear();
+                            list.addAll(result);
+                            adapter.notifyDataSetChanged();
                         },
                         e -> {
                             e.printStackTrace();
@@ -110,11 +150,6 @@ public class SearchFragment extends BaseListFragment<StatusesAdapter,Status> {
     @Override
     protected boolean isInitializedList() {
         return false;
-    }
-
-    @Override
-    protected StatusesAdapter initializeListAdapter(Context context, ArrayList<Status> data) {
-        return new StatusesAdapter(context,data);
     }
 
     public Observable<List<Status>> getResponseObservable() {
