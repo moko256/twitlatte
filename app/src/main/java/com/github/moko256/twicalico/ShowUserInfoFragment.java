@@ -14,6 +14,8 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 
+import java.text.DateFormat;
+
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import twitter4j.Status;
@@ -35,6 +37,7 @@ public class ShowUserInfoFragment extends Fragment implements ToolbarTitleInterf
     TextView userNameText;
     TextView userIdText;
     TextView userBioText;
+    TextView userCreatedAt;
     TextView userTweetsCount;
     TextView userFollowCount;
     TextView userFollowerCount;
@@ -78,6 +81,7 @@ public class ShowUserInfoFragment extends Fragment implements ToolbarTitleInterf
         userNameText=(TextView) view.findViewById(R.id.show_user_name);
         userIdText=(TextView) view.findViewById(R.id.show_user_id);
         userBioText =(TextView) view.findViewById(R.id.show_user_bio);
+        userCreatedAt=(TextView) view.findViewById(R.id.show_user_created_at);
         userTweetsCount=(TextView) view.findViewById(R.id.show_user_tweets_count);
         userFollowCount=(TextView) view.findViewById(R.id.show_user_follow_count);
         userFollowerCount=(TextView) view.findViewById(R.id.show_user_follower_count);
@@ -103,6 +107,7 @@ public class ShowUserInfoFragment extends Fragment implements ToolbarTitleInterf
         getActivity().setTitle(user.getName());
         userBioText.setText(user.getDescription());
 
+        userCreatedAt.setText(DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.FULL).format(user.getCreatedAt()));
         userTweetsCount.setText(getContext().getString(R.string.tweet_counts_is,String.valueOf(user.getStatusesCount())));
         userFollowCount.setText(getContext().getString(R.string.follow_counts_is,String.valueOf(user.getFriendsCount())));
         userFollowerCount.setText(getContext().getString(R.string.follower_counts_is,String.valueOf(user.getFollowersCount())));

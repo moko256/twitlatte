@@ -93,7 +93,13 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:id="@+id/show_user_created_at"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:id="@+id/show_user_follow_count"
+                    android:layout_below="@id/show_user_created_at"
                     android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
                 <TextView
                     android:layout_width="match_parent"
