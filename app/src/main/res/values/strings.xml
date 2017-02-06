@@ -41,6 +41,7 @@
     <string name="destroy_follow_follower">Cancel Follow-Follower</string>
     <string name="spam_report">Report this Account as a spam</string>
     <string name="save_image">Save this image</string>
+    <string name="load_timeline_image_quality">Quality of the images on the timeline</string>
     <string name="about">About</string>
     <string name="license">License</string>
     <string name="enable">Enable</string>
@@ -56,10 +57,10 @@
     <string name="use_tweet_source_mute">Use Regex client mute</string>
     <string name="tweet_source_mute_regex_pattern">Tweet posted client mute Regex pattern</string>
 
-    <string name="mode_image_level_none">Not loading image at timeline</string>
-    <string name="mode_image_level_low">Level low</string>
-    <string name="mode_image_level_normal">Level normal</string>
-    <string name="mode_image_level_full">Level full</string>
+    <string name="mode_image_level_none">Not loading image on the timeline</string>
+    <string name="mode_image_level_low">Quality low</string>
+    <string name="mode_image_level_normal">Quality normal</string>
+    <string name="mode_image_level_full">Quality full</string>
 
     <string name="mode_night_no">Not Use</string>
     <string name="mode_night_yes">Use</string>

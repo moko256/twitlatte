@@ -77,9 +77,9 @@
         <ListPreference
             android:key="timelineImageLoadType"
             android:defaultValue="mode_normal"
-            android:title="@string/theme"
+            android:title="@string/load_timeline_image_quality"
             android:summary="%s"
-            android:dialogTitle="@string/theme"
+            android:dialogTitle="@string/load_timeline_image_quality"
             android:entries="@array/choose_timeline_image_load_mode_entries"
             android:entryValues="@array/choose_timeline_image_load_mode_entries_value"/>
     </PreferenceCategory>
