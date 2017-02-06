@@ -110,5 +110,48 @@
             </RelativeLayout>
         </android.support.v7.widget.CardView>
 
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/show_user_latest_tweet"
+            android:layout_below="@id/show_user_data_card"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="8dp"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:focusable="true"
+            app:cardCornerRadius="2dp"
+            app:cardElevation="2dp"
+            app:cardUseCompatPadding="true">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/show_user_latest_tweet_title"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                    android:text="@string/latest_tweet"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginLeft="16dp" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp"
+                    android:id="@+id/show_user_latest_tweet_text"
+                    android:layout_below="@id/show_user_latest_tweet_title"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
+                <Button
+                    android:id="@+id/show_user_latest_tweet_see_more_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:layout_below="@id/show_user_latest_tweet_text"
+                    android:text="@string/see_more"
+                    style="@style/Widget.AppCompat.Button.Borderless.Colored"/>
+            </RelativeLayout>
+        </android.support.v7.widget.CardView>
+
     </RelativeLayout>
 </android.support.v4.widget.NestedScrollView>
