@@ -38,6 +38,12 @@ class StatusesAdapter extends BaseListAdapter<Status,StatusesAdapter.ViewHolder>
 
     StatusesAdapter(Context context, ArrayList<Status> data) {
         super(context,data);
+        setHasStableIds(true);
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return data.get(position).getId();
     }
 
     @Override

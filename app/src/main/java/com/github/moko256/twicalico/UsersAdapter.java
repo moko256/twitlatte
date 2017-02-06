@@ -24,6 +24,12 @@ class UsersAdapter extends BaseListAdapter<User,UsersAdapter.ViewHolder> {
 
     UsersAdapter(Context context, ArrayList<User> data) {
         super(context, data);
+        setHasStableIds(true);
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return data.get(position).getId();
     }
 
     @Override
