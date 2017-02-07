@@ -3,22 +3,18 @@ package com.github.moko256.twicalico;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 
 import java.util.ArrayList;
-import java.util.List;
 
-import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import twitter4j.Paging;
 import twitter4j.Query;
+import twitter4j.RateLimitStatus;
+import twitter4j.ResponseList;
 import twitter4j.Status;
 import twitter4j.TwitterException;
 
@@ -27,17 +23,14 @@ import twitter4j.TwitterException;
  *
  * @author moko256
  */
-public class SearchFragment extends BaseListFragment {
+public class SearchFragment extends BaseTweetListFragment {
 
-    private static String BUNDLE_KEY_SEARCH_QUERY="query";
+    private final static String BUNDLE_KEY_SEARCH_QUERY="query";
 
-    private ArrayList<Status> list;
     private String searchText="";
-    private StatusesAdapter adapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        list=new ArrayList<>();
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
@@ -51,59 +44,38 @@ public class SearchFragment extends BaseListFragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view=super.onCreateView(inflater, container, savedInstanceState);
-
-        adapter=new StatusesAdapter(getContext(), list);
-        setAdapter(adapter);
-        if (!isInitializedList()){
-            adapter.notifyDataSetChanged();
-        }
-
-        return view;
-    }
-
-    @Override
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        ArrayList<Status> l=(ArrayList<Status>) savedInstanceState.getSerializable("list");
-        if(l!=null){
-            list.addAll(l);
-        }
         searchText=savedInstanceState.getString(BUNDLE_KEY_SEARCH_QUERY,"");
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState){
         super.onSaveInstanceState(outState);
-        outState.putSerializable("list", (ArrayList) list);
         outState.putString(BUNDLE_KEY_SEARCH_QUERY,searchText);
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        adapter=null;
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        list=null;
         searchText=null;
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.activity_search_toolbar,menu);
+
         MenuItem searchMenu=menu.findItem(R.id.action_search);
-        searchMenu.expandActionView();
         SearchView searchView=(SearchView) searchMenu.getActionView();
+
+        MenuItemCompat.expandActionView(searchMenu);
+        searchView.onActionViewExpanded();
         searchView.setQuery(searchText,false);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String searchWord) {
                 searchText=searchWord;
+                list.clear();
                 onInitializeList();
                 return false;
             }
@@ -121,49 +93,38 @@ public class SearchFragment extends BaseListFragment {
     }
 
     @Override
-    protected void onInitializeList() {
-        getResponseObservable()
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        result-> {
-                            list.clear();
-                            list.addAll(result);
-                            adapter.notifyDataSetChanged();
-                        },
-                        e -> {
-                            e.printStackTrace();
-                            Snackbar.make(getView(), "Error", Snackbar.LENGTH_INDEFINITE)
-                                    .setAction("Try", v -> onInitializeList())
-                                    .show();
-                        },
-                        ()-> getSwipeRefreshLayout().setRefreshing(false)
-                );
+    public ResponseList<Status> getResponseList(Paging paging) throws TwitterException {
+        SearchResultList result=new SearchResultList();
+        if (!searchText.equals("")){
+            Query query=new Query(searchText)
+                    .count(paging.getCount())
+                    .sinceId(paging.getSinceId())
+                    .maxId(paging.getMaxId());
+            result.addAll(GlobalApplication.twitter.search().search(query).getTweets());
+        }
+        return result;
     }
 
-    @Override
-    protected void onUpdateList() {}
+    private class SearchResultList extends ArrayList<Status> implements ResponseList<Status>{
 
-    @Override
-    protected void onLoadMoreList() {}
+        @Override
+        public int getAccessLevel() {return 0;}
 
-    @Override
-    protected boolean isInitializedList() {
-        return false;
-    }
+        @Override
+        public RateLimitStatus getRateLimitStatus() {
+            return new RateLimitStatus() {
+                @Override
+                public int getRemaining() {return 0;}
 
-    public Observable<List<Status>> getResponseObservable() {
-        return Observable.create(
-                subscriber->{
-                    try {
-                        if (!searchText.equals("")){
-                            subscriber.onNext(GlobalApplication.twitter.search().search(new Query(searchText)).getTweets());
-                        }
-                        subscriber.onCompleted();
-                    } catch (TwitterException e) {
-                        subscriber.onError(e);
-                    }
-                }
-        );
+                @Override
+                public int getLimit() {return 0;}
+
+                @Override
+                public int getResetTimeInSeconds() {return 0;}
+
+                @Override
+                public int getSecondsUntilReset() {return 0;}
+            };
+        }
     }
 }
