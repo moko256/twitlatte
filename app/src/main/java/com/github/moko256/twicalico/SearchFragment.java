@@ -77,12 +77,12 @@ public class SearchFragment extends BaseTweetListFragment {
                 searchText=searchWord;
                 list.clear();
                 onInitializeList();
-                return false;
+                return true;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                return false;
+                return true;
             }
         });
         searchView.setOnCloseListener(() -> {
