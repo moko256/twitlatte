@@ -8,6 +8,7 @@ import android.graphics.drawable.Drawable;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.view.ViewCompat;
+import android.support.v7.content.res.AppCompatResources;
 import android.support.v7.widget.AppCompatCheckBox;
 import android.support.v7.widget.AppCompatImageButton;
 import android.support.v7.widget.RecyclerView;
@@ -289,7 +290,7 @@ class StatusesAdapter extends BaseListAdapter<Status,StatusesAdapter.ViewHolder>
             tweetRetweetButton.setButtonDrawable(R.drawable.ic_retweet_black_24dp);
 
             tweetReplyButton=(AppCompatImageButton) itemView.findViewById(R.id.tweet_content_reply_button);
-            Drawable replyIcon= DrawableCompat.wrap(context.getResources().getDrawable(R.drawable.ic_reply_black_24dp));
+            Drawable replyIcon= DrawableCompat.wrap(AppCompatResources.getDrawable(context, R.drawable.ic_reply_black_24dp));
             DrawableCompat.setTintList(replyIcon,context.getResources().getColorStateList(R.color.reply_button_color_stateful));
             tweetReplyButton.setImageDrawable(replyIcon);
 
