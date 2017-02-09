@@ -74,15 +74,16 @@ public class SearchFragment extends BaseTweetListFragment {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String searchWord) {
+                searchView.clearFocus();
                 searchText=searchWord;
                 list.clear();
                 onInitializeList();
-                return true;
+                return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                return true;
+                return false;
             }
         });
         searchView.setOnCloseListener(() -> {
