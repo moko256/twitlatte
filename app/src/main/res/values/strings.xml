@@ -44,6 +44,7 @@
     <string name="latest_tweet">Latest tweet</string>
     <string name="see_more">See more…</string>
     <string name="error_occurred">Error occurred</string>
+    <string name="retry">retry</string>
     <string name="error_occurred_with_error_code">Error occurred (Error code : %d)</string>
     <string name="load_timeline_image_quality">Quality of the images on the timeline</string>
     <string name="about">About</string>
