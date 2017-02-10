@@ -153,9 +153,9 @@ public class ShowUserActivity extends AppCompatActivity implements ActivityHasUs
                         o -> {},
                         throwable -> {
                             throwable.printStackTrace();
-                            Toast.makeText(this,"Error occurred.",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, R.string.error_occurred, Toast.LENGTH_SHORT).show();
                         },
-                        ()->Toast.makeText(this,"Succeeded.",Toast.LENGTH_SHORT).show()
+                        ()->Toast.makeText(this, R.string.succeeded, Toast.LENGTH_SHORT).show()
                 );
 
     }

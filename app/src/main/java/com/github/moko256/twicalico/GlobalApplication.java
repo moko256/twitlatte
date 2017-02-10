@@ -68,7 +68,7 @@ public class GlobalApplication extends Application {
                                         )
                                 ))
                         .setBigContentTitle("Error : "+e.toString())
-                        .setSummaryText("Error occurred.");
+                        .setSummaryText(getResources().getString(R.string.error_occurred));
                 String[] lines=stringWriter.toString().split("\n");
                 for(String s : lines){
                     inboxStyle.addLine(s);

@@ -197,11 +197,11 @@ class StatusesAdapter extends BaseListAdapter<Status,StatusesAdapter.ViewHolder>
                         result->{
                             //data.set(i,(Status)result);
                             //notifyItemChanged(i);
-                            Toast.makeText(context,"succeed",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, R.string.succeeded, Toast.LENGTH_SHORT).show();
                         },
                         throwable -> {
                             throwable.printStackTrace();
-                            Toast.makeText(context,"error",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, R.string.error_occurred, Toast.LENGTH_SHORT).show();
                         },
                         ()->{}
                 )
@@ -228,11 +228,11 @@ class StatusesAdapter extends BaseListAdapter<Status,StatusesAdapter.ViewHolder>
                         result->{
                             //data.set(i,(Status)result);
                             //notifyItemChanged(i);
-                            Toast.makeText(context,"succeed",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, R.string.succeeded, Toast.LENGTH_SHORT).show();
                         },
                         throwable -> {
                             throwable.printStackTrace();
-                            Toast.makeText(context,"error",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context,R.string.error_occurred,Toast.LENGTH_SHORT).show();
                         },
                         ()->{}
                 )
