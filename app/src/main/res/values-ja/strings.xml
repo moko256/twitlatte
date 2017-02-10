@@ -35,6 +35,7 @@
     <string name="save_image">この画像を保存する</string>
     <string name="latest_tweet">直近のツイート</string>
     <string name="see_more">もっと見る</string>
+    <string name="error_occurred">エラーが発生しました</string>
     <string name="load_timeline_image_quality">タイムラインの画像の画質</string>
     <string name="about">概要</string>
     <string name="license">ライセンス</string>
