@@ -20,6 +20,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+
 import java.util.ArrayList;
 
 import rx.Observable;
@@ -239,6 +241,14 @@ class StatusesAdapter extends BaseListAdapter<Status,StatusesAdapter.ViewHolder>
         );
         viewHolder.tweetRetweetButton.setChecked(item.isRetweeted());
         viewHolder.tweetRetweetButton.setEnabled(!item.getUser().isProtected());
+    }
+
+    @Override
+    public void onViewRecycled(ViewHolder holder) {
+        super.onViewRecycled(holder);
+        for (int i=0;i<4;i++){
+            Glide.clear(holder.tweetImageTableView.getImageView(i));
+        }
     }
 
     @Override
