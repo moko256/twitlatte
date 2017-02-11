@@ -24,14 +24,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/tweet_retweet_user_name"
-            android:textSize="14sp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
             android:layout_marginBottom="12dp"
             android:layout_marginLeft="16dp"/>
 
         <ImageView
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_marginBottom="8dp"
             android:layout_marginRight="8dp"
             android:id="@+id/TLimage"
             android:layout_below="@+id/tweet_retweet_user_name"/>
@@ -42,9 +41,9 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/tweet_retweet_user_name"
             android:layout_alignParentRight="true"
-            android:textColor="#808080"
+            android:textColor="?android:textColorSecondary"
             android:lines="1"
-            android:textSize="16sp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:gravity="right"/>
 
         <TextView
@@ -55,11 +54,10 @@
             android:layout_toLeftOf="@id/tweet_time_stamp_text"
             android:layout_toRightOf="@id/TLimage"
             android:ellipsize="end"
-            android:textSize="16sp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:lines="1"
             android:layout_marginTop="0dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginBottom="2dp"/>
+            android:layout_marginRight="8dp"/>
 
         <TextView
             android:id="@+id/tweet_user_id"
@@ -69,19 +67,16 @@
             android:ellipsize="end"
             android:layout_below="@id/tweet_user_name"
             android:layout_toRightOf="@id/TLimage"
-            android:textSize="16sp"
-            android:layout_marginTop="0dp"
-            android:layout_marginBottom="2dp"
-            android:textColor="#808080"/>
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textColor="?android:textColorSecondary"/>
 
         <TextView
             android:id="@+id/tweet_content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/tweet_user_id"
-            android:layout_marginTop="0dp"
-            android:layout_marginBottom="2dp"
-            android:textSize="16sp"/>
+            android:layout_below="@id/TLimage"
+            android:layout_marginTop="16dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
 
         <RelativeLayout
             android:id="@+id/tweet_quote_tweet"
@@ -89,12 +84,12 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/tweet_content"
             android:background="@drawable/border_frame"
-            android:layout_marginTop="2dp"
+            android:layout_marginTop="16dp"
             android:padding="8dp">
             <TextView
                 android:id="@+id/tweet_quote_tweet_user_name"
                 android:ellipsize="end"
-                android:textSize="16sp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 android:lines="1"
                 android:layout_marginRight="8dp"
                 android:layout_width="wrap_content"
@@ -107,8 +102,8 @@
                 android:layout_toRightOf="@id/tweet_quote_tweet_user_name"
                 android:lines="1"
                 android:ellipsize="end"
-                android:textSize="16sp"
-                android:textColor="#808080"/>
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:textColor="?android:textColorSecondary"/>
             <TextView
                 android:id="@+id/tweet_quote_tweet_content"
                 android:layout_width="wrap_content"
@@ -116,7 +111,7 @@
                 android:layout_below="@id/tweet_quote_tweet_user_name"
                 android:maxLines="5"
                 android:ellipsize="end"
-                android:textSize="16sp"/>
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
         </RelativeLayout>
 
         <com.github.moko256.twicalico.TweetImageTableView
@@ -124,9 +119,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/tweet_quote_tweet"
+            android:layout_marginTop="16dp"
             android:layout_marginLeft="-16dp"
-            android:layout_marginRight="-16dp"
-            android:layout_marginBottom="2dp" />
+            android:layout_marginRight="-16dp"/>
 
         <!--
          Please set button image.
@@ -141,7 +136,10 @@
             android:layout_height="24dp"
             android:layout_below="@id/tweet_image_container"
             android:layout_alignParentRight="true"
-            android:layout_margin="12dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="4dp"
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="12dp"
             app:buttonTint="@color/like_button_color_stateful"/>
 
         <android.support.v7.widget.AppCompatCheckBox
@@ -150,7 +148,10 @@
             android:layout_height="24dp"
             android:layout_below="@id/tweet_image_container"
             android:layout_toLeftOf="@+id/tweet_content_like_button"
-            android:layout_margin="12dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="4dp"
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="12dp"
             app:buttonTint="@color/retweet_button_color_stateful"/>
 
         <!--
@@ -163,7 +164,10 @@
             android:layout_height="24dp"
             android:layout_below="@id/tweet_image_container"
             android:layout_toLeftOf="@+id/tweet_content_retweet_button"
-            android:layout_margin="12dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="4dp"
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="12dp"
             android:background="?attr/controlBackground"/>
 
     </RelativeLayout>
