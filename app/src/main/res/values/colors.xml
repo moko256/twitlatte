@@ -4,9 +4,11 @@
     <color name="colorPrimaryDark">#5D4037</color>
     <color name="colorAccent">#FF9100</color>
 
+    <color name="preference_fallback_accent_color">@color/colorAccent</color>
+
     <color name="imageToggleEnable">#8A000000</color>
     <color name="imageToggleDisable">#42000000</color>
 
     <color name="likeToggleCheckedColor">#E91E63</color>
-    <color name="retweetToggleCheckedColor">#430A47</color>
+    <color name="retweetToggleCheckedColor">#4CAF50</color>
 </resources>

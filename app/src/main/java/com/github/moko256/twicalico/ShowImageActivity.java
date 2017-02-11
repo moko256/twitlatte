@@ -15,8 +15,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
 
-import java.util.Objects;
-
 import twitter4j.MediaEntity;
 
 /**
@@ -89,7 +87,7 @@ public class ShowImageActivity extends AppCompatActivity {
         switch (mediaEntity.getType()){
             case "video":
                 for(MediaEntity.Variant variant : mediaEntity.getVideoVariants()){
-                    if(Objects.equals(variant.getContentType(), "video/mp4")){
+                    if(variant.getContentType().equals("video/mp4")){
                         path=variant.getUrl();
                         ext="mp4";
                     }

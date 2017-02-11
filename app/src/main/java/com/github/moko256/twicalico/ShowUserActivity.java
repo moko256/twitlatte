@@ -12,8 +12,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import java.util.Objects;
-
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -188,7 +186,7 @@ public class ShowUserActivity extends AppCompatActivity implements ActivityHasUs
                 .create(
                         subscriber->{
                             String userName=(String) getIntent().getSerializableExtra("userName");
-                            if(!(user!=null&& Objects.equals(user.getScreenName(), userName))){
+                            if(!(user!=null&&user.getScreenName().equals(userName))){
                                 if(userName!=null){
                                     try {
                                         user=GlobalApplication.twitter.showUser(userName);
