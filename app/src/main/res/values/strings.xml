@@ -30,7 +30,7 @@
     <string name="follower_counts_is">Followers: %s</string>
     <string name="other">Others</string>
     <string name="share">Share…</string>
-    <string name="add_list">Add list</string>
+    <string name="add_to_list">Add to list</string>
     <string name="show_list">Show lists</string>
     <string name="create_follow">Follow</string>
     <string name="destroy_follow">Cancel Follow</string>
