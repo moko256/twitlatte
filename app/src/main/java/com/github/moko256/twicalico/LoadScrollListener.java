@@ -1,7 +1,7 @@
 package com.github.moko256.twicalico;
 
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 
 /**
  * Created by moko256 on 2016/06/05.
@@ -13,10 +13,12 @@ public abstract class LoadScrollListener extends RecyclerView.OnScrollListener{
     private int previousTotal = 0;
     private boolean loading = true;
 
-    private LinearLayoutManager linearLayoutManager;
+    private int[] firstVisibleItems;
 
-    public LoadScrollListener(LinearLayoutManager linearLayoutManager) {
-        this.linearLayoutManager = linearLayoutManager;
+    private StaggeredGridLayoutManager staggeredGridLayoutManager;
+
+    public LoadScrollListener(StaggeredGridLayoutManager staggeredGridLayoutManager) {
+        this.staggeredGridLayoutManager = staggeredGridLayoutManager;
     }
 
     @Override
@@ -24,8 +26,9 @@ public abstract class LoadScrollListener extends RecyclerView.OnScrollListener{
         super.onScrolled(recyclerView,dx,dy);
 
         int visibleItemCount = recyclerView.getChildCount();
-        int totalItemCount = linearLayoutManager.getItemCount();
-        int firstVisibleItem = linearLayoutManager.findFirstVisibleItemPosition();
+        int totalItemCount = staggeredGridLayoutManager.getItemCount();
+        firstVisibleItems=staggeredGridLayoutManager.findFirstVisibleItemPositions(firstVisibleItems);
+        int firstVisibleItem = firstVisibleItems[0];
 
         if (loading) {
             if (totalItemCount > previousTotal) {

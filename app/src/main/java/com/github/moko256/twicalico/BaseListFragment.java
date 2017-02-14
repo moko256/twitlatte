@@ -4,8 +4,8 @@ import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,7 +41,7 @@ public abstract class BaseListFragment extends Fragment {
 
         recyclerView=(RecyclerView) view.findViewById(R.id.TLlistView);
         recyclerView.setLayoutManager(initializeRecyclerViewLayoutManager());
-        recyclerView.addOnScrollListener(new LoadScrollListener((LinearLayoutManager) recyclerView.getLayoutManager()) {
+        recyclerView.addOnScrollListener(new LoadScrollListener((StaggeredGridLayoutManager) recyclerView.getLayoutManager()) {
             @Override
             public void load() {
                 if(isInitializedList()){
@@ -80,7 +80,7 @@ public abstract class BaseListFragment extends Fragment {
     protected abstract boolean isInitializedList();
 
     protected RecyclerView.LayoutManager initializeRecyclerViewLayoutManager(){
-        return new LinearLayoutManager(getContext());
+        return new StaggeredGridLayoutManager(1,StaggeredGridLayoutManager.VERTICAL);
     }
 
     @LayoutRes

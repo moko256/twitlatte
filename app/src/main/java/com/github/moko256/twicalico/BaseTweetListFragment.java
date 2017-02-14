@@ -2,8 +2,8 @@ package com.github.moko256.twicalico;
 
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -173,9 +173,9 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
     @Override
     protected RecyclerView.LayoutManager initializeRecyclerViewLayoutManager() {
         if (getContext().getResources().getConfiguration().smallestScreenWidthDp>=600){
-            return new LinearLayoutManager(getContext());
+            return new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         } else {
-            return new LinearLayoutManager(getContext());
+            return new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
         }
     }
 
