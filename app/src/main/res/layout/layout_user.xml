@@ -2,16 +2,15 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="72dp"
     android:foreground="?android:attr/selectableItemBackground"
     android:focusable="true"
-    android:clickable="true"
-    android:padding="16dp">
+    android:clickable="true">
 
     <ImageView
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_marginRight="8dp"
+        android:layout_margin="16dp"
         android:id="@+id/user_user_image"/>
 
     <TextView
@@ -21,18 +20,21 @@
         android:layout_toRightOf="@id/user_user_image"
         android:ellipsize="end"
         android:lines="1"
-        android:layout_marginRight="8dp"
-        android:textSize="16sp"/>
+        android:layout_marginTop="16dp"
+        android:layout_marginRight="16dp"
+        android:textSize="16sp"
+        android:textColor="?android:textColorPrimary"/>
 
     <TextView
         android:id="@+id/user_user_id"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/user_user_image"
+        android:layout_below="@id/user_user_name"
         android:ellipsize="end"
         android:lines="1"
-        android:layout_toRightOf="@id/user_user_name"
-        android:layout_alignParentRight="true"
+        android:layout_marginRight="16dp"
         android:textSize="16sp"
-        android:textColor="#808080"/>
+        android:textColor="?android:textColorSecondary"/>
 
 </RelativeLayout>
