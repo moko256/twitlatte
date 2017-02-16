@@ -1,5 +1,6 @@
 package com.github.moko256.twicalico;
 
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
@@ -40,6 +41,20 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view=super.onCreateView(inflater, container, savedInstanceState);
+
+        getRecyclerView().addItemDecoration(new RecyclerView.ItemDecoration() {
+            @Override
+            public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+                super.getItemOffsets(outRect, view, parent, state);
+
+                int span=((StaggeredGridLayoutManager.LayoutParams) view.getLayoutParams()).getSpanIndex();
+                float dens=getContext().getResources().getDisplayMetrics().density;
+
+                outRect.left=Math.round(dens*(span==0?8:4));
+                outRect.right=Math.round(dens*(span==((StaggeredGridLayoutManager) parent.getLayoutManager()).getSpanCount()-1?4:8));
+                outRect.bottom=outRect.top=Math.round(dens*4);
+            }
+        });
 
         adapter=new StatusesAdapter(getContext(), list);
         setAdapter(adapter);

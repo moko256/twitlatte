@@ -96,6 +96,10 @@ public abstract class BaseListFragment extends Fragment {
         return recyclerView.getAdapter();
     }
 
+    public RecyclerView getRecyclerView() {
+        return recyclerView;
+    }
+
     protected void setAdapter(RecyclerView.Adapter adapter) {
         recyclerView.setAdapter(adapter);
     }
