@@ -14,6 +14,7 @@ import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.preference.PreferenceManager;
 import android.widget.Toast;
 
+import java.text.DateFormat;
 import java.util.Date;
 
 /**
@@ -104,8 +105,13 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         version.setSummary("Version "+ BuildConfig.VERSION_NAME);
         version.setOnPreferenceClickListener(preference -> {
             Date birthday=new Date(1446956982000L);
-            Toast.makeText(getContext(), "This application was born on "+birthday.toString(), Toast.LENGTH_SHORT).show();
-            Toast.makeText(getContext(), "This application is "+String.valueOf((int)Math.floor((new Date().getTime()-birthday.getTime())/(31557600000L)))+" old.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(
+                    getContext(),
+                    "This application was born on "+
+                            DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.FULL).format(birthday),
+                    Toast.LENGTH_SHORT
+            ).show();
+            Toast.makeText(getContext(), "This application is "+String.valueOf((int)Math.floor((new Date().getTime()-birthday.getTime())/(31557600000L)))+"years old.", Toast.LENGTH_SHORT).show();
             return false;
         });
 

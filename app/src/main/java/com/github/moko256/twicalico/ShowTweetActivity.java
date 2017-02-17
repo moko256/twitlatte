@@ -9,7 +9,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatEditText;
 import android.text.Html;
-import android.text.format.DateUtils;
 import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.widget.ImageView;
@@ -19,6 +18,8 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
+
+import java.text.DateFormat;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
@@ -131,8 +132,9 @@ public class ShowTweetActivity extends AppCompatActivity {
                     tableView.setVisibility(View.GONE);
                 }
 
-                ((TextView)findViewById(R.id.tweet_show_timestamp)).setText(DateUtils.formatDateTime(
-                        ShowTweetActivity.this,item.getCreatedAt().getTime(),DateUtils.FORMAT_ABBREV_RELATIVE)
+                ((TextView)findViewById(R.id.tweet_show_timestamp)).setText(
+                        DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.FULL)
+                                .format(item.getCreatedAt())
                 );
                 TextView viaText=(TextView)findViewById(R.id.tweet_show_via);
                 viaText.setText(Html.fromHtml("via:"+item.getSource()));
