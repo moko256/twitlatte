@@ -62,6 +62,7 @@ public class ShowTweetActivity extends AppCompatActivity {
                             statusId = Long.parseLong(data.getQueryParameter("id"), 10);
                         } else {
                             ShowTweetActivity.this.finish();
+                            return null;
                         }
                     }
                     try {
@@ -102,11 +103,9 @@ public class ShowTweetActivity extends AppCompatActivity {
                     if (tweetQuoteTweetLayout.getVisibility() != View.VISIBLE) {
                         tweetQuoteTweetLayout.setVisibility(View.VISIBLE);
                     }
-                    tweetQuoteTweetLayout.setOnClickListener(v -> {
-                        startActivity(
-                                new Intent(ShowTweetActivity.this,ShowTweetActivity.class).putExtra("statusId",(Long)quotedStatus.getId())
-                        );
-                    });
+                    tweetQuoteTweetLayout.setOnClickListener(v -> startActivity(
+                            new Intent(ShowTweetActivity.this,ShowTweetActivity.class).putExtra("statusId",(Long)quotedStatus.getId())
+                    ));
                     ((TextView) findViewById(R.id.tweet_show_quote_tweet_user_name)).setText(quotedStatus.getUser().getName());
                     ((TextView) findViewById(R.id.tweet_show_quote_tweet_user_id)).setText(TwitterStringUtil.plusAtMark(quotedStatus.getUser().getScreenName()));
                     ((TextView) findViewById(R.id.tweet_show_quote_tweet_content)).setText(quotedStatus.getText());
