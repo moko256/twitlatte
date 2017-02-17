@@ -51,7 +51,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                 float dens=getContext().getResources().getDisplayMetrics().density;
 
                 outRect.left=Math.round(dens*(span==0?8:4));
-                outRect.right=Math.round(dens*(span==((StaggeredGridLayoutManager) parent.getLayoutManager()).getSpanCount()-1?4:8));
+                outRect.right=Math.round(dens*(span==((StaggeredGridLayoutManager) parent.getLayoutManager()).getSpanCount()-1?8:4));
                 outRect.bottom=outRect.top=Math.round(dens*4);
             }
         });
