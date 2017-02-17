@@ -52,7 +52,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
 
                 outRect.left=Math.round(dens*(span==0?8:4));
                 outRect.right=Math.round(dens*(span==((StaggeredGridLayoutManager) parent.getLayoutManager()).getSpanCount()-1?8:4));
-                outRect.bottom=outRect.top=Math.round(dens*4);
+                outRect.top=Math.round(dens*8);
             }
         });
 
