@@ -1,7 +1,9 @@
 package com.github.moko256.twicalico;
 
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,6 +37,16 @@ public abstract class BaseUsersFragment extends BaseListFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view=super.onCreateView(inflater, container, savedInstanceState);
+
+        getRecyclerView().addItemDecoration(new RecyclerView.ItemDecoration() {
+            @Override
+            public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+                super.getItemOffsets(outRect, view, parent, state);
+                if (parent.getChildAdapterPosition(view)==0){
+                    outRect.top=Math.round(getContext().getResources().getDisplayMetrics().density*8);
+                }
+            }
+        });
 
         adapter=new UsersAdapter(getContext(), list);
         setAdapter(adapter);
