@@ -7,10 +7,10 @@
         <item>@string/mode_image_level_full</item>
     </string-array>
     <string-array name="choose_timeline_image_load_mode_entries_value">
-        <item>mode_none</item>
-        <item>mode_low</item>
-        <item>mode_normal</item>
-        <item>mode_full</item>
+        <item>@string/mode_none_value</item>
+        <item>@string/mode_low_value</item>
+        <item>@string/mode_normal_value</item>
+        <item>@string/mode_full_value</item>
     </string-array>
 
     <string-array name="choose_night_mode_entries">
@@ -20,23 +20,9 @@
         <item>@string/mode_night_yes</item>
     </string-array>
     <string-array name="choose_night_mode_entries_value">
-        <item>mode_night_no</item>
-        <item>mode_night_auto</item>
-        <item>mode_night_follow_system</item>
-        <item>mode_night_yes</item>
+        <item>@string/mode_night_no_value</item>
+        <item>@string/mode_night_auto_value</item>
+        <item>@string/mode_night_follow_system_value</item>
+        <item>@string/mode_night_yes_value</item>
     </string-array>
-
-    <string-array name="license_entries">
-        <item>Android Compatibility Library v4</item>
-        <item>Android Compatibility Library v7</item>
-        <item>Android Compatibility Library v14</item>
-        <item>Android Design Support Library</item>
-        <item>Glide</item>
-        <item>OkHttp</item>
-        <item>Twitter4J</item>
-        <item>twitter-text</item>
-        <item>RxJava</item>
-        <item>RxAndroid</item>
-    </string-array>
-
 </resources>
