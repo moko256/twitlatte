@@ -1,21 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layer-list
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:drawable="@drawable/app_shortcut_background"
         android:top="2dp"
         android:bottom="2dp"
         android:left="2dp"
-        android:right="2dp">
-
-    </item>
-    <item
-        android:top="12dp"
-        android:bottom="12dp"
-        android:left="12dp"
-        android:right="12dp">
-        <selector>
-            <item android:drawable="@drawable/ic_add_color_accent_24dp"/>
-        </selector>
-    </item>
+        android:right="2dp"/>
+    <item android:drawable="@drawable/ic_add_app_shortcut"/>
 </layer-list>
