@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="72dp"
@@ -23,7 +25,8 @@
         android:layout_marginTop="16dp"
         android:layout_marginRight="16dp"
         android:textSize="16sp"
-        android:textColor="?android:textColorPrimary"/>
+        android:textColor="?android:textColorPrimary"
+        tools:text="User name"/>
 
     <TextView
         android:id="@+id/user_user_id"
@@ -35,6 +38,7 @@
         android:lines="1"
         android:layout_marginRight="16dp"
         android:textSize="16sp"
-        android:textColor="?android:textColorSecondary"/>
+        android:textColor="?android:textColorSecondary"
+        tools:text="\@user_id"/>
 
 </RelativeLayout>

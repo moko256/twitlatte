@@ -2,6 +2,7 @@
 <android.support.v7.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:clipToPadding="false"
@@ -23,14 +24,16 @@
             android:id="@+id/tweet_retweet_user_name"
             android:textAppearance="@style/TextAppearance.AppCompat.Caption"
             android:layout_marginBottom="12dp"
-            android:layout_marginLeft="16dp"/>
+            android:layout_marginLeft="16dp"
+            tools:text="@string/retweet_by"/>
 
         <ImageView
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_marginRight="8dp"
             android:id="@+id/TLimage"
-            android:layout_below="@+id/tweet_retweet_user_name"/>
+            android:layout_below="@+id/tweet_retweet_user_name"
+            tools:src="@android:color/white"/>
 
         <TextView
             android:id="@+id/tweet_time_stamp_text"
@@ -41,7 +44,8 @@
             android:textColor="?android:textColorSecondary"
             android:lines="1"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            android:gravity="right"/>
+            android:gravity="right"
+            tools:text="time stamp"/>
 
         <TextView
             android:id="@+id/tweet_user_name"
@@ -54,7 +58,8 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:lines="1"
             android:layout_marginTop="0dp"
-            android:layout_marginRight="8dp"/>
+            android:layout_marginRight="8dp"
+            tools:text="User name"/>
 
         <TextView
             android:id="@+id/tweet_user_id"
@@ -65,7 +70,8 @@
             android:layout_below="@id/tweet_user_name"
             android:layout_toRightOf="@id/TLimage"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            android:textColor="?android:textColorSecondary"/>
+            android:textColor="?android:textColorSecondary"
+            tools:text="\@user_id"/>
 
         <TextView
             android:id="@+id/tweet_content"
@@ -73,7 +79,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/TLimage"
             android:layout_marginTop="16dp"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            tools:text="Tweet context"/>
 
         <RelativeLayout
             android:id="@+id/tweet_quote_tweet"
@@ -91,7 +98,8 @@
                 android:layout_marginRight="8dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="2dp"/>
+                android:layout_marginBottom="2dp"
+                tools:text="Use name"/>
             <TextView
                 android:id="@+id/tweet_quote_tweet_user_id"
                 android:layout_width="wrap_content"
@@ -100,7 +108,8 @@
                 android:lines="1"
                 android:ellipsize="end"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                android:textColor="?android:textColorSecondary"/>
+                android:textColor="?android:textColorSecondary"
+                tools:text="\@user_id"/>
             <TextView
                 android:id="@+id/tweet_quote_tweet_content"
                 android:layout_width="wrap_content"
@@ -108,7 +117,8 @@
                 android:layout_below="@id/tweet_quote_tweet_user_name"
                 android:maxLines="5"
                 android:ellipsize="end"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                tools:text="Quoted tweet context"/>
         </RelativeLayout>
 
         <com.github.moko256.twicalico.TweetImageTableView
@@ -137,7 +147,8 @@
             android:layout_marginBottom="4dp"
             android:layout_marginLeft="12dp"
             android:layout_marginRight="12dp"
-            app:buttonTint="@color/like_button_color_stateful"/>
+            app:buttonTint="@color/like_button_color_stateful"
+            tools:button="@drawable/ic_heart_black_24dp"/>
 
         <android.support.v7.widget.AppCompatCheckBox
             android:id="@+id/tweet_content_retweet_button"
@@ -149,7 +160,8 @@
             android:layout_marginBottom="4dp"
             android:layout_marginLeft="12dp"
             android:layout_marginRight="12dp"
-            app:buttonTint="@color/retweet_button_color_stateful"/>
+            app:buttonTint="@color/retweet_button_color_stateful"
+            tools:button="@drawable/ic_retweet_black_24dp"/>
 
         <!--
          Please set image : drawable/ic_reply_black_24dp
@@ -165,7 +177,10 @@
             android:layout_marginBottom="4dp"
             android:layout_marginLeft="12dp"
             android:layout_marginRight="12dp"
-            android:background="?attr/controlBackground"/>
+            android:background="?attr/controlBackground"
+            tools:tint="@color/reply_button_color_stateful"
+            tools:src="@drawable/ic_reply_black_24dp"
+            tools:ignore="PrivateResource" />
 
     </RelativeLayout>
 
