@@ -1,8 +1,6 @@
 <resources>
 
     <style name="BaseAppTheme" parent="Theme.AppCompat.DayNight">
-        <item name="android:textColor">@color/colorText</item>
-        <item name="android:windowBackground">@color/background</item>
 
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>

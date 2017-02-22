@@ -1,5 +1,7 @@
 <resources>
-    <string name="app_name">twicalico</string>
+    <string
+        name="app_name"
+        translatable="false">twicalico</string>
 
     <string
         name="navigation_drawer_open"
@@ -25,20 +27,62 @@
     <string name="app_settings">Application Settings</string>
     <string name="add_account">add other account</string>
     <string name="logout">Logout</string>
+    <string name="tweet_counts_is">Tweets: %s</string>
+    <string name="follow_counts_is">Follows: %s</string>
+    <string name="follower_counts_is">Followers: %s</string>
     <string name="other">Others</string>
     <string name="share">Share…</string>
-    <string name="add_list">Add list</string>
+    <string name="add_to_list">Add to list</string>
     <string name="show_list">Show lists</string>
+    <string name="create_follow">Follow</string>
+    <string name="destroy_follow">Cancel Follow</string>
     <string name="create_mute">Mute</string>
     <string name="destroy_mute">Cancel Mute</string>
     <string name="create_block">Block</string>
     <string name="destroy_block">Cancel Block</string>
     <string name="destroy_follow_follower">Cancel Follow-Follower</string>
     <string name="spam_report">Report this Account as a spam</string>
+    <string name="save_image">Save this image</string>
+    <string name="latest_tweet">Latest tweet</string>
+    <string name="see_more">See more…</string>
+    <string name="error_occurred">Error occurred</string>
+    <string name="retry">retry</string>
+    <string name="succeeded">Succeeded</string>
+    <string name="error_occurred_with_error_code">Error occurred (Error code : %d)</string>
+    <string name="load_timeline_image_quality">Quality of the images on the timeline</string>
+    <string name="about">About</string>
     <string name="license">License</string>
+    <string name="enable">Enable</string>
+    <string name="disable">Disable</string>
+    <string name="high_power_mute">High Power Mute</string>
+    <string name="edit_pattern">Edit Regex pattern</string>
+    <string name="use_tweet_regex_mute">Use Regex Tweet mute</string>
+    <string name="tweet_mute_regex_pattern">Tweet mute Regex pattern</string>
+    <string name="use_user_screen_name_regex_mute">Use Regex user screen name mute</string>
+    <string name="user_screen_name_mute_regex_pattern">User screen name mute Regex pattern</string>
+    <string name="use_user_name_regex_mute">Use Regex user name mute</string>
+    <string name="user_name_mute_regex_pattern">User name mute Regex pattern</string>
+    <string name="use_tweet_source_mute">Use Regex client mute</string>
+    <string name="tweet_source_mute_regex_pattern">Tweet posted client mute Regex pattern</string>
+
+    <string name="mode_image_level_none">Not loading image on the timeline</string>
+    <string name="mode_image_level_low">Quality low</string>
+    <string name="mode_image_level_normal">Quality normal</string>
+    <string name="mode_image_level_full">Quality full</string>
 
     <string name="mode_night_no">Not Use</string>
     <string name="mode_night_yes">Use</string>
     <string name="mode_night_follow_system">Follow system(enable Android 7.0 later)</string>
-    <string name="mode_night_auto">Automatically(use now time)</string>
+    <string name="mode_night_auto">Automatically(use device\'s date)</string>
+
+    <string name="mode_night_no_value" translatable="false">mode_night_no</string>
+    <string name="mode_night_auto_value" translatable="false">mode_night_auto</string>
+    <string name="mode_night_follow_system_value" translatable="false">mode_night_follow_system</string>
+    <string name="mode_night_yes_value" translatable="false">mode_night_yes</string>
+
+    <string name="mode_none_value" translatable="false">mode_none</string>
+    <string name="mode_low_value" translatable="false">mode_low</string>
+    <string name="mode_normal_value" translatable="false">mode_normal</string>
+    <string name="mode_full_value" translatable="false">mode_full</string>
+
 </resources>

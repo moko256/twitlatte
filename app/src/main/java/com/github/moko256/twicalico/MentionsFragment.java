@@ -14,7 +14,7 @@ public class MentionsFragment extends BaseTweetListFragment implements ToolbarTi
 
     @Override
     public ResponseList<Status> getResponseList(Paging paging) throws TwitterException {
-        return Static.twitter.getMentionsTimeline(paging);
+        return GlobalApplication.twitter.getMentionsTimeline(paging);
     }
 
     @Override

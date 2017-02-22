@@ -5,7 +5,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import twitter4j.ExtendedMediaEntity;
+import twitter4j.MediaEntity;
 
 /**
  * Created by moko256 on 2016/10/29.
@@ -16,7 +16,7 @@ class ImagePagerAdapter extends FragmentPagerAdapter {
 
     ImagePagerChildFragment[] fragments;
 
-    ImagePagerAdapter(FragmentManager fm, ExtendedMediaEntity[] mediaEntities, Context context) {
+    ImagePagerAdapter(FragmentManager fm, MediaEntity[] mediaEntities, Context context) {
         super(fm);
         int length=mediaEntities.length;
         fragments=new ImagePagerChildFragment[length];

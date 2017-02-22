@@ -17,21 +17,52 @@
     <string name="app_settings">アプリケーションの設定</string>
     <string name="add_account">他のアカウントを追加</string>
     <string name="logout">ログアウトする</string>
+    <string name="tweet_counts_is">ツイート数: %s</string>
+    <string name="follow_counts_is">フォロー数: %s</string>
+    <string name="follower_counts_is">フォロワー数: %s</string>
     <string name="other">その他</string>
     <string name="share">共有する</string>
-    <string name="add_list">リストに追加</string>
+    <string name="add_to_list">リストに追加</string>
     <string name="show_list">リストを見る</string>
+    <string name="create_follow">フォロー</string>
+    <string name="destroy_follow">フォロー解除</string>
     <string name="create_mute">ミュートする</string>
     <string name="destroy_mute">ミュートを解除する</string>
     <string name="create_block">ブロック</string>
     <string name="destroy_block">ブロックを解除する</string>
     <string name="destroy_follow_follower">FF解除</string>
     <string name="spam_report">スパムとして報告する</string>
+    <string name="save_image">この画像を保存する</string>
+    <string name="latest_tweet">直近のツイート</string>
+    <string name="see_more">もっと見る</string>
+    <string name="error_occurred">エラーが発生しました</string>
+    <string name="retry">再試行</string>
+    <string name="succeeded">成功しました</string>
+    <string name="error_occurred_with_error_code">エラーが発生しました (エラーコード : %d)</string>
+    <string name="load_timeline_image_quality">タイムラインの画像の画質</string>
+    <string name="about">概要</string>
     <string name="license">ライセンス</string>
+    <string name="enable">有効</string>
+    <string name="disable">無効</string>
+    <string name="high_power_mute">最強のミュート</string>
+    <string name="edit_pattern">正規表現パターンの編集</string>
+    <string name="use_tweet_regex_mute">ツイートの正規表現ミュートを使用する</string>
+    <string name="tweet_mute_regex_pattern">ツイートミュートの正規表現パターン</string>
+    <string name="use_user_screen_name_regex_mute">スクリーンネームの正規表現ミュートを使用する</string>
+    <string name="user_screen_name_mute_regex_pattern">スクリーンネームミュートの正規表現パターン</string>
+    <string name="use_user_name_regex_mute">ユーザー名の正規表現ミュートを使用する</string>
+    <string name="user_name_mute_regex_pattern">ユーザー名ミュートの正規表現パターン</string>
+    <string name="use_tweet_source_mute">クライアントの正規表現ミュートを使用する</string>
+    <string name="tweet_source_mute_regex_pattern">投稿したクライアントのミュートの正規表現パターン</string>
+
+    <string name="mode_image_level_none">タイムラインの画像を読み込まない</string>
+    <string name="mode_image_level_low">低速モード</string>
+    <string name="mode_image_level_normal">通常モード</string>
+    <string name="mode_image_level_full">高画質モード</string>
 
     <string name="mode_night_no">使用しない</string>
     <string name="mode_night_yes">使用する</string>
     <string name="mode_night_follow_system">システムの設定に従う(Android 7.0以降で有効)</string>
-    <string name="mode_night_auto">自動(現在時刻を使用)</string>
+    <string name="mode_night_auto">自動(端末の時刻を使用)</string>
 
 </resources>

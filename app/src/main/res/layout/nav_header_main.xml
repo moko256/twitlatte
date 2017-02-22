@@ -1,44 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="@dimen/nav_header_height">
 
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/user_bg_image"/>
+        android:id="@+id/user_bg_image"
+        tools:src="@android:color/darker_gray"/>
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/nav_header_height"
+        android:layout_height="match_parent"
         android:gravity="bottom"
         android:orientation="vertical"
-        android:paddingBottom="@dimen/activity_vertical_margin"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
-        android:paddingTop="@dimen/activity_vertical_margin"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark">
+        android:paddingBottom="@dimen/nav_header_vertical_margin"
+        android:paddingLeft="@dimen/nav_header_horizontal_margin"
+        android:paddingRight="@dimen/nav_header_horizontal_margin"
+        android:paddingTop="@dimen/nav_header_vertical_margin">
 
         <ImageView
             android:id="@+id/user_image"
             android:layout_width="72dp"
             android:layout_height="72dp"
-            android:paddingTop="@dimen/nav_header_vertical_spacing"/>
+            tools:src="@android:color/white"/>
 
         <TextView
             android:id="@+id/user_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="@dimen/nav_header_vertical_spacing"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            android:textColor="#FFFFFF"/>
+            android:layout_marginTop="@dimen/nav_header_vertical_spacing"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+            android:textColor="#FFFFFF"
+            tools:text="User name"/>
 
         <TextView
             android:id="@+id/user_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="#808080" />
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textColor="#deFFFFFF"
+            tools:text="\@user_name"/>
 
     </LinearLayout>
 

@@ -9,3 +9,5 @@
 .DS_Store
 /build
 /capture
+*.jks
+*.apk

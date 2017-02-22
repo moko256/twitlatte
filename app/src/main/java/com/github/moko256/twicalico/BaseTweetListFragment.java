@@ -1,9 +1,15 @@
 package com.github.moko256.twicalico;
 
-import android.content.Context;
+import android.graphics.Rect;
+import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -21,25 +27,88 @@ import twitter4j.TwitterException;
  *
  * @author moko256
  */
-public abstract class BaseTweetListFragment extends BaseListFragment<StatusesAdapter,Status> {
+public abstract class BaseTweetListFragment extends BaseListFragment {
 
+    StatusesAdapter adapter;
+    ArrayList<Status> list;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        list=new ArrayList<>();
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view=super.onCreateView(inflater, container, savedInstanceState);
+
+        getRecyclerView().addItemDecoration(new RecyclerView.ItemDecoration() {
+            @Override
+            public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+                super.getItemOffsets(outRect, view, parent, state);
+
+                int span=((StaggeredGridLayoutManager.LayoutParams) view.getLayoutParams()).getSpanIndex();
+                float dens=getContext().getResources().getDisplayMetrics().density;
+
+                outRect.left=Math.round(dens*(span==0?8f:4f));
+                outRect.right=Math.round(dens*(span==((StaggeredGridLayoutManager) parent.getLayoutManager()).getSpanCount()-1?8f:4f));
+                outRect.top=Math.round(dens*8f);
+            }
+        });
+
+        adapter=new StatusesAdapter(getContext(), list);
+        setAdapter(adapter);
+        if (!isInitializedList()){
+            adapter.notifyDataSetChanged();
+        }
+
+        return view;
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        if (savedInstanceState != null){
+            ArrayList<Status> l=(ArrayList<Status>) savedInstanceState.getSerializable("list");
+            if(l!=null){
+                list.addAll(l);
+            }
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState){
+        super.onSaveInstanceState(outState);
+        outState.putSerializable("list", (ArrayList) list);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        adapter=null;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        list=null;
+    }
 
     @Override
     protected void onInitializeList() {
-        if(!getSwipeRefreshLayout().isRefreshing())getSwipeRefreshLayout().setRefreshing(false);
-
         getResponseObservable(new Paging(1,20))
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         result-> {
-                            getContentList().addAll(result);
-                            getListAdapter().notifyDataSetChanged();
+                            list.addAll(result);
+                            adapter.notifyDataSetChanged();
                         },
                         e -> {
                             e.printStackTrace();
-                            Snackbar.make(getView(), "Error", Snackbar.LENGTH_INDEFINITE)
-                                    .setAction("Try", v -> onInitializeList())
+                            Snackbar.make(getView(), getContext().getString(R.string.error_occurred_with_error_code,
+                                    ((TwitterException) e).getErrorCode()), Snackbar.LENGTH_INDEFINITE)
+                                    .setAction(R.string.retry, v -> onInitializeList())
                                     .show();
                         },
                         ()-> getSwipeRefreshLayout().setRefreshing(false)
@@ -48,9 +117,8 @@ public abstract class BaseTweetListFragment extends BaseListFragment<StatusesAda
 
     @Override
     protected void onUpdateList() {
-        if(!getSwipeRefreshLayout().isRefreshing())getSwipeRefreshLayout().setRefreshing(false);
-
-        Paging paging=new Paging(getContentList().get(0).getId());
+        Paging paging=new Paging(list.get(0).getId());
+        paging.count(50);
 
         getResponseObservable(paging)
                 .subscribeOn(Schedulers.newThread())
@@ -59,8 +127,8 @@ public abstract class BaseTweetListFragment extends BaseListFragment<StatusesAda
                         result -> {
                             int size = result.size();
                             if (size > 0) {
-                                getContentList().addAll(0, result);
-                                getListAdapter().notifyItemRangeInserted(0,size);
+                                list.addAll(0, result);
+                                adapter.notifyItemRangeInserted(0,size);
                                 TypedValue value=new TypedValue();
                                 Toast t=Toast.makeText(getContext(),"New Tweet",Toast.LENGTH_SHORT);
                                 t.setGravity(
@@ -76,8 +144,9 @@ public abstract class BaseTweetListFragment extends BaseListFragment<StatusesAda
                         e -> {
                             e.printStackTrace();
                             getSwipeRefreshLayout().setRefreshing(false);
-                            Snackbar.make(getView(), "Error", Snackbar.LENGTH_INDEFINITE)
-                                    .setAction("Try", v -> onUpdateList())
+                            Snackbar.make(getView(), getContext().getString(R.string.error_occurred_with_error_code,
+                                    ((TwitterException) e).getErrorCode()), Snackbar.LENGTH_INDEFINITE)
+                                    .setAction(R.string.retry, v -> onUpdateList())
                                     .show();
                         },
                         () -> getSwipeRefreshLayout().setRefreshing(false)
@@ -87,7 +156,8 @@ public abstract class BaseTweetListFragment extends BaseListFragment<StatusesAda
     @Override
     protected void onLoadMoreList() {
         Paging paging=new Paging();
-        paging.maxId(getContentList().get(getContentList().size()-1).getId());
+        paging.maxId(list.get(list.size()-1).getId()-1L);
+        paging.count(50);
         getResponseObservable(paging)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -95,16 +165,15 @@ public abstract class BaseTweetListFragment extends BaseListFragment<StatusesAda
                         result -> {
                             int size = result.size();
                             if (size > 0) {
-                                int l= getContentList().size();
-                                result.remove(0);
-                                getContentList().addAll(result);
-                                getListAdapter().notifyItemRangeInserted(l,size);
+                                list.addAll(result);
+                                adapter.notifyItemRangeInserted(list.size(),size);
                             }
                         },
                         e -> {
                             e.printStackTrace();
-                            Snackbar.make(getView(), "Error", Snackbar.LENGTH_INDEFINITE)
-                                    .setAction("Try", v -> onLoadMoreList())
+                            Snackbar.make(getView(), getContext().getString(R.string.error_occurred_with_error_code,
+                                    ((TwitterException) e).getErrorCode()), Snackbar.LENGTH_INDEFINITE)
+                                    .setAction(R.string.retry, v -> onLoadMoreList())
                                     .show();
                         },
                         () -> {}
@@ -113,12 +182,16 @@ public abstract class BaseTweetListFragment extends BaseListFragment<StatusesAda
 
     @Override
     protected boolean isInitializedList() {
-        return getContentList().size()!=0;
+        return !list.isEmpty();
     }
 
     @Override
-    protected StatusesAdapter initializeListAdapter(Context context, ArrayList<Status> data) {
-        return new StatusesAdapter(context,data);
+    protected RecyclerView.LayoutManager initializeRecyclerViewLayoutManager() {
+        if (getContext().getResources().getConfiguration().smallestScreenWidthDp>=600){
+            return new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+        } else {
+            return new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
+        }
     }
 
     public Observable<ResponseList<Status>> getResponseObservable(Paging paging) {

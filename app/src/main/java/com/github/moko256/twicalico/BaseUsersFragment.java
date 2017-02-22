@@ -1,8 +1,12 @@
 package com.github.moko256.twicalico;
 
-import android.content.Context;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import java.util.ArrayList;
 
@@ -18,26 +22,87 @@ import twitter4j.User;
  *
  * @author moko256
  */
-public abstract class BaseUsersFragment extends BaseListFragment<UsersAdapter,User> {
+public abstract class BaseUsersFragment extends BaseListFragment {
 
+    UsersAdapter adapter;
+    ArrayList<User> list;
     long next_cursor;
 
     @Override
-    protected void onInitializeList() {
-        if(!getSwipeRefreshLayout().isRefreshing())getSwipeRefreshLayout().setRefreshing(false);
+    public void onCreate(Bundle savedInstanceState) {
+        list=new ArrayList<>();
+        super.onCreate(savedInstanceState);
+    }
 
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view=super.onCreateView(inflater, container, savedInstanceState);
+
+        getRecyclerView().addItemDecoration(new RecyclerView.ItemDecoration() {
+            @Override
+            public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+                super.getItemOffsets(outRect, view, parent, state);
+                if (parent.getChildAdapterPosition(view)==0){
+                    outRect.top=Math.round(getContext().getResources().getDisplayMetrics().density*8f);
+                }
+            }
+        });
+
+        adapter=new UsersAdapter(getContext(), list);
+        setAdapter(adapter);
+        if(!isInitializedList()){
+            adapter.notifyDataSetChanged();
+        }
+
+        return view;
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        if (savedInstanceState != null) {
+            ArrayList<User> l=(ArrayList<User>) savedInstanceState.getSerializable("list");
+            if(l!=null){
+                list.addAll(l);
+            }
+            next_cursor=savedInstanceState.getLong("next_cursor",-1);
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState){
+        super.onSaveInstanceState(outState);
+        outState.putSerializable("list", (ArrayList) list);
+        outState.putLong("next_cursor",next_cursor);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        adapter=null;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        list=null;
+    }
+
+    @Override
+    protected void onInitializeList() {
         getResponseObservable(-1)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         result-> {
-                            getContentList().addAll(result);
-                            getListAdapter().notifyDataSetChanged();
+                            list.addAll(result);
+                            adapter.notifyDataSetChanged();
                         },
                         e -> {
                             e.printStackTrace();
-                            Snackbar.make(getView(), "Error", Snackbar.LENGTH_INDEFINITE)
-                                    .setAction("Try", v -> onInitializeList())
+                            Snackbar.make(getView(), getContext().getString(R.string.error_occurred_with_error_code,
+                                    ((TwitterException) e).getErrorCode()), Snackbar.LENGTH_INDEFINITE)
+                                    .setAction(R.string.retry, v -> onInitializeList())
                                     .show();
                         },
                         ()->getSwipeRefreshLayout().setRefreshing(false)
@@ -51,7 +116,6 @@ public abstract class BaseUsersFragment extends BaseListFragment<UsersAdapter,Us
 
     @Override
     protected void onLoadMoreList() {
-
         getResponseObservable(next_cursor)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -59,15 +123,16 @@ public abstract class BaseUsersFragment extends BaseListFragment<UsersAdapter,Us
                         result -> {
                             int size = result.size();
                             if (size > 0) {
-                                int l = getContentList().size();
-                                getContentList().addAll(result);
-                                getListAdapter().notifyItemRangeInserted(l, size);
+                                int l = list.size();
+                                list.addAll(result);
+                                adapter.notifyItemRangeInserted(l, size);
                             }
                         },
                         e -> {
                             e.printStackTrace();
-                            Snackbar.make(getView(), "Error", Snackbar.LENGTH_INDEFINITE)
-                                    .setAction("Try", v -> onLoadMoreList())
+                            Snackbar.make(getView(), getContext().getString(R.string.error_occurred_with_error_code,
+                                    ((TwitterException) e).getErrorCode()), Snackbar.LENGTH_INDEFINITE)
+                                    .setAction(R.string.retry, v -> onLoadMoreList())
                                     .show();
                         },
                         () -> {}
@@ -76,26 +141,7 @@ public abstract class BaseUsersFragment extends BaseListFragment<UsersAdapter,Us
 
     @Override
     protected boolean isInitializedList() {
-        return getContentList().size()!=0;
-    }
-
-    @Override
-    protected UsersAdapter initializeListAdapter(Context context, ArrayList<User> data) {
-        return new UsersAdapter(context,data);
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (savedInstanceState != null) {
-            next_cursor=savedInstanceState.getLong("next_cursor",-1);
-        }
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState){
-        outState.putLong("next_cursor",next_cursor);
-        super.onSaveInstanceState(outState);
+        return !list.isEmpty();
     }
 
     public Observable<PagableResponseList<User>> getResponseObservable(long cursor) {

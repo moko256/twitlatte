@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestManager;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
@@ -25,59 +26,51 @@ import rx.schedulers.Schedulers;
 import twitter4j.TwitterException;
 import twitter4j.User;
 
+/**
+ * Created by moko256 on 2015/11/08.
+ *
+ * @author moko256
+ */
 public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
 
-        if (Static.twitter == null) {
+        super.onCreate(savedInstanceState);
+
+        if (GlobalApplication.twitter == null) {
             finish();
             startActivity(new Intent(this, OAuthActivity.class));
             return;
         }
 
+        setContentView(R.layout.activity_main);
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setStatusBarColor(0x00000000);
         }
 
-        Observable
-                .create(subscriber->{
-                    if(Static.user==null){
+        if (GlobalApplication.user == null) {
+            Observable
+                    .create(subscriber->{
                         try {
-                            User u=Static.twitter.verifyCredentials();
-                            Static.user=u;
-                            subscriber.onNext(u);
+                            GlobalApplication.user=GlobalApplication.twitter.verifyCredentials();
+                            subscriber.onNext(GlobalApplication.user);
                             subscriber.onCompleted();
                         } catch (TwitterException e) {
                             subscriber.onError(e);
                         }
-                    }else{
-                        subscriber.onNext(Static.user);
-                        subscriber.onCompleted();
-                    }
-                })
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        result->{
-                            User user=(User) result;
-
-                            ((TextView)findViewById(R.id.user_name)).setText(user.getName());
-                            ((TextView)findViewById(R.id.user_id)).setText(TwitterStringUtil.plusAtMark(user.getScreenName()));
-
-                            ImageView userImage=(ImageView)findViewById(R.id.user_image);
-                            ImageView userBackgroundImage=(ImageView)findViewById(R.id.user_bg_image);
-
-                            userImage.setOnClickListener(v -> startMyUserActivity());
-
-                            Glide.with(this).load(user.getBiggerProfileImageURL()).into(userImage);
-                            Glide.with(this).load(user.getProfileBannerRetinaURL()).into(userBackgroundImage);
-                        },
-                        Throwable::printStackTrace,
-                        ()->{}
-                );
+                    })
+                    .subscribeOn(Schedulers.newThread())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(
+                            result-> setDrawerHeader((User) result),
+                            Throwable::printStackTrace,
+                            ()->{}
+                    );
+        } else {
+            setDrawerHeader(GlobalApplication.user);
+        }
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -94,19 +87,19 @@ public class MainActivity extends AppCompatActivity {
             if(!item.isChecked()){
                 switch(id){
                     case R.id.nav_timeline:
-                        startFragment(new TimeLineFragment());
+                        replaceFragment(new TimeLineFragment());
                         break;
                     case R.id.nav_mentions:
-                        startFragment(new MentionsFragment());
+                        replaceFragment(new MentionsFragment());
                         break;
                     case R.id.nav_account:
                         startMyUserActivity();
                         break;
                     case R.id.nav_follow_and_follower:
-                        startFragment(new MyFollowFollowerFragment());
+                        replaceFragment(new MyFollowFollowerFragment());
                         break;
                     case R.id.nav_like:
-                        startFragment(new LikeMeFragment());
+                        replaceFragment(new LikeMeFragment());
                         break;
                     case R.id.nav_settings:
                         startActivity(new Intent(this,SettingsActivity.class));
@@ -120,41 +113,44 @@ public class MainActivity extends AppCompatActivity {
 
         });
 
-        findViewById(R.id.fab).setOnClickListener(v -> startActivity(new Intent(this , SendTweetActivity.class)));
+        findViewById(R.id.fab).setOnClickListener(v -> startActivity(new Intent(this, SendTweetActivity.class)));
 
         TabLayout tabLayout=(TabLayout) findViewById(R.id.toolbar_tab);
 
-        getSupportFragmentManager().addOnBackStackChangedListener(() -> onFragmentBackStackChanged(navigationView,tabLayout));
+        getSupportFragmentManager().addOnBackStackChangedListener(() -> attachFragment(getMainFragment(), navigationView, tabLayout));
 
         if(savedInstanceState==null){
-            startFragment(new TimeLineFragment());
+            Fragment top=new TimeLineFragment();
+            addFragment(top);
+            attachFragment(top, navigationView, tabLayout);
         }
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        GlobalApplication.user=null;
     }
 
     @Override
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        onFragmentBackStackChanged((NavigationView) findViewById(R.id.nav_view),(TabLayout)findViewById(R.id.toolbar_tab));
+        attachFragment(getMainFragment(), (NavigationView) findViewById(R.id.nav_view), (TabLayout) findViewById(R.id.toolbar_tab));
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_main_toolbar,menu);
-        //SearchView searchView=(SearchView) menu.findItem(R.id.action_search).getActionView();
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_search:
-                startFragment(new SearchFragment());
-                break;
-            default:
-                break;
+        if (item.getItemId()==R.id.action_search){
+            startActivity(new Intent(this,SearchActivity.class));
         }
-        return super.onOptionsItemSelected(item);
+        return true;
     }
 
     @Override
@@ -162,33 +158,44 @@ public class MainActivity extends AppCompatActivity {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } else if (getSupportFragmentManager().getBackStackEntryCount()>1) {
-            getSupportFragmentManager().popBackStack();
         } else {
-            //super.onBackPressed();
-            finish();
+            super.onBackPressed();
         }
     }
 
     private void startMyUserActivity() {
-        if (Static.user!=null){
-            startActivity(new Intent(this, ShowUserActivity.class).putExtra("user", Static.user));
+        if (GlobalApplication.user!=null){
+            startActivity(new Intent(this, ShowUserActivity.class).putExtra("user", GlobalApplication.user));
         }
     }
 
-    private void startFragment(Fragment fragment){
+    private void addFragment(Fragment fragment){
+        getSupportFragmentManager()
+                .beginTransaction()
+                .add(R.id.mainLayout, fragment)
+                .commit();
+    }
+
+    private void replaceFragment(Fragment fragment){
         getSupportFragmentManager()
                 .beginTransaction()
                 .addToBackStack(null)
+                .setCustomAnimations(android.R.anim.fade_in,android.R.anim.fade_out,android.R.anim.fade_in,android.R.anim.fade_out)
                 .replace(R.id.mainLayout, fragment)
                 .commit();
     }
 
-    private void onFragmentBackStackChanged(NavigationView navigationView, TabLayout tabLayout){
-        Fragment fragment=getSupportFragmentManager().findFragmentById(R.id.mainLayout);
+    private Fragment getMainFragment(){
+        return getSupportFragmentManager().findFragmentById(R.id.mainLayout);
+    }
+
+    private void attachFragment(Fragment fragment,NavigationView navigationView, TabLayout tabLayout){
         if (fragment != null) {
-            if(fragment instanceof ToolbarTitleInterface && fragment instanceof NavigationPositionInterface){
+            if(fragment instanceof ToolbarTitleInterface){
                 setTitle(((ToolbarTitleInterface)fragment).getTitleResourceId());
+            }
+
+            if(fragment instanceof NavigationPositionInterface){
                 navigationView.setCheckedItem(((NavigationPositionInterface)fragment).getNavigationPosition());
             }
 
@@ -197,13 +204,27 @@ public class MainActivity extends AppCompatActivity {
                     tabLayout.setVisibility(View.VISIBLE);
                 }
                 tabLayout.setupWithViewPager(((UseTabsInterface)fragment).getTabsViewPager());
-            }
-            else{
+            } else{
                 if(tabLayout.getVisibility()!=View.GONE) {
                     tabLayout.setVisibility(View.GONE);
                 }
             }
         }
+    }
+
+    private void setDrawerHeader(User user){
+        ((TextView)findViewById(R.id.user_name)).setText(user.getName());
+        ((TextView)findViewById(R.id.user_id)).setText(TwitterStringUtil.plusAtMark(user.getScreenName()));
+
+        ImageView userImage=(ImageView)findViewById(R.id.user_image);
+        ImageView userBackgroundImage=(ImageView)findViewById(R.id.user_bg_image);
+
+        userImage.setOnClickListener(v -> startMyUserActivity());
+
+        RequestManager manager=Glide.with(this);
+
+        manager.load(user.getBiggerProfileImageURL()).into(userImage);
+        manager.load(user.getProfileBannerRetinaURL()).into(userBackgroundImage);
     }
 
 }

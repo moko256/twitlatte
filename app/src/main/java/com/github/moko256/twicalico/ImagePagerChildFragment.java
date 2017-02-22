@@ -14,7 +14,7 @@ import com.bumptech.glide.Glide;
 
 import java.util.Objects;
 
-import twitter4j.ExtendedMediaEntity;
+import twitter4j.MediaEntity;
 
 /**
  * Created by moko256 on 2016/10/29.
@@ -31,7 +31,7 @@ public class ImagePagerChildFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view=inflater.inflate(R.layout.fragment_image_pager_child, null);
 
-        ExtendedMediaEntity mediaEntity=(ExtendedMediaEntity) getArguments().getSerializable(FRAG_MEDIA_ENTITY);
+        MediaEntity mediaEntity=(MediaEntity) getArguments().getSerializable(FRAG_MEDIA_ENTITY);
 
         if (mediaEntity == null) {
             return view;
@@ -45,7 +45,7 @@ public class ImagePagerChildFragment extends Fragment {
                 videoView=(VideoView) view.findViewById(R.id.fragment_image_pager_video);
                 videoView.setVisibility(View.VISIBLE);
                 String videoPath="";
-                for(ExtendedMediaEntity.Variant variant : mediaEntity.getVideoVariants()){
+                for(MediaEntity.Variant variant : mediaEntity.getVideoVariants()){
                     if(Objects.equals(variant.getContentType(), "application/x-mpegURL")){
                         videoPath=variant.getUrl();
                     }
@@ -72,7 +72,7 @@ public class ImagePagerChildFragment extends Fragment {
         return view;
     }
 
-    public static ImagePagerChildFragment getInstance(ExtendedMediaEntity entity){
+    public static ImagePagerChildFragment getInstance(MediaEntity entity){
         ImagePagerChildFragment fragment=new ImagePagerChildFragment();
         Bundle bundle=new Bundle();
         bundle.putSerializable(FRAG_MEDIA_ENTITY,entity);

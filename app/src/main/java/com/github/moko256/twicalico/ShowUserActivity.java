@@ -2,19 +2,15 @@ package com.github.moko256.twicalico;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import com.bumptech.glide.Glide;
-
-import java.util.Objects;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
@@ -28,29 +24,46 @@ import twitter4j.User;
  *
  * @author moko256
  */
-public class ShowUserActivity extends AppCompatActivity implements ShowUserFragment.HasUserActivity {
+public class ShowUserActivity extends AppCompatActivity implements ActivityHasUserObservable {
 
     User user;
+
+    ActionBar actionBar;
+    ViewPager viewPager;
+    TabLayout tabLayout;
 
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_user);
 
-        if (savedInstanceState == null) {
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .add(R.id.show_user_fragment_container, new ShowUserFragment())
-                    .commit();
-        } else {
+        if (savedInstanceState != null) {
             user=(User)savedInstanceState.getSerializable("user");
         }
 
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar_show_user));
-        ActionBar actionBar=getSupportActionBar();
+
+        actionBar=getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeAsUpIndicator(R.drawable.ic_back_white_24dp);
 
+        viewPager=(ViewPager) findViewById(R.id.show_user_view_pager);
+        viewPager.setOffscreenPageLimit(0);
+        viewPager.setAdapter(new ShowUserFragmentsPagerAdapter(getSupportFragmentManager(),this));
+
+        tabLayout=(TabLayout) findViewById(R.id.tab_show_user);
+        tabLayout.setupWithViewPager(viewPager);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        tabLayout=null;
+        viewPager=null;
+        actionBar=null;
+
+        user=null;
     }
 
     @Override
@@ -74,15 +87,16 @@ public class ShowUserActivity extends AppCompatActivity implements ShowUserFragm
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         ThrowableFunc throwableFunc=null;
-        Twitter twitter = Static.twitter;
+        Twitter twitter = GlobalApplication.twitter;
 
         switch (item.getItemId()){
             case R.id.action_share:
-                Intent intent=new Intent();
-                intent.setAction(Intent.ACTION_SEND);
-                intent.setType("text/plain");
-                intent.putExtra(Intent.EXTRA_TEXT,"https://twitter.com/"+user.getScreenName());
-                startActivity(intent);
+                startActivity(
+                        new Intent()
+                                .setAction(Intent.ACTION_SEND)
+                                .setType("text/plain")
+                                .putExtra(Intent.EXTRA_TEXT,"https://twitter.com/"+user.getScreenName())
+                );
                 break;
             case R.id.action_create_follow:
                 throwableFunc=()->twitter.createFriendship(user.getId());
@@ -109,7 +123,7 @@ public class ShowUserActivity extends AppCompatActivity implements ShowUserFragm
                 };
                 break;
             case R.id.action_spam_report:
-                throwableFunc=()->Static.twitter.reportSpam(user.getId());
+                throwableFunc=()->GlobalApplication.twitter.reportSpam(user.getId());
                 break;
         }
 
@@ -137,9 +151,9 @@ public class ShowUserActivity extends AppCompatActivity implements ShowUserFragm
                         o -> {},
                         throwable -> {
                             throwable.printStackTrace();
-                            Toast.makeText(this,"Error occurred.",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, R.string.error_occurred, Toast.LENGTH_SHORT).show();
                         },
-                        ()->Toast.makeText(this,"Succeeded.",Toast.LENGTH_SHORT).show()
+                        ()->Toast.makeText(this, R.string.succeeded, Toast.LENGTH_SHORT).show()
                 );
 
     }
@@ -163,7 +177,6 @@ public class ShowUserActivity extends AppCompatActivity implements ShowUserFragm
     }
     private interface Func{
         void call();
-
     }
 
 
@@ -173,10 +186,10 @@ public class ShowUserActivity extends AppCompatActivity implements ShowUserFragm
                 .create(
                         subscriber->{
                             String userName=(String) getIntent().getSerializableExtra("userName");
-                            if(!(user!=null&& Objects.equals(user.getScreenName(), userName))){
+                            if(!(user!=null&&user.getScreenName().equals(userName))){
                                 if(userName!=null){
                                     try {
-                                        user=Static.twitter.showUser(userName);
+                                        user=GlobalApplication.twitter.showUser(userName);
                                     } catch (TwitterException e) {
                                         subscriber.onError(e);
                                     }
@@ -188,18 +201,5 @@ public class ShowUserActivity extends AppCompatActivity implements ShowUserFragm
                             subscriber.onCompleted();
                         }
                 );
-    }
-
-    @Override
-    public void updateHeader(User user) {
-        ImageView header=(ImageView) findViewById(R.id.show_user_bgimage);
-        ImageView icon=(ImageView) findViewById(R.id.show_user_image);
-
-        Glide.with(this).load(user.getProfileBannerRetinaURL()).into(header);
-        Glide.with(this).load(user.getBiggerProfileImageURL()).into(icon);
-
-        ((TextView) findViewById(R.id.show_user_id)).setText(TwitterStringUtil.plusAtMark(user.getScreenName()));
-        setTitle(user.getName());
-        ((TextView) findViewById(R.id.show_user_bio)).setText(user.getDescription());
     }
 }

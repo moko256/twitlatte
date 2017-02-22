@@ -1,17 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <PreferenceCategory android:title="@string/app_settings">
+    <PreferenceCategory android:title="@string/account">
         <ListPreference
             android:key="AccountPoint"
-            android:defaultValue=""
             android:title="@string/account"
             android:summary="%s"
-            android:dialogTitle="@string/account"
-            android:entries="@array/choose_account_number_entries"
-            android:entryValues="@array/choose_account_number_entries_value"/>
+            android:dialogTitle="@string/account"/>
         <Preference
             android:key="logout"
             android:title="@string/logout"/>
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:title="@string/high_power_mute">
+        <SwitchPreference
+            android:key="patternTweetMuteEnabled"
+            android:defaultValue="false"
+            android:title="@string/use_tweet_regex_mute"
+            android:summaryOn="@string/enable"
+            android:summaryOff="@string/disable"/>
+        <EditTextPreference
+            android:key="tweetMutePattern"
+            android:defaultValue=""
+            android:title="@string/tweet_mute_regex_pattern"
+            android:summary="%s"
+            android:dialogTitle="@string/edit_pattern"/>
+
+        <SwitchPreference
+            android:key="patternUserScreenNameMuteEnabled"
+            android:defaultValue="false"
+            android:title="@string/use_user_screen_name_regex_mute"
+            android:summaryOn="@string/enable"
+            android:summaryOff="@string/disable"/>
+        <EditTextPreference
+            android:key="userScreenNameMutePattern"
+            android:defaultValue=""
+            android:title="@string/user_screen_name_mute_regex_pattern"
+            android:summary="%s"
+            android:dialogTitle="@string/edit_pattern"/>
+
+        <SwitchPreference
+            android:key="patternUserNameMuteEnabled"
+            android:defaultValue="false"
+            android:title="@string/use_user_name_regex_mute"
+            android:summaryOn="@string/enable"
+            android:summaryOff="@string/disable"/>
+        <EditTextPreference
+            android:key="tweetUserNamePattern"
+            android:defaultValue=""
+            android:title="@string/user_name_mute_regex_pattern"
+            android:summary="%s"
+            android:dialogTitle="@string/edit_pattern"/>
+
+        <SwitchPreference
+            android:key="patternTweetSourceMuteEnabled"
+            android:defaultValue="false"
+            android:title="@string/use_tweet_source_mute"
+            android:summaryOn="@string/enable"
+            android:summaryOff="@string/disable"/>
+        <EditTextPreference
+            android:key="tweetSourceMutePattern"
+            android:defaultValue=""
+            android:title="@string/tweet_source_mute_regex_pattern"
+            android:summary="%s"
+            android:dialogTitle="@string/edit_pattern"/>
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:title="@string/app_settings">
         <ListPreference
             android:key="nightModeType"
             android:defaultValue="mode_night_no"
@@ -20,12 +74,23 @@
             android:dialogTitle="@string/theme"
             android:entries="@array/choose_night_mode_entries"
             android:entryValues="@array/choose_night_mode_entries_value"/>
+        <ListPreference
+            android:key="timelineImageLoadType"
+            android:defaultValue="mode_normal"
+            android:title="@string/load_timeline_image_quality"
+            android:summary="%s"
+            android:dialogTitle="@string/load_timeline_image_quality"
+            android:entries="@array/choose_timeline_image_load_mode_entries"
+            android:entryValues="@array/choose_timeline_image_load_mode_entries_value"/>
     </PreferenceCategory>
     <PreferenceCategory
-        android:title="@string/other">
+        android:title="@string/about">
         <Preference
             android:key="license"
             android:title="@string/license"
             android:summary="Show License Text" />
+        <Preference
+            android:key="app_version"
+            android:title="@string/app_name"/>
     </PreferenceCategory>
 </PreferenceScreen>

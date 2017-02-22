@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <application
         android:name=".GlobalApplication"
@@ -92,7 +93,7 @@
                 <data android:scheme="http" />
                 <data android:host="twitter.com" />
                 <data android:host="mobile.twitter.com" />
-                <data android:pathPattern="/.*/" />
+                <data android:pathPattern="/.*" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -122,13 +123,21 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".SearchActivity"
+            android:label="@string/action_search"
+            android:theme="@style/AppTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+        </activity>
+        <activity
             android:name=".SettingsActivity"
             android:label="@string/action_settings"
             android:theme="@style/SettingsActivityTheme" />
         <activity
             android:name=".LicensesActivity"
             android:label="@string/license"
-            android:theme="@style/SettingsActivityTheme" />
+            android:theme="@style/AppTheme" />
     </application>
 
 </manifest>

@@ -23,7 +23,18 @@ public class LicensesActivity extends AppCompatActivity {
         actionBar.setHomeAsUpIndicator(R.drawable.ic_back_white_24dp);
 
         RecyclerView recyclerView=(RecyclerView) findViewById(R.id.activity_licenses_list);
-        recyclerView.setAdapter(new StringArrayAdapter(this,getResources().getStringArray(R.array.license_entries)));
+        recyclerView.setAdapter(new StringArrayAdapter(this, new String[]{
+                "Android Compatibility Library v4",
+                "Android Compatibility Library v7",
+                "Android Compatibility Library v14",
+                "Android Design Support Library",
+                "Glide",
+                "OkHttp",
+                "Twitter4J",
+                "twitter-text",
+                "RxJava",
+                "RxAndroid"
+        }));
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }

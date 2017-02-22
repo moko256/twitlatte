@@ -12,6 +12,10 @@ import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.preference.PreferenceManager;
+import android.widget.Toast;
+
+import java.text.DateFormat;
+import java.util.Date;
 
 /**
  * Created by moko256 on 2016/03/28.
@@ -63,21 +67,14 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 }
         );
 
-        Preference license=findPreference("license");
-        license.setOnPreferenceClickListener(preference -> {
-            startActivity(new Intent(getContext(),LicensesActivity.class));
-            return false;
-        });
-
-        Preference logout= findPreference("logout");
-        logout.setOnPreferenceClickListener(preference -> {
+        findPreference("logout").setOnPreferenceClickListener(preference -> {
             new AlertDialog.Builder(getContext())
                     .setTitle(R.string.logout)
                     .setMessage("Logout?")
                     .setCancelable(true)
                     .setPositiveButton(android.R.string.ok,
                             (dialog, i) ->
-                                    nowAccountList.getOnPreferenceChangeListener().onPreferenceChange(preference,String.valueOf(helper.deleteAccessToken(Static.user.getId())-1))
+                                    nowAccountList.getOnPreferenceChangeListener().onPreferenceChange(preference,String.valueOf(helper.deleteAccessToken(helper.getAccessToken(Integer.valueOf(defaultSharedPreferences.getString("AccountPoint","-1"))).getUserId())-1))
                     )
                     .setNegativeButton(android.R.string.cancel,(dialog, i) -> dialog.cancel())
                     .show();
@@ -98,6 +95,25 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                     return true;
                 }
         );
+
+        findPreference("license").setOnPreferenceClickListener(preference -> {
+            startActivity(new Intent(getContext(),LicensesActivity.class));
+            return false;
+        });
+
+        Preference version=findPreference("app_version");
+        version.setSummary("Version "+ BuildConfig.VERSION_NAME);
+        version.setOnPreferenceClickListener(preference -> {
+            Date birthday=new Date(1446956982000L);
+            Toast.makeText(
+                    getContext(),
+                    "This application was born on "+
+                            DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.FULL).format(birthday),
+                    Toast.LENGTH_SHORT
+            ).show();
+            Toast.makeText(getContext(), "This application is "+String.valueOf((int)Math.floor((new Date().getTime()-birthday.getTime())/(31557600000L)))+"years old.", Toast.LENGTH_SHORT).show();
+            return false;
+        });
 
     }
 }

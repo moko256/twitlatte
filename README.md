@@ -3,10 +3,8 @@ twicalico
 
 This application is the simple Twitter client for Android\.
 
-## Description
-
-* Minimum api level is 19\.
-* Target api level is 25\.
+Minimum api level is 17\.
+Target api level is 25\.
 
 ## Usage
 

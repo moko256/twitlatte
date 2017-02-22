@@ -6,10 +6,14 @@ import android.content.Intent;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestManager;
 
 import java.util.ArrayList;
 
@@ -20,15 +24,29 @@ import twitter4j.User;
  *
  * @author moko256
  */
-class UsersAdapter extends BaseListAdapter<User,UsersAdapter.ViewHolder> {
+class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> {
+
+    private ArrayList<User> data;
+    private Context context;
+
+    private RequestManager imageRequestManager;
 
     UsersAdapter(Context context, ArrayList<User> data) {
-        super(context, data);
+        this.context = context;
+        this.data = data;
+        imageRequestManager= Glide.with(context);
+
+        setHasStableIds(true);
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return data.get(position).getId();
     }
 
     @Override
     public UsersAdapter.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        return new ViewHolder(inflater.inflate(R.layout.layout_user, viewGroup, false));
+        return new ViewHolder(LayoutInflater.from(context).inflate(R.layout.layout_user, viewGroup, false));
     }
 
     @Override
@@ -41,9 +59,10 @@ class UsersAdapter extends BaseListAdapter<User,UsersAdapter.ViewHolder> {
         viewHolder.userUserId.setText(TwitterStringUtil.plusAtMark(item.getScreenName()));
         viewHolder.itemView.setOnClickListener(v -> {
             ViewCompat.setTransitionName(viewHolder.userUserImage,"tweet_user_image");
-            Intent intent = new Intent(context,ShowUserActivity.class);
-            intent.putExtra("user",item);
-            context.startActivity(intent, ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) context,viewHolder.userUserImage,"tweet_user_image").toBundle());
+            context.startActivity(
+                    new Intent(context,ShowUserActivity.class).putExtra("user",item),
+                    ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) context,viewHolder.userUserImage,"tweet_user_image").toBundle()
+            );
         });
 
     }

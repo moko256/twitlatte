@@ -1,10 +1,6 @@
 package com.github.moko256.twicalico;
 
-import android.content.ClipData;
-import android.content.ClipDescription;
 import android.graphics.Color;
-import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -12,12 +8,15 @@ import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatEditText;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.DragEvent;
-import android.view.View;
 import android.widget.TextView;
 
 import com.twitter.Validator;
 
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+import twitter4j.Status;
+import twitter4j.StatusUpdate;
 import twitter4j.TwitterException;
 
 /**
@@ -27,53 +26,30 @@ import twitter4j.TwitterException;
  */
 public class SendTweetActivity extends AppCompatActivity {
 
+    Validator twitterTextValidator;
+
+    ActionBar actionBar;
+    TextView counterTextView;
+    AppCompatEditText editText;
+    AppCompatButton button;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_send_tweet);
 
-        ActionBar actionBar=getSupportActionBar();
+        twitterTextValidator=new Validator();
+
+        actionBar=getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeAsUpIndicator(R.drawable.ic_clear_white_24dp);
 
-        TextView counterTextView=(TextView)findViewById(R.id.tweet_text_edit_counter);
-        AppCompatEditText editText=(AppCompatEditText)findViewById(R.id.tweet_text_edit);
-        editText.setOnLongClickListener(view -> {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                editText.startDragAndDrop(
-                        new ClipData(
-                                "text",
-                                new String[]{ClipDescription.MIMETYPE_TEXT_PLAIN},
-                                new ClipData.Item(editText.getText().subSequence(editText.getSelectionStart(), editText.getSelectionEnd()))
-                        ),
-                        new View.DragShadowBuilder(editText),
-                        null,
-                        View.DRAG_FLAG_GLOBAL);
-            }
-            return true;
-        });
-        editText.setOnDragListener((view, dragEvent) -> {
-            switch(dragEvent.getAction()){
-                case DragEvent.ACTION_DROP:
-                    if(dragEvent.getClipDescription().hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)){
-                        editText.setText(
-                                editText.getText().replace(
-                                        editText.getSelectionStart(),
-                                        editText.getSelectionEnd(),
-                                        dragEvent.getClipData().getItemAt(0).getText()
-                                )
-                        );
-                    }
-                    break;
-            }
-            return true;
-        });
-        onEditTextChanged(editText.getText(),counterTextView);
+        counterTextView=(TextView)findViewById(R.id.tweet_text_edit_counter);
+
+        editText=(AppCompatEditText)findViewById(R.id.tweet_text_edit);
         editText.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -81,28 +57,36 @@ public class SendTweetActivity extends AppCompatActivity {
             }
 
             @Override
-            public void afterTextChanged(Editable s) {
-
-            }
+            public void afterTextChanged(Editable s) {}
         });
 
-        AppCompatButton button=(AppCompatButton)findViewById(R.id.tweet_text_submit);
+        onEditTextChanged(editText.getText(),counterTextView);
+
+        button=(AppCompatButton)findViewById(R.id.tweet_text_submit);
         button.setOnClickListener(v -> {
-            button.setEnabled(false);
-            new AsyncTask<String,Void,Void>(){
-            @Override
-            public Void doInBackground(String... str){
-                try {
-                    Static.twitter.updateStatus(str[0]);
-                    finish();
-                } catch (TwitterException e) {
-                    e.printStackTrace();
-                }
-                return null;
-            }
-            }.execute(editText.getText().toString());
+            v.setEnabled(false);
+            updateStatusObservable(new StatusUpdate(editText.getText().toString()))
+                    .subscribeOn(Schedulers.newThread())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(
+                            it->{},
+                            Throwable::printStackTrace,
+                            this::finish
+                    );
         });
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        button=null;
+        editText=null;
+        counterTextView=null;
+        actionBar=null;
+
+        twitterTextValidator=null;
     }
 
     @Override
@@ -112,15 +96,26 @@ public class SendTweetActivity extends AppCompatActivity {
     }
 
     private void onEditTextChanged(CharSequence s,TextView counterTextView){
-        int textLength=new Validator().getTweetLength(s.toString());
+        int textLength=twitterTextValidator.getTweetLength(s.toString());
         int maxLength=Validator.MAX_TWEET_LENGTH;
-        counterTextView.setText(String.valueOf(textLength)+"/"+String.valueOf(maxLength));
+        counterTextView.setText(String.valueOf(textLength)+" / "+String.valueOf(maxLength));
         if (textLength>=maxLength){
             counterTextView.setTextColor(Color.RED);
         }
         else{
             counterTextView.setTextColor(Color.GRAY);
         }
+    }
+
+    private Observable<Status> updateStatusObservable(StatusUpdate statusUpdate){
+        return Observable.create(subscriber -> {
+            try {
+                subscriber.onNext(GlobalApplication.twitter.updateStatus(statusUpdate));
+                subscriber.onCompleted();
+            } catch (TwitterException e) {
+                subscriber.onError(e);
+            }
+        });
     }
 
 }

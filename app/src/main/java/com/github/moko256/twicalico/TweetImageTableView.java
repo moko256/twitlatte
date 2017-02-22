@@ -80,6 +80,24 @@ public class TweetImageTableView extends GridLayout {
 
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        childLayout();
+        super.onLayout(changed, left, top, right, bottom);
+    }
+
+    public void setImageNumber(int num){
+        imageNum=num;
+        childLayout();
+    }
+
+    public int getImageNumber(){
+        return imageNum;
+    }
+
+    public ImageView getImageView(int i){
+        return imageViews[i];
+    }
+
+    private void childLayout(){
 
         for (int i = 0; i < 4; i++) {
             ImageView imageView = imageViews[i];
@@ -95,21 +113,6 @@ public class TweetImageTableView extends GridLayout {
             int param[]=params[imageNum-1][i];
             imageView.setLayoutParams(makeGridLayoutParams(param[0],param[1],param[2],param[3]));
         }
-
-        super.onLayout(changed, left, top, right, bottom);
-    }
-
-    public void setImageNumber(int num){
-        imageNum=num;
-        forceLayout();
-    }
-
-    public int getImageNumber(){
-        return imageNum;
-    }
-
-    public ImageView getImageView(int i){
-        return imageViews[i];
     }
 
     private LayoutParams makeGridLayoutParams(int row, int column, int rowSpan, int colSpan){

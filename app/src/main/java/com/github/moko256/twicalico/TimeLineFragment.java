@@ -14,7 +14,7 @@ public class TimeLineFragment extends BaseTweetListFragment implements ToolbarTi
 
     @Override
     public ResponseList<Status> getResponseList(Paging paging) throws TwitterException {
-        return Static.twitter.getHomeTimeline(paging);
+        return GlobalApplication.twitter.getHomeTimeline(paging);
     }
 
     @Override
