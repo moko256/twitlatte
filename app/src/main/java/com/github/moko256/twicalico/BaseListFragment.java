@@ -1,6 +1,8 @@
 package com.github.moko256.twicalico;
 
+import android.app.Activity;
 import android.os.Bundle;
+import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -103,5 +105,20 @@ public abstract class BaseListFragment extends Fragment {
     protected void setAdapter(RecyclerView.Adapter adapter) {
         recyclerView.setAdapter(adapter);
     }
+
+    protected View getSnackBarParentContainer(){
+        Activity parent=getActivity();
+        if(parent instanceof GetSnackBarParentContainerId){
+            return parent.findViewById(((GetSnackBarParentContainerId) getActivity()).getSnackBarParentContainerId());
+        } else {
+            return getView();
+        }
+    }
+
+    public interface GetSnackBarParentContainerId {
+        @IdRes
+        int getSnackBarParentContainerId();
+    }
+
 }
 

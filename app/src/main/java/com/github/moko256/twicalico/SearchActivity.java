@@ -10,7 +10,7 @@ import android.support.v7.app.AppCompatActivity;
  * @author moko256
  */
 
-public class SearchActivity extends AppCompatActivity {
+public class SearchActivity extends AppCompatActivity implements BaseListFragment.GetSnackBarParentContainerId {
     ActionBar actionBar;
 
     @Override
@@ -41,5 +41,10 @@ public class SearchActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp() {
         finish();
         return false;
+    }
+
+    @Override
+    public int getSnackBarParentContainerId() {
+        return R.id.activity_search_fragment_container;
     }
 }

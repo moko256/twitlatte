@@ -106,7 +106,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                         },
                         e -> {
                             e.printStackTrace();
-                            Snackbar.make(getView(), getContext().getString(R.string.error_occurred_with_error_code,
+                            Snackbar.make(getSnackBarParentContainer(), getContext().getString(R.string.error_occurred_with_error_code,
                                     ((TwitterException) e).getErrorCode()), Snackbar.LENGTH_INDEFINITE)
                                     .setAction(R.string.retry, v -> onInitializeList())
                                     .show();
@@ -144,7 +144,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                         e -> {
                             e.printStackTrace();
                             getSwipeRefreshLayout().setRefreshing(false);
-                            Snackbar.make(getView(), getContext().getString(R.string.error_occurred_with_error_code,
+                            Snackbar.make(getSnackBarParentContainer(), getContext().getString(R.string.error_occurred_with_error_code,
                                     ((TwitterException) e).getErrorCode()), Snackbar.LENGTH_INDEFINITE)
                                     .setAction(R.string.retry, v -> onUpdateList())
                                     .show();
@@ -171,7 +171,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                         },
                         e -> {
                             e.printStackTrace();
-                            Snackbar.make(getView(), getContext().getString(R.string.error_occurred_with_error_code,
+                            Snackbar.make(getSnackBarParentContainer(), getContext().getString(R.string.error_occurred_with_error_code,
                                     ((TwitterException) e).getErrorCode()), Snackbar.LENGTH_INDEFINITE)
                                     .setAction(R.string.retry, v -> onLoadMoreList())
                                     .show();

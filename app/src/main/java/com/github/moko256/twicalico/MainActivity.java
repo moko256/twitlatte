@@ -31,7 +31,7 @@ import twitter4j.User;
  *
  * @author moko256
  */
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements BaseListFragment.GetSnackBarParentContainerId {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -189,7 +189,12 @@ public class MainActivity extends AppCompatActivity {
         return getSupportFragmentManager().findFragmentById(R.id.mainLayout);
     }
 
-    private void attachFragment(Fragment fragment,NavigationView navigationView, TabLayout tabLayout){
+    @Override
+    public int getSnackBarParentContainerId() {
+        return R.id.activity_main_coordinator_layout;
+    }
+
+    private void attachFragment(Fragment fragment, NavigationView navigationView, TabLayout tabLayout){
         if (fragment != null) {
             if(fragment instanceof ToolbarTitleInterface){
                 setTitle(((ToolbarTitleInterface)fragment).getTitleResourceId());
