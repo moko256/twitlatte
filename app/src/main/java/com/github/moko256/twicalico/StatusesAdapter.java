@@ -16,10 +16,10 @@ import twitter4j.Status;
  */
 class StatusesAdapter extends RecyclerView.Adapter<StatusesAdapter.ViewHolder> {
 
-    private ArrayList<Status> data;
+    private ArrayList<Long> data;
     private Context context;
 
-    StatusesAdapter(Context context, ArrayList<Status> data) {
+    StatusesAdapter(Context context, ArrayList<Long> data) {
         this.context = context;
         this.data = data;
 
@@ -28,12 +28,12 @@ class StatusesAdapter extends RecyclerView.Adapter<StatusesAdapter.ViewHolder> {
 
     @Override
     public long getItemId(int position) {
-        return data.get(position).getId();
+        return data.get(position);
     }
 
     @Override
     public int getItemViewType(int position) {
-        Status status=data.get(position);
+        Status status=GlobalApplication.statusCache.get(data.get(position));
         Status item = status.isRetweet()?status.getRetweetedStatus():status;
         AppConfiguration conf=GlobalApplication.configuration;
         if((conf.isPatternTweetMuteEnabled() && item.getText().matches(conf.getTweetMutePattern())) ||
@@ -61,7 +61,7 @@ class StatusesAdapter extends RecyclerView.Adapter<StatusesAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int i) {
-        viewHolder.statusView.setStatus(data.get(i));
+        viewHolder.statusView.setStatus(GlobalApplication.statusCache.get(data.get(i)));
     }
 
     @Override

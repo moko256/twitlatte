@@ -261,6 +261,10 @@ public class StatusCacheMap {
         });
     }
 
+    public Status get(Long id){
+        return statusCache.get(id);
+    }
+
     public void addAll(Collection<? extends Status> c) {
         for (Status status : c) {
             add(status);

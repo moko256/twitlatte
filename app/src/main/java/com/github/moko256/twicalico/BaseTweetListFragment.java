@@ -30,7 +30,7 @@ import twitter4j.TwitterException;
 public abstract class BaseTweetListFragment extends BaseListFragment {
 
     StatusesAdapter adapter;
-    ArrayList<Status> list;
+    ArrayList<Long> list;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -69,7 +69,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         if (savedInstanceState != null){
-            ArrayList<Status> l=(ArrayList<Status>) savedInstanceState.getSerializable("list");
+            ArrayList<Long> l=(ArrayList<Long>) savedInstanceState.getSerializable("list");
             if(l!=null){
                 list.addAll(l);
             }
@@ -79,7 +79,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
     @Override
     public void onSaveInstanceState(Bundle outState){
         super.onSaveInstanceState(outState);
-        outState.putSerializable("list", (ArrayList) list);
+        outState.putSerializable("list", list);
     }
 
     @Override
@@ -101,7 +101,13 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         result-> {
-                            list.addAll(result);
+                            GlobalApplication.statusCache.addAll(result);
+                            list.addAll(
+                                    Observable
+                                    .from(result)
+                                    .map(Status::getId)
+                                    .toList().toSingle().toBlocking().value()
+                            );
                             adapter.notifyDataSetChanged();
                         },
                         e -> {
@@ -117,7 +123,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
 
     @Override
     protected void onUpdateList() {
-        Paging paging=new Paging(list.get(0).getId());
+        Paging paging=new Paging(list.get(0));
         paging.count(50);
 
         getResponseObservable(paging)
@@ -127,7 +133,14 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                         result -> {
                             int size = result.size();
                             if (size > 0) {
-                                list.addAll(0, result);
+                                GlobalApplication.statusCache.addAll(result);
+                                list.addAll(
+                                        0,
+                                        Observable
+                                                .from(result)
+                                                .map(Status::getId)
+                                                .toList().toSingle().toBlocking().value()
+                                );
                                 adapter.notifyItemRangeInserted(0,size);
                                 TypedValue value=new TypedValue();
                                 Toast t=Toast.makeText(getContext(),"New Tweet",Toast.LENGTH_SHORT);
@@ -156,7 +169,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
     @Override
     protected void onLoadMoreList() {
         Paging paging=new Paging();
-        paging.maxId(list.get(list.size()-1).getId()-1L);
+        paging.maxId(list.get(list.size()-1)-1L);
         paging.count(50);
         getResponseObservable(paging)
                 .subscribeOn(Schedulers.newThread())
@@ -165,7 +178,13 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                         result -> {
                             int size = result.size();
                             if (size > 0) {
-                                list.addAll(result);
+                                GlobalApplication.statusCache.addAll(result);
+                                list.addAll(
+                                        Observable
+                                                .from(result)
+                                                .map(Status::getId)
+                                                .toList().toSingle().toBlocking().value()
+                                );
                                 adapter.notifyItemRangeInserted(list.size(),size);
                             }
                         },

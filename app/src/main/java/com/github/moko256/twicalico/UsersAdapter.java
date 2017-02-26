@@ -26,12 +26,12 @@ import twitter4j.User;
  */
 class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> {
 
-    private ArrayList<User> data;
+    private ArrayList<Long> data;
     private Context context;
 
     private RequestManager imageRequestManager;
 
-    UsersAdapter(Context context, ArrayList<User> data) {
+    UsersAdapter(Context context, ArrayList<Long> data) {
         this.context = context;
         this.data = data;
         imageRequestManager= Glide.with(context);
@@ -41,7 +41,7 @@ class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> {
 
     @Override
     public long getItemId(int position) {
-        return data.get(position).getId();
+        return data.get(position);
     }
 
     @Override
@@ -51,7 +51,7 @@ class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int i) {
-        User item=data.get(i);
+        User item=GlobalApplication.userCache.get(data.get(i));
 
         imageRequestManager.load(item.getProfileImageURL()).into(viewHolder.userUserImage);
 
