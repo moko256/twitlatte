@@ -53,6 +53,12 @@ public class ShowUserActivity extends AppCompatActivity implements ActivityHasUs
 
         tabLayout=(TabLayout) findViewById(R.id.tab_show_user);
         tabLayout.setupWithViewPager(viewPager);
+
+        findViewById(R.id.activity_show_user_fab).setOnClickListener(v -> {
+            if (user!=null){
+                startActivity(SendTweetActivity.getIntent(this, TwitterStringUtil.plusAtMark(user.getScreenName())+" "));
+            }
+        });
     }
 
     @Override

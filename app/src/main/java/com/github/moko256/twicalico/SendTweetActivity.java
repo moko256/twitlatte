@@ -1,5 +1,7 @@
 package com.github.moko256.twicalico;
 
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -26,6 +28,8 @@ import twitter4j.TwitterException;
  */
 public class SendTweetActivity extends AppCompatActivity {
 
+    private static final String INTENT_EXTRA_TWEET_TEXT="text";
+
     Validator twitterTextValidator;
 
     ActionBar actionBar;
@@ -47,6 +51,12 @@ public class SendTweetActivity extends AppCompatActivity {
         counterTextView=(TextView)findViewById(R.id.tweet_text_edit_counter);
 
         editText=(AppCompatEditText)findViewById(R.id.tweet_text_edit);
+        if (getIntent()!=null){
+            String text=getIntent().getStringExtra(INTENT_EXTRA_TWEET_TEXT);
+            if (text!=null) {
+                editText.setText(text);
+            }
+        }
         editText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -118,4 +128,7 @@ public class SendTweetActivity extends AppCompatActivity {
         });
     }
 
+    public static Intent getIntent(Context context, String text){
+        return new Intent(context,SendTweetActivity.class).putExtra(INTENT_EXTRA_TWEET_TEXT, text);
+    }
 }

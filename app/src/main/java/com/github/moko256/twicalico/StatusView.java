@@ -92,7 +92,7 @@ public class StatusView extends RelativeLayout {
         tweetRetweetButton.setButtonDrawable(R.drawable.ic_retweet_black_24dp);
 
         tweetReplyButton=(AppCompatImageButton) findViewById(R.id.tweet_content_reply_button);
-        Drawable replyIcon= DrawableCompat.wrap(AppCompatResources.getDrawable(context, R.drawable.ic_reply_black_24dp));
+        Drawable replyIcon= DrawableCompat.wrap(AppCompatResources.getDrawable(context, R.drawable.ic_reply_white_24dp));
         DrawableCompat.setTintList(replyIcon,context.getResources().getColorStateList(R.color.reply_button_color_stateful));
         tweetReplyButton.setImageDrawable(replyIcon);
 

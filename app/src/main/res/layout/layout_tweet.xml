@@ -164,7 +164,7 @@
             tools:button="@drawable/ic_retweet_black_24dp"/>
 
         <!--
-         Please set image : drawable/ic_reply_black_24dp
+         Please set image : drawable/ic_reply_white_24dp
          and, set tint : color/reply_button_color_stateful
          -->
         <android.support.v7.widget.AppCompatImageButton
@@ -179,7 +179,7 @@
             android:layout_marginRight="12dp"
             android:background="?attr/controlBackground"
             tools:tint="@color/reply_button_color_stateful"
-            tools:src="@drawable/ic_reply_black_24dp"
+            tools:src="@drawable/ic_reply_white_24dp"
             tools:ignore="PrivateResource" />
 
     </RelativeLayout>
