@@ -36,7 +36,7 @@ public class GlobalApplication extends Application {
     static AppConfiguration configuration;
 
     static UserCacheMap userCache=new UserCacheMap();
-    static StatusCacheMap statusCache=new StatusCacheMap(userCache);
+    static StatusCacheMap statusCache=new StatusCacheMap();
 
     @Override
     public void onCreate() {
