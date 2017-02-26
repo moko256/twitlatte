@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 
-import twitter4j.ExtendedMediaEntity;
 import twitter4j.GeoLocation;
 import twitter4j.HashtagEntity;
 import twitter4j.MediaEntity;
@@ -68,13 +67,15 @@ public class StatusCacheMap {
             private URLEntity[] urlEntities=status.getURLEntities();
             private HashtagEntity[] hashtagEntities=status.getHashtagEntities();
             private MediaEntity[] mediaEntities=status.getMediaEntities();
-            private ExtendedMediaEntity[] extendedMediaEntities=status.getExtendedMediaEntities();
             private SymbolEntity[] symbolEntities=status.getSymbolEntities();
             private long currentUserRetweetId = status.getCurrentUserRetweetId();
             private Scopes scopes=status.getScopes();
             private String[] withheldInCountries = status.getWithheldInCountries();
             private Status quotedStatus=status.getQuotedStatus();
             private long quotedStatusId = status.getQuotedStatusId();
+
+            private int displayTextRangeStart = status.getDisplayTextRangeStart();
+            private int displayTextRangeEnd = status.getDisplayTextRangeEnd();
 
 
 
@@ -209,6 +210,16 @@ public class StatusCacheMap {
             }
 
             @Override
+            public int getDisplayTextRangeStart() {
+                return displayTextRangeStart;
+            }
+
+            @Override
+            public int getDisplayTextRangeEnd() {
+                return displayTextRangeEnd;
+            }
+
+            @Override
             public int compareTo(Status o) {
                 return 0;
             }
@@ -231,11 +242,6 @@ public class StatusCacheMap {
             @Override
             public MediaEntity[] getMediaEntities() {
                 return mediaEntities;
-            }
-
-            @Override
-            public ExtendedMediaEntity[] getExtendedMediaEntities() {
-                return extendedMediaEntities;
             }
 
             @Override
