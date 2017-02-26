@@ -19,6 +19,8 @@
 -dontwarn twitter4j.**
 -keep class twitter4j.** { *; }
 
+-keep class android.support.v7.widget.SearchView { *; }
+
 -keep public class * implements com.bumptech.glide.module.GlideModule
 
 -dontwarn java.lang.invoke.*

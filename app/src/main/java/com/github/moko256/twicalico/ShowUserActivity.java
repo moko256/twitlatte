@@ -24,7 +24,7 @@ import twitter4j.User;
  *
  * @author moko256
  */
-public class ShowUserActivity extends AppCompatActivity implements ActivityHasUserObservable {
+public class ShowUserActivity extends AppCompatActivity implements ActivityHasUserObservable,BaseListFragment.GetSnackBarParentContainerId {
 
     User user;
 
@@ -201,5 +201,10 @@ public class ShowUserActivity extends AppCompatActivity implements ActivityHasUs
                             subscriber.onCompleted();
                         }
                 );
+    }
+
+    @Override
+    public int getSnackBarParentContainerId() {
+        return R.id.activity_show_user_coordinator_layout;
     }
 }
