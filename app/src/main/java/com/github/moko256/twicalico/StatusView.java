@@ -233,8 +233,7 @@ public class StatusView extends RelativeLayout {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         result->{
-                            //data.set(i,(Status)result);
-                            //notifyItemChanged(i);
+                            GlobalApplication.statusCache.add((Status)result);
                             Toast.makeText(getContext(), R.string.succeeded, Toast.LENGTH_SHORT).show();
                         },
                         throwable -> {
@@ -264,8 +263,7 @@ public class StatusView extends RelativeLayout {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         result->{
-                            //data.set(i,(Status)result);
-                            //notifyItemChanged(i);
+                            GlobalApplication.statusCache.add((Status)result);
                             Toast.makeText(getContext(), R.string.succeeded, Toast.LENGTH_SHORT).show();
                         },
                         throwable -> {

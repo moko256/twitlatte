@@ -25,7 +25,7 @@ import twitter4j.User;
 public abstract class BaseUsersFragment extends BaseListFragment {
 
     UsersAdapter adapter;
-    ArrayList<User> list;
+    ArrayList<Long> list;
     long next_cursor;
 
     @Override
@@ -61,7 +61,7 @@ public abstract class BaseUsersFragment extends BaseListFragment {
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         if (savedInstanceState != null) {
-            ArrayList<User> l=(ArrayList<User>) savedInstanceState.getSerializable("list");
+            ArrayList<Long> l=(ArrayList<Long>) savedInstanceState.getSerializable("list");
             if(l!=null){
                 list.addAll(l);
             }
@@ -72,8 +72,8 @@ public abstract class BaseUsersFragment extends BaseListFragment {
     @Override
     public void onSaveInstanceState(Bundle outState){
         super.onSaveInstanceState(outState);
-        outState.putSerializable("list", (ArrayList) list);
-        outState.putLong("next_cursor",next_cursor);
+        outState.putSerializable("list", list);
+        outState.putLong("next_cursor", next_cursor);
     }
 
     @Override
@@ -95,7 +95,13 @@ public abstract class BaseUsersFragment extends BaseListFragment {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         result-> {
-                            list.addAll(result);
+                            GlobalApplication.userCache.addAll(result);
+                            list.addAll(
+                                    Observable
+                                            .from(result)
+                                            .map(User::getId)
+                                            .toList().toSingle().toBlocking().value()
+                            );
                             adapter.notifyDataSetChanged();
                         },
                         e -> {
@@ -124,7 +130,13 @@ public abstract class BaseUsersFragment extends BaseListFragment {
                             int size = result.size();
                             if (size > 0) {
                                 int l = list.size();
-                                list.addAll(result);
+                                GlobalApplication.userCache.addAll(result);
+                                list.addAll(
+                                        Observable
+                                                .from(result)
+                                                .map(User::getId)
+                                                .toList().toSingle().toBlocking().value()
+                                );
                                 adapter.notifyItemRangeInserted(l, size);
                             }
                         },
