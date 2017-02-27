@@ -55,6 +55,7 @@ public class SendTweetActivity extends AppCompatActivity {
             String text=getIntent().getStringExtra(INTENT_EXTRA_TWEET_TEXT);
             if (text!=null) {
                 editText.setText(text);
+                editText.setSelection(text.length());
             }
         }
         editText.addTextChangedListener(new TextWatcher() {
