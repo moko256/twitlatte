@@ -97,11 +97,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                     }
             );
 
-            findPreference("license").setOnPreferenceClickListener(preference -> {
-                startActivity(new Intent(getContext(),LicensesActivity.class));
-                return false;
-            });
-
             Preference version=findPreference("app_version");
             version.setSummary("Version "+ BuildConfig.VERSION_NAME);
             version.setOnPreferenceClickListener(preference -> {
@@ -115,6 +110,26 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 Toast.makeText(getContext(), "This application is "+String.valueOf((int)Math.floor((new Date().getTime()-birthday.getTime())/(31557600000L)))+"years old.", Toast.LENGTH_SHORT).show();
                 return false;
             });
+        } else if(getArguments().getString(ARG_PREFERENCE_ROOT).equals("license")){
+            final String license_keys[]=new String[]{
+                    "support_v4",
+                    "support_v7",
+                    "support_v14",
+                    "support_design",
+                    "glide",
+                    "okhttp",
+                    "twitter4j",
+                    "twitter_text",
+                    "rx_java",
+                    "rx_android"
+            };
+
+            for (String name : license_keys) {
+                findPreference("license_lib_" + name).setOnPreferenceClickListener(preference -> {
+                    getContext().startActivity(new Intent(getContext(), LicensesActivity.class).putExtra("library_name", name));
+                    return true;
+                });
+            }
         }
 
     }

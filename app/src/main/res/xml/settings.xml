@@ -89,10 +89,41 @@
     </PreferenceCategory>
     <PreferenceCategory
         android:title="@string/about">
-        <Preference
+        <PreferenceScreen
             android:key="license"
             android:title="@string/license"
-            android:summary="Show License Text" />
+            android:summary="Show License Text">
+            <Preference
+                android:key="license_lib_support_v4"
+                android:title="Android Compatibility Library v4"/>
+            <Preference
+                android:key="license_lib_support_v7"
+                android:title="Android Compatibility Library v7"/>
+            <Preference
+                android:key="license_lib_support_v14"
+                android:title="Android Compatibility Library v14"/>
+            <Preference
+                android:key="license_lib_support_design"
+                android:title="Android Design Support Library"/>
+            <Preference
+                android:key="license_lib_glide"
+                android:title="Glide"/>
+            <Preference
+                android:key="license_lib_okhttp"
+                android:title="OkHttp"/>
+            <Preference
+                android:key="license_lib_twitter4j"
+                android:title="Twitter4J"/>
+            <Preference
+                android:key="license_lib_twitter_text"
+                android:title="twitter-text"/>
+            <Preference
+                android:key="license_lib_rx_java"
+                android:title="RxJava"/>
+            <Preference
+                android:key="license_lib_rx_android"
+                android:title="RxAndroid"/>
+        </PreferenceScreen>
         <Preference
             android:key="app_version"
             android:title="@string/app_name"/>

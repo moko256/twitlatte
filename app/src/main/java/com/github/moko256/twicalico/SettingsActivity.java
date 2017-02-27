@@ -1,5 +1,6 @@
 package com.github.moko256.twicalico;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -25,9 +26,20 @@ public class SettingsActivity extends AppCompatActivity implements PreferenceFra
         actionBar.setHomeAsUpIndicator(R.drawable.ic_back_white_24dp);
 
         if (savedInstanceState == null) {
+            PreferenceFragmentCompat fragment=new SettingsFragment();
+
+            if (getIntent()!=null){
+                String key = getIntent().getStringExtra(PreferenceFragmentCompat.ARG_PREFERENCE_ROOT);
+                if (key != null) {
+                    Bundle args=new Bundle();
+                    args.putString(PreferenceFragmentCompat.ARG_PREFERENCE_ROOT, key);
+                    fragment.setArguments(args);
+                }
+            }
+
             getSupportFragmentManager()
                     .beginTransaction()
-                    .add(R.id.activity_settings_container,new SettingsFragment())
+                    .add(R.id.activity_settings_container,fragment)
                     .commit();
         }
     }
@@ -46,17 +58,7 @@ public class SettingsActivity extends AppCompatActivity implements PreferenceFra
 
     @Override
     public boolean onPreferenceStartScreen(PreferenceFragmentCompat caller, PreferenceScreen pref) {
-        PreferenceFragmentCompat fragment=new SettingsFragment();
-        Bundle args=new Bundle();
-        args.putString(PreferenceFragmentCompat.ARG_PREFERENCE_ROOT, pref.getKey());
-        fragment.setArguments(args);
-        getSupportFragmentManager()
-                .beginTransaction()
-                .setBreadCrumbTitle(pref.getTitle())
-                .setCustomAnimations(android.R.anim.fade_in,android.R.anim.fade_out,android.R.anim.fade_in,android.R.anim.fade_out)
-                .replace(R.id.activity_settings_container,fragment)
-                .addToBackStack(null)
-                .commit();
+        startActivity(new Intent(this, SettingsActivity.class).putExtra(PreferenceFragmentCompat.ARG_PREFERENCE_ROOT, pref.getKey()));
         return true;
     }
 }
