@@ -20,7 +20,8 @@ public class ShowUserFragmentsPagerAdapter extends FragmentPagerAdapter {
 
         mFragments=new Fragment[]{
                 new ShowUserInfoFragment(),
-                new ShowUserTimelineFragment()
+                new ShowUserTimelineFragment(),
+                new ShowUserLikeFragment()
         };
         mContext=context;
     }
