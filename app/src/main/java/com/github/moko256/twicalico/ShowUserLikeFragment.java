@@ -9,7 +9,7 @@ import twitter4j.TwitterException;
 import twitter4j.User;
 
 /**
- * Created by moko256 on 2016/06/30.
+ * Created by moko256 on 2017/03/04.
  *
  * @author moko256
  */
