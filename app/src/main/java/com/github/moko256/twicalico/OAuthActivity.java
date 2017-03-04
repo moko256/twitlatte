@@ -137,7 +137,7 @@ public class OAuthActivity extends AppCompatActivity {
         String tokenSecret = accessToken.getTokenSecret();
 
         TokenSQLiteOpenHelper tokenOpenHelper = new TokenSQLiteOpenHelper(this);
-        long nowAccountPoint=tokenOpenHelper.setAccessToken(accessToken)-1;
+        long nowAccountPoint=tokenOpenHelper.addAccessToken(accessToken)-1;
         tokenOpenHelper.close();
 
         defaultSharedPreferences
@@ -150,6 +150,7 @@ public class OAuthActivity extends AppCompatActivity {
         GlobalApplication.twitter.setOAuthAccessToken(
                 new AccessToken(token, tokenSecret)
         );
+        GlobalApplication.user = null;
 
         finish();
         startActivity(new Intent(this,MainActivity.class));

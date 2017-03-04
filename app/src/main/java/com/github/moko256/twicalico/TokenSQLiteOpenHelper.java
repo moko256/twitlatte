@@ -34,17 +34,22 @@ public class TokenSQLiteOpenHelper extends SQLiteOpenHelper {
     public AccessToken getAccessToken(int index){
         SQLiteDatabase database=getReadableDatabase();
         Cursor c=database.query("AccountTokenList",new String[]{"userName","userId","token","tokenSecret"},null,null,null,null,null);
-        c.moveToPosition(index);
+        if (!c.moveToPosition(index)){
+            return null;
+        }
 
         AccessToken accessToken=new AccessToken(c.getString(2),c.getString(3)){
+            String screenName = c.getString(0);
+            long userId = Long.parseLong(c.getString(1),10);
+
             @Override
             public String getScreenName() {
-                return c.getString(0);
+                return screenName;
             }
 
             @Override
             public long getUserId() {
-                return Long.parseLong(c.getString(1),10);
+                return userId;
             }
         };
 
@@ -54,7 +59,7 @@ public class TokenSQLiteOpenHelper extends SQLiteOpenHelper {
         return accessToken;
     }
 
-    public long setAccessToken(AccessToken accessToken){
+    public long addAccessToken(AccessToken accessToken){
         SQLiteDatabase database=getWritableDatabase();
 
         ContentValues contentValues = new ContentValues();
@@ -63,9 +68,22 @@ public class TokenSQLiteOpenHelper extends SQLiteOpenHelper {
         contentValues.put("token",accessToken.getToken());
         contentValues.put("tokenSecret",accessToken.getTokenSecret());
 
-        database.insert("AccountTokenList","zero",contentValues);
+        Cursor c=database.query(
+                "AccountTokenList",
+                new String[]{"userName","userId","token","tokenSecret"},
+                "userId=?", new String[]{String.valueOf(accessToken.getUserId())}
+                ,null,null,null
+        );
 
-        long count=DatabaseUtils.queryNumEntries(database,"AccountTokenList");
+        if (c.moveToNext()){
+            database.update("AccountTokenList",contentValues,"userId=?", new String[]{String.valueOf(accessToken.getUserId())});
+        } else {
+            database.insert("AccountTokenList", "zero", contentValues);
+        }
+
+        c.close();
+
+        long count = DatabaseUtils.queryNumEntries(database,"AccountTokenList");
         database.close();
         return count;
     }
@@ -73,7 +91,7 @@ public class TokenSQLiteOpenHelper extends SQLiteOpenHelper {
     public long deleteAccessToken(long userId){
         SQLiteDatabase database=getWritableDatabase();
         database.delete("AccountTokenList","userId=?",new String[]{String.valueOf(userId)});
-        long count= DatabaseUtils.queryNumEntries(database,"AccountTokenList")-1;
+        long count = DatabaseUtils.queryNumEntries(database,"AccountTokenList");
         database.close();
         return count;
     }

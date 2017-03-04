@@ -155,6 +155,8 @@ public class GlobalApplication extends Application {
         AccessToken accessToken=tokenOpenHelper.getAccessToken(nowAccountPoint);
         tokenOpenHelper.close();
 
+        if (accessToken==null)return;
+
         Configuration conf=new ConfigurationBuilder()
                 .setTweetModeExtended(true)
                 .build();

@@ -1,11 +1,15 @@
 package com.github.moko256.twicalico;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.os.Process;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.preference.ListPreference;
@@ -63,6 +67,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                         if (newValue.equals("-1")){
                             getActivity().finish();
                             startActivity(new Intent(getContext(),OAuthActivity.class));
+                        } else {
+                            restart();
                         }
                         return true;
                     }
@@ -74,8 +80,23 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                         .setMessage("Logout?")
                         .setCancelable(true)
                         .setPositiveButton(android.R.string.ok,
-                                (dialog, i) ->
-                                        nowAccountList.getOnPreferenceChangeListener().onPreferenceChange(preference,String.valueOf(helper.deleteAccessToken(helper.getAccessToken(Integer.valueOf(defaultSharedPreferences.getString("AccountPoint","-1"))).getUserId())-1))
+                                (dialog, i) -> {
+                                    defaultSharedPreferences
+                                            .edit()
+                                            .putString(
+                                                    "AccountPoint",
+                                                    String.valueOf(
+                                                            helper.deleteAccessToken(
+                                                                    helper.getAccessToken(
+                                                                            Integer.valueOf(
+                                                                                    defaultSharedPreferences.getString("AccountPoint","-1")
+                                                                            ))
+                                                                            .getUserId()
+                                                            )-1
+                                                    )
+                                            ).apply();
+                                    restart();
+                                }
                         )
                         .setNegativeButton(android.R.string.cancel,(dialog, i) -> dialog.cancel())
                         .show();
@@ -132,5 +153,19 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             }
         }
 
+    }
+
+    private void restart(){
+        AlarmManager manager = (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
+        manager.set(
+                AlarmManager.RTC,
+                System.currentTimeMillis() + 1000,
+                PendingIntent.getActivity(
+                        getContext().getApplicationContext(),
+                        0,
+                        new Intent(getContext().getApplicationContext(), MainActivity.class),
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                ));
+        Process.killProcess(Process.myPid());
     }
 }
