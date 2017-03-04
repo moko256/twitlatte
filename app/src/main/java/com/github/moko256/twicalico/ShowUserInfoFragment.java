@@ -90,6 +90,10 @@ public class ShowUserInfoFragment extends Fragment implements ToolbarTitleInterf
         userLatestTweetText=(TextView) view.findViewById(R.id.show_user_latest_tweet_text);
         userLatestTweetLoadMoreButton=(Button) view.findViewById(R.id.show_user_latest_tweet_see_more_button);
 
+        if (user!=null){
+            setShowUserInfo();
+        }
+
         return view;
     }
 
