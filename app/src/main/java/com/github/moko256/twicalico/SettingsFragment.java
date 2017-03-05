@@ -1,8 +1,5 @@
 package com.github.moko256.twicalico;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -67,8 +64,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                         if (newValue.equals("-1")){
                             getActivity().finish();
                             startActivity(new Intent(getContext(),OAuthActivity.class));
-                        } else {
-                            restart();
                         }
                         return true;
                     }
@@ -95,7 +90,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                                                             )-1
                                                     )
                                             ).apply();
-                                    restart();
+                                    getActivity().finish();
+                                    Process.killProcess(Process.myPid());
                                 }
                         )
                         .setNegativeButton(android.R.string.cancel,(dialog, i) -> dialog.cancel())
@@ -155,17 +151,4 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
     }
 
-    private void restart(){
-        AlarmManager manager = (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
-        manager.set(
-                AlarmManager.RTC,
-                System.currentTimeMillis() + 1000,
-                PendingIntent.getActivity(
-                        getContext().getApplicationContext(),
-                        0,
-                        new Intent(getContext().getApplicationContext(), MainActivity.class),
-                        PendingIntent.FLAG_UPDATE_CURRENT
-                ));
-        Process.killProcess(Process.myPid());
-    }
 }
