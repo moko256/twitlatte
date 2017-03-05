@@ -229,7 +229,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
         RequestManager manager=Glide.with(this);
 
         manager.load(user.getBiggerProfileImageURL()).into(userImage);
-        manager.load(user.getProfileBannerRetinaURL()).into(userBackgroundImage);
+        manager.load(user.getProfileBannerRetinaURL()).centerCrop().into(userBackgroundImage);
     }
 
 }

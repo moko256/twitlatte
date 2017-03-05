@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/nav_header_height">
+    android:layout_height="wrap_content">
 
     <ImageView
         android:layout_width="match_parent"
@@ -11,9 +11,10 @@
         android:id="@+id/user_bg_image"
         tools:src="@android:color/darker_gray"/>
 
-    <LinearLayout
+    <com.github.moko256.twicalico.WideRatioLinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:fitsSystemWindows="false"
         android:gravity="bottom"
         android:orientation="vertical"
         android:paddingBottom="@dimen/nav_header_vertical_margin"
@@ -23,8 +24,8 @@
 
         <ImageView
             android:id="@+id/user_image"
-            android:layout_width="72dp"
-            android:layout_height="72dp"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
             tools:src="@android:color/white"/>
 
         <TextView
@@ -44,6 +45,6 @@
             android:textColor="#deFFFFFF"
             tools:text="\@user_name"/>
 
-    </LinearLayout>
+    </com.github.moko256.twicalico.WideRatioLinearLayout>
 
-</RelativeLayout>
+</FrameLayout>
