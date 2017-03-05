@@ -10,7 +10,6 @@ import android.support.v4.view.ViewCompat;
 import android.support.v7.content.res.AppCompatResources;
 import android.support.v7.widget.AppCompatCheckBox;
 import android.support.v7.widget.AppCompatImageButton;
-import android.text.method.LinkMovementMethod;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -139,9 +138,7 @@ public class StatusView extends RelativeLayout {
 
         tweetUserName.setText(item.getUser().getName());
         tweetUserId.setText(TwitterStringUtil.plusAtMark(item.getUser().getScreenName()));
-        tweetContext.setText(TwitterStringUtil.getLinkedSequence(item,getContext()));
-        tweetContext.setMovementMethod(LinkMovementMethod.getInstance());
-        tweetContext.setFocusable(false);
+        tweetContext.setText(TwitterStringUtil.getStatusTextSequence(item));
 
         tweetTimeStampText.setText(timeSpanConverter.toTimeSpanString(item.getCreatedAt().getTime()));
         tweetUserImage.setOnClickListener(v->{

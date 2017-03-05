@@ -32,6 +32,42 @@ public class TwitterStringUtil {
         return "@" + string;
     }
 
+    public static CharSequence getStatusTextSequence(Status item){
+
+        String tweet = item.getText();
+        StringBuilder builder = new StringBuilder(tweet);
+
+        List<URLEntity> urlEntities=Observable
+                .concat(Observable.from(item.getURLEntities()),
+                        Observable.create(
+                                subscriber -> {
+                                    if(item.getMediaEntities().length>0){
+                                        subscriber.onNext(item.getMediaEntities()[0]);
+                                    }
+                                    subscriber.onCompleted();
+                                }
+                        ))
+                .toSortedList((i1,i2)->i1.getStart()-i2.getStart())
+                .toBlocking()
+                .single();
+
+        int sp = 0;
+
+        for (URLEntity entity : urlEntities) {
+            String url = entity.getURL();
+            String displayUrl = entity.getDisplayURL();
+
+            int urlLength = url.codePointCount(0, url.length());
+            int displayUrlLength = displayUrl.codePointCount(0, displayUrl.length());
+            int dusp = displayUrlLength - urlLength;
+            builder.replace(tweet.offsetByCodePoints(0,entity.getStart()) + sp, tweet.offsetByCodePoints(0,entity.getEnd()) + sp, displayUrl);
+
+            sp+=dusp;
+        }
+
+        return builder;
+    }
+
     public static CharSequence getLinkedSequence(Status item, Context mContext){
 
         String tweet = item.getText();
