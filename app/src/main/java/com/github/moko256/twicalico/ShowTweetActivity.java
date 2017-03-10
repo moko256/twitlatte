@@ -96,6 +96,17 @@ public class ShowTweetActivity extends AppCompatActivity {
 
                                     imageRequestManager.load(item.getUser().getProfileImageURL()).into(userImage);
 
+                                    TextView tweetIsReply = (TextView) findViewById(R.id.tweet_show_is_reply_text);
+                                    long replyTweetId = item.getInReplyToStatusId();
+                                    if (replyTweetId != -1){
+                                        tweetIsReply.setVisibility(View.VISIBLE);
+                                        tweetIsReply.setOnClickListener(v -> startActivity(
+                                                new Intent(ShowTweetActivity.this,ShowTweetActivity.class).putExtra("statusId",(Long) replyTweetId)
+                                        ));
+                                    } else {
+                                        tweetIsReply.setVisibility(View.GONE);
+                                    }
+
                                     ((TextView) findViewById(R.id.tweet_show_user_name)).setText(item.getUser().getName());
                                     ((TextView) findViewById(R.id.tweet_show_user_id)).setText(TwitterStringUtil.plusAtMark(item.getUser().getScreenName()));
                                     TextView contentText=(TextView) findViewById(R.id.tweet_show_content);
