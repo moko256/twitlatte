@@ -37,6 +37,23 @@
             android:layout_gravity="right"
             android:layout_marginBottom="16dp"/>
 
+
+        <TextView
+            android:id="@+id/activity_tweet_send_images_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/images"
+            android:textColor="@color/colorAccent"
+            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+            android:layout_marginBottom="8dp"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/activity_tweet_send_images_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"/>
+
+
         <android.support.v7.widget.AppCompatButton
             android:id="@+id/tweet_text_submit"
             android:layout_width="wrap_content"

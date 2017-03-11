@@ -3,22 +3,32 @@ package com.github.moko256.twicalico;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatEditText;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.twitter.Validator;
+
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.util.List;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import twitter4j.Status;
 import twitter4j.StatusUpdate;
+import twitter4j.Twitter;
 import twitter4j.TwitterException;
 
 /**
@@ -29,12 +39,15 @@ import twitter4j.TwitterException;
 public class SendTweetActivity extends AppCompatActivity {
 
     private static final String INTENT_EXTRA_TWEET_TEXT="text";
+    private static final int REQUEST_GET_IMAGE = 10;
 
     Validator twitterTextValidator;
 
     ActionBar actionBar;
     TextView counterTextView;
     AppCompatEditText editText;
+    RecyclerView imagesRecyclerView;
+    ImagesAdapter imagesAdapter;
     AppCompatButton button;
 
     @Override
@@ -73,15 +86,38 @@ public class SendTweetActivity extends AppCompatActivity {
 
         onEditTextChanged(editText.getText(),counterTextView);
 
+        imagesRecyclerView = (RecyclerView) findViewById(R.id.activity_tweet_send_images_recycler_view);
+        imagesAdapter = new ImagesAdapter(this);
+
+        imagesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        imagesAdapter.setLimit(4);
+        imagesAdapter.setOnAddButtonClickListener(v -> {
+            Intent intent;
+            if (Build.VERSION.SDK_INT < 19){
+                intent = new Intent(Intent.ACTION_GET_CONTENT);
+            } else {
+                intent = new Intent(Intent.ACTION_OPEN_DOCUMENT).addCategory(Intent.CATEGORY_OPENABLE);
+            }
+            intent.setType("image/*");
+            startActivityForResult(intent, REQUEST_GET_IMAGE);
+        });
+        imagesRecyclerView.setAdapter(imagesAdapter);
+        imagesAdapter.notifyDataSetChanged();
+
         button=(AppCompatButton)findViewById(R.id.tweet_text_submit);
         button.setOnClickListener(v -> {
             v.setEnabled(false);
-            updateStatusObservable(new StatusUpdate(editText.getText().toString()))
+            updateStatusObservable(new StatusUpdate(editText.getText().toString()), imagesAdapter.getImagesList())
                     .subscribeOn(Schedulers.newThread())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
                             it->{},
-                            Throwable::printStackTrace,
+                            e->{
+                                e.printStackTrace();
+                                v.setEnabled(true);
+                                Toast.makeText(this, R.string.error_occurred, Toast.LENGTH_SHORT).show();
+                            },
                             this::finish
                     );
         });
@@ -89,15 +125,32 @@ public class SendTweetActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_GET_IMAGE){
+            if (data != null){
+                Uri resultUri = data.getData();
+                if (resultUri != null){
+                    imagesAdapter.getImagesList().add(resultUri);
+                    imagesAdapter.notifyItemInserted(imagesAdapter.getImagesList().size());
+                }
+            }
+        }
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
 
-        button=null;
-        editText=null;
-        counterTextView=null;
-        actionBar=null;
+        button = null;
+        imagesAdapter.clearImages();
+        imagesAdapter = null;
+        imagesRecyclerView = null;
+        editText = null;
+        counterTextView = null;
+        actionBar = null;
 
-        twitterTextValidator=null;
+        twitterTextValidator = null;
     }
 
     @Override
@@ -118,12 +171,22 @@ public class SendTweetActivity extends AppCompatActivity {
         }
     }
 
-    private Observable<Status> updateStatusObservable(StatusUpdate statusUpdate){
+    private Observable<Status> updateStatusObservable(StatusUpdate statusUpdate, List<Uri> images){
         return Observable.create(subscriber -> {
             try {
-                subscriber.onNext(GlobalApplication.twitter.updateStatus(statusUpdate));
+                Twitter twitter = GlobalApplication.twitter;
+                if (images != null && images.size() > 0) {
+                    long ids[] = new long[images.size()];
+                    for (int i = 0; i < images.size(); i++) {
+                        Uri uri = images.get(i);
+                        InputStream image = getContentResolver().openInputStream(uri);
+                        ids[i] = twitter.uploadMedia(uri.getLastPathSegment(), image).getMediaId();
+                    }
+                    statusUpdate.setMediaIds(ids);
+                }
+                subscriber.onNext(twitter.updateStatus(statusUpdate));
                 subscriber.onCompleted();
-            } catch (TwitterException e) {
+            } catch (FileNotFoundException | TwitterException e){
                 subscriber.onError(e);
             }
         });
