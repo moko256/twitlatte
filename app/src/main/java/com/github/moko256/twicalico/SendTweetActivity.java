@@ -22,6 +22,7 @@ import com.twitter.Validator;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
@@ -66,6 +67,18 @@ public class SendTweetActivity extends AppCompatActivity {
         editText=(AppCompatEditText)findViewById(R.id.tweet_text_edit);
         if (getIntent()!=null){
             String text=getIntent().getStringExtra(INTENT_EXTRA_TWEET_TEXT);
+            if (text!=null){
+                Uri data = getIntent().getData();
+                if (data != null){
+                    String scheme = data.getScheme();
+                    if (scheme.equals("https")){
+                        String path = data.getPath();
+                        if (path.matches(".*status=.+")){
+                            text=Pattern.compile("(?<=(.*status=)).+").matcher(path).group();
+                        }
+                    }
+                }
+            }
             if (text!=null) {
                 editText.setText(text);
                 editText.setSelection(text.length());

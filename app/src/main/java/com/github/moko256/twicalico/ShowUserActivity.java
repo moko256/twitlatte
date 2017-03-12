@@ -12,6 +12,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import java.util.List;
+import java.util.regex.Pattern;
+
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -192,14 +195,25 @@ public class ShowUserActivity extends AppCompatActivity implements ActivityHasUs
                 .create(
                         subscriber->{
                             String userName=(String) getIntent().getSerializableExtra("userName");
-                            if(!(user!=null&&user.getScreenName().equals(userName))){
-                                if(userName!=null){
+                            if (userName == null){
+                                if (getIntent().getData().getScheme().equals("https")){
+                                    List<String> paths = getIntent().getData().getPathSegments();
+                                    userName = paths.get(paths.size());
+                                } else if(getIntent().getData().getScheme().equals("twitter")){
+                                    String s = getIntent().getData().getPath();
+                                    if (s.matches(".*\\?(id|screen_name)=.+")){
+                                        userName = Pattern.compile("(?<=(.*(id|screen_name)=)).+").matcher(s).group();
+                                    }
+                                }
+                            }
+                            if (!(user!=null&&user.getScreenName().equals(userName))){
+                                if (userName!=null){
                                     try {
                                         user=GlobalApplication.twitter.showUser(userName);
                                     } catch (TwitterException e) {
                                         subscriber.onError(e);
                                     }
-                                }else {
+                                } else {
                                     user=(User) getIntent().getSerializableExtra("user");
                                 }
                             }
