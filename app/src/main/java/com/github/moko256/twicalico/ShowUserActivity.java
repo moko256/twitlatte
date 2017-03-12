@@ -1,6 +1,7 @@
 package com.github.moko256.twicalico;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -193,20 +194,34 @@ public class ShowUserActivity extends AppCompatActivity implements ActivityHasUs
     public Observable<User> getUserObservable(){
         return Observable
                 .create(
-                        subscriber->{
-                            String userName=(String) getIntent().getSerializableExtra("userName");
-                            if (userName == null){
-                                if (getIntent().getData().getScheme().equals("https")){
-                                    List<String> paths = getIntent().getData().getPathSegments();
-                                    userName = paths.get(paths.size());
-                                } else if(getIntent().getData().getScheme().equals("twitter")){
-                                    String s = getIntent().getData().getPath();
-                                    if (s.matches(".*\\?(id|screen_name)=.+")){
-                                        userName = Pattern.compile("(?<=(.*(id|screen_name)=)).+").matcher(s).group();
+                        subscriber-> {
+                            String userName = null;
+
+                            String userNameByExtra = (String) getIntent().getSerializableExtra("userName");
+                            if (userNameByExtra != null){
+                                userName = userNameByExtra;
+                            } else {
+                                Uri data = getIntent().getData();
+
+                                if (data != null){
+                                    String scheme = data.getScheme();
+
+                                    String userNameByLink = null;
+                                    if (scheme.equals("https")){
+                                        List<String> paths = data.getPathSegments();
+                                        userNameByLink = paths.get(paths.size());
+                                    } else if(scheme.equals("twitter")){
+                                        String path = data.getPath();
+                                        if (path.matches(".*\\?(id|screen_name)=.+")){
+                                            userNameByLink = Pattern.compile("(?<=(.*(id|screen_name)=)).+").matcher(path).group();
+                                        }
                                     }
+
+                                    userName = userNameByLink;
+
                                 }
                             }
-                            if (!(user!=null&&user.getScreenName().equals(userName))){
+                            if (user==null||!user.getScreenName().equals(userName)){
                                 if (userName!=null){
                                     try {
                                         user=GlobalApplication.twitter.showUser(userName);
