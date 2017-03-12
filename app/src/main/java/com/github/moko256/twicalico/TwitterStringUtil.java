@@ -129,12 +129,11 @@ public class TwitterStringUtil {
         for (URLEntity entity : urlEntities) {
             String url = entity.getURL();
             String expandedUrl = entity.getExpandedURL();
-            String displayUrl = entity.getDisplayURL();
 
             int urlLength = url.codePointCount(0, url.length());
-            int displayUrlLength = displayUrl.codePointCount(0, displayUrl.length());
+            int displayUrlLength = expandedUrl.codePointCount(0, expandedUrl.length());
             int dusp = displayUrlLength - urlLength;
-            spannableStringBuilder.replace(tweet.offsetByCodePoints(0,entity.getStart()) + sp, tweet.offsetByCodePoints(0,entity.getEnd()) + sp, displayUrl);
+            spannableStringBuilder.replace(tweet.offsetByCodePoints(0,entity.getStart()) + sp, tweet.offsetByCodePoints(0,entity.getEnd()) + sp, expandedUrl);
             spannableStringBuilder.setSpan(new URLSpan(expandedUrl), tweet.offsetByCodePoints(0,entity.getStart()) + sp, tweet.offsetByCodePoints(0,entity.getEnd()) + sp + dusp, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
 
             sp+=dusp;

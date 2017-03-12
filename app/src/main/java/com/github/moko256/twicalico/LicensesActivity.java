@@ -48,17 +48,9 @@ public class LicensesActivity extends AppCompatActivity {
                             path = "license_android_support.txt";
                             break;
 
-                        case "glide":
-                        case "okhttp":
-                        case "twitter4j":
-                        case "twitter_text":
-                        case "rx_java":
-                        case "rx_android":
+                        default:
                             path = "license_"+libName+".txt";
                             break;
-
-                        default:
-                            return;
                     }
 
                     textStream=getAssets().open(path);

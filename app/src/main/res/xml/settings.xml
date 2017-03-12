@@ -106,6 +106,9 @@
                 android:key="license_lib_support_design"
                 android:title="Android Design Support Library"/>
             <Preference
+                android:key="license_lib_exo_player"
+                android:title="ExoPlayer"/>
+            <Preference
                 android:key="license_lib_glide"
                 android:title="Glide"/>
             <Preference

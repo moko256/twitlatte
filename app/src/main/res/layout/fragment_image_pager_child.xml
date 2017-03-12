@@ -9,7 +9,7 @@
         android:visibility="gone"
         android:layout_gravity="center"
         android:id="@+id/fragment_image_pager_image" />
-    <VideoView
+    <com.google.android.exoplayer2.ui.SimpleExoPlayerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"

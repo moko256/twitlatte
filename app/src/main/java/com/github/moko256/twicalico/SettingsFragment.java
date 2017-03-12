@@ -133,6 +133,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                     "support_v7",
                     "support_v14",
                     "support_design",
+                    "exo_player",
                     "glide",
                     "okhttp",
                     "twitter4j",
