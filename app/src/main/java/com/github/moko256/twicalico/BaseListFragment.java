@@ -62,24 +62,6 @@ public abstract class BaseListFragment extends Fragment {
             }
         });
 
-        /*
-        view.setFocusableInTouchMode(true);
-        view.setOnKeyListener((v, keyCode, event) -> {
-            if (event.getAction() == KeyEvent.ACTION_DOWN){
-                if (keyCode == KeyEvent.KEYCODE_VOLUME_UP){
-                    v.requestFocus(View.FOCUS_UP);
-                    return true;
-                } else if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN){
-                    v.requestFocus(View.FOCUS_DOWN);
-                    return true;
-                } else {
-                    return false;
-                }
-            } else {
-                return false;
-            }
-        });*/
-
         return view;
     }
 
