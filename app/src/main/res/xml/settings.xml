@@ -105,10 +105,13 @@
     </PreferenceCategory>
     <PreferenceCategory
         android:title="@string/about">
+        <Preference
+            android:key="license_at_this_app"
+            android:title="@string/license_at_this_app"
+            android:summary="@string/apache_license_2_0"/>
         <PreferenceScreen
             android:key="license"
-            android:title="@string/license"
-            android:summary="Show License Text">
+            android:title="@string/open_source_license">
             <Preference
                 android:key="license_lib_support_v4"
                 android:title="Android Compatibility Library v4"/>
@@ -143,8 +146,6 @@
                 android:key="license_lib_rx_android"
                 android:title="RxAndroid"/>
         </PreferenceScreen>
-        <Preference
-            android:key="app_version"
-            android:title="@string/app_name"/>
+        <Preference android:key="app_version"/>
     </PreferenceCategory>
 </PreferenceScreen>

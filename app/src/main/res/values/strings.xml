@@ -43,6 +43,7 @@
     <string name="follow_and_follower">Follow and Followers</string>
     <string name="retweet_by">Retweeted by %s</string>
     <string name="reply_to">Reply to %s</string>
+    <string name="mention_to">Mention to %s</string>
     <string name="app_settings">Application Settings</string>
     <string name="add_account">Add other account</string>
     <string name="logout">Logout</string>
@@ -70,7 +71,9 @@
     <string name="error_occurred_with_error_code">Error occurred (Error code : %d)</string>
     <string name="load_timeline_image_quality">Quality of the images on the timeline</string>
     <string name="about">About</string>
-    <string name="license">License</string>
+    <string name="license_at_this_app">License at this application</string>
+    <string name="apache_license_2_0" translatable="false">Apache License, Version 2.0</string>
+    <string name="open_source_license">Open source license</string>
     <string name="enable">Enable</string>
     <string name="disable">Disable</string>
     <string name="high_power_mute">High Power Mute</string>

@@ -153,10 +153,16 @@ public class StatusView extends RelativeLayout {
 
         boolean isReply = item.getInReplyToScreenName()!=null;
         if (isReply){
-            if(tweetReplyUserName.getVisibility()!= View.VISIBLE){
+            if (tweetReplyUserName.getVisibility()!= View.VISIBLE){
                 tweetReplyUserName.setVisibility(View.VISIBLE);
             }
-            tweetReplyUserName.setText(getContext().getString(R.string.reply_to,item.getUser().getName()));
+
+            tweetReplyUserName.setText(getContext().getString(
+                    (item.getInReplyToStatusId() != -1)?
+                            R.string.reply_to:
+                            R.string.mention_to,
+                    item.getInReplyToScreenName()
+            ));
         }
         else{
             if(tweetReplyUserName.getVisibility()!=View.GONE){

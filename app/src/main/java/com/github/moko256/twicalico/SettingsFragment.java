@@ -130,8 +130,18 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                     }
             );
 
+            Preference licenseThisApp=findPreference("license_at_this_app");
+            licenseThisApp.setOnPreferenceClickListener(preference -> {
+                getContext().startActivity(
+                        new Intent(getContext(), LicensesActivity.class)
+                                .putExtra("title", getResources().getText(R.string.app_name))
+                                .putExtra("library_name", "twicalico")
+                );
+                return true;
+            });
+
             Preference version=findPreference("app_version");
-            version.setSummary("Version "+ BuildConfig.VERSION_NAME);
+            version.setTitle("Version:"+ BuildConfig.VERSION_NAME);
             version.setOnPreferenceClickListener(preference -> {
                 Date birthday=new Date(1446956982000L);
                 Toast.makeText(
@@ -160,7 +170,11 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
             for (String name : license_keys) {
                 findPreference("license_lib_" + name).setOnPreferenceClickListener(preference -> {
-                    getContext().startActivity(new Intent(getContext(), LicensesActivity.class).putExtra("library_name", name));
+                    getContext().startActivity(
+                            new Intent(getContext(), LicensesActivity.class)
+                                    .putExtra("title", preference.getTitle())
+                                    .putExtra("library_name", name)
+                    );
                     return true;
                 });
             }

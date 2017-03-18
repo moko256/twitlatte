@@ -49,6 +49,11 @@ public class LicensesActivity extends AppCompatActivity {
         licenseTextView = (TextView) findViewById(R.id.license_text);
 
         if (getIntent()!=null){
+            String title = getIntent().getStringExtra("title");
+            if (title != null){
+                actionBar.setTitle(title);
+            }
+
             String libName=getIntent().getStringExtra("library_name");
             if (libName!=null){
                 try {

@@ -33,6 +33,7 @@
     <string name="add_image">画像を追加</string>
     <string name="retweet_by">%sさんがリツイートしました</string>
     <string name="reply_to">%sさんへの返信</string>
+    <string name="mention_to">%sさんへの言及</string>
     <string name="app_settings">アプリケーションの設定</string>
     <string name="add_account">他のアカウントを追加</string>
     <string name="logout">ログアウトする</string>
@@ -60,7 +61,8 @@
     <string name="error_occurred_with_error_code">エラーが発生しました (エラーコード : %d)</string>
     <string name="load_timeline_image_quality">タイムラインの画像の画質</string>
     <string name="about">概要</string>
-    <string name="license">ライセンス</string>
+    <string name="license_at_this_app">このアプリケーションのライセンス</string>
+    <string name="open_source_license">オープンソースライセンス</string>
     <string name="enable">有効</string>
     <string name="disable">無効</string>
     <string name="high_power_mute">最強のミュート</string>
