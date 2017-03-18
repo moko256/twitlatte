@@ -45,6 +45,11 @@ public class SettingsActivity extends AppCompatActivity implements PreferenceFra
             PreferenceFragmentCompat fragment=new SettingsFragment();
 
             if (getIntent()!=null){
+                String title = getIntent().getStringExtra("title");
+                if (title != null){
+                    actionBar.setTitle(title);
+                }
+
                 String key = getIntent().getStringExtra(PreferenceFragmentCompat.ARG_PREFERENCE_ROOT);
                 if (key != null) {
                     Bundle args=new Bundle();
@@ -74,7 +79,11 @@ public class SettingsActivity extends AppCompatActivity implements PreferenceFra
 
     @Override
     public boolean onPreferenceStartScreen(PreferenceFragmentCompat caller, PreferenceScreen pref) {
-        startActivity(new Intent(this, SettingsActivity.class).putExtra(PreferenceFragmentCompat.ARG_PREFERENCE_ROOT, pref.getKey()));
+        startActivity(
+                new Intent(this, SettingsActivity.class)
+                        .putExtra("title", pref.getTitle())
+                        .putExtra(PreferenceFragmentCompat.ARG_PREFERENCE_ROOT, pref.getKey())
+        );
         return true;
     }
 }
