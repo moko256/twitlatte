@@ -23,6 +23,7 @@ import android.graphics.drawable.Drawable;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.view.ViewCompat;
+import android.support.v4.widget.Space;
 import android.support.v7.content.res.AppCompatResources;
 import android.support.v7.widget.AppCompatCheckBox;
 import android.support.v7.widget.AppCompatImageButton;
@@ -59,9 +60,11 @@ public class StatusView extends RelativeLayout {
     ImageView tweetUserImage;
     TextView tweetRetweetUserName;
     TextView tweetReplyUserName;
+    Space tweetHeaderBottomMargin;
     TextView tweetUserName;
     TextView tweetUserId;
     TextView tweetContext;
+    TextView tweetViaText;
     TextView tweetTimeStampText;
     RelativeLayout tweetQuoteTweetLayout;
     TextView tweetQuoteTweetUserName;
@@ -89,12 +92,14 @@ public class StatusView extends RelativeLayout {
 
         imageRequestManager= Glide.with(context);
         
-        tweetUserImage=(ImageView) findViewById(R.id.TLimage);
+        tweetUserImage=(ImageView) findViewById(R.id.tweet_icon);
         tweetRetweetUserName=(TextView) findViewById(R.id.tweet_retweet_user_name);
         tweetReplyUserName=(TextView) findViewById(R.id.tweet_reply_user_name);
+        tweetHeaderBottomMargin=(Space) findViewById(R.id.tweet_header_bottom_margin);
         tweetUserId=(TextView) findViewById(R.id.tweet_user_id);
         tweetUserName=(TextView) findViewById(R.id.tweet_user_name);
         tweetContext=(TextView) findViewById(R.id.tweet_content);
+        tweetViaText=(TextView) findViewById(R.id.tweet_via_text);
         tweetTimeStampText=(TextView) findViewById(R.id.tweet_time_stamp_text);
         tweetQuoteTweetLayout=(RelativeLayout)  findViewById(R.id.tweet_quote_tweet);
         tweetQuoteTweetUserName=(TextView) findViewById(R.id.tweet_quote_tweet_user_name);
@@ -146,15 +151,26 @@ public class StatusView extends RelativeLayout {
             }
         }
 
-        if (status.getInReplyToScreenName()!=null){
-            if(tweetRetweetUserName.getVisibility()!= View.VISIBLE){
-                tweetRetweetUserName.setVisibility(View.VISIBLE);
+        boolean isReply = status.getInReplyToScreenName()!=null;
+        if (isReply){
+            if(tweetReplyUserName.getVisibility()!= View.VISIBLE){
+                tweetReplyUserName.setVisibility(View.VISIBLE);
             }
-            tweetRetweetUserName.setText(getContext().getString(R.string.retweet_by,status.getUser().getName()));
+            tweetReplyUserName.setText(getContext().getString(R.string.reply_to,status.getUser().getName()));
         }
         else{
-            if(tweetRetweetUserName.getVisibility()!=View.GONE){
-                tweetRetweetUserName.setVisibility(View.GONE);
+            if(tweetReplyUserName.getVisibility()!=View.GONE){
+                tweetReplyUserName.setVisibility(View.GONE);
+            }
+        }
+
+        if (status.isRetweet()||isReply){
+            if (tweetHeaderBottomMargin.getVisibility()!=VISIBLE){
+                tweetHeaderBottomMargin.setVisibility(VISIBLE);
+            }
+        } else {
+            if (tweetHeaderBottomMargin.getVisibility()!=GONE){
+                tweetHeaderBottomMargin.setVisibility(GONE);
             }
         }
 
@@ -169,6 +185,8 @@ public class StatusView extends RelativeLayout {
         tweetUserName.setText(item.getUser().getName());
         tweetUserId.setText(TwitterStringUtil.plusAtMark(item.getUser().getScreenName()));
         tweetContext.setText(TwitterStringUtil.getStatusTextSequence(item));
+
+        tweetViaText.setText("via:"+TwitterStringUtil.removeHtmlTags(item.getSource()));
 
         tweetTimeStampText.setText(timeSpanConverter.toTimeSpanString(item.getCreatedAt().getTime()));
         tweetUserImage.setOnClickListener(v->{

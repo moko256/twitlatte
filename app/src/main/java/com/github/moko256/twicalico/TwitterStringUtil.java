@@ -26,6 +26,7 @@ import android.text.style.ClickableSpan;
 import android.text.style.URLSpan;
 import android.view.View;
 
+import java.text.Normalizer;
 import java.util.List;
 
 import rx.Observable;
@@ -46,6 +47,10 @@ public class TwitterStringUtil {
     @NonNull
     public static String plusAtMark(String string){
         return "@" + string;
+    }
+
+    public static String removeHtmlTags(String html){
+        return Normalizer.normalize(html, Normalizer.Form.NFC).replaceAll("<.+?>", "");
     }
 
     public static CharSequence getStatusTextSequence(Status item){
