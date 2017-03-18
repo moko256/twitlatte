@@ -63,6 +63,7 @@ public class OAuthActivity extends AppCompatActivity {
             new AlertDialog.Builder(this)
                     .setPositiveButton("Use URL scheme Auth",(dialog, which) -> startUrlAuth())
                     .setNegativeButton("Use PIN Auth",(dialog, which) -> startPinAuth())
+                    .setCancelable(false)
                     .show();
         }
     }
@@ -168,7 +169,7 @@ public class OAuthActivity extends AppCompatActivity {
         );
         GlobalApplication.user = null;
 
-        finish();
         startActivity(new Intent(this,MainActivity.class));
+        finish();
     }
 }

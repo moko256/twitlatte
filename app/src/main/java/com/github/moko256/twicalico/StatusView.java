@@ -151,12 +151,12 @@ public class StatusView extends RelativeLayout {
             }
         }
 
-        boolean isReply = status.getInReplyToScreenName()!=null;
+        boolean isReply = item.getInReplyToScreenName()!=null;
         if (isReply){
             if(tweetReplyUserName.getVisibility()!= View.VISIBLE){
                 tweetReplyUserName.setVisibility(View.VISIBLE);
             }
-            tweetReplyUserName.setText(getContext().getString(R.string.reply_to,status.getUser().getName()));
+            tweetReplyUserName.setText(getContext().getString(R.string.reply_to,item.getUser().getName()));
         }
         else{
             if(tweetReplyUserName.getVisibility()!=View.GONE){
