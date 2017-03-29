@@ -87,10 +87,14 @@ public class ShowTweetActivity extends AppCompatActivity {
                                         return;
                                     }
                                 }
-                                try {
-                                    status = GlobalApplication.twitter.showStatus(statusId);
-                                } catch (TwitterException e) {
-                                    subscriber.onError(e);
+                                status = GlobalApplication.statusCache.get(statusId);
+                                if (status == null){
+                                    try {
+                                        status = GlobalApplication.twitter.showStatus(statusId);
+                                        GlobalApplication.statusCache.add(status);
+                                    } catch (TwitterException e) {
+                                        subscriber.onError(e);
+                                    }
                                 }
                             }
                             subscriber.onNext(status);

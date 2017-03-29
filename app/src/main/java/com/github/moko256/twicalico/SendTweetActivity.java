@@ -22,6 +22,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
@@ -30,6 +31,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -60,6 +62,8 @@ public class SendTweetActivity extends AppCompatActivity {
 
     Validator twitterTextValidator;
 
+    ViewGroup rootViewGroup;
+
     ActionBar actionBar;
     TextView counterTextView;
     AppCompatEditText editText;
@@ -73,6 +77,8 @@ public class SendTweetActivity extends AppCompatActivity {
         setContentView(R.layout.activity_send_tweet);
 
         twitterTextValidator=new Validator();
+
+        rootViewGroup=(ViewGroup) findViewById(R.id.activity_tweet_send_layout_root);
 
         actionBar=getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -145,7 +151,7 @@ public class SendTweetActivity extends AppCompatActivity {
                             e->{
                                 e.printStackTrace();
                                 v.setEnabled(true);
-                                Toast.makeText(this, R.string.error_occurred, Toast.LENGTH_SHORT).show();
+                                Snackbar.make(rootViewGroup, e.getMessage(), Snackbar.LENGTH_INDEFINITE).show();
                             },
                             this::finish
                     );
