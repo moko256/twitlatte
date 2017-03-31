@@ -35,6 +35,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.moko256.twicalico.model.SendTweetModel;
 import com.twitter.Validator;
 
 import java.io.FileNotFoundException;
@@ -57,10 +58,11 @@ import twitter4j.TwitterException;
  */
 public class SendTweetActivity extends AppCompatActivity {
 
-    private static final String INTENT_EXTRA_TWEET_TEXT="text";
+    private static final String INTENT_EXTRA_IN_REPLY_TO_STATUS_ID = "inReplyToStatusId";
+    private static final String INTENT_EXTRA_TWEET_TEXT = "text";
     private static final int REQUEST_GET_IMAGE = 10;
 
-    Validator twitterTextValidator;
+    SendTweetModel model;
 
     ViewGroup rootViewGroup;
 
@@ -76,7 +78,11 @@ public class SendTweetActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_send_tweet);
 
-        twitterTextValidator=new Validator();
+        model = new SendTweetModel(GlobalApplication.twitter, getContentResolver());
+
+        if (savedInstanceState != null){
+            model.setInReplyToStatusId(savedInstanceState.getLong(INTENT_EXTRA_IN_REPLY_TO_STATUS_ID, -1));
+        }
 
         rootViewGroup=(ViewGroup) findViewById(R.id.activity_tweet_send_layout_root);
 
@@ -87,7 +93,29 @@ public class SendTweetActivity extends AppCompatActivity {
         counterTextView=(TextView)findViewById(R.id.tweet_text_edit_counter);
 
         editText=(AppCompatEditText)findViewById(R.id.tweet_text_edit);
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                model.setTweetText(s.toString());
+
+                counterTextView.setText(String.valueOf(model.getTweetLength())+" / "+String.valueOf(Validator.MAX_TWEET_LENGTH));
+                counterTextView.setTextColor(model.isValidTweet()? Color.GRAY: Color.RED);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
+
         if (getIntent()!=null){
+            if (!model.isReply()){
+                model.setInReplyToStatusId(getIntent().getLongExtra(
+                        INTENT_EXTRA_IN_REPLY_TO_STATUS_ID, -1
+                ));
+            }
+
             String text=getIntent().getStringExtra(INTENT_EXTRA_TWEET_TEXT);
             if (text!=null){
                 Uri data = getIntent().getData();
@@ -106,23 +134,12 @@ public class SendTweetActivity extends AppCompatActivity {
                 editText.setSelection(text.length());
             }
         }
-        editText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                onEditTextChanged(s,counterTextView);
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {}
-        });
-
-        onEditTextChanged(editText.getText(),counterTextView);
+        editText.setHint(model.isReply()? R.string.reply: R.string.tweet);
 
         imagesRecyclerView = (RecyclerView) findViewById(R.id.activity_tweet_send_images_recycler_view);
         imagesAdapter = new ImagesAdapter(this);
+        model.setUriList(imagesAdapter.getImagesList());
 
         imagesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -143,9 +160,7 @@ public class SendTweetActivity extends AppCompatActivity {
         button=(AppCompatButton)findViewById(R.id.tweet_text_submit);
         button.setOnClickListener(v -> {
             v.setEnabled(false);
-            updateStatusObservable(new StatusUpdate(editText.getText().toString()), imagesAdapter.getImagesList())
-                    .subscribeOn(Schedulers.newThread())
-                    .observeOn(AndroidSchedulers.mainThread())
+            model.postTweet()
                     .subscribe(
                             it->{},
                             e->{
@@ -157,6 +172,12 @@ public class SendTweetActivity extends AppCompatActivity {
                     );
         });
 
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putLong(INTENT_EXTRA_IN_REPLY_TO_STATUS_ID, model.getInReplyToStatusId());
     }
 
     @Override
@@ -184,8 +205,7 @@ public class SendTweetActivity extends AppCompatActivity {
         editText = null;
         counterTextView = null;
         actionBar = null;
-
-        twitterTextValidator = null;
+        model = null;
     }
 
     @Override
@@ -194,40 +214,11 @@ public class SendTweetActivity extends AppCompatActivity {
         return false;
     }
 
-    private void onEditTextChanged(CharSequence s,TextView counterTextView){
-        int textLength=twitterTextValidator.getTweetLength(s.toString());
-        int maxLength=Validator.MAX_TWEET_LENGTH;
-        counterTextView.setText(String.valueOf(textLength)+" / "+String.valueOf(maxLength));
-        if (textLength>=maxLength){
-            counterTextView.setTextColor(Color.RED);
-        }
-        else{
-            counterTextView.setTextColor(Color.GRAY);
-        }
-    }
-
-    private Observable<Status> updateStatusObservable(StatusUpdate statusUpdate, List<Uri> images){
-        return Observable.create(subscriber -> {
-            try {
-                Twitter twitter = GlobalApplication.twitter;
-                if (images != null && images.size() > 0) {
-                    long ids[] = new long[images.size()];
-                    for (int i = 0; i < images.size(); i++) {
-                        Uri uri = images.get(i);
-                        InputStream image = getContentResolver().openInputStream(uri);
-                        ids[i] = twitter.uploadMedia(uri.getLastPathSegment(), image).getMediaId();
-                    }
-                    statusUpdate.setMediaIds(ids);
-                }
-                subscriber.onNext(twitter.updateStatus(statusUpdate));
-                subscriber.onCompleted();
-            } catch (FileNotFoundException | TwitterException e){
-                subscriber.onError(e);
-            }
-        });
-    }
-
     public static Intent getIntent(Context context, String text){
         return new Intent(context,SendTweetActivity.class).putExtra(INTENT_EXTRA_TWEET_TEXT, text);
+    }
+
+    public static Intent getIntent(Context context, long inReplyToStatusId, String text){
+        return SendTweetActivity.getIntent(context, text).putExtra(INTENT_EXTRA_IN_REPLY_TO_STATUS_ID, inReplyToStatusId);
     }
 }

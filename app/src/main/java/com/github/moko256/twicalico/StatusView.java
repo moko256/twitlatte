@@ -326,5 +326,9 @@ public class StatusView extends RelativeLayout {
         );
         tweetRetweetButton.setChecked(item.isRetweeted());
         tweetRetweetButton.setEnabled(!item.getUser().isProtected());
+
+        tweetReplyButton.setOnClickListener(
+                v -> getContext().startActivity(SendTweetActivity.getIntent(getContext(), item.getId(), ""))
+        );
     }
 }

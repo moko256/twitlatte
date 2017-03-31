@@ -33,6 +33,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
+import com.github.moko256.twicalico.model.SendTweetModel;
 
 import java.text.DateFormat;
 
@@ -183,21 +184,12 @@ public class ShowTweetActivity extends AppCompatActivity {
                                     AppCompatEditText replyText=(AppCompatEditText) findViewById(R.id.tweet_show_tweet_reply_text);
                                     AppCompatButton replyButton=(AppCompatButton) findViewById(R.id.tweet_show_tweet_reply_button);
                                     replyButton.setOnClickListener(v -> {
-                                        StatusUpdate update=new StatusUpdate(TwitterStringUtil.plusAtMark(item.getUser().getScreenName())+" "+replyText.getText().toString());
-                                        update.inReplyToStatusId(item.getId());
                                         replyButton.setEnabled(false);
+                                        SendTweetModel model = new SendTweetModel(GlobalApplication.twitter, getContentResolver());
+                                        model.setTweetText(replyText.getText().toString());
+                                        model.setInReplyToStatusId(item.getId());
                                         subscriptions.add(
-                                                Observable
-                                                        .create(subscriber -> {
-                                                            try {
-                                                                subscriber.onNext(GlobalApplication.twitter.updateStatus(update));
-                                                                subscriber.onCompleted();
-                                                            } catch (TwitterException e) {
-                                                                subscriber.onError(e);
-                                                            }
-                                                        })
-                                                        .subscribeOn(Schedulers.newThread())
-                                                        .observeOn(AndroidSchedulers.mainThread())
+                                                model.postTweet()
                                                         .subscribe(
                                                                 it->{},
                                                                 e->{
