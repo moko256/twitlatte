@@ -53,6 +53,23 @@ public class TwitterStringUtil {
         return Normalizer.normalize(html, Normalizer.Form.NFC).replaceAll("<.+?>", "");
     }
 
+    public static String convertToSIUnitString(int num){
+        if (num == 0) return "0";
+        boolean isNegative = (num < 0);
+        if (isNegative) num *= -1;
+
+        float k = num / 1000;
+        if (k < 1) return (isNegative? "-": "") + String.valueOf(num);
+
+        float m = k / 1000;
+        if (m < 1) return (isNegative? "-": "") + String.valueOf(Math.round(k)) + "K";
+
+        float g = m / 1000;
+        if (g < 1) return (isNegative? "-": "") + String.valueOf(Math.round(m)) + "M";
+
+        return (isNegative? "-": "") + String.valueOf(Math.round(g)) + "G";
+    }
+
     public static CharSequence getStatusTextSequence(Status item){
 
         String tweet = item.getText();

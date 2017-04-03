@@ -25,11 +25,11 @@ import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.Space;
 import android.support.v7.content.res.AppCompatResources;
-import android.support.v7.widget.AppCompatCheckBox;
-import android.support.v7.widget.AppCompatImageButton;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.CheckBox;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -57,23 +57,25 @@ public class StatusView extends RelativeLayout {
 
     RequestManager imageRequestManager;
 
-    ImageView tweetUserImage;
-    TextView tweetRetweetUserName;
-    TextView tweetReplyUserName;
-    Space tweetHeaderBottomMargin;
-    TextView tweetUserName;
-    TextView tweetUserId;
+    ImageView userImage;
+    TextView retweetUserName;
+    TextView replyUserName;
+    Space headerBottomMargin;
+    TextView userName;
+    TextView userId;
     TextView tweetContext;
-    TextView tweetViaText;
-    TextView tweetTimeStampText;
-    RelativeLayout tweetQuoteTweetLayout;
-    TextView tweetQuoteTweetUserName;
-    TextView tweetQuoteTweetUserId;
-    TextView tweetQuoteTweetContext;
-    TweetImageTableView tweetImageTableView;
-    AppCompatCheckBox tweetLikeButton;
-    AppCompatCheckBox tweetRetweetButton;
-    AppCompatImageButton tweetReplyButton;
+    TextView viaText;
+    TextView timeStampText;
+    RelativeLayout quoteTweetLayout;
+    TextView quoteTweetUserName;
+    TextView quoteTweetUserId;
+    TextView quoteTweetContext;
+    TweetImageTableView imageTableView;
+    CheckBox likeButton;
+    CheckBox retweetButton;
+    ImageButton replyButton;
+    TextView likeCount;
+    TextView retweetCount;
 
     TimeSpanConverter timeSpanConverter;
     
@@ -92,31 +94,31 @@ public class StatusView extends RelativeLayout {
 
         imageRequestManager= Glide.with(context);
         
-        tweetUserImage=(ImageView) findViewById(R.id.tweet_icon);
-        tweetRetweetUserName=(TextView) findViewById(R.id.tweet_retweet_user_name);
-        tweetReplyUserName=(TextView) findViewById(R.id.tweet_reply_user_name);
-        tweetHeaderBottomMargin=(Space) findViewById(R.id.tweet_header_bottom_margin);
-        tweetUserId=(TextView) findViewById(R.id.tweet_user_id);
-        tweetUserName=(TextView) findViewById(R.id.tweet_user_name);
+        userImage =(ImageView) findViewById(R.id.tweet_icon);
+        retweetUserName =(TextView) findViewById(R.id.tweet_retweet_user_name);
+        replyUserName =(TextView) findViewById(R.id.tweet_reply_user_name);
+        headerBottomMargin =(Space) findViewById(R.id.tweet_header_bottom_margin);
+        userId =(TextView) findViewById(R.id.tweet_user_id);
+        userName =(TextView) findViewById(R.id.tweet_user_name);
         tweetContext=(TextView) findViewById(R.id.tweet_content);
-        tweetViaText=(TextView) findViewById(R.id.tweet_via_text);
-        tweetTimeStampText=(TextView) findViewById(R.id.tweet_time_stamp_text);
-        tweetQuoteTweetLayout=(RelativeLayout)  findViewById(R.id.tweet_quote_tweet);
-        tweetQuoteTweetUserName=(TextView) findViewById(R.id.tweet_quote_tweet_user_name);
-        tweetQuoteTweetUserId=(TextView) findViewById(R.id.tweet_quote_tweet_user_id);
-        tweetQuoteTweetContext=(TextView) findViewById(R.id.tweet_quote_tweet_content);
-        tweetImageTableView=(TweetImageTableView) findViewById(R.id.tweet_image_container);
+        viaText =(TextView) findViewById(R.id.tweet_via_text);
+        timeStampText =(TextView) findViewById(R.id.tweet_time_stamp_text);
+        quoteTweetLayout =(RelativeLayout)  findViewById(R.id.tweet_quote_tweet);
+        quoteTweetUserName =(TextView) findViewById(R.id.tweet_quote_tweet_user_name);
+        quoteTweetUserId =(TextView) findViewById(R.id.tweet_quote_tweet_user_id);
+        quoteTweetContext =(TextView) findViewById(R.id.tweet_quote_tweet_content);
+        imageTableView =(TweetImageTableView) findViewById(R.id.tweet_image_container);
 
-        tweetLikeButton=(AppCompatCheckBox) findViewById(R.id.tweet_content_like_button);
-        tweetLikeButton.setButtonDrawable(R.drawable.ic_heart_black_24dp);
+        likeButton =(CheckBox) findViewById(R.id.tweet_content_like_button);
+        retweetButton =(CheckBox) findViewById(R.id.tweet_content_retweet_button);
 
-        tweetRetweetButton=(AppCompatCheckBox) findViewById(R.id.tweet_content_retweet_button);
-        tweetRetweetButton.setButtonDrawable(R.drawable.ic_retweet_black_24dp);
-
-        tweetReplyButton=(AppCompatImageButton) findViewById(R.id.tweet_content_reply_button);
+        replyButton =(ImageButton) findViewById(R.id.tweet_content_reply_button);
         Drawable replyIcon= DrawableCompat.wrap(AppCompatResources.getDrawable(context, R.drawable.ic_reply_white_24dp));
         DrawableCompat.setTintList(replyIcon,context.getResources().getColorStateList(R.color.reply_button_color_stateful));
-        tweetReplyButton.setImageDrawable(replyIcon);
+        replyButton.setImageDrawable(replyIcon);
+
+        likeCount = (TextView) findViewById(R.id.tweet_content_like_count);
+        retweetCount = (TextView) findViewById(R.id.tweet_content_retweet_count);
 
         timeSpanConverter=new TimeSpanConverter();
     }
@@ -131,7 +133,7 @@ public class StatusView extends RelativeLayout {
             updateView();
         } else {
             for (int i=0;i<4;i++){
-                Glide.clear(tweetImageTableView.getImageView(i));
+                Glide.clear(imageTableView.getImageView(i));
             }
         }
     }
@@ -140,24 +142,24 @@ public class StatusView extends RelativeLayout {
         final Status item = status.isRetweet()?status.getRetweetedStatus():status;
 
         if (status.isRetweet()){
-            if(tweetRetweetUserName.getVisibility()!= View.VISIBLE){
-                tweetRetweetUserName.setVisibility(View.VISIBLE);
+            if(retweetUserName.getVisibility()!= View.VISIBLE){
+                retweetUserName.setVisibility(View.VISIBLE);
             }
-            tweetRetweetUserName.setText(getContext().getString(R.string.retweet_by,status.getUser().getName()));
+            retweetUserName.setText(getContext().getString(R.string.retweet_by,status.getUser().getName()));
         }
         else{
-            if(tweetRetweetUserName.getVisibility()!=View.GONE){
-                tweetRetweetUserName.setVisibility(View.GONE);
+            if(retweetUserName.getVisibility()!=View.GONE){
+                retweetUserName.setVisibility(View.GONE);
             }
         }
 
         boolean isReply = item.getInReplyToScreenName()!=null;
         if (isReply){
-            if (tweetReplyUserName.getVisibility()!= View.VISIBLE){
-                tweetReplyUserName.setVisibility(View.VISIBLE);
+            if (replyUserName.getVisibility()!= View.VISIBLE){
+                replyUserName.setVisibility(View.VISIBLE);
             }
 
-            tweetReplyUserName.setText(getContext().getString(
+            replyUserName.setText(getContext().getString(
                     (item.getInReplyToStatusId() != -1)?
                             R.string.reply_to:
                             R.string.mention_to,
@@ -165,18 +167,18 @@ public class StatusView extends RelativeLayout {
             ));
         }
         else{
-            if(tweetReplyUserName.getVisibility()!=View.GONE){
-                tweetReplyUserName.setVisibility(View.GONE);
+            if(replyUserName.getVisibility()!=View.GONE){
+                replyUserName.setVisibility(View.GONE);
             }
         }
 
         if (status.isRetweet()||isReply){
-            if (tweetHeaderBottomMargin.getVisibility()!=VISIBLE){
-                tweetHeaderBottomMargin.setVisibility(VISIBLE);
+            if (headerBottomMargin.getVisibility()!=VISIBLE){
+                headerBottomMargin.setVisibility(VISIBLE);
             }
         } else {
-            if (tweetHeaderBottomMargin.getVisibility()!=GONE){
-                tweetHeaderBottomMargin.setVisibility(GONE);
+            if (headerBottomMargin.getVisibility()!=GONE){
+                headerBottomMargin.setVisibility(GONE);
             }
         }
 
@@ -186,54 +188,54 @@ public class StatusView extends RelativeLayout {
         } else {
             profileImageUrl=item.getUser().getBiggerProfileImageURLHttps();
         }
-        imageRequestManager.load(profileImageUrl).into(tweetUserImage);
+        imageRequestManager.load(profileImageUrl).into(userImage);
 
-        tweetUserName.setText(item.getUser().getName());
-        tweetUserId.setText(TwitterStringUtil.plusAtMark(item.getUser().getScreenName()));
+        userName.setText(item.getUser().getName());
+        userId.setText(TwitterStringUtil.plusAtMark(item.getUser().getScreenName()));
         tweetContext.setText(TwitterStringUtil.getStatusTextSequence(item));
 
-        tweetViaText.setText("via:"+TwitterStringUtil.removeHtmlTags(item.getSource()));
+        viaText.setText("via:"+TwitterStringUtil.removeHtmlTags(item.getSource()));
 
-        tweetTimeStampText.setText(timeSpanConverter.toTimeSpanString(item.getCreatedAt().getTime()));
-        tweetUserImage.setOnClickListener(v->{
-            ViewCompat.setTransitionName(tweetUserImage,"tweet_user_image");
+        timeStampText.setText(timeSpanConverter.toTimeSpanString(item.getCreatedAt().getTime()));
+        userImage.setOnClickListener(v->{
+            ViewCompat.setTransitionName(userImage,"tweet_user_image");
             getContext().startActivity(
                     new Intent(getContext(), ShowUserActivity.class).putExtra("user",item.getUser()),
-                    ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) getContext(), tweetUserImage, "tweet_user_image").toBundle()
+                    ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) getContext(), userImage, "tweet_user_image").toBundle()
             );
         });
         setOnClickListener(v -> {
-            ViewCompat.setTransitionName(tweetUserImage,"tweet_user_image");
+            ViewCompat.setTransitionName(userImage,"tweet_user_image");
             getContext().startActivity(
                     new Intent(getContext(),ShowTweetActivity.class).putExtra("status",item),
-                    ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) getContext(), tweetUserImage,"tweet_user_image").toBundle()
+                    ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) getContext(), userImage,"tweet_user_image").toBundle()
             );
         });
 
         Status quotedStatus=item.getQuotedStatus();
         if(quotedStatus!=null){
-            if (tweetQuoteTweetLayout.getVisibility() != View.VISIBLE) {
-                tweetQuoteTweetLayout.setVisibility(View.VISIBLE);
+            if (quoteTweetLayout.getVisibility() != View.VISIBLE) {
+                quoteTweetLayout.setVisibility(View.VISIBLE);
             }
-            tweetQuoteTweetLayout.setOnClickListener(v -> getContext().startActivity(
+            quoteTweetLayout.setOnClickListener(v -> getContext().startActivity(
                     new Intent(getContext(),ShowTweetActivity.class).putExtra("statusId",(Long)quotedStatus.getId()))
             );
-            tweetQuoteTweetUserName.setText(quotedStatus.getUser().getName());
-            tweetQuoteTweetUserId.setText(TwitterStringUtil.plusAtMark(quotedStatus.getUser().getScreenName()));
-            tweetQuoteTweetContext.setText(quotedStatus.getText());
+            quoteTweetUserName.setText(quotedStatus.getUser().getName());
+            quoteTweetUserId.setText(TwitterStringUtil.plusAtMark(quotedStatus.getUser().getScreenName()));
+            quoteTweetContext.setText(quotedStatus.getText());
         }else{
-            if (tweetQuoteTweetLayout.getVisibility() != View.GONE) {
-                tweetQuoteTweetLayout.setVisibility(View.GONE);
+            if (quoteTweetLayout.getVisibility() != View.GONE) {
+                quoteTweetLayout.setVisibility(View.GONE);
             }
         }
 
         MediaEntity mediaEntities[]=item.getMediaEntities();
 
         if (mediaEntities.length!=0){
-            tweetImageTableView.setVisibility(View.VISIBLE);
-            tweetImageTableView.setImageNumber(mediaEntities.length);
+            imageTableView.setVisibility(View.VISIBLE);
+            imageTableView.setImageNumber(mediaEntities.length);
             for (int ii = 0; ii < mediaEntities.length; ii++) {
-                ImageView imageView=tweetImageTableView.getImageView(ii);
+                ImageView imageView= imageTableView.getImageView(ii);
                 int finalIi = ii;
                 imageView.setOnClickListener(v-> getContext().startActivity(ShowImageActivity.getIntent(getContext(),mediaEntities, finalIi)));
 
@@ -263,10 +265,10 @@ public class StatusView extends RelativeLayout {
             }
         }
         else{
-            tweetImageTableView.setVisibility(View.GONE);
+            imageTableView.setVisibility(View.GONE);
         }
 
-        tweetLikeButton.setOnCheckedChangeListener((compoundButton, b) -> Observable
+        likeButton.setOnCheckedChangeListener((compoundButton, b) -> Observable
                 .create(subscriber->{
                     try {
                         if(b&&(!item.isFavorited())){
@@ -294,9 +296,9 @@ public class StatusView extends RelativeLayout {
                         ()->{}
                 )
         );
-        tweetLikeButton.setChecked(item.isFavorited());
+        likeButton.setChecked(item.isFavorited());
 
-        tweetRetweetButton.setOnCheckedChangeListener((compoundButton, b) -> Observable
+        retweetButton.setOnCheckedChangeListener((compoundButton, b) -> Observable
                 .create(subscriber->{
                     try {
                         if(b&&(!item.isRetweeted())){
@@ -324,11 +326,14 @@ public class StatusView extends RelativeLayout {
                         ()->{}
                 )
         );
-        tweetRetweetButton.setChecked(item.isRetweeted());
-        tweetRetweetButton.setEnabled(!item.getUser().isProtected());
+        retweetButton.setChecked(item.isRetweeted());
+        retweetButton.setEnabled(!item.getUser().isProtected());
 
-        tweetReplyButton.setOnClickListener(
+        replyButton.setOnClickListener(
                 v -> getContext().startActivity(SendTweetActivity.getIntent(getContext(), item.getId(), ""))
         );
+
+        if (item.getFavoriteCount() != 0) likeCount.setText(TwitterStringUtil.convertToSIUnitString(item.getFavoriteCount()));
+        if (item.getRetweetCount() != 0) retweetCount.setText(TwitterStringUtil.convertToSIUnitString(item.getRetweetCount()));
     }
 }

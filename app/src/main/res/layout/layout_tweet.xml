@@ -171,38 +171,54 @@
             android:layout_marginLeft="-16dp"
             android:layout_marginRight="-16dp"/>
 
-        <!--
-         Please set button image.
+        <TextView
+            android:id="@+id/tweet_content_like_count"
+            android:layout_width="30sp"
+            android:layout_height="24dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="12dp"
+            android:layout_below="@id/tweet_image_container"
+            android:layout_alignParentRight="true"
+            android:gravity="left|center_vertical"
+            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+            tools:text="20G"/>
 
-         drawable/ic_heart_black_24dp
-         drawable/ic_retweet_black_24dp
-         -->
-
-        <android.support.v7.widget.AppCompatCheckBox
+        <com.github.moko256.twicalico.DrawableToggleView
             android:id="@+id/tweet_content_like_button"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_below="@id/tweet_image_container"
-            android:layout_alignParentRight="true"
+            android:layout_toLeftOf="@id/tweet_content_like_count"
             android:layout_marginTop="20dp"
             android:layout_marginBottom="4dp"
             android:layout_marginLeft="12dp"
-            android:layout_marginRight="12dp"
-            app:buttonTint="@color/like_button_color_stateful"
-            tools:button="@drawable/ic_heart_black_24dp"/>
+            android:layout_marginRight="6dp"
+            app:toggle_drawable="@drawable/ic_heart_black_24dp"
+            app:buttonTint="@color/like_button_color_stateful"/>
 
-        <android.support.v7.widget.AppCompatCheckBox
+        <TextView
+            android:id="@+id/tweet_content_retweet_count"
+            android:layout_width="30sp"
+            android:layout_height="24dp"
+            android:layout_marginTop="20dp"
+            android:layout_below="@id/tweet_image_container"
+            android:layout_toLeftOf="@id/tweet_content_like_button"
+            android:gravity="left|center_vertical"
+            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+            tools:text="500M"/>
+
+        <com.github.moko256.twicalico.DrawableToggleView
             android:id="@+id/tweet_content_retweet_button"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_below="@id/tweet_image_container"
-            android:layout_toLeftOf="@+id/tweet_content_like_button"
+            android:layout_toLeftOf="@+id/tweet_content_retweet_count"
             android:layout_marginTop="20dp"
             android:layout_marginBottom="4dp"
-            android:layout_marginLeft="12dp"
-            android:layout_marginRight="12dp"
-            app:buttonTint="@color/retweet_button_color_stateful"
-            tools:button="@drawable/ic_retweet_black_24dp"/>
+            android:layout_marginLeft="18dp"
+            android:layout_marginRight="6dp"
+            app:toggle_drawable="@drawable/ic_retweet_black_24dp"
+            app:buttonTint="@color/retweet_button_color_stateful"/>
 
         <!--
          Please set image : drawable/ic_reply_white_24dp
@@ -217,10 +233,10 @@
             android:layout_marginTop="20dp"
             android:layout_marginBottom="4dp"
             android:layout_marginLeft="12dp"
-            android:layout_marginRight="12dp"
+            android:layout_marginRight="30sp"
             android:background="?attr/controlBackground"
-            tools:tint="@color/reply_button_color_stateful"
             tools:src="@drawable/ic_reply_white_24dp"
+            tools:tint="@color/reply_button_color_stateful"
             tools:ignore="PrivateResource" />
 
     </RelativeLayout>
