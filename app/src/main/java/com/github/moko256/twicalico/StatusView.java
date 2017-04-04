@@ -333,7 +333,7 @@ public class StatusView extends RelativeLayout {
                 v -> getContext().startActivity(SendTweetActivity.getIntent(getContext(), item.getId(), ""))
         );
 
-        if (item.getFavoriteCount() != 0) likeCount.setText(TwitterStringUtil.convertToSIUnitString(item.getFavoriteCount()));
-        if (item.getRetweetCount() != 0) retweetCount.setText(TwitterStringUtil.convertToSIUnitString(item.getRetweetCount()));
+        likeCount.setText((item.getFavoriteCount() != 0)? TwitterStringUtil.convertToSIUnitString(item.getFavoriteCount()): "");
+        retweetCount.setText((item.getRetweetCount() != 0)? TwitterStringUtil.convertToSIUnitString(item.getRetweetCount()): "");
     }
 }

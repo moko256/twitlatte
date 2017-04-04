@@ -127,30 +127,39 @@
             android:id="@+id/tweet_quote_tweet"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/tweet_via_text"
-            android:background="@drawable/border_frame"
-            android:layout_marginTop="16dp"
-            android:padding="8dp">
+            android:layout_marginTop="8dp"
+            android:layout_below="@id/tweet_via_text">
+            <ImageView
+                android:id="@+id/tweet_divider"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginBottom="8dp"
+                android:src="@color/dividerColor"/>
+
             <TextView
                 android:id="@+id/tweet_quote_tweet_user_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tweet_divider"
+                android:layout_marginRight="8dp"
+                android:layout_marginBottom="2dp"
                 android:ellipsize="end"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 android:lines="1"
-                android:layout_marginRight="8dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="2dp"
                 tools:text="Use name"/>
+
             <TextView
                 android:id="@+id/tweet_quote_tweet_user_id"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/tweet_divider"
                 android:layout_toRightOf="@id/tweet_quote_tweet_user_name"
                 android:lines="1"
                 android:ellipsize="end"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 android:textColor="?android:textColorSecondary"
                 tools:text="\@user_id"/>
+
             <TextView
                 android:id="@+id/tweet_quote_tweet_content"
                 android:layout_width="wrap_content"

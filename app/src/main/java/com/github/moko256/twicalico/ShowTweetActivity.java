@@ -167,7 +167,7 @@ public class ShowTweetActivity extends AppCompatActivity {
                                             ImageView imageView=tableView.getImageView(ii);
                                             int finalIi = ii;
                                             imageView.setOnClickListener(v-> startActivity(ShowImageActivity.getIntent(ShowTweetActivity.this,mediaEntities, finalIi)));
-                                            imageRequestManager.load(mediaEntities[ii].getMediaURLHttps()).placeholder(R.drawable.border_frame).centerCrop().into(imageView);
+                                            imageRequestManager.load(mediaEntities[ii].getMediaURLHttps()).centerCrop().into(imageView);
                                         }
                                     }else{
                                         tableView.setVisibility(View.GONE);

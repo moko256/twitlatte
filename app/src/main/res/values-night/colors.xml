@@ -21,4 +21,6 @@
 
     <color name="imageToggleEnable">#FFFFFF</color>
     <color name="imageToggleDisable">#4DFFFFFF</color>
+
+    <color name="dividerColor">#1FFFFFFF</color>
 </resources>
