@@ -203,7 +203,7 @@
             android:layout_marginLeft="12dp"
             android:layout_marginRight="6dp"
             app:toggle_drawable="@drawable/ic_heart_black_24dp"
-            app:buttonTint="@color/like_button_color_stateful"/>
+            app:buttonTint="@color/toggle_button_color_stateful"/>
 
         <TextView
             android:id="@+id/tweet_content_retweet_count"
@@ -227,7 +227,7 @@
             android:layout_marginLeft="18dp"
             android:layout_marginRight="6dp"
             app:toggle_drawable="@drawable/ic_retweet_black_24dp"
-            app:buttonTint="@color/retweet_button_color_stateful"/>
+            app:buttonTint="@color/toggle_button_color_stateful"/>
 
         <!--
          Please set image : drawable/ic_reply_white_24dp

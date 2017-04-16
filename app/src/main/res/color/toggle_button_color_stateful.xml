@@ -16,7 +16,7 @@
   -->
 
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_checked="true"  android:color="@color/likeToggleCheckedColor"/>
+    <item android:state_checked="true"  android:color="@color/colorAccent"/>
     <item android:state_checked="false" android:state_enabled="true"   android:color="@color/imageToggleEnable"/>
     <item android:state_checked="false" android:state_enabled="false" android:color="@color/imageToggleDisable"/>
 </selector>
