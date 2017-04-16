@@ -22,8 +22,13 @@
     </style>
     <style name="BaseTheme" parent="BaseAppThemeV21"/>
 
+    <style name="SplashTheme" parent="BaseSplashTheme">
+        <item name="android:windowExitTransition">@android:transition/explode</item>
+    </style>
+    
     <style name="MainActivityTheme" parent="AppTheme.NoActionBar">
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
 
     <style name="ShowTweetImageActivityTheme" parent="BaseShowTweetImageActivityTheme">

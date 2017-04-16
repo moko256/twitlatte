@@ -32,73 +32,19 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name=".MainActivity"
-            android:theme="@style/MainActivityTheme">
+            android:name=".SplashActivity"
+            android:theme="@style/SplashTheme"
+            android:noHistory="true">
+
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/static_shortcuts" />
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <meta-data
-                android:name="android.app.shortcuts"
-                android:resource="@xml/static_shortcuts" />
-        </activity>
 
-        <activity
-            android:name=".SendTweetActivity"
-            android:label="@string/tweet">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data android:scheme="https" />
-                <data android:host="twitter.com" />
-                <data android:host="mobile.twitter.com" />
-                <data android:pathPattern="/?status=.*" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data android:scheme="twitter" />
-                <data android:host="post" />
-                <data android:pathPattern="/?message=.*&amp;in_reply_to_status_id=.*" />
-            </intent-filter>
-        </activity>
-
-        <activity
-            android:name=".ShowTweetActivity"
-            android:label="@string/tweet">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data android:scheme="https" />
-                <data android:host="twitter.com" />
-                <data android:host="mobile.twitter.com" />
-                <data android:pathPattern="/.*/status/.*" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data android:scheme="twitter" />
-                <data android:host="status" />
-                <data android:pathPattern="\?id=.*" />
-            </intent-filter>
-        </activity>
-
-        <activity
-            android:name=".ShowUserActivity"
-            android:label=""
-            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -110,6 +56,7 @@
                 <data android:host="mobile.twitter.com" />
                 <data android:pathPattern="/.*" />
             </intent-filter>
+
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -117,10 +64,25 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data android:scheme="twitter" />
-                <data android:host="user" />
-                <data android:pathPattern="/?screen_name=.*" />
-                <data android:pathPattern="/?id=.*" />
             </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".MainActivity"
+            android:theme="@style/MainActivityTheme"/>
+
+        <activity
+            android:name=".SendTweetActivity"
+            android:label="@string/tweet"/>
+
+        <activity
+            android:name=".ShowTweetActivity"
+            android:label="@string/tweet"/>
+
+        <activity
+            android:name=".ShowUserActivity"
+            android:label=""
+            android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity
             android:name=".ShowImageActivity"

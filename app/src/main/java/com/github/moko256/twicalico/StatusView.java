@@ -200,14 +200,14 @@ public class StatusView extends RelativeLayout {
         userImage.setOnClickListener(v->{
             ViewCompat.setTransitionName(userImage,"tweet_user_image");
             getContext().startActivity(
-                    new Intent(getContext(), ShowUserActivity.class).putExtra("user",item.getUser()),
+                    ShowUserActivity.getIntent(getContext(), item.getUser().getId()),
                     ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) getContext(), userImage, "tweet_user_image").toBundle()
             );
         });
         setOnClickListener(v -> {
             ViewCompat.setTransitionName(userImage,"tweet_user_image");
             getContext().startActivity(
-                    new Intent(getContext(),ShowTweetActivity.class).putExtra("status",item),
+                    ShowTweetActivity.getIntent(getContext(), item.getId()),
                     ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) getContext(), userImage,"tweet_user_image").toBundle()
             );
         });
@@ -218,8 +218,8 @@ public class StatusView extends RelativeLayout {
                 quoteTweetLayout.setVisibility(View.VISIBLE);
             }
             quoteTweetLayout.setOnClickListener(v -> getContext().startActivity(
-                    new Intent(getContext(),ShowTweetActivity.class).putExtra("statusId",(Long)quotedStatus.getId()))
-            );
+                    ShowTweetActivity.getIntent(getContext(), quotedStatus.getId())
+            ));
             quoteTweetUserName.setText(quotedStatus.getUser().getName());
             quoteTweetUserId.setText(TwitterStringUtil.plusAtMark(quotedStatus.getUser().getScreenName()));
             quoteTweetContext.setText(quotedStatus.getText());

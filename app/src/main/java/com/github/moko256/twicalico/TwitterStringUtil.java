@@ -141,8 +141,7 @@ public class TwitterStringUtil {
                 @Override
                 public void onClick(View view) {
                     mContext.startActivity(
-                            new Intent(mContext, ShowUserActivity.class)
-                                    .putExtra("userName", userMentionEntity.getScreenName())
+                            ShowUserActivity.getIntent(mContext, userMentionEntity.getScreenName())
                     );
                 }
             }, tweet.offsetByCodePoints(0,userMentionEntity.getStart()), tweet.offsetByCodePoints(0,userMentionEntity.getEnd()), Spanned.SPAN_INCLUSIVE_INCLUSIVE);

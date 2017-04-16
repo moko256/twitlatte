@@ -35,6 +35,12 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <style name="BaseSplashTheme" parent="AppTheme.NoActionBar">
+        <item name="android:windowBackground">@color/colorPrimary</item>
+    </style>
+
+    <style name="SplashTheme" parent="BaseSplashTheme"/>
+
     <style name="MainActivityTheme" parent="AppTheme.NoActionBar"/>
 
     <style name="BaseShowTweetImageActivityTheme" parent="AppTheme.NoActionBar">

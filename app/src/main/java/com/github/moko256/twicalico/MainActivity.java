@@ -62,15 +62,12 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
 
         setContentView(R.layout.activity_main);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(0x00000000);
-        }
-
         if (GlobalApplication.user == null) {
             Observable
                     .create(subscriber->{
                         try {
                             GlobalApplication.user=GlobalApplication.twitter.verifyCredentials();
+                            GlobalApplication.userCache.add(GlobalApplication.user);
                             subscriber.onNext(GlobalApplication.user);
                             subscriber.onCompleted();
                         } catch (TwitterException e) {
@@ -181,7 +178,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
 
     private void startMyUserActivity() {
         if (GlobalApplication.user!=null){
-            startActivity(new Intent(this, ShowUserActivity.class).putExtra("user", GlobalApplication.user));
+            startActivity(ShowUserActivity.getIntent(this, GlobalApplication.user.getId()));
         }
     }
 

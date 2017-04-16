@@ -16,8 +16,8 @@
 
 package com.github.moko256.twicalico;
 
+import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -43,7 +43,6 @@ import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
 import twitter4j.MediaEntity;
 import twitter4j.Status;
-import twitter4j.StatusUpdate;
 import twitter4j.TwitterException;
 
 /**
@@ -72,30 +71,21 @@ public class ShowTweetActivity extends AppCompatActivity {
         subscriptions.add(
                 Observable.create(
                         subscriber -> {
-                            Long statusId;
-                            twitter4j.Status status=(twitter4j.Status) getIntent().getSerializableExtra("status");
-                            if(status==null) {
-                                statusId = (Long) getIntent().getSerializableExtra("statusId");
-                                if (statusId == null) {
-                                    Uri data = getIntent().getData();
-                                    if (data.getScheme().equals("https")||data.getScheme().equals("http")) {
-                                        statusId = Long.parseLong(data.getPathSegments().get(2), 10);
-                                    } else if (data.getScheme().equals("twitter")) {
-                                        statusId = Long.parseLong(data.getQueryParameter("id"), 10);
-                                    } else {
-                                        ShowTweetActivity.this.finish();
-                                        subscriber.onCompleted();
-                                        return;
-                                    }
-                                }
-                                status = GlobalApplication.statusCache.get(statusId);
-                                if (status == null){
-                                    try {
-                                        status = GlobalApplication.twitter.showStatus(statusId);
-                                        GlobalApplication.statusCache.add(status);
-                                    } catch (TwitterException e) {
-                                        subscriber.onError(e);
-                                    }
+                            long statusId;
+                            Status status;
+                            statusId = getIntent().getLongExtra("statusId", -1);
+                            if (statusId == -1) {
+                                ShowTweetActivity.this.finish();
+                                subscriber.onCompleted();
+                                return;
+                            }
+                            status = GlobalApplication.statusCache.get(statusId);
+                            if (status == null){
+                                try {
+                                    status = GlobalApplication.twitter.showStatus(statusId);
+                                    GlobalApplication.statusCache.add(status);
+                                } catch (TwitterException e) {
+                                    subscriber.onError(e);
                                 }
                             }
                             subscriber.onNext(status);
@@ -121,9 +111,7 @@ public class ShowTweetActivity extends AppCompatActivity {
                                     long replyTweetId = item.getInReplyToStatusId();
                                     if (replyTweetId != -1){
                                         tweetIsReply.setVisibility(View.VISIBLE);
-                                        tweetIsReply.setOnClickListener(v -> startActivity(
-                                                new Intent(ShowTweetActivity.this,ShowTweetActivity.class).putExtra("statusId",(Long) replyTweetId)
-                                        ));
+                                        tweetIsReply.setOnClickListener(v -> startActivity(getIntent(this, replyTweetId)));
                                     } else {
                                         tweetIsReply.setVisibility(View.GONE);
                                     }
@@ -134,9 +122,7 @@ public class ShowTweetActivity extends AppCompatActivity {
                                     contentText.setText(TwitterStringUtil.getLinkedSequence(item,ShowTweetActivity.this));
                                     contentText.setMovementMethod(LinkMovementMethod.getInstance());
 
-                                    userImage.setOnClickListener(v-> startActivity(
-                                            new Intent(ShowTweetActivity.this,ShowUserActivity.class).putExtra("user",item.getUser())
-                                    ));
+                                    userImage.setOnClickListener(v-> startActivity(ShowUserActivity.getIntent(this, item.getUser().getId())));
 
                                     RelativeLayout tweetQuoteTweetLayout=(RelativeLayout) findViewById(R.id.tweet_show_quote_tweet);
 
@@ -145,9 +131,7 @@ public class ShowTweetActivity extends AppCompatActivity {
                                         if (tweetQuoteTweetLayout.getVisibility() != View.VISIBLE) {
                                             tweetQuoteTweetLayout.setVisibility(View.VISIBLE);
                                         }
-                                        tweetQuoteTweetLayout.setOnClickListener(v -> startActivity(
-                                                new Intent(ShowTweetActivity.this,ShowTweetActivity.class).putExtra("statusId",(Long)quotedStatus.getId())
-                                        ));
+                                        tweetQuoteTweetLayout.setOnClickListener(v -> startActivity(getIntent(this, quotedStatus.getId())));
                                         ((TextView) findViewById(R.id.tweet_show_quote_tweet_user_name)).setText(quotedStatus.getUser().getName());
                                         ((TextView) findViewById(R.id.tweet_show_quote_tweet_user_id)).setText(TwitterStringUtil.plusAtMark(quotedStatus.getUser().getScreenName()));
                                         ((TextView) findViewById(R.id.tweet_show_quote_tweet_content)).setText(quotedStatus.getText());
@@ -226,6 +210,10 @@ public class ShowTweetActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp(){
         finish();
         return false;
+    }
+
+    public static Intent getIntent(Context context, long statusId){
+        return new Intent(context, ShowTweetActivity.class).putExtra("statusId", statusId);
     }
 
 }

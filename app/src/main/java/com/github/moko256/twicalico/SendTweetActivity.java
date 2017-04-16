@@ -117,18 +117,6 @@ public class SendTweetActivity extends AppCompatActivity {
             }
 
             String text=getIntent().getStringExtra(INTENT_EXTRA_TWEET_TEXT);
-            if (text!=null){
-                Uri data = getIntent().getData();
-                if (data != null){
-                    String scheme = data.getScheme();
-                    if (scheme.equals("https")){
-                        String path = data.getPath();
-                        if (path.matches(".*status=.+")){
-                            text=Pattern.compile("(?<=(.*status=)).+").matcher(path).group();
-                        }
-                    }
-                }
-            }
             if (text!=null) {
                 editText.setText(text);
                 editText.setSelection(text.length());

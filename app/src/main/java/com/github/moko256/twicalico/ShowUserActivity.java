@@ -16,8 +16,8 @@
 
 package com.github.moko256.twicalico;
 
+import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -28,9 +28,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
-
-import java.util.List;
-import java.util.regex.Pattern;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
@@ -121,7 +118,7 @@ public class ShowUserActivity extends AppCompatActivity implements ActivityHasUs
                         new Intent()
                                 .setAction(Intent.ACTION_SEND)
                                 .setType("text/plain")
-                                .putExtra(Intent.EXTRA_TEXT,"https://twitter.com/"+user.getScreenName())
+                                .putExtra(Intent.EXTRA_TEXT, user.getURL())
                 );
                 break;
             case R.id.action_create_follow:
@@ -211,44 +208,30 @@ public class ShowUserActivity extends AppCompatActivity implements ActivityHasUs
         return Observable
                 .create(
                         subscriber-> {
-                            String userName = null;
+                            if (user==null){
+                                String userScreenName = getIntent().getStringExtra("userScreenName");
+                                long userId = getIntent().getLongExtra("userId", -1);
 
-                            String userNameByExtra = (String) getIntent().getSerializableExtra("userName");
-                            if (userNameByExtra != null){
-                                userName = userNameByExtra;
-                            } else {
-                                Uri data = getIntent().getData();
-
-                                if (data != null){
-                                    String scheme = data.getScheme();
-
-                                    String userNameByLink = null;
-                                    if (scheme.equals("https")){
-                                        List<String> paths = data.getPathSegments();
-                                        userNameByLink = paths.get(paths.size());
-                                    } else if(scheme.equals("twitter")){
-                                        String path = data.getPath();
-                                        if (path.matches(".*\\?(id|screen_name)=.+")){
-                                            userNameByLink = Pattern.compile("(?<=(.*(id|screen_name)=)).+").matcher(path).group();
-                                        }
-                                    }
-
-                                    userName = userNameByLink;
-
+                                if (userId != -1){
+                                    user = GlobalApplication.userCache.get(userId);
                                 }
-                            }
-                            if (user==null||!user.getScreenName().equals(userName)){
-                                if (userName!=null){
+
+                                if (user==null) {
                                     try {
-                                        user=GlobalApplication.twitter.showUser(userName);
+                                        if (userId != -1) {
+                                            user = GlobalApplication.twitter.showUser(userId);
+                                        } else if (userScreenName != null) {
+                                            user = GlobalApplication.twitter.showUser(userScreenName);
+                                        }
                                     } catch (TwitterException e) {
                                         subscriber.onError(e);
                                     }
-                                } else {
-                                    user=(User) getIntent().getSerializableExtra("user");
                                 }
                             }
-                            subscriber.onNext(user);
+
+                            if (user != null){
+                                subscriber.onNext(user);
+                            }
                             subscriber.onCompleted();
                         }
                 );
@@ -257,5 +240,13 @@ public class ShowUserActivity extends AppCompatActivity implements ActivityHasUs
     @Override
     public int getSnackBarParentContainerId() {
         return R.id.activity_show_user_coordinator_layout;
+    }
+
+    public static Intent getIntent(Context context, long userId){
+        return new Intent(context, ShowUserActivity.class).putExtra("userId", userId);
+    }
+
+    public static Intent getIntent(Context context, String userName){
+        return new Intent(context, ShowUserActivity.class).putExtra("userScreenName", userName);
     }
 }
