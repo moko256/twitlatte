@@ -16,6 +16,7 @@
 
 package com.github.moko256.twicalico;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -33,6 +34,11 @@ import android.widget.Toast;
 
 import java.text.DateFormat;
 import java.util.Date;
+
+import twitter4j.TwitterFactory;
+import twitter4j.auth.AccessToken;
+import twitter4j.conf.Configuration;
+import twitter4j.conf.ConfigurationBuilder;
 
 /**
  * Created by moko256 on 2016/03/28.
@@ -78,8 +84,28 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             nowAccountList.setOnPreferenceChangeListener(
                     (preference, newValue) -> {
                         if (newValue.equals("-1")){
-                            getActivity().finish();
-                            startActivity(new Intent(getContext(),OAuthActivity.class));
+                            GlobalApplication.twitter = null;
+                            startActivity(
+                                    new Intent(getContext(),OAuthActivity.class)
+                            );
+                        } else {
+                            TokenSQLiteOpenHelper tokenOpenHelper = new TokenSQLiteOpenHelper(this.getContext());
+                            AccessToken accessToken=tokenOpenHelper.getAccessToken(Integer.valueOf((String) newValue));
+                            tokenOpenHelper.close();
+
+                            Configuration conf=new ConfigurationBuilder()
+                                    .setTweetModeExtended(true)
+                                    .setOAuthConsumerKey(GlobalApplication.consumerKey)
+                                    .setOAuthConsumerSecret(GlobalApplication.consumerSecret)
+                                    .setOAuthAccessToken(accessToken.getToken())
+                                    .setOAuthAccessTokenSecret(accessToken.getTokenSecret())
+                                    .build();
+
+                            GlobalApplication.twitter = new TwitterFactory(conf).getInstance();
+                            GlobalApplication.user = null;
+                            startActivity(
+                                    new Intent(getContext(),MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                            );
                         }
                         return true;
                     }
@@ -92,22 +118,34 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                         .setCancelable(true)
                         .setPositiveButton(android.R.string.ok,
                                 (dialog, i) -> {
+                                    long p = helper.deleteAccessToken(
+                                            helper.getAccessToken(
+                                                    Integer.valueOf(
+                                                            defaultSharedPreferences.getString("AccountPoint","-1")
+                                                    ))
+                                                    .getUserId()
+                                    )-1;
                                     defaultSharedPreferences
                                             .edit()
-                                            .putString(
-                                                    "AccountPoint",
-                                                    String.valueOf(
-                                                            helper.deleteAccessToken(
-                                                                    helper.getAccessToken(
-                                                                            Integer.valueOf(
-                                                                                    defaultSharedPreferences.getString("AccountPoint","-1")
-                                                                            ))
-                                                                            .getUserId()
-                                                            )-1
-                                                    )
-                                            ).apply();
-                                    getActivity().finish();
-                                    Process.killProcess(Process.myPid());
+                                            .putString("AccountPoint", String.valueOf(p)).apply();
+
+                                    TokenSQLiteOpenHelper tokenOpenHelper = new TokenSQLiteOpenHelper(this.getContext());
+                                    AccessToken accessToken=tokenOpenHelper.getAccessToken(Long.valueOf(p).intValue());
+                                    tokenOpenHelper.close();
+
+                                    Configuration conf=new ConfigurationBuilder()
+                                            .setTweetModeExtended(true)
+                                            .setOAuthConsumerKey(GlobalApplication.consumerKey)
+                                            .setOAuthConsumerSecret(GlobalApplication.consumerSecret)
+                                            .setOAuthAccessToken(accessToken.getToken())
+                                            .setOAuthAccessTokenSecret(accessToken.getTokenSecret())
+                                            .build();
+
+                                    GlobalApplication.twitter = new TwitterFactory(conf).getInstance();
+                                    GlobalApplication.user = null;
+                                    startActivity(
+                                            new Intent(getContext(),MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                                    );
                                 }
                         )
                         .setNegativeButton(android.R.string.cancel,(dialog, i) -> dialog.cancel())

@@ -175,11 +175,13 @@ public class GlobalApplication extends Application {
 
         Configuration conf=new ConfigurationBuilder()
                 .setTweetModeExtended(true)
+                .setOAuthConsumerKey(consumerKey)
+                .setOAuthConsumerSecret(consumerSecret)
+                .setOAuthAccessToken(accessToken.getToken())
+                .setOAuthAccessTokenSecret(accessToken.getTokenSecret())
                 .build();
 
         twitter = new TwitterFactory(conf).getInstance();
-        twitter.setOAuthConsumer(consumerKey, consumerSecret);
-        twitter.setOAuthAccessToken(accessToken);
 
         super.onCreate();
     }
