@@ -120,6 +120,8 @@ public class SendTweetActivity extends AppCompatActivity {
             if (text!=null) {
                 editText.setText(text);
                 editText.setSelection(text.length());
+            } else {
+                editText.setText("");
             }
         }
 

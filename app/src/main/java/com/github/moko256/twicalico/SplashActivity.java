@@ -69,7 +69,7 @@ public class SplashActivity extends AppCompatActivity {
                     } else if (data.getPath().matches("/.+/status/.+")){
                         intent = ShowTweetActivity.getIntent(this, Long.parseLong(data.getPathSegments().get(2)));
                     } else if (data.getPathSegments().size() == 1){
-                        intent = ShowUserActivity.getIntent(this, Long.valueOf(data.getLastPathSegment()));
+                        intent = ShowUserActivity.getIntent(this, data.getLastPathSegment());
                     }
                     break;
             }
