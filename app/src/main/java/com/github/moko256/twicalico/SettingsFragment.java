@@ -102,7 +102,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                                     .build();
 
                             GlobalApplication.twitter = new TwitterFactory(conf).getInstance();
-                            GlobalApplication.user = null;
+                            GlobalApplication.userId = accessToken.getUserId();
                             startActivity(
                                     new Intent(getContext(),MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                             );
@@ -142,7 +142,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                                             .build();
 
                                     GlobalApplication.twitter = new TwitterFactory(conf).getInstance();
-                                    GlobalApplication.user = null;
+                                    GlobalApplication.userId = accessToken.getUserId();
                                     startActivity(
                                             new Intent(getContext(),MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                                     );

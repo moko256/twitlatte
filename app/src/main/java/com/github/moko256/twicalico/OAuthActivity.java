@@ -91,11 +91,7 @@ public class OAuthActivity extends AppCompatActivity {
 
             @Override
             public void onPostExecute(Void n) {
-                new CustomTabsIntent.Builder()
-                        .setShowTitle(false)
-                        .setToolbarColor(getResources().getColor(R.color.colorPrimary))
-                        .build()
-                        .launchUrl(OAuthActivity.this, Uri.parse(req.getAuthorizationURL()));
+                startBrowser(req.getAuthorizationURL());
             }
         }.execute();
     }
@@ -119,11 +115,7 @@ public class OAuthActivity extends AppCompatActivity {
 
             @Override
             public void onPostExecute(Void n) {
-                new CustomTabsIntent.Builder()
-                        .setShowTitle(false)
-                        .setToolbarColor(getResources().getColor(R.color.colorPrimary))
-                        .build()
-                        .launchUrl(OAuthActivity.this, Uri.parse(req.getAuthorizationURL()));
+                startBrowser(req.getAuthorizationURL());
             }
         }.execute();
 
@@ -133,6 +125,14 @@ public class OAuthActivity extends AppCompatActivity {
                 .setView(editText)
                 .setPositiveButton(android.R.string.ok,(dialog, which) -> initToken(editText.getText().toString()))
                 .show();
+    }
+
+    private void startBrowser(String url){
+        new CustomTabsIntent.Builder()
+                .setShowTitle(false)
+                .setToolbarColor(getResources().getColor(R.color.colorPrimary))
+                .build()
+                .launchUrl(OAuthActivity.this, Uri.parse(url));
     }
 
     private void initToken(String verifier){
@@ -179,7 +179,7 @@ public class OAuthActivity extends AppCompatActivity {
         GlobalApplication.twitter.setOAuthAccessToken(
                 new AccessToken(token, tokenSecret)
         );
-        GlobalApplication.user = null;
+        GlobalApplication.userId = accessToken.getUserId();
 
         startActivity(new Intent(this,MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
     }

@@ -47,7 +47,7 @@ public class GlobalApplication extends Application {
     static final String consumerSecret=BuildConfig.CONSUMER_SECRET;
 
     static Twitter twitter;
-    static User user;
+    static long userId;
 
     static AppConfiguration configuration;
 
@@ -172,6 +172,8 @@ public class GlobalApplication extends Application {
         tokenOpenHelper.close();
 
         if (accessToken==null)return;
+
+        userId = accessToken.getUserId();
 
         Configuration conf=new ConfigurationBuilder()
                 .setTweetModeExtended(true)

@@ -62,28 +62,27 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
 
         setContentView(R.layout.activity_main);
 
-        if (GlobalApplication.user == null) {
-            Observable
-                    .create(subscriber->{
-                        try {
-                            GlobalApplication.user=GlobalApplication.twitter.verifyCredentials();
-                            GlobalApplication.userCache.add(GlobalApplication.user);
-                            subscriber.onNext(GlobalApplication.user);
-                            subscriber.onCompleted();
-                        } catch (TwitterException e) {
-                            subscriber.onError(e);
+        Observable
+                .create(subscriber->{
+                    try {
+                        User me = GlobalApplication.userCache.get(GlobalApplication.userId);
+                        if (me == null){
+                            me = GlobalApplication.twitter.verifyCredentials();
+                            GlobalApplication.userCache.add(me);
                         }
-                    })
-                    .subscribeOn(Schedulers.newThread())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(
-                            result-> setDrawerHeader((User) result),
-                            Throwable::printStackTrace,
-                            ()->{}
-                    );
-        } else {
-            setDrawerHeader(GlobalApplication.user);
-        }
+                        subscriber.onNext(me);
+                        subscriber.onCompleted();
+                    } catch (TwitterException e) {
+                        subscriber.onError(e);
+                    }
+                })
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        result-> setDrawerHeader((User) result),
+                        Throwable::printStackTrace,
+                        ()->{}
+                );
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -141,12 +140,6 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        GlobalApplication.user=null;
-    }
-
-    @Override
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         attachFragment(getMainFragment(), (NavigationView) findViewById(R.id.nav_view), (TabLayout) findViewById(R.id.toolbar_tab));
@@ -177,9 +170,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
     }
 
     private void startMyUserActivity() {
-        if (GlobalApplication.user!=null){
-            startActivity(ShowUserActivity.getIntent(this, GlobalApplication.user.getId()));
-        }
+        startActivity(ShowUserActivity.getIntent(this, GlobalApplication.userId));
     }
 
     private void addFragment(Fragment fragment){
