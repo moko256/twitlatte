@@ -124,7 +124,7 @@ public class SendTweetModel {
 
     public static class InvalidTextException extends Throwable {
         public InvalidTextException(){
-            super("Invalid lengh of tweet text");
+            super("Invalid length of tweet text");
         }
     }
 }
