@@ -81,7 +81,7 @@
 
             <TextView
                 android:id="@+id/tweet_show_content"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tweet_show_image"
                 android:layout_marginTop="16dp"
@@ -120,7 +120,7 @@
                     tools:text="\@user_id"/>
                 <TextView
                     android:id="@+id/tweet_show_quote_tweet_content"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/tweet_show_quote_tweet_user_name"
                     android:maxLines="5"

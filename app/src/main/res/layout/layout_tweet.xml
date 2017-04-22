@@ -35,7 +35,7 @@
         android:layout_height="wrap_content">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/tweet_retweet_user_name"
             android:textAppearance="@style/TextAppearance.AppCompat.Caption"
@@ -43,7 +43,7 @@
             tools:text="@string/retweet_by"/>
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/tweet_reply_user_name"
             android:layout_below="@id/tweet_retweet_user_name"
@@ -105,7 +105,7 @@
 
         <TextView
             android:id="@+id/tweet_content"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/tweet_icon"
             android:layout_marginTop="16dp"
@@ -114,7 +114,7 @@
 
         <TextView
             android:id="@+id/tweet_via_text"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/tweet_content"
             android:layout_marginTop="16dp"
@@ -162,7 +162,7 @@
 
             <TextView
                 android:id="@+id/tweet_quote_tweet_content"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tweet_quote_tweet_user_name"
                 android:maxLines="5"
