@@ -19,6 +19,7 @@ package com.github.moko256.twicalico;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
+import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v7.widget.AppCompatCheckBox;
 import android.util.AttributeSet;
 
@@ -41,7 +42,11 @@ public class DrawableToggleView extends AppCompatCheckBox {
     public DrawableToggleView(Context context, AttributeSet attrs, int defStyleAttr){
         super(context, attrs, defStyleAttr);
         TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.DrawableToggleView);
-        Drawable drawable = array.getDrawable(R.styleable.DrawableToggleView_toggle_drawable);
+        Drawable drawable = VectorDrawableCompat.create(
+                context.getResources(),
+                array.getResourceId(R.styleable.DrawableToggleView_toggle_drawable, -1),
+                context.getTheme()
+        );
         if (drawable != null){
             setButtonDrawable(drawable);
         }
