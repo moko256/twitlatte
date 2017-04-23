@@ -18,17 +18,18 @@ package com.github.moko256.twicalico;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.Space;
 import android.support.v7.content.res.AppCompatResources;
+import android.support.v7.widget.CardView;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -52,7 +53,7 @@ import twitter4j.util.TimeSpanConverter;
  * @author moko256
  */
 
-public class StatusView extends RelativeLayout {
+public class StatusView extends FrameLayout {
     Status status;
 
     RequestManager imageRequestManager;
