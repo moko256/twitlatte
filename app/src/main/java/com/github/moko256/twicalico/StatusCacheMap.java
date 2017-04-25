@@ -76,6 +76,8 @@ public class StatusCacheMap {
 
         /* Based on twitter4j.StatusJSONImpl */
 
+        private int flags = 0;
+
         private final Date createdAt;
         private final long id;
         private final String text;
@@ -331,6 +333,22 @@ public class StatusCacheMap {
         @Override
         public int getAccessLevel() {
             return 0;
+        }
+
+        public int getFlags() {
+            return flags;
+        }
+
+        public boolean isExistFlag(int flag) {
+            return (flags & flag) == flag;
+        }
+
+        public void addFlag(int flag) {
+            flags |= flag;
+        }
+
+        public void removeFlag(int flag) {
+            flags ^= flag;
         }
     }
 }

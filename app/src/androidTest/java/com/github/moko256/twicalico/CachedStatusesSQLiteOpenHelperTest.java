@@ -87,7 +87,7 @@ public class CachedStatusesSQLiteOpenHelperTest extends ApplicationTestCase<Appl
 
         @Override
         public Date getCreatedAt() {
-            return null;
+            return new Date();
         }
 
         @Override
@@ -112,7 +112,7 @@ public class CachedStatusesSQLiteOpenHelperTest extends ApplicationTestCase<Appl
 
         @Override
         public String getSource() {
-            return null;
+            return "test";
         }
 
         @Override
