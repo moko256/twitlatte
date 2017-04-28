@@ -24,7 +24,6 @@ import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.Space;
 import android.support.v7.content.res.AppCompatResources;
-import android.support.v7.widget.CardView;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -65,7 +64,6 @@ public class StatusView extends FrameLayout {
     TextView userName;
     TextView userId;
     TextView tweetContext;
-    TextView viaText;
     TextView timeStampText;
     RelativeLayout quoteTweetLayout;
     TextView quoteTweetUserName;
@@ -102,7 +100,6 @@ public class StatusView extends FrameLayout {
         userId =(TextView) findViewById(R.id.tweet_user_id);
         userName =(TextView) findViewById(R.id.tweet_user_name);
         tweetContext=(TextView) findViewById(R.id.tweet_content);
-        viaText =(TextView) findViewById(R.id.tweet_via_text);
         timeStampText =(TextView) findViewById(R.id.tweet_time_stamp_text);
         quoteTweetLayout =(RelativeLayout)  findViewById(R.id.tweet_quote_tweet);
         quoteTweetUserName =(TextView) findViewById(R.id.tweet_quote_tweet_user_name);
@@ -183,19 +180,15 @@ public class StatusView extends FrameLayout {
             }
         }
 
-        String profileImageUrl;
-        if (GlobalApplication.configuration.getTimelineImageLoadMode()<=AppConfiguration.IMAGE_LOAD_MODE_LOW){
-            profileImageUrl=item.getUser().getProfileImageURLHttps();
+        if (GlobalApplication.configuration.isTimelineImageLoad()){
+            imageRequestManager.load(item.getUser().getProfileImageURLHttps()).into(userImage);
         } else {
-            profileImageUrl=item.getUser().getBiggerProfileImageURLHttps();
+            userImage.setImageResource(R.drawable.border_frame);
         }
-        imageRequestManager.load(profileImageUrl).into(userImage);
 
         userName.setText(item.getUser().getName());
         userId.setText(TwitterStringUtil.plusAtMark(item.getUser().getScreenName()));
         tweetContext.setText(TwitterStringUtil.getStatusTextSequence(item));
-
-        viaText.setText("via:"+TwitterStringUtil.removeHtmlTags(item.getSource()));
 
         timeStampText.setText(timeSpanConverter.toTimeSpanString(item.getCreatedAt().getTime()));
         userImage.setOnClickListener(v->{
@@ -240,28 +233,13 @@ public class StatusView extends FrameLayout {
                 int finalIi = ii;
                 imageView.setOnClickListener(v-> getContext().startActivity(ShowImageActivity.getIntent(getContext(),mediaEntities, finalIi)));
 
-                int loadMode=GlobalApplication.configuration.getTimelineImageLoadMode();
-
-                if (loadMode!=AppConfiguration.IMAGE_LOAD_MODE_NONE){
-                    String mediaUrlPrefix;
-                    switch (loadMode){
-                        case AppConfiguration.IMAGE_LOAD_MODE_LOW:
-                            mediaUrlPrefix="small";
-                            break;
-                        case AppConfiguration.IMAGE_LOAD_MODE_FULL:
-                            mediaUrlPrefix="large";
-                            break;
-                        default:
-                            mediaUrlPrefix="medium";
-                    }
+                if (GlobalApplication.configuration.isTimelineImageLoad()){
                     imageRequestManager
-                            .load(mediaEntities[ii].getMediaURLHttps()+":"+mediaUrlPrefix)
+                            .load(mediaEntities[ii].getMediaURLHttps()+":medium")
                             .centerCrop()
                             .into(imageView);
                 } else {
-                    imageRequestManager
-                            .load(R.drawable.border_frame)
-                            .into(imageView);
+                    imageView.setImageResource(R.drawable.border_frame);
                 }
             }
         }

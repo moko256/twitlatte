@@ -17,5 +17,7 @@
 
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:drawable="@color/colorPrimary"/>
-    <item android:drawable="@mipmap/ic_launcher" android:gravity="center" android:width="120dp" android:height="120dp"/>
+    <item android:gravity="center" android:width="128dp" android:height="128dp">
+        <bitmap android:src="@mipmap/ic_launcher" android:mipMap="true" />
+    </item>
 </layer-list>

@@ -112,23 +112,12 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             tools:text="Tweet context"/>
 
-        <TextView
-            android:id="@+id/tweet_via_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/tweet_content"
-            android:layout_marginTop="16dp"
-            android:textColor="?android:textColorSecondary"
-            android:lines="1"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            tools:text="via:Twitter"/>
-
         <RelativeLayout
             android:id="@+id/tweet_quote_tweet"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:layout_below="@id/tweet_via_text">
+            android:layout_below="@id/tweet_content">
             <ImageView
                 android:id="@+id/tweet_divider"
                 android:layout_width="match_parent"

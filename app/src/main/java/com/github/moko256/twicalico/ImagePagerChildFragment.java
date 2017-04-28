@@ -136,7 +136,12 @@ public class ImagePagerChildFragment extends Fragment {
             default:
                 imageView=(ImageView) view.findViewById(R.id.fragment_image_pager_image);
                 imageView.setVisibility(View.VISIBLE);
-                Glide.with(this).load(mediaEntity.getMediaURLHttps()+":orig").into(imageView);
+                Glide.with(this)
+                        .load(mediaEntity.getMediaURLHttps()+":large")
+                        .fitCenter()
+                        .crossFade(0)
+                        .thumbnail(Glide.with(this).load(mediaEntity.getMediaURLHttps()+":medium").fitCenter())
+                        .into(imageView);
                 break;
         }
         return view;

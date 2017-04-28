@@ -59,7 +59,7 @@
     <string name="retry">再試行</string>
     <string name="succeeded">成功しました</string>
     <string name="error_occurred_with_error_code">エラーが発生しました (エラーコード : %d)</string>
-    <string name="load_timeline_image_quality">タイムラインの画像の画質</string>
+    <string name="is_load_timeline_image">タイムラインの画像を読み込むか</string>
     <string name="about">概要</string>
     <string name="license_at_this_app">このアプリケーションのライセンス</string>
     <string name="open_source_license">オープンソースライセンス</string>
@@ -77,9 +77,7 @@
     <string name="tweet_source_mute_regex_pattern">投稿したクライアントのミュートの正規表現パターン</string>
 
     <string name="mode_image_level_none">タイムラインの画像を読み込まない</string>
-    <string name="mode_image_level_low">低速モード</string>
-    <string name="mode_image_level_normal">通常モード</string>
-    <string name="mode_image_level_full">高画質モード</string>
+    <string name="mode_image_level_normal">タイムラインの画像を読み込む</string>
 
     <string name="mode_night_no">使用しない</string>
     <string name="mode_night_yes">使用する</string>

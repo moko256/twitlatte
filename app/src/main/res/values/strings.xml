@@ -69,7 +69,7 @@
     <string name="retry">retry</string>
     <string name="succeeded">Succeeded</string>
     <string name="error_occurred_with_error_code">Error occurred (Error code : %d)</string>
-    <string name="load_timeline_image_quality">Quality of the images on the timeline</string>
+    <string name="is_load_timeline_image">Load the images on the timeline</string>
     <string name="about">About</string>
     <string name="license_at_this_app">License at this application</string>
     <string name="apache_license_2_0" translatable="false">Apache License, Version 2.0</string>
@@ -87,10 +87,8 @@
     <string name="use_tweet_source_mute">Use Regex client mute</string>
     <string name="tweet_source_mute_regex_pattern">Tweet posted client mute Regex pattern</string>
 
-    <string name="mode_image_level_none">Not loading image on the timeline</string>
-    <string name="mode_image_level_low">Quality low</string>
-    <string name="mode_image_level_normal">Quality normal</string>
-    <string name="mode_image_level_full">Quality full</string>
+    <string name="mode_image_level_none">Do not load images on the timeline</string>
+    <string name="mode_image_level_normal">Load images on the timeline</string>
 
     <string name="mode_night_no">Not Use</string>
     <string name="mode_night_yes">Use</string>
@@ -102,9 +100,7 @@
     <string name="mode_night_follow_system_value" translatable="false">mode_night_follow_system</string>
     <string name="mode_night_yes_value" translatable="false">mode_night_yes</string>
 
-    <string name="mode_none_value" translatable="false">mode_none</string>
-    <string name="mode_low_value" translatable="false">mode_low</string>
-    <string name="mode_normal_value" translatable="false">mode_normal</string>
-    <string name="mode_full_value" translatable="false">mode_full</string>
+    <string name="mode_none_value" translatable="false">false</string>
+    <string name="mode_normal_value" translatable="false">true</string>
 
 </resources>

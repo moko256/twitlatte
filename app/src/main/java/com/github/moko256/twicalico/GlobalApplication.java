@@ -31,7 +31,6 @@ import java.util.Date;
 
 import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
-import twitter4j.User;
 import twitter4j.auth.AccessToken;
 import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
@@ -123,24 +122,7 @@ public class GlobalApplication extends Application {
             configuration.setTweetSourceMutePattern(defaultSharedPreferences.getString("tweetSourceMutePattern",""));
         }
 
-        int timelineImageLoadType;
-        switch(defaultSharedPreferences.getString("timelineImageLoadType","mode_normal")){
-            case "mode_none":
-                timelineImageLoadType=AppConfiguration.IMAGE_LOAD_MODE_NONE;
-                break;
-            case "mode_low":
-                timelineImageLoadType=AppConfiguration.IMAGE_LOAD_MODE_LOW;
-                break;
-            case "mode_normal":
-                timelineImageLoadType=AppConfiguration.IMAGE_LOAD_MODE_NORMAL;
-                break;
-            case "mode_full":
-                timelineImageLoadType=AppConfiguration.IMAGE_LOAD_MODE_FULL;
-                break;
-            default:
-                timelineImageLoadType=AppConfiguration.IMAGE_LOAD_MODE_NORMAL;
-        }
-        configuration.setTimelineImageLoadMode(timelineImageLoadType);
+        configuration.setIsTimelineImageLoad(Boolean.valueOf(defaultSharedPreferences.getString("isTimelineImageLoad","true")));
 
         @AppCompatDelegate.NightMode
         int mode=AppCompatDelegate.MODE_NIGHT_NO;
