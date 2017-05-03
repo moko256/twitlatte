@@ -44,6 +44,7 @@
     <string name="share">共有する</string>
     <string name="add_to_list">リストに追加</string>
     <string name="show_list">リストを見る</string>
+    <string name="load_more">もっと見る</string>
     <string name="create_follow">フォロー</string>
     <string name="destroy_follow">フォロー解除</string>
     <string name="create_mute">ミュートする</string>

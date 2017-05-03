@@ -29,6 +29,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
@@ -73,6 +74,40 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
         });
 
         adapter=new StatusesAdapter(getContext(), list);
+        adapter.setOnLoadMoreClick(position -> getResponseObservable(
+                new Paging()
+                        .maxId(list.get(position-1)-1L)
+                        .sinceId(list.get(position+1))
+                        .count(50))
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        result -> {
+                            if (result.size() > 0) {
+                                GlobalApplication.statusCache.addAll(result);
+                                list.remove(position);
+                                adapter.notifyItemRemoved(position);
+                                List<Long>ids = Observable
+                                        .from(result)
+                                        .map(Status::getId)
+                                        .toList().toSingle().toBlocking().value();
+                                ids.add(-1L);
+                                list.addAll(position, ids);
+                                adapter.notifyItemRangeInserted(position, ids.size());
+                            } else {
+                                list.remove(position);
+                                adapter.notifyItemRemoved(position);
+                            }
+                        },
+                        e -> {
+                            e.printStackTrace();
+                            Snackbar.make(getSnackBarParentContainer(), getContext().getString(R.string.error_occurred_with_error_code,
+                                    ((TwitterException) e).getErrorCode()), Snackbar.LENGTH_INDEFINITE)
+                                    .setAction(R.string.retry, v -> onLoadMoreList())
+                                    .show();
+                        },
+                        () -> {}
+                ));
         setAdapter(adapter);
         if (!isInitializedList()){
             adapter.notifyDataSetChanged();
@@ -139,25 +174,21 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
 
     @Override
     protected void onUpdateList() {
-        Paging paging=new Paging(list.get(0));
-        paging.count(50);
-
-        getResponseObservable(paging)
+        getResponseObservable(new Paging(list.get(0)).count(50))
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         result -> {
-                            int size = result.size();
-                            if (size > 0) {
+                            if (result.size() > 0) {
                                 GlobalApplication.statusCache.addAll(result);
-                                list.addAll(
-                                        0,
-                                        Observable
-                                                .from(result)
-                                                .map(Status::getId)
-                                                .toList().toSingle().toBlocking().value()
-                                );
-                                adapter.notifyItemRangeInserted(0,size);
+                                List<Long> ids = Observable
+                                        .from(result)
+                                        .map(Status::getId)
+                                        .toList().toSingle().toBlocking().value();
+                                ids.add(-1L);
+
+                                list.addAll(0, ids);
+                                adapter.notifyItemRangeInserted(0, ids.size());
                                 TypedValue value=new TypedValue();
                                 Toast t=Toast.makeText(getContext(),"New Tweet",Toast.LENGTH_SHORT);
                                 t.setGravity(
@@ -201,7 +232,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                                                 .map(Status::getId)
                                                 .toList().toSingle().toBlocking().value()
                                 );
-                                adapter.notifyItemRangeInserted(list.size(),size);
+                                adapter.notifyItemRangeInserted(list.size(), size);
                             }
                         },
                         e -> {

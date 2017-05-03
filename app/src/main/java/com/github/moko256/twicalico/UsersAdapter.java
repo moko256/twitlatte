@@ -69,7 +69,7 @@ class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> {
     public void onBindViewHolder(ViewHolder viewHolder, final int i) {
         User item=GlobalApplication.userCache.get(data.get(i));
 
-        imageRequestManager.load(item.getProfileImageURL()).into(viewHolder.userUserImage);
+        imageRequestManager.load(item.getProfileImageURLHttps()).into(viewHolder.userUserImage);
 
         viewHolder.userUserName.setText(item.getName());
         viewHolder.userUserId.setText(TwitterStringUtil.plusAtMark(item.getScreenName()));
