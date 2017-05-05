@@ -235,8 +235,7 @@ public class StatusView extends FrameLayout {
 
                 if (GlobalApplication.configuration.isTimelineImageLoad()){
                     imageRequestManager
-                            .load(mediaEntities[ii].getMediaURLHttps()+":medium")
-                            .centerCrop()
+                            .load(mediaEntities[ii].getMediaURLHttps()+":small")
                             .into(imageView);
                 } else {
                     imageView.setImageResource(R.drawable.border_frame);

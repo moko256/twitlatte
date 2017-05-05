@@ -140,7 +140,7 @@ public class ImagePagerChildFragment extends Fragment {
                         .load(mediaEntity.getMediaURLHttps()+":large")
                         .fitCenter()
                         .crossFade(0)
-                        .thumbnail(Glide.with(this).load(mediaEntity.getMediaURLHttps()+":medium").fitCenter())
+                        .thumbnail(Glide.with(this).load(mediaEntity.getMediaURLHttps()+":small").fitCenter())
                         .into(imageView);
                 break;
         }

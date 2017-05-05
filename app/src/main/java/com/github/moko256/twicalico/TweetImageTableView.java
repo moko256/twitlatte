@@ -17,10 +17,9 @@
 package com.github.moko256.twicalico;
 
 import android.content.Context;
+import android.support.v7.widget.GridLayout;
 import android.util.AttributeSet;
-import android.view.LayoutInflater;
 import android.view.ViewGroup;
-import android.widget.GridLayout;
 import android.widget.ImageView;
 
 /**
@@ -31,7 +30,7 @@ import android.widget.ImageView;
 public class TweetImageTableView extends GridLayout {
 
     private ImageView imageViews[];
-    private int imageNum=1;
+    private int imageNum = 0;
 
     /* {row,column,rowSpan,colSpan} */
     private final int params[][][]={
@@ -39,6 +38,14 @@ public class TweetImageTableView extends GridLayout {
             {{0,0,2,1},{0,1,2,1},{0,0,0,0},{0,0,0,0}},
             {{0,0,2,1},{0,1,1,1},{1,1,1,1},{0,0,0,0}},
             {{0,0,1,1},{0,1,1,1},{1,0,1,1},{1,1,1,1}}
+    };
+
+    /* {right,bottom} */
+    private final int margins[][][]={
+            {{0,0},{0,0},{0,0},{0,0}},
+            {{4,0},{0,0},{0,0},{0,0}},
+            {{4,0},{0,4},{0,0},{0,0}},
+            {{4,4},{0,4},{4,0},{0,0}}
     };
 
     public TweetImageTableView(Context context) {
@@ -52,19 +59,14 @@ public class TweetImageTableView extends GridLayout {
     public TweetImageTableView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
 
-        final int ids[]={
-                R.id.layout_tweet_image_1,
-                R.id.layout_tweet_image_2,
-                R.id.layout_tweet_image_3,
-                R.id.layout_tweet_image_4
-        };
-
-        LayoutInflater.from(getContext()).inflate(R.layout.layout_tweet_image_table,this);
+        setColumnCount(2);
+        setRowCount(2);
 
         imageViews=new ImageView[4];
 
-        for(int i=0;i<ids.length;i++){
-            imageViews[i]=(ImageView) findViewById(ids[i]);
+        for(int i=0;i<imageViews.length;i++){
+            imageViews[i] = new ImageView(context);
+            imageViews[i].setScaleType(ImageView.ScaleType.CENTER_CROP);
         }
     }
 
@@ -76,12 +78,12 @@ public class TweetImageTableView extends GridLayout {
         int widthMode=MeasureSpec.getMode(widthSpec);
         int heightMode=MeasureSpec.getMode(heightSpec);
 
-        if (widthMode!=MeasureSpec.EXACTLY){
+        if (heightMode==MeasureSpec.EXACTLY){
             widthMode=MeasureSpec.EXACTLY;
             widthSize=heightSize/9*16;
         }
 
-        if (heightMode!=MeasureSpec.EXACTLY){
+        if (widthMode==MeasureSpec.EXACTLY){
             heightMode=MeasureSpec.EXACTLY;
             heightSize=widthSize/16*9;
         }
@@ -94,15 +96,20 @@ public class TweetImageTableView extends GridLayout {
         super.onMeasure(measuredWidthSpec, measuredHeightSpec);
     }
 
-    @Override
-    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        childLayout();
-        super.onLayout(changed, left, top, right, bottom);
-    }
-
     public void setImageNumber(int num){
-        imageNum=num;
-        childLayout();
+        imageNum = num;
+        removeAllViews();
+        for(int i = 0; i < imageNum; i++){
+            addView(imageViews[i]);
+        }
+        for(int i = 0; i < imageNum; i++){
+            float dens = getContext().getResources().getDisplayMetrics().density;
+            int param[] = params[imageNum - 1][i];
+            int margin[] = margins[imageNum -1][i];
+            LayoutParams params = makeGridLayoutParams(param[0],param[1],param[2],param[3]);
+            params.setMargins(0, 0, Math.round(dens * margin[0]), Math.round(dens * margin[1]));
+            imageViews[i].setLayoutParams(params);
+        }
     }
 
     public int getImageNumber(){
@@ -113,28 +120,10 @@ public class TweetImageTableView extends GridLayout {
         return imageViews[i];
     }
 
-    private void childLayout(){
-
-        for (int i = 0; i < 4; i++) {
-            ImageView imageView = imageViews[i];
-            if (i < imageNum) {
-                imageView.setVisibility(VISIBLE);
-            } else {
-                imageView.setVisibility(GONE);
-            }
-        }
-
-        for(int i=0;i<4;i++){
-            ImageView imageView=imageViews[i];
-            int param[]=params[imageNum-1][i];
-            imageView.setLayoutParams(makeGridLayoutParams(param[0],param[1],param[2],param[3]));
-        }
-    }
-
     private LayoutParams makeGridLayoutParams(int row, int column, int rowSpan, int colSpan){
-        LayoutParams params=new LayoutParams(new ViewGroup.LayoutParams(getMeasuredWidth()/2*colSpan,getMeasuredHeight()/2*rowSpan));
-        params.rowSpec=spec(row,rowSpan);
-        params.columnSpec=spec(column,colSpan);
+        LayoutParams params=new LayoutParams(new ViewGroup.LayoutParams(0, 0));
+        params.rowSpec=spec(row,rowSpan,1);
+        params.columnSpec=spec(column,colSpan,1);
         return params;
     }
 }
