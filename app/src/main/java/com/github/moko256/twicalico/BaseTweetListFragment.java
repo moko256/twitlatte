@@ -91,7 +91,9 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                                         .from(result)
                                         .map(Status::getId)
                                         .toList().toSingle().toBlocking().value();
-                                ids.add(-1L);
+                                if (result.size() == 50){
+                                    ids.add(-1L);
+                                }
                                 list.addAll(position, ids);
                                 adapter.notifyItemRangeInserted(position, ids.size());
                             } else {
@@ -185,7 +187,9 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                                         .from(result)
                                         .map(Status::getId)
                                         .toList().toSingle().toBlocking().value();
-                                ids.add(-1L);
+                                if (result.size() == 50){
+                                    ids.add(-1L);
+                                }
 
                                 list.addAll(0, ids);
                                 adapter.notifyItemRangeInserted(0, ids.size());
