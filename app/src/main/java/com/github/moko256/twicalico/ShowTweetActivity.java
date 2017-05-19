@@ -33,6 +33,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.github.moko256.twicalico.model.SendTweetModel;
 
 import java.text.DateFormat;
@@ -151,7 +152,7 @@ public class ShowTweetActivity extends AppCompatActivity {
                                             ImageView imageView=tableView.getImageView(ii);
                                             int finalIi = ii;
                                             imageView.setOnClickListener(v-> startActivity(ShowImageActivity.getIntent(ShowTweetActivity.this,mediaEntities, finalIi)));
-                                            imageRequestManager.load(mediaEntities[ii].getMediaURLHttps()+":small").into(imageView);
+                                            imageRequestManager.load(mediaEntities[ii].getMediaURLHttps()+":small").diskCacheStrategy(DiskCacheStrategy.NONE).into(imageView);
                                         }
                                     }else{
                                         tableView.setVisibility(View.GONE);

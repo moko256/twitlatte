@@ -37,6 +37,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
@@ -236,6 +237,7 @@ public class StatusView extends FrameLayout {
                 if (GlobalApplication.configuration.isTimelineImageLoad()){
                     imageRequestManager
                             .load(mediaEntities[ii].getMediaURLHttps()+":small")
+                            .diskCacheStrategy(DiskCacheStrategy.NONE)
                             .into(imageView);
                 } else {
                     imageView.setImageResource(R.drawable.border_frame);
