@@ -64,12 +64,12 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
             public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
                 super.getItemOffsets(outRect, view, parent, state);
 
-                int span=((StaggeredGridLayoutManager.LayoutParams) view.getLayoutParams()).getSpanIndex();
-                float dens=getContext().getResources().getDisplayMetrics().density;
+                int span = ((StaggeredGridLayoutManager.LayoutParams) view.getLayoutParams()).getSpanIndex();
+                float dens = getContext().getResources().getDisplayMetrics().density;
 
-                outRect.left=Math.round(dens*(span==0?8f:4f));
-                outRect.right=Math.round(dens*(span==((StaggeredGridLayoutManager) parent.getLayoutManager()).getSpanCount()-1?8f:4f));
-                outRect.top=Math.round(dens*8f);
+                outRect.left = Math.round(dens * (span == 0 ? 8f : 4f));
+                outRect.right = Math.round(dens * (span == ((StaggeredGridLayoutManager) parent.getLayoutManager()).getSpanCount() - 1 ? 8f : 4f));
+                outRect.top = Math.round(dens * 8f);
             }
         });
 

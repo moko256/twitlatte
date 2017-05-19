@@ -18,6 +18,7 @@ package com.github.moko256.twicalico;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -89,6 +90,12 @@ class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             ((StatusViewHolder) viewHolder).setStatus(GlobalApplication.statusCache.get(data.get(i)));
         } else if (viewHolder instanceof MoreLoadViewHolder) {
             viewHolder.itemView.setOnClickListener(v -> onLoadMoreClick.onClick(i));
+            ViewGroup.LayoutParams oldParams = viewHolder.itemView.getLayoutParams();
+            StaggeredGridLayoutManager.LayoutParams params = oldParams != null?
+                    new StaggeredGridLayoutManager.LayoutParams(oldParams) :
+                    new StaggeredGridLayoutManager.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            params.setFullSpan(true);
+            viewHolder.itemView.setLayoutParams(params);
         }
     }
 
