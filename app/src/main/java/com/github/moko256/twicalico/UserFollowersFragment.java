@@ -16,6 +16,8 @@
 
 package com.github.moko256.twicalico;
 
+import android.os.Bundle;
+
 import twitter4j.PagableResponseList;
 import twitter4j.TwitterException;
 import twitter4j.User;
@@ -25,16 +27,34 @@ import twitter4j.User;
  *
  * @author moko256
  */
-public class MyFollowUserFragment extends BaseUsersFragment implements ToolbarTitleInterface,NavigationPositionInterface {
+public class UserFollowersFragment extends BaseUsersFragment implements ToolbarTitleInterface,NavigationPositionInterface {
+
+    long userId = -1;
 
     @Override
-    public PagableResponseList<User> getResponseList(long cursor) throws TwitterException {
-        return GlobalApplication.twitter.getFriendsList(GlobalApplication.userId, cursor);
+    protected void onInitializeList() {
+        if (userId == -1){
+            userId = getArguments().getLong("userId", -1);
+        }
+        super.onInitializeList();
+    }
+
+    public static UserFollowersFragment newInstance(long userId){
+        UserFollowersFragment result = new UserFollowersFragment();
+        Bundle args = new Bundle();
+        args.putLong("userId", userId);
+        result.setArguments(args);
+        return result;
+    }
+
+    @Override
+    public PagableResponseList<User> getResponseList(long cursorLong) throws TwitterException {
+        return GlobalApplication.twitter.getFollowersList(userId, cursorLong);
     }
 
     @Override
     public int getTitleResourceId() {
-        return R.string.follow;
+        return R.string.follower;
     }
 
     @Override

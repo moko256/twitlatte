@@ -70,6 +70,7 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
 
         tabLayout=(TabLayout) findViewById(R.id.tab_show_user);
         tabLayout.setupWithViewPager(viewPager);
+        tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
 
         findViewById(R.id.activity_show_user_fab).setOnClickListener(v -> {
             if (user!=null){
@@ -78,6 +79,8 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
         });
 
         getUserObservable()
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         it -> viewPager.setAdapter(new ShowUserFragmentsPagerAdapter(getSupportFragmentManager(),this,it.getId())),
                         e -> Snackbar.make(findViewById(getSnackBarParentContainerId()), getString(R.string.error_occurred_with_error_code,

@@ -37,7 +37,9 @@ public class ShowUserFragmentsPagerAdapter extends FragmentPagerAdapter {
         mFragments=new Fragment[]{
                 UserInfoFragment.newInstance(userId),
                 UserTimelineFragment.newInstance(userId),
-                UserLikeFragment.newInstance(userId)
+                UserLikeFragment.newInstance(userId),
+                UserFollowsFragment.newInstance(userId),
+                UserFollowersFragment.newInstance(userId)
         };
         mContext=context;
     }

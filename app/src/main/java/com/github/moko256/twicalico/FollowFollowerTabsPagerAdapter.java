@@ -30,12 +30,12 @@ class FollowFollowerTabsPagerAdapter extends FragmentPagerAdapter {
     private Fragment[] mFragments;
     private Context mContext;
 
-    FollowFollowerTabsPagerAdapter(FragmentManager fm, Context context) {
+    FollowFollowerTabsPagerAdapter(FragmentManager fm, Context context,long userId) {
         super(fm);
 
         mFragments=new Fragment[]{
-                new MyFollowUserFragment(),
-                new MyFollowerUserFragment()
+                UserFollowsFragment.newInstance(userId),
+                UserFollowersFragment.newInstance(userId)
         };
         mContext=context;
     }
