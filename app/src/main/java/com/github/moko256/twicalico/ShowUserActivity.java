@@ -19,6 +19,7 @@ package com.github.moko256.twicalico;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
@@ -41,7 +42,7 @@ import twitter4j.User;
  *
  * @author moko256
  */
-public class ShowUserActivity extends AppCompatActivity implements ActivityHasUserObservable,BaseListFragment.GetSnackBarParentContainerId {
+public class ShowUserActivity extends AppCompatActivity implements BaseListFragment.GetSnackBarParentContainerId {
 
     User user;
 
@@ -66,7 +67,6 @@ public class ShowUserActivity extends AppCompatActivity implements ActivityHasUs
 
         viewPager=(ViewPager) findViewById(R.id.show_user_view_pager);
         viewPager.setOffscreenPageLimit(1);
-        viewPager.setAdapter(new ShowUserFragmentsPagerAdapter(getSupportFragmentManager(),this));
 
         tabLayout=(TabLayout) findViewById(R.id.tab_show_user);
         tabLayout.setupWithViewPager(viewPager);
@@ -76,6 +76,15 @@ public class ShowUserActivity extends AppCompatActivity implements ActivityHasUs
                 startActivity(SendTweetActivity.getIntent(this, TwitterStringUtil.plusAtMark(user.getScreenName())+" "));
             }
         });
+
+        getUserObservable()
+                .subscribe(
+                        it -> viewPager.setAdapter(new ShowUserFragmentsPagerAdapter(getSupportFragmentManager(),this,it.getId())),
+                        e -> Snackbar.make(findViewById(getSnackBarParentContainerId()), getString(R.string.error_occurred_with_error_code,
+                                ((TwitterException) e).getErrorCode()), Snackbar.LENGTH_INDEFINITE)
+                                .show(),
+                        () -> {}
+                );
     }
 
     @Override
@@ -203,7 +212,6 @@ public class ShowUserActivity extends AppCompatActivity implements ActivityHasUs
     }
 
 
-    @Override
     public Observable<User> getUserObservable(){
         return Observable
                 .create(
@@ -222,6 +230,7 @@ public class ShowUserActivity extends AppCompatActivity implements ActivityHasUs
                                             user = GlobalApplication.twitter.showUser(userId);
                                         } else if (userScreenName != null) {
                                             user = GlobalApplication.twitter.showUser(userScreenName);
+                                            GlobalApplication.userCache.add(user);
                                         }
                                     } catch (TwitterException e) {
                                         subscriber.onError(e);

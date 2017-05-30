@@ -17,7 +17,6 @@
 package com.github.moko256.twicalico;
 
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -99,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
             if(!item.isChecked()){
                 switch(id){
                     case R.id.nav_timeline:
-                        replaceFragment(new TimeLineFragment());
+                        replaceFragment(new HomeTimeLineFragment());
                         break;
                     case R.id.nav_mentions:
                         replaceFragment(new MentionsFragment());
@@ -111,7 +110,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                         replaceFragment(new MyFollowFollowerFragment());
                         break;
                     case R.id.nav_like:
-                        replaceFragment(new LikeMeFragment());
+                        replaceFragment(UserLikeFragment.newInstance(GlobalApplication.userId));
                         break;
                     case R.id.nav_settings:
                         startActivity(new Intent(this,SettingsActivity.class));
@@ -132,7 +131,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
         getSupportFragmentManager().addOnBackStackChangedListener(() -> attachFragment(getMainFragment(), navigationView, tabLayout));
 
         if(savedInstanceState==null){
-            Fragment top=new TimeLineFragment();
+            Fragment top=new HomeTimeLineFragment();
             addFragment(top);
             attachFragment(top, navigationView, tabLayout);
         }

@@ -31,13 +31,13 @@ public class ShowUserFragmentsPagerAdapter extends FragmentPagerAdapter {
     private Fragment[] mFragments;
     private Context mContext;
 
-    ShowUserFragmentsPagerAdapter(FragmentManager fm, Context context) {
+    ShowUserFragmentsPagerAdapter(FragmentManager fm, Context context, long userId) {
         super(fm);
 
         mFragments=new Fragment[]{
-                new ShowUserInfoFragment(),
-                new ShowUserTimelineFragment(),
-                new ShowUserLikeFragment()
+                UserInfoFragment.newInstance(userId),
+                UserTimelineFragment.newInstance(userId),
+                UserLikeFragment.newInstance(userId)
         };
         mContext=context;
     }

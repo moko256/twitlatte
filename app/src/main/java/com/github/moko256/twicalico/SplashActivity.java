@@ -22,8 +22,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
-import java.util.List;
-
 /**
  * Created by moko256 on 2017/04/16.
  *

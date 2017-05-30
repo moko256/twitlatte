@@ -26,7 +26,7 @@ import twitter4j.TwitterException;
  *
  * @author moko256
  */
-public class TimeLineFragment extends BaseTweetListFragment implements ToolbarTitleInterface,NavigationPositionInterface {
+public class HomeTimeLineFragment extends BaseTweetListFragment implements ToolbarTitleInterface,NavigationPositionInterface {
 
     @Override
     public ResponseList<Status> getResponseList(Paging paging) throws TwitterException {

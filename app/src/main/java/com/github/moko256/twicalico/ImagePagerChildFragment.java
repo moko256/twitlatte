@@ -34,7 +34,7 @@ import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.LoopingMediaSource;
 import com.google.android.exoplayer2.source.hls.HlsMediaSource;
-import com.google.android.exoplayer2.trackselection.AdaptiveVideoTrackSelection;
+import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
@@ -83,7 +83,7 @@ public class ImagePagerChildFragment extends Fragment {
                 player = ExoPlayerFactory.newSimpleInstance(
                         getContext(),
                         new DefaultTrackSelector(
-                                new AdaptiveVideoTrackSelection.Factory(new DefaultBandwidthMeter())
+                                new AdaptiveTrackSelection.Factory(new DefaultBandwidthMeter())
                         ),
                         new DefaultLoadControl()
                 );
@@ -109,7 +109,7 @@ public class ImagePagerChildFragment extends Fragment {
                 player = ExoPlayerFactory.newSimpleInstance(
                         getContext(),
                         new DefaultTrackSelector(
-                                new AdaptiveVideoTrackSelection.Factory(new DefaultBandwidthMeter())
+                                new AdaptiveTrackSelection.Factory(new DefaultBandwidthMeter())
                         ),
                         new DefaultLoadControl()
                 );

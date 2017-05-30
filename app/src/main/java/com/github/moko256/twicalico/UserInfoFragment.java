@@ -32,9 +32,11 @@ import com.bumptech.glide.RequestManager;
 
 import java.text.DateFormat;
 
+import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import twitter4j.Status;
+import twitter4j.TwitterException;
 import twitter4j.User;
 
 /**
@@ -43,7 +45,7 @@ import twitter4j.User;
  * @author moko256
  */
 
-public class ShowUserInfoFragment extends Fragment implements ToolbarTitleInterface {
+public class UserInfoFragment extends Fragment implements ToolbarTitleInterface {
 
     RequestManager requestManager;
 
@@ -62,26 +64,45 @@ public class ShowUserInfoFragment extends Fragment implements ToolbarTitleInterf
     TextView userLatestTweetText;
     Button userLatestTweetLoadMoreButton;
 
-    User user;
+    long userId = -1;
+
+    public static UserInfoFragment newInstance(long userId){
+        UserInfoFragment result = new UserInfoFragment();
+        Bundle args = new Bundle();
+        args.putLong("userId", userId);
+        result.setArguments(args);
+        return result;
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ActivityHasUserObservable activity=(ActivityHasUserObservable)getActivity();
-        activity.getUserObservable()
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        result->{
-                            user=result;
-                            setShowUserInfo();
-                        },
-                        throwable->{
-                            throwable.printStackTrace();
-                            getActivity().finish();
-                        },
-                        ()->{}
-                );
+        userId = getArguments().getLong("userId");
+
+        User cachedUser = GlobalApplication.userCache.get(userId);
+        if (cachedUser==null){
+            Observable
+                    .create(
+                            subscriber -> {
+                                try {
+                                    subscriber.onNext(GlobalApplication.twitter.showUser(userId));
+                                    subscriber.onCompleted();
+                                } catch (TwitterException e) {
+                                    subscriber.onError(e);
+                                }
+                            }
+                    )
+                    .subscribeOn(Schedulers.newThread())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(
+                            result -> setShowUserInfo((User) result),
+                            throwable->{
+                                throwable.printStackTrace();
+                                getActivity().finish();
+                            },
+                            ()->{}
+                    );
+        }
     }
 
     @Nullable
@@ -106,8 +127,9 @@ public class ShowUserInfoFragment extends Fragment implements ToolbarTitleInterf
         userLatestTweetText=(TextView) view.findViewById(R.id.show_user_latest_tweet_text);
         userLatestTweetLoadMoreButton=(Button) view.findViewById(R.id.show_user_latest_tweet_see_more_button);
 
-        if (user!=null){
-            setShowUserInfo();
+        User cachedUser = GlobalApplication.userCache.get(userId);
+        if (cachedUser!=null){
+            setShowUserInfo(cachedUser);
         }
 
         return view;
@@ -118,7 +140,7 @@ public class ShowUserInfoFragment extends Fragment implements ToolbarTitleInterf
         return R.string.account;
     }
 
-    private void setShowUserInfo() {
+    private void setShowUserInfo(User user) {
         requestManager.load(user.getProfileBannerRetinaURL()).into(header);
         requestManager.load(user.getBiggerProfileImageURL()).into(icon);
 
