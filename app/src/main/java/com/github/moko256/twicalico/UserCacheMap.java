@@ -16,8 +16,10 @@
 
 package com.github.moko256.twicalico;
 
+import android.content.Context;
+import android.support.v4.util.LruCache;
+
 import java.util.Collection;
-import java.util.HashMap;
 
 import twitter4j.User;
 
@@ -29,18 +31,20 @@ import twitter4j.User;
 
 public class UserCacheMap {
 
-    private HashMap<Long, User> cache=new HashMap<>();
+    private CachedUsersSQLiteOpenHelper diskCache;
+    private LruCache<Long, User> cache=new LruCache<>(10000);
+
+    public UserCacheMap(Context context){
+        diskCache = new CachedUsersSQLiteOpenHelper(context);
+    }
 
     public int size() {
         return cache.size();
     }
 
-    public boolean isEmpty() {
-        return cache.isEmpty();
-    }
-
     public void add(User user) {
         cache.put(user.getId(), user);
+        diskCache.addCachedUser(user);
     }
 
     public void addAll(Collection<? extends User> c) {
@@ -50,7 +54,8 @@ public class UserCacheMap {
     }
 
     public User get(long id) {
-        return cache.get(id);
+        User memoryCache = cache.get(id);
+        return memoryCache != null? memoryCache: diskCache.getCachedUser(id);
     }
 
     public void clear() {

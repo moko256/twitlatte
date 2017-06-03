@@ -50,8 +50,8 @@ public class GlobalApplication extends Application {
 
     static AppConfiguration configuration;
 
-    static UserCacheMap userCache=new UserCacheMap();
-    static StatusCacheMap statusCache=new StatusCacheMap();
+    static UserCacheMap userCache;
+    static StatusCacheMap statusCache;
 
     @Override
     public void onCreate() {
@@ -97,6 +97,9 @@ public class GlobalApplication extends Application {
                 defaultUnCaughtExceptionHandler.uncaughtException(t,e);
             }
         });
+
+        userCache=new UserCacheMap(this);
+        statusCache=new StatusCacheMap(this);
 
         SharedPreferences defaultSharedPreferences=PreferenceManager.getDefaultSharedPreferences(this);
 

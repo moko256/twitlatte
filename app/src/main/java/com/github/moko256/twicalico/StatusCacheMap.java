@@ -16,9 +16,11 @@
 
 package com.github.moko256.twicalico;
 
+import android.content.Context;
+import android.support.v4.util.LruCache;
+
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 
 import twitter4j.GeoLocation;
 import twitter4j.HashtagEntity;
@@ -40,14 +42,15 @@ import twitter4j.UserMentionEntity;
 
 public class StatusCacheMap {
 
-    private HashMap<Long, Status> statusCache=new HashMap<>();
+    private LruCache<Long, Status> statusCache=new LruCache<>(10000);
+    private CachedStatusesSQLiteOpenHelper diskCache;
+
+    public StatusCacheMap(Context context){
+        diskCache = new CachedStatusesSQLiteOpenHelper(context);
+    }
 
     public int size() {
         return statusCache.size();
-    }
-
-    public boolean isEmpty() {
-        return statusCache.isEmpty();
     }
 
     public void add(final Status status) {
@@ -55,11 +58,14 @@ public class StatusCacheMap {
         if (status.isRetweet()){
             add(status.getRetweetedStatus());
         }
-        statusCache.put(status.getId(), new CachedStatus(status));
+        Status cacheStatus = new CachedStatus(status);
+        statusCache.put(status.getId(), cacheStatus);
+        diskCache.addCachedStatus(cacheStatus);
     }
 
     public Status get(Long id){
-        return statusCache.get(id);
+        Status memoryCache = statusCache.get(id);
+        return memoryCache != null? memoryCache: diskCache.getCachedStatus(id);
     }
 
     public void addAll(Collection<? extends Status> c) {

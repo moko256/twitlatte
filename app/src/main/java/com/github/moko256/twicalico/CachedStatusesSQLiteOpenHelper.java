@@ -21,26 +21,16 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.support.annotation.NonNull;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Arrays;
-import java.util.Date;
 
-import twitter4j.GeoLocation;
-import twitter4j.HashtagEntity;
-import twitter4j.MediaEntity;
-import twitter4j.Place;
-import twitter4j.RateLimitStatus;
-import twitter4j.Scopes;
 import twitter4j.Status;
-import twitter4j.SymbolEntity;
-import twitter4j.URLEntity;
-import twitter4j.User;
-import twitter4j.UserMentionEntity;
 
 /**
  * Created by moko256 on 2017/03/17.
@@ -51,7 +41,7 @@ import twitter4j.UserMentionEntity;
 public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
 
     private final String[] columns = new String[]{
-            "id",
+            "id","status"/*
             "flags",
             "createdAt",
             "text",
@@ -81,7 +71,7 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
             "quotedStatus_json",
             "displayTextRangeStart",
             "displayTextRangeEnd",
-            "userId"
+            "userId"*/
     };
 
     public CachedStatusesSQLiteOpenHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version){
@@ -93,40 +83,9 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+        String columnsStr = Arrays.toString(columns);
         db.execSQL(
-                "create table CachedStatuses(" +
-                        "id integer," +
-                        "flags integer," +
-                        "createdAt integer," +
-                        "text string," +
-                        "source string," +
-                        "isTruncated integer," +
-                        "inReplyToStatusId integer," +
-                        "inReplyToUserId integer," +
-                        "isFavorited integer," +
-                        "isRetweeted integer," +
-                        "favoriteCount integer," +
-                        "inReplyToScreenName integer," +
-                        "geoLocation_lat real," +
-                        "geoLocation_lon real," +
-                        "retweetCount integer," +
-                        "isPossiblySensitive integer," +
-                        "lang string," +
-                        "contributorsIDs string," +
-                        "retweetedStatusId integer," +
-                        "userMentionEntities_json string," +
-                        "urlEntities_json string," +
-                        "hashtagEntities_json string," +
-                        "mediaEntities_json string," +
-                        "symbolEntities_json string," +
-                        "currentUserRetweetId integer," +
-                        "withheldInCountries string," +
-                        "quotedStatusId integer," +
-                        "quotedStatus_json string," +
-                        "displayTextRangeStart integer," +
-                        "displayTextRangeEnd integer," +
-                        "userId integer" +
-                        ");"
+                "create table CachedStatuses(" + columnsStr.substring(1, columnsStr.length() - 1) + ");"
         );
     }
 
@@ -141,11 +100,26 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
         Cursor c=database.query(
                 "CachedStatuses",
                 columns,
-                "id=?", new String[]{String.valueOf(id)}
+                "id=" + String.valueOf(id), null
                 ,null,null,null
         );
         if (c.moveToLast()){
+            try {
+                ByteArrayInputStream byteArrayInputStream =new ByteArrayInputStream(c.getBlob(1));
+                ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream);
+                status = (Status) objectInputStream.readObject();
+                objectInputStream.close();
+                byteArrayInputStream.close();
+            } catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+            /*
             status = new CachedStorageStatus() {
+                @Override
+                public long getId() {
+                    return c.getLong(0);
+                }
+
                 @Override
                 public int getFlags() {
                     return c.getInt(1);
@@ -157,23 +131,8 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
                 }
 
                 @Override
-                public long getId() {
-                    return c.getLong(0);
-                }
-
-                @Override
                 public String getText() {
                     return c.getString(3);
-                }
-
-                @Override
-                public int getDisplayTextRangeStart() {
-                    return c.getInt(28);
-                }
-
-                @Override
-                public int getDisplayTextRangeEnd() {
-                    return c.getInt(29);
                 }
 
                 @Override
@@ -197,16 +156,6 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
                 }
 
                 @Override
-                public String getInReplyToScreenName() {
-                    return c.getString(11);
-                }
-
-                @Override
-                public GeoLocation getGeoLocation() {
-                    return new GeoLocation(c.getDouble(12), c.getDouble(13));
-                }
-
-                @Override
                 public Place getPlace() {
                     return null;
                 }
@@ -227,13 +176,33 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
                 }
 
                 @Override
-                public User getUser() {
-                    return null;
+                public String getInReplyToScreenName() {
+                    return c.getString(11);
                 }
 
                 @Override
-                public long getUserId() {
-                    return c.getLong(30);
+                public GeoLocation getGeoLocation() {
+                    return new GeoLocation(c.getDouble(12), c.getDouble(13));
+                }
+
+                @Override
+                public int getRetweetCount() {
+                    return c.getInt(14);
+                }
+
+                @Override
+                public boolean isPossiblySensitive() {
+                    return c.getInt(15) != 0;
+                }
+
+                @Override
+                public String getLang() {
+                    return c.getString(16);
+                }
+
+                @Override
+                public User getUser() {
+                    return null;
                 }
 
                 @Override
@@ -265,11 +234,6 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
                 }
 
                 @Override
-                public int getRetweetCount() {
-                    return c.getInt(14);
-                }
-
-                @Override
                 public boolean isRetweetedByMe() {
                     return false;
                 }
@@ -277,16 +241,6 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
                 @Override
                 public long getCurrentUserRetweetId() {
                     return c.getLong(24);
-                }
-
-                @Override
-                public boolean isPossiblySensitive() {
-                    return c.getInt(15) != 0;
-                }
-
-                @Override
-                public String getLang() {
-                    return c.getString(16);
                 }
 
                 @Override
@@ -302,6 +256,16 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
                 @Override
                 public long getQuotedStatusId() {
                     return c.getLong(26);
+                }
+
+                @Override
+                public int getDisplayTextRangeStart() {
+                    return c.getInt(28);
+                }
+
+                @Override
+                public int getDisplayTextRangeEnd() {
+                    return c.getInt(29);
                 }
 
                 @Override
@@ -340,6 +304,11 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
                 }
 
                 @Override
+                public long getUserId() {
+                    return c.getLong(30);
+                }
+
+                @Override
                 public RateLimitStatus getRateLimitStatus() {
                     return null;
                 }
@@ -348,7 +317,7 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
                 public int getAccessLevel() {
                     return 0;
                 }
-            };
+            };*/
         }
 
         c.close();
@@ -376,59 +345,20 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
             SQLiteDatabase database=getWritableDatabase();
 
             ContentValues contentValues = new ContentValues();
-            contentValues.put("id", String.valueOf(status.getId()));
+            contentValues.put("id", status.getId());
             contentValues.put("status", serializedStatusByte);
 
             Cursor c=database.query(
                     "CachedStatuses",
                     columns,
-                    "id=?",
-                    new String[]{
-                            String.valueOf(status.getId()),
-                            status instanceof CachedStorageStatus?
-                                    String.valueOf(((CachedStorageStatus) status).getFlags()):
-                                    "0",
-                            String.valueOf(status.getCreatedAt().getTime()),
-                            status.getText(),
-                            status.getSource(),
-                            status.isTruncated()?"1":"0",
-                            String.valueOf(status.getInReplyToStatusId()),
-                            String.valueOf(status.getInReplyToUserId()),
-                            String.valueOf(status.isFavorited()),
-                            String.valueOf(status.isRetweeted()),
-                            String.valueOf(status.getFavoriteCount()),
-                            String.valueOf(status.getInReplyToScreenName()),
-                            status.getGeoLocation()!=null?String.valueOf(status.getGeoLocation().getLatitude()):"",
-                            status.getGeoLocation()!=null?String.valueOf(status.getGeoLocation().getLongitude()):"",
-                            String.valueOf(status.getRetweetCount()),
-                            status.isPossiblySensitive()?"1":"0",
-                            status.getLang(),
-                            "",//status.getContributors()
-                            String.valueOf(
-                                    status instanceof CachedStorageStatus?
-                                            ((CachedStorageStatus) status).getRetweetedStatusId():
-                                            status.getRetweetedStatus().getId()
-                            ),
-                            "userMentionEntities_json",
-                            "urlEntities_json",
-                            "hashtagEntities_json",
-                            "mediaEntities_json",
-                            "symbolEntities_json",
-                            String.valueOf(status.getCurrentUserRetweetId()),
-                            Arrays.toString(status.getWithheldInCountries()),
-                            String.valueOf(status.getQuotedStatusId()),
-                            "quotedStatus_json",
-                            String.valueOf(status.getDisplayTextRangeStart()),
-                            String.valueOf(status.getDisplayTextRangeEnd()),
-                            String.valueOf(status.getUser().getId()),
-                    }
-                    ,null,null,null
+                    "id=" + String.valueOf(status.getId()),
+                    null,null,null,null
             );
 
             if (c.moveToNext()){
-                database.update("CachedStatuses", contentValues, "id=?", new String[]{String.valueOf(status.getId())});
+                database.update("CachedStatuses", contentValues, "id=" + String.valueOf(status.getId()), null);
             } else {
-                database.insert("CachedStatuses", "zero", contentValues);
+                database.insert("CachedStatuses", "", contentValues);
             }
 
             c.close();
@@ -438,7 +368,7 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
 
     public void deleteCachedStatus(long id){
         SQLiteDatabase database=getWritableDatabase();
-        database.delete("CachedStatuses", "id=?", new String[]{String.valueOf(id)});
+        database.delete("CachedStatuses", "id=" + String.valueOf(id), null);
     }
 
     public interface CachedStorageStatus extends Status {

@@ -55,10 +55,6 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_user);
 
-        if (savedInstanceState != null) {
-            user=(User)savedInstanceState.getSerializable("user");
-        }
-
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar_show_user));
 
         actionBar=getSupportActionBar();
@@ -99,12 +95,6 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
         actionBar=null;
 
         user=null;
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState){
-        outState.putSerializable("user", user);
-        super.onSaveInstanceState(outState);
     }
 
     @Override
