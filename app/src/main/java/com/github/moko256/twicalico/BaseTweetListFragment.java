@@ -80,11 +80,12 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                         .sinceId(list.get(position+1))
                         .count(50))
                 .subscribeOn(Schedulers.newThread())
+                .observeOn(Schedulers.io())
+                .doOnNext(statuses -> GlobalApplication.statusCache.addAll(statuses))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         result -> {
                             if (result.size() > 0) {
-                                GlobalApplication.statusCache.addAll(result);
                                 list.remove(position);
                                 adapter.notifyItemRemoved(position);
                                 List<Long>ids = Observable
@@ -151,10 +152,11 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
     protected void onInitializeList() {
         getResponseObservable(new Paging(1,20))
                 .subscribeOn(Schedulers.newThread())
+                .observeOn(Schedulers.io())
+                .doOnNext(statuses -> GlobalApplication.statusCache.addAll(statuses))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         result-> {
-                            GlobalApplication.statusCache.addAll(result);
                             list.addAll(
                                     Observable
                                     .from(result)
@@ -178,11 +180,12 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
     protected void onUpdateList() {
         getResponseObservable(new Paging(list.get(0)).count(50))
                 .subscribeOn(Schedulers.newThread())
+                .observeOn(Schedulers.io())
+                .doOnNext(statuses -> GlobalApplication.statusCache.addAll(statuses))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         result -> {
                             if (result.size() > 0) {
-                                GlobalApplication.statusCache.addAll(result);
                                 List<Long> ids = Observable
                                         .from(result)
                                         .map(Status::getId)
@@ -224,12 +227,13 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
         paging.count(50);
         getResponseObservable(paging)
                 .subscribeOn(Schedulers.newThread())
+                .observeOn(Schedulers.io())
+                .doOnNext(statuses -> GlobalApplication.statusCache.addAll(statuses))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         result -> {
                             int size = result.size();
                             if (size > 0) {
-                                GlobalApplication.statusCache.addAll(result);
                                 list.addAll(
                                         Observable
                                                 .from(result)

@@ -17,10 +17,12 @@
 package com.github.moko256.twicalico;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v4.util.LruCache;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 
 import twitter4j.GeoLocation;
 import twitter4j.HashtagEntity;
@@ -65,12 +67,23 @@ public class StatusCacheMap {
 
     public Status get(Long id){
         Status memoryCache = statusCache.get(id);
-        return memoryCache != null? memoryCache: diskCache.getCachedStatus(id);
+        if (memoryCache == null){
+            Status storageCache = diskCache.getCachedStatus(id);
+            if (storageCache != null) {
+                statusCache.put(storageCache.getId(), storageCache);
+            }
+            return  storageCache;
+        } else {
+            return memoryCache;
+        }
     }
 
     public void addAll(Collection<? extends Status> c) {
-        for (Status status : c) {
-            add(status);
+        if (c.size() > 0) {
+            HashSet<? extends Status> hashSet = new HashSet<>(c);
+            for (Status status : hashSet) {
+                add(status);
+            }
         }
     }
 
@@ -81,8 +94,6 @@ public class StatusCacheMap {
     public static class CachedStatus implements Status{
 
         /* Based on twitter4j.StatusJSONImpl */
-
-        private int flags = 0;
 
         private final Date createdAt;
         private final long id;
@@ -302,7 +313,7 @@ public class StatusCacheMap {
         }
 
         @Override
-        public int compareTo(Status o) {
+        public int compareTo(@NonNull Status o) {
             return 0;
         }
 
@@ -341,20 +352,14 @@ public class StatusCacheMap {
             return 0;
         }
 
-        public int getFlags() {
-            return flags;
+        @Override
+        public int hashCode() {
+            return (int) id;
         }
 
-        public boolean isExistFlag(int flag) {
-            return (flags & flag) == flag;
-        }
-
-        public void addFlag(int flag) {
-            flags |= flag;
-        }
-
-        public void removeFlag(int flag) {
-            flags ^= flag;
+        @Override
+        public boolean equals(Object obj) {
+            return obj != null && (this == obj || obj instanceof Status && ((Status) obj).getId() == this.id);
         }
     }
 }

@@ -107,7 +107,7 @@ public class CachedUsersSQLiteOpenHelper extends SQLiteOpenHelper {
 
     }
 
-    public User getCachedUser(long id){
+    public synchronized User getCachedUser(long id){
         User user = null;
         SQLiteDatabase database=getReadableDatabase();
         Cursor c=database.query(
@@ -481,6 +481,16 @@ public class CachedUsersSQLiteOpenHelper extends SQLiteOpenHelper {
                 public int getAccessLevel() {
                     return 0;
                 }
+
+                @Override
+                public int hashCode() {
+                    return (int) id;
+                }
+
+                @Override
+                public boolean equals(Object obj) {
+                    return obj != null && (this == obj || obj instanceof User && ((User) obj).getId() == this.id);
+                }
             };
         }
 
@@ -489,7 +499,7 @@ public class CachedUsersSQLiteOpenHelper extends SQLiteOpenHelper {
         return user;
     }
 
-    public void addCachedUser(User user){
+    public synchronized void addCachedUser(User user){
         SQLiteDatabase database=getWritableDatabase();
 
         ContentValues contentValues = new ContentValues();
@@ -571,7 +581,7 @@ public class CachedUsersSQLiteOpenHelper extends SQLiteOpenHelper {
         database.close();
     }
 
-    public void deleteCachedUser(long id){
+    public synchronized void deleteCachedUser(long id){
         SQLiteDatabase database=getWritableDatabase();
         database.delete("CachedUsers", "id=" + String.valueOf(id), null);
     }

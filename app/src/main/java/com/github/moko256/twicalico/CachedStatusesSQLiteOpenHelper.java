@@ -94,7 +94,7 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
 
     }
 
-    public Status getCachedStatus(long id){
+    public synchronized Status getCachedStatus(long id){
         Status status = null;
         SQLiteDatabase database=getReadableDatabase();
         Cursor c=database.query(
@@ -325,7 +325,7 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
         return status;
     }
 
-    public void addCachedStatus(Status status){
+    public synchronized void addCachedStatus(Status status){
         byte[] serializedStatusByte = null;
 
         try {
@@ -366,7 +366,7 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
         }
     }
 
-    public void deleteCachedStatus(long id){
+    public synchronized void deleteCachedStatus(long id){
         SQLiteDatabase database=getWritableDatabase();
         database.delete("CachedStatuses", "id=" + String.valueOf(id), null);
     }

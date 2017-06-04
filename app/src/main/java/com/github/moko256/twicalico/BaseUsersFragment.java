@@ -108,10 +108,11 @@ public abstract class BaseUsersFragment extends BaseListFragment {
     protected void onInitializeList() {
         getResponseObservable(-1)
                 .subscribeOn(Schedulers.newThread())
+                .observeOn(Schedulers.io())
+                .doOnNext(users -> GlobalApplication.userCache.addAll(users))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         result-> {
-                            GlobalApplication.userCache.addAll(result);
                             list.addAll(
                                     Observable
                                             .from(result)
@@ -140,13 +141,14 @@ public abstract class BaseUsersFragment extends BaseListFragment {
     protected void onLoadMoreList() {
         getResponseObservable(next_cursor)
                 .subscribeOn(Schedulers.newThread())
+                .observeOn(Schedulers.io())
+                .doOnNext(users -> GlobalApplication.userCache.addAll(users))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         result -> {
                             int size = result.size();
                             if (size > 0) {
                                 int l = list.size();
-                                GlobalApplication.userCache.addAll(result);
                                 list.addAll(
                                         Observable
                                                 .from(result)

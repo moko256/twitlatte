@@ -20,6 +20,7 @@ import android.content.Context;
 import android.support.v4.util.LruCache;
 
 import java.util.Collection;
+import java.util.HashSet;
 
 import twitter4j.User;
 
@@ -48,14 +49,25 @@ public class UserCacheMap {
     }
 
     public void addAll(Collection<? extends User> c) {
-        for (User user : c) {
-            add(user);
+        if (c.size() > 0) {
+            HashSet<? extends User> hashSet = new HashSet<>(c);
+            for (User user : hashSet) {
+                add(user);
+            }
         }
     }
 
     public User get(long id) {
         User memoryCache = cache.get(id);
-        return memoryCache != null? memoryCache: diskCache.getCachedUser(id);
+        if (memoryCache == null){
+            User storageCache = diskCache.getCachedUser(id);
+            if (storageCache != null){
+                cache.put(storageCache.getId(), storageCache);
+            }
+            return storageCache;
+        } else {
+            return memoryCache;
+        }
     }
 
     public void clear() {
