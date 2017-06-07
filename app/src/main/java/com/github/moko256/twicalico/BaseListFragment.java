@@ -27,6 +27,7 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 /**
  * Created by moko256 on 2016/10/09.
@@ -37,6 +38,9 @@ public abstract class BaseListFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private ProgressBar progressBar;
+
+    private boolean isProgressCircleLoading = true;
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -78,6 +82,9 @@ public abstract class BaseListFragment extends Fragment {
             }
         });
 
+        progressBar = (ProgressBar) view.findViewById(R.id.loadingProgress);
+        updateProgressCircleLoading();
+
         return view;
     }
 
@@ -89,7 +96,15 @@ public abstract class BaseListFragment extends Fragment {
         recyclerView=null;
     }
 
-    public void onRestoreInstanceState(Bundle savedInstanceState){}
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean("isProgressCircleLoading", isProgressCircleLoading);
+    }
+
+    public void onRestoreInstanceState(Bundle savedInstanceState){
+        isProgressCircleLoading = savedInstanceState.getBoolean("isProgressCircleLoading", true);
+    }
 
     protected abstract void onInitializeList();
     protected abstract void onUpdateList();
@@ -134,6 +149,15 @@ public abstract class BaseListFragment extends Fragment {
     public interface GetSnackBarParentContainerId {
         @IdRes
         int getSnackBarParentContainerId();
+    }
+
+    protected void setProgressCircleLoading(boolean isLoading){
+        isProgressCircleLoading = isLoading;
+        updateProgressCircleLoading();
+    }
+
+    private void updateProgressCircleLoading(){
+        progressBar.setVisibility(isProgressCircleLoading? View.VISIBLE: View.GONE);
     }
 
 }
