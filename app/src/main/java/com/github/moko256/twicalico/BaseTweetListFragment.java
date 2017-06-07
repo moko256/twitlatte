@@ -34,6 +34,7 @@ import java.util.List;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
+import rx.subscriptions.CompositeSubscription;
 import twitter4j.Paging;
 import twitter4j.ResponseList;
 import twitter4j.Status;
@@ -49,9 +50,12 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
     StatusesAdapter adapter;
     ArrayList<Long> list;
 
+    CompositeSubscription subscription;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         list=new ArrayList<>();
+        subscription = new CompositeSubscription();
         super.onCreate(savedInstanceState);
     }
 
@@ -74,43 +78,45 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
         });
 
         adapter=new StatusesAdapter(getContext(), list);
-        adapter.setOnLoadMoreClick(position -> getResponseObservable(
-                new Paging()
-                        .maxId(list.get(position-1)-1L)
-                        .sinceId(list.get(position+1))
-                        .count(50))
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(Schedulers.io())
-                .doOnNext(statuses -> GlobalApplication.statusCache.addAll(statuses))
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        result -> {
-                            if (result.size() > 0) {
-                                list.remove(position);
-                                adapter.notifyItemRemoved(position);
-                                List<Long>ids = Observable
-                                        .from(result)
-                                        .map(Status::getId)
-                                        .toList().toSingle().toBlocking().value();
-                                if (result.size() == 50){
-                                    ids.add(-1L);
-                                }
-                                list.addAll(position, ids);
-                                adapter.notifyItemRangeInserted(position, ids.size());
-                            } else {
-                                list.remove(position);
-                                adapter.notifyItemRemoved(position);
-                            }
-                        },
-                        e -> {
-                            e.printStackTrace();
-                            Snackbar.make(getSnackBarParentContainer(), getContext().getString(R.string.error_occurred_with_error_code,
-                                    ((TwitterException) e).getErrorCode()), Snackbar.LENGTH_INDEFINITE)
-                                    .setAction(R.string.retry, v -> onLoadMoreList())
-                                    .show();
-                        },
-                        () -> {}
-                ));
+        adapter.setOnLoadMoreClick(position -> subscription.add(
+                getResponseObservable(
+                        new Paging()
+                                .maxId(list.get(position-1)-1L)
+                                .sinceId(list.get(position+1))
+                                .count(50))
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(Schedulers.io())
+                        .doOnNext(statuses -> GlobalApplication.statusCache.addAll(statuses))
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                                result -> {
+                                    if (result.size() > 0) {
+                                        list.remove(position);
+                                        adapter.notifyItemRemoved(position);
+                                        List<Long>ids = Observable
+                                                .from(result)
+                                                .map(Status::getId)
+                                                .toList().toSingle().toBlocking().value();
+                                        if (result.size() == 50){
+                                            ids.add(-1L);
+                                        }
+                                        list.addAll(position, ids);
+                                        adapter.notifyItemRangeInserted(position, ids.size());
+                                    } else {
+                                        list.remove(position);
+                                        adapter.notifyItemRemoved(position);
+                                    }
+                                },
+                                e -> {
+                                    e.printStackTrace();
+                                    Snackbar.make(getSnackBarParentContainer(), getContext().getString(R.string.error_occurred_with_error_code,
+                                            ((TwitterException) e).getErrorCode()), Snackbar.LENGTH_INDEFINITE)
+                                            .setAction(R.string.retry, v -> onLoadMoreList())
+                                            .show();
+                                },
+                                () -> {}
+                        )
+        ));
         setAdapter(adapter);
         if (!isInitializedList()){
             adapter.notifyDataSetChanged();
@@ -145,113 +151,121 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        subscription.unsubscribe();
+        subscription = null;
         list=null;
     }
 
     @Override
     protected void onInitializeList() {
-        getResponseObservable(new Paging(1,20))
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(Schedulers.io())
-                .doOnNext(statuses -> GlobalApplication.statusCache.addAll(statuses))
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        result-> {
-                            list.addAll(
-                                    Observable
-                                    .from(result)
-                                    .map(Status::getId)
-                                    .toList().toSingle().toBlocking().value()
-                            );
-                            adapter.notifyDataSetChanged();
-                        },
-                        e -> {
-                            e.printStackTrace();
-                            Snackbar.make(getSnackBarParentContainer(), getContext().getString(R.string.error_occurred_with_error_code,
-                                    ((TwitterException) e).getErrorCode()), Snackbar.LENGTH_INDEFINITE)
-                                    .setAction(R.string.retry, v -> onInitializeList())
-                                    .show();
-                        },
-                        ()-> getSwipeRefreshLayout().setRefreshing(false)
-                );
+        subscription.add(
+                getResponseObservable(new Paging(1,20))
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(Schedulers.io())
+                        .doOnNext(statuses -> GlobalApplication.statusCache.addAll(statuses))
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                                result-> {
+                                    list.addAll(
+                                            Observable
+                                                    .from(result)
+                                                    .map(Status::getId)
+                                                    .toList().toSingle().toBlocking().value()
+                                    );
+                                    adapter.notifyDataSetChanged();
+                                },
+                                e -> {
+                                    e.printStackTrace();
+                                    Snackbar.make(getSnackBarParentContainer(), getContext().getString(R.string.error_occurred_with_error_code,
+                                            ((TwitterException) e).getErrorCode()), Snackbar.LENGTH_INDEFINITE)
+                                            .setAction(R.string.retry, v -> onInitializeList())
+                                            .show();
+                                },
+                                () -> {
+                                    getSwipeRefreshLayout().setRefreshing(false);
+                                    setProgressCircleLoading(false);
+                                }
+                        )
+        );
     }
 
     @Override
     protected void onUpdateList() {
-        getResponseObservable(new Paging(list.get(0)).count(50))
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(Schedulers.io())
-                .doOnNext(statuses -> GlobalApplication.statusCache.addAll(statuses))
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        result -> {
-                            if (result.size() > 0) {
-                                List<Long> ids = Observable
-                                        .from(result)
-                                        .map(Status::getId)
-                                        .toList().toSingle().toBlocking().value();
-                                if (result.size() == 50){
-                                    ids.add(-1L);
-                                }
+        subscription.add(
+                getResponseObservable(new Paging(list.get(0)).count(50))
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(Schedulers.io())
+                        .doOnNext(statuses -> GlobalApplication.statusCache.addAll(statuses))
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                                result -> {
+                                    if (result.size() > 0) {
+                                        List<Long> ids = Observable
+                                                .from(result)
+                                                .map(Status::getId)
+                                                .toList().toSingle().toBlocking().value();
+                                        if (result.size() == 50){
+                                            ids.add(-1L);
+                                        }
 
-                                list.addAll(0, ids);
-                                adapter.notifyItemRangeInserted(0, ids.size());
-                                TypedValue value=new TypedValue();
-                                Toast t=Toast.makeText(getContext(),"New Tweet",Toast.LENGTH_SHORT);
-                                t.setGravity(
-                                        Gravity.TOP|Gravity.CENTER,
-                                        0,
-                                        getContext().getTheme().resolveAttribute(R.attr.actionBarSize, value, true)?
-                                                TypedValue.complexToDimensionPixelOffset(value.data, getResources().getDisplayMetrics()):
-                                                0
-                                );
-                                t.show();
-                            }
-                        },
-                        e -> {
-                            e.printStackTrace();
-                            getSwipeRefreshLayout().setRefreshing(false);
-                            Snackbar.make(getSnackBarParentContainer(), getContext().getString(R.string.error_occurred_with_error_code,
-                                    ((TwitterException) e).getErrorCode()), Snackbar.LENGTH_INDEFINITE)
-                                    .setAction(R.string.retry, v -> onUpdateList())
-                                    .show();
-                        },
-                        () -> getSwipeRefreshLayout().setRefreshing(false)
-                );
+                                        list.addAll(0, ids);
+                                        adapter.notifyItemRangeInserted(0, ids.size());
+                                        TypedValue value=new TypedValue();
+                                        Toast t=Toast.makeText(getContext(),"New Tweet",Toast.LENGTH_SHORT);
+                                        t.setGravity(
+                                                Gravity.TOP|Gravity.CENTER,
+                                                0,
+                                                getContext().getTheme().resolveAttribute(R.attr.actionBarSize, value, true)?
+                                                        TypedValue.complexToDimensionPixelOffset(value.data, getResources().getDisplayMetrics()):
+                                                        0
+                                        );
+                                        t.show();
+                                    }
+                                },
+                                e -> {
+                                    e.printStackTrace();
+                                    getSwipeRefreshLayout().setRefreshing(false);
+                                    Snackbar.make(getSnackBarParentContainer(), getContext().getString(R.string.error_occurred_with_error_code,
+                                            ((TwitterException) e).getErrorCode()), Snackbar.LENGTH_INDEFINITE)
+                                            .setAction(R.string.retry, v -> onUpdateList())
+                                            .show();
+                                },
+                                () -> getSwipeRefreshLayout().setRefreshing(false)
+                        )
+        );
     }
 
     @Override
     protected void onLoadMoreList() {
-        Paging paging=new Paging();
-        paging.maxId(list.get(list.size()-1)-1L);
-        paging.count(50);
-        getResponseObservable(paging)
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(Schedulers.io())
-                .doOnNext(statuses -> GlobalApplication.statusCache.addAll(statuses))
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        result -> {
-                            int size = result.size();
-                            if (size > 0) {
-                                list.addAll(
-                                        Observable
-                                                .from(result)
-                                                .map(Status::getId)
-                                                .toList().toSingle().toBlocking().value()
-                                );
-                                adapter.notifyItemRangeInserted(list.size(), size);
-                            }
-                        },
-                        e -> {
-                            e.printStackTrace();
-                            Snackbar.make(getSnackBarParentContainer(), getContext().getString(R.string.error_occurred_with_error_code,
-                                    ((TwitterException) e).getErrorCode()), Snackbar.LENGTH_INDEFINITE)
-                                    .setAction(R.string.retry, v -> onLoadMoreList())
-                                    .show();
-                        },
-                        () -> {}
-                );
+        subscription.add(
+                getResponseObservable(new Paging().maxId(list.get(list.size()-1)-1L).count(50))
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(Schedulers.io())
+                        .doOnNext(statuses -> GlobalApplication.statusCache.addAll(statuses))
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                                result -> {
+                                    int size = result.size();
+                                    if (size > 0) {
+                                        list.addAll(
+                                                Observable
+                                                        .from(result)
+                                                        .map(Status::getId)
+                                                        .toList().toSingle().toBlocking().value()
+                                        );
+                                        adapter.notifyItemRangeInserted(list.size(), size);
+                                    }
+                                },
+                                e -> {
+                                    e.printStackTrace();
+                                    Snackbar.make(getSnackBarParentContainer(), getContext().getString(R.string.error_occurred_with_error_code,
+                                            ((TwitterException) e).getErrorCode()), Snackbar.LENGTH_INDEFINITE)
+                                            .setAction(R.string.retry, v -> onLoadMoreList())
+                                            .show();
+                                },
+                                () -> {}
+                        )
+        );
     }
 
     @Override

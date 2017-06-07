@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
+import rx.subscriptions.CompositeSubscription;
 import twitter4j.PagableResponseList;
 import twitter4j.TwitterException;
 import twitter4j.User;
@@ -44,9 +45,12 @@ public abstract class BaseUsersFragment extends BaseListFragment {
     ArrayList<Long> list;
     long next_cursor;
 
+    CompositeSubscription subscription;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         list=new ArrayList<>();
+        subscription = new CompositeSubscription();
         super.onCreate(savedInstanceState);
     }
 
@@ -101,35 +105,42 @@ public abstract class BaseUsersFragment extends BaseListFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        subscription.unsubscribe();
+        subscription = null;
         list=null;
     }
 
     @Override
     protected void onInitializeList() {
-        getResponseObservable(-1)
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(Schedulers.io())
-                .doOnNext(users -> GlobalApplication.userCache.addAll(users))
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        result-> {
-                            list.addAll(
-                                    Observable
-                                            .from(result)
-                                            .map(User::getId)
-                                            .toList().toSingle().toBlocking().value()
-                            );
-                            adapter.notifyDataSetChanged();
-                        },
-                        e -> {
-                            e.printStackTrace();
-                            Snackbar.make(getSnackBarParentContainer(), getContext().getString(R.string.error_occurred_with_error_code,
-                                    ((TwitterException) e).getErrorCode()), Snackbar.LENGTH_INDEFINITE)
-                                    .setAction(R.string.retry, v -> onInitializeList())
-                                    .show();
-                        },
-                        ()->getSwipeRefreshLayout().setRefreshing(false)
-                );
+        subscription.add(
+                getResponseObservable(-1)
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(Schedulers.io())
+                        .doOnNext(users -> GlobalApplication.userCache.addAll(users))
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                                result-> {
+                                    list.addAll(
+                                            Observable
+                                                    .from(result)
+                                                    .map(User::getId)
+                                                    .toList().toSingle().toBlocking().value()
+                                    );
+                                    adapter.notifyDataSetChanged();
+                                },
+                                e -> {
+                                    e.printStackTrace();
+                                    Snackbar.make(getSnackBarParentContainer(), getContext().getString(R.string.error_occurred_with_error_code,
+                                            ((TwitterException) e).getErrorCode()), Snackbar.LENGTH_INDEFINITE)
+                                            .setAction(R.string.retry, v -> onInitializeList())
+                                            .show();
+                                },
+                                () -> {
+                                    getSwipeRefreshLayout().setRefreshing(false);
+                                    setProgressCircleLoading(false);
+                                }
+                        )
+        );
     }
 
     @Override
@@ -139,34 +150,36 @@ public abstract class BaseUsersFragment extends BaseListFragment {
 
     @Override
     protected void onLoadMoreList() {
-        getResponseObservable(next_cursor)
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(Schedulers.io())
-                .doOnNext(users -> GlobalApplication.userCache.addAll(users))
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        result -> {
-                            int size = result.size();
-                            if (size > 0) {
-                                int l = list.size();
-                                list.addAll(
-                                        Observable
-                                                .from(result)
-                                                .map(User::getId)
-                                                .toList().toSingle().toBlocking().value()
-                                );
-                                adapter.notifyItemRangeInserted(l, size);
-                            }
-                        },
-                        e -> {
-                            e.printStackTrace();
-                            Snackbar.make(getSnackBarParentContainer(), getContext().getString(R.string.error_occurred_with_error_code,
-                                    ((TwitterException) e).getErrorCode()), Snackbar.LENGTH_INDEFINITE)
-                                    .setAction(R.string.retry, v -> onLoadMoreList())
-                                    .show();
-                        },
-                        () -> {}
-                );
+        subscription.add(
+                getResponseObservable(next_cursor)
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(Schedulers.io())
+                        .doOnNext(users -> GlobalApplication.userCache.addAll(users))
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                                result -> {
+                                    int size = result.size();
+                                    if (size > 0) {
+                                        int l = list.size();
+                                        list.addAll(
+                                                Observable
+                                                        .from(result)
+                                                        .map(User::getId)
+                                                        .toList().toSingle().toBlocking().value()
+                                        );
+                                        adapter.notifyItemRangeInserted(l, size);
+                                    }
+                                },
+                                e -> {
+                                    e.printStackTrace();
+                                    Snackbar.make(getSnackBarParentContainer(), getContext().getString(R.string.error_occurred_with_error_code,
+                                            ((TwitterException) e).getErrorCode()), Snackbar.LENGTH_INDEFINITE)
+                                            .setAction(R.string.retry, v -> onLoadMoreList())
+                                            .show();
+                                },
+                                () -> {}
+                        )
+        );
     }
 
     @Override
