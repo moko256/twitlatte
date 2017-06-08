@@ -78,7 +78,7 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
         super(context, new File(context.getCacheDir(), name).getAbsolutePath(), factory, version);
     }
     public CachedStatusesSQLiteOpenHelper(Context context){
-        super(context, "CachedStatuses.db", null, 1);
+        this(context, "CachedStatuses.db", null, 1);
     }
 
     @Override

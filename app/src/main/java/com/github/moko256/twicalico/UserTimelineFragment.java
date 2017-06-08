@@ -33,11 +33,11 @@ public class UserTimelineFragment extends BaseTweetListFragment implements Toolb
     long userId = -1;
 
     @Override
-    protected void onInitializeList() {
+    public void onCreate(Bundle savedInstanceState) {
         if (userId == -1){
             userId = getArguments().getLong("userId", -1);
         }
-        super.onInitializeList();
+        super.onCreate(savedInstanceState);
     }
 
     public static UserTimelineFragment newInstance(long userId){
@@ -56,5 +56,10 @@ public class UserTimelineFragment extends BaseTweetListFragment implements Toolb
     @Override
     public int getTitleResourceId() {
         return R.string.tweet;
+    }
+
+    @Override
+    protected String getCachedIdsDatabaseName() {
+        return "UserTimeline_"+String.valueOf(userId);
     }
 }

@@ -157,7 +157,7 @@ public abstract class BaseListFragment extends Fragment {
     }
 
     private void updateProgressCircleLoading(){
-        progressBar.setVisibility(isProgressCircleLoading? View.VISIBLE: View.GONE);
+        if (progressBar != null) progressBar.setVisibility(isProgressCircleLoading? View.VISIBLE: View.GONE);
     }
 
 }

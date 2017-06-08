@@ -91,7 +91,7 @@ public class CachedUsersSQLiteOpenHelper extends SQLiteOpenHelper {
         super(context, new File(context.getCacheDir(), name).getAbsolutePath(), factory, version);
     }
     public CachedUsersSQLiteOpenHelper(Context context){
-        super(context, "CachedUsers.db", null, 1);
+        this(context, "CachedUsers.db", null, 1);
     }
 
     @Override

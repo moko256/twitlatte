@@ -52,10 +52,20 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
 
     CompositeSubscription subscription;
 
+    CachedIdListSQLiteOpenHelper statusIdsDatabase;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         list=new ArrayList<>();
         subscription = new CompositeSubscription();
+        statusIdsDatabase = new CachedIdListSQLiteOpenHelper(getContext(), getCachedIdsDatabaseName());
+        if (savedInstanceState == null){
+            ArrayList<Long> c = statusIdsDatabase.getIds();
+            if (c.size() > 0) {
+                list.addAll(c);
+                setProgressCircleLoading(false);
+            }
+        }
         super.onCreate(savedInstanceState);
     }
 
@@ -122,6 +132,8 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
             adapter.notifyDataSetChanged();
         }
 
+        getRecyclerView().getLayoutManager().scrollToPosition(statusIdsDatabase.getListViewPosition());
+
         return view;
     }
 
@@ -149,6 +161,18 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
     }
 
     @Override
+    public void onStop() {
+        super.onStop();
+        int[] positions = new int[1];
+        ((StaggeredGridLayoutManager) getRecyclerView().getLayoutManager()).findFirstVisibleItemPositions(positions);
+        statusIdsDatabase.setListViewPosition(positions[0]);
+        ArrayList<Long> ids = statusIdsDatabase.getIds();
+        if (ids.size() - positions[0] > 1000){
+            statusIdsDatabase.deleteIds(ids.subList(positions[0] + 1000, ids.size()));
+        }
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
         subscription.unsubscribe();
@@ -166,12 +190,12 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
                                 result-> {
-                                    list.addAll(
-                                            Observable
-                                                    .from(result)
-                                                    .map(Status::getId)
-                                                    .toList().toSingle().toBlocking().value()
-                                    );
+                                    List<Long> ids = Observable
+                                            .from(result)
+                                            .map(Status::getId)
+                                            .toList().toSingle().toBlocking().value();
+                                    list.addAll(ids);
+                                    statusIdsDatabase.addIds(ids);
                                     adapter.notifyDataSetChanged();
                                 },
                                 e -> {
@@ -204,11 +228,12 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                                                 .from(result)
                                                 .map(Status::getId)
                                                 .toList().toSingle().toBlocking().value();
-                                        if (result.size() == 50){
+                                        if (result.size() > 40){
                                             ids.add(-1L);
                                         }
 
                                         list.addAll(0, ids);
+                                        statusIdsDatabase.insertIds(0, ids);
                                         adapter.notifyItemRangeInserted(0, ids.size());
                                         TypedValue value=new TypedValue();
                                         Toast t=Toast.makeText(getContext(),"New Tweet",Toast.LENGTH_SHORT);
@@ -247,13 +272,13 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                                 result -> {
                                     int size = result.size();
                                     if (size > 0) {
-                                        list.addAll(
-                                                Observable
-                                                        .from(result)
-                                                        .map(Status::getId)
-                                                        .toList().toSingle().toBlocking().value()
-                                        );
-                                        adapter.notifyItemRangeInserted(list.size(), size);
+                                        List<Long> ids = Observable
+                                                .from(result)
+                                                .map(Status::getId)
+                                                .toList().toSingle().toBlocking().value();
+                                        list.addAll(ids);
+                                        statusIdsDatabase.insertIds(list.size() - size, ids);
+                                        adapter.notifyItemRangeInserted(list.size() - size, size);
                                     }
                                 },
                                 e -> {
@@ -281,6 +306,8 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
             return new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
         }
     }
+
+    protected abstract String getCachedIdsDatabaseName();
 
     public Observable<ResponseList<Status>> getResponseObservable(Paging paging) {
         return Observable.create(

@@ -43,4 +43,8 @@ public class HomeTimeLineFragment extends BaseTweetListFragment implements Toolb
         return R.id.nav_timeline;
     }
 
+    @Override
+    protected String getCachedIdsDatabaseName() {
+        return "HomeTimeline";
+    }
 }

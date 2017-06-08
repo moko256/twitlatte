@@ -43,4 +43,8 @@ public class MentionsFragment extends BaseTweetListFragment implements ToolbarTi
         return R.id.nav_mentions;
     }
 
+    @Override
+    protected String getCachedIdsDatabaseName() {
+        return "MentionsToMe";
+    }
 }

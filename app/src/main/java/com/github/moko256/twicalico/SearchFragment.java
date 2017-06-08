@@ -144,4 +144,9 @@ public class SearchFragment extends BaseTweetListFragment {
             };
         }
     }
+
+    @Override
+    protected String getCachedIdsDatabaseName() {
+        return "Search_" + searchText;
+    }
 }

@@ -33,11 +33,11 @@ public class UserLikeFragment extends BaseTweetListFragment implements ToolbarTi
     long userId = -1;
 
     @Override
-    protected void onInitializeList() {
+    public void onCreate(Bundle savedInstanceState) {
         if (userId == -1){
             userId = getArguments().getLong("userId", -1);
         }
-        super.onInitializeList();
+        super.onCreate(savedInstanceState);
     }
 
     public static UserLikeFragment newInstance(long userId){
@@ -56,5 +56,10 @@ public class UserLikeFragment extends BaseTweetListFragment implements ToolbarTi
     @Override
     public int getTitleResourceId() {
         return R.string.like;
+    }
+
+    @Override
+    protected String getCachedIdsDatabaseName() {
+        return "UserLike_"+String.valueOf(userId);
     }
 }
