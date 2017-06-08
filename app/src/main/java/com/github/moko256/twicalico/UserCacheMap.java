@@ -43,12 +43,12 @@ public class UserCacheMap {
         return cache.size();
     }
 
-    public synchronized void add(User user) {
+    public void add(User user) {
         cache.put(user.getId(), user);
         diskCache.addCachedUser(user);
     }
 
-    public synchronized void addAll(Collection<? extends User> c) {
+    public void addAll(Collection<? extends User> c) {
         if (c.size() > 0) {
             HashSet<? extends User> hashSet = new HashSet<>(c);
             for (User user : hashSet) {
@@ -57,7 +57,7 @@ public class UserCacheMap {
         }
     }
 
-    public synchronized User get(long id) {
+    public User get(long id) {
         User memoryCache = cache.get(id);
         if (memoryCache == null){
             User storageCache = diskCache.getCachedUser(id);

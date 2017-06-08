@@ -55,7 +55,7 @@ public class StatusCacheMap {
         return statusCache.size();
     }
 
-    public synchronized void add(final Status status) {
+    public void add(final Status status) {
         GlobalApplication.userCache.add(status.getUser());
         if (status.isRetweet()){
             add(status.getRetweetedStatus());
@@ -65,7 +65,7 @@ public class StatusCacheMap {
         diskCache.addCachedStatus(cacheStatus);
     }
 
-    public synchronized Status get(Long id){
+    public Status get(Long id){
         Status memoryCache = statusCache.get(id);
         if (memoryCache == null){
             Status storageCache = diskCache.getCachedStatus(id);
@@ -78,7 +78,7 @@ public class StatusCacheMap {
         }
     }
 
-    public synchronized void addAll(Collection<? extends Status> c) {
+    public void addAll(Collection<? extends Status> c) {
         if (c.size() > 0) {
             HashSet<? extends Status> hashSet = new HashSet<>(c);
             for (Status status : hashSet) {
