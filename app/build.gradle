@@ -25,8 +25,8 @@ android {
         applicationId "com.github.moko256.twicailco"
         minSdkVersion 17
         targetSdkVersion 25
-        versionCode 3
-        versionName "0.6.0"
+        versionCode 4
+        versionName "0.6.1"
 
         buildConfigField "String", "CONSUMER_KEY", "\"${CONSUMER_KEY}\""
         buildConfigField "String", "CONSUMER_SECRET", "\"${CONSUMER_SECRET}\""
