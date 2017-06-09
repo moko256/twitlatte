@@ -102,18 +102,21 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                                 result -> {
                                     if (result.size() > 0) {
                                         list.remove(position);
+                                        statusIdsDatabase.deleteIds(new long[]{-1L});
                                         adapter.notifyItemRemoved(position);
                                         List<Long>ids = Observable
                                                 .from(result)
                                                 .map(Status::getId)
                                                 .toList().toSingle().toBlocking().value();
-                                        if (result.size() == 50){
+                                        if (result.size() > 40){
                                             ids.add(-1L);
                                         }
                                         list.addAll(position, ids);
+                                        statusIdsDatabase.insertIds(position, ids);
                                         adapter.notifyItemRangeInserted(position, ids.size());
                                     } else {
                                         list.remove(position);
+                                        statusIdsDatabase.deleteIds(new long[]{-1L});
                                         adapter.notifyItemRemoved(position);
                                     }
                                 },

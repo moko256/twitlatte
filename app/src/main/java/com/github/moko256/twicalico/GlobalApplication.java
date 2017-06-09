@@ -98,9 +98,6 @@ public class GlobalApplication extends Application {
             }
         });
 
-        userCache=new UserCacheMap(this);
-        statusCache=new StatusCacheMap(this);
-
         SharedPreferences defaultSharedPreferences=PreferenceManager.getDefaultSharedPreferences(this);
 
         configuration=new AppConfiguration();
@@ -148,16 +145,20 @@ public class GlobalApplication extends Application {
 
         AppCompatDelegate.setDefaultNightMode(mode);
 
-        int nowAccountPoint=Integer.parseInt(defaultSharedPreferences.getString("AccountPoint","-1"),10);
-
+        int nowAccountPoint = Integer.parseInt(defaultSharedPreferences.getString("AccountPoint","-1"),10);
         if (nowAccountPoint==-1)return;
 
-        TokenSQLiteOpenHelper tokenOpenHelper = new TokenSQLiteOpenHelper(this);
+        TokenSQLiteOpenHelper tokenOpenHelper =  new TokenSQLiteOpenHelper(this);
         AccessToken accessToken=tokenOpenHelper.getAccessToken(nowAccountPoint);
         tokenOpenHelper.close();
 
         if (accessToken==null)return;
+        initTwitter(accessToken);
 
+        super.onCreate();
+    }
+
+    public void initTwitter(AccessToken accessToken){
         userId = accessToken.getUserId();
 
         Configuration conf=new ConfigurationBuilder()
@@ -170,6 +171,7 @@ public class GlobalApplication extends Application {
 
         twitter = new TwitterFactory(conf).getInstance();
 
-        super.onCreate();
+        userCache=new UserCacheMap(this);
+        statusCache=new StatusCacheMap(this);
     }
 }

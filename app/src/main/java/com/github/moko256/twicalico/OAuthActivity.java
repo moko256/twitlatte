@@ -174,13 +174,9 @@ public class OAuthActivity extends AppCompatActivity {
                 .putString("AccountPoint",String.valueOf(nowAccountPoint))
                 .apply();
 
-        GlobalApplication.twitter = new TwitterFactory().getInstance();
-        GlobalApplication.twitter.setOAuthConsumer(GlobalApplication.consumerKey, GlobalApplication.consumerSecret);
-        GlobalApplication.twitter.setOAuthAccessToken(
-                new AccessToken(token, tokenSecret)
-        );
-        GlobalApplication.userId = accessToken.getUserId();
+        ((GlobalApplication) getApplication()).initTwitter(accessToken);
 
         startActivity(new Intent(this,MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+        finish();
     }
 }

@@ -88,7 +88,7 @@ public class CachedUsersSQLiteOpenHelper extends SQLiteOpenHelper {
     };
 
     public CachedUsersSQLiteOpenHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version){
-        super(context, new File(context.getCacheDir(), name).getAbsolutePath(), factory, version);
+        super(context, new File(context.getCacheDir(), String.valueOf(GlobalApplication.userId) + "/" + name).getAbsolutePath(), factory, version);
     }
     public CachedUsersSQLiteOpenHelper(Context context){
         this(context, "CachedUsers.db", null, 1);
