@@ -531,7 +531,7 @@ public class CachedUsersSQLiteOpenHelper extends SQLiteOpenHelper {
         contentValues.put(columns[25], user.getTimeZone());
         contentValues.put(columns[26], user.getProfileBackgroundImageURL());
         contentValues.put(columns[27], user.getProfileBackgroundImageUrlHttps());
-        contentValues.put(columns[28], user.getProfileBannerURL());
+        contentValues.put(columns[28], user.getProfileBannerURL() != null? user.getProfileBannerURL().replaceAll("/web$", ""): null);
         contentValues.put(columns[29], user.isProfileBackgroundTiled()? 1: 0);
         contentValues.put(columns[30], user.getLang());
         contentValues.put(columns[31], user.getStatusesCount());
