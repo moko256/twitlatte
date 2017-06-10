@@ -72,18 +72,15 @@ public class GlobalApplication extends Application {
                                 .setContentText(e.toString())
                                 .setWhen(new Date().getTime())
                                 .setShowWhen(true)
-                                .addAction(
-                                        android.R.drawable.ic_menu_share,
-                                        "SHARE",
-                                        PendingIntent.getActivity(
-                                                this,
-                                                401,
-                                                new Intent(Intent.ACTION_SEND)
-                                                        .setType("text/plain")
-                                                        .putExtra(Intent.EXTRA_TEXT,stringWriter.toString()),
-                                                PendingIntent.FLAG_UPDATE_CURRENT
-                                        )
-                                ))
+                                .setColor(getResources().getColor(R.color.colorAccent))
+                                .setContentIntent(PendingIntent.getActivity(
+                                        this,
+                                        401,
+                                        new Intent(Intent.ACTION_SEND)
+                                                .setType("text/plain")
+                                                .putExtra(Intent.EXTRA_TEXT,stringWriter.toString()),
+                                        PendingIntent.FLAG_UPDATE_CURRENT
+                                )))
                         .setBigContentTitle("Error : "+e.toString())
                         .setSummaryText(getResources().getString(R.string.error_occurred));
                 String[] lines=stringWriter.toString().split("\n");
