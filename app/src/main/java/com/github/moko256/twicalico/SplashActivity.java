@@ -73,6 +73,10 @@ public class SplashActivity extends AppCompatActivity {
             }
         }
 
+        if (GlobalApplication.twitter == null) {
+            intent = new Intent(this, OAuthActivity.class);
+        }
+
         if (intent == null) {
             intent = new Intent(this, MainActivity.class);
         }

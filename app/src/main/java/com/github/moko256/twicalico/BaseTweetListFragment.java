@@ -95,8 +95,6 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                                 .sinceId(list.get(position+1))
                                 .count(50))
                         .subscribeOn(Schedulers.newThread())
-                        .observeOn(Schedulers.io())
-                        .doOnNext(statuses -> GlobalApplication.statusCache.addAll(statuses))
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
                                 result -> {
@@ -188,8 +186,6 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
         subscription.add(
                 getResponseObservable(new Paging(1,20))
                         .subscribeOn(Schedulers.newThread())
-                        .observeOn(Schedulers.io())
-                        .doOnNext(statuses -> GlobalApplication.statusCache.addAll(statuses))
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
                                 result-> {
@@ -221,8 +217,6 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
         subscription.add(
                 getResponseObservable(new Paging(list.get(0)).count(50))
                         .subscribeOn(Schedulers.newThread())
-                        .observeOn(Schedulers.io())
-                        .doOnNext(statuses -> GlobalApplication.statusCache.addAll(statuses))
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
                                 result -> {
@@ -268,8 +262,6 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
         subscription.add(
                 getResponseObservable(new Paging().maxId(list.get(list.size()-1)-1L).count(50))
                         .subscribeOn(Schedulers.newThread())
-                        .observeOn(Schedulers.io())
-                        .doOnNext(statuses -> GlobalApplication.statusCache.addAll(statuses))
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
                                 result -> {
@@ -316,7 +308,11 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
         return Observable.create(
                 subscriber->{
                     try {
-                        subscriber.onNext(getResponseList(paging));
+                        ResponseList<Status> statuses = getResponseList(paging);
+                        if (statuses.size() > 0){
+                            GlobalApplication.statusCache.addAll(statuses);
+                        }
+                        subscriber.onNext(statuses);
                         subscriber.onCompleted();
                     } catch (TwitterException e) {
                         subscriber.onError(e);

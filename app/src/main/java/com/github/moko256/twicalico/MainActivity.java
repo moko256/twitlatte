@@ -52,36 +52,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
     public void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-
-        if (GlobalApplication.twitter == null) {
-            finish();
-            startActivity(new Intent(this, OAuthActivity.class));
-            return;
-        }
-
         setContentView(R.layout.activity_main);
-
-        Observable
-                .create(subscriber->{
-                    try {
-                        User me = GlobalApplication.userCache.get(GlobalApplication.userId);
-                        if (me == null){
-                            me = GlobalApplication.twitter.verifyCredentials();
-                            GlobalApplication.userCache.add(me);
-                        }
-                        subscriber.onNext(me);
-                        subscriber.onCompleted();
-                    } catch (TwitterException e) {
-                        subscriber.onError(e);
-                    }
-                })
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        result-> setDrawerHeader((User) result),
-                        Throwable::printStackTrace,
-                        ()->{}
-                );
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -123,6 +94,35 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
             return (id != R.id.nav_settings)&&(id != R.id.nav_account);
 
         });
+
+        View headerView = navigationView.inflateHeaderView(R.layout.nav_header_main);
+
+        TextView userNameText = (TextView) headerView.findViewById(R.id.user_name);
+        TextView userIdText = (TextView) headerView.findViewById(R.id.user_id);
+        ImageView userImage = (ImageView) headerView.findViewById(R.id.user_image);
+        ImageView userBackgroundImage = (ImageView) headerView.findViewById(R.id.user_bg_image);
+
+        Observable
+                .create(subscriber->{
+                    try {
+                        User me = GlobalApplication.userCache.get(GlobalApplication.userId);
+                        if (me == null){
+                            me = GlobalApplication.twitter.verifyCredentials();
+                            GlobalApplication.userCache.add(me);
+                        }
+                        subscriber.onNext(me);
+                        subscriber.onCompleted();
+                    } catch (TwitterException e) {
+                        subscriber.onError(e);
+                    }
+                })
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        result -> setDrawerHeader((User) result, userNameText, userIdText, userImage, userBackgroundImage),
+                        Throwable::printStackTrace,
+                        ()->{}
+                );
 
         findViewById(R.id.fab).setOnClickListener(v -> startActivity(new Intent(this, SendTweetActivity.class)));
 
@@ -220,12 +220,9 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
         }
     }
 
-    private void setDrawerHeader(User user){
-        ((TextView)findViewById(R.id.user_name)).setText(user.getName());
-        ((TextView)findViewById(R.id.user_id)).setText(TwitterStringUtil.plusAtMark(user.getScreenName()));
-
-        ImageView userImage=(ImageView)findViewById(R.id.user_image);
-        ImageView userBackgroundImage=(ImageView)findViewById(R.id.user_bg_image);
+    private void setDrawerHeader(User user, TextView userNameText, TextView userIdText, ImageView userImage, ImageView userBackgroundImage){
+        userNameText.setText(user.getName());
+        userIdText.setText(TwitterStringUtil.plusAtMark(user.getScreenName()));
 
         userImage.setOnClickListener(v -> startMyUserActivity());
 
