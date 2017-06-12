@@ -501,6 +501,26 @@ public class CachedUsersSQLiteOpenHelper extends SQLiteOpenHelper {
 
     public synchronized void addCachedUser(User user){
         SQLiteDatabase database=getWritableDatabase();
+        database.beginTransaction();
+        addCachedUserAtTransaction(user);
+        database.setTransactionSuccessful();
+        database.endTransaction();
+        database.close();
+    }
+
+    public synchronized void addCachedUsers(User[] users){
+        SQLiteDatabase database=getWritableDatabase();
+        database.beginTransaction();
+        for (User user : users) {
+            addCachedUserAtTransaction(user);
+        }
+        database.setTransactionSuccessful();
+        database.endTransaction();
+        database.close();
+    }
+
+    private void addCachedUserAtTransaction(User user){
+        SQLiteDatabase database=getWritableDatabase();
 
         ContentValues contentValues = new ContentValues();
         contentValues.put(columns[0], user.getId());
@@ -578,12 +598,13 @@ public class CachedUsersSQLiteOpenHelper extends SQLiteOpenHelper {
         }
 
         c.close();
-        database.close();
     }
+
 
     public synchronized void deleteCachedUser(long id){
         SQLiteDatabase database=getWritableDatabase();
         database.delete("CachedUsers", "id=" + String.valueOf(id), null);
+        database.close();
     }
 
 

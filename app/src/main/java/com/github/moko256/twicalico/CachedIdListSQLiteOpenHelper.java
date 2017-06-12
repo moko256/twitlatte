@@ -82,6 +82,15 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
 
     public synchronized void addIds(long... ids){
         SQLiteDatabase database=getWritableDatabase();
+        database.beginTransaction();
+        addIdsAtTransaction(ids);
+        database.setTransactionSuccessful();
+        database.endTransaction();
+        database.close();
+    }
+
+    private void addIdsAtTransaction(long... ids){
+        SQLiteDatabase database=getWritableDatabase();
 
         for (int i = ids.length - 1; i >= 0; i--) {
             ContentValues contentValues = new ContentValues();
@@ -89,8 +98,6 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
 
             database.insert(databaseName, "", contentValues);
         }
-
-        database.close();
     }
 
     public synchronized void insertIds(int bottomPosition, List<Long> ids){
@@ -110,9 +117,13 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
             l[i] = d.get(i);
         }
 
-        deleteIds(l);
-        addIds(ids);
-        addIds(l);
+        SQLiteDatabase database = getWritableDatabase();
+        database.beginTransaction();
+        deleteIdsAtTransaction(l);
+        addIdsAtTransaction(ids);
+        addIdsAtTransaction(l);
+        database.setTransactionSuccessful();
+        database.endTransaction();
     }
 
     public synchronized void deleteIds(List<Long> ids){
@@ -125,10 +136,18 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
 
     public synchronized void deleteIds(long[] ids){
         SQLiteDatabase database=getWritableDatabase();
+        database.beginTransaction();
+        deleteIdsAtTransaction(ids);
+        database.setTransactionSuccessful();
+        database.endTransaction();
+        database.close();
+    }
+
+    private void deleteIdsAtTransaction(long[] ids){
+        SQLiteDatabase database = getWritableDatabase();
         for (long id : ids) {
             database.delete(databaseName, "id=" + String.valueOf(id), null);
         }
-        database.close();
     }
 
     public synchronized int getListViewPosition(){

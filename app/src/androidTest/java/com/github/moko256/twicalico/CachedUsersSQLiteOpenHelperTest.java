@@ -36,7 +36,9 @@ import twitter4j.User;
 
 public class CachedUsersSQLiteOpenHelperTest extends ApplicationTestCase<Application> {
 
-    private static final long TEST_DUMMY_USER_ID = 1L;
+    private static final long TEST_DUMMY_USER_ID_1 = 1L;
+    private static final long TEST_DUMMY_USER_ID_2 = 2L;
+
     private static final String TEST_DUMMY_USER_NAME_0 = "0";
     private static final String TEST_DUMMY_USER_NAME_1 = "1";
 
@@ -48,23 +50,31 @@ public class CachedUsersSQLiteOpenHelperTest extends ApplicationTestCase<Applica
     protected void setUp() throws Exception {
         super.setUp();
 
-        CachedUsersSQLiteOpenHelper helper = new CachedUsersSQLiteOpenHelper(new RenamingDelegatingContext(getContext(), "test_"));
+        CachedUsersSQLiteOpenHelper helper = new CachedUsersSQLiteOpenHelper(new RenamingDelegatingContext(getContext(), ""));
 
-        helper.addCachedUser(new TestUser(TEST_DUMMY_USER_ID, TEST_DUMMY_USER_NAME_0));
-        User addedStatusResult = helper.getCachedUser(TEST_DUMMY_USER_ID);
+        helper.addCachedUser(new TestUser(TEST_DUMMY_USER_ID_1, TEST_DUMMY_USER_NAME_0));
+        User addedStatusResult = helper.getCachedUser(TEST_DUMMY_USER_ID_1);
 
         assertEquals(addedStatusResult.getName(), TEST_DUMMY_USER_NAME_0);
 
 
-        helper.addCachedUser(new TestUser(TEST_DUMMY_USER_ID, TEST_DUMMY_USER_NAME_1));
-        User updatedStatusResult = helper.getCachedUser(TEST_DUMMY_USER_ID);
+        helper.addCachedUser(new TestUser(TEST_DUMMY_USER_ID_1, TEST_DUMMY_USER_NAME_1));
+        User updatedStatusResult = helper.getCachedUser(TEST_DUMMY_USER_ID_1);
 
         assertEquals(updatedStatusResult.getName(), TEST_DUMMY_USER_NAME_1);
 
 
-        helper.deleteCachedUser(TEST_DUMMY_USER_ID);
+        helper.deleteCachedUser(TEST_DUMMY_USER_ID_1);
 
-        assertEquals(helper.getCachedUser(TEST_DUMMY_USER_ID), null);
+        assertEquals(helper.getCachedUser(TEST_DUMMY_USER_ID_1), null);
+
+        helper.addCachedUsers(new User[]{
+                new TestUser(TEST_DUMMY_USER_ID_1, TEST_DUMMY_USER_NAME_0),
+                new TestUser(TEST_DUMMY_USER_ID_2, TEST_DUMMY_USER_NAME_1)
+        });
+
+        assertEquals(helper.getCachedUser(TEST_DUMMY_USER_ID_1).getName(), TEST_DUMMY_USER_NAME_0);
+        assertEquals(helper.getCachedUser(TEST_DUMMY_USER_ID_2).getName(), TEST_DUMMY_USER_NAME_1);
 
         helper.close();
     }

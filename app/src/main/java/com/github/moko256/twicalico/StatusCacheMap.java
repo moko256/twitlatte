@@ -82,8 +82,16 @@ public class StatusCacheMap {
         if (c.size() > 0) {
             HashSet<? extends Status> hashSet = new HashSet<>(c);
             for (Status status : hashSet) {
-                add(status);
+                GlobalApplication.userCache.add(status.getUser());
+                if (status.isRetweet()){
+                    add(status.getRetweetedStatus());
+                }
+                Status cacheStatus = new CachedStatus(status);
+                statusCache.put(status.getId(), cacheStatus);
             }
+            Status[] statuses = new Status[hashSet.size()];
+            statuses = hashSet.toArray(statuses);
+            diskCache.addCachedStatuses(statuses);
         }
     }
 

@@ -42,7 +42,9 @@ import twitter4j.UserMentionEntity;
 
 public class CachedStatusesSQLiteOpenHelperTest extends ApplicationTestCase<Application> {
 
-    private static final long TEST_DUMMY_STATUS_ID = 1L;
+    private static final long TEST_DUMMY_STATUS_ID_1 = 1L;
+    private static final long TEST_DUMMY_STATUS_ID_2 = 2L;
+
     private static final String TEST_DUMMY_STATUS_TEXT_0 = "0";
     private static final String TEST_DUMMY_STATUS_TEXT_1 = "1";
 
@@ -54,23 +56,31 @@ public class CachedStatusesSQLiteOpenHelperTest extends ApplicationTestCase<Appl
     protected void setUp() throws Exception {
         super.setUp();
 
-        CachedStatusesSQLiteOpenHelper helper = new CachedStatusesSQLiteOpenHelper(new RenamingDelegatingContext(getContext(), "test_"));
+        CachedStatusesSQLiteOpenHelper helper = new CachedStatusesSQLiteOpenHelper(new RenamingDelegatingContext(getContext(), ""));
 
-        helper.addCachedStatus(new TestStatus(TEST_DUMMY_STATUS_ID, TEST_DUMMY_STATUS_TEXT_0));
-        Status addedStatusResult = helper.getCachedStatus(TEST_DUMMY_STATUS_ID);
+        helper.addCachedStatus(new TestStatus(TEST_DUMMY_STATUS_ID_1, TEST_DUMMY_STATUS_TEXT_0));
+        Status addedStatusResult = helper.getCachedStatus(TEST_DUMMY_STATUS_ID_1);
 
         assertEquals(addedStatusResult.getText(), TEST_DUMMY_STATUS_TEXT_0);
 
 
-        helper.addCachedStatus(new TestStatus(TEST_DUMMY_STATUS_ID, TEST_DUMMY_STATUS_TEXT_1));
-        Status updatedStatusResult = helper.getCachedStatus(TEST_DUMMY_STATUS_ID);
+        helper.addCachedStatus(new TestStatus(TEST_DUMMY_STATUS_ID_1, TEST_DUMMY_STATUS_TEXT_1));
+        Status updatedStatusResult = helper.getCachedStatus(TEST_DUMMY_STATUS_ID_1);
 
         assertEquals(updatedStatusResult.getText(), TEST_DUMMY_STATUS_TEXT_1);
 
 
-        helper.deleteCachedStatus(TEST_DUMMY_STATUS_ID);
+        helper.deleteCachedStatus(TEST_DUMMY_STATUS_ID_1);
 
-        assertEquals(helper.getCachedStatus(TEST_DUMMY_STATUS_ID), null);
+        assertEquals(helper.getCachedStatus(TEST_DUMMY_STATUS_ID_1), null);
+
+        helper.addCachedStatuses(new Status[]{
+                new TestStatus(TEST_DUMMY_STATUS_ID_1, TEST_DUMMY_STATUS_TEXT_0),
+                new TestStatus(TEST_DUMMY_STATUS_ID_2, TEST_DUMMY_STATUS_TEXT_1)
+        });
+
+        assertEquals(helper.getCachedStatus(TEST_DUMMY_STATUS_ID_1).getText(), TEST_DUMMY_STATUS_TEXT_0);
+        assertEquals(helper.getCachedStatus(TEST_DUMMY_STATUS_ID_2).getText(), TEST_DUMMY_STATUS_TEXT_1);
 
         helper.close();
     }

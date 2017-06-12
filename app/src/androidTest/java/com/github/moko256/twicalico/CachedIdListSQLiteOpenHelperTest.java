@@ -38,7 +38,7 @@ public class CachedIdListSQLiteOpenHelperTest extends ApplicationTestCase<Applic
     protected void setUp() throws Exception {
         super.setUp();
 
-        CachedIdListSQLiteOpenHelper helper = new CachedIdListSQLiteOpenHelper(new RenamingDelegatingContext(getContext(), "test_"), "testDatabase");
+        CachedIdListSQLiteOpenHelper helper = new CachedIdListSQLiteOpenHelper(new RenamingDelegatingContext(getContext(), ""), "testDatabase");
 
         long[] input = new long[]{0,1,2};
 

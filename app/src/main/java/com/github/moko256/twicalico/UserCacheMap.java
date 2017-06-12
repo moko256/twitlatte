@@ -52,8 +52,11 @@ public class UserCacheMap {
         if (c.size() > 0) {
             HashSet<? extends User> hashSet = new HashSet<>(c);
             for (User user : hashSet) {
-                add(user);
+                cache.put(user.getId(), user);
             }
+            User[] users = new User[hashSet.size()];
+            users = hashSet.toArray(users);
+            diskCache.addCachedUsers(users);
         }
     }
 

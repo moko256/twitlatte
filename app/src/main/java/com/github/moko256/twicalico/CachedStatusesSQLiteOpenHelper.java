@@ -326,6 +326,26 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
     }
 
     public synchronized void addCachedStatus(Status status){
+        SQLiteDatabase database=getWritableDatabase();
+        database.beginTransaction();
+        addCachedStatusAtTransaction(status);
+        database.setTransactionSuccessful();
+        database.endTransaction();
+        database.close();
+    }
+
+    public synchronized void addCachedStatuses(Status[] statuses){
+        SQLiteDatabase database=getWritableDatabase();
+        database.beginTransaction();
+        for (Status status : statuses) {
+            addCachedStatusAtTransaction(status);
+        }
+        database.setTransactionSuccessful();
+        database.endTransaction();
+        database.close();
+    }
+
+    private void addCachedStatusAtTransaction(Status status){
         byte[] serializedStatusByte = null;
 
         try {
@@ -362,13 +382,14 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
             }
 
             c.close();
-            database.close();
         }
     }
+
 
     public synchronized void deleteCachedStatus(long id){
         SQLiteDatabase database=getWritableDatabase();
         database.delete("CachedStatuses", "id=" + String.valueOf(id), null);
+        database.close();
     }
 
     public interface CachedStorageStatus extends Status {
