@@ -26,6 +26,7 @@ import android.preference.PreferenceManager;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 
@@ -53,11 +54,6 @@ public class OAuthActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_oauth);
-        new AlertDialog.Builder(this)
-                .setPositiveButton("Use URL scheme Auth",(dialog, which) -> startUrlAuth())
-                .setNegativeButton("Use PIN Auth",(dialog, which) -> startPinAuth())
-                .setCancelable(false)
-                .show();
     }
 
     @Override
@@ -124,6 +120,7 @@ public class OAuthActivity extends AppCompatActivity {
         new AlertDialog.Builder(this)
                 .setView(editText)
                 .setPositiveButton(android.R.string.ok,(dialog, which) -> initToken(editText.getText().toString()))
+                .setCancelable(false)
                 .show();
     }
 
@@ -178,5 +175,17 @@ public class OAuthActivity extends AppCompatActivity {
 
         startActivity(new Intent(this,MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
         finish();
+    }
+
+    public void onStartUrlAuthClick(View view) {
+        startUrlAuth();
+    }
+
+    public void onStartPinAuthClick(View view) {
+        startPinAuth();
+    }
+
+    public void onSettingClick(View view) {
+        startActivity(new Intent(this, SettingsActivity.class));
     }
 }
