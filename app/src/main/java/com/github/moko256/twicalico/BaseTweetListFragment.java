@@ -92,8 +92,8 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                 getResponseObservable(
                         new Paging()
                                 .maxId(list.get(position-1)-1L)
-                                .sinceId(list.get(position+1))
-                                .count(50))
+                                .sinceId(list.get(list.size() > position + 1? position + 2: position + 1))
+                                .count(100))
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
@@ -106,7 +106,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                                                 .from(result)
                                                 .map(Status::getId)
                                                 .toList().toSingle().toBlocking().value();
-                                        if (result.size() > 40){
+                                        if (!ids.get(result.size() - 1).equals(list.get(position + 1))){
                                             ids.add(-1L);
                                         }
                                         list.addAll(position, ids);
@@ -165,7 +165,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
     public void onStop() {
         super.onStop();
         int[] positions = null;
-        positions = ((StaggeredGridLayoutManager) getRecyclerView().getLayoutManager()).findFirstVisibleItemPositions(positions);
+        positions = ((StaggeredGridLayoutManager) getRecyclerView().getLayoutManager()).findFirstCompletelyVisibleItemPositions(positions);
         statusIdsDatabase.setListViewPosition(positions[0]);
         ArrayList<Long> ids = statusIdsDatabase.getIds();
         if (ids.size() - positions[0] > 1000){
@@ -215,7 +215,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
     @Override
     protected void onUpdateList() {
         subscription.add(
-                getResponseObservable(new Paging(list.get(0)).count(50))
+                getResponseObservable(new Paging(list.get(list.size() > 1? 0: 1)).count(100))
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
@@ -225,7 +225,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                                                 .from(result)
                                                 .map(Status::getId)
                                                 .toList().toSingle().toBlocking().value();
-                                        if (result.size() > 40){
+                                        if (!ids.get(result.size() - 1).equals(list.get(0))){
                                             ids.add(-1L);
                                         }
 
