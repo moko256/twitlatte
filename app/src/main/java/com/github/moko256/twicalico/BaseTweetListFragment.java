@@ -92,7 +92,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                 getResponseObservable(
                         new Paging()
                                 .maxId(list.get(position-1)-1L)
-                                .sinceId(list.get(list.size() > position + 1? position + 2: position + 1))
+                                .sinceId(list.get(list.size() >= position + 2? position + 2: position + 1))
                                 .count(100))
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
@@ -106,7 +106,9 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                                                 .from(result)
                                                 .map(Status::getId)
                                                 .toList().toSingle().toBlocking().value();
-                                        if (!ids.get(result.size() - 1).equals(list.get(position + 1))){
+                                        if (ids.get(ids.size() - 1).equals(list.get(position))) {
+                                            ids.remove(ids.size() - 1);
+                                        } else {
                                             ids.add(-1L);
                                         }
                                         list.addAll(position, ids);
@@ -215,7 +217,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
     @Override
     protected void onUpdateList() {
         subscription.add(
-                getResponseObservable(new Paging(list.get(list.size() > 1? 0: 1)).count(100))
+                getResponseObservable(new Paging(list.get(list.size() >= 2? 1: 0)).count(100))
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
@@ -225,7 +227,9 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                                                 .from(result)
                                                 .map(Status::getId)
                                                 .toList().toSingle().toBlocking().value();
-                                        if (!ids.get(result.size() - 1).equals(list.get(0))){
+                                        if (ids.get(ids.size() - 1).equals(list.get(0))) {
+                                            ids.remove(ids.size() - 1);
+                                        } else {
                                             ids.add(-1L);
                                         }
 

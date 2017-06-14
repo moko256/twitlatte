@@ -87,6 +87,8 @@
     <string name="user_name_mute_regex_pattern">User name mute Regex pattern</string>
     <string name="use_tweet_source_mute">Use Regex client mute</string>
     <string name="tweet_source_mute_regex_pattern">Tweet posted client mute Regex pattern</string>
+    <string name="oauth_using_url_scheme">Not using PIN authorization</string>
+    <string name="oauth_using_pin">Using PIN authorization</string>
 
     <string name="mode_image_level_none">Do not load images on the timeline</string>
     <string name="mode_image_level_normal">Load images on the timeline</string>
