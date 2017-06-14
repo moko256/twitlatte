@@ -233,19 +233,21 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                                             ids.add(-1L);
                                         }
 
-                                        list.addAll(0, ids);
-                                        statusIdsDatabase.insertIds(0, ids);
-                                        adapter.notifyItemRangeInserted(0, ids.size());
-                                        TypedValue value=new TypedValue();
-                                        Toast t=Toast.makeText(getContext(),"New Tweet",Toast.LENGTH_SHORT);
-                                        t.setGravity(
-                                                Gravity.TOP|Gravity.CENTER,
-                                                0,
-                                                getContext().getTheme().resolveAttribute(R.attr.actionBarSize, value, true)?
-                                                        TypedValue.complexToDimensionPixelOffset(value.data, getResources().getDisplayMetrics()):
-                                                        0
-                                        );
-                                        t.show();
+                                        if (ids.size() > 0){
+                                            list.addAll(0, ids);
+                                            statusIdsDatabase.insertIds(0, ids);
+                                            adapter.notifyItemRangeInserted(0, ids.size());
+                                            TypedValue value=new TypedValue();
+                                            Toast t=Toast.makeText(getContext(),"New Tweet",Toast.LENGTH_SHORT);
+                                            t.setGravity(
+                                                    Gravity.TOP|Gravity.CENTER,
+                                                    0,
+                                                    getContext().getTheme().resolveAttribute(R.attr.actionBarSize, value, true)?
+                                                            TypedValue.complexToDimensionPixelOffset(value.data, getResources().getDisplayMetrics()):
+                                                            0
+                                            );
+                                            t.show();
+                                        }
                                     }
                                 },
                                 e -> {
