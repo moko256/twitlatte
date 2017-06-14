@@ -18,15 +18,15 @@ apply plugin: 'com.android.application'
 apply plugin: 'me.tatarka.retrolambda'
 
 android {
-    compileSdkVersion 25
+    compileSdkVersion 26
     buildToolsVersion "25.0.2"
 
     defaultConfig {
         applicationId "com.github.moko256.twicailco"
         minSdkVersion 17
-        targetSdkVersion 25
-        versionCode 7
-        versionName "0.6.4"
+        targetSdkVersion 26
+        versionCode 8
+        versionName "0.6.5"
 
         buildConfigField "String", "CONSUMER_KEY", "\"${CONSUMER_KEY}\""
         buildConfigField "String", "CONSUMER_SECRET", "\"${CONSUMER_SECRET}\""
