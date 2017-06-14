@@ -186,6 +186,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                     "support_v7",
                     "support_v14",
                     "support_design",
+                    "support_custom_tabs",
                     "exo_player",
                     "glide",
                     "okhttp",
