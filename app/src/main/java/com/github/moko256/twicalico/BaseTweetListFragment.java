@@ -167,7 +167,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
     public void onStop() {
         super.onStop();
         int[] positions = null;
-        positions = ((StaggeredGridLayoutManager) getRecyclerView().getLayoutManager()).findFirstCompletelyVisibleItemPositions(positions);
+        positions = ((StaggeredGridLayoutManager) getRecyclerView().getLayoutManager()).findFirstVisibleItemPositions(positions);
         statusIdsDatabase.setListViewPosition(positions[0]);
         ArrayList<Long> ids = statusIdsDatabase.getIds();
         if (ids.size() - positions[0] > 1000){
