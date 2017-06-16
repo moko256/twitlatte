@@ -97,10 +97,10 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
 
         View headerView = navigationView.inflateHeaderView(R.layout.nav_header_main);
 
-        TextView userNameText = (TextView) headerView.findViewById(R.id.user_name);
-        TextView userIdText = (TextView) headerView.findViewById(R.id.user_id);
-        ImageView userImage = (ImageView) headerView.findViewById(R.id.user_image);
-        ImageView userBackgroundImage = (ImageView) headerView.findViewById(R.id.user_bg_image);
+        TextView userNameText = headerView.findViewById(R.id.user_name);
+        TextView userIdText = headerView.findViewById(R.id.user_id);
+        ImageView userImage = headerView.findViewById(R.id.user_image);
+        ImageView userBackgroundImage = headerView.findViewById(R.id.user_bg_image);
 
         Observable
                 .create(subscriber->{
@@ -228,7 +228,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
 
         RequestManager manager=Glide.with(this);
 
-        manager.load(user.getBiggerProfileImageURL()).into(userImage);
+        manager.load(user.getBiggerProfileImageURL()).asBitmap().into(new CircleImageTarget(userImage));
         manager.load(user.getProfileBannerRetinaURL()).centerCrop().into(userBackgroundImage);
     }
 

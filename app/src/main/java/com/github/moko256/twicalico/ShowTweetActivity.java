@@ -106,7 +106,7 @@ public class ShowTweetActivity extends AppCompatActivity {
 
                                     ImageView userImage=(ImageView) findViewById(R.id.tweet_show_image);
 
-                                    imageRequestManager.load(item.getUser().getProfileImageURL()).into(userImage);
+                                    imageRequestManager.load(item.getUser().getProfileImageURL()).asBitmap().into(new CircleImageTarget(userImage));
 
                                     TextView tweetIsReply = (TextView) findViewById(R.id.tweet_show_is_reply_text);
                                     long replyTweetId = item.getInReplyToStatusId();

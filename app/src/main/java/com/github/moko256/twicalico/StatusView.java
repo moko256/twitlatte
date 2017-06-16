@@ -94,30 +94,30 @@ public class StatusView extends FrameLayout {
 
         imageRequestManager= Glide.with(context);
         
-        userImage =(ImageView) findViewById(R.id.tweet_icon);
-        retweetUserName =(TextView) findViewById(R.id.tweet_retweet_user_name);
-        replyUserName =(TextView) findViewById(R.id.tweet_reply_user_name);
-        headerBottomMargin =(Space) findViewById(R.id.tweet_header_bottom_margin);
-        userId =(TextView) findViewById(R.id.tweet_user_id);
-        userName =(TextView) findViewById(R.id.tweet_user_name);
-        tweetContext=(TextView) findViewById(R.id.tweet_content);
-        timeStampText =(TextView) findViewById(R.id.tweet_time_stamp_text);
-        quoteTweetLayout =(RelativeLayout)  findViewById(R.id.tweet_quote_tweet);
-        quoteTweetUserName =(TextView) findViewById(R.id.tweet_quote_tweet_user_name);
-        quoteTweetUserId =(TextView) findViewById(R.id.tweet_quote_tweet_user_id);
-        quoteTweetContext =(TextView) findViewById(R.id.tweet_quote_tweet_content);
-        imageTableView =(TweetImageTableView) findViewById(R.id.tweet_image_container);
+        userImage = findViewById(R.id.tweet_icon);
+        retweetUserName = findViewById(R.id.tweet_retweet_user_name);
+        replyUserName = findViewById(R.id.tweet_reply_user_name);
+        headerBottomMargin = findViewById(R.id.tweet_header_bottom_margin);
+        userId = findViewById(R.id.tweet_user_id);
+        userName = findViewById(R.id.tweet_user_name);
+        tweetContext= findViewById(R.id.tweet_content);
+        timeStampText = findViewById(R.id.tweet_time_stamp_text);
+        quoteTweetLayout = findViewById(R.id.tweet_quote_tweet);
+        quoteTweetUserName = findViewById(R.id.tweet_quote_tweet_user_name);
+        quoteTweetUserId = findViewById(R.id.tweet_quote_tweet_user_id);
+        quoteTweetContext = findViewById(R.id.tweet_quote_tweet_content);
+        imageTableView = findViewById(R.id.tweet_image_container);
 
-        likeButton =(CheckBox) findViewById(R.id.tweet_content_like_button);
-        retweetButton =(CheckBox) findViewById(R.id.tweet_content_retweet_button);
+        likeButton = findViewById(R.id.tweet_content_like_button);
+        retweetButton = findViewById(R.id.tweet_content_retweet_button);
 
-        replyButton =(ImageButton) findViewById(R.id.tweet_content_reply_button);
+        replyButton = findViewById(R.id.tweet_content_reply_button);
         Drawable replyIcon= DrawableCompat.wrap(AppCompatResources.getDrawable(context, R.drawable.ic_reply_white_24dp));
         DrawableCompat.setTintList(replyIcon,context.getResources().getColorStateList(R.color.reply_button_color_stateful));
         replyButton.setImageDrawable(replyIcon);
 
-        likeCount = (TextView) findViewById(R.id.tweet_content_like_count);
-        retweetCount = (TextView) findViewById(R.id.tweet_content_retweet_count);
+        likeCount = findViewById(R.id.tweet_content_like_count);
+        retweetCount = findViewById(R.id.tweet_content_retweet_count);
 
         timeSpanConverter=new TimeSpanConverter();
     }
@@ -182,9 +182,9 @@ public class StatusView extends FrameLayout {
         }
 
         if (GlobalApplication.configuration.isTimelineImageLoad()){
-            imageRequestManager.load(item.getUser().getProfileImageURLHttps()).into(userImage);
+            imageRequestManager.load(item.getUser().getProfileImageURLHttps()).asBitmap().into(new CircleImageTarget(userImage));
         } else {
-            userImage.setImageResource(R.drawable.border_frame);
+            userImage.setImageResource(R.drawable.border_frame_round);
         }
 
         userName.setText(item.getUser().getName());

@@ -112,20 +112,20 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
 
         requestManager=Glide.with(this);
 
-        header=(ImageView) view.findViewById(R.id.show_user_bgimage);
-        icon=(ImageView) view.findViewById(R.id.show_user_image);
+        header= view.findViewById(R.id.show_user_bgimage);
+        icon= view.findViewById(R.id.show_user_image);
 
-        userNameText=(TextView) view.findViewById(R.id.show_user_name);
-        userIdText=(TextView) view.findViewById(R.id.show_user_id);
-        userBioText =(TextView) view.findViewById(R.id.show_user_bio);
-        userCreatedAt=(TextView) view.findViewById(R.id.show_user_created_at);
-        userTweetsCount=(TextView) view.findViewById(R.id.show_user_tweets_count);
-        userFollowCount=(TextView) view.findViewById(R.id.show_user_follow_count);
-        userFollowerCount=(TextView) view.findViewById(R.id.show_user_follower_count);
+        userNameText= view.findViewById(R.id.show_user_name);
+        userIdText= view.findViewById(R.id.show_user_id);
+        userBioText = view.findViewById(R.id.show_user_bio);
+        userCreatedAt= view.findViewById(R.id.show_user_created_at);
+        userTweetsCount= view.findViewById(R.id.show_user_tweets_count);
+        userFollowCount= view.findViewById(R.id.show_user_follow_count);
+        userFollowerCount= view.findViewById(R.id.show_user_follower_count);
 
-        userLatestTweetCard=(CardView) view.findViewById(R.id.show_user_latest_tweet);
-        userLatestTweetText=(TextView) view.findViewById(R.id.show_user_latest_tweet_text);
-        userLatestTweetLoadMoreButton=(Button) view.findViewById(R.id.show_user_latest_tweet_see_more_button);
+        userLatestTweetCard= view.findViewById(R.id.show_user_latest_tweet);
+        userLatestTweetText= view.findViewById(R.id.show_user_latest_tweet_text);
+        userLatestTweetLoadMoreButton= view.findViewById(R.id.show_user_latest_tweet_see_more_button);
 
         User cachedUser = GlobalApplication.userCache.get(userId);
         if (cachedUser!=null){
@@ -142,7 +142,7 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
 
     private void setShowUserInfo(User user) {
         requestManager.load(user.getProfileBannerRetinaURL()).into(header);
-        requestManager.load(user.getBiggerProfileImageURL()).into(icon);
+        requestManager.load(user.getBiggerProfileImageURL()).asBitmap().into(new CircleImageTarget(icon));
 
         userNameText.setText(user.getName());
         userIdText.setText(TwitterStringUtil.plusAtMark(user.getScreenName()));
