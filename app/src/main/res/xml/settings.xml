@@ -30,7 +30,7 @@
         android:title="@string/app_settings">
         <ListPreference
             android:key="nightModeType"
-            android:defaultValue="mode_night_no"
+            android:defaultValue="@string/mode_night_no_value"
             android:title="@string/theme"
             android:summary="%s"
             android:dialogTitle="@string/theme"
@@ -57,7 +57,6 @@
                     android:summaryOff="@string/disable"/>
                 <EditTextPreference
                     android:key="tweetMutePattern"
-                    android:defaultValue=""
                     android:title="@string/tweet_mute_regex_pattern"
                     android:summary="%s"
                     android:dialogTitle="@string/edit_pattern"/>
@@ -70,7 +69,6 @@
                     android:summaryOff="@string/disable"/>
                 <EditTextPreference
                     android:key="userScreenNameMutePattern"
-                    android:defaultValue=""
                     android:title="@string/user_screen_name_mute_regex_pattern"
                     android:summary="%s"
                     android:dialogTitle="@string/edit_pattern"/>
@@ -83,7 +81,6 @@
                     android:summaryOff="@string/disable"/>
                 <EditTextPreference
                     android:key="tweetUserNamePattern"
-                    android:defaultValue=""
                     android:title="@string/user_name_mute_regex_pattern"
                     android:summary="%s"
                     android:dialogTitle="@string/edit_pattern"/>
@@ -96,7 +93,6 @@
                     android:summaryOff="@string/disable"/>
                 <EditTextPreference
                     android:key="tweetSourceMutePattern"
-                    android:defaultValue=""
                     android:title="@string/tweet_source_mute_regex_pattern"
                     android:summary="%s"
                     android:dialogTitle="@string/edit_pattern"/>
@@ -149,6 +145,9 @@
                 android:key="license_lib_rx_android"
                 android:title="RxAndroid"/>
         </PreferenceScreen>
+        <Preference
+            android:key="source_code_link"
+            android:title="GitHub" />
         <Preference android:key="app_version"/>
     </PreferenceCategory>
 </PreferenceScreen>

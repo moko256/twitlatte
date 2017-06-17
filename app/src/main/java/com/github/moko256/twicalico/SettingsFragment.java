@@ -21,6 +21,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatDelegate;
@@ -165,6 +166,12 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                                 .putExtra("library_name", "twicalico")
                 );
                 return true;
+            });
+
+            Preference sourceCodeLink=findPreference("source_code_link");
+            sourceCodeLink.setOnPreferenceClickListener(preference -> {
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/moko256/twicalico")));
+                return false;
             });
 
             Preference version=findPreference("app_version");
