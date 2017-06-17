@@ -69,7 +69,7 @@ class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> {
     public void onBindViewHolder(ViewHolder viewHolder, final int i) {
         User item=GlobalApplication.userCache.get(data.get(i));
 
-        imageRequestManager.load(item.getProfileImageURLHttps()).into(viewHolder.userUserImage);
+        imageRequestManager.load(item.getProfileImageURLHttps()).asBitmap().into(new CircleImageTarget(viewHolder.userUserImage));
 
         viewHolder.userUserName.setText(item.getName());
         viewHolder.userUserId.setText(TwitterStringUtil.plusAtMark(item.getScreenName()));
@@ -100,9 +100,9 @@ class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> {
 
         ViewHolder(final View itemView) {
             super(itemView);
-            userUserImage=(ImageView) itemView.findViewById(R.id.user_user_image);
-            userUserId=(TextView) itemView.findViewById(R.id.user_user_id);
-            userUserName=(TextView) itemView.findViewById(R.id.user_user_name);
+            userUserImage= itemView.findViewById(R.id.user_user_image);
+            userUserId= itemView.findViewById(R.id.user_user_id);
+            userUserName= itemView.findViewById(R.id.user_user_name);
         }
     }
 }
