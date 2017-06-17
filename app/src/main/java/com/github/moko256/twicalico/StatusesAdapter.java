@@ -79,6 +79,8 @@ class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         if (i == 1){
             return new MoreLoadViewHolder();
+        } else if (i == 2) {
+            return new MutedTweetViewHolder();
         } else {
             return new StatusViewHolder();
         }
@@ -132,6 +134,12 @@ class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private class MoreLoadViewHolder extends RecyclerView.ViewHolder {
         MoreLoadViewHolder() {
             super(LayoutInflater.from(context).inflate(R.layout.layout_list_load_more_text, null));
+        }
+    }
+
+    private class MutedTweetViewHolder extends RecyclerView.ViewHolder {
+        MutedTweetViewHolder() {
+            super(LayoutInflater.from(context).inflate(R.layout.layout_list_muted_text, null));
         }
     }
 

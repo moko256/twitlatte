@@ -76,6 +76,7 @@
     <string name="user_name_mute_regex_pattern">ユーザー名ミュートの正規表現パターン</string>
     <string name="use_tweet_source_mute">クライアントの正規表現ミュートを使用する</string>
     <string name="tweet_source_mute_regex_pattern">投稿したクライアントのミュートの正規表現パターン</string>
+    <string name="muted_tweet">ミュートされたツイート</string>
     <string name="oauth_using_url_scheme">PINを使わない認証</string>
     <string name="oauth_using_pin">PINを使う認証</string>
 
