@@ -5,8 +5,8 @@ This application is the simple Twitter client for Android\.
 
 [<img src="https://dply.me/xz8gz0/button/large" alt="Try it on your device via DeployGate">](https://dply.me/xz8gz0#install)
 
-Minimum api level is 17\.
-Target api level is 25\.
+* Minimum api level is 17\. Target api level is 26\.
+* Material Design
 
 ## Usage
 
