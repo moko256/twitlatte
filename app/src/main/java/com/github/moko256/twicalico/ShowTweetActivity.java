@@ -45,6 +45,7 @@ import rx.subscriptions.CompositeSubscription;
 import twitter4j.MediaEntity;
 import twitter4j.Status;
 import twitter4j.TwitterException;
+import twitter4j.UserMentionEntity;
 
 /**
  * Created by moko256 on 2016/03/10.
@@ -168,6 +169,8 @@ public class ShowTweetActivity extends AppCompatActivity {
 
                                     AppCompatEditText replyText=(AppCompatEditText) findViewById(R.id.tweet_show_tweet_reply_text);
                                     AppCompatButton replyButton=(AppCompatButton) findViewById(R.id.tweet_show_tweet_reply_button);
+                                    UserMentionEntity[] users = item.getUserMentionEntities();
+                                    replyText.setText(TwitterStringUtil.convertToReplyTopString(item.getUser().getScreenName(), users));
                                     replyButton.setOnClickListener(v -> {
                                         replyButton.setEnabled(false);
                                         SendTweetModel model = new SendTweetModel(GlobalApplication.twitter, getContentResolver());
@@ -183,7 +186,7 @@ public class ShowTweetActivity extends AppCompatActivity {
                                                                     replyButton.setEnabled(true);
                                                                 },
                                                                 ()-> {
-                                                                    replyText.setText("");
+                                                                    replyText.setText(TwitterStringUtil.convertToReplyTopString(item.getUser().getScreenName(), users));
                                                                     replyButton.setEnabled(true);
                                                                     Toast.makeText(ShowTweetActivity.this,R.string.succeeded,Toast.LENGTH_SHORT).show();
                                                                 }

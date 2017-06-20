@@ -310,7 +310,7 @@ public class StatusView extends FrameLayout {
         retweetButton.setEnabled(!item.getUser().isProtected());
 
         replyButton.setOnClickListener(
-                v -> getContext().startActivity(SendTweetActivity.getIntent(getContext(), item.getId(), ""))
+                v -> getContext().startActivity(SendTweetActivity.getIntent(getContext(), item.getId(), TwitterStringUtil.convertToReplyTopString(item.getUser().getScreenName(), item.getUserMentionEntities()).toString()))
         );
 
         likeCount.setText((item.getFavoriteCount() != 0)? TwitterStringUtil.convertToSIUnitString(item.getFavoriteCount()): "");

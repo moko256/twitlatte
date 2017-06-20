@@ -36,7 +36,7 @@
     </style>
 
     <style name="BaseSplashTheme" parent="AppTheme.NoActionBar">
-        <item name="android:windowBackground">@drawable/splash_screen_background</item>
+        <item name="android:windowBackground">@color/colorPrimary</item>
     </style>
 
     <style name="SplashTheme" parent="BaseSplashTheme"/>

@@ -70,6 +70,16 @@ public class TwitterStringUtil {
         return (isNegative? "-": "") + String.valueOf(Math.round(g)) + "G";
     }
 
+
+    public static CharSequence convertToReplyTopString(String userScreenName, UserMentionEntity[] users){
+        StringBuilder userIdsStr = new StringBuilder();
+        userIdsStr.append("@").append(userScreenName).append(" ");
+        for (UserMentionEntity user : users) {
+            userIdsStr.append("@").append(user.getScreenName()).append(" ");
+        }
+        return userIdsStr;
+    }
+
     public static CharSequence getStatusTextSequence(Status item){
 
         String tweet = item.getText();
