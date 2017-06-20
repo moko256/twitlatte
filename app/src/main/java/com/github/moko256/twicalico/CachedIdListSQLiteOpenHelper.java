@@ -41,7 +41,7 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
         super(context, new File(context.getCacheDir(), String.valueOf(GlobalApplication.userId) + "/" + name).getAbsolutePath(), factory, version);
     }
     public CachedIdListSQLiteOpenHelper(Context context, String name){
-        this(context, name + ".db", null, 1);
+        this(context, name + ".db", null, BuildConfig.CACHE_DATABASE_VERSION);
         databaseName = name;
     }
 

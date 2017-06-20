@@ -31,6 +31,8 @@ android {
         buildConfigField "String", "CONSUMER_KEY", "\"${CONSUMER_KEY}\""
         buildConfigField "String", "CONSUMER_SECRET", "\"${CONSUMER_SECRET}\""
 
+        buildConfigField "int" , "CACHE_DATABASE_VERSION" , "1"
+
         vectorDrawables.useSupportLibrary = true
 
     }
