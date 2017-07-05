@@ -126,7 +126,7 @@ public class TwitterStringUtil {
             spannableStringBuilder.setSpan(new ClickableSpan() {
                 @Override
                 public void onClick(View view) {
-                    mContext.startActivity(new Intent(mContext,SearchActivity.class)
+                    mContext.startActivity(new Intent(mContext,SearchResultActivity.class)
                             .setAction(Intent.ACTION_SEARCH)
                             .putExtra(SearchManager.QUERY,symbolEntity.getText())
                     );
@@ -138,7 +138,7 @@ public class TwitterStringUtil {
             spannableStringBuilder.setSpan(new ClickableSpan() {
                 @Override
                 public void onClick(View view) {
-                    mContext.startActivity(new Intent(mContext,SearchActivity.class)
+                    mContext.startActivity(new Intent(mContext,SearchResultActivity.class)
                             .setAction(Intent.ACTION_SEARCH)
                             .putExtra(SearchManager.QUERY,"#"+hashtagEntity.getText())
                     );

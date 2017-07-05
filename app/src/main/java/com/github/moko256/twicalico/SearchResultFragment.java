@@ -39,7 +39,7 @@ import twitter4j.TwitterException;
  *
  * @author moko256
  */
-public class SearchFragment extends BaseTweetListFragment {
+public class SearchResultFragment extends BaseTweetListFragment {
 
     private final static String BUNDLE_KEY_SEARCH_QUERY="query";
 
@@ -47,16 +47,11 @@ public class SearchFragment extends BaseTweetListFragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        if (savedInstanceState == null) {
+            searchText=getActivity().getIntent().getStringExtra(BUNDLE_KEY_SEARCH_QUERY);
+        }
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-
-        if (savedInstanceState == null) {
-            Intent intent=getActivity().getIntent();
-            if (intent!=null&&intent.getAction()!=null&&intent.getAction().equals(Intent.ACTION_SEARCH)){
-                searchText=intent.getStringExtra(SearchManager.QUERY);
-                onInitializeList();
-            }
-        }
     }
 
     @Override
@@ -75,38 +70,6 @@ public class SearchFragment extends BaseTweetListFragment {
     public void onDestroy() {
         super.onDestroy();
         searchText=null;
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.activity_search_toolbar,menu);
-
-        MenuItem searchMenu=menu.findItem(R.id.action_search);
-        SearchView searchView=(SearchView) searchMenu.getActionView();
-
-        MenuItemCompat.expandActionView(searchMenu);
-        searchView.onActionViewExpanded();
-        searchView.setQuery(searchText,false);
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String searchWord) {
-                searchView.clearFocus();
-                searchText=searchWord;
-                list.clear();
-                onInitializeList();
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                return false;
-            }
-        });
-        searchView.setOnCloseListener(() -> {
-            getActivity().finish();
-            return false;
-        });
-        super.onCreateOptionsMenu(menu,inflater);
     }
 
     @Override
@@ -147,6 +110,6 @@ public class SearchFragment extends BaseTweetListFragment {
 
     @Override
     protected String getCachedIdsDatabaseName() {
-        return "Search_" + searchText;
+        return "Search_" + searchText.hashCode();
     }
 }

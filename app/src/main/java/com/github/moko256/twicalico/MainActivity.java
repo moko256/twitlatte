@@ -54,15 +54,15 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(item-> {
             int id = item.getItemId();
 
@@ -126,7 +126,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
 
         findViewById(R.id.fab).setOnClickListener(v -> startActivity(new Intent(this, SendTweetActivity.class)));
 
-        TabLayout tabLayout=(TabLayout) findViewById(R.id.toolbar_tab);
+        TabLayout tabLayout= findViewById(R.id.toolbar_tab);
 
         getSupportFragmentManager().addOnBackStackChangedListener(() -> attachFragment(getMainFragment(), navigationView, tabLayout));
 
@@ -141,7 +141,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
     @Override
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        attachFragment(getMainFragment(), (NavigationView) findViewById(R.id.nav_view), (TabLayout) findViewById(R.id.toolbar_tab));
+        attachFragment(getMainFragment(), findViewById(R.id.nav_view), findViewById(R.id.toolbar_tab));
     }
 
     @Override
@@ -153,14 +153,14 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId()==R.id.action_search){
-            startActivity(new Intent(this,SearchActivity.class));
+            startActivity(new Intent(this, TrendsActivity.class));
         }
         return true;
     }
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {

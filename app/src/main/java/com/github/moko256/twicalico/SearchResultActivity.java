@@ -16,6 +16,9 @@
 
 package com.github.moko256.twicalico;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -26,7 +29,7 @@ import android.support.v7.app.AppCompatActivity;
  * @author moko256
  */
 
-public class SearchActivity extends AppCompatActivity implements BaseListFragment.GetSnackBarParentContainerId {
+public class SearchResultActivity extends AppCompatActivity implements BaseListFragment.GetSnackBarParentContainerId {
     ActionBar actionBar;
 
     @Override
@@ -35,16 +38,20 @@ public class SearchActivity extends AppCompatActivity implements BaseListFragmen
         setContentView(R.layout.activity_search);
 
         actionBar=getSupportActionBar();
-        actionBar.setTitle("");
+        actionBar.setTitle(getIntent().getStringExtra("query"));
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeAsUpIndicator(R.drawable.ic_back_white_24dp);
 
         if (savedInstanceState == null) {
             getSupportFragmentManager()
                     .beginTransaction()
-                    .add(R.id.activity_search_fragment_container,new SearchFragment())
+                    .add(R.id.activity_search_fragment_container,new SearchResultFragment())
                     .commit();
         }
+    }
+
+    public static Intent getIntent(Context context, String query){
+        return new Intent(context, SearchResultActivity.class).putExtra("query", query);
     }
 
     @Override

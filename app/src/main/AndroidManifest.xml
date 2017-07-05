@@ -20,6 +20,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <application
@@ -101,21 +102,18 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".SearchActivity"
-            android:label="@string/action_search"
-            android:theme="@style/AppTheme">
-            <intent-filter>
-                <action android:name="android.intent.action.SEARCH" />
-            </intent-filter>
-        </activity>
+            android:name=".TrendsActivity"
+            android:label="@string/trends" />
+        <activity
+            android:name=".SearchResultActivity"
+            android:label="@string/action_search"/>
         <activity
             android:name=".SettingsActivity"
             android:label="@string/action_settings"
             android:theme="@style/SettingsActivityTheme" />
         <activity
             android:name=".LicensesActivity"
-            android:label="@string/open_source_license"
-            android:theme="@style/AppTheme" />
+            android:label="@string/open_source_license" />
     </application>
 
 </manifest>

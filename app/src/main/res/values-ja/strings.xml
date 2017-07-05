@@ -18,6 +18,7 @@
 <resources>
     <string name="action_settings">設定</string>
     <string name="action_search">検索</string>
+    <string name="trends">トレンド</string>
     <string name="timeline">タイムライン</string>
     <string name="mentions">メンション</string>
     <string name="tweet">ツイート</string>
