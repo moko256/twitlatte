@@ -18,7 +18,6 @@ package com.github.moko256.twicalico;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
@@ -72,7 +71,7 @@ class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> {
         imageRequestManager.load(item.getProfileImageURLHttps()).asBitmap().into(new CircleImageTarget(viewHolder.userUserImage));
 
         viewHolder.userUserName.setText(item.getName());
-        viewHolder.userUserId.setText(TwitterStringUtil.plusAtMark(item.getScreenName()));
+        viewHolder.userUserId.setText(TwitterStringUtils.plusAtMark(item.getScreenName()));
         viewHolder.itemView.setOnClickListener(v -> {
             ViewCompat.setTransitionName(viewHolder.userUserImage,"tweet_user_image");
             context.startActivity(

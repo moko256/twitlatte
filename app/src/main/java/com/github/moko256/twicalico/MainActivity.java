@@ -222,7 +222,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
 
     private void setDrawerHeader(User user, TextView userNameText, TextView userIdText, ImageView userImage, ImageView userBackgroundImage){
         userNameText.setText(user.getName());
-        userIdText.setText(TwitterStringUtil.plusAtMark(user.getScreenName()));
+        userIdText.setText(TwitterStringUtils.plusAtMark(user.getScreenName()));
 
         userImage.setOnClickListener(v -> startMyUserActivity());
 

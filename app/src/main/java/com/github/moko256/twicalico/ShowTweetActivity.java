@@ -119,9 +119,9 @@ public class ShowTweetActivity extends AppCompatActivity {
                                     }
 
                                     ((TextView) findViewById(R.id.tweet_show_user_name)).setText(item.getUser().getName());
-                                    ((TextView) findViewById(R.id.tweet_show_user_id)).setText(TwitterStringUtil.plusAtMark(item.getUser().getScreenName()));
+                                    ((TextView) findViewById(R.id.tweet_show_user_id)).setText(TwitterStringUtils.plusAtMark(item.getUser().getScreenName()));
                                     TextView contentText=(TextView) findViewById(R.id.tweet_show_content);
-                                    contentText.setText(TwitterStringUtil.getLinkedSequence(item,ShowTweetActivity.this));
+                                    contentText.setText(TwitterStringUtils.getLinkedSequence(item,ShowTweetActivity.this));
                                     contentText.setMovementMethod(LinkMovementMethod.getInstance());
 
                                     userImage.setOnClickListener(v-> startActivity(ShowUserActivity.getIntent(this, item.getUser().getId())));
@@ -135,7 +135,7 @@ public class ShowTweetActivity extends AppCompatActivity {
                                         }
                                         tweetQuoteTweetLayout.setOnClickListener(v -> startActivity(getIntent(this, quotedStatus.getId())));
                                         ((TextView) findViewById(R.id.tweet_show_quote_tweet_user_name)).setText(quotedStatus.getUser().getName());
-                                        ((TextView) findViewById(R.id.tweet_show_quote_tweet_user_id)).setText(TwitterStringUtil.plusAtMark(quotedStatus.getUser().getScreenName()));
+                                        ((TextView) findViewById(R.id.tweet_show_quote_tweet_user_id)).setText(TwitterStringUtils.plusAtMark(quotedStatus.getUser().getScreenName()));
                                         ((TextView) findViewById(R.id.tweet_show_quote_tweet_content)).setText(quotedStatus.getText());
                                     }else{
                                         if (tweetQuoteTweetLayout.getVisibility() != View.GONE) {
@@ -170,7 +170,7 @@ public class ShowTweetActivity extends AppCompatActivity {
                                     AppCompatEditText replyText=(AppCompatEditText) findViewById(R.id.tweet_show_tweet_reply_text);
                                     AppCompatButton replyButton=(AppCompatButton) findViewById(R.id.tweet_show_tweet_reply_button);
                                     UserMentionEntity[] users = item.getUserMentionEntities();
-                                    replyText.setText(TwitterStringUtil.convertToReplyTopString(item.getUser().getScreenName(), users));
+                                    replyText.setText(TwitterStringUtils.convertToReplyTopString(item.getUser().getScreenName(), users));
                                     replyButton.setOnClickListener(v -> {
                                         replyButton.setEnabled(false);
                                         SendTweetModel model = new SendTweetModel(GlobalApplication.twitter, getContentResolver());
@@ -186,7 +186,7 @@ public class ShowTweetActivity extends AppCompatActivity {
                                                                     replyButton.setEnabled(true);
                                                                 },
                                                                 ()-> {
-                                                                    replyText.setText(TwitterStringUtil.convertToReplyTopString(item.getUser().getScreenName(), users));
+                                                                    replyText.setText(TwitterStringUtils.convertToReplyTopString(item.getUser().getScreenName(), users));
                                                                     replyButton.setEnabled(true);
                                                                     Toast.makeText(ShowTweetActivity.this,R.string.succeeded,Toast.LENGTH_SHORT).show();
                                                                 }

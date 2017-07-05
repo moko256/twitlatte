@@ -188,8 +188,8 @@ public class StatusView extends FrameLayout {
         }
 
         userName.setText(item.getUser().getName());
-        userId.setText(TwitterStringUtil.plusAtMark(item.getUser().getScreenName()));
-        tweetContext.setText(TwitterStringUtil.getStatusTextSequence(item));
+        userId.setText(TwitterStringUtils.plusAtMark(item.getUser().getScreenName()));
+        tweetContext.setText(TwitterStringUtils.getStatusTextSequence(item));
 
         timeStampText.setText(timeSpanConverter.toTimeSpanString(item.getCreatedAt().getTime()));
         userImage.setOnClickListener(v->{
@@ -216,7 +216,7 @@ public class StatusView extends FrameLayout {
                     ShowTweetActivity.getIntent(getContext(), quotedStatus.getId())
             ));
             quoteTweetUserName.setText(quotedStatus.getUser().getName());
-            quoteTweetUserId.setText(TwitterStringUtil.plusAtMark(quotedStatus.getUser().getScreenName()));
+            quoteTweetUserId.setText(TwitterStringUtils.plusAtMark(quotedStatus.getUser().getScreenName()));
             quoteTweetContext.setText(quotedStatus.getText());
         }else{
             if (quoteTweetLayout.getVisibility() != View.GONE) {
@@ -310,10 +310,10 @@ public class StatusView extends FrameLayout {
         retweetButton.setEnabled(!item.getUser().isProtected());
 
         replyButton.setOnClickListener(
-                v -> getContext().startActivity(SendTweetActivity.getIntent(getContext(), item.getId(), TwitterStringUtil.convertToReplyTopString(item.getUser().getScreenName(), item.getUserMentionEntities()).toString()))
+                v -> getContext().startActivity(SendTweetActivity.getIntent(getContext(), item.getId(), TwitterStringUtils.convertToReplyTopString(item.getUser().getScreenName(), item.getUserMentionEntities()).toString()))
         );
 
-        likeCount.setText((item.getFavoriteCount() != 0)? TwitterStringUtil.convertToSIUnitString(item.getFavoriteCount()): "");
-        retweetCount.setText((item.getRetweetCount() != 0)? TwitterStringUtil.convertToSIUnitString(item.getRetweetCount()): "");
+        likeCount.setText((item.getFavoriteCount() != 0)? TwitterStringUtils.convertToSIUnitString(item.getFavoriteCount()): "");
+        retweetCount.setText((item.getRetweetCount() != 0)? TwitterStringUtils.convertToSIUnitString(item.getRetweetCount()): "");
     }
 }

@@ -145,7 +145,7 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
         requestManager.load(user.getBiggerProfileImageURL()).asBitmap().into(new CircleImageTarget(icon));
 
         userNameText.setText(user.getName());
-        userIdText.setText(TwitterStringUtil.plusAtMark(user.getScreenName()));
+        userIdText.setText(TwitterStringUtils.plusAtMark(user.getScreenName()));
         getActivity().setTitle(user.getName());
         userBioText.setText(user.getDescription());
 
