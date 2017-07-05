@@ -23,6 +23,8 @@ import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.customtabs.CustomTabsIntent;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.preference.ListPreference;
@@ -172,7 +174,11 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
             Preference sourceCodeLink=findPreference("source_code_link");
             sourceCodeLink.setOnPreferenceClickListener(preference -> {
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/moko256/twicalico")));
+                new CustomTabsIntent.Builder()
+                        .setToolbarColor(ContextCompat.getColor(getContext(), R.color.colorPrimary))
+                        .setSecondaryToolbarColor(ContextCompat.getColor(getContext(), R.color.colorPrimaryDark))
+                        .build()
+                        .launchUrl(getContext(), Uri.parse("https://github.com/moko256/twicalico"));
                 return false;
             });
 

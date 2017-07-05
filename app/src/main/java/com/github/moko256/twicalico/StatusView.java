@@ -20,10 +20,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.Space;
-import android.support.v7.content.res.AppCompatResources;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -115,8 +115,8 @@ public class StatusView extends FrameLayout {
         retweetButton = findViewById(R.id.tweet_content_retweet_button);
 
         replyButton = findViewById(R.id.tweet_content_reply_button);
-        Drawable replyIcon= DrawableCompat.wrap(AppCompatResources.getDrawable(context, R.drawable.ic_reply_white_24dp));
-        DrawableCompat.setTintList(replyIcon,context.getResources().getColorStateList(R.color.reply_button_color_stateful));
+        Drawable replyIcon= DrawableCompat.wrap(ContextCompat.getDrawable(context, R.drawable.ic_reply_white_24dp));
+        DrawableCompat.setTintList(replyIcon, ContextCompat.getColorStateList(context, R.color.reply_button_color_stateful));
         replyButton.setImageDrawable(replyIcon);
 
         likeCount = findViewById(R.id.tweet_content_like_count);

@@ -22,6 +22,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationManagerCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.app.NotificationCompat;
 
@@ -76,7 +77,7 @@ public class GlobalApplication extends Application {
                                 .setContentText(e.toString())
                                 .setWhen(new Date().getTime())
                                 .setShowWhen(true)
-                                .setColor(getResources().getColor(R.color.colorAccent))
+                                .setColor(ContextCompat.getColor(this, R.color.colorAccent))
                                 .setContentIntent(PendingIntent.getActivity(
                                         this,
                                         401,

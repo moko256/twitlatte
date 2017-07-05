@@ -19,13 +19,16 @@ package com.github.moko256.twicalico.utils;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.customtabs.CustomTabsIntent;
+import android.support.v4.content.ContextCompat;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.ClickableSpan;
-import android.text.style.URLSpan;
 import android.view.View;
 
+import com.github.moko256.twicalico.R;
 import com.github.moko256.twicalico.SearchResultActivity;
 import com.github.moko256.twicalico.ShowUserActivity;
 
@@ -132,10 +135,7 @@ public class TwitterStringUtils {
             spannableStringBuilder.setSpan(new ClickableSpan() {
                 @Override
                 public void onClick(View view) {
-                    mContext.startActivity(new Intent(mContext,SearchResultActivity.class)
-                            .setAction(Intent.ACTION_SEARCH)
-                            .putExtra(SearchManager.QUERY,symbolEntity.getText())
-                    );
+                    mContext.startActivity(SearchResultActivity.getIntent(mContext, symbolEntity.getText()));
                 }
             }, tweet.offsetByCodePoints(0,symbolEntity.getStart()), tweet.offsetByCodePoints(0,symbolEntity.getEnd()), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
         }
@@ -189,7 +189,16 @@ public class TwitterStringUtils {
             if (entity.getStart() <= tweetLength && entity.getEnd() <= tweetLength) {
                 int dusp = displayUrlLength - urlLength;
                 spannableStringBuilder.replace(tweet.offsetByCodePoints(0, entity.getStart()) + sp, tweet.offsetByCodePoints(0, entity.getEnd()) + sp, expandedUrl);
-                spannableStringBuilder.setSpan(new URLSpan(expandedUrl), tweet.offsetByCodePoints(0, entity.getStart()) + sp, tweet.offsetByCodePoints(0, entity.getEnd()) + sp + dusp, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+                spannableStringBuilder.setSpan(new ClickableSpan() {
+                    @Override
+                    public void onClick(View view) {
+                        new CustomTabsIntent.Builder()
+                                .setToolbarColor(ContextCompat.getColor(mContext, R.color.colorPrimary))
+                                .setSecondaryToolbarColor(ContextCompat.getColor(mContext, R.color.colorPrimaryDark))
+                                .build()
+                                .launchUrl(mContext, Uri.parse(expandedUrl));
+                    }
+                }, tweet.offsetByCodePoints(0, entity.getStart()) + sp, tweet.offsetByCodePoints(0, entity.getEnd()) + sp + dusp, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
 
                 sp += dusp;
             }

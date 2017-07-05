@@ -23,6 +23,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.customtabs.CustomTabsIntent;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -127,7 +128,8 @@ public class OAuthActivity extends AppCompatActivity {
     private void startBrowser(String url){
         new CustomTabsIntent.Builder()
                 .setShowTitle(false)
-                .setToolbarColor(getResources().getColor(R.color.colorPrimary))
+                .setToolbarColor(ContextCompat.getColor(this, R.color.colorPrimary))
+                .setSecondaryToolbarColor(ContextCompat.getColor(this, R.color.colorPrimaryDark))
                 .build()
                 .launchUrl(OAuthActivity.this, Uri.parse(url));
     }
@@ -158,9 +160,6 @@ public class OAuthActivity extends AppCompatActivity {
 
     private void storeAccessToken(AccessToken accessToken){
         SharedPreferences defaultSharedPreferences= PreferenceManager.getDefaultSharedPreferences(this);
-
-        String token = accessToken.getToken();
-        String tokenSecret = accessToken.getTokenSecret();
 
         TokenSQLiteOpenHelper tokenOpenHelper = new TokenSQLiteOpenHelper(this);
         long nowAccountPoint=tokenOpenHelper.addAccessToken(accessToken)-1;
