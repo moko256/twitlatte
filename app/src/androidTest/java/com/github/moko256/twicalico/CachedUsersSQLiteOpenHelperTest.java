@@ -16,10 +16,12 @@
 
 package com.github.moko256.twicalico;
 
-import android.app.Application;
 import android.support.annotation.NonNull;
-import android.test.ApplicationTestCase;
-import android.test.RenamingDelegatingContext;
+import android.support.test.InstrumentationRegistry;
+import android.support.test.runner.AndroidJUnit4;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import java.util.Date;
 
@@ -28,13 +30,17 @@ import twitter4j.Status;
 import twitter4j.URLEntity;
 import twitter4j.User;
 
+import static org.junit.Assert.*;
+
 /**
  * Created by moko256 on 2017/03/17.
  *
  * @author moko256
  */
+@RunWith(AndroidJUnit4.class)
+public class CachedUsersSQLiteOpenHelperTest {
 
-public class CachedUsersSQLiteOpenHelperTest extends ApplicationTestCase<Application> {
+    private CachedUsersSQLiteOpenHelper helper = new CachedUsersSQLiteOpenHelper(InstrumentationRegistry.getTargetContext());
 
     private static final long TEST_DUMMY_USER_ID_1 = 1L;
     private static final long TEST_DUMMY_USER_ID_2 = 2L;
@@ -42,32 +48,36 @@ public class CachedUsersSQLiteOpenHelperTest extends ApplicationTestCase<Applica
     private static final String TEST_DUMMY_USER_NAME_0 = "0";
     private static final String TEST_DUMMY_USER_NAME_1 = "1";
 
-    public CachedUsersSQLiteOpenHelperTest() {
-        super(Application.class);
+    @Test
+    public void test() throws Exception {
+        addCacheTest();
+        updateCacheTest();
+        removeCacheTest();
+        addUsersTest();
+        helper.close();
     }
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-
-        CachedUsersSQLiteOpenHelper helper = new CachedUsersSQLiteOpenHelper(new RenamingDelegatingContext(getContext(), ""));
-
+    private void addCacheTest(){
         helper.addCachedUser(new TestUser(TEST_DUMMY_USER_ID_1, TEST_DUMMY_USER_NAME_0));
         User addedStatusResult = helper.getCachedUser(TEST_DUMMY_USER_ID_1);
 
         assertEquals(addedStatusResult.getName(), TEST_DUMMY_USER_NAME_0);
+    }
 
-
+    private void updateCacheTest(){
         helper.addCachedUser(new TestUser(TEST_DUMMY_USER_ID_1, TEST_DUMMY_USER_NAME_1));
         User updatedStatusResult = helper.getCachedUser(TEST_DUMMY_USER_ID_1);
 
         assertEquals(updatedStatusResult.getName(), TEST_DUMMY_USER_NAME_1);
+    }
 
-
+    private void removeCacheTest(){
         helper.deleteCachedUser(TEST_DUMMY_USER_ID_1);
 
         assertEquals(helper.getCachedUser(TEST_DUMMY_USER_ID_1), null);
+    }
 
+    private void addUsersTest(){
         helper.addCachedUsers(new User[]{
                 new TestUser(TEST_DUMMY_USER_ID_1, TEST_DUMMY_USER_NAME_0),
                 new TestUser(TEST_DUMMY_USER_ID_2, TEST_DUMMY_USER_NAME_1)
@@ -75,8 +85,6 @@ public class CachedUsersSQLiteOpenHelperTest extends ApplicationTestCase<Applica
 
         assertEquals(helper.getCachedUser(TEST_DUMMY_USER_ID_1).getName(), TEST_DUMMY_USER_NAME_0);
         assertEquals(helper.getCachedUser(TEST_DUMMY_USER_ID_2).getName(), TEST_DUMMY_USER_NAME_1);
-
-        helper.close();
     }
 
     private static class TestUser implements User{

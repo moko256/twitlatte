@@ -16,9 +16,11 @@
 
 package com.github.moko256.twicalico;
 
-import android.app.Application;
-import android.test.ApplicationTestCase;
-import android.test.RenamingDelegatingContext;
+import android.support.test.InstrumentationRegistry;
+import android.support.test.runner.AndroidJUnit4;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import java.util.Date;
 
@@ -34,13 +36,17 @@ import twitter4j.URLEntity;
 import twitter4j.User;
 import twitter4j.UserMentionEntity;
 
+import static org.junit.Assert.*;
+
 /**
  * Created by moko256 on 2017/03/17.
  *
  * @author moko256
  */
+@RunWith(AndroidJUnit4.class)
+public class CachedStatusesSQLiteOpenHelperTest {
 
-public class CachedStatusesSQLiteOpenHelperTest extends ApplicationTestCase<Application> {
+    private CachedStatusesSQLiteOpenHelper helper = new CachedStatusesSQLiteOpenHelper(InstrumentationRegistry.getTargetContext());
 
     private static final long TEST_DUMMY_STATUS_ID_1 = 1L;
     private static final long TEST_DUMMY_STATUS_ID_2 = 2L;
@@ -48,32 +54,36 @@ public class CachedStatusesSQLiteOpenHelperTest extends ApplicationTestCase<Appl
     private static final String TEST_DUMMY_STATUS_TEXT_0 = "0";
     private static final String TEST_DUMMY_STATUS_TEXT_1 = "1";
 
-    public CachedStatusesSQLiteOpenHelperTest() {
-        super(Application.class);
+    @Test
+    public void test() throws Exception {
+        addCacheTest();
+        updateCacheTest();
+        removeCacheTest();
+        addStatusesTest();
+        helper.close();
     }
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-
-        CachedStatusesSQLiteOpenHelper helper = new CachedStatusesSQLiteOpenHelper(new RenamingDelegatingContext(getContext(), ""));
-
+    private void addCacheTest(){
         helper.addCachedStatus(new TestStatus(TEST_DUMMY_STATUS_ID_1, TEST_DUMMY_STATUS_TEXT_0));
         Status addedStatusResult = helper.getCachedStatus(TEST_DUMMY_STATUS_ID_1);
 
         assertEquals(addedStatusResult.getText(), TEST_DUMMY_STATUS_TEXT_0);
+    }
 
-
+    private void updateCacheTest(){
         helper.addCachedStatus(new TestStatus(TEST_DUMMY_STATUS_ID_1, TEST_DUMMY_STATUS_TEXT_1));
         Status updatedStatusResult = helper.getCachedStatus(TEST_DUMMY_STATUS_ID_1);
 
         assertEquals(updatedStatusResult.getText(), TEST_DUMMY_STATUS_TEXT_1);
+    }
 
-
+    private void removeCacheTest(){
         helper.deleteCachedStatus(TEST_DUMMY_STATUS_ID_1);
 
         assertEquals(helper.getCachedStatus(TEST_DUMMY_STATUS_ID_1), null);
+    }
 
+    private void addStatusesTest(){
         helper.addCachedStatuses(new Status[]{
                 new TestStatus(TEST_DUMMY_STATUS_ID_1, TEST_DUMMY_STATUS_TEXT_0),
                 new TestStatus(TEST_DUMMY_STATUS_ID_2, TEST_DUMMY_STATUS_TEXT_1)
@@ -81,8 +91,6 @@ public class CachedStatusesSQLiteOpenHelperTest extends ApplicationTestCase<Appl
 
         assertEquals(helper.getCachedStatus(TEST_DUMMY_STATUS_ID_1).getText(), TEST_DUMMY_STATUS_TEXT_0);
         assertEquals(helper.getCachedStatus(TEST_DUMMY_STATUS_ID_2).getText(), TEST_DUMMY_STATUS_TEXT_1);
-
-        helper.close();
     }
 
     private static class TestStatus implements Status{

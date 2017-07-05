@@ -16,19 +16,25 @@
 
 package com.github.moko256.twicalico;
 
-import android.app.Application;
-import android.test.ApplicationTestCase;
-import android.test.RenamingDelegatingContext;
+import android.support.test.InstrumentationRegistry;
+import android.support.test.runner.AndroidJUnit4;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import twitter4j.auth.AccessToken;
+
+import static org.junit.Assert.*;
 
 /**
  * Created by moko256 on 2017/03/04.
  *
  * @author moko256
  */
+@RunWith(AndroidJUnit4.class)
+public class TokenSQLiteOpenHelperTest {
 
-public class TokenSQLiteOpenHelperTest extends ApplicationTestCase<Application> {
+    private TokenSQLiteOpenHelper helper = new TokenSQLiteOpenHelper(InstrumentationRegistry.getTargetContext());
 
     private static final long TEST_USER_1_USER_ID = 1L;
 
@@ -40,22 +46,21 @@ public class TokenSQLiteOpenHelperTest extends ApplicationTestCase<Application> 
     private static final String TEST_USER_1_USER_TOKEN_2 = "token2";
     private static final String TEST_USER_1_USER_TOKEN_SECRET_2 = "token_secret2";
 
-    public TokenSQLiteOpenHelperTest() {
-        super(Application.class);
+    @Test
+    public void test() throws Exception {
+        addToken();
+        updateToken();
+        deleteToken();
+        helper.close();
     }
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-
-        TokenSQLiteOpenHelper helper = new TokenSQLiteOpenHelper(new RenamingDelegatingContext(getContext(), "test_"));
-
+    private void addToken(){
         final long addAccessTokenResult = helper.addAccessToken(
                 generateAccessToken(
-                TEST_USER_1_USER_ID,
-                TEST_USER_1_USER_SCREEN_NAME_1,
-                TEST_USER_1_USER_TOKEN_1,
-                TEST_USER_1_USER_TOKEN_SECRET_1
+                        TEST_USER_1_USER_ID,
+                        TEST_USER_1_USER_SCREEN_NAME_1,
+                        TEST_USER_1_USER_TOKEN_1,
+                        TEST_USER_1_USER_TOKEN_SECRET_1
                 )
         );
 
@@ -67,9 +72,9 @@ public class TokenSQLiteOpenHelperTest extends ApplicationTestCase<Application> 
         assertEquals(addedAccessTokenResult.getScreenName(), TEST_USER_1_USER_SCREEN_NAME_1);
         assertEquals(addedAccessTokenResult.getToken(), TEST_USER_1_USER_TOKEN_1);
         assertEquals(addedAccessTokenResult.getTokenSecret(), TEST_USER_1_USER_TOKEN_SECRET_1);
+    }
 
-
-
+    private void updateToken(){
         final long updateAccessTokenResult = helper.addAccessToken(
                 generateAccessToken(
                         TEST_USER_1_USER_ID,
@@ -86,13 +91,11 @@ public class TokenSQLiteOpenHelperTest extends ApplicationTestCase<Application> 
         assertEquals(updatedAccessTokenResult.getScreenName(), TEST_USER_1_USER_SCREEN_NAME_2);
         assertEquals(updatedAccessTokenResult.getToken(), TEST_USER_1_USER_TOKEN_2);
         assertEquals(updatedAccessTokenResult.getTokenSecret(), TEST_USER_1_USER_TOKEN_SECRET_2);
+    }
 
-
-
+    private void deleteToken(){
         final long deleteAccessTokenResult = helper.deleteAccessToken(TEST_USER_1_USER_ID);
         assertEquals(deleteAccessTokenResult, 0);
-
-        helper.close();
     }
 
     private AccessToken generateAccessToken(final long userId, final String screenName, final String token, final String tokenSecret){

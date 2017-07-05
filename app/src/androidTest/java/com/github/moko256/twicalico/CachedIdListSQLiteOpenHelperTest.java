@@ -16,58 +16,70 @@
 
 package com.github.moko256.twicalico;
 
-import android.app.Application;
-import android.test.ApplicationTestCase;
-import android.test.RenamingDelegatingContext;
+import android.support.test.InstrumentationRegistry;
+import android.support.test.runner.AndroidJUnit4;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import java.util.ArrayList;
 
+import static org.junit.Assert.*;
+
 /**
- * Created by kouta on 2017/06/08.
+ * Created by moko256 on 2017/06/08.
  *
  * @author moko256
  */
+@RunWith(AndroidJUnit4.class)
+public class CachedIdListSQLiteOpenHelperTest {
 
-public class CachedIdListSQLiteOpenHelperTest extends ApplicationTestCase<Application> {
+    private CachedIdListSQLiteOpenHelper helper = new CachedIdListSQLiteOpenHelper(InstrumentationRegistry.getTargetContext(), "testDatabase");
 
-    public CachedIdListSQLiteOpenHelperTest() {
-        super(Application.class);
+    private long[] addInput = new long[]{0,1,2};
+    private long[] insertInput = new long[]{100, 101};
+
+    @Test
+    public void test() throws Exception{
+        helper.getWritableDatabase().execSQL("delete from testDatabase");
+        addIdTest();
+        insertIdTest();
+        deleteIdTest();
+        setListViewPositionTest();
+        helper.close();
     }
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
 
-        CachedIdListSQLiteOpenHelper helper = new CachedIdListSQLiteOpenHelper(new RenamingDelegatingContext(getContext(), ""), "testDatabase");
-
-        long[] input = new long[]{0,1,2};
-
-        helper.addIds(input);
+    private void addIdTest(){
+        helper.addIds(addInput);
 
         ArrayList<Long> result1 = helper.getIds();
         for (int i = 0; i < result1.size() ; i++) {
-            assertEquals(result1.get(i), Long.valueOf(input[i]));
+            assertEquals(result1.get(i), Long.valueOf(addInput[i]));
         }
+    }
 
-        long[] insert = new long[]{100, 101};
-        helper.insertIds(1,insert);
+    private void insertIdTest(){
+        helper.insertIds(1, insertInput);
 
         ArrayList<Long> result2 = helper.getIds();
-        for (int i = 0; i < insert.length; i++) {
-            assertEquals(Long.valueOf(insert[i]), result2.get(i + 1));
+        for (int i = 0; i < insertInput.length; i++) {
+            assertEquals(Long.valueOf(insertInput[i]), result2.get(i + 1));
         }
+    }
 
-        helper.deleteIds(input);
-        helper.deleteIds(insert);
+    private void deleteIdTest(){
+        helper.deleteIds(addInput);
+        helper.deleteIds(insertInput);
 
         assertEquals(helper.getIds().size(), 0);
+    }
 
+    private void setListViewPositionTest(){
         helper.setListViewPosition(100);
         assertEquals(helper.getListViewPosition(), 100);
 
         helper.setListViewPosition(50);
         assertEquals(helper.getListViewPosition(), 50);
-
-        helper.close();
     }
 }
