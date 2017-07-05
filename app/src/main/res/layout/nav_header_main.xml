@@ -28,7 +28,7 @@
         android:fitsSystemWindows="false"
         tools:src="@android:color/darker_gray"/>
 
-    <com.github.moko256.twicalico.WideRatioLinearLayout
+    <com.github.moko256.twicalico.widget.WideRatioLinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fitsSystemWindows="true"
@@ -62,6 +62,6 @@
             android:textColor="#deFFFFFF"
             tools:text="\@user_name"/>
 
-    </com.github.moko256.twicalico.WideRatioLinearLayout>
+    </com.github.moko256.twicalico.widget.WideRatioLinearLayout>
 
 </FrameLayout>

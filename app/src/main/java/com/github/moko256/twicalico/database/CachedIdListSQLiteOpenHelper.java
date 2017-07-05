@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-package com.github.moko256.twicalico;
+package com.github.moko256.twicalico.database;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
+import com.github.moko256.twicalico.BuildConfig;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -37,11 +39,8 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
 
     private String databaseName;
 
-    public CachedIdListSQLiteOpenHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version){
-        super(context, new File(context.getCacheDir(), String.valueOf(GlobalApplication.userId) + "/" + name).getAbsolutePath(), factory, version);
-    }
-    public CachedIdListSQLiteOpenHelper(Context context, String name){
-        this(context, name + ".db", null, BuildConfig.CACHE_DATABASE_VERSION);
+    public CachedIdListSQLiteOpenHelper(Context context, long userId, String name){
+        super(context, new File(context.getCacheDir(), String.valueOf(userId) + "/" + name + ".db").getAbsolutePath(), null, BuildConfig.CACHE_DATABASE_VERSION);
         databaseName = name;
     }
 

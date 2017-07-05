@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.moko256.twicalico;
+package com.github.moko256.twicalico.database;
 
 import android.content.ContentValues;
 import android.content.Context;

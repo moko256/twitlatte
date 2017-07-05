@@ -22,6 +22,8 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
+import com.github.moko256.twicalico.utils.TwitterStringUtils;
+
 import java.util.ArrayList;
 
 import twitter4j.Status;

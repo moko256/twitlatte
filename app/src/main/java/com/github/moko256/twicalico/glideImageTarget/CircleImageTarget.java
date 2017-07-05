@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.moko256.twicalico;
+package com.github.moko256.twicalico.glideImageTarget;
 
 import android.graphics.Bitmap;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;

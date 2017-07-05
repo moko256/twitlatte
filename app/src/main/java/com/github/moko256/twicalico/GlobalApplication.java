@@ -25,6 +25,10 @@ import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.app.NotificationCompat;
 
+import com.github.moko256.twicalico.cacheMap.StatusCacheMap;
+import com.github.moko256.twicalico.cacheMap.UserCacheMap;
+import com.github.moko256.twicalico.database.TokenSQLiteOpenHelper;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Date;
@@ -50,8 +54,8 @@ public class GlobalApplication extends Application {
 
     static AppConfiguration configuration;
 
-    static UserCacheMap userCache;
-    static StatusCacheMap statusCache;
+    public static UserCacheMap userCache;
+    public static StatusCacheMap statusCache;
 
     @Override
     public void onCreate() {
@@ -168,7 +172,7 @@ public class GlobalApplication extends Application {
 
         twitter = new TwitterFactory(conf).getInstance();
 
-        userCache=new UserCacheMap(this);
-        statusCache=new StatusCacheMap(this);
+        userCache=new UserCacheMap(this, userId);
+        statusCache=new StatusCacheMap(this, userId);
     }
 }

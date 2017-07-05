@@ -34,7 +34,10 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.github.moko256.twicalico.glideImageTarget.CircleImageTarget;
 import com.github.moko256.twicalico.model.SendTweetModel;
+import com.github.moko256.twicalico.utils.TwitterStringUtils;
+import com.github.moko256.twicalico.widget.TweetImageTableView;
 
 import java.text.DateFormat;
 
@@ -105,11 +108,11 @@ public class ShowTweetActivity extends AppCompatActivity {
 
                                     RequestManager imageRequestManager= Glide.with(ShowTweetActivity.this);
 
-                                    ImageView userImage=(ImageView) findViewById(R.id.tweet_show_image);
+                                    ImageView userImage= findViewById(R.id.tweet_show_image);
 
                                     imageRequestManager.load(item.getUser().getProfileImageURL()).asBitmap().into(new CircleImageTarget(userImage));
 
-                                    TextView tweetIsReply = (TextView) findViewById(R.id.tweet_show_is_reply_text);
+                                    TextView tweetIsReply = findViewById(R.id.tweet_show_is_reply_text);
                                     long replyTweetId = item.getInReplyToStatusId();
                                     if (replyTweetId != -1){
                                         tweetIsReply.setVisibility(View.VISIBLE);
@@ -120,13 +123,13 @@ public class ShowTweetActivity extends AppCompatActivity {
 
                                     ((TextView) findViewById(R.id.tweet_show_user_name)).setText(item.getUser().getName());
                                     ((TextView) findViewById(R.id.tweet_show_user_id)).setText(TwitterStringUtils.plusAtMark(item.getUser().getScreenName()));
-                                    TextView contentText=(TextView) findViewById(R.id.tweet_show_content);
+                                    TextView contentText= findViewById(R.id.tweet_show_content);
                                     contentText.setText(TwitterStringUtils.getLinkedSequence(item,ShowTweetActivity.this));
                                     contentText.setMovementMethod(LinkMovementMethod.getInstance());
 
                                     userImage.setOnClickListener(v-> startActivity(ShowUserActivity.getIntent(this, item.getUser().getId())));
 
-                                    RelativeLayout tweetQuoteTweetLayout=(RelativeLayout) findViewById(R.id.tweet_show_quote_tweet);
+                                    RelativeLayout tweetQuoteTweetLayout= findViewById(R.id.tweet_show_quote_tweet);
 
                                     twitter4j.Status quotedStatus=item.getQuotedStatus();
                                     if(quotedStatus!=null){
@@ -145,7 +148,7 @@ public class ShowTweetActivity extends AppCompatActivity {
 
                                     MediaEntity mediaEntities[]=item.getMediaEntities();
 
-                                    TweetImageTableView tableView=(TweetImageTableView) findViewById(R.id.tweet_show_images);
+                                    TweetImageTableView tableView= findViewById(R.id.tweet_show_images);
                                     if(mediaEntities.length!=0){
                                         tableView.setVisibility(View.VISIBLE);
                                         tableView.setImageNumber(mediaEntities.length);
@@ -163,12 +166,12 @@ public class ShowTweetActivity extends AppCompatActivity {
                                             DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.FULL)
                                                     .format(item.getCreatedAt())
                                     );
-                                    TextView viaText=(TextView)findViewById(R.id.tweet_show_via);
+                                    TextView viaText= findViewById(R.id.tweet_show_via);
                                     viaText.setText(Html.fromHtml("via:"+item.getSource()));
                                     viaText.setMovementMethod(new LinkMovementMethod());
 
-                                    AppCompatEditText replyText=(AppCompatEditText) findViewById(R.id.tweet_show_tweet_reply_text);
-                                    AppCompatButton replyButton=(AppCompatButton) findViewById(R.id.tweet_show_tweet_reply_button);
+                                    AppCompatEditText replyText= findViewById(R.id.tweet_show_tweet_reply_text);
+                                    AppCompatButton replyButton= findViewById(R.id.tweet_show_tweet_reply_button);
                                     UserMentionEntity[] users = item.getUserMentionEntities();
                                     replyText.setText(TwitterStringUtils.convertToReplyTopString(item.getUser().getScreenName(), users));
                                     replyButton.setOnClickListener(v -> {

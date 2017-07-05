@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.moko256.twicalico;
+package com.github.moko256.twicalico.database;
 
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
@@ -37,7 +37,7 @@ import static org.junit.Assert.assertEquals;
 @RunWith(AndroidJUnit4.class)
 public class CachedTrendsSQLiteOpenHelperTest {
 
-    private CachedTrendsSQLiteOpenHelper helper = new CachedTrendsSQLiteOpenHelper(InstrumentationRegistry.getTargetContext());
+    private CachedTrendsSQLiteOpenHelper helper = new CachedTrendsSQLiteOpenHelper(InstrumentationRegistry.getTargetContext(), 0);
 
     private String[] input0 = new String[]{"0", "1", "2"};
     private String[] input1 = new String[]{"3", "4"};

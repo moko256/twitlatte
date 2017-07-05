@@ -28,6 +28,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.github.moko256.twicalico.database.CachedIdListSQLiteOpenHelper;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,7 +60,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
     public void onCreate(Bundle savedInstanceState) {
         list=new ArrayList<>();
         subscription = new CompositeSubscription();
-        statusIdsDatabase = new CachedIdListSQLiteOpenHelper(getContext(), getCachedIdsDatabaseName());
+        statusIdsDatabase = new CachedIdListSQLiteOpenHelper(getContext(), GlobalApplication.userId, getCachedIdsDatabaseName());
         if (savedInstanceState == null){
             ArrayList<Long> c = statusIdsDatabase.getIds();
             if (c.size() > 0) {

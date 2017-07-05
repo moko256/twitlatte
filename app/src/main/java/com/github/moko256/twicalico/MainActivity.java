@@ -34,6 +34,8 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
+import com.github.moko256.twicalico.glideImageTarget.CircleImageTarget;
+import com.github.moko256.twicalico.utils.TwitterStringUtils;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
@@ -124,7 +126,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                         ()->{}
                 );
 
-        findViewById(R.id.fab).setOnClickListener(v -> startActivity(new Intent(this, SendTweetActivity.class)));
+        findViewById(R.id.fab).setOnClickListener(v -> startActivity(new Intent(this, PostTweetActivity.class)));
 
         TabLayout tabLayout= findViewById(R.id.toolbar_tab);
 

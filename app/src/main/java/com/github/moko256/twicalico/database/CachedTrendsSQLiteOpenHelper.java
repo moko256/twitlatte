@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.moko256.twicalico;
+package com.github.moko256.twicalico.database;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -22,16 +22,15 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.github.moko256.twicalico.BuildConfig;
+
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import twitter4j.Trend;
-import twitter4j.Trends;
 
 /**
  * Created by moko256 on 2017/07/05.
@@ -41,11 +40,8 @@ import twitter4j.Trends;
 
 public class CachedTrendsSQLiteOpenHelper extends SQLiteOpenHelper {
 
-    public CachedTrendsSQLiteOpenHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version){
-        super(context, new File(context.getCacheDir(), String.valueOf(GlobalApplication.userId) + "/" + name).getAbsolutePath(), factory, version);
-    }
-    public CachedTrendsSQLiteOpenHelper(Context context){
-        this(context, "Trends.db", null, BuildConfig.CACHE_DATABASE_VERSION);
+    public CachedTrendsSQLiteOpenHelper(Context context, long userId){
+        super(context, new File(context.getCacheDir(), String.valueOf(userId) + "/" + "Trends.db").getAbsolutePath(), null, BuildConfig.CACHE_DATABASE_VERSION);
     }
 
     @Override
@@ -91,8 +87,8 @@ public class CachedTrendsSQLiteOpenHelper extends SQLiteOpenHelper {
         database.close();
     }
 
-    private class CachedTrend implements Trend{
-        String name;
+    private static class CachedTrend implements Trend{
+        private final String name;
 
         private CachedTrend(String name){
             this.name = name;

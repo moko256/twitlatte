@@ -31,6 +31,8 @@ import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.preference.PreferenceManager;
 import android.widget.Toast;
 
+import com.github.moko256.twicalico.database.TokenSQLiteOpenHelper;
+
 import java.text.DateFormat;
 import java.util.Date;
 

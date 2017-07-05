@@ -60,6 +60,7 @@ public class TrendsActivity extends AppCompatActivity {
 
         searchMenu.expandActionView();
         searchView.onActionViewExpanded();
+        searchView.clearFocus();
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String searchWord) {

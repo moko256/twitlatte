@@ -73,7 +73,7 @@
             android:theme="@style/MainActivityTheme"/>
 
         <activity
-            android:name=".SendTweetActivity"
+            android:name=".PostTweetActivity"
             android:label="@string/tweet"/>
 
         <activity

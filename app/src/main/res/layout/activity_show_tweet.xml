@@ -129,7 +129,7 @@
                     tools:text="Quote tweet context"/>
             </RelativeLayout>
 
-            <com.github.moko256.twicalico.TweetImageTableView
+            <com.github.moko256.twicalico.widget.TweetImageTableView
                 android:id="@+id/tweet_show_images"
                 android:layout_below="@id/tweet_show_quote_tweet"
                 android:layout_width="match_parent"

@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 
-package com.github.moko256.twicalico;
+package com.github.moko256.twicalico.cacheMap;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v4.util.LruCache;
+
+import com.github.moko256.twicalico.GlobalApplication;
+import com.github.moko256.twicalico.database.CachedStatusesSQLiteOpenHelper;
 
 import java.util.Collection;
 import java.util.Date;
@@ -47,8 +50,8 @@ public class StatusCacheMap {
     private LruCache<Long, Status> statusCache=new LruCache<>(10000);
     private CachedStatusesSQLiteOpenHelper diskCache;
 
-    public StatusCacheMap(Context context){
-        diskCache = new CachedStatusesSQLiteOpenHelper(context);
+    public StatusCacheMap(Context context, long userId){
+        diskCache = new CachedStatusesSQLiteOpenHelper(context, userId);
     }
 
     public int size() {
@@ -93,10 +96,6 @@ public class StatusCacheMap {
             statuses = hashSet.toArray(statuses);
             diskCache.addCachedStatuses(statuses);
         }
-    }
-
-    public void clear() {
-
     }
 
     public static class CachedStatus implements Status{

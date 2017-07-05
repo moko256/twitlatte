@@ -160,7 +160,7 @@
                 tools:text="Quoted tweet context"/>
         </RelativeLayout>
 
-        <com.github.moko256.twicalico.TweetImageTableView
+        <com.github.moko256.twicalico.widget.TweetImageTableView
             android:id="@+id/tweet_image_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -181,7 +181,7 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Caption"
             tools:text="20G"/>
 
-        <com.github.moko256.twicalico.DrawableToggleView
+        <com.github.moko256.twicalico.widget.DrawableToggleView
             android:id="@+id/tweet_content_like_button"
             android:layout_width="24dp"
             android:layout_height="24dp"
@@ -205,7 +205,7 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Caption"
             tools:text="500M"/>
 
-        <com.github.moko256.twicalico.DrawableToggleView
+        <com.github.moko256.twicalico.widget.DrawableToggleView
             android:id="@+id/tweet_content_retweet_button"
             android:layout_width="24dp"
             android:layout_height="24dp"

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.moko256.twicalico;
+package com.github.moko256.twicalico.database;
 
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
@@ -24,7 +24,7 @@ import org.junit.runner.RunWith;
 
 import java.util.ArrayList;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Created by moko256 on 2017/06/08.
@@ -34,7 +34,7 @@ import static org.junit.Assert.*;
 @RunWith(AndroidJUnit4.class)
 public class CachedIdListSQLiteOpenHelperTest {
 
-    private CachedIdListSQLiteOpenHelper helper = new CachedIdListSQLiteOpenHelper(InstrumentationRegistry.getTargetContext(), "testDatabase");
+    private CachedIdListSQLiteOpenHelper helper = new CachedIdListSQLiteOpenHelper(InstrumentationRegistry.getTargetContext(), 0, "testIdsDatabase");
 
     private long[] addInput = new long[]{0,1,2};
     private long[] insertInput = new long[]{100, 101};

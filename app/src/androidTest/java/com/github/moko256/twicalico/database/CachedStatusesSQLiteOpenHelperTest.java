@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package com.github.moko256.twicalico;
+package com.github.moko256.twicalico.database;
 
+import android.support.annotation.NonNull;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -36,7 +37,7 @@ import twitter4j.URLEntity;
 import twitter4j.User;
 import twitter4j.UserMentionEntity;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Created by moko256 on 2017/03/17.
@@ -46,7 +47,7 @@ import static org.junit.Assert.*;
 @RunWith(AndroidJUnit4.class)
 public class CachedStatusesSQLiteOpenHelperTest {
 
-    private CachedStatusesSQLiteOpenHelper helper = new CachedStatusesSQLiteOpenHelper(InstrumentationRegistry.getTargetContext());
+    private CachedStatusesSQLiteOpenHelper helper = new CachedStatusesSQLiteOpenHelper(InstrumentationRegistry.getTargetContext(), 0);
 
     private static final long TEST_DUMMY_STATUS_ID_1 = 1L;
     private static final long TEST_DUMMY_STATUS_ID_2 = 2L;
@@ -244,7 +245,7 @@ public class CachedStatusesSQLiteOpenHelperTest {
         }
 
         @Override
-        public int compareTo(Status o) {
+        public int compareTo(@NonNull Status o) {
             return 0;
         }
 

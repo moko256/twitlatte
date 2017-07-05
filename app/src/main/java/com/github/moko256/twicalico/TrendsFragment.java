@@ -34,6 +34,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.github.moko256.twicalico.database.CachedTrendsSQLiteOpenHelper;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -64,7 +66,7 @@ public class TrendsFragment extends BaseListFragment {
     public void onCreate(Bundle savedInstanceState) {
         list=new ArrayList<>();
         subscription = new CompositeSubscription();
-        helper = new CachedTrendsSQLiteOpenHelper(getContext());
+        helper = new CachedTrendsSQLiteOpenHelper(getContext(), GlobalApplication.userId);
         if (savedInstanceState == null) {
             ArrayList<Trend> trends = helper.getTrends();
             if (trends.size() > 0){

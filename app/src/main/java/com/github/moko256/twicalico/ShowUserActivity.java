@@ -30,6 +30,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.github.moko256.twicalico.utils.TwitterStringUtils;
+
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -55,22 +57,22 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_user);
 
-        setSupportActionBar((Toolbar) findViewById(R.id.toolbar_show_user));
+        setSupportActionBar(findViewById(R.id.toolbar_show_user));
 
         actionBar=getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeAsUpIndicator(R.drawable.ic_back_white_24dp);
 
-        viewPager=(ViewPager) findViewById(R.id.show_user_view_pager);
+        viewPager= findViewById(R.id.show_user_view_pager);
         viewPager.setOffscreenPageLimit(1);
 
-        tabLayout=(TabLayout) findViewById(R.id.tab_show_user);
+        tabLayout= findViewById(R.id.tab_show_user);
         tabLayout.setupWithViewPager(viewPager);
         tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
 
         findViewById(R.id.activity_show_user_fab).setOnClickListener(v -> {
             if (user!=null){
-                startActivity(SendTweetActivity.getIntent(this, TwitterStringUtils.plusAtMark(user.getScreenName())+" "));
+                startActivity(PostTweetActivity.getIntent(this, TwitterStringUtils.plusAtMark(user.getScreenName())+" "));
             }
         });
 

@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-package com.github.moko256.twicalico;
+package com.github.moko256.twicalico.cacheMap;
 
 import android.content.Context;
 import android.support.v4.util.LruCache;
+
+import com.github.moko256.twicalico.database.CachedUsersSQLiteOpenHelper;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -35,8 +37,8 @@ public class UserCacheMap {
     private CachedUsersSQLiteOpenHelper diskCache;
     private LruCache<Long, User> cache=new LruCache<>(10000);
 
-    public UserCacheMap(Context context){
-        diskCache = new CachedUsersSQLiteOpenHelper(context);
+    public UserCacheMap(Context context, long userId){
+        diskCache = new CachedUsersSQLiteOpenHelper(context, userId);
     }
 
     public int size() {
@@ -71,9 +73,5 @@ public class UserCacheMap {
         } else {
             return memoryCache;
         }
-    }
-
-    public void clear() {
-
     }
 }

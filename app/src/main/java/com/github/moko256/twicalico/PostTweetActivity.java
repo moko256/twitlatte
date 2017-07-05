@@ -33,30 +33,16 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.github.moko256.twicalico.model.SendTweetModel;
 import com.twitter.Validator;
-
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.util.List;
-import java.util.regex.Pattern;
-
-import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
-import twitter4j.Status;
-import twitter4j.StatusUpdate;
-import twitter4j.Twitter;
-import twitter4j.TwitterException;
 
 /**
  * Created by moko256 on 2015/11/08.
  *
  * @author moko256
  */
-public class SendTweetActivity extends AppCompatActivity {
+public class PostTweetActivity extends AppCompatActivity {
 
     private static final String INTENT_EXTRA_IN_REPLY_TO_STATUS_ID = "inReplyToStatusId";
     private static final String INTENT_EXTRA_TWEET_TEXT = "text";
@@ -84,15 +70,15 @@ public class SendTweetActivity extends AppCompatActivity {
             model.setInReplyToStatusId(savedInstanceState.getLong(INTENT_EXTRA_IN_REPLY_TO_STATUS_ID, -1));
         }
 
-        rootViewGroup=(ViewGroup) findViewById(R.id.activity_tweet_send_layout_root);
+        rootViewGroup= findViewById(R.id.activity_tweet_send_layout_root);
 
         actionBar=getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeAsUpIndicator(R.drawable.ic_clear_white_24dp);
 
-        counterTextView=(TextView)findViewById(R.id.tweet_text_edit_counter);
+        counterTextView= findViewById(R.id.tweet_text_edit_counter);
 
-        editText=(AppCompatEditText)findViewById(R.id.tweet_text_edit);
+        editText= findViewById(R.id.tweet_text_edit);
         editText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -127,7 +113,7 @@ public class SendTweetActivity extends AppCompatActivity {
 
         editText.setHint(model.isReply()? R.string.reply: R.string.tweet);
 
-        imagesRecyclerView = (RecyclerView) findViewById(R.id.activity_tweet_send_images_recycler_view);
+        imagesRecyclerView = findViewById(R.id.activity_tweet_send_images_recycler_view);
         imagesAdapter = new ImagesAdapter(this);
         model.setUriList(imagesAdapter.getImagesList());
 
@@ -147,7 +133,7 @@ public class SendTweetActivity extends AppCompatActivity {
         imagesRecyclerView.setAdapter(imagesAdapter);
         imagesAdapter.notifyDataSetChanged();
 
-        button=(AppCompatButton)findViewById(R.id.tweet_text_submit);
+        button= findViewById(R.id.tweet_text_submit);
         button.setOnClickListener(v -> {
             v.setEnabled(false);
             model.postTweet()
@@ -205,10 +191,10 @@ public class SendTweetActivity extends AppCompatActivity {
     }
 
     public static Intent getIntent(Context context, String text){
-        return new Intent(context,SendTweetActivity.class).putExtra(INTENT_EXTRA_TWEET_TEXT, text);
+        return new Intent(context,PostTweetActivity.class).putExtra(INTENT_EXTRA_TWEET_TEXT, text);
     }
 
     public static Intent getIntent(Context context, long inReplyToStatusId, String text){
-        return SendTweetActivity.getIntent(context, text).putExtra(INTENT_EXTRA_IN_REPLY_TO_STATUS_ID, inReplyToStatusId);
+        return PostTweetActivity.getIntent(context, text).putExtra(INTENT_EXTRA_IN_REPLY_TO_STATUS_ID, inReplyToStatusId);
     }
 }

@@ -38,6 +38,9 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.github.moko256.twicalico.glideImageTarget.CircleImageTarget;
+import com.github.moko256.twicalico.utils.TwitterStringUtils;
+import com.github.moko256.twicalico.widget.TweetImageTableView;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
@@ -310,7 +313,7 @@ public class StatusView extends FrameLayout {
         retweetButton.setEnabled(!item.getUser().isProtected());
 
         replyButton.setOnClickListener(
-                v -> getContext().startActivity(SendTweetActivity.getIntent(getContext(), item.getId(), TwitterStringUtils.convertToReplyTopString(item.getUser().getScreenName(), item.getUserMentionEntities()).toString()))
+                v -> getContext().startActivity(PostTweetActivity.getIntent(getContext(), item.getId(), TwitterStringUtils.convertToReplyTopString(item.getUser().getScreenName(), item.getUserMentionEntities()).toString()))
         );
 
         likeCount.setText((item.getFavoriteCount() != 0)? TwitterStringUtils.convertToSIUnitString(item.getFavoriteCount()): "");

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.moko256.twicalico;
+package com.github.moko256.twicalico.database;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -23,8 +23,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.support.annotation.NonNull;
 
+import com.github.moko256.twicalico.BuildConfig;
+
 import java.io.File;
-import java.net.URL;
 import java.util.Arrays;
 import java.util.Date;
 
@@ -87,11 +88,8 @@ public class CachedUsersSQLiteOpenHelper extends SQLiteOpenHelper {
             "withheldInCountries"
     };
 
-    public CachedUsersSQLiteOpenHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version){
-        super(context, new File(context.getCacheDir(), String.valueOf(GlobalApplication.userId) + "/" + name).getAbsolutePath(), factory, version);
-    }
-    public CachedUsersSQLiteOpenHelper(Context context){
-        this(context, "CachedUsers.db", null, BuildConfig.CACHE_DATABASE_VERSION);
+    public CachedUsersSQLiteOpenHelper(Context context, long userId){
+        super(context, new File(context.getCacheDir(), String.valueOf(userId) + "/" + "CachedUsers.db").getAbsolutePath(), null, BuildConfig.CACHE_DATABASE_VERSION);
     }
 
     @Override

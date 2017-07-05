@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.moko256.twicalico;
+package com.github.moko256.twicalico.utils;
 
 import android.app.SearchManager;
 import android.content.Context;
@@ -25,6 +25,9 @@ import android.text.Spanned;
 import android.text.style.ClickableSpan;
 import android.text.style.URLSpan;
 import android.view.View;
+
+import com.github.moko256.twicalico.SearchResultActivity;
+import com.github.moko256.twicalico.ShowUserActivity;
 
 import java.text.Normalizer;
 import java.util.List;
