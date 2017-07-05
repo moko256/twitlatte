@@ -64,38 +64,7 @@ public class CachedTrendsSQLiteOpenHelper extends SQLiteOpenHelper {
         ArrayList<Trend> trends = new ArrayList<>(c.getCount());
 
         while (c.moveToNext()){
-            trends.add(new Trend() {
-                String name = c.getString(0);
-                @Override
-                public String getName() {
-                    return name;
-                }
-
-                @Override
-                public String getURL() {
-                    return "http://twitter.com/search?q=" + getQuery();
-                }
-
-                @Override
-                public String getQuery() {
-                    try {
-                        return URLEncoder.encode(name, "UTF-8");
-                    } catch (UnsupportedEncodingException e) {
-                        e.printStackTrace();
-                        return null;
-                    }
-                }
-
-                @Override
-                public int hashCode() {
-                    return name.hashCode();
-                }
-
-                @Override
-                public boolean equals(Object obj) {
-                    return obj!=null&&obj instanceof Trend&&((Trend) obj).getName().equals(name);
-                }
-            });
+            trends.add(new CachedTrend(c.getString(0)));
         }
 
         c.close();
@@ -120,5 +89,43 @@ public class CachedTrendsSQLiteOpenHelper extends SQLiteOpenHelper {
         database.setTransactionSuccessful();
         database.endTransaction();
         database.close();
+    }
+
+    private class CachedTrend implements Trend{
+        String name;
+
+        private CachedTrend(String name){
+            this.name = name;
+        }
+
+        @Override
+        public String getName() {
+            return name;
+        }
+
+        @Override
+        public String getURL() {
+            return "http://twitter.com/search?q=" + getQuery();
+        }
+
+        @Override
+        public String getQuery() {
+            try {
+                return URLEncoder.encode(name, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        public int hashCode() {
+            return name.hashCode();
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            return obj!=null&&obj instanceof Trend&&((Trend) obj).getName().equals(name);
+        }
     }
 }

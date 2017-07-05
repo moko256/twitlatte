@@ -20,15 +20,14 @@ import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Rect;
+import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
-import android.support.v4.content.PermissionChecker;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
@@ -134,11 +133,19 @@ public class TrendsFragment extends BaseListFragment {
 
     @Override
     protected void onInitializeList() {
-        switch (PermissionChecker.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION)){
-            case PermissionChecker.PERMISSION_GRANTED:
+        int permissionStatus;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            permissionStatus = getActivity().checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION);
+        } else {
+            permissionStatus = PackageManager.PERMISSION_GRANTED;
+        }
+
+        switch (permissionStatus){
+            case PackageManager.PERMISSION_GRANTED:
                 subscription.add(
-                        getResponseObservable()
-                                .subscribeOn(Schedulers.newThread())
+                        getLocationObservable()
+                                .concatMap(location -> getResponseObservable(location).subscribeOn(Schedulers.newThread()))
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(
                                         result-> {
@@ -160,9 +167,10 @@ public class TrendsFragment extends BaseListFragment {
                                 )
                 );
                 break;
-            case PermissionChecker.PERMISSION_DENIED:
+            case PackageManager.PERMISSION_DENIED:
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    getActivity().requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 400);
+                    requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 400);
+                    return;
                 }
                 break;
             default:
@@ -196,25 +204,39 @@ public class TrendsFragment extends BaseListFragment {
         }
     }
 
-    public Observable<Trends> getResponseObservable() {
+    public Observable<Trends> getResponseObservable(Location location) {
         return Observable.create(
                 subscriber->{
                     try {
-                        LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-                        Location location = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+                        subscriber.onNext(getTrends(location));
+                        subscriber.onCompleted();
+                    } catch (TwitterException e) {
+                        subscriber.onError(e);
+                    }
+                }
+        );
+    }
+
+    public Observable<Location> getLocationObservable(){
+        LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        LocationListener[] locationListener = new LocationListener[1];
+        Observable<Location> result = Observable.create(
+                subscriber -> {
+                    try {
+                        Criteria criteria = new Criteria();
+                        criteria.setAccuracy(Criteria.ACCURACY_COARSE);
+                        criteria.setCostAllowed(false);
+                        String bestProvider = locationManager.getBestProvider(criteria, true);
+                        Location location = locationManager.getLastKnownLocation(bestProvider);
                         if (location != null) {
-                            subscriber.onNext(getTrends(location));
+                            subscriber.onNext(location);
                             subscriber.onCompleted();
                         } else {
-                            locationManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER, 0, 0, new LocationListener() {
+                            locationListener[0] = new LocationListener() {
                                 @Override
                                 public void onLocationChanged(Location location) {
                                     locationManager.removeUpdates(this);
-                                    try {
-                                        subscriber.onNext(getTrends(location));
-                                    } catch (TwitterException e) {
-                                        subscriber.onError(e);
-                                    }
+                                    subscriber.onNext(location);
                                     subscriber.onCompleted();
                                 }
 
@@ -226,13 +248,20 @@ public class TrendsFragment extends BaseListFragment {
 
                                 @Override
                                 public void onProviderDisabled(String s) {}
-                            }, Looper.getMainLooper());
+                            };
+                            locationManager.requestLocationUpdates(bestProvider, 0, 0, locationListener[0]);
                         }
-                    } catch (TwitterException | SecurityException e) {
+                    } catch(SecurityException e){
                         subscriber.onError(e);
                     }
                 }
         );
+        result.doOnUnsubscribe(() -> {
+            if (locationListener[0] != null){
+                locationManager.removeUpdates(locationListener[0]);
+            }
+        });
+        return result;
     }
 
     private Trends getTrends(Location location) throws TwitterException {
