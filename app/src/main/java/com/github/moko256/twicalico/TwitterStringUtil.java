@@ -107,10 +107,12 @@ public class TwitterStringUtil {
 
             int urlLength = url.codePointCount(0, url.length());
             int displayUrlLength = displayUrl.codePointCount(0, displayUrl.length());
-            int dusp = displayUrlLength - urlLength;
-            builder.replace(tweet.offsetByCodePoints(0,entity.getStart()) + sp, tweet.offsetByCodePoints(0,entity.getEnd()) + sp, displayUrl);
+            if (entity.getStart() < tweet.length() && entity.getEnd() < tweet.length()){
+                int dusp = displayUrlLength - urlLength;
+                builder.replace(tweet.offsetByCodePoints(0,entity.getStart()) + sp, tweet.offsetByCodePoints(0,entity.getEnd()) + sp, displayUrl);
 
-            sp+=dusp;
+                sp+=dusp;
+            }
         }
 
         return builder;
@@ -179,11 +181,13 @@ public class TwitterStringUtil {
 
             int urlLength = url.codePointCount(0, url.length());
             int displayUrlLength = expandedUrl.codePointCount(0, expandedUrl.length());
-            int dusp = displayUrlLength - urlLength;
-            spannableStringBuilder.replace(tweet.offsetByCodePoints(0,entity.getStart()) + sp, tweet.offsetByCodePoints(0,entity.getEnd()) + sp, expandedUrl);
-            spannableStringBuilder.setSpan(new URLSpan(expandedUrl), tweet.offsetByCodePoints(0,entity.getStart()) + sp, tweet.offsetByCodePoints(0,entity.getEnd()) + sp + dusp, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+            if (entity.getStart() < tweet.length() && entity.getEnd() < tweet.length()) {
+                int dusp = displayUrlLength - urlLength;
+                spannableStringBuilder.replace(tweet.offsetByCodePoints(0, entity.getStart()) + sp, tweet.offsetByCodePoints(0, entity.getEnd()) + sp, expandedUrl);
+                spannableStringBuilder.setSpan(new URLSpan(expandedUrl), tweet.offsetByCodePoints(0, entity.getStart()) + sp, tweet.offsetByCodePoints(0, entity.getEnd()) + sp + dusp, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
 
-            sp+=dusp;
+                sp += dusp;
+            }
         }
 
         return spannableStringBuilder;

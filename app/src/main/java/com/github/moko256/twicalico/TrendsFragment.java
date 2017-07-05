@@ -48,7 +48,9 @@ import twitter4j.Trends;
 import twitter4j.TwitterException;
 
 /**
- * Created by kouta on 2017/07/05.
+ * Created by moko256 on 2017/07/05.
+ *
+ * @author moko256
  */
 
 public class TrendsFragment extends BaseListFragment {
@@ -57,11 +59,20 @@ public class TrendsFragment extends BaseListFragment {
 
     CompositeSubscription subscription;
 
+    CachedTrendsSQLiteOpenHelper helper;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         list=new ArrayList<>();
         subscription = new CompositeSubscription();
-
+        helper = new CachedTrendsSQLiteOpenHelper(getContext());
+        if (savedInstanceState == null) {
+            ArrayList<Trend> trends = helper.getTrends();
+            if (trends.size() > 0){
+                list = trends;
+                setProgressCircleLoading(false);
+            }
+        }
         super.onCreate(savedInstanceState);
     }
 
@@ -116,6 +127,8 @@ public class TrendsFragment extends BaseListFragment {
         super.onDestroy();
         subscription.unsubscribe();
         subscription = null;
+        helper.close();
+        helper = null;
         list=null;
     }
 
@@ -223,10 +236,13 @@ public class TrendsFragment extends BaseListFragment {
     }
 
     private Trends getTrends(Location location) throws TwitterException {
-        return GlobalApplication.twitter
+        Trends result = GlobalApplication.twitter
                 .getPlaceTrends(GlobalApplication.twitter.getClosestTrends(
                         new GeoLocation(location.getLatitude(), location.getLongitude())
                 ).get(0).getWoeid());
+
+        helper.setTrends(Arrays.asList(result.getTrends()));
+        return result;
     }
 
 }

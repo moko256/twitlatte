@@ -16,14 +16,7 @@
 
 package com.github.moko256.twicalico;
 
-import android.app.SearchManager;
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v7.widget.SearchView;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 
 import java.util.ArrayList;
 
@@ -79,7 +72,8 @@ public class SearchResultFragment extends BaseTweetListFragment {
             Query query=new Query(searchText)
                     .count(paging.getCount())
                     .sinceId(paging.getSinceId())
-                    .maxId(paging.getMaxId());
+                    .maxId(paging.getMaxId())
+                    .resultType(Query.ResultType.recent);
             result.addAll(GlobalApplication.twitter.search().search(query).getTweets());
         }
         return result;
@@ -110,6 +104,11 @@ public class SearchResultFragment extends BaseTweetListFragment {
 
     @Override
     protected String getCachedIdsDatabaseName() {
-        return "Search_" + searchText.hashCode();
+        byte[] bytes = searchText.getBytes();
+        StringBuilder bytesStr = new StringBuilder("Search_");
+        for (byte aByte : bytes) {
+            bytesStr.append(aByte < 0? "_" + String.valueOf(-aByte): String.valueOf(aByte));
+        }
+        return bytesStr.toString();
     }
 }
