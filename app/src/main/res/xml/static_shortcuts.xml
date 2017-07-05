@@ -23,7 +23,7 @@
         android:shortcutLongLabel="@string/tweet">
         <intent
             android:action="android.intent.action.VIEW"
-            android:targetPackage="com.github.moko256.twicailco"
+            android:targetPackage="com.github.moko256.twicalico"
             android:targetClass="com.github.moko256.twicalico.SendTweetActivity"/>
         <categories android:name="android.shortcut.conversation"/>
     </shortcut>
