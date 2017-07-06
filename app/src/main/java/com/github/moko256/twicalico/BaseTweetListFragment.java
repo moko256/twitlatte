@@ -303,11 +303,10 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
 
     @Override
     protected RecyclerView.LayoutManager initializeRecyclerViewLayoutManager() {
-        if (getContext().getResources().getConfiguration().smallestScreenWidthDp>=600){
-            return new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-        } else {
-            return new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
-        }
+            return new StaggeredGridLayoutManager(
+                    (int) Math.ceil(getContext().getResources().getConfiguration().smallestScreenWidthDp/300),
+                    StaggeredGridLayoutManager.VERTICAL
+            );
     }
 
     protected abstract String getCachedIdsDatabaseName();
