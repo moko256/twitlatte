@@ -31,6 +31,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
 
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
+
 import twitter4j.MediaEntity;
 
 /**
@@ -52,7 +56,9 @@ public class ShowImageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_image);
 
-        mediaEntities=(MediaEntity[]) getIntent().getSerializableExtra(FRAG_MEDIA_ENTITIES);
+        List<MediaEntity> mediaEntitiesList = (List<MediaEntity>) getIntent().getSerializableExtra(FRAG_MEDIA_ENTITIES);
+        mediaEntities = new MediaEntity[mediaEntitiesList.size()];
+        mediaEntitiesList.toArray(mediaEntities);
         int position=getIntent().getIntExtra(FRAG_POSITION,0);
 
         toolbar=(Toolbar) findViewById(R.id.activity_show_image_toolbar);
@@ -135,7 +141,7 @@ public class ShowImageActivity extends AppCompatActivity {
 
     public static Intent getIntent(Context context, MediaEntity[] entities , int position){
         return new Intent(context,ShowImageActivity.class)
-                .putExtra(FRAG_MEDIA_ENTITIES,entities)
+                .putExtra(FRAG_MEDIA_ENTITIES, (Serializable) Arrays.asList(entities))
                 .putExtra(FRAG_POSITION,position);
     }
 }

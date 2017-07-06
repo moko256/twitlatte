@@ -17,10 +17,20 @@
 package com.github.moko256.twicalico.widget;
 
 import android.content.Context;
+import android.support.v7.content.res.AppCompatResources;
 import android.support.v7.widget.GridLayout;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.github.moko256.twicalico.GlobalApplication;
+import com.github.moko256.twicalico.R;
+import com.github.moko256.twicalico.ShowImageActivity;
+
+import twitter4j.MediaEntity;
 
 /**
  * Created by moko256 on 2016/06/11.
@@ -30,7 +40,8 @@ import android.widget.ImageView;
 public class TweetImageTableView extends GridLayout {
 
     private ImageView imageViews[];
-    private int imageNum = 0;
+    private MediaEntity mediaEntities[];
+    private FrameLayout covers[];
 
     /* {row,column,rowSpan,colSpan} */
     private final int params[][][]={
@@ -63,10 +74,17 @@ public class TweetImageTableView extends GridLayout {
         setRowCount(2);
 
         imageViews=new ImageView[4];
+        covers = new FrameLayout[4];
 
         for(int i=0;i<imageViews.length;i++){
             imageViews[i] = new ImageView(context);
             imageViews[i].setScaleType(ImageView.ScaleType.CENTER_CROP);
+            imageViews[i].setLayoutParams(new FrameLayout.LayoutParams(
+                    FrameLayout.LayoutParams.MATCH_PARENT,
+                    FrameLayout.LayoutParams.MATCH_PARENT
+            ));
+            covers[i] = new FrameLayout(context);
+            covers[i].addView(imageViews[i]);
         }
     }
 
@@ -96,11 +114,11 @@ public class TweetImageTableView extends GridLayout {
         super.onMeasure(measuredWidthSpec, measuredHeightSpec);
     }
 
-    public void setImageNumber(int num){
-        imageNum = num;
+    private void updateImageNumber(){
+        int imageNum = mediaEntities.length;
         removeAllViews();
         for(int i = 0; i < imageNum; i++){
-            addView(imageViews[i]);
+            addView(covers[i]);
         }
         for(int i = 0; i < imageNum; i++){
             float dens = getContext().getResources().getDisplayMetrics().density;
@@ -108,16 +126,8 @@ public class TweetImageTableView extends GridLayout {
             int margin[] = margins[imageNum -1][i];
             LayoutParams params = makeGridLayoutParams(param[0],param[1],param[2],param[3]);
             params.setMargins(0, 0, Math.round(dens * margin[0]), Math.round(dens * margin[1]));
-            imageViews[i].setLayoutParams(params);
+            covers[i].setLayoutParams(params);
         }
-    }
-
-    public int getImageNumber(){
-        return imageNum;
-    }
-
-    public ImageView getImageView(int i){
-        return imageViews[i];
     }
 
     private LayoutParams makeGridLayoutParams(int row, int column, int rowSpan, int colSpan){
@@ -125,5 +135,37 @@ public class TweetImageTableView extends GridLayout {
         params.rowSpec=spec(row,rowSpan,1);
         params.columnSpec=spec(column,colSpan,1);
         return params;
+    }
+
+    public void setMediaEntities(MediaEntity[] mediaEntities) {
+        this.mediaEntities = mediaEntities;
+        updateImageNumber();
+        for (int ii = 0; ii < mediaEntities.length; ii++) {
+            ImageView imageView= imageViews[ii];
+            int finalIi = ii;
+            imageView.setOnClickListener(v-> getContext().startActivity(ShowImageActivity.getIntent(getContext(),mediaEntities, finalIi)));
+
+            if (GlobalApplication.configuration.isTimelineImageLoad()){
+                Glide.with(getContext())
+                        .load(mediaEntities[ii].getMediaURLHttps()+":small")
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .into(imageView);
+                if (mediaEntities[ii].getType().equals("video")){
+                    covers[ii].setForeground(AppCompatResources.getDrawable(getContext(), R.drawable.player_foreground));
+                } else if (mediaEntities[ii].getType().equals("animated_gif")){
+                    covers[ii].setForeground(AppCompatResources.getDrawable(getContext(), R.drawable.gif_foreground));
+                } else {
+                    covers[ii].setForeground(null);
+                }
+            } else {
+                imageView.setImageResource(R.drawable.border_frame);
+            }
+        }
+    }
+
+    public void clearImages(){
+        for (int i = 0; i < 4; i++){
+            Glide.clear(imageViews[i]);
+        }
     }
 }

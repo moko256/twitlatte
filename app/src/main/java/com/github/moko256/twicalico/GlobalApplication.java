@@ -53,7 +53,7 @@ public class GlobalApplication extends Application {
     static Twitter twitter;
     static long userId;
 
-    static AppConfiguration configuration;
+    public static AppConfiguration configuration;
 
     public static UserCacheMap userCache;
     public static StatusCacheMap statusCache;
@@ -125,6 +125,8 @@ public class GlobalApplication extends Application {
         }
 
         configuration.setIsTimelineImageLoad(Boolean.valueOf(defaultSharedPreferences.getString("isTimelineImageLoad","true")));
+
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
 
         @AppCompatDelegate.NightMode
         int mode=AppCompatDelegate.MODE_NIGHT_NO;

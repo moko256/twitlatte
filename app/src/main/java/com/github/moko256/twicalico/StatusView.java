@@ -24,6 +24,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.Space;
+import android.support.v7.content.res.AppCompatResources;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,7 +38,6 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.github.moko256.twicalico.glideImageTarget.CircleImageTarget;
 import com.github.moko256.twicalico.utils.TwitterStringUtils;
 import com.github.moko256.twicalico.widget.TweetImageTableView;
@@ -115,7 +115,7 @@ public class StatusView extends FrameLayout {
         retweetButton = findViewById(R.id.tweet_content_retweet_button);
 
         replyButton = findViewById(R.id.tweet_content_reply_button);
-        Drawable replyIcon= DrawableCompat.wrap(ContextCompat.getDrawable(context, R.drawable.ic_reply_white_24dp));
+        Drawable replyIcon= DrawableCompat.wrap(AppCompatResources.getDrawable(context, R.drawable.ic_reply_white_24dp));
         DrawableCompat.setTintList(replyIcon, ContextCompat.getColorStateList(context, R.color.reply_button_color_stateful));
         replyButton.setImageDrawable(replyIcon);
 
@@ -134,9 +134,7 @@ public class StatusView extends FrameLayout {
             this.status = status;
             updateView();
         } else {
-            for (int i=0;i<4;i++){
-                Glide.clear(imageTableView.getImageView(i));
-            }
+            imageTableView.clearImages();
         }
     }
     
@@ -231,21 +229,7 @@ public class StatusView extends FrameLayout {
 
         if (mediaEntities.length!=0){
             imageTableView.setVisibility(View.VISIBLE);
-            imageTableView.setImageNumber(mediaEntities.length);
-            for (int ii = 0; ii < mediaEntities.length; ii++) {
-                ImageView imageView= imageTableView.getImageView(ii);
-                int finalIi = ii;
-                imageView.setOnClickListener(v-> getContext().startActivity(ShowImageActivity.getIntent(getContext(),mediaEntities, finalIi)));
-
-                if (GlobalApplication.configuration.isTimelineImageLoad()){
-                    imageRequestManager
-                            .load(mediaEntities[ii].getMediaURLHttps()+":small")
-                            .diskCacheStrategy(DiskCacheStrategy.NONE)
-                            .into(imageView);
-                } else {
-                    imageView.setImageResource(R.drawable.border_frame);
-                }
-            }
+            imageTableView.setMediaEntities(mediaEntities);
         }
         else{
             imageTableView.setVisibility(View.GONE);

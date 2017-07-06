@@ -151,13 +151,7 @@ public class ShowTweetActivity extends AppCompatActivity {
                                     TweetImageTableView tableView= findViewById(R.id.tweet_show_images);
                                     if(mediaEntities.length!=0){
                                         tableView.setVisibility(View.VISIBLE);
-                                        tableView.setImageNumber(mediaEntities.length);
-                                        for (int ii = 0; ii < mediaEntities.length; ii++) {
-                                            ImageView imageView=tableView.getImageView(ii);
-                                            int finalIi = ii;
-                                            imageView.setOnClickListener(v-> startActivity(ShowImageActivity.getIntent(ShowTweetActivity.this,mediaEntities, finalIi)));
-                                            imageRequestManager.load(mediaEntities[ii].getMediaURLHttps()+":small").diskCacheStrategy(DiskCacheStrategy.NONE).into(imageView);
-                                        }
+                                        tableView.setMediaEntities(mediaEntities);
                                     }else{
                                         tableView.setVisibility(View.GONE);
                                     }
