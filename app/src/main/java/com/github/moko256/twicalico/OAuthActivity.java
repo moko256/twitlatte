@@ -32,7 +32,7 @@ import android.widget.EditText;
 
 import com.github.moko256.twicalico.database.TokenSQLiteOpenHelper;
 
-import rx.Observable;
+import rx.Single;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import twitter4j.TwitterException;
@@ -140,11 +140,10 @@ public class OAuthActivity extends AppCompatActivity {
         Configuration conf = ConfigurationContext.getInstance();
         oauth =new OAuthAuthorization(conf);
 
-        Observable
-                .create(subscriber -> {
+        Single.create(
+                subscriber -> {
                     try {
-                        subscriber.onNext(oauth.getOAuthAccessToken(req,verifier));
-                        subscriber.onCompleted();
+                        subscriber.onSuccess(oauth.getOAuthAccessToken(req,verifier));
                     } catch (TwitterException e) {
                         subscriber.onError(e);
                     }
@@ -153,8 +152,7 @@ public class OAuthActivity extends AppCompatActivity {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         result-> storeAccessToken(((AccessToken) result)),
-                        Throwable::printStackTrace,
-                        ()->{}
+                        Throwable::printStackTrace
                 );
     }
 

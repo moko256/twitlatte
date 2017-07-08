@@ -25,7 +25,7 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.List;
 
-import rx.Observable;
+import rx.Single;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import twitter4j.Status;
@@ -91,8 +91,8 @@ public class SendTweetModel {
         this.uriList = uriList;
     }
 
-    public Observable<Status> postTweet(){
-        Observable<Status> observable = Observable.create(subscriber -> {
+    public Single<Status> postTweet(){
+        Single<Status> single = Single.create(subscriber -> {
             if (isValidTweet()){
                 try {
                     StatusUpdate statusUpdate = new StatusUpdate(tweetText);
@@ -108,8 +108,7 @@ public class SendTweetModel {
                     if (isReply()){
                         statusUpdate.setInReplyToStatusId(inReplyToStatusId);
                     }
-                    subscriber.onNext(twitter.updateStatus(statusUpdate));
-                    subscriber.onCompleted();
+                    subscriber.onSuccess(twitter.updateStatus(statusUpdate));
                 } catch (FileNotFoundException | TwitterException e){
                     subscriber.onError(e);
                 }
@@ -117,13 +116,13 @@ public class SendTweetModel {
                 subscriber.onError(new InvalidTextException());
             }
         });
-        return observable
+        return single
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public static class InvalidTextException extends Throwable {
-        public InvalidTextException(){
+    private static class InvalidTextException extends Throwable {
+        InvalidTextException(){
             super("Invalid length of tweet text");
         }
     }

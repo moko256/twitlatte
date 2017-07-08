@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.moko256.twicalico.utils;
-
-import com.github.moko256.twicalico.utils.TwitterStringUtils;
+package com.github.moko256.twicalico.text;
 
 import org.junit.Test;
 

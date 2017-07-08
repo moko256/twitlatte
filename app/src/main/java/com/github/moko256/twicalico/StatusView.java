@@ -39,10 +39,10 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.github.moko256.twicalico.glideImageTarget.CircleImageTarget;
-import com.github.moko256.twicalico.utils.TwitterStringUtils;
+import com.github.moko256.twicalico.text.TwitterStringUtils;
 import com.github.moko256.twicalico.widget.TweetImageTableView;
 
-import rx.Observable;
+import rx.Single;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import twitter4j.MediaEntity;
@@ -235,16 +235,15 @@ public class StatusView extends FrameLayout {
             imageTableView.setVisibility(View.GONE);
         }
 
-        likeButton.setOnCheckedChangeListener((compoundButton, b) -> Observable
+        likeButton.setOnCheckedChangeListener((compoundButton, b) -> Single
                 .create(subscriber->{
                     try {
                         if(b&&(!item.isFavorited())){
-                            subscriber.onNext(GlobalApplication.twitter.createFavorite(item.getId()));
+                            subscriber.onSuccess(GlobalApplication.twitter.createFavorite(item.getId()));
                         }
                         else if((!b)&&item.isFavorited()){
-                            subscriber.onNext(GlobalApplication.twitter.destroyFavorite(item.getId()));
+                            subscriber.onSuccess(GlobalApplication.twitter.destroyFavorite(item.getId()));
                         }
-                        subscriber.onCompleted();
                     } catch (TwitterException e) {
                         subscriber.onError(e);
                     }
@@ -259,22 +258,20 @@ public class StatusView extends FrameLayout {
                         throwable -> {
                             throwable.printStackTrace();
                             Toast.makeText(getContext(), R.string.error_occurred, Toast.LENGTH_SHORT).show();
-                        },
-                        ()->{}
+                        }
                 )
         );
         likeButton.setChecked(item.isFavorited());
 
-        retweetButton.setOnCheckedChangeListener((compoundButton, b) -> Observable
+        retweetButton.setOnCheckedChangeListener((compoundButton, b) -> Single
                 .create(subscriber->{
                     try {
                         if(b&&(!item.isRetweeted())){
-                            subscriber.onNext(GlobalApplication.twitter.retweetStatus(item.getId()));
+                            subscriber.onSuccess(GlobalApplication.twitter.retweetStatus(item.getId()));
                         }
                         else if((!b)&&item.isRetweeted()){
-                            subscriber.onNext(GlobalApplication.twitter.destroyStatus(item.getCurrentUserRetweetId()));
+                            subscriber.onSuccess(GlobalApplication.twitter.destroyStatus(item.getCurrentUserRetweetId()));
                         }
-                        subscriber.onCompleted();
                     } catch (TwitterException e) {
                         subscriber.onError(e);
                     }
@@ -289,8 +286,7 @@ public class StatusView extends FrameLayout {
                         throwable -> {
                             throwable.printStackTrace();
                             Toast.makeText(getContext(),R.string.error_occurred,Toast.LENGTH_SHORT).show();
-                        },
-                        ()->{}
+                        }
                 )
         );
         retweetButton.setChecked(item.isRetweeted());

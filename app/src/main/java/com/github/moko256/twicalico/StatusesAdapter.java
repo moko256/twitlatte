@@ -22,7 +22,7 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
-import com.github.moko256.twicalico.utils.TwitterStringUtils;
+import com.github.moko256.twicalico.text.TwitterStringUtils;
 
 import java.util.ArrayList;
 

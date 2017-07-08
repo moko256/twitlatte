@@ -25,8 +25,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import rx.Observable;
+import rx.Single;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
@@ -81,9 +83,13 @@ public abstract class BaseUsersFragment extends BaseListFragment {
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         if (savedInstanceState != null) {
-            ArrayList<Long> l=(ArrayList<Long>) savedInstanceState.getSerializable("list");
+            ArrayList l=(ArrayList) savedInstanceState.getSerializable("list");
             if(l!=null){
-                list.addAll(l);
+                Long longs[] = new Long[l.size()];
+                for (int i = 0; i < longs.length; i++) {
+                    longs[i] = (Long)l.get(i);
+                }
+                list.addAll(Arrays.asList(longs));
             }
             next_cursor=savedInstanceState.getLong("next_cursor",-1);
         }
@@ -113,10 +119,8 @@ public abstract class BaseUsersFragment extends BaseListFragment {
     @Override
     protected void onInitializeList() {
         subscription.add(
-                getResponseObservable(-1)
+                getResponseSingle(-1)
                         .subscribeOn(Schedulers.newThread())
-                        .observeOn(Schedulers.io())
-                        .doOnNext(users -> GlobalApplication.userCache.addAll(users))
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
                                 result-> {
@@ -127,6 +131,8 @@ public abstract class BaseUsersFragment extends BaseListFragment {
                                                     .toList().toSingle().toBlocking().value()
                                     );
                                     adapter.notifyDataSetChanged();
+                                    getSwipeRefreshLayout().setRefreshing(false);
+                                    setProgressCircleLoading(false);
                                 },
                                 e -> {
                                     e.printStackTrace();
@@ -134,10 +140,6 @@ public abstract class BaseUsersFragment extends BaseListFragment {
                                             ((TwitterException) e).getErrorCode()), Snackbar.LENGTH_INDEFINITE)
                                             .setAction(R.string.retry, v -> onInitializeList())
                                             .show();
-                                },
-                                () -> {
-                                    getSwipeRefreshLayout().setRefreshing(false);
-                                    setProgressCircleLoading(false);
                                 }
                         )
         );
@@ -151,10 +153,8 @@ public abstract class BaseUsersFragment extends BaseListFragment {
     @Override
     protected void onLoadMoreList() {
         subscription.add(
-                getResponseObservable(next_cursor)
+                getResponseSingle(next_cursor)
                         .subscribeOn(Schedulers.newThread())
-                        .observeOn(Schedulers.io())
-                        .doOnNext(users -> GlobalApplication.userCache.addAll(users))
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
                                 result -> {
@@ -176,8 +176,7 @@ public abstract class BaseUsersFragment extends BaseListFragment {
                                             ((TwitterException) e).getErrorCode()), Snackbar.LENGTH_INDEFINITE)
                                             .setAction(R.string.retry, v -> onLoadMoreList())
                                             .show();
-                                },
-                                () -> {}
+                                }
                         )
         );
     }
@@ -187,14 +186,14 @@ public abstract class BaseUsersFragment extends BaseListFragment {
         return !list.isEmpty();
     }
 
-    public Observable<PagableResponseList<User>> getResponseObservable(long cursor) {
-        return Observable.create(
+    public Single<PagableResponseList<User>> getResponseSingle(long cursor) {
+        return Single.create(
                 subscriber->{
                     try {
                         PagableResponseList<User> pagableResponseList=getResponseList(cursor);
                         next_cursor=pagableResponseList.getNextCursor();
-                        subscriber.onNext(pagableResponseList);
-                        subscriber.onCompleted();
+                        GlobalApplication.userCache.addAll(pagableResponseList);
+                        subscriber.onSuccess(pagableResponseList);
                     } catch (TwitterException e) {
                         subscriber.onError(e);
                     }

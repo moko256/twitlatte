@@ -33,15 +33,14 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.github.moko256.twicalico.glideImageTarget.CircleImageTarget;
 import com.github.moko256.twicalico.model.SendTweetModel;
-import com.github.moko256.twicalico.utils.TwitterStringUtils;
+import com.github.moko256.twicalico.text.TwitterStringUtils;
 import com.github.moko256.twicalico.widget.TweetImageTableView;
 
 import java.text.DateFormat;
 
-import rx.Observable;
+import rx.Single;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
@@ -74,14 +73,13 @@ public class ShowTweetActivity extends AppCompatActivity {
         }
 
         subscriptions.add(
-                Observable.create(
+                Single.create(
                         subscriber -> {
                             long statusId;
                             Status status;
                             statusId = getIntent().getLongExtra("statusId", -1);
                             if (statusId == -1) {
                                 ShowTweetActivity.this.finish();
-                                subscriber.onCompleted();
                                 return;
                             }
                             status = GlobalApplication.statusCache.get(statusId);
@@ -93,8 +91,7 @@ public class ShowTweetActivity extends AppCompatActivity {
                                     subscriber.onError(e);
                                 }
                             }
-                            subscriber.onNext(status);
-                            subscriber.onCompleted();
+                            subscriber.onSuccess(status);
                         })
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
@@ -176,16 +173,15 @@ public class ShowTweetActivity extends AppCompatActivity {
                                         subscriptions.add(
                                                 model.postTweet()
                                                         .subscribe(
-                                                                it->{},
+                                                                it -> {
+                                                                    replyText.setText(TwitterStringUtils.convertToReplyTopString(item.getUser().getScreenName(), users));
+                                                                    replyButton.setEnabled(true);
+                                                                    Toast.makeText(ShowTweetActivity.this,R.string.succeeded,Toast.LENGTH_SHORT).show();
+                                                                },
                                                                 e->{
                                                                     e.printStackTrace();
                                                                     Toast.makeText(ShowTweetActivity.this,R.string.error_occurred,Toast.LENGTH_SHORT).show();
                                                                     replyButton.setEnabled(true);
-                                                                },
-                                                                ()-> {
-                                                                    replyText.setText(TwitterStringUtils.convertToReplyTopString(item.getUser().getScreenName(), users));
-                                                                    replyButton.setEnabled(true);
-                                                                    Toast.makeText(ShowTweetActivity.this,R.string.succeeded,Toast.LENGTH_SHORT).show();
                                                                 }
                                                         )
                                         );
@@ -194,8 +190,6 @@ public class ShowTweetActivity extends AppCompatActivity {
                                 e->{
                                     e.printStackTrace();
                                     finish();
-                                },
-                                ()->{
                                 })
         );
     }

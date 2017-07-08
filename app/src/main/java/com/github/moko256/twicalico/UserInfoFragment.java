@@ -30,11 +30,11 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.github.moko256.twicalico.glideImageTarget.CircleImageTarget;
-import com.github.moko256.twicalico.utils.TwitterStringUtils;
+import com.github.moko256.twicalico.text.TwitterStringUtils;
 
 import java.text.DateFormat;
 
-import rx.Observable;
+import rx.Single;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import twitter4j.Status;
@@ -83,17 +83,14 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
 
         User cachedUser = GlobalApplication.userCache.get(userId);
         if (cachedUser==null){
-            Observable
-                    .create(
-                            subscriber -> {
-                                try {
-                                    subscriber.onNext(GlobalApplication.twitter.showUser(userId));
-                                    subscriber.onCompleted();
-                                } catch (TwitterException e) {
-                                    subscriber.onError(e);
-                                }
-                            }
-                    )
+            Single.create(
+                    subscriber -> {
+                        try {
+                            subscriber.onSuccess(GlobalApplication.twitter.showUser(userId));
+                        } catch (TwitterException e) {
+                            subscriber.onError(e);
+                        }
+                    })
                     .subscribeOn(Schedulers.newThread())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
@@ -101,8 +98,7 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
                             throwable->{
                                 throwable.printStackTrace();
                                 getActivity().finish();
-                            },
-                            ()->{}
+                            }
                     );
         }
     }

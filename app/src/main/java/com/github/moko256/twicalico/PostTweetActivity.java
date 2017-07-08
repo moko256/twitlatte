@@ -138,13 +138,12 @@ public class PostTweetActivity extends AppCompatActivity {
             v.setEnabled(false);
             model.postTweet()
                     .subscribe(
-                            it->{},
+                            it -> this.finish(),
                             e->{
                                 e.printStackTrace();
                                 v.setEnabled(true);
                                 Snackbar.make(rootViewGroup, e.getMessage(), Snackbar.LENGTH_INDEFINITE).show();
-                            },
-                            this::finish
+                            }
                     );
         });
 

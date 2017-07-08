@@ -34,7 +34,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Locale;
 
-import rx.Observable;
+import rx.Single;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
@@ -99,9 +99,13 @@ public class TrendsFragment extends BaseListFragment {
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         if (savedInstanceState != null){
-            ArrayList<Trend> l=(ArrayList<Trend>) savedInstanceState.getSerializable("list");
+            ArrayList l=(ArrayList) savedInstanceState.getSerializable("list");
             if(l!=null){
-                list.addAll(l);
+                Trend trends[] = new Trend[l.size()];
+                for (int i = 0; i < trends.length; i++) {
+                    trends[i] = (Trend)l.get(i);
+                }
+                list.addAll(Arrays.asList(trends));
             }
         }
     }
@@ -131,8 +135,8 @@ public class TrendsFragment extends BaseListFragment {
     @Override
     protected void onInitializeList() {
         subscription.add(
-                getGeoLocationObservable()
-                        .concatMap(geolocation-> getResponseObservable(geolocation).subscribeOn(Schedulers.newThread()))
+                getGeoLocationSingle()
+                        .flatMap(geolocation-> getResponseSingle(geolocation).subscribeOn(Schedulers.newThread()))
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
@@ -140,6 +144,8 @@ public class TrendsFragment extends BaseListFragment {
                                     list.clear();
                                     list.addAll(Arrays.asList(result.getTrends()));
                                     adapter.notifyDataSetChanged();
+                                    getSwipeRefreshLayout().setRefreshing(false);
+                                    setProgressCircleLoading(false);
                                 },
                                 e -> {
                                     e.printStackTrace();
@@ -147,10 +153,6 @@ public class TrendsFragment extends BaseListFragment {
                                             ((TwitterException) e).getErrorCode()), Snackbar.LENGTH_INDEFINITE)
                                             .setAction(R.string.retry, v -> onInitializeList())
                                             .show();
-                                },
-                                () -> {
-                                    getSwipeRefreshLayout().setRefreshing(false);
-                                    setProgressCircleLoading(false);
                                 }
                         )
         );
@@ -174,16 +176,15 @@ public class TrendsFragment extends BaseListFragment {
         return new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
     }
 
-    public Observable<Trends> getResponseObservable(GeoLocation geolocation) {
-        return Observable.create(
+    public Single<Trends> getResponseSingle(GeoLocation geolocation) {
+        return Single.create(
                 subscriber->{
                     try {
                         Trends trends = GlobalApplication.twitter
                                 .getPlaceTrends(GlobalApplication.twitter.getClosestTrends(geolocation).get(0).getWoeid());
                         helper.setTrends(Arrays.asList(trends.getTrends()));
 
-                        subscriber.onNext(trends);
-                        subscriber.onCompleted();
+                        subscriber.onSuccess(trends);
                     } catch (TwitterException e) {
                         subscriber.onError(e);
                     }
@@ -191,16 +192,15 @@ public class TrendsFragment extends BaseListFragment {
         );
     }
 
-    public Observable<GeoLocation> getGeoLocationObservable(){
-        return Observable.create(
+    public Single<GeoLocation> getGeoLocationSingle(){
+        return Single.create(
                 subscriber -> {
                     try {
                         Geocoder geocoder = new Geocoder(getContext());
                         Locale locale = Locale.getDefault();
                         Address address = geocoder.getFromLocationName(locale.getDisplayCountry(), 1).get(0);
                         if (address.getCountryCode().equals(locale.getCountry())){
-                            subscriber.onNext(new GeoLocation(address.getLatitude(), address.getLongitude()));
-                            subscriber.onCompleted();
+                            subscriber.onSuccess(new GeoLocation(address.getLatitude(), address.getLongitude()));
                         }
                     } catch(IOException e){
                         subscriber.onError(e);

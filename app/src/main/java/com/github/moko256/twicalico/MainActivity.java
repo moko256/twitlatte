@@ -35,9 +35,9 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.github.moko256.twicalico.glideImageTarget.CircleImageTarget;
-import com.github.moko256.twicalico.utils.TwitterStringUtils;
+import com.github.moko256.twicalico.text.TwitterStringUtils;
 
-import rx.Observable;
+import rx.Single;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import twitter4j.TwitterException;
@@ -104,16 +104,15 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
         ImageView userImage = headerView.findViewById(R.id.user_image);
         ImageView userBackgroundImage = headerView.findViewById(R.id.user_bg_image);
 
-        Observable
-                .create(subscriber->{
+        Single.create(
+                subscriber->{
                     try {
                         User me = GlobalApplication.userCache.get(GlobalApplication.userId);
                         if (me == null){
                             me = GlobalApplication.twitter.verifyCredentials();
                             GlobalApplication.userCache.add(me);
                         }
-                        subscriber.onNext(me);
-                        subscriber.onCompleted();
+                        subscriber.onSuccess(me);
                     } catch (TwitterException e) {
                         subscriber.onError(e);
                     }
@@ -122,8 +121,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         result -> setDrawerHeader((User) result, userNameText, userIdText, userImage, userBackgroundImage),
-                        Throwable::printStackTrace,
-                        ()->{}
+                        Throwable::printStackTrace
                 );
 
         findViewById(R.id.fab).setOnClickListener(v -> startActivity(new Intent(this, PostTweetActivity.class)));

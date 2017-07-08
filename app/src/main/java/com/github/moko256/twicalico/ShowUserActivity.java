@@ -25,14 +25,14 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.github.moko256.twicalico.utils.TwitterStringUtils;
+import com.github.moko256.twicalico.text.TwitterStringUtils;
 
-import rx.Observable;
+import rx.Completable;
+import rx.Single;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import twitter4j.Twitter;
@@ -76,15 +76,14 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
             }
         });
 
-        getUserObservable()
+        getUserSingle()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         it -> viewPager.setAdapter(new ShowUserFragmentsPagerAdapter(getSupportFragmentManager(),this,it.getId())),
                         e -> Snackbar.make(findViewById(getSnackBarParentContainerId()), getString(R.string.error_occurred_with_error_code,
                                 ((TwitterException) e).getErrorCode()), Snackbar.LENGTH_INDEFINITE)
-                                .show(),
-                        () -> {}
+                                .show()
                 );
     }
 
@@ -163,8 +162,8 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
     }
 
     private void runAsWorkerThread(ThrowableFunc func){
-        Observable
-                .create(subscriber -> {
+        Completable.create(
+                subscriber -> {
                     try{
                         func.call();
                         subscriber.onCompleted();
@@ -175,12 +174,11 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        o -> {},
+                        () -> Toast.makeText(this, R.string.succeeded, Toast.LENGTH_SHORT).show(),
                         throwable -> {
                             throwable.printStackTrace();
                             Toast.makeText(this, R.string.error_occurred, Toast.LENGTH_SHORT).show();
-                        },
-                        ()->Toast.makeText(this, R.string.succeeded, Toast.LENGTH_SHORT).show()
+                        }
                 );
 
     }
@@ -207,8 +205,8 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
     }
 
 
-    public Observable<User> getUserObservable(){
-        return Observable
+    public Single<User> getUserSingle(){
+        return Single
                 .create(
                         subscriber-> {
                             if (user==null){
@@ -234,9 +232,8 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
                             }
 
                             if (user != null){
-                                subscriber.onNext(user);
+                                subscriber.onSuccess(user);
                             }
-                            subscriber.onCompleted();
                         }
                 );
     }

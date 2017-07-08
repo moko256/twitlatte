@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.moko256.twicalico.utils;
+package com.github.moko256.twicalico.text;
 
 import android.app.SearchManager;
 import android.content.Context;
@@ -33,10 +33,9 @@ import com.github.moko256.twicalico.SearchResultActivity;
 import com.github.moko256.twicalico.ShowUserActivity;
 
 import java.text.Normalizer;
-import java.util.List;
 
-import rx.Observable;
 import twitter4j.HashtagEntity;
+import twitter4j.MediaEntity;
 import twitter4j.Status;
 import twitter4j.SymbolEntity;
 import twitter4j.URLEntity;
@@ -91,19 +90,7 @@ public class TwitterStringUtils {
         String tweet = item.getText();
         StringBuilder builder = new StringBuilder(tweet);
 
-        List<URLEntity> urlEntities=Observable
-                .concat(Observable.from(item.getURLEntities()),
-                        Observable.create(
-                                subscriber -> {
-                                    if(item.getMediaEntities().length>0){
-                                        subscriber.onNext(item.getMediaEntities()[0]);
-                                    }
-                                    subscriber.onCompleted();
-                                }
-                        ))
-                .toSortedList((i1,i2)->i1.getStart()-i2.getStart())
-                .toBlocking()
-                .single();
+        URLEntity[] urlEntities = item.getURLEntities();
 
         int tweetLength = tweet.codePointCount(0, tweet.length());
         int sp = 0;
@@ -119,6 +106,15 @@ public class TwitterStringUtils {
                 builder.replace(tweet.offsetByCodePoints(0,entity.getStart()) + sp, tweet.offsetByCodePoints(0,entity.getEnd()) + sp, displayUrl);
 
                 sp+=dusp;
+            }
+        }
+
+        MediaEntity[] mediaEntities = item.getMediaEntities();
+        if (mediaEntities.length > 0){
+            MediaEntity mediaEntity = mediaEntities[0];
+            int result = builder.indexOf(mediaEntity.getURL(), builder.offsetByCodePoints(0, mediaEntity.getStart()));
+            if (result != -1){
+                builder.replace(result, result + mediaEntity.getURL().length(), "");
             }
         }
 
@@ -163,19 +159,7 @@ public class TwitterStringUtils {
             }, tweet.offsetByCodePoints(0,userMentionEntity.getStart()), tweet.offsetByCodePoints(0,userMentionEntity.getEnd()), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
         }
 
-        List<URLEntity> urlEntities=Observable
-                .concat(Observable.from(item.getURLEntities()),
-                        Observable.create(
-                                subscriber -> {
-                                    if(item.getMediaEntities().length>0){
-                                        subscriber.onNext(item.getMediaEntities()[0]);
-                                    }
-                                    subscriber.onCompleted();
-                                }
-                        ))
-                .toSortedList((i1,i2)->i1.getStart()-i2.getStart())
-                .toBlocking()
-                .single();
+        URLEntity[] urlEntities = item.getURLEntities();
 
         int tweetLength = tweet.codePointCount(0, tweet.length());
         int sp = 0;
@@ -201,6 +185,16 @@ public class TwitterStringUtils {
                 }, tweet.offsetByCodePoints(0, entity.getStart()) + sp, tweet.offsetByCodePoints(0, entity.getEnd()) + sp + dusp, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
 
                 sp += dusp;
+            }
+        }
+
+        MediaEntity[] mediaEntities = item.getMediaEntities();
+        if (mediaEntities.length > 0){
+            MediaEntity mediaEntity = mediaEntities[0];
+            String text = spannableStringBuilder.toString();
+            int result = text.indexOf(mediaEntity.getURL(), text.offsetByCodePoints(0, mediaEntity.getStart()));
+            if (result != -1){
+                spannableStringBuilder.replace(result, result + mediaEntity.getURL().length(), "");
             }
         }
 

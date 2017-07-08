@@ -31,9 +31,11 @@ import android.widget.Toast;
 import com.github.moko256.twicalico.database.CachedIdListSQLiteOpenHelper;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import rx.Observable;
+import rx.Single;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
@@ -91,7 +93,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
 
         adapter=new StatusesAdapter(getContext(), list);
         adapter.setOnLoadMoreClick(position -> subscription.add(
-                getResponseObservable(
+                getResponseSingle(
                         new Paging()
                                 .maxId(list.get(position-1)-1L)
                                 .sinceId(list.get(list.size() >= position + 2? position + 2: position + 1))
@@ -128,8 +130,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                                             ((TwitterException) e).getErrorCode()), Snackbar.LENGTH_INDEFINITE)
                                             .setAction(R.string.retry, v -> onLoadMoreList())
                                             .show();
-                                },
-                                () -> {}
+                                }
                         )
         ));
         setAdapter(adapter);
@@ -146,9 +147,13 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         if (savedInstanceState != null){
-            ArrayList<Long> l=(ArrayList<Long>) savedInstanceState.getSerializable("list");
+            ArrayList l=(ArrayList) savedInstanceState.getSerializable("list");
             if(l!=null){
-                list.addAll(l);
+                Long longs[] = new Long[l.size()];
+                for (int i = 0; i < longs.length; i++) {
+                    longs[i] = (Long)l.get(i);
+                }
+                list.addAll(Arrays.asList(longs));
             }
         }
     }
@@ -168,8 +173,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
     @Override
     public void onStop() {
         super.onStop();
-        int[] positions = null;
-        positions = ((StaggeredGridLayoutManager) getRecyclerView().getLayoutManager()).findFirstVisibleItemPositions(positions);
+        int[] positions = ((StaggeredGridLayoutManager) getRecyclerView().getLayoutManager()).findFirstVisibleItemPositions(null);
         statusIdsDatabase.setListViewPosition(positions[0]);
         ArrayList<Long> ids = statusIdsDatabase.getIds();
         if (ids.size() - positions[0] > 1000){
@@ -188,7 +192,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
     @Override
     protected void onInitializeList() {
         subscription.add(
-                getResponseObservable(new Paging(1,20))
+                getResponseSingle(new Paging(1,20))
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
@@ -200,6 +204,8 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                                     list.addAll(ids);
                                     statusIdsDatabase.addIds(ids);
                                     adapter.notifyDataSetChanged();
+                                    getSwipeRefreshLayout().setRefreshing(false);
+                                    setProgressCircleLoading(false);
                                 },
                                 e -> {
                                     e.printStackTrace();
@@ -207,10 +213,6 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                                             ((TwitterException) e).getErrorCode()), Snackbar.LENGTH_INDEFINITE)
                                             .setAction(R.string.retry, v -> onInitializeList())
                                             .show();
-                                },
-                                () -> {
-                                    getSwipeRefreshLayout().setRefreshing(false);
-                                    setProgressCircleLoading(false);
                                 }
                         )
         );
@@ -219,7 +221,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
     @Override
     protected void onUpdateList() {
         subscription.add(
-                getResponseObservable(new Paging(list.get(list.size() >= 2? 1: 0)).count(100))
+                getResponseSingle(new Paging(list.get(list.size() >= 2? 1: 0)).count(100))
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
@@ -251,6 +253,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                                             t.show();
                                         }
                                     }
+                                    getSwipeRefreshLayout().setRefreshing(false);
                                 },
                                 e -> {
                                     e.printStackTrace();
@@ -259,8 +262,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                                             ((TwitterException) e).getErrorCode()), Snackbar.LENGTH_INDEFINITE)
                                             .setAction(R.string.retry, v -> onUpdateList())
                                             .show();
-                                },
-                                () -> getSwipeRefreshLayout().setRefreshing(false)
+                                }
                         )
         );
     }
@@ -268,7 +270,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
     @Override
     protected void onLoadMoreList() {
         subscription.add(
-                getResponseObservable(new Paging().maxId(list.get(list.size()-1)-1L).count(50))
+                getResponseSingle(new Paging().maxId(list.get(list.size()-1)-1L).count(50))
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
@@ -290,8 +292,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                                             ((TwitterException) e).getErrorCode()), Snackbar.LENGTH_INDEFINITE)
                                             .setAction(R.string.retry, v -> onLoadMoreList())
                                             .show();
-                                },
-                                () -> {}
+                                }
                         )
         );
     }
@@ -311,16 +312,15 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
 
     protected abstract String getCachedIdsDatabaseName();
 
-    public Observable<ResponseList<Status>> getResponseObservable(Paging paging) {
-        return Observable.create(
+    public Single<ResponseList<Status>> getResponseSingle(Paging paging) {
+        return Single.create(
                 subscriber->{
                     try {
                         ResponseList<Status> statuses = getResponseList(paging);
                         if (statuses.size() > 0){
                             GlobalApplication.statusCache.addAll(statuses);
                         }
-                        subscriber.onNext(statuses);
-                        subscriber.onCompleted();
+                        subscriber.onSuccess(statuses);
                     } catch (TwitterException e) {
                         subscriber.onError(e);
                     }
