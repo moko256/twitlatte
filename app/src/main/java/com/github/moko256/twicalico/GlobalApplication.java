@@ -28,6 +28,7 @@ import android.support.v7.app.NotificationCompat;
 
 import com.github.moko256.twicalico.cacheMap.StatusCacheMap;
 import com.github.moko256.twicalico.cacheMap.UserCacheMap;
+import com.github.moko256.twicalico.config.AppConfiguration;
 import com.github.moko256.twicalico.database.TokenSQLiteOpenHelper;
 
 import java.io.PrintWriter;
@@ -109,6 +110,11 @@ public class GlobalApplication extends Application {
             configuration.setTweetMutePattern(defaultSharedPreferences.getString("tweetMutePattern",""));
         }
 
+        configuration.setPatternTweetMuteShowOnlyImageEnabled(defaultSharedPreferences.getBoolean("patternTweetMuteShowOnlyImageEnabled",false));
+        if(configuration.isPatternTweetMuteShowOnlyImageEnabled()){
+            configuration.setTweetMuteShowOnlyImagePattern(defaultSharedPreferences.getString("tweetMuteShowOnlyImagePattern",""));
+        }
+
         configuration.setPatternUserScreenNameMuteEnabled(defaultSharedPreferences.getBoolean("patternUserScreenNameMuteEnabled",false));
         if(configuration.isPatternUserScreenNameMuteEnabled()){
             configuration.setUserScreenNameMutePattern(defaultSharedPreferences.getString("userScreenNameMutePattern",""));
@@ -124,7 +130,7 @@ public class GlobalApplication extends Application {
             configuration.setTweetSourceMutePattern(defaultSharedPreferences.getString("tweetSourceMutePattern",""));
         }
 
-        configuration.setIsTimelineImageLoad(Boolean.valueOf(defaultSharedPreferences.getString("isTimelineImageLoad","true")));
+        configuration.setTimelineImageLoad(Boolean.valueOf(defaultSharedPreferences.getString("isTimelineImageLoad","true")));
 
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
 

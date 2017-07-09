@@ -22,7 +22,9 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
+import com.github.moko256.twicalico.config.AppConfiguration;
 import com.github.moko256.twicalico.text.TwitterStringUtils;
+import com.github.moko256.twicalico.widget.TweetImageTableView;
 
 import java.util.ArrayList;
 
@@ -74,6 +76,11 @@ class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 ){
             return 2;
         }
+        if ((conf.isPatternTweetMuteShowOnlyImageEnabled()
+                && item.getMediaEntities().length > 0
+                && item.getText().matches(conf.getTweetMuteShowOnlyImagePattern()))){
+            return 3;
+        }
         return super.getItemViewType(position);
     }
 
@@ -83,6 +90,8 @@ class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             return new MoreLoadViewHolder();
         } else if (i == 2) {
             return new MutedTweetViewHolder();
+        } else if (i == 3){
+            return new ImagesOnlyTweetViewHolder();
         } else {
             return new StatusViewHolder();
         }
@@ -92,6 +101,8 @@ class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, final int i) {
         if (viewHolder instanceof StatusViewHolder) {
             ((StatusViewHolder) viewHolder).setStatus(GlobalApplication.statusCache.get(data.get(i)));
+        } else if (viewHolder instanceof ImagesOnlyTweetViewHolder){
+            ((ImagesOnlyTweetViewHolder) viewHolder).setStatus(GlobalApplication.statusCache.get(data.get(i)));
         } else if (viewHolder instanceof MoreLoadViewHolder) {
             viewHolder.itemView.setOnClickListener(v -> onLoadMoreClick.onClick(i));
             ViewGroup.LayoutParams oldParams = viewHolder.itemView.getLayoutParams();
@@ -142,6 +153,24 @@ class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private class MutedTweetViewHolder extends RecyclerView.ViewHolder {
         MutedTweetViewHolder() {
             super(LayoutInflater.from(context).inflate(R.layout.layout_list_muted_text, null));
+        }
+    }
+
+    private class ImagesOnlyTweetViewHolder extends RecyclerView.ViewHolder {
+        TweetImageTableView tweetImageTableView;
+
+        ImagesOnlyTweetViewHolder() {
+            super(LayoutInflater.from(context).inflate(R.layout.layout_list_tweet_only_image, null));
+            tweetImageTableView = itemView.findViewById(R.id.list_tweet_image_container);
+        }
+
+        void setStatus(Status status) {
+            Status item = status.isRetweet()? status.getRetweetedStatus(): status;
+            tweetImageTableView.setMediaEntities(item.getMediaEntities());
+            itemView.setOnLongClickListener(v -> {
+                context.startActivity(ShowTweetActivity.getIntent(context, item.getId()));
+                return true;
+            });
         }
     }
 

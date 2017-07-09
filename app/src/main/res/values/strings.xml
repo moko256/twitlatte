@@ -82,6 +82,8 @@
     <string name="edit_pattern">Edit Regex pattern</string>
     <string name="use_tweet_regex_mute">Use Regex Tweet mute</string>
     <string name="tweet_mute_regex_pattern">Tweet mute Regex pattern</string>
+    <string name="use_tweet_regex_mute_show_only_image">Use Regex Tweet mute (Show only image)</string>
+    <string name="tweet_mute_regex_pattern_show_only_image">Tweet mute Regex pattern (Show only image)</string>
     <string name="use_user_screen_name_regex_mute">Use Regex user screen name mute</string>
     <string name="user_screen_name_mute_regex_pattern">User screen name mute Regex pattern</string>
     <string name="use_user_name_regex_mute">Use Regex user name mute</string>

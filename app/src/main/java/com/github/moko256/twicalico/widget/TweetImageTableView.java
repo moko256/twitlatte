@@ -141,15 +141,14 @@ public class TweetImageTableView extends GridLayout {
         this.mediaEntities = mediaEntities;
         updateImageNumber();
         for (int ii = 0; ii < mediaEntities.length; ii++) {
-            ImageView imageView= imageViews[ii];
             int finalIi = ii;
-            imageView.setOnClickListener(v-> getContext().startActivity(ShowImageActivity.getIntent(getContext(),mediaEntities, finalIi)));
+            covers[ii].setOnClickListener(v-> getContext().startActivity(ShowImageActivity.getIntent(getContext(),mediaEntities, finalIi)));
 
             if (GlobalApplication.configuration.isTimelineImageLoad()){
                 Glide.with(getContext())
                         .load(mediaEntities[ii].getMediaURLHttps()+":small")
                         .diskCacheStrategy(DiskCacheStrategy.NONE)
-                        .into(imageView);
+                        .into(imageViews[ii]);
                 if (mediaEntities[ii].getType().equals("video")){
                     covers[ii].setForeground(AppCompatResources.getDrawable(getContext(), R.drawable.player_foreground));
                 } else if (mediaEntities[ii].getType().equals("animated_gif")){
@@ -158,7 +157,7 @@ public class TweetImageTableView extends GridLayout {
                     covers[ii].setForeground(null);
                 }
             } else {
-                imageView.setImageResource(R.drawable.border_frame);
+                imageViews[ii].setImageResource(R.drawable.border_frame);
             }
         }
     }

@@ -62,6 +62,18 @@
                     android:dialogTitle="@string/edit_pattern"/>
 
                 <SwitchPreference
+                    android:key="patternTweetMuteShowOnlyImageEnabled"
+                    android:defaultValue="false"
+                    android:title="@string/use_tweet_regex_mute_show_only_image"
+                    android:summaryOn="@string/enable"
+                    android:summaryOff="@string/disable"/>
+                <EditTextPreference
+                    android:key="tweetMuteShowOnlyImagePattern"
+                    android:title="@string/tweet_mute_regex_pattern_show_only_image"
+                    android:summary="%s"
+                    android:dialogTitle="@string/edit_pattern"/>
+
+                <SwitchPreference
                     android:key="patternUserScreenNameMuteEnabled"
                     android:defaultValue="false"
                     android:title="@string/use_user_screen_name_regex_mute"

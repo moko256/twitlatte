@@ -71,6 +71,8 @@
     <string name="edit_pattern">正規表現パターンの編集</string>
     <string name="use_tweet_regex_mute">ツイートの正規表現ミュートを使用する</string>
     <string name="tweet_mute_regex_pattern">ツイートミュートの正規表現パターン</string>
+    <string name="use_tweet_regex_mute_show_only_image">ツイートの正規表現ミュートを使用する (画像のみ表示)</string>
+    <string name="tweet_mute_regex_pattern_show_only_image">ツイートミュートの正規表現パターン (画像のみ表示)</string>
     <string name="use_user_screen_name_regex_mute">スクリーンネームの正規表現ミュートを使用する</string>
     <string name="user_screen_name_mute_regex_pattern">スクリーンネームミュートの正規表現パターン</string>
     <string name="use_user_name_regex_mute">ユーザー名の正規表現ミュートを使用する</string>

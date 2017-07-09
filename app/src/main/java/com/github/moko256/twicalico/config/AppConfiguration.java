@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.moko256.twicalico;
+package com.github.moko256.twicalico.config;
 
 /**
  * Created by moko256 on 2017/02/04.
@@ -27,6 +27,9 @@ public class AppConfiguration {
     private boolean patternTweetMuteEnabled;
     private String tweetMutePattern;
 
+    private boolean patternTweetMuteShowOnlyImageEnabled;
+    private String tweetMuteShowOnlyImagePattern;
+
     private boolean patternUserScreenNameMuteEnabled;
     private String userScreenNameMutePattern;
 
@@ -37,6 +40,7 @@ public class AppConfiguration {
     private String tweetSourceMutePattern;
 
     private boolean isTimelineImageLoad;
+
 
     public boolean isPatternTweetMuteEnabled() {
         return patternTweetMuteEnabled;
@@ -52,6 +56,22 @@ public class AppConfiguration {
 
     public void setTweetMutePattern(String tweetMutePattern) {
         this.tweetMutePattern = tweetMutePattern;
+    }
+
+    public boolean isPatternTweetMuteShowOnlyImageEnabled() {
+        return patternTweetMuteShowOnlyImageEnabled;
+    }
+
+    public void setPatternTweetMuteShowOnlyImageEnabled(boolean patternTweetMuteShowOnlyImageEnabled) {
+        this.patternTweetMuteShowOnlyImageEnabled = patternTweetMuteShowOnlyImageEnabled;
+    }
+
+    public String getTweetMuteShowOnlyImagePattern() {
+        return tweetMuteShowOnlyImagePattern;
+    }
+
+    public void setTweetMuteShowOnlyImagePattern(String tweetMuteShowOnlyImagePattern) {
+        this.tweetMuteShowOnlyImagePattern = tweetMuteShowOnlyImagePattern;
     }
 
     public boolean isPatternUserScreenNameMuteEnabled() {
@@ -102,7 +122,7 @@ public class AppConfiguration {
         this.tweetSourceMutePattern = tweetSourceMutePattern;
     }
 
-    public void setIsTimelineImageLoad(boolean isTimelineImageLoad) {
+    public void setTimelineImageLoad(boolean isTimelineImageLoad) {
         this.isTimelineImageLoad = isTimelineImageLoad;
     }
 
