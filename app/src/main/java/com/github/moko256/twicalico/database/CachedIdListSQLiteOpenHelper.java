@@ -48,11 +48,18 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("create table " + databaseName + "(id);");
         db.execSQL("create table ListViewPosition(position);");
+        //db.execSQL("create table ListViewPositionOffset(offset);");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
+        /*
+        switch (oldVersion){
+            case 1:
+                db.execSQL("create table ListViewPositionOffset(offset);");
+                break;
+        }
+        */
     }
 
     public synchronized ArrayList<Long> getIds(){
@@ -169,14 +176,43 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
         ContentValues contentValues = new ContentValues();
         contentValues.put("position", i);
 
-        Cursor c = database.query("ListViewPosition", new String[]{"position"}, null, null, null, null, null);
-        if (c.moveToNext()){
-            database.update("ListViewPosition", contentValues, null, null);
-        } else {
-            database.insert("ListViewPosition", "", contentValues);
-        }
-
-        c.close();
+        database.beginTransaction();
+        database.delete("ListViewPosition", null, null);
+        database.insert("ListViewPosition", null, contentValues);
+        database.setTransactionSuccessful();
+        database.endTransaction();
         database.close();
     }
+
+    /*
+
+    public synchronized int getListViewPositionOffset(){
+        SQLiteDatabase database=getReadableDatabase();
+        Cursor c = database.query("ListViewPositionOffset", new String[]{"offset"}, null, null, null, null, null);
+        int r;
+        if (c.moveToNext()){
+            r = c.getInt(0);
+        } else {
+            r = 0;
+        }
+        c.close();
+        database.close();
+        return r;
+    }
+
+    public synchronized void setListViewPositionOffset(int i){
+        SQLiteDatabase database=getWritableDatabase();
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("offset", i);
+
+        database.beginTransaction();
+        database.delete("ListViewPositionOffset", null, null);
+        database.insert("ListViewPositionOffset", null, contentValues);
+        database.setTransactionSuccessful();
+        database.endTransaction();
+        database.close();
+    }
+
+    */
 }

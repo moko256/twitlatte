@@ -367,20 +367,7 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
             contentValues.put("id", status.getId());
             contentValues.put("status", serializedStatusByte);
 
-            Cursor c=database.query(
-                    "CachedStatuses",
-                    columns,
-                    "id=" + String.valueOf(status.getId()),
-                    null,null,null,null
-            );
-
-            if (c.moveToNext()){
-                database.update("CachedStatuses", contentValues, "id=" + String.valueOf(status.getId()), null);
-            } else {
-                database.insert("CachedStatuses", "", contentValues);
-            }
-
-            c.close();
+            database.replace("CachedStatuses", null, contentValues);
         }
     }
 

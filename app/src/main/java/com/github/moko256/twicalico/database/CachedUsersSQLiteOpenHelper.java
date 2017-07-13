@@ -582,20 +582,7 @@ public class CachedUsersSQLiteOpenHelper extends SQLiteOpenHelper {
         contentValues.put(columns[41], Arrays.toString(ends).replace("[", "").replace("]", ""));
         contentValues.put(columns[42], Arrays.toString(user.getWithheldInCountries()).replace("[", "").replace("]", ""));
 
-        Cursor c=database.query(
-                "CachedUsers",
-                columns,
-                "id=" + String.valueOf(user.getId()),
-                null,null,null,null
-        );
-
-        if (c.moveToNext()){
-            database.update("CachedUsers", contentValues, "id=" + String.valueOf(user.getId()), null);
-        } else {
-            database.insert("CachedUsers", "", contentValues);
-        }
-
-        c.close();
+        database.replace("CachedUsers", null, contentValues);
     }
 
 

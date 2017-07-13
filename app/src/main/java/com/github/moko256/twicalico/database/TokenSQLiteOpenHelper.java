@@ -84,20 +84,7 @@ public class TokenSQLiteOpenHelper extends SQLiteOpenHelper {
         contentValues.put("token",accessToken.getToken());
         contentValues.put("tokenSecret",accessToken.getTokenSecret());
 
-        Cursor c=database.query(
-                "AccountTokenList",
-                new String[]{"userName","userId","token","tokenSecret"},
-                "userId=?", new String[]{String.valueOf(accessToken.getUserId())}
-                ,null,null,null
-        );
-
-        if (c.moveToNext()){
-            database.update("AccountTokenList",contentValues,"userId=?", new String[]{String.valueOf(accessToken.getUserId())});
-        } else {
-            database.insert("AccountTokenList", "zero", contentValues);
-        }
-
-        c.close();
+        database.replace("AccountTokenList", "zero", contentValues);
 
         long count = DatabaseUtils.queryNumEntries(database,"AccountTokenList");
         database.close();
