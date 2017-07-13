@@ -72,7 +72,7 @@
     <string name="succeeded">Succeeded</string>
     <string name="error_occurred_with_error_code">Error occurred (Error code : %d)</string>
     <string name="is_load_timeline_image">Load the images on the timeline</string>
-    <string name="version_s">Version %s</string>
+    <string name="version_text">Version</string>
     <string name="about">About</string>
     <string name="license_at_this_app">License at this application</string>
     <string name="apache_license_2_0" translatable="false">Apache License, Version 2.0</string>

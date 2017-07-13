@@ -183,7 +183,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             });
 
             Preference version=findPreference("app_version");
-            version.setTitle(getString(R.string.version_s, BuildConfig.VERSION_NAME));
+            version.setSummary(BuildConfig.VERSION_NAME);
             version.setOnPreferenceClickListener(preference -> {
                 Date birthday=new Date(1446956982000L);
                 Toast.makeText(

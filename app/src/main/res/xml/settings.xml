@@ -160,6 +160,8 @@
         <Preference
             android:key="source_code_link"
             android:title="GitHub" />
-        <Preference android:key="app_version"/>
+        <Preference
+            android:key="app_version"
+            android:title="@string/version_text"/>
     </PreferenceCategory>
 </PreferenceScreen>
