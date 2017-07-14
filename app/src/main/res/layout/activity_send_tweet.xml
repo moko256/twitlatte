@@ -17,9 +17,11 @@
 
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/activity_tweet_send_layout_root">
+    android:id="@+id/activity_tweet_send_layout_root"
+    tools:context=".PostTweetActivity">
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -70,6 +72,42 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"/>
 
+
+        <TextView
+            android:id="@+id/activity_tweet_possibly_sensitive_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/possibly_sensitive"
+            android:textColor="@color/colorAccent"
+            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+            android:layout_marginBottom="8dp"/>
+
+        <android.support.v7.widget.SwitchCompat
+            android:id="@+id/activity_tweet_possibly_sensitive_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"/>
+
+        <TextView
+            android:id="@+id/activity_tweet_location_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/add_location"
+            android:textColor="@color/colorAccent"
+            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+            android:layout_marginBottom="8dp"/>
+
+        <android.support.v7.widget.SwitchCompat
+            android:id="@+id/activity_tweet_location_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"/>
+
+        <TextView
+            android:id="@+id/activity_tweet_location_result"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"/>
 
         <android.support.v7.widget.AppCompatButton
             android:id="@+id/tweet_text_submit"

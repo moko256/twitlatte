@@ -41,6 +41,8 @@
     <string name="theme">Theme</string>
     <string name="images">Images</string>
     <string name="add_image">Add image…</string>
+    <string name="possibly_sensitive">Include sensitivity in the images</string>
+    <string name="add_location">Add location</string>
     <string name="follow_and_follower">Follow and Followers</string>
     <string name="retweet_by">Retweeted by %s</string>
     <string name="reply_to">Reply to %s</string>

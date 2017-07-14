@@ -32,6 +32,8 @@
     <string name="theme">テーマ</string>
     <string name="images">画像</string>
     <string name="add_image">画像を追加</string>
+    <string name="add_location">位置情報を追加</string>
+    <string name="possibly_sensitive">画像に過激な表現を含む</string>
     <string name="retweet_by">%sさんがリツイートしました</string>
     <string name="reply_to">%sさんへの返信</string>
     <string name="mention_to">%sさんへの言及</string>

@@ -28,6 +28,7 @@ import java.util.List;
 import rx.Single;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
+import twitter4j.GeoLocation;
 import twitter4j.Status;
 import twitter4j.StatusUpdate;
 import twitter4j.Twitter;
@@ -45,8 +46,10 @@ public class SendTweetModel {
     private ContentResolver contentResolver;
 
     private long inReplyToStatusId = -1;
+    private boolean possiblySensitive;
     private String tweetText;
     private List<Uri> uriList;
+    private GeoLocation location;
 
     private Validator validator = new Validator();
 
@@ -65,6 +68,14 @@ public class SendTweetModel {
 
     public boolean isReply() {
         return inReplyToStatusId != -1;
+    }
+
+    public boolean isPossiblySensitive() {
+        return possiblySensitive;
+    }
+
+    public void setPossiblySensitive(boolean possiblySensitive) {
+        this.possiblySensitive = possiblySensitive;
     }
 
     public String getTweetText() {
@@ -91,6 +102,14 @@ public class SendTweetModel {
         this.uriList = uriList;
     }
 
+    public GeoLocation getLocation() {
+        return location;
+    }
+
+    public void setLocation(GeoLocation location) {
+        this.location = location;
+    }
+
     public Single<Status> postTweet(){
         Single<Status> single = Single.create(subscriber -> {
             if (isValidTweet()){
@@ -104,9 +123,13 @@ public class SendTweetModel {
                             ids[i] = twitter.uploadMedia(uri.getLastPathSegment(), image).getMediaId();
                         }
                         statusUpdate.setMediaIds(ids);
+                        statusUpdate.setPossiblySensitive(possiblySensitive);
                     }
                     if (isReply()){
                         statusUpdate.setInReplyToStatusId(inReplyToStatusId);
+                    }
+                    if (location != null){
+                        statusUpdate.setLocation(location);
                     }
                     subscriber.onSuccess(twitter.updateStatus(statusUpdate));
                 } catch (FileNotFoundException | TwitterException e){
