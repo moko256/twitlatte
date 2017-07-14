@@ -290,7 +290,7 @@ public class StatusView extends FrameLayout {
                 )
         );
         retweetButton.setChecked(item.isRetweeted());
-        retweetButton.setEnabled(!item.getUser().isProtected());
+        retweetButton.setEnabled(!(item.getUser().isProtected()) || item.getUser().getId() == GlobalApplication.userId);
 
         replyButton.setOnClickListener(
                 v -> getContext().startActivity(PostTweetActivity.getIntent(getContext(), item.getId(), TwitterStringUtils.convertToReplyTopString(item.getUser().getScreenName(), item.getUserMentionEntities()).toString()))
