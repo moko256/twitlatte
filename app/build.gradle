@@ -74,8 +74,8 @@ dependencies {
 
     compile 'com.github.bumptech.glide:glide:3.8.0'
 
-    compile 'org.twitter4j:twitter4j-core:4.0.6'
-    compile 'org.twitter4j:twitter4j-http2-support:4.0.6'
+    //compile 'org.twitter4j:twitter4j-core:4.0.6'
+    //compile 'org.twitter4j:twitter4j-http2-support:4.0.6'
 
     compile 'com.twitter:twitter-text:1.14.7'
 

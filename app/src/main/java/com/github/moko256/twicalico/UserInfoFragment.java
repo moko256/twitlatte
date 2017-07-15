@@ -141,9 +141,9 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
     }
 
     private void setShowUserInfo(User user) {
-        String headerWebUrl = user.getProfileBannerURL();
-        if (headerWebUrl != null) {
-            requestManager.load(headerWebUrl.substring(0, headerWebUrl.length() - 3) + "1500x500").into(header);
+        String headerUrl = user.getProfileBanner1500x500URL();
+        if (headerUrl != null) {
+            requestManager.load(headerUrl).into(header);
         } else {
             String colorStr = user.getProfileBackgroundColor();
             if (!TextUtils.isEmpty(colorStr)){
