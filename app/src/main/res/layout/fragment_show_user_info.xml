@@ -42,7 +42,7 @@
                 android:layout_height="wrap_content">
                 <ImageView
                     android:layout_width="match_parent"
-                    android:layout_height="200dp"
+                    android:layout_height="wrap_content"
                     android:id="@+id/show_user_bgimage"
                     tools:src="@android:color/darker_gray"/>
 
@@ -51,7 +51,8 @@
                     android:layout_height="64dp"
                     android:id="@+id/show_user_image"
                     android:layout_centerHorizontal="true"
-                    android:layout_marginTop="168dp"
+                    android:layout_below="@id/show_user_bgimage"
+                    android:layout_marginTop="-32dp"
                     android:transitionName="tweet_user_image"
                     tools:src="@android:color/white"/>
 

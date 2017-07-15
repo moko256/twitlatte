@@ -139,7 +139,8 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
     }
 
     private void setShowUserInfo(User user) {
-        requestManager.load(user.getProfileBannerRetinaURL()).into(header);
+        String headerWebUrl = user.getProfileBannerURL();
+        requestManager.load(headerWebUrl.substring(0, headerWebUrl.length() - 3) + "1500x500").into(header);
         requestManager.load(user.getBiggerProfileImageURL()).asBitmap().into(new CircleImageTarget(icon));
 
         userNameText.setText(user.getName());
