@@ -16,10 +16,12 @@
 
 package com.github.moko256.twicalico;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -140,7 +142,14 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
 
     private void setShowUserInfo(User user) {
         String headerWebUrl = user.getProfileBannerURL();
-        requestManager.load(headerWebUrl.substring(0, headerWebUrl.length() - 3) + "1500x500").into(header);
+        if (headerWebUrl != null) {
+            requestManager.load(headerWebUrl.substring(0, headerWebUrl.length() - 3) + "1500x500").into(header);
+        } else {
+            String colorStr = user.getProfileBackgroundColor();
+            if (!TextUtils.isEmpty(colorStr)){
+                header.setBackgroundColor(Color.parseColor("#" + colorStr));
+            }
+        }
         requestManager.load(user.getBiggerProfileImageURL()).asBitmap().into(new CircleImageTarget(icon));
 
         userNameText.setText(user.getName());
