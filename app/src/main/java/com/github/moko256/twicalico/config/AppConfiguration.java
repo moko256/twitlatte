@@ -16,6 +16,8 @@
 
 package com.github.moko256.twicalico.config;
 
+import java.util.regex.Pattern;
+
 /**
  * Created by moko256 on 2017/02/04.
  *
@@ -28,16 +30,16 @@ public class AppConfiguration {
     private String tweetMutePattern;
 
     private boolean patternTweetMuteShowOnlyImageEnabled;
-    private String tweetMuteShowOnlyImagePattern;
+    private Pattern tweetMuteShowOnlyImagePattern;
 
     private boolean patternUserScreenNameMuteEnabled;
-    private String userScreenNameMutePattern;
+    private Pattern userScreenNameMutePattern;
 
     private boolean patternUserNameMuteEnabled;
-    private String userNameMutePattern;
+    private Pattern userNameMutePattern;
 
     private boolean patternTweetSourceMuteEnabled;
-    private String tweetSourceMutePattern;
+    private Pattern tweetSourceMutePattern;
 
     private boolean isTimelineImageLoad;
 
@@ -66,11 +68,11 @@ public class AppConfiguration {
         this.patternTweetMuteShowOnlyImageEnabled = patternTweetMuteShowOnlyImageEnabled;
     }
 
-    public String getTweetMuteShowOnlyImagePattern() {
+    public Pattern getTweetMuteShowOnlyImagePattern() {
         return tweetMuteShowOnlyImagePattern;
     }
 
-    public void setTweetMuteShowOnlyImagePattern(String tweetMuteShowOnlyImagePattern) {
+    public void setTweetMuteShowOnlyImagePattern(Pattern tweetMuteShowOnlyImagePattern) {
         this.tweetMuteShowOnlyImagePattern = tweetMuteShowOnlyImagePattern;
     }
 
@@ -82,11 +84,11 @@ public class AppConfiguration {
         this.patternUserScreenNameMuteEnabled = patternUserScreenNameMuteEnabled;
     }
 
-    public String getUserScreenNameMutePattern() {
+    public Pattern getUserScreenNameMutePattern() {
         return userScreenNameMutePattern;
     }
 
-    public void setUserScreenNameMutePattern(String userScreenNameMutePattern) {
+    public void setUserScreenNameMutePattern(Pattern userScreenNameMutePattern) {
         this.userScreenNameMutePattern = userScreenNameMutePattern;
     }
 
@@ -98,11 +100,11 @@ public class AppConfiguration {
         this.patternUserNameMuteEnabled = patternUserNameMuteEnabled;
     }
 
-    public String getUserNameMutePattern() {
+    public Pattern getUserNameMutePattern() {
         return userNameMutePattern;
     }
 
-    public void setUserNameMutePattern(String userNameMutePattern) {
+    public void setUserNameMutePattern(Pattern userNameMutePattern) {
         this.userNameMutePattern = userNameMutePattern;
     }
 
@@ -114,11 +116,11 @@ public class AppConfiguration {
         this.patternTweetSourceMuteEnabled = patternTweetSourceMuteEnabled;
     }
 
-    public String getTweetSourceMutePattern() {
+    public Pattern getTweetSourceMutePattern() {
         return tweetSourceMutePattern;
     }
 
-    public void setTweetSourceMutePattern(String tweetSourceMutePattern) {
+    public void setTweetSourceMutePattern(Pattern tweetSourceMutePattern) {
         this.tweetSourceMutePattern = tweetSourceMutePattern;
     }
 

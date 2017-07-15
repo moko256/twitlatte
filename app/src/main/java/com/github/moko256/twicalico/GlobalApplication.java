@@ -34,6 +34,7 @@ import com.github.moko256.twicalico.database.TokenSQLiteOpenHelper;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Date;
+import java.util.regex.Pattern;
 
 import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
@@ -112,22 +113,22 @@ public class GlobalApplication extends Application {
 
         configuration.setPatternTweetMuteShowOnlyImageEnabled(defaultSharedPreferences.getBoolean("patternTweetMuteShowOnlyImageEnabled",false));
         if(configuration.isPatternTweetMuteShowOnlyImageEnabled()){
-            configuration.setTweetMuteShowOnlyImagePattern(defaultSharedPreferences.getString("tweetMuteShowOnlyImagePattern",""));
+            configuration.setTweetMuteShowOnlyImagePattern(Pattern.compile(defaultSharedPreferences.getString("tweetMuteShowOnlyImagePattern","")));
         }
 
         configuration.setPatternUserScreenNameMuteEnabled(defaultSharedPreferences.getBoolean("patternUserScreenNameMuteEnabled",false));
         if(configuration.isPatternUserScreenNameMuteEnabled()){
-            configuration.setUserScreenNameMutePattern(defaultSharedPreferences.getString("userScreenNameMutePattern",""));
+            configuration.setUserScreenNameMutePattern(Pattern.compile(defaultSharedPreferences.getString("userScreenNameMutePattern","")));
         }
 
         configuration.setPatternUserNameMuteEnabled(defaultSharedPreferences.getBoolean("patternUserNameMuteEnabled",false));
         if(configuration.isPatternUserNameMuteEnabled()){
-            configuration.setUserNameMutePattern(defaultSharedPreferences.getString("userNameMutePattern",""));
+            configuration.setUserNameMutePattern(Pattern.compile(defaultSharedPreferences.getString("userNameMutePattern","")));
         }
 
         configuration.setPatternTweetSourceMuteEnabled(defaultSharedPreferences.getBoolean("patternTweetSourceMuteEnabled",false));
         if(configuration.isPatternTweetSourceMuteEnabled()){
-            configuration.setTweetSourceMutePattern(defaultSharedPreferences.getString("tweetSourceMutePattern",""));
+            configuration.setTweetSourceMutePattern(Pattern.compile(defaultSharedPreferences.getString("tweetSourceMutePattern","")));
         }
 
         configuration.setTimelineImageLoad(Boolean.valueOf(defaultSharedPreferences.getString("isTimelineImageLoad","true")));

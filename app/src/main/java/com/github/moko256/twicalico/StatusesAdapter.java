@@ -70,15 +70,15 @@ class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         Status item = status.isRetweet()?status.getRetweetedStatus():status;
         AppConfiguration conf=GlobalApplication.configuration;
         if((conf.isPatternTweetMuteEnabled() && item.getText().matches(conf.getTweetMutePattern())) ||
-                (conf.isPatternUserScreenNameMuteEnabled() && item.getUser().getScreenName().matches(conf.getUserScreenNameMutePattern())) ||
-                (conf.isPatternUserNameMuteEnabled() && item.getUser().getName().matches(conf.getUserNameMutePattern())) ||
-                (conf.isPatternTweetSourceMuteEnabled() && TwitterStringUtils.removeHtmlTags(item.getSource()).matches(conf.getTweetSourceMutePattern()))
+                (conf.isPatternUserScreenNameMuteEnabled() && conf.getUserScreenNameMutePattern().matcher(item.getUser().getScreenName()).matches()) ||
+                (conf.isPatternUserNameMuteEnabled() && conf.getUserNameMutePattern().matcher(item.getUser().getName()).matches()) ||
+                (conf.isPatternTweetSourceMuteEnabled() && conf.getTweetSourceMutePattern().matcher(TwitterStringUtils.removeHtmlTags(item.getSource())).matches())
                 ){
             return 2;
         }
         if ((conf.isPatternTweetMuteShowOnlyImageEnabled()
                 && item.getMediaEntities().length > 0
-                && item.getText().matches(conf.getTweetMuteShowOnlyImagePattern()))){
+                && conf.getTweetMuteShowOnlyImagePattern().matcher(item.getText()).matches())){
             return 3;
         }
         return super.getItemViewType(position);
