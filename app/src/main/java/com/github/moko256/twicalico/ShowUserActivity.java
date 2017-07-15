@@ -21,6 +21,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -69,6 +71,21 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
         tabLayout= findViewById(R.id.tab_show_user);
         tabLayout.setupWithViewPager(viewPager);
         tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {}
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {}
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+                Fragment fragment = ((FragmentPagerAdapter) viewPager.getAdapter()).getItem(tab.getPosition());
+                if (fragment instanceof MoveableTopInterface){
+                    ((MoveableTopInterface) fragment).moveToTop();
+                }
+            }
+        });
 
         findViewById(R.id.activity_show_user_fab).setOnClickListener(v -> {
             if (user!=null){

@@ -34,7 +34,7 @@ import android.widget.ProgressBar;
  *
  * @author moko256
  */
-public abstract class BaseListFragment extends Fragment {
+public abstract class BaseListFragment extends Fragment implements MoveableTopInterface {
 
     private RecyclerView recyclerView;
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -61,7 +61,7 @@ public abstract class BaseListFragment extends Fragment {
 
         View view=inflater.inflate(getLayoutResourceId(), container ,false);
 
-        recyclerView=(RecyclerView) view.findViewById(R.id.TLlistView);
+        recyclerView= view.findViewById(R.id.TLlistView);
         recyclerView.setLayoutManager(initializeRecyclerViewLayoutManager());
         recyclerView.addOnScrollListener(new LoadScrollListener((StaggeredGridLayoutManager) recyclerView.getLayoutManager()) {
             @Override
@@ -72,7 +72,7 @@ public abstract class BaseListFragment extends Fragment {
             }
         });
 
-        swipeRefreshLayout=(SwipeRefreshLayout) view.findViewById(R.id.srl);
+        swipeRefreshLayout= view.findViewById(R.id.srl);
         swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
         swipeRefreshLayout.setOnRefreshListener(()->{
             if (isInitializedList()){
@@ -82,10 +82,20 @@ public abstract class BaseListFragment extends Fragment {
             }
         });
 
-        progressBar = (ProgressBar) view.findViewById(R.id.loadingProgress);
+        progressBar = view.findViewById(R.id.loadingProgress);
         updateProgressCircleLoading();
 
         return view;
+    }
+
+    @Override
+    public void moveToTop() {
+        if (((StaggeredGridLayoutManager) recyclerView.getLayoutManager()).findFirstVisibleItemPositions(null)[0]
+                < 5) {
+            getRecyclerView().smoothScrollToPosition(0);
+        } else {
+            getRecyclerView().scrollToPosition(0);
+        }
     }
 
     @Override

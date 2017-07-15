@@ -21,6 +21,7 @@ import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -58,6 +59,13 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        toolbar.getChildAt(0).setOnClickListener(v -> {
+            Fragment fragment = getMainFragment();
+            if (fragment instanceof MoveableTopInterface){
+                ((MoveableTopInterface) fragment).moveToTop();
+            }
+        });
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -127,6 +135,21 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
         findViewById(R.id.fab).setOnClickListener(v -> startActivity(new Intent(this, PostTweetActivity.class)));
 
         TabLayout tabLayout= findViewById(R.id.toolbar_tab);
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {}
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {}
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+                Fragment fragment = ((FragmentPagerAdapter) ((UseTabsInterface) getMainFragment()).getTabsViewPager().getAdapter()).getItem(tab.getPosition());
+                if (fragment instanceof MoveableTopInterface){
+                    ((MoveableTopInterface) fragment).moveToTop();
+                }
+            }
+        });
 
         getSupportFragmentManager().addOnBackStackChangedListener(() -> attachFragment(getMainFragment(), navigationView, tabLayout));
 
