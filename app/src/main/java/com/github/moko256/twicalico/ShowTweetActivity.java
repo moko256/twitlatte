@@ -49,6 +49,9 @@ import twitter4j.Status;
 import twitter4j.TwitterException;
 import twitter4j.UserMentionEntity;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+
 /**
  * Created by moko256 on 2016/03/10.
  * This Activity is to show a tweet.
@@ -112,17 +115,23 @@ public class ShowTweetActivity extends AppCompatActivity {
                                     TextView tweetIsReply = findViewById(R.id.tweet_show_is_reply_text);
                                     long replyTweetId = item.getInReplyToStatusId();
                                     if (replyTweetId != -1){
-                                        tweetIsReply.setVisibility(View.VISIBLE);
+                                        tweetIsReply.setVisibility(VISIBLE);
                                         tweetIsReply.setOnClickListener(v -> startActivity(getIntent(this, replyTweetId)));
                                     } else {
-                                        tweetIsReply.setVisibility(View.GONE);
+                                        tweetIsReply.setVisibility(GONE);
                                     }
 
                                     ((TextView) findViewById(R.id.tweet_show_user_name)).setText(item.getUser().getName());
                                     ((TextView) findViewById(R.id.tweet_show_user_id)).setText(TwitterStringUtils.plusAtMark(item.getUser().getScreenName()));
+
                                     TextView contentText= findViewById(R.id.tweet_show_content);
-                                    contentText.setText(TwitterStringUtils.getLinkedSequence(item,ShowTweetActivity.this));
-                                    contentText.setMovementMethod(LinkMovementMethod.getInstance());
+
+                                    CharSequence text = TwitterStringUtils.getLinkedSequence(item,ShowTweetActivity.this);
+                                    if (!text.toString().trim().isEmpty()) {
+                                        contentText.setText(text);
+                                        contentText.setMovementMethod(LinkMovementMethod.getInstance());
+                                        contentText.setVisibility(VISIBLE);
+                                    }
 
                                     userImage.setOnClickListener(v-> startActivity(ShowUserActivity.getIntent(this, item.getUser().getId())));
 
@@ -130,16 +139,16 @@ public class ShowTweetActivity extends AppCompatActivity {
 
                                     twitter4j.Status quotedStatus=item.getQuotedStatus();
                                     if(quotedStatus!=null){
-                                        if (tweetQuoteTweetLayout.getVisibility() != View.VISIBLE) {
-                                            tweetQuoteTweetLayout.setVisibility(View.VISIBLE);
+                                        if (tweetQuoteTweetLayout.getVisibility() != VISIBLE) {
+                                            tweetQuoteTweetLayout.setVisibility(VISIBLE);
                                         }
                                         tweetQuoteTweetLayout.setOnClickListener(v -> startActivity(getIntent(this, quotedStatus.getId())));
                                         ((TextView) findViewById(R.id.tweet_show_quote_tweet_user_name)).setText(quotedStatus.getUser().getName());
                                         ((TextView) findViewById(R.id.tweet_show_quote_tweet_user_id)).setText(TwitterStringUtils.plusAtMark(quotedStatus.getUser().getScreenName()));
                                         ((TextView) findViewById(R.id.tweet_show_quote_tweet_content)).setText(quotedStatus.getText());
                                     }else{
-                                        if (tweetQuoteTweetLayout.getVisibility() != View.GONE) {
-                                            tweetQuoteTweetLayout.setVisibility(View.GONE);
+                                        if (tweetQuoteTweetLayout.getVisibility() != GONE) {
+                                            tweetQuoteTweetLayout.setVisibility(GONE);
                                         }
                                     }
 
@@ -147,10 +156,10 @@ public class ShowTweetActivity extends AppCompatActivity {
 
                                     TweetImageTableView tableView= findViewById(R.id.tweet_show_images);
                                     if(mediaEntities.length!=0){
-                                        tableView.setVisibility(View.VISIBLE);
+                                        tableView.setVisibility(VISIBLE);
                                         tableView.setMediaEntities(mediaEntities);
                                     }else{
-                                        tableView.setVisibility(View.GONE);
+                                        tableView.setVisibility(GONE);
                                     }
 
                                     ((TextView)findViewById(R.id.tweet_show_timestamp)).setText(

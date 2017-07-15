@@ -86,7 +86,9 @@
                 android:layout_below="@id/tweet_show_image"
                 android:layout_marginTop="16dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                tools:text="Tweet context"/>
+                android:visibility="gone"
+                tools:text="Tweet context"
+                tools:visibility="visible"/>
 
             <RelativeLayout
                 android:id="@+id/tweet_show_quote_tweet"
@@ -132,6 +134,7 @@
             <com.github.moko256.twicalico.widget.TweetImageTableView
                 android:id="@+id/tweet_show_images"
                 android:layout_below="@id/tweet_show_quote_tweet"
+                android:layout_marginTop="16dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 

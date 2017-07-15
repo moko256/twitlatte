@@ -190,7 +190,18 @@ public class StatusView extends FrameLayout {
 
         userName.setText(item.getUser().getName());
         userId.setText(TwitterStringUtils.plusAtMark(item.getUser().getScreenName()));
-        tweetContext.setText(TwitterStringUtils.getStatusTextSequence(item));
+
+        CharSequence text = TwitterStringUtils.getStatusTextSequence(item);
+        if (!text.toString().trim().isEmpty()) {
+            tweetContext.setText(text);
+            if (tweetContext.getVisibility() != VISIBLE){
+                tweetContext.setVisibility(VISIBLE);
+            }
+        } else {
+            if (tweetContext.getVisibility() != GONE){
+                tweetContext.setVisibility(GONE);
+            }
+        }
 
         timeStampText.setText(timeSpanConverter.toTimeSpanString(item.getCreatedAt().getTime()));
         userImage.setOnClickListener(v->{
