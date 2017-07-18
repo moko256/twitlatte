@@ -25,7 +25,7 @@ android {
         applicationId "com.github.moko256.twicalico"
         minSdkVersion 17
         targetSdkVersion 26
-        versionCode 20
+        versionCode 21
         versionName "0.7.6.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
