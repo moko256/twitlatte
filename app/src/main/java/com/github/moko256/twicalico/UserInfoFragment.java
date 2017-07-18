@@ -22,6 +22,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
 import android.text.TextUtils;
+import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -155,7 +156,8 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
         userNameText.setText(user.getName());
         userIdText.setText(TwitterStringUtils.plusAtMark(user.getScreenName()));
         getActivity().setTitle(user.getName());
-        userBioText.setText(user.getDescription());
+        userBioText.setText(TwitterStringUtils.getProfileLinkedSequence(getContext(), user));
+        userBioText.setMovementMethod(LinkMovementMethod.getInstance());
 
         userCreatedAt.setText(DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.FULL).format(user.getCreatedAt()));
         userTweetsCount.setText(getContext().getString(R.string.tweet_counts_is,String.valueOf(user.getStatusesCount())));

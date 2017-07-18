@@ -642,12 +642,12 @@ public class CachedUsersSQLiteOpenHelper extends SQLiteOpenHelper {
 
                 @Override
                 public int getStart() {
-                    return Integer.valueOf(starts[finalI]);
+                    return Integer.valueOf(starts[finalI].trim());
                 }
 
                 @Override
                 public int getEnd() {
-                    return Integer.valueOf(ends[finalI]);
+                    return Integer.valueOf(ends[finalI].trim());
                 }
             };
         }

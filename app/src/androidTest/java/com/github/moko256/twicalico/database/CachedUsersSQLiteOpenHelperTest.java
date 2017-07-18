@@ -304,6 +304,21 @@ public class CachedUsersSQLiteOpenHelperTest {
         }
 
         @Override
+        public String getProfileBanner300x100URL() {
+            return null;
+        }
+
+        @Override
+        public String getProfileBanner600x200URL() {
+            return null;
+        }
+
+        @Override
+        public String getProfileBanner1500x500URL() {
+            return null;
+        }
+
+        @Override
         public boolean isProfileBackgroundTiled() {
             return false;
         }

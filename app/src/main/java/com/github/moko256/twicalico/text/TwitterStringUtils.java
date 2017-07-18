@@ -25,6 +25,7 @@ import android.support.customtabs.CustomTabsIntent;
 import android.support.v4.content.ContextCompat;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
+import android.text.TextUtils;
 import android.text.style.ClickableSpan;
 import android.view.View;
 
@@ -39,6 +40,7 @@ import twitter4j.MediaEntity;
 import twitter4j.Status;
 import twitter4j.SymbolEntity;
 import twitter4j.URLEntity;
+import twitter4j.User;
 import twitter4j.UserMentionEntity;
 
 /**
@@ -200,6 +202,43 @@ public class TwitterStringUtils {
 
         return spannableStringBuilder;
 
+    }
+
+    public static CharSequence getProfileLinkedSequence(Context mContext, User user){
+        String description = user.getDescription();
+        URLEntity[] urlEntities = user.getDescriptionURLEntities();
+
+        if (urlEntities == null || urlEntities.length <= 0 || TextUtils.isEmpty(urlEntities[0].getURL())) return description;
+
+        SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(description);
+        int tweetLength = description.codePointCount(0, description.length());
+        int sp = 0;
+
+        for (URLEntity entity : urlEntities) {
+            String url = entity.getURL();
+            String expandedUrl = entity.getDisplayURL();
+
+            int urlLength = url.codePointCount(0, url.length());
+            int displayUrlLength = expandedUrl.codePointCount(0, expandedUrl.length());
+            if (entity.getStart() <= tweetLength && entity.getEnd() <= tweetLength) {
+                int dusp = displayUrlLength - urlLength;
+                spannableStringBuilder.replace(description.offsetByCodePoints(0, entity.getStart()) + sp, description.offsetByCodePoints(0, entity.getEnd()) + sp, expandedUrl);
+                spannableStringBuilder.setSpan(new ClickableSpan() {
+                    @Override
+                    public void onClick(View view) {
+                        new CustomTabsIntent.Builder()
+                                .setToolbarColor(ContextCompat.getColor(mContext, R.color.colorPrimary))
+                                .setSecondaryToolbarColor(ContextCompat.getColor(mContext, R.color.colorPrimaryDark))
+                                .build()
+                                .launchUrl(mContext, Uri.parse(entity.getExpandedURL()));
+                    }
+                }, description.offsetByCodePoints(0, entity.getStart()) + sp, description.offsetByCodePoints(0, entity.getEnd()) + sp + dusp, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+
+                sp += dusp;
+            }
+        }
+
+        return spannableStringBuilder;
     }
 
 }
