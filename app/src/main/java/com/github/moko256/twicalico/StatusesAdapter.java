@@ -20,7 +20,10 @@ import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.github.moko256.twicalico.config.AppConfiguration;
 import com.github.moko256.twicalico.text.TwitterStringUtils;
@@ -104,7 +107,11 @@ class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         } else if (viewHolder instanceof ImagesOnlyTweetViewHolder){
             ((ImagesOnlyTweetViewHolder) viewHolder).setStatus(GlobalApplication.statusCache.get(data.get(i)));
         } else if (viewHolder instanceof MoreLoadViewHolder) {
-            viewHolder.itemView.setOnClickListener(v -> onLoadMoreClick.onClick(i));
+            ((MoreLoadViewHolder) viewHolder).setIsLoading(false);
+            viewHolder.itemView.setOnClickListener(v -> {
+                ((MoreLoadViewHolder) viewHolder).setIsLoading(true);
+                onLoadMoreClick.onClick(i);
+            });
             ViewGroup.LayoutParams oldParams = viewHolder.itemView.getLayoutParams();
             StaggeredGridLayoutManager.LayoutParams params = oldParams != null?
                     new StaggeredGridLayoutManager.LayoutParams(oldParams) :
@@ -145,8 +152,26 @@ class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     private class MoreLoadViewHolder extends RecyclerView.ViewHolder {
+        TextView text;
+        ProgressBar progressBar;
+
+        private boolean isLoading = false;
+
         MoreLoadViewHolder() {
             super(LayoutInflater.from(context).inflate(R.layout.layout_list_load_more_text, null));
+            text = itemView.findViewById(R.id.layout_list_load_more_text_view);
+            progressBar = itemView.findViewById(R.id.layout_list_load_more_text_progress);
+            this.isLoading = isLoading;
+        }
+
+        void setIsLoading(boolean isLoading){
+            itemView.setClickable(!isLoading);
+            text.setVisibility(isLoading? View.INVISIBLE: View.VISIBLE);
+            progressBar.setVisibility(isLoading? View.VISIBLE: View.INVISIBLE);
+        }
+
+        boolean getIsLoading(){
+            return isLoading;
         }
     }
 
