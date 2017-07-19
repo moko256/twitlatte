@@ -17,12 +17,17 @@
 package com.github.moko256.twicalico;
 
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.customtabs.CustomTabsIntent;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
+import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,6 +65,8 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
     TextView userNameText;
     TextView userIdText;
     TextView userBioText;
+    TextView userLocation;
+    TextView userUrl;
     TextView userCreatedAt;
     TextView userTweetsCount;
     TextView userFollowCount;
@@ -119,6 +126,8 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
         userNameText= view.findViewById(R.id.show_user_name);
         userIdText= view.findViewById(R.id.show_user_id);
         userBioText = view.findViewById(R.id.show_user_bio);
+        userLocation = view.findViewById(R.id.show_user_location);
+        userUrl = view.findViewById(R.id.show_user_url);
         userCreatedAt= view.findViewById(R.id.show_user_created_at);
         userTweetsCount= view.findViewById(R.id.show_user_tweets_count);
         userFollowCount= view.findViewById(R.id.show_user_follow_count);
@@ -158,6 +167,19 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
         getActivity().setTitle(user.getName());
         userBioText.setText(TwitterStringUtils.getProfileLinkedSequence(getContext(), user));
         userBioText.setMovementMethod(LinkMovementMethod.getInstance());
+
+        if (!TextUtils.isEmpty(user.getLocation())){
+            userLocation.setText(getString(R.string.location_is, user.getLocation()));
+        } else {
+            userLocation.setVisibility(View.GONE);
+        }
+
+        if (!TextUtils.isEmpty(user.getURL())){
+            userUrl.setText(getString(R.string.url_is, user.getURL()));
+            userUrl.setMovementMethod(LinkMovementMethod.getInstance());
+        } else {
+            userUrl.setVisibility(View.GONE);
+        }
 
         userCreatedAt.setText(DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.FULL).format(user.getCreatedAt()));
         userTweetsCount.setText(getContext().getString(R.string.tweet_counts_is,String.valueOf(user.getStatusesCount())));

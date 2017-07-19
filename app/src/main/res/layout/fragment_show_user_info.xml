@@ -116,7 +116,22 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:id="@+id/show_user_location"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    tools:text="location"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/show_user_url"
+                    android:layout_below="@id/show_user_location"
+                    android:autoLink="web"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    tools:text="url"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:id="@+id/show_user_created_at"
+                    android:layout_below="@id/show_user_url"
                     android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                     tools:text="date user was created at"/>
                 <TextView

@@ -40,6 +40,8 @@
     <string name="app_settings">アプリケーションの設定</string>
     <string name="add_account">他のアカウントを追加</string>
     <string name="logout">ログアウトする</string>
+    <string name="location_is">所在地: %s</string>
+    <string name="url_is">URL: %s</string>
     <string name="tweet_counts_is">ツイート数: %s</string>
     <string name="follow_counts_is">フォロー数: %s</string>
     <string name="follower_counts_is">フォロワー数: %s</string>
