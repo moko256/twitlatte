@@ -29,6 +29,8 @@ import android.support.annotation.NonNull;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import java.io.Serializable;
@@ -61,27 +63,11 @@ public class ShowImageActivity extends AppCompatActivity {
         mediaEntitiesList.toArray(mediaEntities);
         int position=getIntent().getIntExtra(FRAG_POSITION,0);
 
-        toolbar=(Toolbar) findViewById(R.id.activity_show_image_toolbar);
-        toolbar.inflateMenu(R.menu.activity_show_image_toolbar);
-        toolbar.setOnMenuItemClickListener(item -> {
-            if(item.getItemId()==R.id.activity_show_image_download){
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED){
-                        requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},100);
-                    } else {
-                        contentDownload();
-                    }
-                } else {
-                    contentDownload();
-                }
-            }
-            return true;
-        });
+        getSupportActionBar().setTitle("");
 
-        pager= (ViewPager) findViewById(R.id.activity_show_image_view_pager);
+        pager= findViewById(R.id.activity_show_image_view_pager);
         pager.setAdapter(new ImagePagerAdapter(getSupportFragmentManager(),mediaEntities,this));
         pager.setCurrentItem(position);
-
     }
 
     @Override
@@ -100,6 +86,28 @@ public class ShowImageActivity extends AppCompatActivity {
         } else {
             Toast.makeText(this,"Permission Denided.",Toast.LENGTH_LONG).show();
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_show_image_toolbar, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId()==R.id.activity_show_image_download){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED){
+                    requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},100);
+                } else {
+                    contentDownload();
+                }
+            } else {
+                contentDownload();
+            }
+        }
+        return true;
     }
 
     private void contentDownload(){

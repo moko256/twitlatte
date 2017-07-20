@@ -98,7 +98,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data android:scheme="twicalico" />
+                <data android:scheme="@string/app_name" />
             </intent-filter>
         </activity>
         <activity
