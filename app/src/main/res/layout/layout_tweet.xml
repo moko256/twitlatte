@@ -85,7 +85,7 @@
             android:layout_toLeftOf="@id/tweet_time_stamp_text"
             android:layout_toRightOf="@id/tweet_icon"
             android:ellipsize="end"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
             android:lines="1"
             android:layout_marginTop="0dp"
             android:layout_marginRight="8dp"
@@ -99,7 +99,7 @@
             android:ellipsize="end"
             android:layout_below="@id/tweet_user_name"
             android:layout_toRightOf="@id/tweet_icon"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
             android:textColor="?android:textColorSecondary"
             tools:text="\@user_id"/>
 
