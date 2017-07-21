@@ -205,11 +205,7 @@ public class StatusView extends FrameLayout {
 
         timeStampText.setText(timeSpanConverter.toTimeSpanString(item.getCreatedAt().getTime()));
         userImage.setOnClickListener(v->{
-            ViewCompat.setTransitionName(userImage,"tweet_user_image");
-            getContext().startActivity(
-                    ShowUserActivity.getIntent(getContext(), item.getUser().getId()),
-                    ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) getContext(), userImage, "tweet_user_image").toBundle()
-            );
+            getContext().startActivity(ShowUserActivity.getIntent(getContext(), item.getUser().getId()));
         });
         setOnClickListener(v -> {
             ViewCompat.setTransitionName(userImage,"tweet_user_image");

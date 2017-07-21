@@ -75,11 +75,7 @@ class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> {
         viewHolder.userUserName.setText(item.getName());
         viewHolder.userUserId.setText(TwitterStringUtils.plusAtMark(item.getScreenName()));
         viewHolder.itemView.setOnClickListener(v -> {
-            ViewCompat.setTransitionName(viewHolder.userUserImage,"tweet_user_image");
-            context.startActivity(
-                    ShowUserActivity.getIntent(context, item.getId()),
-                    ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) context,viewHolder.userUserImage,"tweet_user_image").toBundle()
-            );
+            context.startActivity(ShowUserActivity.getIntent(context, item.getId()));
         });
 
     }
