@@ -103,11 +103,20 @@
             android:textColor="?android:textColorSecondary"
             tools:text="\@user_id"/>
 
+        <com.github.moko256.twicalico.widget.TweetImageTableView
+            android:id="@+id/tweet_image_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tweet_icon"
+            android:layout_marginTop="16dp"
+            android:layout_marginLeft="-16dp"
+            android:layout_marginRight="-16dp"/>
+
         <TextView
             android:id="@+id/tweet_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/tweet_icon"
+            android:layout_below="@id/tweet_image_container"
             android:layout_marginTop="16dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             tools:text="Tweet context"/>
@@ -160,22 +169,13 @@
                 tools:text="Quoted tweet context"/>
         </RelativeLayout>
 
-        <com.github.moko256.twicalico.widget.TweetImageTableView
-            android:id="@+id/tweet_image_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/tweet_quote_tweet"
-            android:layout_marginTop="16dp"
-            android:layout_marginLeft="-16dp"
-            android:layout_marginRight="-16dp"/>
-
         <TextView
             android:id="@+id/tweet_content_like_count"
             android:layout_width="30sp"
             android:layout_height="24dp"
             android:layout_marginTop="20dp"
             android:layout_marginRight="12dp"
-            android:layout_below="@id/tweet_image_container"
+            android:layout_below="@id/tweet_quote_tweet"
             android:layout_alignParentRight="true"
             android:gravity="left|center_vertical"
             android:textAppearance="@style/TextAppearance.AppCompat.Caption"
@@ -185,7 +185,7 @@
             android:id="@+id/tweet_content_like_button"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:layout_below="@id/tweet_image_container"
+            android:layout_below="@id/tweet_quote_tweet"
             android:layout_toLeftOf="@id/tweet_content_like_count"
             android:layout_marginTop="20dp"
             android:layout_marginBottom="4dp"
@@ -199,7 +199,7 @@
             android:layout_width="30sp"
             android:layout_height="24dp"
             android:layout_marginTop="20dp"
-            android:layout_below="@id/tweet_image_container"
+            android:layout_below="@id/tweet_quote_tweet"
             android:layout_toLeftOf="@id/tweet_content_like_button"
             android:gravity="left|center_vertical"
             android:textAppearance="@style/TextAppearance.AppCompat.Caption"
@@ -209,7 +209,7 @@
             android:id="@+id/tweet_content_retweet_button"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:layout_below="@id/tweet_image_container"
+            android:layout_below="@id/tweet_quote_tweet"
             android:layout_toLeftOf="@+id/tweet_content_retweet_count"
             android:layout_marginTop="20dp"
             android:layout_marginBottom="4dp"
@@ -226,7 +226,7 @@
             android:id="@+id/tweet_content_reply_button"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:layout_below="@id/tweet_image_container"
+            android:layout_below="@id/tweet_quote_tweet"
             android:layout_toLeftOf="@+id/tweet_content_retweet_button"
             android:layout_marginTop="20dp"
             android:layout_marginBottom="4dp"
