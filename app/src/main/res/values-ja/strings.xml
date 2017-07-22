@@ -64,7 +64,6 @@
     <string name="error_occurred">エラーが発生しました</string>
     <string name="retry">再試行</string>
     <string name="succeeded">成功しました</string>
-    <string name="error_occurred_with_error_code">エラーが発生しました (エラーコード : %d)</string>
     <string name="is_load_timeline_image">タイムラインの画像を読み込むか</string>
     <string name="version_text">バージョン</string>
     <string name="about">概要</string>

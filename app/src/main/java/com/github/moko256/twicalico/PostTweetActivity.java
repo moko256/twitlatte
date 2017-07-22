@@ -46,6 +46,7 @@ import android.widget.TextView;
 
 import com.github.moko256.twicalico.model.base.PostTweetModel;
 import com.github.moko256.twicalico.model.impl.PostTweetModelImpl;
+import com.github.moko256.twicalico.text.TwitterStringUtils;
 import com.twitter.Validator;
 
 import rx.Single;
@@ -194,7 +195,7 @@ public class PostTweetActivity extends AppCompatActivity {
                             e->{
                                 e.printStackTrace();
                                 v.setEnabled(true);
-                                Snackbar.make(rootViewGroup, e.getMessage(), Snackbar.LENGTH_INDEFINITE).show();
+                                Snackbar.make(rootViewGroup, TwitterStringUtils.convertErrorToText(e), Snackbar.LENGTH_INDEFINITE).show();
                             }
                     );
         });

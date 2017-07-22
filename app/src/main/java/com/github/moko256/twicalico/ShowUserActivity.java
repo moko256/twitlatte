@@ -98,8 +98,7 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         it -> viewPager.setAdapter(new ShowUserFragmentsPagerAdapter(getSupportFragmentManager(),this,it.getId())),
-                        e -> Snackbar.make(findViewById(getSnackBarParentContainerId()), getString(R.string.error_occurred_with_error_code,
-                                ((TwitterException) e).getErrorCode()), Snackbar.LENGTH_INDEFINITE)
+                        e -> Snackbar.make(findViewById(getSnackBarParentContainerId()), TwitterStringUtils.convertErrorToText(e), Snackbar.LENGTH_INDEFINITE)
                                 .show()
                 );
     }

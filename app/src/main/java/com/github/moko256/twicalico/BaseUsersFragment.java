@@ -24,6 +24,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.github.moko256.twicalico.text.TwitterStringUtils;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -136,8 +138,7 @@ public abstract class BaseUsersFragment extends BaseListFragment {
                                 },
                                 e -> {
                                     e.printStackTrace();
-                                    Snackbar.make(getSnackBarParentContainer(), getContext().getString(R.string.error_occurred_with_error_code,
-                                            ((TwitterException) e).getErrorCode()), Snackbar.LENGTH_INDEFINITE)
+                                    Snackbar.make(getSnackBarParentContainer(), TwitterStringUtils.convertErrorToText(e), Snackbar.LENGTH_INDEFINITE)
                                             .setAction(R.string.retry, v -> onInitializeList())
                                             .show();
                                 }
@@ -172,8 +173,7 @@ public abstract class BaseUsersFragment extends BaseListFragment {
                                 },
                                 e -> {
                                     e.printStackTrace();
-                                    Snackbar.make(getSnackBarParentContainer(), getContext().getString(R.string.error_occurred_with_error_code,
-                                            ((TwitterException) e).getErrorCode()), Snackbar.LENGTH_INDEFINITE)
+                                    Snackbar.make(getSnackBarParentContainer(), TwitterStringUtils.convertErrorToText(e), Snackbar.LENGTH_INDEFINITE)
                                             .setAction(R.string.retry, v -> onLoadMoreList())
                                             .show();
                                 }

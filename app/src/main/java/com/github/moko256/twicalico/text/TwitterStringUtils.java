@@ -39,6 +39,7 @@ import twitter4j.HashtagEntity;
 import twitter4j.MediaEntity;
 import twitter4j.Status;
 import twitter4j.SymbolEntity;
+import twitter4j.TwitterException;
 import twitter4j.URLEntity;
 import twitter4j.User;
 import twitter4j.UserMentionEntity;
@@ -85,6 +86,14 @@ public class TwitterStringUtils {
             userIdsStr.append("@").append(user.getScreenName()).append(" ");
         }
         return userIdsStr;
+    }
+
+    public static String convertErrorToText(Throwable e){
+        if (e instanceof TwitterException && !TextUtils.isEmpty(((TwitterException) e).getErrorMessage())){
+            return ((TwitterException) e).getErrorMessage();
+        } else {
+            return e.getMessage();
+        }
     }
 
     public static CharSequence getStatusTextSequence(Status item){

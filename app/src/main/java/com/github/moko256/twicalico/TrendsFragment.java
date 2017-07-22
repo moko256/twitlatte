@@ -28,6 +28,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.github.moko256.twicalico.database.CachedTrendsSQLiteOpenHelper;
+import com.github.moko256.twicalico.text.TwitterStringUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -149,8 +150,7 @@ public class TrendsFragment extends BaseListFragment {
                                 },
                                 e -> {
                                     e.printStackTrace();
-                                    Snackbar.make(getSnackBarParentContainer(), getContext().getString(R.string.error_occurred_with_error_code,
-                                            ((TwitterException) e).getErrorCode()), Snackbar.LENGTH_INDEFINITE)
+                                    Snackbar.make(getSnackBarParentContainer(), TwitterStringUtils.convertErrorToText(e), Snackbar.LENGTH_INDEFINITE)
                                             .setAction(R.string.retry, v -> onInitializeList())
                                             .show();
                                 }

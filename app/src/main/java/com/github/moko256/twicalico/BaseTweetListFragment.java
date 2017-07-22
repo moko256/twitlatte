@@ -29,6 +29,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.github.moko256.twicalico.database.CachedIdListSQLiteOpenHelper;
+import com.github.moko256.twicalico.text.TwitterStringUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -126,8 +127,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                                 },
                                 e -> {
                                     e.printStackTrace();
-                                    Snackbar.make(getSnackBarParentContainer(), getContext().getString(R.string.error_occurred_with_error_code,
-                                            ((TwitterException) e).getErrorCode()), Snackbar.LENGTH_INDEFINITE)
+                                    Snackbar.make(getSnackBarParentContainer(), TwitterStringUtils.convertErrorToText(e), Snackbar.LENGTH_INDEFINITE)
                                             .setAction(R.string.retry, v -> onLoadMoreList())
                                             .show();
                                 }
@@ -210,8 +210,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                                 },
                                 e -> {
                                     e.printStackTrace();
-                                    Snackbar.make(getSnackBarParentContainer(), getContext().getString(R.string.error_occurred_with_error_code,
-                                            ((TwitterException) e).getErrorCode()), Snackbar.LENGTH_INDEFINITE)
+                                    Snackbar.make(getSnackBarParentContainer(), TwitterStringUtils.convertErrorToText(e), Snackbar.LENGTH_INDEFINITE)
                                             .setAction(R.string.retry, v -> onInitializeList())
                                             .show();
                                 }
@@ -259,8 +258,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                                 e -> {
                                     e.printStackTrace();
                                     getSwipeRefreshLayout().setRefreshing(false);
-                                    Snackbar.make(getSnackBarParentContainer(), getContext().getString(R.string.error_occurred_with_error_code,
-                                            ((TwitterException) e).getErrorCode()), Snackbar.LENGTH_INDEFINITE)
+                                    Snackbar.make(getSnackBarParentContainer(), TwitterStringUtils.convertErrorToText(e), Snackbar.LENGTH_INDEFINITE)
                                             .setAction(R.string.retry, v -> onUpdateList())
                                             .show();
                                 }
@@ -289,8 +287,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                                 },
                                 e -> {
                                     e.printStackTrace();
-                                    Snackbar.make(getSnackBarParentContainer(), getContext().getString(R.string.error_occurred_with_error_code,
-                                            ((TwitterException) e).getErrorCode()), Snackbar.LENGTH_INDEFINITE)
+                                    Snackbar.make(getSnackBarParentContainer(), TwitterStringUtils.convertErrorToText(e), Snackbar.LENGTH_INDEFINITE)
                                             .setAction(R.string.retry, v -> onLoadMoreList())
                                             .show();
                                 }
