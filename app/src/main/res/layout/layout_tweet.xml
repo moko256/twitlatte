@@ -179,6 +179,7 @@
             android:layout_alignParentRight="true"
             android:gravity="left|center_vertical"
             android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+            android:textStyle="bold"
             tools:text="20G"/>
 
         <com.github.moko256.twicalico.widget.DrawableToggleView
@@ -203,6 +204,7 @@
             android:layout_toLeftOf="@id/tweet_content_like_button"
             android:gravity="left|center_vertical"
             android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+            android:textStyle="bold"
             tools:text="500M"/>
 
         <com.github.moko256.twicalico.widget.DrawableToggleView
