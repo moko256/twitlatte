@@ -15,5 +15,5 @@
   -->
 
 <resources>
-    <string name="app_name" translatable="false">tco_debug</string>
+    <string name="app_name" translatable="false">tco-debug</string>
 </resources>
