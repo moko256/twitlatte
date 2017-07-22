@@ -50,6 +50,7 @@
     <string name="app_settings">Application Settings</string>
     <string name="add_account">Add other account</string>
     <string name="logout">Logout</string>
+    <string name="permission_denied">Permission Denied</string>
     <string name="location_is">Location: %s</string>
     <string name="url_is">URL: %s</string>
     <string name="tweet_counts_is">Tweets: %s</string>
@@ -60,6 +61,7 @@
     <string name="add_to_list">Add to list</string>
     <string name="show_list">Show lists</string>
     <string name="load_more">Load more…</string>
+    <string name="confirm_message">Do this action?</string>
     <string name="create_follow">Follow</string>
     <string name="destroy_follow">Cancel Follow</string>
     <string name="create_mute">Mute</string>

@@ -108,7 +108,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             findPreference("logout").setOnPreferenceClickListener(preference -> {
                 new AlertDialog.Builder(getContext())
                         .setTitle(R.string.logout)
-                        .setMessage("Logout?")
+                        .setMessage(R.string.confirm_message)
                         .setCancelable(true)
                         .setPositiveButton(android.R.string.ok,
                                 (dialog, i) -> {

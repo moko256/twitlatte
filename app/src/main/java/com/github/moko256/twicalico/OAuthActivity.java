@@ -61,7 +61,7 @@ public class OAuthActivity extends AppCompatActivity {
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         Uri uri = intent.getData();
-        if(requirePin||(uri != null && uri.toString().startsWith("twicalico://OAuthActivity"))){
+        if(requirePin||(uri != null && uri.toString().startsWith(getString(R.string.app_name) + "://OAuthActivity"))){
 
             if (!requirePin){
                 initToken(uri.getQueryParameter("oauth_verifier"));
@@ -79,7 +79,7 @@ public class OAuthActivity extends AppCompatActivity {
             @Override
             public Void doInBackground(Void... params) {
                 try {
-                    req = oauth.getOAuthRequestToken("twicalico://OAuthActivity");
+                    req = oauth.getOAuthRequestToken(getString(R.string.app_name) + "://OAuthActivity");
                 } catch (TwitterException e) {
                     e.printStackTrace();
                 }

@@ -84,7 +84,7 @@ public class ShowImageActivity extends AppCompatActivity {
         if (grantResults[0]==PackageManager.PERMISSION_GRANTED){
             contentDownload();
         } else {
-            Toast.makeText(this,"Permission Denided.",Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.permission_denied,Toast.LENGTH_LONG).show();
         }
     }
 
@@ -141,7 +141,7 @@ public class ShowImageActivity extends AppCompatActivity {
         String fileName=String.valueOf(mediaEntity.getId())+"."+ext;
         request.setDestinationInExternalPublicDir(
                 Environment.DIRECTORY_DOWNLOADS,
-                "/twicalico/"+fileName
+                "/" + getString(R.string.app_name) + "/"+fileName
         );
         request.setTitle(fileName);
         manager.enqueue(request);

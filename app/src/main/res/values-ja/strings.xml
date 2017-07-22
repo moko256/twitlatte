@@ -40,6 +40,7 @@
     <string name="app_settings">アプリケーションの設定</string>
     <string name="add_account">他のアカウントを追加</string>
     <string name="logout">ログアウトする</string>
+    <string name="permission_denied">権限が拒否されました</string>
     <string name="location_is">所在地: %s</string>
     <string name="url_is">URL: %s</string>
     <string name="tweet_counts_is">ツイート数: %s</string>
@@ -50,6 +51,7 @@
     <string name="add_to_list">リストに追加</string>
     <string name="show_list">リストを見る</string>
     <string name="load_more">もっと見る</string>
+    <string name="confirm_message">実行しますか？</string>
     <string name="create_follow">フォロー</string>
     <string name="destroy_follow">フォロー解除</string>
     <string name="create_mute">ミュートする</string>

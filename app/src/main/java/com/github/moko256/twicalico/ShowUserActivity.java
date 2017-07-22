@@ -171,7 +171,7 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
 
         if (throwableFunc != null) {
             ThrowableFunc finalThrowableFunc = throwableFunc;
-            confirmDialog("Summer vacation","Are you ok?",()->runAsWorkerThread(finalThrowableFunc));
+            confirmDialog(item.getTitle(), getString(R.string.confirm_message),()->runAsWorkerThread(finalThrowableFunc));
         }
 
         return super.onOptionsItemSelected(item);
@@ -199,7 +199,7 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
 
     }
 
-    private void confirmDialog(String title, String message,Func func){
+    private void confirmDialog(CharSequence title, CharSequence message,Func func){
         new AlertDialog.Builder(this)
                 .setTitle(title)
                 .setMessage(message)
