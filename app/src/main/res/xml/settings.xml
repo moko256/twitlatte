@@ -142,6 +142,9 @@
                 android:key="license_lib_glide"
                 android:title="Glide"/>
             <Preference
+                android:key="license_lib_photo_view"
+                android:title="PhotoView"/>
+            <Preference
                 android:key="license_lib_okhttp"
                 android:title="OkHttp"/>
             <Preference

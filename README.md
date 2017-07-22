@@ -25,6 +25,7 @@ This application is built using these libraries\:
 * Android Design Support Library
 * Android Custom Tabs Support Library
 * Glide
+* PhotoView
 * OkHttp
 * Twitter4J
 * twitter-text

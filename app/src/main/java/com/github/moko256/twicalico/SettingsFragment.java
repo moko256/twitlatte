@@ -204,6 +204,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                     "support_custom_tabs",
                     "exo_player",
                     "glide",
+                    "photo_view",
                     "okhttp",
                     "twitter4j",
                     "twitter_text",
