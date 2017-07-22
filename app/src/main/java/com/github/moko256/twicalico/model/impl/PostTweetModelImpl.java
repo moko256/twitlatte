@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package com.github.moko256.twicalico.model;
+package com.github.moko256.twicalico.model.impl;
 
 import android.content.ContentResolver;
 import android.net.Uri;
 
+import com.github.moko256.twicalico.model.base.PostTweetModel;
 import com.twitter.Validator;
 
 import java.io.FileNotFoundException;
@@ -35,12 +36,12 @@ import twitter4j.Twitter;
 import twitter4j.TwitterException;
 
 /**
- * Created by moko256 on 2017/03/31.
+ * Created by moko256 on 2017/07/22.
  *
  * @author moko256
  */
 
-public class SendTweetModel {
+public class PostTweetModelImpl implements PostTweetModel {
 
     private Twitter twitter;
     private ContentResolver contentResolver;
@@ -53,64 +54,78 @@ public class SendTweetModel {
 
     private Validator validator = new Validator();
 
-    public SendTweetModel(Twitter twitter, ContentResolver contentResolver){
+    public PostTweetModelImpl(Twitter twitter, ContentResolver contentResolver){
         this.twitter = twitter;
         this.contentResolver = contentResolver;
     }
 
+    @Override
     public long getInReplyToStatusId() {
         return inReplyToStatusId;
     }
 
+    @Override
     public void setInReplyToStatusId(long inReplyToStatusId) {
         this.inReplyToStatusId = inReplyToStatusId;
     }
 
-    public boolean isReply() {
-        return inReplyToStatusId != -1;
-    }
-
+    @Override
     public boolean isPossiblySensitive() {
         return possiblySensitive;
     }
 
+    @Override
     public void setPossiblySensitive(boolean possiblySensitive) {
         this.possiblySensitive = possiblySensitive;
     }
 
+    @Override
     public String getTweetText() {
         return tweetText;
     }
 
+    @Override
     public void setTweetText(String tweetText) {
         this.tweetText = tweetText;
     }
 
-    public int getTweetLength(){
-      return validator.getTweetLength(tweetText);
+    @Override
+    public int getTweetLength() {
+        return validator.getTweetLength(tweetText);
     }
 
-    public boolean isValidTweet(){
+    @Override
+    public boolean isReply() {
+        return inReplyToStatusId != -1;
+    }
+
+    @Override
+    public boolean isValidTweet() {
         return validator.isValidTweet(tweetText);
     }
 
+    @Override
     public List<Uri> getUriList() {
         return uriList;
     }
 
+    @Override
     public void setUriList(List<Uri> uriList) {
         this.uriList = uriList;
     }
 
+    @Override
     public GeoLocation getLocation() {
         return location;
     }
 
+    @Override
     public void setLocation(GeoLocation location) {
         this.location = location;
     }
 
-    public Single<Status> postTweet(){
+    @Override
+    public Single<Status> postTweet() {
         Single<Status> single = Single.create(subscriber -> {
             if (isValidTweet()){
                 try {
@@ -136,7 +151,7 @@ public class SendTweetModel {
                     subscriber.onError(e);
                 }
             } else {
-                subscriber.onError(new InvalidTextException());
+                subscriber.onError(new PostTweetModelImpl.InvalidTextException());
             }
         });
         return single

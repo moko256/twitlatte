@@ -25,7 +25,6 @@ import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatEditText;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -34,7 +33,8 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.github.moko256.twicalico.glideImageTarget.CircleImageTarget;
-import com.github.moko256.twicalico.model.SendTweetModel;
+import com.github.moko256.twicalico.model.base.PostTweetModel;
+import com.github.moko256.twicalico.model.impl.PostTweetModelImpl;
 import com.github.moko256.twicalico.text.TwitterStringUtils;
 import com.github.moko256.twicalico.widget.TweetImageTableView;
 
@@ -176,7 +176,7 @@ public class ShowTweetActivity extends AppCompatActivity {
                                     replyText.setText(TwitterStringUtils.convertToReplyTopString(item.getUser().getScreenName(), users));
                                     replyButton.setOnClickListener(v -> {
                                         replyButton.setEnabled(false);
-                                        SendTweetModel model = new SendTweetModel(GlobalApplication.twitter, getContentResolver());
+                                        PostTweetModel model = new PostTweetModelImpl(GlobalApplication.twitter, getContentResolver());
                                         model.setTweetText(replyText.getText().toString());
                                         model.setInReplyToStatusId(item.getId());
                                         subscriptions.add(

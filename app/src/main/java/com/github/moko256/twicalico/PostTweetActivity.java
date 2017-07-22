@@ -44,7 +44,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.github.moko256.twicalico.model.SendTweetModel;
+import com.github.moko256.twicalico.model.base.PostTweetModel;
+import com.github.moko256.twicalico.model.impl.PostTweetModelImpl;
 import com.twitter.Validator;
 
 import rx.Single;
@@ -62,7 +63,7 @@ public class PostTweetActivity extends AppCompatActivity {
     private static final String INTENT_EXTRA_TWEET_TEXT = "text";
     private static final int REQUEST_GET_IMAGE = 10;
 
-    SendTweetModel model;
+    PostTweetModel model;
 
     ViewGroup rootViewGroup;
 
@@ -83,7 +84,7 @@ public class PostTweetActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_send_tweet);
 
-        model = new SendTweetModel(GlobalApplication.twitter, getContentResolver());
+        model = new PostTweetModelImpl(GlobalApplication.twitter, getContentResolver());
         subscription = new CompositeSubscription();
 
         if (savedInstanceState != null){
