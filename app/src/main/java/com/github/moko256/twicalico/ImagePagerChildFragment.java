@@ -16,7 +16,9 @@
 
 package com.github.moko256.twicalico;
 
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -167,6 +169,11 @@ public class ImagePagerChildFragment extends Fragment {
 
             case "photo":
             default:
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    getActivity().getWindow().setStatusBarColor(0x88000000);
+                    getActivity().getWindow().setNavigationBarColor(0x80000000);
+                    ((AppCompatActivity) getActivity()).getSupportActionBar().setBackgroundDrawable(new ColorDrawable(0x80000000));
+                }
                 getActivity().getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(visibility -> {
                     if (visibility == View.SYSTEM_UI_FLAG_VISIBLE){
                         ((AppCompatActivity) getActivity()).getSupportActionBar().show();
