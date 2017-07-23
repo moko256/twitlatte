@@ -25,18 +25,14 @@ import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatEditText;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.RequestManager;
-import com.github.moko256.twicalico.glideImageTarget.CircleImageTarget;
 import com.github.moko256.twicalico.model.base.PostTweetModel;
 import com.github.moko256.twicalico.model.impl.PostTweetModelImpl;
 import com.github.moko256.twicalico.text.TwitterStringUtils;
-import com.github.moko256.twicalico.widget.TweetImageTableView;
 
 import java.text.DateFormat;
 
@@ -44,7 +40,6 @@ import rx.Single;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
-import twitter4j.MediaEntity;
 import twitter4j.Status;
 import twitter4j.TwitterException;
 import twitter4j.UserMentionEntity;
@@ -106,12 +101,6 @@ public class ShowTweetActivity extends AppCompatActivity {
                                     }
                                     Status item=(Status) result;
 
-                                    RequestManager imageRequestManager= Glide.with(ShowTweetActivity.this);
-
-                                    ImageView userImage= findViewById(R.id.tweet_show_image);
-
-                                    imageRequestManager.load(item.getUser().getProfileImageURL()).asBitmap().into(new CircleImageTarget(userImage));
-
                                     TextView tweetIsReply = findViewById(R.id.tweet_show_is_reply_text);
                                     long replyTweetId = item.getInReplyToStatusId();
                                     if (replyTweetId != -1){
@@ -121,46 +110,12 @@ public class ShowTweetActivity extends AppCompatActivity {
                                         tweetIsReply.setVisibility(GONE);
                                     }
 
-                                    ((TextView) findViewById(R.id.tweet_show_user_name)).setText(item.getUser().getName());
-                                    ((TextView) findViewById(R.id.tweet_show_user_id)).setText(TwitterStringUtils.plusAtMark(item.getUser().getScreenName()));
-
-                                    TextView contentText= findViewById(R.id.tweet_show_content);
-
-                                    CharSequence text = TwitterStringUtils.getLinkedSequence(item,ShowTweetActivity.this);
-                                    if (!text.toString().trim().isEmpty()) {
-                                        contentText.setText(text);
-                                        contentText.setMovementMethod(LinkMovementMethod.getInstance());
-                                        contentText.setVisibility(VISIBLE);
-                                    }
-
-                                    userImage.setOnClickListener(v-> startActivity(ShowUserActivity.getIntent(this, item.getUser().getId())));
-
-                                    RelativeLayout tweetQuoteTweetLayout= findViewById(R.id.tweet_show_quote_tweet);
-
-                                    twitter4j.Status quotedStatus=item.getQuotedStatus();
-                                    if(quotedStatus!=null){
-                                        if (tweetQuoteTweetLayout.getVisibility() != VISIBLE) {
-                                            tweetQuoteTweetLayout.setVisibility(VISIBLE);
-                                        }
-                                        tweetQuoteTweetLayout.setOnClickListener(v -> startActivity(getIntent(this, quotedStatus.getId())));
-                                        ((TextView) findViewById(R.id.tweet_show_quote_tweet_user_name)).setText(quotedStatus.getUser().getName());
-                                        ((TextView) findViewById(R.id.tweet_show_quote_tweet_user_id)).setText(TwitterStringUtils.plusAtMark(quotedStatus.getUser().getScreenName()));
-                                        ((TextView) findViewById(R.id.tweet_show_quote_tweet_content)).setText(quotedStatus.getText());
-                                    }else{
-                                        if (tweetQuoteTweetLayout.getVisibility() != GONE) {
-                                            tweetQuoteTweetLayout.setVisibility(GONE);
-                                        }
-                                    }
-
-                                    MediaEntity mediaEntities[]=item.getMediaEntities();
-
-                                    TweetImageTableView tableView= findViewById(R.id.tweet_show_images);
-                                    if(mediaEntities.length!=0){
-                                        tableView.setVisibility(VISIBLE);
-                                        tableView.setMediaEntities(mediaEntities);
-                                    }else{
-                                        tableView.setVisibility(GONE);
-                                    }
+                                    StatusView statusView = new StatusView(this);
+                                    statusView.setStatus(((Status) result));
+                                    ViewGroup cview = (ViewGroup) statusView.getChildAt(0);
+                                    ViewGroup sview = (ViewGroup) cview.getChildAt(0);
+                                    cview.removeView(sview);
+                                    ((FrameLayout) findViewById(R.id.tweet_show_tweet)).addView(sview);
 
                                     ((TextView)findViewById(R.id.tweet_show_timestamp)).setText(
                                             DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.FULL)

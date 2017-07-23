@@ -45,104 +45,17 @@
                 android:visibility="gone"
                 tools:visibility="visible"/>
 
-            <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+            <FrameLayout
+                android:id="@+id/tweet_show_tweet"
                 android:layout_below="@id/tweet_show_is_reply_text"
-                android:layout_marginRight="8dp"
-                android:id="@+id/tweet_show_image"
-                android:transitionName="tweet_user_image"
-                tools:src="@android:color/white"/>
-
-            <TextView
-                android:id="@+id/tweet_show_user_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/tweet_show_is_reply_text"
-                android:layout_toRightOf="@id/tweet_show_image"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                android:layout_marginTop="0dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginBottom="2dp"
-                tools:text="User name"/>
-
-            <TextView
-                android:id="@+id/tweet_show_user_id"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_toRightOf="@id/tweet_show_image"
-                android:layout_below="@id/tweet_show_user_name"
-                android:textSize="16sp"
-                android:layout_marginTop="0dp"
-                android:layout_marginBottom="2dp"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                android:textColor="?android:textColorSecondary"
-                tools:text="\@user_id"/>
-
-            <TextView
-                android:id="@+id/tweet_show_content"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/tweet_show_image"
-                android:layout_marginTop="16dp"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                android:visibility="gone"
-                tools:text="Tweet context"
-                tools:visibility="visible"/>
-
-            <RelativeLayout
-                android:id="@+id/tweet_show_quote_tweet"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/tweet_show_content"
-                android:background="@drawable/border_frame"
-                android:layout_marginTop="16dp"
-                android:visibility="gone"
-                android:padding="8dp"
-                tools:visibility="visible">
-                <TextView
-                    android:id="@+id/tweet_show_quote_tweet_user_name"
-                    android:ellipsize="end"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                    android:lines="1"
-                    android:layout_marginRight="8dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="2dp"
-                    tools:text="User name"/>
-                <TextView
-                    android:id="@+id/tweet_show_quote_tweet_user_id"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/tweet_show_quote_tweet_user_name"
-                    android:lines="1"
-                    android:ellipsize="end"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                    android:textColor="?android:textColorSecondary"
-                    tools:text="\@user_id"/>
-                <TextView
-                    android:id="@+id/tweet_show_quote_tweet_content"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/tweet_show_quote_tweet_user_name"
-                    android:maxLines="5"
-                    android:ellipsize="end"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                    tools:text="Quote tweet context"/>
-            </RelativeLayout>
-
-            <com.github.moko256.twicalico.widget.TweetImageTableView
-                android:id="@+id/tweet_show_images"
-                android:layout_below="@id/tweet_show_quote_tweet"
-                android:layout_marginTop="16dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content" />
 
             <TextView
                 android:id="@+id/tweet_show_via"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/tweet_show_images"
+                android:layout_below="@id/tweet_show_tweet"
                 android:layout_marginTop="0dp"
                 android:layout_marginBottom="2dp"
                 android:textColor="?android:textColorSecondary"
