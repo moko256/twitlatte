@@ -33,6 +33,7 @@ import com.bumptech.glide.Glide;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSourceFactory;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.LoopingMediaSource;
@@ -153,9 +154,10 @@ public class ImagePagerChildFragment extends Fragment {
                         new LoopingMediaSource(
                                 new ExtractorMediaSource(
                                         Uri.parse(mediaEntity.getVideoVariants()[0].getUrl()),
-                                        new DefaultDataSourceFactory(
-                                                getContext(),
-                                                getResources().getText(R.string.app_name).toString()
+                                        new OkHttpDataSourceFactory(
+                                                GlobalApplication.getOkHttpClient(),
+                                                getResources().getText(R.string.app_name).toString(),
+                                                null
                                         ),
                                         new DefaultExtractorsFactory(),
                                         new Handler(),

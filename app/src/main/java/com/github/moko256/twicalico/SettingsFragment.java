@@ -127,16 +127,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                                     AccessToken accessToken=tokenOpenHelper.getAccessToken(Long.valueOf(p).intValue());
                                     tokenOpenHelper.close();
 
-                                    Configuration conf=new ConfigurationBuilder()
-                                            .setTweetModeExtended(true)
-                                            .setOAuthConsumerKey(GlobalApplication.consumerKey)
-                                            .setOAuthConsumerSecret(GlobalApplication.consumerSecret)
-                                            .setOAuthAccessToken(accessToken.getToken())
-                                            .setOAuthAccessTokenSecret(accessToken.getTokenSecret())
-                                            .build();
-
-                                    GlobalApplication.twitter = new TwitterFactory(conf).getInstance();
-                                    GlobalApplication.userId = accessToken.getUserId();
+                                    ((GlobalApplication) getActivity().getApplication()).initTwitter(accessToken);
                                     startActivity(
                                             new Intent(getContext(),MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                                     );

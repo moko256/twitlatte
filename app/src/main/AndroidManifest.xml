@@ -32,6 +32,10 @@
         android:resizeableActivity="true"
         android:theme="@style/AppTheme">
 
+        <meta-data
+            android:name="com.github.moko256.twicalico.GlideModule"
+            android:value="GlideModule"/>
+
         <activity
             android:name=".SplashActivity"
             android:theme="@style/SplashTheme"
