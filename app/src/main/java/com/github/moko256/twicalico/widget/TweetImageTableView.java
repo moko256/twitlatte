@@ -116,6 +116,9 @@ public class TweetImageTableView extends GridLayout {
 
     private void updateImageNumber(){
         int imageNum = mediaEntities.length;
+        if (imageNum > 4){
+            imageNum = 4;
+        }
         removeAllViews();
         for(int i = 0; i < imageNum; i++){
             addView(covers[i]);
@@ -140,7 +143,11 @@ public class TweetImageTableView extends GridLayout {
     public void setMediaEntities(MediaEntity[] mediaEntities) {
         this.mediaEntities = mediaEntities;
         updateImageNumber();
-        for (int ii = 0; ii < mediaEntities.length; ii++) {
+        int imageNum = mediaEntities.length;
+        if (imageNum > 4){
+            imageNum = 4;
+        }
+        for (int ii = 0; ii < imageNum; ii++) {
             int finalIi = ii;
             covers[ii].setOnClickListener(v-> getContext().startActivity(ShowImageActivity.getIntent(getContext(),mediaEntities, finalIi)));
 
