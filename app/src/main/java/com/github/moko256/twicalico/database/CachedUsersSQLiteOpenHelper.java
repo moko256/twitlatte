@@ -96,7 +96,7 @@ public class CachedUsersSQLiteOpenHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         String columnsStr = Arrays.toString(columns);
         db.execSQL(
-                "create table CachedUsers(" + columnsStr.substring(1, columnsStr.length() - 1) + ");"
+                "create table CachedUsers(" + columnsStr.substring(1, columnsStr.length() - 1) + ", primary key(id));"
         );
     }
 
@@ -112,7 +112,7 @@ public class CachedUsersSQLiteOpenHelper extends SQLiteOpenHelper {
                 "CachedUsers",
                 columns,
                 "id=" + String.valueOf(id), null
-                ,null,null,null
+                ,null,null,null,"1"
         );
         if (c.moveToLast()){
             user = new User() {

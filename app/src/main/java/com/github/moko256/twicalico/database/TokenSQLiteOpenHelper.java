@@ -38,7 +38,7 @@ public class TokenSQLiteOpenHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL(
-                "create table AccountTokenList(userName string ,userId string , token string , tokenSecret string);"
+                "create table AccountTokenList(userName string , userId string primary key , token string , tokenSecret string);"
         );
     }
 

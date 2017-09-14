@@ -84,7 +84,7 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         String columnsStr = Arrays.toString(columns);
         db.execSQL(
-                "create table CachedStatuses(" + columnsStr.substring(1, columnsStr.length() - 1) + ");"
+                "create table CachedStatuses(" + columnsStr.substring(1, columnsStr.length() - 1) + ", primary key(id));"
         );
     }
 
@@ -100,7 +100,7 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
                 "CachedStatuses",
                 columns,
                 "id=" + String.valueOf(id), null
-                ,null,null,null
+                ,null,null,null,"1"
         );
         if (c.moveToLast()){
             try {
