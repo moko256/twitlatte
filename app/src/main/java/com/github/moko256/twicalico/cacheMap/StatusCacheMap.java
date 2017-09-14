@@ -27,6 +27,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 
+import rx.Observable;
 import twitter4j.GeoLocation;
 import twitter4j.HashtagEntity;
 import twitter4j.MediaEntity;
@@ -84,17 +85,28 @@ public class StatusCacheMap {
     public void addAll(Collection<? extends Status> c) {
         if (c.size() > 0) {
             HashSet<? extends Status> hashSet = new HashSet<>(c);
-            for (Status status : hashSet) {
-                GlobalApplication.userCache.add(status.getUser());
-                if (status.isRetweet()){
-                    add(status.getRetweetedStatus());
+            Observable<Status> statusesObservable = Observable.unsafeCreate(subscriber -> {
+                for (Status status : hashSet) {
+                    subscriber.onNext(status);
+                    if (status.isRetweet()){
+                        subscriber.onNext(status.getRetweetedStatus());
+                    }
                 }
-                Status cacheStatus = new CachedStatus(status);
-                statusCache.put(status.getId(), cacheStatus);
-            }
-            Status[] statuses = new Status[hashSet.size()];
-            statuses = hashSet.toArray(statuses);
-            diskCache.addCachedStatuses(statuses);
+                subscriber.onCompleted();
+            });
+
+            GlobalApplication.userCache.addAll(new HashSet<>(
+                    statusesObservable.map(Status::getUser).toList().toSingle().toBlocking().value()
+            ));
+
+            Observable<Status> cachedStatusObservable = statusesObservable.map(CachedStatus::new);
+
+            cachedStatusObservable.forEach(status -> statusCache.put(status.getId(), status));
+            HashSet<Status> cacheStatusSet = new HashSet<>(cachedStatusObservable.toList().toSingle().toBlocking().value());
+
+            Status[] diskCacheStatuses = new Status[cacheStatusSet.size()];
+            cacheStatusSet.toArray(diskCacheStatuses);
+            diskCache.addCachedStatuses(diskCacheStatuses);
         }
     }
 
