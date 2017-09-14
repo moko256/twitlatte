@@ -44,7 +44,12 @@ public class CachedTrendsSQLiteOpenHelperTest {
 
     @Test
     public void test() throws Exception{
-        helper.getWritableDatabase().execSQL("delete from Trends");
+        try {
+            helper.getWritableDatabase().execSQL("delete from Trends;");
+        } catch (Exception e) {
+            //Do nothing
+        }
+
         setTrendsTest();
         updateTrendsTest();
         helper.close();

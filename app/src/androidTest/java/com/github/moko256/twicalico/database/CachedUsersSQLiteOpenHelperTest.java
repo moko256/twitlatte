@@ -50,6 +50,12 @@ public class CachedUsersSQLiteOpenHelperTest {
 
     @Test
     public void test() throws Exception {
+        try {
+            helper.getWritableDatabase().execSQL("delete from CachedUsers;");
+        } catch (Exception e) {
+            //Do nothing
+        }
+
         addCacheTest();
         updateCacheTest();
         removeCacheTest();

@@ -41,7 +41,12 @@ public class CachedIdListSQLiteOpenHelperTest {
 
     @Test
     public void test() throws Exception{
-        helper.getWritableDatabase().execSQL("delete from testDatabase");
+        try {
+            helper.getWritableDatabase().execSQL("delete from testIdsDatabase;");
+        } catch (Exception e) {
+            //Do nothing
+        }
+
         addIdTest();
         insertIdTest();
         deleteIdTest();

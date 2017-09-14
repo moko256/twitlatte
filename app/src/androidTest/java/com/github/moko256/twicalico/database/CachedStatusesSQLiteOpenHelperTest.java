@@ -57,6 +57,12 @@ public class CachedStatusesSQLiteOpenHelperTest {
 
     @Test
     public void test() throws Exception {
+        try {
+            helper.getWritableDatabase().execSQL("delete from CachedStatuses;");
+        } catch (Exception e) {
+            //Do nothing
+        }
+
         addCacheTest();
         updateCacheTest();
         removeCacheTest();

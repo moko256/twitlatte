@@ -48,6 +48,12 @@ public class TokenSQLiteOpenHelperTest {
 
     @Test
     public void test() throws Exception {
+        try {
+            helper.getWritableDatabase().execSQL("delete from AccountTokenList;");
+        } catch (Exception e) {
+            //Do nothing
+        }
+
         addToken();
         updateToken();
         deleteToken();
