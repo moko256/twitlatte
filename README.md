@@ -1,11 +1,12 @@
 twicalico
 ====
 
-This application is the simple Twitter client for Android\.
+This application is the Twitter client for Android\.
 
 [<img src="https://dply.me/vjtth8/button/large" alt="Try it on your device via DeployGate">](https://dply.me/vjtth8#install)
 
-* Minimum api level is 17\. Target api level is 26\.
+* Minimum api level is 17
+* Target api level is 26
 * Material Design
 
 ## Usage
