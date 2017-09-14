@@ -137,7 +137,7 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
                         new Intent()
                                 .setAction(Intent.ACTION_SEND)
                                 .setType("text/plain")
-                                .putExtra(Intent.EXTRA_TEXT, user.getURL())
+                                .putExtra(Intent.EXTRA_TEXT, "https://twitter.com/" + user.getScreenName())
                 );
                 break;
             case R.id.action_create_follow:
