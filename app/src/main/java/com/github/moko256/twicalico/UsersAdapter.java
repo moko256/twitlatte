@@ -16,10 +16,7 @@
 
 package com.github.moko256.twicalico;
 
-import android.app.Activity;
 import android.content.Context;
-import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,9 +24,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.RequestManager;
-import com.github.moko256.twicalico.glideImageTarget.CircleImageTarget;
 import com.github.moko256.twicalico.text.TwitterStringUtils;
 
 import java.util.ArrayList;
@@ -46,12 +40,12 @@ class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> {
     private ArrayList<Long> data;
     private Context context;
 
-    private RequestManager imageRequestManager;
+    private GlideRequests glideRequests;
 
     UsersAdapter(Context context, ArrayList<Long> data) {
         this.context = context;
         this.data = data;
-        imageRequestManager= Glide.with(context);
+        glideRequests = GlideApp.with(context);
 
         setHasStableIds(true);
     }
@@ -70,7 +64,7 @@ class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> {
     public void onBindViewHolder(ViewHolder viewHolder, final int i) {
         User item=GlobalApplication.userCache.get(data.get(i));
 
-        imageRequestManager.load(item.getProfileImageURLHttps()).asBitmap().into(new CircleImageTarget(viewHolder.userUserImage));
+        glideRequests.asBitmap().load(item.getProfileImageURLHttps()).circleCrop().into(viewHolder.userUserImage);
 
         viewHolder.userUserName.setText(item.getName());
         viewHolder.userUserId.setText(TwitterStringUtils.plusAtMark(item.getScreenName()));

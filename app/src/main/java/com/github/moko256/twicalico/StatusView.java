@@ -36,9 +36,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.RequestManager;
-import com.github.moko256.twicalico.glideImageTarget.CircleImageTarget;
 import com.github.moko256.twicalico.text.TwitterStringUtils;
 import com.github.moko256.twicalico.widget.TweetImageTableView;
 
@@ -59,7 +56,7 @@ import twitter4j.util.TimeSpanConverter;
 public class StatusView extends FrameLayout {
     Status status;
 
-    RequestManager imageRequestManager;
+    GlideRequests glideRequests;
 
     ImageView userImage;
     TextView retweetUserName;
@@ -95,7 +92,7 @@ public class StatusView extends FrameLayout {
 
         LayoutInflater.from(getContext()).inflate(R.layout.layout_tweet,this);
 
-        imageRequestManager= Glide.with(context);
+        glideRequests = GlideApp.with(context);
         
         userImage = findViewById(R.id.tweet_icon);
         retweetUserName = findViewById(R.id.tweet_retweet_user_name);
@@ -183,7 +180,7 @@ public class StatusView extends FrameLayout {
         }
 
         if (GlobalApplication.configuration.isTimelineImageLoad()){
-            imageRequestManager.load(item.getUser().getProfileImageURLHttps()).asBitmap().into(new CircleImageTarget(userImage));
+            glideRequests.asBitmap().load(item.getUser().getProfileImageURLHttps()).circleCrop().into(userImage);
         } else {
             userImage.setImageResource(R.drawable.border_frame_round);
         }

@@ -29,7 +29,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -189,11 +188,14 @@ public class ImagePagerChildFragment extends Fragment {
                         hideSystemUI();
                     }
                 });
-                Glide.with(this)
+                GlideApp.with(this)
                         .load(mediaEntity.getMediaURLHttps()+":large")
                         .fitCenter()
-                        .crossFade(0)
-                        .thumbnail(Glide.with(this).load(mediaEntity.getMediaURLHttps()+":small").fitCenter())
+                        .thumbnail(
+                                GlideApp.with(this)
+                                        .load(mediaEntity.getMediaURLHttps()+":small")
+                                        .fitCenter()
+                        )
                         .into(imageView);
                 break;
         }

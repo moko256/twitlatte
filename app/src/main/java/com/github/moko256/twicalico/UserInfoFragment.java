@@ -17,17 +17,12 @@
 package com.github.moko256.twicalico;
 
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.customtabs.CustomTabsIntent;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
-import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
-import android.text.style.ClickableSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,9 +30,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.RequestManager;
-import com.github.moko256.twicalico.glideImageTarget.CircleImageTarget;
 import com.github.moko256.twicalico.text.TwitterStringUtils;
 
 import java.text.DateFormat;
@@ -57,7 +49,7 @@ import twitter4j.User;
 
 public class UserInfoFragment extends Fragment implements ToolbarTitleInterface {
 
-    RequestManager requestManager;
+    GlideRequests glideRequests;
 
     ImageView header;
     ImageView icon;
@@ -118,7 +110,7 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view=inflater.inflate(R.layout.fragment_show_user_info,container,false);
 
-        requestManager=Glide.with(this);
+        glideRequests =GlideApp.with(this);
 
         header= view.findViewById(R.id.show_user_bgimage);
         icon= view.findViewById(R.id.show_user_image);
@@ -153,14 +145,14 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
     private void setShowUserInfo(User user) {
         String headerUrl = user.getProfileBanner1500x500URL();
         if (headerUrl != null) {
-            requestManager.load(headerUrl).into(header);
+            glideRequests.load(headerUrl).into(header);
         } else {
             String colorStr = user.getProfileBackgroundColor();
             if (!TextUtils.isEmpty(colorStr)){
                 header.setBackgroundColor(Color.parseColor("#" + colorStr));
             }
         }
-        requestManager.load(user.getBiggerProfileImageURL()).asBitmap().into(new CircleImageTarget(icon));
+        glideRequests.asBitmap().load(user.getBiggerProfileImageURL()).circleCrop().into(icon);
 
         userNameText.setText(user.getName());
         userIdText.setText(TwitterStringUtils.plusAtMark(user.getScreenName()));

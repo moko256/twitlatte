@@ -33,9 +33,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.RequestManager;
-import com.github.moko256.twicalico.glideImageTarget.CircleImageTarget;
 import com.github.moko256.twicalico.text.TwitterStringUtils;
 
 import rx.Single;
@@ -249,10 +246,10 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
 
         userImage.setOnClickListener(v -> startMyUserActivity());
 
-        RequestManager manager=Glide.with(this);
+        GlideRequests requests=GlideApp.with(this);
 
-        manager.load(user.getBiggerProfileImageURL()).asBitmap().into(new CircleImageTarget(userImage));
-        manager.load(user.getProfileBannerRetinaURL()).centerCrop().into(userBackgroundImage);
+        requests.asBitmap().load(user.getBiggerProfileImageURL()).circleCrop().into(userImage);
+        requests.load(user.getProfileBannerRetinaURL()).centerCrop().into(userBackgroundImage);
     }
 
 }

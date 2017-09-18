@@ -24,8 +24,8 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.github.moko256.twicalico.GlideApp;
 import com.github.moko256.twicalico.GlobalApplication;
 import com.github.moko256.twicalico.R;
 import com.github.moko256.twicalico.ShowImageActivity;
@@ -152,7 +152,7 @@ public class TweetImageTableView extends GridLayout {
             covers[ii].setOnClickListener(v-> getContext().startActivity(ShowImageActivity.getIntent(getContext(),mediaEntities, finalIi)));
 
             if (GlobalApplication.configuration.isTimelineImageLoad()){
-                Glide.with(getContext())
+                GlideApp.with(getContext())
                         .load(mediaEntities[ii].getMediaURLHttps()+":small")
                         .diskCacheStrategy(DiskCacheStrategy.NONE)
                         .into(imageViews[ii]);
@@ -171,7 +171,7 @@ public class TweetImageTableView extends GridLayout {
 
     public void clearImages(){
         for (int i = 0; i < 4; i++){
-            Glide.clear(imageViews[i]);
+            GlideApp.with(this).clear(imageViews[i]);
         }
     }
 }

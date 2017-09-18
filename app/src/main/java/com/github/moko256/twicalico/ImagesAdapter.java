@@ -25,8 +25,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-
 import java.util.ArrayList;
 
 /**
@@ -71,7 +69,7 @@ public class ImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             ImageChildViewHolder viewHolder = (ImageChildViewHolder) holder;
             Uri image = images.get(position);
             viewHolder.title.setText(image.getLastPathSegment());
-            Glide.with(context).load(image).into(viewHolder.image);
+            GlideApp.with(context).load(image).into(viewHolder.image);
         } else {
             holder.itemView.setOnClickListener(onAddButtonClickListener);
         }
@@ -116,8 +114,8 @@ public class ImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
         ImageChildViewHolder(View itemView) {
             super(itemView);
-            image = (ImageView) itemView.findViewById(R.id.layout_images_adapter_image_child_image);
-            title = (TextView) itemView.findViewById(R.id.layout_images_adapter_image_child_title);
+            image = itemView.findViewById(R.id.layout_images_adapter_image_child_image);
+            title = itemView.findViewById(R.id.layout_images_adapter_image_child_title);
         }
     }
 

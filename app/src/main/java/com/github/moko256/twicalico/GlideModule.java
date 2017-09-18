@@ -20,8 +20,10 @@ import android.content.Context;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.GlideBuilder;
+import com.bumptech.glide.Registry;
 import com.bumptech.glide.integration.okhttp3.OkHttpUrlLoader;
 import com.bumptech.glide.load.model.GlideUrl;
+import com.bumptech.glide.module.AppGlideModule;
 
 import java.io.InputStream;
 
@@ -31,7 +33,8 @@ import java.io.InputStream;
  * @author moko256
  */
 
-public class GlideModule implements com.bumptech.glide.module.GlideModule {
+@com.bumptech.glide.annotation.GlideModule
+public class GlideModule extends AppGlideModule {
 
     @Override
     public void applyOptions(Context context, GlideBuilder builder) {
@@ -39,13 +42,18 @@ public class GlideModule implements com.bumptech.glide.module.GlideModule {
     }
 
     @Override
-    public void registerComponents(Context context, Glide glide) {
-        glide.register(
+    public void registerComponents(Context context, Glide glide, Registry registry) {
+        registry.append(
                 GlideUrl.class,
                 InputStream.class,
                 new OkHttpUrlLoader.Factory(
                         GlobalApplication.getOkHttpClient()
                 )
         );
+    }
+
+    @Override
+    public boolean isManifestParsingEnabled() {
+        return false;
     }
 }
