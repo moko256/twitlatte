@@ -73,6 +73,8 @@
     <string name="open_source_license">オープンソースライセンス</string>
     <string name="enable">有効</string>
     <string name="disable">無効</string>
+    <string name="crash_log">クラッシュログ</string>
+    <string name="crash_log_channel_description">twicalicoがクラッシュしたら通知する</string>
     <string name="high_power_mute">最強のミュート</string>
     <string name="edit_pattern">正規表現パターンの編集</string>
     <string name="use_tweet_regex_mute">ツイートの正規表現ミュートを使用する</string>

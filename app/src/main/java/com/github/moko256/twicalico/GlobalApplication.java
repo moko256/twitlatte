@@ -17,14 +17,18 @@
 package com.github.moko256.twicalico;
 
 import android.app.Application;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.preference.PreferenceManager;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatDelegate;
-import android.support.v7.app.NotificationCompat;
 
 import com.github.moko256.twicalico.cacheMap.StatusCacheMap;
 import com.github.moko256.twicalico.cacheMap.UserCacheMap;
@@ -66,6 +70,19 @@ public class GlobalApplication extends Application {
 
     @Override
     public void onCreate() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(
+                    "crash_log",
+                    getString(R.string.crash_log),
+                    NotificationManager.IMPORTANCE_DEFAULT
+            );
+            channel.setDescription(getString(R.string.crash_log_channel_description));
+            channel.setLightColor(Color.RED);
+            channel.setLockscreenVisibility(Notification.VISIBILITY_SECRET);
+
+            ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).createNotificationChannel(channel);
+        }
+
         final Thread.UncaughtExceptionHandler defaultUnCaughtExceptionHandler=Thread.getDefaultUncaughtExceptionHandler();
         Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
             try {
@@ -77,7 +94,7 @@ public class GlobalApplication extends Application {
                 printWriter.close();
                 stringWriter.close();
                 NotificationCompat.InboxStyle inboxStyle=new NotificationCompat.InboxStyle(
-                        new NotificationCompat.Builder(getApplicationContext())
+                        new NotificationCompat.Builder(getApplicationContext(), "crash_log")
                                 .setSmallIcon(android.R.drawable.stat_notify_error)
                                 .setContentTitle("Error : "+e.toString())
                                 .setContentText(e.toString())
