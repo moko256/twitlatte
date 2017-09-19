@@ -77,7 +77,7 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
     };
 
     public CachedStatusesSQLiteOpenHelper(Context context, long userId){
-        super(context, new File(context.getCacheDir(), String.valueOf(userId) + "/" + "CachedStatuses.db").getAbsolutePath(), null, BuildConfig.CACHE_DATABASE_VERSION);
+        super(context, new File(context.getCacheDir(), String.valueOf(userId) + "/CachedStatuses.db").getAbsolutePath(), null, BuildConfig.CACHE_DATABASE_VERSION);
     }
 
     @Override
@@ -374,13 +374,25 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
 
     public synchronized void deleteCachedStatus(long id){
         SQLiteDatabase database=getWritableDatabase();
-        database.delete("CachedStatuses", "id=" + String.valueOf(id), null);
+        database.beginTransaction();
+        deleteCachedStatusAtTransaction(id);
+        database.setTransactionSuccessful();
+        database.endTransaction();
         database.close();
     }
 
-    public interface CachedStorageStatus extends Status {
-        int getFlags();
-        long getUserId();
-        long getRetweetedStatusId();
+    public synchronized void deleteCachedStatuses(long[] ids){
+        SQLiteDatabase database=getWritableDatabase();
+        database.beginTransaction();
+        for (long id : ids) {
+            deleteCachedStatusAtTransaction(id);
+        }
+        database.setTransactionSuccessful();
+        database.endTransaction();
+        database.close();
+    }
+
+    private void deleteCachedStatusAtTransaction(long id) {
+        getWritableDatabase().delete("CachedStatuses", "id=" + String.valueOf(id), null);
     }
 }

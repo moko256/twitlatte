@@ -26,6 +26,7 @@ import com.github.moko256.twicalico.database.CachedStatusesSQLiteOpenHelper;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 
 import rx.Observable;
 import twitter4j.GeoLocation;
@@ -110,7 +111,15 @@ public class StatusCacheMap {
         }
     }
 
-    public static class CachedStatus implements Status{
+    public void delete(List<Long> ids){
+        long[] idsArray = new long[ids.size()];
+        for (int i = 0; i < ids.size(); i++) {
+            idsArray[i] = ids.get(i);
+        }
+        diskCache.deleteCachedStatuses(idsArray);
+    }
+
+    private static class CachedStatus implements Status{
 
         /* Based on twitter4j.StatusJSONImpl */
 

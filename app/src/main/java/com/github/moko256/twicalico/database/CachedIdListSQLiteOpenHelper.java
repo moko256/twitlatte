@@ -20,6 +20,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.github.moko256.twicalico.BuildConfig;
@@ -40,7 +41,10 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
     private String databaseName;
 
     public CachedIdListSQLiteOpenHelper(Context context, long userId, String name){
-        super(context, new File(context.getCacheDir(), String.valueOf(userId) + "/" + name + ".db").getAbsolutePath(), null, BuildConfig.CACHE_DATABASE_VERSION);
+        super(context, new File(context.getCacheDir(), String.valueOf(userId) + "/CachedIdList.db").getAbsolutePath(), null, BuildConfig.CACHE_DATABASE_VERSION);
+        if (name.equals("ListViewPosition")){
+            throw new SQLiteException("this table name cannot use");
+        }
         databaseName = name;
     }
 
@@ -154,6 +158,57 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
         for (long id : ids) {
             database.delete(databaseName, "id=" + String.valueOf(id), null);
         }
+    }
+
+    public boolean hasIdOtherTable(long id){
+        boolean result = false;
+        Cursor t = getReadableDatabase().rawQuery("select name from sqlite_master where type='table'", null);
+        while ((!result) && t.moveToNext()){
+            String tableName = t.getString(0);
+            if (!(tableName.equals("android_metadata") || tableName.equals("ListViewPosition") || tableName.equals(databaseName))) {
+                Cursor c = getReadableDatabase().query(
+                        tableName,
+                        new String[]{"id"},
+                        "id=" + String.valueOf(id),
+                        null, null, null, null, "1"
+                );
+                result = c.getCount() > 0;
+                c.close();
+            }
+        }
+        t.close();
+        return result;
+    }
+
+    public boolean[] hasIdsOtherTable(List<Long> ids){
+        long[] l = new long[ids.size()];
+        for (int i = 0; i < ids.size(); i++) {
+            l[i] = ids.get(i);
+        }
+        return hasIdsOtherTable(l);
+    }
+
+    public boolean[] hasIdsOtherTable(long[] ids){
+        boolean[] result = new boolean[ids.length];
+        for (int i = 0; i < ids.length; i++) {
+            Cursor t = getReadableDatabase().rawQuery("select name from sqlite_master where type='table'", null);
+            result[i] = false;
+            while ((!result[i]) && t.moveToNext()){
+                String tableName = t.getString(0);
+                if (!(tableName.equals("android_metadata") || tableName.equals("ListViewPosition") || tableName.equals(databaseName))) {
+                    Cursor c = getReadableDatabase().query(
+                            tableName,
+                            new String[]{"id"},
+                            "id=" + String.valueOf(ids[i]),
+                            null, null, null, null, "1"
+                    );
+                    result[i] = c.getCount() > 0;
+                    c.close();
+                }
+            }
+            t.close();
+        }
+        return result;
     }
 
     public synchronized int getListViewPosition(){

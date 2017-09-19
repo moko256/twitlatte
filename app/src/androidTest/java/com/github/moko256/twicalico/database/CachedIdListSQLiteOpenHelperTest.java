@@ -25,6 +25,8 @@ import org.junit.runner.RunWith;
 import java.util.ArrayList;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by moko256 on 2017/06/08.
@@ -49,6 +51,7 @@ public class CachedIdListSQLiteOpenHelperTest {
 
         addIdTest();
         insertIdTest();
+        hasIdOtherTableTest();
         deleteIdTest();
         setListViewPositionTest();
         helper.close();
@@ -71,6 +74,16 @@ public class CachedIdListSQLiteOpenHelperTest {
         for (int i = 0; i < insertInput.length; i++) {
             assertEquals(Long.valueOf(insertInput[i]), result2.get(i + 1));
         }
+    }
+
+    private void hasIdOtherTableTest(){
+        CachedIdListSQLiteOpenHelper helper2 = new CachedIdListSQLiteOpenHelper(InstrumentationRegistry.getTargetContext(), 0, "testIdDatabase2");
+        assertTrue(helper2.hasIdOtherTable(2));
+        assertFalse(helper2.hasIdOtherTable(5));
+
+        boolean[] result = helper2.hasIdsOtherTable(new long[]{100, 105});
+        assertTrue(result[0]);
+        assertFalse(result[1]);
     }
 
     private void deleteIdTest(){
