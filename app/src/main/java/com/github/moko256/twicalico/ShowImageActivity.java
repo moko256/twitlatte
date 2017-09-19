@@ -27,6 +27,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -63,7 +64,10 @@ public class ShowImageActivity extends AppCompatActivity {
         mediaEntitiesList.toArray(mediaEntities);
         int position=getIntent().getIntExtra(FRAG_POSITION,0);
 
-        getSupportActionBar().setTitle("");
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle("");
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setHomeAsUpIndicator(R.drawable.ic_clear_white_24dp);
 
         pager= findViewById(R.id.activity_show_image_view_pager);
         pager.setAdapter(new ImagePagerAdapter(getSupportFragmentManager(),mediaEntities,this));
@@ -89,6 +93,12 @@ public class ShowImageActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return false;
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_show_image_toolbar, menu);
         return super.onCreateOptionsMenu(menu);
@@ -106,8 +116,9 @@ public class ShowImageActivity extends AppCompatActivity {
             } else {
                 contentDownload();
             }
+            return true;
         }
-        return true;
+        return super.onOptionsItemSelected(item);
     }
 
     private void contentDownload(){
