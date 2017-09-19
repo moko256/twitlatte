@@ -50,9 +50,13 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("create table " + databaseName + "(id);");
         db.execSQL("create table ListViewPosition(position);");
         //db.execSQL("create table ListViewPositionOffset(offset);");
+    }
+    
+    @Override
+    public void onOpen(SQLiteDatabase db) {
+        db.execSQL("create table if not exist " + databaseName + "(id);");
     }
 
     @Override
