@@ -38,25 +38,21 @@ import java.util.List;
 
 public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
 
+    private CachedIdListListSQLiteOpenHelper idListList;
     private String databaseName;
 
     public CachedIdListSQLiteOpenHelper(Context context, long userId, String name){
-        super(context, new File(context.getCacheDir(), String.valueOf(userId) + "/CachedIdList.db").getAbsolutePath(), null, BuildConfig.CACHE_DATABASE_VERSION);
-        if (name.equals("ListViewPosition")){
-            throw new SQLiteException("this table name cannot use");
-        }
+        super(context, new File(context.getCacheDir(), String.valueOf(userId) + "/" + name + ".db").getAbsolutePath(), null, BuildConfig.CACHE_DATABASE_VERSION);
         databaseName = name;
+        idListList = new CachedIdListListSQLiteOpenHelper(context, userId);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+        idListList.addTable(databaseName);
+        db.execSQL("create table " + databaseName + "(id);");
         db.execSQL("create table ListViewPosition(position);");
         //db.execSQL("create table ListViewPositionOffset(offset);");
-    }
-    
-    @Override
-    public void onOpen(SQLiteDatabase db) {
-        db.execSQL("create table if not exist " + databaseName + "(id);");
     }
 
     @Override
@@ -166,10 +162,10 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
 
     public boolean hasIdOtherTable(long id){
         boolean result = false;
-        Cursor t = getReadableDatabase().rawQuery("select name from sqlite_master where type='table'", null);
+        Cursor t = idListList.getReadableDatabase().query("IdListList", new String[]{"tableName"}, null, null, null, null, null);
         while ((!result) && t.moveToNext()){
             String tableName = t.getString(0);
-            if (!(tableName.equals("android_metadata") || tableName.equals("ListViewPosition") || tableName.equals(databaseName))) {
+            if (!(tableName.equals("android_metadata") || tableName.equals(databaseName))) {
                 Cursor c = getReadableDatabase().query(
                         tableName,
                         new String[]{"id"},
