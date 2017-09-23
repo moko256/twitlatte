@@ -28,21 +28,20 @@ import com.github.moko256.twicalico.BuildConfig;
 import java.io.File;
 
 /**
- * Created by moko256 on 17/09/20.
+ * Created by moko256 on 2017/09/20.
  *
  * @author moko256
  */
 
-public class CachedIdListListSQLiteOpenHelper extends SQLiteOpenHelper {
+class CachedIdListListSQLiteOpenHelper extends SQLiteOpenHelper {
 
-
-    public CachedIdListListSQLiteOpenHelper(Context context, long userId){
+    CachedIdListListSQLiteOpenHelper(Context context, long userId){
         super(context, new File(context.getCacheDir(), String.valueOf(userId) + "/IdListList.db").getAbsolutePath(), null, BuildConfig.CACHE_DATABASE_VERSION);
     }
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        sqLiteDatabase.execSQL("create table IdListList(String tableName);");
+        sqLiteDatabase.execSQL("create table IdListList(tableName);");
     }
 
     @Override
@@ -56,14 +55,4 @@ public class CachedIdListListSQLiteOpenHelper extends SQLiteOpenHelper {
         getWritableDatabase().insert("IdListList", null, contentValues);
     }
 
-    public boolean isExist(String tableName){
-        Cursor c = getReadableDatabase().query(
-                "IdListList",
-                new String[]{"tableName"},
-                "tableName=?",
-                new String[]{tableName},
-                null, null, null, "1"
-        );
-        return c.getCount() > 0;
-    }
 }
