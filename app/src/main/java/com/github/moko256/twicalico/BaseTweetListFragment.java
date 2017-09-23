@@ -59,6 +59,8 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
 
     CachedIdListSQLiteOpenHelper statusIdsDatabase;
 
+    final static int PARAM_PAGING_COUNT = 200;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         list=new ArrayList<>();
@@ -98,7 +100,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                         new Paging()
                                 .maxId(list.get(position-1)-1L)
                                 .sinceId(list.get(list.size() >= position + 2? position + 2: position + 1))
-                                .count(100))
+                                .count(PARAM_PAGING_COUNT))
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
@@ -230,7 +232,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
     @Override
     protected void onUpdateList() {
         subscription.add(
-                getResponseSingle(new Paging(list.get(list.size() >= 2? 1: 0)).count(100))
+                getResponseSingle(new Paging(list.get(list.size() >= 2? 1: 0)).count(PARAM_PAGING_COUNT))
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
@@ -278,7 +280,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
     @Override
     protected void onLoadMoreList() {
         subscription.add(
-                getResponseSingle(new Paging().maxId(list.get(list.size()-1)-1L).count(50))
+                getResponseSingle(new Paging().maxId(list.get(list.size()-1)-1L).count(PARAM_PAGING_COUNT))
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
