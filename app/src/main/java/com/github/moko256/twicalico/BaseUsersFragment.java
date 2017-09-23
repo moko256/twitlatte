@@ -107,13 +107,13 @@ public abstract class BaseUsersFragment extends BaseListFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        subscription.unsubscribe();
         adapter=null;
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        subscription.unsubscribe();
         subscription = null;
         list=null;
     }

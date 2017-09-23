@@ -169,6 +169,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        subscription.unsubscribe();
         adapter=null;
     }
 
@@ -196,7 +197,6 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        subscription.unsubscribe();
         subscription = null;
         list=null;
     }
