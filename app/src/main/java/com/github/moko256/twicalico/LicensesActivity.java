@@ -34,19 +34,16 @@ import java.io.InputStreamReader;
 
 public class LicensesActivity extends AppCompatActivity {
 
-    ActionBar actionBar;
-    TextView licenseTextView;
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_licenses);
 
-        actionBar = getSupportActionBar();
+        ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeAsUpIndicator(R.drawable.ic_back_white_24dp);
 
-        licenseTextView = (TextView) findViewById(R.id.license_text);
+        TextView licenseTextView = findViewById(R.id.license_text);
 
         if (getIntent()!=null){
             String title = getIntent().getStringExtra("title");
@@ -95,13 +92,6 @@ public class LicensesActivity extends AppCompatActivity {
                 }
             }
         }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        actionBar=null;
-        licenseTextView=null;
     }
 
     @Override

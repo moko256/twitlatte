@@ -51,7 +51,6 @@ public class ShowImageActivity extends AppCompatActivity {
 
     MediaEntity[] mediaEntities;
 
-    Toolbar toolbar;
     ViewPager pager;
 
     @Override
@@ -78,7 +77,6 @@ public class ShowImageActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         pager=null;
-        toolbar=null;
         mediaEntities=null;
     }
 

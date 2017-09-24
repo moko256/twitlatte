@@ -30,14 +30,12 @@ import android.support.v7.preference.PreferenceScreen;
  */
 public class SettingsActivity extends AppCompatActivity implements PreferenceFragmentCompat.OnPreferenceStartScreenCallback {
 
-    ActionBar actionBar;
-
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
-        actionBar=getSupportActionBar();
+        ActionBar actionBar=getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeAsUpIndicator(R.drawable.ic_back_white_24dp);
 
@@ -63,12 +61,6 @@ public class SettingsActivity extends AppCompatActivity implements PreferenceFra
                     .add(R.id.activity_settings_container,fragment)
                     .commit();
         }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        actionBar=null;
     }
 
     @Override

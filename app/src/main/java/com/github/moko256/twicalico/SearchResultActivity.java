@@ -30,14 +30,13 @@ import android.support.v7.app.AppCompatActivity;
  */
 
 public class SearchResultActivity extends AppCompatActivity implements BaseListFragment.GetSnackBarParentContainerId {
-    ActionBar actionBar;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
-        actionBar=getSupportActionBar();
+        ActionBar actionBar=getSupportActionBar();
         actionBar.setTitle(getIntent().getStringExtra("query"));
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeAsUpIndicator(R.drawable.ic_back_white_24dp);
@@ -52,12 +51,6 @@ public class SearchResultActivity extends AppCompatActivity implements BaseListF
 
     public static Intent getIntent(Context context, String query){
         return new Intent(context, SearchResultActivity.class).putExtra("query", query);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        actionBar=null;
     }
 
     @Override

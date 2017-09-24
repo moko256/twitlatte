@@ -266,36 +266,38 @@ public class PostTweetActivity extends AppCompatActivity {
     }
 
     private Single<Location> getLocation(){
-        return Single.create(singleSubscriber -> {
-            LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-            Criteria criteria = new Criteria();
-            criteria.setAccuracy(Criteria.ACCURACY_FINE);
-            criteria.setCostAllowed(false);
+        LocationManager locationManager = (LocationManager) getApplicationContext().getSystemService(LOCATION_SERVICE);
+        Criteria criteria = new Criteria();
+        criteria.setAccuracy(Criteria.ACCURACY_FINE);
+        criteria.setCostAllowed(false);
+        final LocationListener[] locationListener = new LocationListener[1];
+        Single<Location> single = Single.create(singleSubscriber -> {
+            locationListener[0] = new LocationListener() {
+                @Override
+                public void onLocationChanged(Location location) {
+                    locationManager.removeUpdates(this);
+                    singleSubscriber.onSuccess(location);
+                }
+
+                @Override
+                public void onStatusChanged(String provider, int status, Bundle extras) {}
+
+                @Override
+                public void onProviderEnabled(String provider) {}
+
+                @Override
+                public void onProviderDisabled(String provider) {}
+            };
             try {
-                locationManager.requestLocationUpdates(
-                        locationManager.getBestProvider(criteria, true),
-                        0, 0,
-                        new LocationListener() {
-                            @Override
-                            public void onLocationChanged(Location location) {
-                                locationManager.removeUpdates(this);
-                                singleSubscriber.onSuccess(location);
-                            }
-
-                            @Override
-                            public void onStatusChanged(String provider, int status, Bundle extras) {}
-
-                            @Override
-                            public void onProviderEnabled(String provider) {}
-
-                            @Override
-                            public void onProviderDisabled(String provider) {}
-                        }
+                locationManager.requestSingleUpdate(
+                        locationManager.getBestProvider(criteria, true), locationListener[0], null
                 );
             } catch (SecurityException e){
                 singleSubscriber.onError(e);
             }
         });
+        single.doOnUnsubscribe(() -> locationManager.removeUpdates(locationListener[0]));
+        return single;
     }
 
     public static Intent getIntent(Context context, String text){
