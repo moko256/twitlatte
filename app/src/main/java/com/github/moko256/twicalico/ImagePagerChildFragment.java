@@ -30,6 +30,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.google.android.exoplayer2.DefaultLoadControl;
+import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSourceFactory;
@@ -98,7 +99,7 @@ public class ImagePagerChildFragment extends Fragment {
                 });
 
                 player = ExoPlayerFactory.newSimpleInstance(
-                        getContext(),
+                        new DefaultRenderersFactory(getContext()),
                         new DefaultTrackSelector(
                                 new AdaptiveTrackSelection.Factory(new DefaultBandwidthMeter())
                         ),
@@ -111,13 +112,12 @@ public class ImagePagerChildFragment extends Fragment {
                 player.prepare(
                         new HlsMediaSource(
                                 Uri.parse(videoPath),
-                                new DefaultDataSourceFactory(
-                                        getContext(),
-                                        getResources().getText(R.string.app_name).toString()
+                                new OkHttpDataSourceFactory(
+                                        GlobalApplication.getOkHttpClient(),
+                                        getResources().getText(R.string.app_name).toString(),
+                                        null
                                 ),
-                                HlsMediaSource.DEFAULT_MIN_LOADABLE_RETRY_COUNT,
-                                new Handler(),
-                                null
+                                null, null
                         )
                 );
                 break;
@@ -139,7 +139,7 @@ public class ImagePagerChildFragment extends Fragment {
                 });
 
                 player = ExoPlayerFactory.newSimpleInstance(
-                        getContext(),
+                        new DefaultRenderersFactory(getContext()),
                         new DefaultTrackSelector(
                                 new AdaptiveTrackSelection.Factory(new DefaultBandwidthMeter())
                         ),
