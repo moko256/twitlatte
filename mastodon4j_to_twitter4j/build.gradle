@@ -14,4 +14,13 @@
  * limitations under the License.
  */
 
-include ':app', ':mastodon4j_to_twitter4j'
+apply plugin: 'java'
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+
+    compile 'com.github.sys1yagi.mastodon4j:mastodon4j:1.2.0'
+}
+
+sourceCompatibility = "1.8"
+targetCompatibility = "1.8"

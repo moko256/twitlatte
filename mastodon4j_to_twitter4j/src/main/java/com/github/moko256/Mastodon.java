@@ -14,4 +14,8 @@
  * limitations under the License.
  */
 
-include ':app', ':mastodon4j_to_twitter4j'
+package com.github.moko256;
+
+public class Mastodon {
+
+}
