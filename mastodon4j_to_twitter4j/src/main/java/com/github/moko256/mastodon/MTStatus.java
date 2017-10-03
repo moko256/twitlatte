@@ -74,7 +74,7 @@ class MTStatus implements twitter4j.Status{
 
     @Override
     public String getSource() {
-        return status.getSpoilerText();
+        return "<a href='" + status.getApplication().getWebsite() + "'>" + status.getApplication().getName() + "</a>";
     }
 
     @Override
@@ -114,37 +114,37 @@ class MTStatus implements twitter4j.Status{
 
     @Override
     public boolean isRetweeted() {
-        return false;
+        return status.isReblogged();
     }
 
     @Override
     public int getFavoriteCount() {
-        return 0;
+        return status.getFavouritesCount();
     }
 
     @Override
     public User getUser() {
-        return null;
+        return new MTUser(status.getAccount());
     }
 
     @Override
     public boolean isRetweet() {
-        return false;
+        return status.getReblog() != null;
     }
 
     @Override
     public twitter4j.Status getRetweetedStatus() {
-        return null;
+        return new MTStatus(status.getReblog());
     }
 
     @Override
     public long[] getContributors() {
-        return new long[0];
+        return null;
     }
 
     @Override
     public int getRetweetCount() {
-        return 0;
+        return status.getReblogsCount();
     }
 
     @Override
@@ -154,17 +154,17 @@ class MTStatus implements twitter4j.Status{
 
     @Override
     public long getCurrentUserRetweetId() {
-        return 0;
+        return -1;
     }
 
     @Override
     public boolean isPossiblySensitive() {
-        return false;
+        return status.isSensitive();
     }
 
     @Override
     public String getLang() {
-        return null;
+        return null;//status.getLanguage();
     }
 
     @Override
@@ -174,12 +174,12 @@ class MTStatus implements twitter4j.Status{
 
     @Override
     public String[] getWithheldInCountries() {
-        return new String[0];
+        return null;
     }
 
     @Override
     public long getQuotedStatusId() {
-        return 0;
+        return -1;
     }
 
     @Override

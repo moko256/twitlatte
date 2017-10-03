@@ -93,8 +93,10 @@ final class MastodonTwitterImpl implements Twitter {
 
     private final MastodonClient client;
 
-    MastodonTwitterImpl(String instanceUrl, Application app, AppRegistration appRegistration, OkHttpClient okHttpClient){
-        client = new MastodonClient.Builder(instanceUrl, new OkHttpClient.Builder(), new GsonBuilder().create()).build();
+    public MastodonTwitterImpl(String instanceUrl, String accessToken){
+        client = new MastodonClient.Builder(instanceUrl, new OkHttpClient.Builder(), new GsonBuilder().create())
+                .accessToken(accessToken)
+                .build();
     }
 
     @Override
