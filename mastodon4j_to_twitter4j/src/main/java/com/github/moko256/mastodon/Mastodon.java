@@ -14,8 +14,12 @@
  * limitations under the License.
  */
 
-package com.github.moko256;
+package com.github.moko256.mastodon;
+
+import com.sys1yagi.mastodon4j.api.entity.Application;
+
+import twitter4j.Twitter;
 
 public class Mastodon {
-
+    public static Twitter getInstance(Application app, );
 }
