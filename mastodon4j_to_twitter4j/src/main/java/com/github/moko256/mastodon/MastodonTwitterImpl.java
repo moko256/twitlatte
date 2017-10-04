@@ -18,6 +18,8 @@ package com.github.moko256.mastodon;
 
 import com.google.gson.GsonBuilder;
 import com.sys1yagi.mastodon4j.MastodonClient;
+import com.sys1yagi.mastodon4j.api.exception.Mastodon4jRequestException;
+import com.sys1yagi.mastodon4j.api.method.Accounts;
 
 import java.io.File;
 import java.io.InputStream;
@@ -85,9 +87,14 @@ final class MastodonTwitterImpl implements Twitter {
 
     private final MastodonClient client;
 
-    public MastodonTwitterImpl(String instanceUrl, String accessToken){
-        client = new MastodonClient.Builder(instanceUrl, new OkHttpClient.Builder(), new GsonBuilder().create())
-                .accessToken(accessToken)
+    /**
+     * This constructor uses AccessToken$tokenSecret as an instance url, because Mastodon API doesn't use tokenSecret.
+     *
+     * @param accessToken AccessToken (tokenSecret is instance url)
+     */
+    public MastodonTwitterImpl(AccessToken accessToken){
+        client = new MastodonClient.Builder(accessToken.getTokenSecret(), new OkHttpClient.Builder(), new GsonBuilder().create())
+                .accessToken(accessToken.getToken())
                 .build();
     }
 
@@ -96,22 +103,34 @@ final class MastodonTwitterImpl implements Twitter {
         return new TimelinesResources() {
             @Override
             public ResponseList<Status> getMentionsTimeline() throws TwitterException {
-                return null;
+                return new MTResponseList<>();
             }
 
             @Override
             public ResponseList<Status> getMentionsTimeline(Paging paging) throws TwitterException {
-                return null;
+                return new MTResponseList<>();
             }
 
             @Override
             public ResponseList<Status> getUserTimeline(String s, Paging paging) throws TwitterException {
-                return null;
+                Accounts accounts = new Accounts(client);
+                try {
+                    return MTResponseList.convert(accounts.getStatuses(accounts.getAccountSearch(s, 1).execute().get(0).getId(), false, MTRangePagingConverter.convert(paging)).execute());
+                } catch (Mastodon4jRequestException e) {
+                    e.printStackTrace();
+                    throw new MTException(e);
+                }
             }
 
             @Override
             public ResponseList<Status> getUserTimeline(long l, Paging paging) throws TwitterException {
-                return null;
+                Accounts accounts = new Accounts(client);
+                try {
+                    return MTResponseList.convert(accounts.getStatuses(l, false, MTRangePagingConverter.convert(paging)).execute());
+                } catch (Mastodon4jRequestException e) {
+                    e.printStackTrace();
+                    throw new MTException(e);
+                }
             }
 
             @Override
