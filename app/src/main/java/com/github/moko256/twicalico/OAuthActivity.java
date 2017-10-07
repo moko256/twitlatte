@@ -30,8 +30,17 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 
+import com.github.moko256.mastodon.MastodonTwitterImpl;
 import com.github.moko256.twicalico.database.TokenSQLiteOpenHelper;
+import com.google.gson.Gson;
+import com.sys1yagi.mastodon4j.MastodonClient;
+import com.sys1yagi.mastodon4j.api.Scope;
+import com.sys1yagi.mastodon4j.api.entity.auth.AppRegistration;
+import com.sys1yagi.mastodon4j.api.exception.Mastodon4jRequestException;
+import com.sys1yagi.mastodon4j.api.method.Apps;
 
+import okhttp3.OkHttpClient;
+import rx.Completable;
 import rx.Single;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -117,10 +126,22 @@ public class OAuthActivity extends AppCompatActivity {
         }.execute();
 
         EditText editText=new EditText(this);
+        editText.setHint("PIN");
         editText.setInputType(EditorInfo.TYPE_NUMBER_FLAG_DECIMAL);
         new AlertDialog.Builder(this)
                 .setView(editText)
                 .setPositiveButton(android.R.string.ok,(dialog, which) -> initToken(editText.getText().toString()))
+                .setCancelable(false)
+                .show();
+    }
+
+    private void startMastodonAuth(){
+        EditText editText=new EditText(this);
+        editText.setHint("URL");
+        editText.setInputType(EditorInfo.TYPE_TEXT_VARIATION_URI);
+        new AlertDialog.Builder(this)
+                .setView(editText)
+                .setPositiveButton(android.R.string.ok,(dialog, which) -> initMastodonToken(editText.getText().toString()))
                 .setCancelable(false)
                 .show();
     }
@@ -147,6 +168,54 @@ public class OAuthActivity extends AppCompatActivity {
                     } catch (TwitterException e) {
                         subscriber.onError(e);
                     }
+                })
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        result-> storeAccessToken(((AccessToken) result)),
+                        Throwable::printStackTrace
+                );
+    }
+
+    private void initMastodonToken(String url){
+        MastodonClient client = new MastodonClient.Builder("mstdn.jp", new OkHttpClient.Builder(), new Gson()).build();
+        Apps apps = new Apps(client);
+        AppRegistration registration;
+        Completable.create(
+                subscriber -> {
+                    try {
+                        registration = apps.createApp(
+                                "mastodon4j-sample-app",
+                                "urn:ietf:wg:oauth:2.0:oob",
+                                new Scope(Scope.Name.ALL),
+                                getString(R.string.app_name) + "://oauth_verifier"
+                        ).execute();
+                        subscriber.onCompleted();
+                    } catch (Mastodon4jRequestException e) {
+                        subscriber.onError(e);
+                    }
+                })
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .(o -> {
+                    startBrowser((new Apps(client).getOAuthUrl(
+                            registration.getClientId(),
+                            new Scope(Scope.Name.ALL),
+                            registration.getRedirectUri()
+                    )));
+                })
+                .flatMap(o -> {
+                    AppRegistration registration = (AppRegistration) o;
+                    val authCode =
+                            val clientSecret = appRegistration.clientSecret
+                    val redirectUri = appRegistration.redirectUri
+                    val accessToken = apps.getAccessToken(
+                            clientId,
+                            clientSecret,
+                            redirectUri,
+                            authCode,
+                            "authorization_code"
+                    );
                 })
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())

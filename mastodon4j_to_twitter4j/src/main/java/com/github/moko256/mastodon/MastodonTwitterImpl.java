@@ -20,6 +20,8 @@ import com.google.gson.GsonBuilder;
 import com.sys1yagi.mastodon4j.MastodonClient;
 import com.sys1yagi.mastodon4j.api.exception.Mastodon4jRequestException;
 import com.sys1yagi.mastodon4j.api.method.Accounts;
+import com.sys1yagi.mastodon4j.api.method.Public;
+import com.sys1yagi.mastodon4j.api.method.Timelines;
 
 import java.io.File;
 import java.io.InputStream;
@@ -83,9 +85,10 @@ import twitter4j.util.function.Consumer;
  * @author moko256
  */
 
-final class MastodonTwitterImpl implements Twitter {
+public final class MastodonTwitterImpl implements Twitter {
 
-    private final MastodonClient client;
+    public final AccessToken accessToken;
+    public final MastodonClient client;
 
     /**
      * This constructor uses AccessToken$tokenSecret as an instance url, because Mastodon API doesn't use tokenSecret.
@@ -93,6 +96,7 @@ final class MastodonTwitterImpl implements Twitter {
      * @param accessToken AccessToken (tokenSecret is instance url)
      */
     public MastodonTwitterImpl(AccessToken accessToken){
+        this.accessToken = accessToken;
         client = new MastodonClient.Builder(accessToken.getTokenSecret(), new OkHttpClient.Builder(), new GsonBuilder().create())
                 .accessToken(accessToken.getToken())
                 .build();
@@ -135,32 +139,37 @@ final class MastodonTwitterImpl implements Twitter {
 
             @Override
             public ResponseList<Status> getUserTimeline(String s) throws TwitterException {
-                return null;
+                return getUserTimeline(s, new Paging(-1L));
             }
 
             @Override
             public ResponseList<Status> getUserTimeline(long l) throws TwitterException {
-                return null;
+                return getUserTimeline(l, new Paging(-1L));
             }
 
             @Override
             public ResponseList<Status> getUserTimeline() throws TwitterException {
-                return null;
+                return getUserTimeline(new Paging(-1L));
             }
 
             @Override
             public ResponseList<Status> getUserTimeline(Paging paging) throws TwitterException {
-                return null;
+                return getUserTimeline(accessToken.getUserId(), paging);
             }
 
             @Override
             public ResponseList<Status> getHomeTimeline() throws TwitterException {
-                return null;
+                return getHomeTimeline(new Paging(-1L));
             }
 
             @Override
             public ResponseList<Status> getHomeTimeline(Paging paging) throws TwitterException {
-                return null;
+                try {
+                    return MTResponseList.convert(new Timelines(client).getHome(MTRangePagingConverter.convert(paging)).execute());
+                } catch (Mastodon4jRequestException e) {
+                    e.printStackTrace();
+                    throw new MTException(e);
+                }
             }
 
             @Override
@@ -1052,62 +1061,62 @@ final class MastodonTwitterImpl implements Twitter {
 
     @Override
     public ResponseList<Status> getMentionsTimeline() throws TwitterException {
-        return null;
+        return timelines().getMentionsTimeline();
     }
 
     @Override
     public ResponseList<Status> getMentionsTimeline(Paging paging) throws TwitterException {
-        return null;
+        return timelines().getMentionsTimeline(paging);
     }
 
     @Override
     public ResponseList<Status> getUserTimeline(String s, Paging paging) throws TwitterException {
-        return null;
+        return timelines().getUserTimeline(s, paging);
     }
 
     @Override
     public ResponseList<Status> getUserTimeline(long l, Paging paging) throws TwitterException {
-        return null;
+        return timelines().getUserTimeline(l, paging);
     }
 
     @Override
     public ResponseList<Status> getUserTimeline(String s) throws TwitterException {
-        return null;
+        return timelines().getUserTimeline(s);
     }
 
     @Override
     public ResponseList<Status> getUserTimeline(long l) throws TwitterException {
-        return null;
+        return timelines().getUserTimeline(l);
     }
 
     @Override
     public ResponseList<Status> getUserTimeline() throws TwitterException {
-        return null;
+        return timelines().getUserTimeline();
     }
 
     @Override
     public ResponseList<Status> getUserTimeline(Paging paging) throws TwitterException {
-        return null;
+        return timelines().getUserTimeline(paging);
     }
 
     @Override
     public ResponseList<Status> getHomeTimeline() throws TwitterException {
-        return null;
+        return timelines().getHomeTimeline();
     }
 
     @Override
     public ResponseList<Status> getHomeTimeline(Paging paging) throws TwitterException {
-        return null;
+        return timelines().getHomeTimeline(paging);
     }
 
     @Override
     public ResponseList<Status> getRetweetsOfMe() throws TwitterException {
-        return null;
+        return timelines().getRetweetsOfMe();
     }
 
     @Override
     public ResponseList<Status> getRetweetsOfMe(Paging paging) throws TwitterException {
-        return null;
+        return timelines().getRetweetsOfMe(paging);
     }
 
     @Override
