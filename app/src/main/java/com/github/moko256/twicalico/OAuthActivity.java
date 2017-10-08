@@ -24,6 +24,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.util.Pair;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -38,6 +39,8 @@ import com.sys1yagi.mastodon4j.api.Scope;
 import com.sys1yagi.mastodon4j.api.entity.auth.AppRegistration;
 import com.sys1yagi.mastodon4j.api.exception.Mastodon4jRequestException;
 import com.sys1yagi.mastodon4j.api.method.Apps;
+
+import java.util.Map;
 
 import okhttp3.OkHttpClient;
 import rx.Completable;
@@ -180,44 +183,52 @@ public class OAuthActivity extends AppCompatActivity {
     private void initMastodonToken(String url){
         MastodonClient client = new MastodonClient.Builder("mstdn.jp", new OkHttpClient.Builder(), new Gson()).build();
         Apps apps = new Apps(client);
-        AppRegistration registration;
-        Completable.create(
+        Single.create(
                 subscriber -> {
                     try {
-                        registration = apps.createApp(
+                        subscriber.onSuccess(apps.createApp(
                                 "mastodon4j-sample-app",
                                 "urn:ietf:wg:oauth:2.0:oob",
                                 new Scope(Scope.Name.ALL),
                                 getString(R.string.app_name) + "://oauth_verifier"
-                        ).execute();
-                        subscriber.onCompleted();
+                        ).execute());
                     } catch (Mastodon4jRequestException e) {
                         subscriber.onError(e);
                     }
                 })
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .(o -> {
+                .flatMap(it -> Single.create(singleSubscriber -> {
+                    AppRegistration appRegistration = (AppRegistration) it;
                     startBrowser((new Apps(client).getOAuthUrl(
-                            registration.getClientId(),
+                            appRegistration.getClientId(),
                             new Scope(Scope.Name.ALL),
-                            registration.getRedirectUri()
+                            appRegistration.getRedirectUri()
                     )));
-                })
-                .flatMap(o -> {
-                    AppRegistration registration = (AppRegistration) o;
-                    val authCode =
-                            val clientSecret = appRegistration.clientSecret
-                    val redirectUri = appRegistration.redirectUri
-                    val accessToken = apps.getAccessToken(
-                            clientId,
-                            clientSecret,
-                            redirectUri,
-                            authCode,
+                    EditText editText=new EditText(this);
+                    editText.setHint("PIN");
+                    editText.setInputType(EditorInfo.TYPE_NUMBER_VARIATION_PASSWORD);
+                    new AlertDialog.Builder(this)
+                            .setView(editText)
+                            .setPositiveButton(android.R.string.ok, (dialog, which) -> {
+                                singleSubscriber.onSuccess(new Pair<String, AppRegistration>(editText.getText().toString(), appRegistration));
+                            })
+                            .setCancelable(false)
+                            .show();
+                }))
+                .observeOn(Schedulers.newThread())
+                .flatMap(it -> {
+                    Pair<String, AppRegistration> pair = (Pair<String, AppRegistration>) it;
+                    String pin = pair.first;
+                    AppRegistration registration = pair.second;
+                    com.sys1yagi.mastodon4j.api.entity.auth.AccessToken accessToken = apps.getAccessToken(
+                            registration.getClientId(),
+                            registration.getClientSecret(),
+                            registration.getRedirectUri(),
+                            pin,
                             "authorization_code"
-                    );
+                    ).execute();
                 })
-                .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         result-> storeAccessToken(((AccessToken) result)),
