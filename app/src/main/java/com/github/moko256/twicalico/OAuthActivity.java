@@ -31,19 +31,17 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 
-import com.github.moko256.mastodon.MastodonTwitterImpl;
 import com.github.moko256.twicalico.database.TokenSQLiteOpenHelper;
 import com.google.gson.Gson;
 import com.sys1yagi.mastodon4j.MastodonClient;
 import com.sys1yagi.mastodon4j.api.Scope;
+import com.sys1yagi.mastodon4j.api.entity.Account;
 import com.sys1yagi.mastodon4j.api.entity.auth.AppRegistration;
 import com.sys1yagi.mastodon4j.api.exception.Mastodon4jRequestException;
+import com.sys1yagi.mastodon4j.api.method.Accounts;
 import com.sys1yagi.mastodon4j.api.method.Apps;
 
-import java.util.Map;
-
 import okhttp3.OkHttpClient;
-import rx.Completable;
 import rx.Single;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -181,16 +179,16 @@ public class OAuthActivity extends AppCompatActivity {
     }
 
     private void initMastodonToken(String url){
-        MastodonClient client = new MastodonClient.Builder("mstdn.jp", new OkHttpClient.Builder(), new Gson()).build();
-        Apps apps = new Apps(client);
+        MastodonClient.Builder clientBuilder = new MastodonClient.Builder(url, new OkHttpClient.Builder(), new Gson());
+        Apps apps = new Apps(clientBuilder.build());
         Single.create(
                 subscriber -> {
                     try {
                         subscriber.onSuccess(apps.createApp(
-                                "mastodon4j-sample-app",
+                                "twicalico",
                                 "urn:ietf:wg:oauth:2.0:oob",
                                 new Scope(Scope.Name.ALL),
-                                getString(R.string.app_name) + "://oauth_verifier"
+                                "https://github.com/moko256/twicalico"
                         ).execute());
                     } catch (Mastodon4jRequestException e) {
                         subscriber.onError(e);
@@ -200,7 +198,7 @@ public class OAuthActivity extends AppCompatActivity {
                 .observeOn(AndroidSchedulers.mainThread())
                 .flatMap(it -> Single.create(singleSubscriber -> {
                     AppRegistration appRegistration = (AppRegistration) it;
-                    startBrowser((new Apps(client).getOAuthUrl(
+                    startBrowser((apps.getOAuthUrl(
                             appRegistration.getClientId(),
                             new Scope(Scope.Name.ALL),
                             appRegistration.getRedirectUri()
@@ -211,27 +209,48 @@ public class OAuthActivity extends AppCompatActivity {
                     new AlertDialog.Builder(this)
                             .setView(editText)
                             .setPositiveButton(android.R.string.ok, (dialog, which) -> {
-                                singleSubscriber.onSuccess(new Pair<String, AppRegistration>(editText.getText().toString(), appRegistration));
+                                singleSubscriber.onSuccess(new Pair<>(editText.getText().toString(), appRegistration));
                             })
                             .setCancelable(false)
                             .show();
                 }))
                 .observeOn(Schedulers.newThread())
-                .flatMap(it -> {
+                .flatMap(it -> Single.create(singleSubscriber -> {
                     Pair<String, AppRegistration> pair = (Pair<String, AppRegistration>) it;
                     String pin = pair.first;
                     AppRegistration registration = pair.second;
-                    com.sys1yagi.mastodon4j.api.entity.auth.AccessToken accessToken = apps.getAccessToken(
-                            registration.getClientId(),
-                            registration.getClientSecret(),
-                            registration.getRedirectUri(),
-                            pin,
-                            "authorization_code"
-                    ).execute();
-                })
+                    try {
+                        com.sys1yagi.mastodon4j.api.entity.auth.AccessToken accessToken = apps.getAccessToken(
+                                registration.getClientId(),
+                                registration.getClientSecret(),
+                                registration.getRedirectUri(),
+                                pin,
+                                "authorization_code"
+                        ).execute();
+                        Account account = new Accounts(clientBuilder.accessToken(accessToken.getAccessToken()).build()).getVerifyCredentials().execute();
+                        singleSubscriber.onSuccess(new Pair(accessToken, account));
+                    } catch (Mastodon4jRequestException e) {
+                        singleSubscriber.onError(e);
+                    }
+                }))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        result-> storeAccessToken(((AccessToken) result)),
+                        result -> {
+                            Pair<com.sys1yagi.mastodon4j.api.entity.auth.AccessToken, Account> pair = (Pair<com.sys1yagi.mastodon4j.api.entity.auth.AccessToken, Account>) result;
+                            com.sys1yagi.mastodon4j.api.entity.auth.AccessToken accessToken = pair.first;
+                            AccessToken storeToken = new AccessToken(accessToken.getAccessToken(), url){
+                                @Override
+                                public String getScreenName() {
+                                    return pair.second.getAcct() + "@" + url;
+                                }
+
+                                @Override
+                                public long getUserId() {
+                                    return pair.second.getId();
+                                }
+                            };
+                            storeAccessToken(storeToken);
+                        },
                         Throwable::printStackTrace
                 );
     }
@@ -260,6 +279,10 @@ public class OAuthActivity extends AppCompatActivity {
 
     public void onStartPinAuthClick(View view) {
         startPinAuth();
+    }
+
+    public void onStartMastodonAuthClick(View view) {
+        startMastodonAuth();
     }
 
     public void onSettingClick(View view) {

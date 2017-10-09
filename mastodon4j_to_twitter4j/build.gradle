@@ -21,6 +21,3 @@ dependencies {
 
     compile 'com.github.sys1yagi.mastodon4j:mastodon4j:1.2.0'
 }
-
-sourceCompatibility = "1.8"
-targetCompatibility = "1.8"

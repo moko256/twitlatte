@@ -30,10 +30,12 @@ import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatDelegate;
 
+import com.github.moko256.mastodon.MastodonTwitterImpl;
 import com.github.moko256.twicalico.cacheMap.StatusCacheMap;
 import com.github.moko256.twicalico.cacheMap.UserCacheMap;
 import com.github.moko256.twicalico.config.AppConfiguration;
 import com.github.moko256.twicalico.database.TokenSQLiteOpenHelper;
+import com.sys1yagi.mastodon4j.MastodonClient;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -116,6 +118,7 @@ public class GlobalApplication extends Application {
                     inboxStyle.addLine(s);
                 }
                 NotificationManagerCompat.from(getApplicationContext()).notify(NotificationManagerCompat.IMPORTANCE_HIGH, inboxStyle.build());
+                e.printStackTrace();
             }catch (Throwable fe){
                 fe.printStackTrace();
             } finally {
@@ -207,15 +210,26 @@ public class GlobalApplication extends Application {
             client = GlobalApplication.getOkHttpClient();
         }
 
-        twitter = new TwitterFactory(conf).getInstance();
+        if (accessToken.getTokenSecret().matches(".*\\..*")){
+            twitter = new MastodonTwitterImpl(accessToken);
+        } else {
+            twitter = new TwitterFactory(conf).getInstance();
+        }
 
         if (client != null) {
             try {
-                Field httpField = Class.forName("twitter4j.TwitterBaseImpl").getDeclaredField("http");
-                httpField.setAccessible(true);
-                Field clientField = AlternativeHttpClientImpl.class.getDeclaredField("okHttpClient");
-                clientField.setAccessible(true);
-                clientField.set(httpField.get(twitter), client);
+                if (twitter instanceof MastodonTwitterImpl){
+                    MastodonClient mc = ((MastodonTwitterImpl) twitter).getClient();
+                    Field clientField = MastodonClient.class.getDeclaredField("client");
+                    clientField.setAccessible(true);
+                    clientField.set(mc, client);
+                } else {
+                    Field httpField = Class.forName("twitter4j.TwitterBaseImpl").getDeclaredField("http");
+                    httpField.setAccessible(true);
+                    Field clientField = AlternativeHttpClientImpl.class.getDeclaredField("okHttpClient");
+                    clientField.setAccessible(true);
+                    clientField.set(httpField.get(twitter), client);
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -229,17 +243,25 @@ public class GlobalApplication extends Application {
         try {
             OkHttpClient client;
 
-            Field httpField = Class.forName("twitter4j.TwitterBaseImpl").getDeclaredField("http");
-            httpField.setAccessible(true);
-            Field clientField = AlternativeHttpClientImpl.class.getDeclaredField("okHttpClient");
-            clientField.setAccessible(true);
-            client = (OkHttpClient) clientField.get(httpField.get(twitter));
-            if (client == null){
-                Method init = AlternativeHttpClientImpl.class.getDeclaredMethod("prepareOkHttpClient");
-                init.setAccessible(true);
-                init.invoke(httpField.get(twitter));
+            if (twitter instanceof MastodonTwitterImpl){
+                MastodonClient mc = ((MastodonTwitterImpl) twitter).getClient();
+                Field clientField = MastodonClient.class.getDeclaredField("client");
+                clientField.setAccessible(true);
+                client = (OkHttpClient) clientField.get(mc);
+            } else {
+                Field httpField = Class.forName("twitter4j.TwitterBaseImpl").getDeclaredField("http");
+                httpField.setAccessible(true);
+                Field clientField = AlternativeHttpClientImpl.class.getDeclaredField("okHttpClient");
+                clientField.setAccessible(true);
                 client = (OkHttpClient) clientField.get(httpField.get(twitter));
+                if (client == null){
+                    Method init = AlternativeHttpClientImpl.class.getDeclaredMethod("prepareOkHttpClient");
+                    init.setAccessible(true);
+                    init.invoke(httpField.get(twitter));
+                    client = (OkHttpClient) clientField.get(httpField.get(twitter));
+                }
             }
+
             return client;
         } catch (Exception e) {
             e.printStackTrace();

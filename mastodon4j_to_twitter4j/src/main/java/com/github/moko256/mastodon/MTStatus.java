@@ -20,6 +20,8 @@ import com.sys1yagi.mastodon4j.api.entity.Status;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import twitter4j.GeoLocation;
@@ -49,7 +51,12 @@ class MTStatus implements twitter4j.Status{
 
     @Override
     public Date getCreatedAt() {
-        return new Date(Long.valueOf(status.getCreatedAt()));
+        try {
+            return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(status.getCreatedAt().replace("X", ""));
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @Override
@@ -74,7 +81,11 @@ class MTStatus implements twitter4j.Status{
 
     @Override
     public String getSource() {
-        return "<a href='" + status.getApplication().getWebsite() + "'>" + status.getApplication().getName() + "</a>";
+        if (status.getApplication() != null) {
+            return "<a href='" + status.getApplication().getWebsite() + "'>" + status.getApplication().getName() + "</a>";
+        } else {
+            return "unknown";
+        }
     }
 
     @Override
@@ -84,12 +95,14 @@ class MTStatus implements twitter4j.Status{
 
     @Override
     public long getInReplyToStatusId() {
-        return status.getInReplyToId();
+        Long id = status.getInReplyToId();
+        return id == null?-1:id;
     }
 
     @Override
     public long getInReplyToUserId() {
-        return status.getInReplyToAccountId();
+        Long id = status.getInReplyToAccountId();
+        return id == null?-1:id;
     }
 
     @Override

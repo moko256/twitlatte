@@ -20,6 +20,8 @@ import com.sys1yagi.mastodon4j.api.entity.Account;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import twitter4j.RateLimitStatus;
@@ -187,7 +189,12 @@ public class MTUser implements User {
 
     @Override
     public Date getCreatedAt() {
-        return new Date(Long.valueOf(account.getCreatedAt()));
+        try {
+            return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(account.getCreatedAt().replace("X", ""));
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @Override
