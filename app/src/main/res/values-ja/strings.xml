@@ -90,6 +90,7 @@
     <string name="muted_tweet">ミュートされたツイート</string>
     <string name="oauth_using_url_scheme">PINを使わない認証</string>
     <string name="oauth_using_pin">PINを使う認証</string>
+    <string name="oauth_mastodon">マストドン認証</string>
 
     <string name="mode_image_level_none">タイムラインの画像を読み込まない</string>
     <string name="mode_image_level_normal">タイムラインの画像を読み込む</string>

@@ -38,7 +38,7 @@
 
     <Button
         android:id="@+id/oauth_mastodon_button"
-        android:text="@string/oauth_using_pin"
+        android:text="@string/oauth_mastodon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/oauth_using_pin_button"

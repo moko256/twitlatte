@@ -101,6 +101,7 @@
     <string name="muted_tweet">Muted tweet</string>
     <string name="oauth_using_url_scheme">Not using PIN authorization</string>
     <string name="oauth_using_pin">Using PIN authorization</string>
+    <string name="oauth_mastodon">Mastodon authorization</string>
 
     <string name="mode_image_level_none">Do not load images on the timeline</string>
     <string name="mode_image_level_normal">Load images on the timeline</string>
