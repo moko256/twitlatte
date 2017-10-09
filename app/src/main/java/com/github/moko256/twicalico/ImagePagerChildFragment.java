@@ -29,6 +29,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.github.moko256.mastodon.MastodonTwitterImpl;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlayerFactory;
@@ -76,11 +77,17 @@ public class ImagePagerChildFragment extends Fragment {
 
         switch (mediaEntity.getType()){
             case "video":
-                String videoPath="";
+                String videoPath = null;
+                boolean isHls = false;
                 for(MediaEntity.Variant variant : mediaEntity.getVideoVariants()){
                     if(variant.getContentType().equals("application/x-mpegURL")){
                         videoPath=variant.getUrl();
+                        isHls = true;
                     }
+                }
+
+                if (videoPath == null){
+                    videoPath = mediaEntity.getVideoVariants()[0].getUrl();
                 }
 
                 videoPlayView = view.findViewById(R.id.fragment_image_pager_video);
@@ -110,15 +117,27 @@ public class ImagePagerChildFragment extends Fragment {
                 }
                 videoPlayView.setPlayer(player);
                 player.prepare(
-                        new HlsMediaSource(
-                                Uri.parse(videoPath),
-                                new OkHttpDataSourceFactory(
-                                        GlobalApplication.getOkHttpClient(),
-                                        getResources().getText(R.string.app_name).toString(),
-                                        null
-                                ),
-                                null, null
-                        )
+                        (isHls)?
+                                new HlsMediaSource(
+                                        Uri.parse(videoPath),
+                                        new OkHttpDataSourceFactory(
+                                                GlobalApplication.getOkHttpClient(),
+                                                getResources().getText(R.string.app_name).toString(),
+                                                null
+                                        ),
+                                        null, null
+                                ):
+                                new ExtractorMediaSource(
+                                        Uri.parse(mediaEntity.getVideoVariants()[0].getUrl()),
+                                        new OkHttpDataSourceFactory(
+                                                GlobalApplication.getOkHttpClient(),
+                                                getResources().getText(R.string.app_name).toString(),
+                                                null
+                                        ),
+                                        new DefaultExtractorsFactory(),
+                                        new Handler(),
+                                        Throwable::printStackTrace
+                                )
                 );
                 break;
 
@@ -193,7 +212,7 @@ public class ImagePagerChildFragment extends Fragment {
                         .fitCenter()
                         .thumbnail(
                                 GlideApp.with(this)
-                                        .load(mediaEntity.getMediaURLHttps()+":small")
+                                        .load(mediaEntity.getMediaURLHttps() + (GlobalApplication.twitter instanceof MastodonTwitterImpl ?"":":small"))
                                         .fitCenter()
                         )
                         .into(imageView);

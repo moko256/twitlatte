@@ -23,7 +23,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.support.annotation.NonNull;
 
+import com.github.moko256.mastodon.MastodonTwitterImpl;
 import com.github.moko256.twicalico.BuildConfig;
+import com.github.moko256.twicalico.GlobalApplication;
 
 import java.io.File;
 import java.util.Arrays;
@@ -198,7 +200,7 @@ public class CachedUsersSQLiteOpenHelper extends SQLiteOpenHelper {
                 }
 
                 private String toResizedURL(String originalURL, String sizeSuffix) {
-                    if (null != originalURL) {
+                    if (null != originalURL && !(GlobalApplication.twitter instanceof MastodonTwitterImpl)) {
                         int index = originalURL.lastIndexOf("_");
                         int suffixIndex = originalURL.lastIndexOf(".");
                         int slashIndex = originalURL.lastIndexOf("/");
@@ -208,7 +210,7 @@ public class CachedUsersSQLiteOpenHelper extends SQLiteOpenHelper {
                         }
                         return url;
                     }
-                    return null;
+                    return originalURL;
                 }
 
                 @Override
@@ -353,47 +355,47 @@ public class CachedUsersSQLiteOpenHelper extends SQLiteOpenHelper {
 
                 @Override
                 public String getProfileBannerURL() {
-                    return profileBannerImageUrl != null ? profileBannerImageUrl + "/web" : null;
+                    return profileBannerImageUrl != null && !(GlobalApplication.twitter instanceof MastodonTwitterImpl)? profileBannerImageUrl + "/web" : profileBannerImageUrl;
                 }
 
                 @Override
                 public String getProfileBannerRetinaURL() {
-                    return profileBannerImageUrl != null ? profileBannerImageUrl + "/web_retina" : null;
+                    return profileBannerImageUrl != null && !(GlobalApplication.twitter instanceof MastodonTwitterImpl)? profileBannerImageUrl + "/web_retina" : profileBannerImageUrl;
                 }
 
                 @Override
                 public String getProfileBannerIPadURL() {
-                    return profileBannerImageUrl != null ? profileBannerImageUrl + "/ipad" : null;
+                    return profileBannerImageUrl != null && !(GlobalApplication.twitter instanceof MastodonTwitterImpl)? profileBannerImageUrl + "/ipad" : profileBannerImageUrl;
                 }
 
                 @Override
                 public String getProfileBannerIPadRetinaURL() {
-                    return profileBannerImageUrl != null ? profileBannerImageUrl + "/ipad_retina" : null;
+                    return profileBannerImageUrl != null && !(GlobalApplication.twitter instanceof MastodonTwitterImpl)? profileBannerImageUrl + "/ipad_retina" : profileBannerImageUrl;
                 }
 
                 @Override
                 public String getProfileBannerMobileURL() {
-                    return profileBannerImageUrl != null ? profileBannerImageUrl + "/mobile" : null;
+                    return profileBannerImageUrl != null && !(GlobalApplication.twitter instanceof MastodonTwitterImpl)? profileBannerImageUrl + "/mobile" : profileBannerImageUrl;
                 }
 
                 @Override
                 public String getProfileBannerMobileRetinaURL() {
-                    return profileBannerImageUrl != null ? profileBannerImageUrl + "/mobile_retina" : null;
+                    return profileBannerImageUrl != null && !(GlobalApplication.twitter instanceof MastodonTwitterImpl)? profileBannerImageUrl + "/mobile_retina" : profileBannerImageUrl;
                 }
 
                 @Override
                 public String getProfileBanner300x100URL() {
-                    return profileBannerImageUrl != null ? profileBannerImageUrl + "/300x100" : null;
+                    return profileBannerImageUrl != null && !(GlobalApplication.twitter instanceof MastodonTwitterImpl)? profileBannerImageUrl + "/300x100" : profileBannerImageUrl;
                 }
 
                 @Override
                 public String getProfileBanner600x200URL() {
-                    return profileBannerImageUrl != null ? profileBannerImageUrl + "/600x200" : null;
+                    return profileBannerImageUrl != null && !(GlobalApplication.twitter instanceof MastodonTwitterImpl)? profileBannerImageUrl + "/600x200" : profileBannerImageUrl;
                 }
 
                 @Override
                 public String getProfileBanner1500x500URL() {
-                    return profileBannerImageUrl != null ? profileBannerImageUrl + "/1500x500" : null;
+                    return profileBannerImageUrl != null && !(GlobalApplication.twitter instanceof MastodonTwitterImpl)? profileBannerImageUrl + "/1500x500" : profileBannerImageUrl;
                 }
 
                 @Override

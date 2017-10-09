@@ -23,12 +23,15 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.v4.content.ContextCompat;
+import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.ClickableSpan;
 import android.view.View;
 
+import com.github.moko256.mastodon.MastodonTwitterImpl;
+import com.github.moko256.twicalico.GlobalApplication;
 import com.github.moko256.twicalico.R;
 import com.github.moko256.twicalico.SearchResultActivity;
 import com.github.moko256.twicalico.ShowUserActivity;
@@ -135,6 +138,10 @@ public class TwitterStringUtils {
     public static CharSequence getLinkedSequence(Status item, Context mContext){
 
         String tweet = item.getText();
+
+        if (GlobalApplication.twitter instanceof MastodonTwitterImpl){
+            return Html.fromHtml(item.getText());
+        }
 
         SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(tweet);
 

@@ -18,16 +18,28 @@ package com.github.moko256.mastodon;
 
 import com.google.gson.GsonBuilder;
 import com.sys1yagi.mastodon4j.MastodonClient;
+import com.sys1yagi.mastodon4j.api.entity.Attachment;
 import com.sys1yagi.mastodon4j.api.exception.Mastodon4jRequestException;
 import com.sys1yagi.mastodon4j.api.method.Accounts;
-import com.sys1yagi.mastodon4j.api.method.Public;
+import com.sys1yagi.mastodon4j.api.method.Media;
+import com.sys1yagi.mastodon4j.api.method.Statuses;
 import com.sys1yagi.mastodon4j.api.method.Timelines;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
+import okhttp3.RequestBody;
 import twitter4j.AccountSettings;
 import twitter4j.Category;
 import twitter4j.DirectMessage;
@@ -35,6 +47,8 @@ import twitter4j.Friendship;
 import twitter4j.GeoLocation;
 import twitter4j.GeoQuery;
 import twitter4j.IDs;
+import twitter4j.JSONException;
+import twitter4j.JSONObject;
 import twitter4j.Location;
 import twitter4j.OEmbed;
 import twitter4j.OEmbedRequest;
@@ -187,7 +201,133 @@ public final class MastodonTwitterImpl implements Twitter {
 
     @Override
     public TweetsResources tweets() {
-        return null;
+        return new TweetsResources() {
+            @Override
+            public ResponseList<Status> getRetweets(long l) throws TwitterException {
+                return null;
+            }
+
+            @Override
+            public IDs getRetweeterIds(long l, long l1) throws TwitterException {
+                return null;
+            }
+
+            @Override
+            public IDs getRetweeterIds(long l, int i, long l1) throws TwitterException {
+                return null;
+            }
+
+            @Override
+            public Status showStatus(long l) throws TwitterException {
+                return null;
+            }
+
+            @Override
+            public Status destroyStatus(long l) throws TwitterException {
+                try {
+                    new Statuses(client).deleteStatus(l);
+                } catch (Mastodon4jRequestException e) {
+                    throw new MTException(e);
+                }
+                return null;
+            }
+
+            @Override
+            public Status updateStatus(String s) throws TwitterException {
+                return null;
+            }
+
+            @Override
+            public Status updateStatus(StatusUpdate statusUpdate) throws TwitterException {
+                try {
+                    Field statusUpdateField = StatusUpdate.class.getDeclaredField("mediaIds");
+                    statusUpdateField.setAccessible(true);
+                    long[] mediaIds = (long[]) statusUpdateField.get(statusUpdate);
+                    List<Long> mediaIdsList = null;
+                    if (mediaIds != null){
+                        mediaIdsList = new ArrayList<>(mediaIds.length);
+                        for (long mediaId : mediaIds) {
+                            mediaIdsList.add(mediaId);
+                        }
+                    }
+                    return new MTStatus(new Statuses(client).postStatus(
+                            statusUpdate.getStatus(),
+                            statusUpdate.getInReplyToStatusId() == -1 ? null : statusUpdate.getInReplyToStatusId(),
+                            mediaIdsList,
+                            statusUpdate.isPossiblySensitive(),
+                            null,
+                            com.sys1yagi.mastodon4j.api.entity.Status.Visibility.Public
+                    ).execute());
+                } catch (Mastodon4jRequestException e) {
+                    throw new MTException(e);
+                } catch (Exception e) {
+                    throw new TwitterException(e.getMessage());
+                }
+            }
+
+            @Override
+            public Status retweetStatus(long l) throws TwitterException {
+                try {
+                    new Statuses(client).postReblog(l);
+                } catch (Mastodon4jRequestException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+
+            @Override
+            public OEmbed getOEmbed(OEmbedRequest oEmbedRequest) throws TwitterException {
+                return null;
+            }
+
+            @Override
+            public ResponseList<Status> lookup(long... longs) throws TwitterException {
+                return null;
+            }
+
+            @Override
+            public UploadedMedia uploadMedia(File file) throws TwitterException {
+                try {
+                    Attachment attachment = new Media(client)
+                            .postMedia(MultipartBody.Part.create(RequestBody.create(MediaType.parse("image"), file)))
+                            .execute();
+                    String json = "{\"media_id\":" + attachment.getId() + "}";
+                    Constructor<UploadedMedia> c = UploadedMedia.class.getDeclaredConstructor(JSONObject.class);
+                    c.setAccessible(true);
+                    return c.newInstance(new JSONObject(json));
+                } catch (Mastodon4jRequestException e) {
+                    throw new MTException(e);
+                } catch (InstantiationException | NoSuchMethodException | IllegalAccessException | InvocationTargetException | JSONException e) {
+                    throw new TwitterException(e.getMessage());
+                }
+            }
+
+            @Override
+            public UploadedMedia uploadMedia(String s, InputStream inputStream) throws TwitterException {
+                try {
+                    ByteArrayOutputStream bout = new ByteArrayOutputStream();
+                    byte [] buffer = new byte[1024];
+                    while(true) {
+                        int len = inputStream.read(buffer);
+                        if(len < 0) {
+                            break;
+                        }
+                        bout.write(buffer, 0, len);
+                    }
+                    Attachment attachment = new Media(client)
+                            .postMedia(MultipartBody.Part.create(RequestBody.create(MediaType.parse("Content-Type:image/*"), bout.toByteArray())))
+                            .execute();
+                    String json = "{\"media_id\":" + attachment.getId() + "}";
+                    Constructor<UploadedMedia> c = UploadedMedia.class.getDeclaredConstructor(JSONObject.class);
+                    c.setAccessible(true);
+                    return c.newInstance(new JSONObject(json));
+                } catch (Mastodon4jRequestException e) {
+                    throw new MTException(e);
+                } catch (IOException | InstantiationException | NoSuchMethodException | IllegalAccessException | InvocationTargetException | JSONException e) {
+                    throw new TwitterException(e.getMessage());
+                }
+            }
+        };
     }
 
     @Override
@@ -396,7 +536,55 @@ public final class MastodonTwitterImpl implements Twitter {
 
     @Override
     public FavoritesResources favorites() {
-        return null;
+        return new FavoritesResources() {
+            @Override
+            public ResponseList<Status> getFavorites() throws TwitterException {
+                return null;
+            }
+
+            @Override
+            public ResponseList<Status> getFavorites(long l) throws TwitterException {
+                return null;
+            }
+
+            @Override
+            public ResponseList<Status> getFavorites(String s) throws TwitterException {
+                return null;
+            }
+
+            @Override
+            public ResponseList<Status> getFavorites(Paging paging) throws TwitterException {
+                return null;
+            }
+
+            @Override
+            public ResponseList<Status> getFavorites(long l, Paging paging) throws TwitterException {
+                return null;
+            }
+
+            @Override
+            public ResponseList<Status> getFavorites(String s, Paging paging) throws TwitterException {
+                return null;
+            }
+
+            @Override
+            public Status createFavorite(long l) throws TwitterException {
+                try {
+                    return new MTStatus(new Statuses(client).postFavourite(l).execute());
+                } catch (Mastodon4jRequestException e) {
+                    throw new MTException(e);
+                }
+            }
+
+            @Override
+            public Status destroyFavorite(long l) throws TwitterException {
+                try {
+                    return new MTStatus(new Statuses(client).postUnfavourite(l).execute());
+                } catch (Mastodon4jRequestException e) {
+                    throw new MTException(e);
+                }
+            }
+        };
     }
 
     @Override
@@ -511,42 +699,42 @@ public final class MastodonTwitterImpl implements Twitter {
 
     @Override
     public ResponseList<Status> getFavorites() throws TwitterException {
-        return null;
+        return favorites().getFavorites();
     }
 
     @Override
     public ResponseList<Status> getFavorites(long l) throws TwitterException {
-        return null;
+        return favorites().getFavorites(l);
     }
 
     @Override
     public ResponseList<Status> getFavorites(String s) throws TwitterException {
-        return null;
+        return favorites().getFavorites(s);
     }
 
     @Override
     public ResponseList<Status> getFavorites(Paging paging) throws TwitterException {
-        return null;
+        return favorites().getFavorites(paging);
     }
 
     @Override
     public ResponseList<Status> getFavorites(long l, Paging paging) throws TwitterException {
-        return null;
+        return favorites().getFavorites(l, paging);
     }
 
     @Override
     public ResponseList<Status> getFavorites(String s, Paging paging) throws TwitterException {
-        return null;
+        return favorites().getFavorites(s, paging);
     }
 
     @Override
     public Status createFavorite(long l) throws TwitterException {
-        return null;
+        return favorites().createFavorite(l);
     }
 
     @Override
     public Status destroyFavorite(long l) throws TwitterException {
-        return null;
+        return favorites().destroyFavorite(l);
     }
 
     @Override
@@ -1316,62 +1504,62 @@ public final class MastodonTwitterImpl implements Twitter {
 
     @Override
     public ResponseList<Status> getRetweets(long l) throws TwitterException {
-        return null;
+        return tweets().getRetweets(l);
     }
 
     @Override
     public IDs getRetweeterIds(long l, long l1) throws TwitterException {
-        return null;
+        return tweets().getRetweeterIds(l, l1);
     }
 
     @Override
     public IDs getRetweeterIds(long l, int i, long l1) throws TwitterException {
-        return null;
+        return tweets().getRetweeterIds(l, i, l1);
     }
 
     @Override
     public Status showStatus(long l) throws TwitterException {
-        return null;
+        return tweets().showStatus(l);
     }
 
     @Override
     public Status destroyStatus(long l) throws TwitterException {
-        return null;
+        return tweets().destroyStatus(l);
     }
 
     @Override
     public Status updateStatus(String s) throws TwitterException {
-        return null;
+        return tweets().updateStatus(s);
     }
 
     @Override
     public Status updateStatus(StatusUpdate statusUpdate) throws TwitterException {
-        return null;
+        return tweets().updateStatus(statusUpdate);
     }
 
     @Override
     public Status retweetStatus(long l) throws TwitterException {
-        return null;
+        return tweets().retweetStatus(l);
     }
 
     @Override
     public OEmbed getOEmbed(OEmbedRequest oEmbedRequest) throws TwitterException {
-        return null;
+        return tweets().getOEmbed(oEmbedRequest);
     }
 
     @Override
     public ResponseList<Status> lookup(long... longs) throws TwitterException {
-        return null;
+        return tweets().lookup(longs);
     }
 
     @Override
     public UploadedMedia uploadMedia(File file) throws TwitterException {
-        return null;
+        return tweets().uploadMedia(file);
     }
 
     @Override
     public UploadedMedia uploadMedia(String s, InputStream inputStream) throws TwitterException {
-        return null;
+        return tweets().uploadMedia(s, inputStream);
     }
 
     @Override
@@ -1381,7 +1569,7 @@ public final class MastodonTwitterImpl implements Twitter {
 
     @Override
     public User verifyCredentials() throws TwitterException {
-        return null;
+        return users().verifyCredentials();
     }
 
     @Override

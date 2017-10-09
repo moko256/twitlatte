@@ -25,6 +25,7 @@ import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.Space;
 import android.support.v7.content.res.AppCompatResources;
+import android.text.method.LinkMovementMethod;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -188,9 +189,10 @@ public class StatusView extends FrameLayout {
         userName.setText(item.getUser().getName());
         userId.setText(TwitterStringUtils.plusAtMark(item.getUser().getScreenName()));
 
-        CharSequence text = TwitterStringUtils.getStatusTextSequence(item);
+        CharSequence text = TwitterStringUtils.getLinkedSequence(item, getContext());
         if (!text.toString().trim().isEmpty()) {
             tweetContext.setText(text);
+            tweetContext.setMovementMethod(LinkMovementMethod.getInstance());
             if (tweetContext.getVisibility() != VISIBLE){
                 tweetContext.setVisibility(VISIBLE);
             }

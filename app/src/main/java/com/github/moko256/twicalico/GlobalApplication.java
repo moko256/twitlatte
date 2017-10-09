@@ -62,7 +62,7 @@ public class GlobalApplication extends Application {
     static final String consumerKey=BuildConfig.CONSUMER_KEY;
     static final String consumerSecret=BuildConfig.CONSUMER_SECRET;
 
-    static Twitter twitter;
+    static public Twitter twitter;
     static long userId;
 
     public static AppConfiguration configuration;
@@ -118,7 +118,6 @@ public class GlobalApplication extends Application {
                     inboxStyle.addLine(s);
                 }
                 NotificationManagerCompat.from(getApplicationContext()).notify(NotificationManagerCompat.IMPORTANCE_HIGH, inboxStyle.build());
-                e.printStackTrace();
             }catch (Throwable fe){
                 fe.printStackTrace();
             } finally {

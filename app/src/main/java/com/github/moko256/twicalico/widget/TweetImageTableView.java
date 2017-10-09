@@ -25,6 +25,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.github.moko256.mastodon.MastodonTwitterImpl;
 import com.github.moko256.twicalico.GlideApp;
 import com.github.moko256.twicalico.GlobalApplication;
 import com.github.moko256.twicalico.R;
@@ -153,7 +154,7 @@ public class TweetImageTableView extends GridLayout {
 
             if (GlobalApplication.configuration.isTimelineImageLoad()){
                 GlideApp.with(getContext())
-                        .load(mediaEntities[ii].getMediaURLHttps()+":small")
+                        .load(mediaEntities[ii].getMediaURLHttps() + (GlobalApplication.twitter instanceof MastodonTwitterImpl?"":":small"))
                         .diskCacheStrategy(DiskCacheStrategy.NONE)
                         .into(imageViews[ii]);
                 if (mediaEntities[ii].getType().equals("video")){
