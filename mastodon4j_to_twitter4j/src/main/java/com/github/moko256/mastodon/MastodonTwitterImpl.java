@@ -219,7 +219,11 @@ public final class MastodonTwitterImpl implements Twitter {
 
             @Override
             public Status showStatus(long l) throws TwitterException {
-                return null;
+                try {
+                    return new MTStatus(new Statuses(client).getStatus(l).execute());
+                } catch (Mastodon4jRequestException e) {
+                    throw new MTException(e);
+                }
             }
 
             @Override
@@ -234,7 +238,7 @@ public final class MastodonTwitterImpl implements Twitter {
 
             @Override
             public Status updateStatus(String s) throws TwitterException {
-                return null;
+                return updateStatus(new StatusUpdate(s));
             }
 
             @Override
@@ -268,11 +272,10 @@ public final class MastodonTwitterImpl implements Twitter {
             @Override
             public Status retweetStatus(long l) throws TwitterException {
                 try {
-                    new Statuses(client).postReblog(l);
+                    return new MTStatus(new Statuses(client).postReblog(l).execute());
                 } catch (Mastodon4jRequestException e) {
-                    e.printStackTrace();
+                    throw new MTException(e);
                 }
-                return null;
             }
 
             @Override
@@ -282,7 +285,15 @@ public final class MastodonTwitterImpl implements Twitter {
 
             @Override
             public ResponseList<Status> lookup(long... longs) throws TwitterException {
-                return null;
+                ResponseList<Status> statuses = new MTResponseList<>();
+                try {
+                    for (long l : longs) {
+                        statuses.add(new MTStatus(new Statuses(client).getStatus(l).execute()));
+                    }
+                } catch (Mastodon4jRequestException e){
+                    throw new MTException(e);
+                }
+                return statuses;
             }
 
             @Override
