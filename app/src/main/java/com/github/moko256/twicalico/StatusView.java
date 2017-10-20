@@ -189,14 +189,14 @@ public class StatusView extends FrameLayout {
         userName.setText(item.getUser().getName());
         userId.setText(TwitterStringUtils.plusAtMark(item.getUser().getScreenName()));
 
-        CharSequence text = TwitterStringUtils.getLinkedSequence(item, getContext());
-        if (!text.toString().trim().isEmpty()) {
-            tweetContext.setText(text);
+        TwitterStringUtils.setLinkedSequenceTo(item, tweetContext);
+        if (!tweetContext.getText().toString().trim().isEmpty()) {
             tweetContext.setMovementMethod(LinkMovementMethod.getInstance());
             if (tweetContext.getVisibility() != VISIBLE){
                 tweetContext.setVisibility(VISIBLE);
             }
         } else {
+            tweetContext.setMovementMethod(null);
             if (tweetContext.getVisibility() != GONE){
                 tweetContext.setVisibility(GONE);
             }

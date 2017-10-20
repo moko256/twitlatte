@@ -19,24 +19,36 @@ package com.github.moko256.twicalico.text;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.util.ArrayMap;
 import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.ClickableSpan;
 import android.view.View;
+import android.widget.TextView;
 
 import com.github.moko256.mastodon.MastodonTwitterImpl;
+import com.github.moko256.twicalico.GlideApp;
+import com.github.moko256.twicalico.GlideRequests;
 import com.github.moko256.twicalico.GlobalApplication;
 import com.github.moko256.twicalico.R;
 import com.github.moko256.twicalico.SearchResultActivity;
 import com.github.moko256.twicalico.ShowUserActivity;
 
 import java.text.Normalizer;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import twitter4j.HashtagEntity;
 import twitter4j.MediaEntity;
@@ -135,12 +147,52 @@ public class TwitterStringUtils {
         return builder;
     }
 
-    public static CharSequence getLinkedSequence(Status item, Context mContext){
+    public static void setLinkedSequenceTo(Status item, TextView textView){
+
+        Context mContext = textView.getContext();
 
         String tweet = item.getText();
 
         if (GlobalApplication.twitter instanceof MastodonTwitterImpl){
-            return Html.fromHtml(item.getText());
+            textView.setText(Html.fromHtml(tweet));
+
+            int imageSize = Math.round(textView.getTextSize());
+
+            List<String> list = new ArrayList<>();
+            Pattern pattern = Pattern.compile("(?<=<img src=['\"])[^<>\"']*(?=['\"]>.*</img>)");
+            Matcher matcher = pattern.matcher(tweet);
+            while (matcher.find()){
+                list.add(matcher.group());
+            }
+            if (list.size() == 0){
+                return;
+            }
+
+            Map<String, Drawable> map = new ArrayMap<>();
+
+            new AsyncTask<Void, Void, Void>(){
+
+                @Override
+                protected Void doInBackground(Void... params) {
+                    GlideRequests glideRequests = GlideApp.with(mContext);
+                    for (String s : list){
+                        try {
+                            Drawable value = glideRequests.load(s).submit().get();
+                            value.setBounds(0, 0, imageSize, imageSize);
+                            map.put(s, value);
+                        } catch (InterruptedException | ExecutionException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    return null;
+                }
+
+                @Override
+                protected void onPostExecute(Void aVoid) {
+                    textView.setText(Html.fromHtml(tweet, map::get, null));
+                }
+            }.execute();
+            return;
         }
 
         SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(tweet);
@@ -216,12 +268,18 @@ public class TwitterStringUtils {
             }
         }
 
-        return spannableStringBuilder;
+        textView.setText(spannableStringBuilder);
 
     }
 
     public static CharSequence getProfileLinkedSequence(Context mContext, User user){
+
         String description = user.getDescription();
+
+        if (GlobalApplication.twitter instanceof MastodonTwitterImpl){
+            return Html.fromHtml(description);
+        }
+
         URLEntity[] urlEntities = user.getDescriptionURLEntities();
 
         if (urlEntities == null || urlEntities.length <= 0 || TextUtils.isEmpty(urlEntities[0].getURL())) return description;
