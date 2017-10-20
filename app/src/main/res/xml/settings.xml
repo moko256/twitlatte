@@ -142,11 +142,17 @@
                 android:key="license_lib_glide"
                 android:title="Glide"/>
             <Preference
+                android:key="license_lib_gson"
+                android:title="google-gson"/>
+            <Preference
                 android:key="license_lib_photo_view"
                 android:title="PhotoView"/>
             <Preference
                 android:key="license_lib_okhttp"
                 android:title="OkHttp"/>
+            <Preference
+                android:key="license_lib_mastodon4j"
+                android:title="mastodon4j"/>
             <Preference
                 android:key="license_lib_twitter4j"
                 android:title="Twitter4J"/>
