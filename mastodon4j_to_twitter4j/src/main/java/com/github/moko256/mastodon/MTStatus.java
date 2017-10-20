@@ -17,6 +17,7 @@
 package com.github.moko256.mastodon;
 
 import com.sys1yagi.mastodon4j.api.entity.Attachment;
+import com.sys1yagi.mastodon4j.api.entity.Emoji;
 import com.sys1yagi.mastodon4j.api.entity.Status;
 
 import org.jetbrains.annotations.NotNull;
@@ -25,6 +26,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import twitter4j.GeoLocation;
@@ -55,7 +57,7 @@ public class MTStatus implements twitter4j.Status{
     @Override
     public Date getCreatedAt() {
         try {
-            return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(status.getCreatedAt().replace("X", ""));
+            return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.ENGLISH).parse(status.getCreatedAt().replace("X", ""));
         } catch (ParseException e) {
             e.printStackTrace();
             return null;
@@ -69,7 +71,11 @@ public class MTStatus implements twitter4j.Status{
 
     @Override
     public String getText() {
-        return status.getContent();
+        String s = status.getContent();
+        for (Emoji e : status.getEmojis()) {
+            s = s.replaceAll(":" + e.getShortcode() + ":", "<img src='" + e.getStatic_url() + "'></img>");
+        }
+        return s;
     }
 
     @Override
