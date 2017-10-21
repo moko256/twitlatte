@@ -49,7 +49,7 @@ import twitter4j.UserMentionEntity;
 
 public class StatusCacheMap {
 
-    private LruCache<Long, Status> statusCache=new LruCache<>(10000);
+    private LruCache<Long, Status> statusCache=new LruCache<>(1000);
     private CachedStatusesSQLiteOpenHelper diskCache;
 
     public StatusCacheMap(Context context, long userId){
