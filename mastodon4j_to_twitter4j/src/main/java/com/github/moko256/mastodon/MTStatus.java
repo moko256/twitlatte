@@ -26,7 +26,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import twitter4j.GeoLocation;
@@ -57,10 +56,10 @@ public class MTStatus implements twitter4j.Status{
     @Override
     public Date getCreatedAt() {
         try {
-            return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.ENGLISH).parse(status.getCreatedAt().replace("X", ""));
+            return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").parse(status.getCreatedAt().replace("Z", "-0000"));
         } catch (ParseException e) {
             e.printStackTrace();
-            return null;
+            return new Date(0L);
         }
     }
 
@@ -73,7 +72,7 @@ public class MTStatus implements twitter4j.Status{
     public String getText() {
         String s = status.getContent();
         for (Emoji e : status.getEmojis()) {
-            s = s.replaceAll(":" + e.getShortcode() + ":", "<img src='" + e.getStatic_url() + "'></img>");
+            s = s.replaceAll(":" + e.getShortcode() + ":", "<img src='" + e.getStaticUrl() + "'></img>");
         }
         return s;
     }
