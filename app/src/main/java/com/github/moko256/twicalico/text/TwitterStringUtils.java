@@ -154,7 +154,8 @@ public class TwitterStringUtils {
         String tweet = item.getText();
 
         if (GlobalApplication.twitter instanceof MastodonTwitterImpl){
-            textView.setText(Html.fromHtml(tweet));
+            Spanned previewText = Html.fromHtml(tweet);
+            textView.setText(previewText);
 
             int imageSize = Math.round(textView.getTextSize());
 
@@ -189,7 +190,9 @@ public class TwitterStringUtils {
 
                 @Override
                 protected void onPostExecute(Void aVoid) {
-                    textView.setText(Html.fromHtml(tweet, map::get, null));
+                    if (textView.getText().equals(previewText)) {
+                        textView.setText(Html.fromHtml(tweet, map::get, null));
+                    }
                 }
             }.execute();
             return;
