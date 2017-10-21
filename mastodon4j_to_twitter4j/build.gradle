@@ -16,17 +16,11 @@
 
 apply plugin: 'java'
 
-ext.kotlin_version = '1.1.4'
-ext.supportTestVersion = '0.5'
-ext.okhttpVersion = '3.6.0'
-ext.gradleToolsVersion = '2.3.1'
-ext.rxJavaVersion = '2.0.8'
-ext.gsonVersion = '2.8.0'
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-    compile "com.squareup.okhttp3:okhttp:$okhttpVersion"
-    compile "com.google.code.gson:gson:$gsonVersion"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:1.1.4"
+    compile "com.squareup.okhttp3:okhttp:3.9.0"
+    compile "com.google.code.gson:gson:2.8.2"
 }
