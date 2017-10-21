@@ -208,11 +208,14 @@ public class ImagePagerChildFragment extends Fragment {
                     }
                 });
                 GlideApp.with(this)
-                        .load(mediaEntity.getMediaURLHttps()+":large")
+                        .load(mediaEntity.getMediaURLHttps() + (GlobalApplication.twitter instanceof MastodonTwitterImpl?"":":large"))
                         .fitCenter()
                         .thumbnail(
                                 GlideApp.with(this)
-                                        .load(mediaEntity.getMediaURLHttps() + (GlobalApplication.twitter instanceof MastodonTwitterImpl ?"":":small"))
+                                        .load(GlobalApplication.twitter instanceof MastodonTwitterImpl?
+                                                mediaEntity.getMediaURLHttps().replace("original", "small"):
+                                                mediaEntity.getMediaURLHttps() + ":small"
+                                        )
                                         .fitCenter()
                         )
                         .into(imageView);

@@ -154,7 +154,10 @@ public class TweetImageTableView extends GridLayout {
 
             if (GlobalApplication.configuration.isTimelineImageLoad()){
                 GlideApp.with(getContext())
-                        .load(mediaEntities[ii].getMediaURLHttps() + (GlobalApplication.twitter instanceof MastodonTwitterImpl?"":":small"))
+                        .load(GlobalApplication.twitter instanceof MastodonTwitterImpl?
+                                mediaEntities[ii].getMediaURLHttps().replace("original", "small"):
+                                mediaEntities[ii].getMediaURLHttps() + ":small"
+                        )
                         .diskCacheStrategy(DiskCacheStrategy.NONE)
                         .into(imageViews[ii]);
                 if (mediaEntities[ii].getType().equals("video")){
