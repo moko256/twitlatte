@@ -81,6 +81,8 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.1.1'
     compile 'com.github.bumptech.glide:okhttp3-integration:4.1.1'
 
+    compile project(":mastodon4j_to_twitter4j")
+
     compile 'com.github.chrisbanes:PhotoView:2.1.3'
 
     //Compiling forked twitter4j(https://github.com/moko256/twitter4j)
