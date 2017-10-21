@@ -149,7 +149,7 @@ public class TwitterStringUtils {
 
     public static void setLinkedSequenceTo(Status item, TextView textView){
 
-        Context mContext = textView.getContext();
+        Context context = textView.getContext();
 
         String tweet = item.getText();
 
@@ -175,7 +175,7 @@ public class TwitterStringUtils {
 
                 @Override
                 protected Void doInBackground(Void... params) {
-                    GlideRequests glideRequests = GlideApp.with(mContext);
+                    GlideRequests glideRequests = GlideApp.with(context);
                     for (String s : list){
                         try {
                             Drawable value = glideRequests.load(s).submit().get();
@@ -190,7 +190,7 @@ public class TwitterStringUtils {
 
                 @Override
                 protected void onPostExecute(Void aVoid) {
-                    if (textView.getText().equals(previewText)) {
+                    if (previewText.toString().equals(textView.getText().toString())) {
                         textView.setText(Html.fromHtml(tweet, map::get, null));
                     }
                 }
@@ -204,7 +204,7 @@ public class TwitterStringUtils {
             spannableStringBuilder.setSpan(new ClickableSpan() {
                 @Override
                 public void onClick(View view) {
-                    mContext.startActivity(SearchResultActivity.getIntent(mContext, symbolEntity.getText()));
+                    context.startActivity(SearchResultActivity.getIntent(context, symbolEntity.getText()));
                 }
             }, tweet.offsetByCodePoints(0,symbolEntity.getStart()), tweet.offsetByCodePoints(0,symbolEntity.getEnd()), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
         }
@@ -213,7 +213,7 @@ public class TwitterStringUtils {
             spannableStringBuilder.setSpan(new ClickableSpan() {
                 @Override
                 public void onClick(View view) {
-                    mContext.startActivity(new Intent(mContext,SearchResultActivity.class)
+                    context.startActivity(new Intent(context,SearchResultActivity.class)
                             .setAction(Intent.ACTION_SEARCH)
                             .putExtra(SearchManager.QUERY,"#"+hashtagEntity.getText())
                     );
@@ -225,8 +225,8 @@ public class TwitterStringUtils {
             spannableStringBuilder.setSpan(new ClickableSpan() {
                 @Override
                 public void onClick(View view) {
-                    mContext.startActivity(
-                            ShowUserActivity.getIntent(mContext, userMentionEntity.getScreenName())
+                    context.startActivity(
+                            ShowUserActivity.getIntent(context, userMentionEntity.getScreenName())
                     );
                 }
             }, tweet.offsetByCodePoints(0,userMentionEntity.getStart()), tweet.offsetByCodePoints(0,userMentionEntity.getEnd()), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
@@ -250,10 +250,10 @@ public class TwitterStringUtils {
                     @Override
                     public void onClick(View view) {
                         new CustomTabsIntent.Builder()
-                                .setToolbarColor(ContextCompat.getColor(mContext, R.color.colorPrimary))
-                                .setSecondaryToolbarColor(ContextCompat.getColor(mContext, R.color.colorPrimaryDark))
+                                .setToolbarColor(ContextCompat.getColor(context, R.color.colorPrimary))
+                                .setSecondaryToolbarColor(ContextCompat.getColor(context, R.color.colorPrimaryDark))
                                 .build()
-                                .launchUrl(mContext, Uri.parse(expandedUrl));
+                                .launchUrl(context, Uri.parse(expandedUrl));
                     }
                 }, tweet.offsetByCodePoints(0, entity.getStart()) + sp, tweet.offsetByCodePoints(0, entity.getEnd()) + sp + dusp, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
 
@@ -275,7 +275,7 @@ public class TwitterStringUtils {
 
     }
 
-    public static CharSequence getProfileLinkedSequence(Context mContext, User user){
+    public static CharSequence getProfileLinkedSequence(Context context, User user){
 
         String description = user.getDescription();
 
@@ -304,10 +304,10 @@ public class TwitterStringUtils {
                     @Override
                     public void onClick(View view) {
                         new CustomTabsIntent.Builder()
-                                .setToolbarColor(ContextCompat.getColor(mContext, R.color.colorPrimary))
-                                .setSecondaryToolbarColor(ContextCompat.getColor(mContext, R.color.colorPrimaryDark))
+                                .setToolbarColor(ContextCompat.getColor(context, R.color.colorPrimary))
+                                .setSecondaryToolbarColor(ContextCompat.getColor(context, R.color.colorPrimaryDark))
                                 .build()
-                                .launchUrl(mContext, Uri.parse(entity.getExpandedURL()));
+                                .launchUrl(context, Uri.parse(entity.getExpandedURL()));
                     }
                 }, description.offsetByCodePoints(0, entity.getStart()) + sp, description.offsetByCodePoints(0, entity.getEnd()) + sp + dusp, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
 
