@@ -21,6 +21,7 @@ import com.sys1yagi.mastodon4j.MastodonClient;
 import com.sys1yagi.mastodon4j.api.entity.Attachment;
 import com.sys1yagi.mastodon4j.api.exception.Mastodon4jRequestException;
 import com.sys1yagi.mastodon4j.api.method.Accounts;
+import com.sys1yagi.mastodon4j.api.method.Favourites;
 import com.sys1yagi.mastodon4j.api.method.Media;
 import com.sys1yagi.mastodon4j.api.method.Statuses;
 import com.sys1yagi.mastodon4j.api.method.Timelines;
@@ -35,10 +36,13 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
+import okhttp3.ConnectionPool;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
+import okhttp3.Protocol;
 import okhttp3.RequestBody;
 import twitter4j.AccountSettings;
 import twitter4j.Category;
@@ -111,7 +115,15 @@ public final class MastodonTwitterImpl implements Twitter {
      */
     public MastodonTwitterImpl(AccessToken accessToken){
         this.accessToken = accessToken;
-        client = new MastodonClient.Builder(accessToken.getTokenSecret(), new OkHttpClient.Builder(), new GsonBuilder().create())
+
+        OkHttpClient.Builder builder = new OkHttpClient.Builder();
+        List<Protocol> protocols = new ArrayList<>();
+        protocols.add(Protocol.HTTP_1_1);
+        protocols.add(Protocol.HTTP_2);
+        builder.protocols(protocols);
+        builder.connectionPool(new ConnectionPool(3, 300, TimeUnit.MILLISECONDS));
+
+        client = new MastodonClient.Builder(accessToken.getTokenSecret(), builder, new GsonBuilder().create())
                 .accessToken(accessToken.getToken())
                 .build();
     }
@@ -550,32 +562,40 @@ public final class MastodonTwitterImpl implements Twitter {
         return new FavoritesResources() {
             @Override
             public ResponseList<Status> getFavorites() throws TwitterException {
-                return null;
+                return getFavorites(new Paging(-1L));
             }
 
             @Override
             public ResponseList<Status> getFavorites(long l) throws TwitterException {
-                return null;
+                return getFavorites(l, new Paging(-1L));
             }
 
             @Override
             public ResponseList<Status> getFavorites(String s) throws TwitterException {
-                return null;
+                return new MTResponseList<>();
             }
 
             @Override
             public ResponseList<Status> getFavorites(Paging paging) throws TwitterException {
-                return null;
+                try {
+                    return MTResponseList.convert(new Favourites(client).getFavourites(MTRangePagingConverter.convert(paging)).execute());
+                } catch (Mastodon4jRequestException e) {
+                    throw new MTException(e);
+                }
             }
 
             @Override
             public ResponseList<Status> getFavorites(long l, Paging paging) throws TwitterException {
-                return null;
+                if (l == accessToken.getUserId()) {
+                    return getFavorites(paging);
+                } else {
+                    return new MTResponseList<>();
+                }
             }
 
             @Override
             public ResponseList<Status> getFavorites(String s, Paging paging) throws TwitterException {
-                return null;
+                return new MTResponseList<>();
             }
 
             @Override
@@ -630,12 +650,12 @@ public final class MastodonTwitterImpl implements Twitter {
 
     @Override
     public String getScreenName() throws TwitterException, IllegalStateException {
-        return null;
+        return verifyCredentials().getScreenName();
     }
 
     @Override
     public long getId() throws TwitterException, IllegalStateException {
-        return 0;
+        return verifyCredentials().getId();
     }
 
     @Override
