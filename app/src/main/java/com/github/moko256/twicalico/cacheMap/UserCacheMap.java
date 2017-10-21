@@ -35,7 +35,7 @@ import twitter4j.User;
 public class UserCacheMap {
 
     private CachedUsersSQLiteOpenHelper diskCache;
-    private LruCache<Long, User> cache=new LruCache<>(10000);
+    private LruCache<Long, User> cache=new LruCache<>(1000);
 
     public UserCacheMap(Context context, long userId){
         diskCache = new CachedUsersSQLiteOpenHelper(context, userId);

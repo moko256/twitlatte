@@ -3,6 +3,9 @@ twicalico
 
 This application is the Twitter client for Android\.
 
+|Timeline|Post screen|Trends screen|
+|---|---|---|
+|![Timeline](readme_image/home.png)|![Post screen](readme_image/post.png)|![Trends screen](readme_image/trends.png)|
 [<img src="https://dply.me/vjtth8/button/large" alt="Try it on your device via DeployGate">](https://dply.me/vjtth8#install)
 
 * Minimum api level is 17

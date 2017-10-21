@@ -33,13 +33,14 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.PermissionChecker;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -76,7 +77,6 @@ public class PostTweetActivity extends AppCompatActivity {
     SwitchCompat possiblySensitiveSwitch;
     SwitchCompat addLocationSwitch;
     TextView locationText;
-    AppCompatButton button;
 
     CompositeSubscription subscription;
 
@@ -186,20 +186,30 @@ public class PostTweetActivity extends AppCompatActivity {
         locationText = findViewById(R.id.activity_tweet_location_result);
         locationText.setVisibility(View.GONE);
 
-        button= findViewById(R.id.tweet_text_submit);
-        button.setOnClickListener(v -> {
-            v.setEnabled(false);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_post_tweet_toolbar, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId() == R.id.activity_post_tweet_send){
+            item.setEnabled(false);
             model.postTweet()
                     .subscribe(
                             it -> this.finish(),
                             e->{
                                 e.printStackTrace();
-                                v.setEnabled(true);
+                                item.setEnabled(true);
                                 Snackbar.make(rootViewGroup, TwitterStringUtils.convertErrorToText(e), Snackbar.LENGTH_INDEFINITE).show();
                             }
                     );
-        });
-
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -246,7 +256,6 @@ public class PostTweetActivity extends AppCompatActivity {
 
         subscription.unsubscribe();
         subscription = null;
-        button = null;
         locationText = null;
         addLocationSwitch = null;
         possiblySensitiveSwitch = null;

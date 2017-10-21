@@ -258,7 +258,9 @@ public class StatusView extends FrameLayout {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         result->{
-                            GlobalApplication.statusCache.add((Status)result);
+                            Status status = (Status) result;
+                            GlobalApplication.statusCache.add(status);
+                            setStatus(status);
                             Toast.makeText(getContext(), R.string.succeeded, Toast.LENGTH_SHORT).show();
                         },
                         throwable -> {
@@ -286,7 +288,9 @@ public class StatusView extends FrameLayout {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         result->{
-                            GlobalApplication.statusCache.add((Status)result);
+                            Status status = (Status) result;
+                            GlobalApplication.statusCache.add(status);
+                            setStatus(status);
                             Toast.makeText(getContext(), R.string.succeeded, Toast.LENGTH_SHORT).show();
                         },
                         throwable -> {

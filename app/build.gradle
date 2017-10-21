@@ -25,8 +25,8 @@ android {
         applicationId "com.github.moko256.twicalico"
         minSdkVersion 17
         targetSdkVersion 26
-        versionCode 28
-        versionName "mastodon-support(based 0.7.12.4)"
+        versionCode 29
+        versionName "mastodon-support(based 0.7.13.0)"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
         buildConfigField "String", "CONSUMER_KEY", "\"${CONSUMER_KEY}\""
@@ -80,8 +80,6 @@ dependencies {
     compile 'com.github.bumptech.glide:glide:4.1.1'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.1.1'
     compile 'com.github.bumptech.glide:okhttp3-integration:4.1.1'
-
-    compile project(":mastodon4j_to_twitter4j")
 
     compile 'com.github.chrisbanes:PhotoView:2.1.3'
 
