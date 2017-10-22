@@ -34,6 +34,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.github.moko256.mastodon.MastodonTwitterImpl;
+
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
@@ -141,7 +143,7 @@ public class ShowImageActivity extends AppCompatActivity {
             case "photo":
             default:
                 String[] pathSplitWithDot=mediaEntity.getMediaURLHttps().split("\\.");
-                path=mediaEntity.getMediaURLHttps()+":orig";
+                path=mediaEntity.getMediaURLHttps() + (GlobalApplication.twitter instanceof MastodonTwitterImpl ?"":":large");
                 ext=pathSplitWithDot[pathSplitWithDot.length-1];
                 break;
         }
