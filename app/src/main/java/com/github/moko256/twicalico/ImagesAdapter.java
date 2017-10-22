@@ -18,6 +18,8 @@ package com.github.moko256.twicalico;
 
 import android.content.Context;
 import android.net.Uri;
+import android.support.annotation.StringRes;
+import android.support.v4.util.Pair;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,10 +42,14 @@ public class ImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     Context context;
 
-    private ArrayList<Uri> images=new ArrayList<>();
-    private int limit = 0;
+    private ArrayList<Pair<Uri, String>> images = new ArrayList<>();
+    private int limit = -1;
+
+    @StringRes
+    private int addText = -1;
 
     private View.OnClickListener onAddButtonClickListener;
+    private OnImageClickListener onImageButtonClickListener;
 
     public ImagesAdapter(Context context){
         this.context = context;
@@ -51,7 +57,7 @@ public class ImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     @Override
     public int getItemViewType(int position) {
-        return (position < limit) && (position < images.size())? VIEW_TYPE_IMAGE: VIEW_TYPE_ADD;
+        return ((limit == -1) || ((position < limit))) && (position < images.size())? VIEW_TYPE_IMAGE: VIEW_TYPE_ADD;
     }
 
     @Override
@@ -67,17 +73,26 @@ public class ImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (getItemViewType(position) == VIEW_TYPE_IMAGE){
             ImageChildViewHolder viewHolder = (ImageChildViewHolder) holder;
-            Uri image = images.get(position);
-            viewHolder.title.setText(image.getLastPathSegment());
+            Pair<Uri, String> pair = images.get(position);
+            Uri image = pair.first;
+            viewHolder.title.setText(pair.second);
             GlideApp.with(context).load(image).into(viewHolder.image);
+            viewHolder.itemView.setOnClickListener(v -> {
+                if (onImageButtonClickListener != null){
+                    onImageButtonClickListener.onClick(position);
+                }
+            });
         } else {
             holder.itemView.setOnClickListener(onAddButtonClickListener);
+            if (addText != -1){
+                ((AddImageViewHolder) holder).addText.setText(addText);
+            }
         }
     }
 
     @Override
     public int getItemCount() {
-        return images.size()<limit? images.size() + 1: limit;
+        return (limit == -1 || images.size()<limit)? images.size() + 1: limit;
     }
 
 
@@ -89,6 +104,14 @@ public class ImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         this.onAddButtonClickListener = onAddButtonClickListener;
     }
 
+    public OnImageClickListener getOnImageButtonClickListener() {
+        return onImageButtonClickListener;
+    }
+
+    public void setOnImageButtonClickListener(OnImageClickListener onImageButtonClickListener) {
+        this.onImageButtonClickListener = onImageButtonClickListener;
+    }
+
     public int getLimit() {
         return limit;
     }
@@ -97,7 +120,7 @@ public class ImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         this.limit = limit;
     }
 
-    public ArrayList<Uri> getImagesList() {
+    public ArrayList<Pair<Uri, String>> getImagesList() {
         return images;
     }
 
@@ -106,6 +129,13 @@ public class ImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         images = null;
     }
 
+    public int getAddText() {
+        return addText;
+    }
+
+    public void setAddText(int addText) {
+        this.addText = addText;
+    }
 
     class ImageChildViewHolder extends RecyclerView.ViewHolder{
 
@@ -121,8 +151,15 @@ public class ImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     class AddImageViewHolder extends RecyclerView.ViewHolder{
 
+        TextView addText;
+
         AddImageViewHolder(View itemView) {
             super(itemView);
+            addText = itemView.findViewById(R.id.layout_images_adapter_add_image_title);
         }
+    }
+
+    public interface OnImageClickListener {
+        void onClick(int index);
     }
 }
