@@ -17,15 +17,23 @@
 package com.github.moko256.twicalico;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.util.Pair;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -33,6 +41,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.github.moko256.twicalico.database.CachedUsersSQLiteOpenHelper;
+import com.github.moko256.twicalico.database.TokenSQLiteOpenHelper;
 import com.github.moko256.twicalico.text.TwitterStringUtils;
 
 import rx.Single;
@@ -108,6 +118,61 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
         TextView userIdText = headerView.findViewById(R.id.user_id);
         ImageView userImage = headerView.findViewById(R.id.user_image);
         ImageView userBackgroundImage = headerView.findViewById(R.id.user_bg_image);
+
+        userImage.setOnLongClickListener(v -> {
+            TokenSQLiteOpenHelper helper = new TokenSQLiteOpenHelper(this);
+            SQLiteDatabase database = helper.getReadableDatabase();
+            Cursor c=database.query("AccountTokenList",new String[]{"userId", "userName"},null,null,null,null,null);
+
+            ImagesAdapter adapter = new ImagesAdapter(this);
+            adapter.setAddText(R.string.add_account);
+            adapter.setOnImageButtonClickListener(i -> {
+                PreferenceManager.getDefaultSharedPreferences(this)
+                        .edit()
+                        .putString("AccountPoint",String.valueOf(i))
+                        .apply();
+                ((GlobalApplication) getApplication()).initTwitter(helper.getAccessToken(i));
+                startActivity(
+                        new Intent(this, MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                );
+                helper.close();
+            });
+            adapter.setOnAddButtonClickListener(v1 -> {
+                GlobalApplication.twitter = null;
+                startActivity(new Intent(this, OAuthActivity.class));
+            });
+
+            while (c.moveToNext()){
+                long id = Long.valueOf(c.getString(0));
+                User user = new CachedUsersSQLiteOpenHelper(this, id).getCachedUser(id);
+                adapter.getImagesList().add(new Pair<>(
+                        Uri.parse(user.getProfileImageURLHttps()),
+                        TwitterStringUtils.plusAtMark(c.getString(1))
+                ));
+            }
+
+            c.close();
+            database.close();
+
+            float dp = Math.round(getResources().getDisplayMetrics().density);
+
+            int sidePadding = Math.round(24 * dp);
+            int topPadding = Math.round(20 * dp);
+            int bottomPadding = Math.round(8 * dp);
+
+            RecyclerView recyclerView = new RecyclerView(this);
+            recyclerView.setLayoutManager(new LinearLayoutManager(this));
+            recyclerView.setOverScrollMode(View.OVER_SCROLL_NEVER);
+            recyclerView.setPadding(sidePadding, topPadding, sidePadding, bottomPadding);
+            recyclerView.setAdapter(adapter);
+
+            new AlertDialog.Builder(this)
+                    .setTitle(R.string.account)
+                    .setView(recyclerView)
+                    .show();
+
+            return true;
+        });
 
         Single.create(
                 subscriber->{

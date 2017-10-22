@@ -31,6 +31,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.PermissionChecker;
+import android.support.v4.util.Pair;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatEditText;
@@ -49,6 +50,9 @@ import com.github.moko256.twicalico.model.base.PostTweetModel;
 import com.github.moko256.twicalico.model.impl.PostTweetModelImpl;
 import com.github.moko256.twicalico.text.TwitterStringUtils;
 import com.twitter.Validator;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import rx.Single;
 import rx.subscriptions.CompositeSubscription;
@@ -137,7 +141,13 @@ public class PostTweetActivity extends AppCompatActivity {
 
         imagesRecyclerView = findViewById(R.id.activity_tweet_send_images_recycler_view);
         imagesAdapter = new ImagesAdapter(this);
-        model.setUriList(imagesAdapter.getImagesList());
+        imagesAdapter.setAddText(R.string.add_image);
+        List<Pair<Uri, String>> imagesList = imagesAdapter.getImagesList();
+        List<Uri> uris = new ArrayList<>(imagesList.size());
+        for (Pair<Uri, String> pair : imagesList) {
+            uris.add(pair.first);
+        }
+        model.setUriList(uris);
 
         imagesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -242,7 +252,7 @@ public class PostTweetActivity extends AppCompatActivity {
             if (data != null){
                 Uri resultUri = data.getData();
                 if (resultUri != null){
-                    imagesAdapter.getImagesList().add(resultUri);
+                    imagesAdapter.getImagesList().add(new Pair<>(resultUri, resultUri.getLastPathSegment()));
                     imagesAdapter.notifyItemInserted(imagesAdapter.getImagesList().size());
                     possiblySensitiveSwitch.setEnabled(true);
                 }
