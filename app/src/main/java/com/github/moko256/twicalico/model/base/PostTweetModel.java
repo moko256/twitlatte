@@ -46,7 +46,6 @@ public interface PostTweetModel {
     boolean isValidTweet();
 
     List<Uri> getUriList();
-    void setUriList(List<Uri> uriList);
 
     GeoLocation getLocation();
     void setLocation(GeoLocation location);

@@ -49,7 +49,7 @@ public class MTStatus implements twitter4j.Status{
 
     Status status;
 
-    MTStatus(Status status){
+    public MTStatus(Status status){
         this.status = status;
     }
 

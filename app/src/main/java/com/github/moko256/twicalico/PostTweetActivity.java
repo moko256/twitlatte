@@ -51,9 +51,6 @@ import com.github.moko256.twicalico.model.impl.PostTweetModelImpl;
 import com.github.moko256.twicalico.text.TwitterStringUtils;
 import com.twitter.Validator;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import rx.Single;
 import rx.subscriptions.CompositeSubscription;
 import twitter4j.GeoLocation;
@@ -142,12 +139,6 @@ public class PostTweetActivity extends AppCompatActivity {
         imagesRecyclerView = findViewById(R.id.activity_tweet_send_images_recycler_view);
         imagesAdapter = new ImagesAdapter(this);
         imagesAdapter.setAddText(R.string.add_image);
-        List<Pair<Uri, String>> imagesList = imagesAdapter.getImagesList();
-        List<Uri> uris = new ArrayList<>(imagesList.size());
-        for (Pair<Uri, String> pair : imagesList) {
-            uris.add(pair.first);
-        }
-        model.setUriList(uris);
 
         imagesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -253,6 +244,7 @@ public class PostTweetActivity extends AppCompatActivity {
                 Uri resultUri = data.getData();
                 if (resultUri != null){
                     imagesAdapter.getImagesList().add(new Pair<>(resultUri, resultUri.getLastPathSegment()));
+                    model.getUriList().add(resultUri);
                     imagesAdapter.notifyItemInserted(imagesAdapter.getImagesList().size());
                     possiblySensitiveSwitch.setEnabled(true);
                 }

@@ -327,28 +327,7 @@ public final class MastodonTwitterImpl implements Twitter {
 
             @Override
             public UploadedMedia uploadMedia(String s, InputStream inputStream) throws TwitterException {
-                try {
-                    ByteArrayOutputStream bout = new ByteArrayOutputStream();
-                    byte [] buffer = new byte[1024];
-                    while(true) {
-                        int len = inputStream.read(buffer);
-                        if(len < 0) {
-                            break;
-                        }
-                        bout.write(buffer, 0, len);
-                    }
-                    Attachment attachment = new Media(client)
-                            .postMedia(MultipartBody.Part.create(RequestBody.create(MediaType.parse("Content-Type:image/*"), bout.toByteArray())))
-                            .execute();
-                    String json = "{\"media_id\":" + attachment.getId() + "}";
-                    Constructor<UploadedMedia> c = UploadedMedia.class.getDeclaredConstructor(JSONObject.class);
-                    c.setAccessible(true);
-                    return c.newInstance(new JSONObject(json));
-                } catch (Mastodon4jRequestException e) {
-                    throw new MTException(e);
-                } catch (IOException | InstantiationException | NoSuchMethodException | IllegalAccessException | InvocationTargetException | JSONException e) {
-                    throw new TwitterException(e.getMessage());
-                }
+                throw new TwitterException("This method cannot use in this class. Please mastodon4j instead.");
             }
         };
     }
