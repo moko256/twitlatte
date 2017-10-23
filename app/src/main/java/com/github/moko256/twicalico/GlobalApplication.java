@@ -195,23 +195,28 @@ public class GlobalApplication extends Application {
     public void initTwitter(AccessToken accessToken){
         userId = accessToken.getUserId();
 
-        Configuration conf=new ConfigurationBuilder()
-                .setTweetModeExtended(true)
-                .setOAuthConsumerKey(consumerKey)
-                .setOAuthConsumerSecret(consumerSecret)
-                .setOAuthAccessToken(accessToken.getToken())
-                .setOAuthAccessTokenSecret(accessToken.getTokenSecret())
-                .build();
-
         OkHttpClient client = null;
 
-        if (twitter != null) {
-            client = GlobalApplication.getOkHttpClient();
-        }
-
         if (accessToken.getTokenSecret().matches(".*\\..*")){
+            if (twitter != null && twitter instanceof MastodonTwitterImpl) {
+                client = GlobalApplication.getOkHttpClient();
+                new GlideModule().registerComponents(this, GlideApp.get(this), GlideApp.get(this).getRegistry());
+            }
             twitter = new MastodonTwitterImpl(accessToken);
         } else {
+            if (twitter != null && !(twitter instanceof MastodonTwitterImpl)) {
+                client = GlobalApplication.getOkHttpClient();
+                new GlideModule().registerComponents(this, GlideApp.get(this), GlideApp.get(this).getRegistry());
+            }
+
+            Configuration conf=new ConfigurationBuilder()
+                    .setTweetModeExtended(true)
+                    .setOAuthConsumerKey(consumerKey)
+                    .setOAuthConsumerSecret(consumerSecret)
+                    .setOAuthAccessToken(accessToken.getToken())
+                    .setOAuthAccessTokenSecret(accessToken.getTokenSecret())
+                    .build();
+
             twitter = new TwitterFactory(conf).getInstance();
         }
 

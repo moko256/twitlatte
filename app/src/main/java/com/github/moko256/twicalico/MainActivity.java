@@ -138,6 +138,10 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                 helper.close();
             });
             adapter.setOnAddButtonClickListener(v1 -> {
+                PreferenceManager.getDefaultSharedPreferences(this)
+                        .edit()
+                        .putString("AccountPoint", "-1")
+                        .apply();
                 GlobalApplication.twitter = null;
                 startActivity(new Intent(this, OAuthActivity.class));
             });
