@@ -239,13 +239,13 @@ public class TwitterStringUtils {
 
         for (URLEntity entity : urlEntities) {
             String url = entity.getURL();
-            String expandedUrl = entity.getExpandedURL();
+            String displayUrl = entity.getDisplayURL();
 
             int urlLength = url.codePointCount(0, url.length());
-            int displayUrlLength = expandedUrl.codePointCount(0, expandedUrl.length());
+            int displayUrlLength = displayUrl.codePointCount(0, displayUrl.length());
             if (entity.getStart() <= tweetLength && entity.getEnd() <= tweetLength) {
                 int dusp = displayUrlLength - urlLength;
-                spannableStringBuilder.replace(tweet.offsetByCodePoints(0, entity.getStart()) + sp, tweet.offsetByCodePoints(0, entity.getEnd()) + sp, expandedUrl);
+                spannableStringBuilder.replace(tweet.offsetByCodePoints(0, entity.getStart()) + sp, tweet.offsetByCodePoints(0, entity.getEnd()) + sp, displayUrl);
                 spannableStringBuilder.setSpan(new ClickableSpan() {
                     @Override
                     public void onClick(View view) {
@@ -253,7 +253,7 @@ public class TwitterStringUtils {
                                 .setToolbarColor(ContextCompat.getColor(context, R.color.colorPrimary))
                                 .setSecondaryToolbarColor(ContextCompat.getColor(context, R.color.colorPrimaryDark))
                                 .build()
-                                .launchUrl(context, Uri.parse(expandedUrl));
+                                .launchUrl(context, Uri.parse(entity.getExpandedURL()));
                     }
                 }, tweet.offsetByCodePoints(0, entity.getStart()) + sp, tweet.offsetByCodePoints(0, entity.getEnd()) + sp + dusp, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
 
