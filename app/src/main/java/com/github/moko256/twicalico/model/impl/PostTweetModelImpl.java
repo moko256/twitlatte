@@ -101,7 +101,7 @@ public class PostTweetModelImpl implements PostTweetModel {
 
     @Override
     public boolean isValidTweet() {
-        return validator.isValidTweet(tweetText);
+        return (uriList != null && uriList.size() > 0) || validator.isValidTweet(tweetText);
     }
 
     @Override
@@ -127,31 +127,27 @@ public class PostTweetModelImpl implements PostTweetModel {
     @Override
     public Single<Status> postTweet() {
         Single<Status> single = Single.create(subscriber -> {
-            if (isValidTweet()){
-                try {
-                    StatusUpdate statusUpdate = new StatusUpdate(tweetText);
-                    if (uriList != null && uriList.size() > 0) {
-                        long ids[] = new long[uriList.size()];
-                        for (int i = 0; i < uriList.size(); i++) {
-                            Uri uri = uriList.get(i);
-                            InputStream image = contentResolver.openInputStream(uri);
-                            ids[i] = twitter.uploadMedia(uri.getLastPathSegment(), image).getMediaId();
-                        }
-                        statusUpdate.setMediaIds(ids);
-                        statusUpdate.setPossiblySensitive(possiblySensitive);
+            try {
+                StatusUpdate statusUpdate = new StatusUpdate(tweetText);
+                if (uriList != null && uriList.size() > 0) {
+                    long ids[] = new long[uriList.size()];
+                    for (int i = 0; i < uriList.size(); i++) {
+                        Uri uri = uriList.get(i);
+                        InputStream image = contentResolver.openInputStream(uri);
+                        ids[i] = twitter.uploadMedia(uri.getLastPathSegment(), image).getMediaId();
                     }
-                    if (isReply()){
-                        statusUpdate.setInReplyToStatusId(inReplyToStatusId);
-                    }
-                    if (location != null){
-                        statusUpdate.setLocation(location);
-                    }
-                    subscriber.onSuccess(twitter.updateStatus(statusUpdate));
-                } catch (FileNotFoundException | TwitterException e){
-                    subscriber.onError(e);
+                    statusUpdate.setMediaIds(ids);
+                    statusUpdate.setPossiblySensitive(possiblySensitive);
                 }
-            } else {
-                subscriber.onError(new PostTweetModelImpl.InvalidTextException());
+                if (isReply()){
+                    statusUpdate.setInReplyToStatusId(inReplyToStatusId);
+                }
+                if (location != null){
+                    statusUpdate.setLocation(location);
+                }
+                subscriber.onSuccess(twitter.updateStatus(statusUpdate));
+            } catch (FileNotFoundException | TwitterException e){
+                subscriber.onError(e);
             }
         });
         return single
@@ -159,9 +155,4 @@ public class PostTweetModelImpl implements PostTweetModel {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    private static class InvalidTextException extends Throwable {
-        InvalidTextException(){
-            super("Invalid length of tweet text");
-        }
-    }
 }
