@@ -18,6 +18,7 @@ package com.github.moko256.twicalico.cacheMap;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.util.LruCache;
 
 import com.github.moko256.twicalico.GlobalApplication;
@@ -27,6 +28,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import rx.Observable;
 import twitter4j.GeoLocation;
@@ -60,14 +62,16 @@ public class StatusCacheMap {
         return statusCache.size();
     }
 
-    public void add(final Status status) {
-        GlobalApplication.userCache.add(status.getUser());
-        if (status.isRetweet()){
-            add(status.getRetweetedStatus());
+    public void add(@Nullable final Status status) {
+        if (status != null) {
+            GlobalApplication.userCache.add(status.getUser());
+            if (status.isRetweet()) {
+                add(status.getRetweetedStatus());
+            }
+            Status cacheStatus = new CachedStatus(status);
+            statusCache.put(status.getId(), cacheStatus);
+            diskCache.addCachedStatus(cacheStatus);
         }
-        Status cacheStatus = new CachedStatus(status);
-        statusCache.put(status.getId(), cacheStatus);
-        diskCache.addCachedStatus(cacheStatus);
     }
 
     public Status get(Long id){
@@ -88,9 +92,11 @@ public class StatusCacheMap {
             HashSet<? extends Status> hashSet = new HashSet<>(c);
             Observable<Status> statusesObservable = Observable.unsafeCreate(subscriber -> {
                 for (Status status : hashSet) {
-                    subscriber.onNext(status);
-                    if (status.isRetweet()){
-                        subscriber.onNext(status.getRetweetedStatus());
+                    if (status != null) {
+                        subscriber.onNext(status);
+                        if (status.isRetweet()) {
+                            subscriber.onNext(status.getRetweetedStatus());
+                        }
                     }
                 }
                 subscriber.onCompleted();
@@ -112,6 +118,12 @@ public class StatusCacheMap {
     }
 
     public void delete(List<Long> ids){
+        Set<Long> idsSet = new HashSet<>();
+        for (Long id : ids) {
+            if (id != null) {
+                idsSet.add(id);
+            }
+        }
         long[] idsArray = new long[ids.size()];
         for (int i = 0; i < ids.size(); i++) {
             idsArray[i] = ids.get(i);

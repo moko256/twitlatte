@@ -46,15 +46,19 @@ public class UserCacheMap {
     }
 
     public void add(User user) {
-        cache.put(user.getId(), user);
-        diskCache.addCachedUser(user);
+        if (user != null) {
+            cache.put(user.getId(), user);
+            diskCache.addCachedUser(user);
+        }
     }
 
     public void addAll(Collection<? extends User> c) {
         if (c.size() > 0) {
             HashSet<? extends User> hashSet = new HashSet<>(c);
             for (User user : hashSet) {
-                cache.put(user.getId(), user);
+                if (user != null) {
+                    cache.put(user.getId(), user);
+                }
             }
             User[] users = new User[hashSet.size()];
             users = hashSet.toArray(users);
