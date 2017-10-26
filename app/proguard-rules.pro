@@ -30,8 +30,6 @@
 
 -keep public class * implements com.bumptech.glide.module.GlideModule
 
--dontwarn java.lang.invoke.*
--dontwarn **$$Lambda$*
 -dontwarn okhttp3.**
 -dontwarn okio.**
 -dontwarn rx.internal.util.unsafe.*
