@@ -124,8 +124,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
             SQLiteDatabase database = helper.getReadableDatabase();
             Cursor c=database.query("AccountTokenList",new String[]{"userId", "userName"},null,null,null,null,null);
 
-            ImagesAdapter adapter = new ImagesAdapter(this);
-            adapter.setAddText(R.string.add_account);
+            SelectAccountsAdapter adapter = new SelectAccountsAdapter(this);
             adapter.setOnImageButtonClickListener(i -> {
                 PreferenceManager.getDefaultSharedPreferences(this)
                         .edit()
@@ -160,14 +159,13 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
 
             float dp = Math.round(getResources().getDisplayMetrics().density);
 
-            int sidePadding = Math.round(24 * dp);
             int topPadding = Math.round(20 * dp);
             int bottomPadding = Math.round(8 * dp);
 
             RecyclerView recyclerView = new RecyclerView(this);
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
             recyclerView.setOverScrollMode(View.OVER_SCROLL_NEVER);
-            recyclerView.setPadding(sidePadding, topPadding, sidePadding, bottomPadding);
+            recyclerView.setPadding(0, topPadding, 0, bottomPadding);
             recyclerView.setAdapter(adapter);
 
             new AlertDialog.Builder(this)

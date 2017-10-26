@@ -23,9 +23,11 @@
     android:foreground="?attr/selectableItemBackground">
     <ImageView
         android:id="@+id/layout_images_adapter_add_image_icon"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
-        app:srcCompat="@drawable/ic_add_app_shortcut"/>
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="24dp"
+        app:srcCompat="@drawable/list_add_icon"/>
     <TextView
         android:id="@+id/layout_images_adapter_add_image_title"
         android:layout_toRightOf="@+id/layout_images_adapter_add_image_icon"
@@ -34,5 +36,5 @@
         android:layout_centerVertical="true"
         android:layout_marginLeft="16dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-        android:text="@string/add_image"/>
+        android:text="@string/add_account"/>
 </RelativeLayout>

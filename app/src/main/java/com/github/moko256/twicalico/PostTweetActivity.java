@@ -74,7 +74,7 @@ public class PostTweetActivity extends AppCompatActivity {
     TextView counterTextView;
     AppCompatEditText editText;
     RecyclerView imagesRecyclerView;
-    ImagesAdapter imagesAdapter;
+    AddedImagesAdapter addedImagesAdapter;
     SwitchCompat possiblySensitiveSwitch;
     SwitchCompat addLocationSwitch;
     TextView locationText;
@@ -137,13 +137,12 @@ public class PostTweetActivity extends AppCompatActivity {
         editText.setHint(model.isReply()? R.string.reply: R.string.tweet);
 
         imagesRecyclerView = findViewById(R.id.activity_tweet_send_images_recycler_view);
-        imagesAdapter = new ImagesAdapter(this);
-        imagesAdapter.setAddText(R.string.add_image);
+        addedImagesAdapter = new AddedImagesAdapter(this);
 
         imagesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        imagesAdapter.setLimit(4);
-        imagesAdapter.setOnAddButtonClickListener(v -> {
+        addedImagesAdapter.setLimit(4);
+        addedImagesAdapter.setOnAddButtonClickListener(v -> {
             Intent intent;
             if (Build.VERSION.SDK_INT < 19){
                 intent = new Intent(Intent.ACTION_GET_CONTENT);
@@ -153,11 +152,11 @@ public class PostTweetActivity extends AppCompatActivity {
             intent.setType("image/*");
             startActivityForResult(intent, REQUEST_GET_IMAGE);
         });
-        imagesRecyclerView.setAdapter(imagesAdapter);
-        imagesAdapter.notifyDataSetChanged();
+        imagesRecyclerView.setAdapter(addedImagesAdapter);
+        addedImagesAdapter.notifyDataSetChanged();
 
         possiblySensitiveSwitch = findViewById(R.id.activity_tweet_possibly_sensitive_switch);
-        possiblySensitiveSwitch.setEnabled(imagesAdapter.getImagesList().size() > 0);
+        possiblySensitiveSwitch.setEnabled(addedImagesAdapter.getImagesList().size() > 0);
         possiblySensitiveSwitch.setOnCheckedChangeListener(
                 (buttonView, isChecked) -> model.setPossiblySensitive(isChecked)
         );
@@ -243,9 +242,9 @@ public class PostTweetActivity extends AppCompatActivity {
             if (data != null){
                 Uri resultUri = data.getData();
                 if (resultUri != null){
-                    imagesAdapter.getImagesList().add(new Pair<>(resultUri, resultUri.getLastPathSegment()));
+                    addedImagesAdapter.getImagesList().add(new Pair<>(resultUri, resultUri.getLastPathSegment()));
                     model.getUriList().add(resultUri);
-                    imagesAdapter.notifyItemInserted(imagesAdapter.getImagesList().size());
+                    addedImagesAdapter.notifyItemInserted(addedImagesAdapter.getImagesList().size());
                     possiblySensitiveSwitch.setEnabled(true);
                 }
             }
@@ -261,8 +260,8 @@ public class PostTweetActivity extends AppCompatActivity {
         locationText = null;
         addLocationSwitch = null;
         possiblySensitiveSwitch = null;
-        imagesAdapter.clearImages();
-        imagesAdapter = null;
+        addedImagesAdapter.clearImages();
+        addedImagesAdapter = null;
         imagesRecyclerView = null;
         editText = null;
         counterTextView = null;
