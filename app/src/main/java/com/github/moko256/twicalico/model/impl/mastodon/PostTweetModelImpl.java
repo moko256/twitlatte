@@ -57,8 +57,8 @@ public class PostTweetModelImpl implements PostTweetModel {
     private ContentResolver contentResolver;
 
     private long inReplyToStatusId = -1;
-    private boolean possiblySensitive;
-    private String tweetText;
+    private boolean possiblySensitive = false;
+    private String tweetText = "";
     private List<Uri> uriList = new ArrayList<>();
     private GeoLocation location;
 
@@ -161,7 +161,7 @@ public class PostTweetModelImpl implements PostTweetModel {
                 }
                 subscriber.onSuccess(new MTStatus(new Statuses(client).postStatus(
                         tweetText,
-                        inReplyToStatusId,
+                        inReplyToStatusId == -1? null: inReplyToStatusId,
                         ids,
                         possiblySensitive,
                         null,
