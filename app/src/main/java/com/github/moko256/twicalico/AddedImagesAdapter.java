@@ -35,7 +35,7 @@ import java.util.ArrayList;
  * @author moko256
  */
 
-public class ImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class AddedImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private static final int VIEW_TYPE_IMAGE = 1;
     private static final int VIEW_TYPE_ADD = 2;
@@ -45,13 +45,9 @@ public class ImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     private ArrayList<Pair<Uri, String>> images = new ArrayList<>();
     private int limit = -1;
 
-    @StringRes
-    private int addText = -1;
-
     private View.OnClickListener onAddButtonClickListener;
-    private OnImageClickListener onImageButtonClickListener;
 
-    public ImagesAdapter(Context context){
+    public AddedImagesAdapter(Context context){
         this.context = context;
     }
 
@@ -77,16 +73,8 @@ public class ImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             Uri image = pair.first;
             viewHolder.title.setText(pair.second);
             GlideApp.with(context).load(image).into(viewHolder.image);
-            viewHolder.itemView.setOnClickListener(v -> {
-                if (onImageButtonClickListener != null){
-                    onImageButtonClickListener.onClick(position);
-                }
-            });
         } else {
             holder.itemView.setOnClickListener(onAddButtonClickListener);
-            if (addText != -1){
-                ((AddImageViewHolder) holder).addText.setText(addText);
-            }
         }
     }
 
@@ -102,14 +90,6 @@ public class ImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     public void setOnAddButtonClickListener(View.OnClickListener onAddButtonClickListener) {
         this.onAddButtonClickListener = onAddButtonClickListener;
-    }
-
-    public OnImageClickListener getOnImageButtonClickListener() {
-        return onImageButtonClickListener;
-    }
-
-    public void setOnImageButtonClickListener(OnImageClickListener onImageButtonClickListener) {
-        this.onImageButtonClickListener = onImageButtonClickListener;
     }
 
     public int getLimit() {
@@ -129,14 +109,6 @@ public class ImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         images = null;
     }
 
-    public int getAddText() {
-        return addText;
-    }
-
-    public void setAddText(int addText) {
-        this.addText = addText;
-    }
-
     class ImageChildViewHolder extends RecyclerView.ViewHolder{
 
         ImageView image;
@@ -151,15 +123,8 @@ public class ImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     class AddImageViewHolder extends RecyclerView.ViewHolder{
 
-        TextView addText;
-
         AddImageViewHolder(View itemView) {
             super(itemView);
-            addText = itemView.findViewById(R.id.layout_images_adapter_add_image_title);
         }
-    }
-
-    public interface OnImageClickListener {
-        void onClick(int index);
     }
 }

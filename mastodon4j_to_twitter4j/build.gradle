@@ -18,7 +18,7 @@ apply plugin: 'java'
 
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-
+    //compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.github.sys1yagi.mastodon4j:mastodon4j:1.3.0'
+    compile files('libs/twitter4j-http2-support.jar')
 }
