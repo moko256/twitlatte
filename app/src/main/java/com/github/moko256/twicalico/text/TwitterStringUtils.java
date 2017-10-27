@@ -34,6 +34,7 @@ import android.text.style.ClickableSpan;
 import android.view.View;
 import android.widget.TextView;
 
+import com.bumptech.glide.load.resource.gif.GifDrawable;
 import com.github.moko256.mastodon.MastodonTwitterImpl;
 import com.github.moko256.twicalico.GlideApp;
 import com.github.moko256.twicalico.GlideRequests;
@@ -191,7 +192,32 @@ public class TwitterStringUtils {
                 @Override
                 protected void onPostExecute(Void aVoid) {
                     if (previewText.toString().equals(textView.getText().toString())) {
-                        textView.setText(Html.fromHtml(tweet, map::get, null));
+                        textView.setText(Html.fromHtml(tweet, key ->{
+                            Drawable value = map.get(key);
+                            if (value instanceof GifDrawable){
+                                value.setCallback(new Drawable.Callback() {
+                                    @Override
+                                    public void invalidateDrawable(@NonNull Drawable who) {
+                                        if (previewText.toString().equals(textView.getText().toString())) {
+                                            textView.setText(Html.fromHtml(tweet, map::get, null));
+                                        }
+                                    }
+
+                                    @Override
+                                    public void scheduleDrawable(@NonNull Drawable who, @NonNull Runnable what, long when) {
+
+                                    }
+
+                                    @Override
+                                    public void unscheduleDrawable(@NonNull Drawable who, @NonNull Runnable what) {
+
+                                    }
+                                });
+                                ((GifDrawable) value).setLoopCount(GifDrawable.LOOP_FOREVER);
+                                ((GifDrawable) value).start();
+                            }
+                            return value;
+                        }, null));
                     }
                 }
             }.execute();

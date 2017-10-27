@@ -152,7 +152,7 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
                 header.setBackgroundColor(Color.parseColor("#" + colorStr));
             }
         }
-        glideRequests.asBitmap().load(user.getBiggerProfileImageURL()).circleCrop().into(icon);
+        glideRequests.load(user.getBiggerProfileImageURL()).circleCrop().into(icon);
 
         userNameText.setText(user.getName());
         userIdText.setText(TwitterStringUtils.plusAtMark(user.getScreenName()));

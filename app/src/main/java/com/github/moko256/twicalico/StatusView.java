@@ -181,7 +181,7 @@ public class StatusView extends FrameLayout {
         }
 
         if (GlobalApplication.configuration.isTimelineImageLoad()){
-            glideRequests.asBitmap().load(item.getUser().getProfileImageURLHttps()).circleCrop().into(userImage);
+            glideRequests.load(item.getUser().getProfileImageURLHttps()).circleCrop().into(userImage);
         } else {
             userImage.setImageResource(R.drawable.border_frame_round);
         }

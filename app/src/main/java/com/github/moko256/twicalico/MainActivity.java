@@ -315,7 +315,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
 
         GlideRequests requests=GlideApp.with(this);
 
-        requests.asBitmap().load(user.getBiggerProfileImageURL()).circleCrop().into(userImage);
+        requests.load(user.getBiggerProfileImageURL()).circleCrop().into(userImage);
         requests.load(user.getProfileBannerRetinaURL()).centerCrop().into(userBackgroundImage);
     }
 

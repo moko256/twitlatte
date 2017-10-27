@@ -72,7 +72,7 @@ public class MTStatus implements twitter4j.Status{
     public String getText() {
         String s = status.getContent();
         for (Emoji e : status.getEmojis()) {
-            s = s.replaceAll(":" + e.getShortcode() + ":", "<img src='" + e.getStaticUrl() + "'></img>");
+            s = s.replaceAll(":" + e.getShortcode() + ":", "<img src='" + e.getUrl() + "'></img>");
         }
         return s;
     }

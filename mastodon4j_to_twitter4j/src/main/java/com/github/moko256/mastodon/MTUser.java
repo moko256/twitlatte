@@ -190,10 +190,10 @@ public class MTUser implements User {
     @Override
     public Date getCreatedAt() {
         try {
-            return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(account.getCreatedAt().replace("X", ""));
+            return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").parse(account.getCreatedAt().replace("Z", "-0000"));
         } catch (ParseException e) {
             e.printStackTrace();
-            return null;
+            return new Date(0L);
         }
     }
 
