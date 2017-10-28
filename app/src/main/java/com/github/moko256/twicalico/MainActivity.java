@@ -50,6 +50,7 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import twitter4j.TwitterException;
 import twitter4j.User;
+import twitter4j.auth.AccessToken;
 
 /**
  * Created by moko256 on 2015/11/08.
@@ -124,16 +125,24 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
             SQLiteDatabase database = helper.getReadableDatabase();
             Cursor c=database.query("AccountTokenList",new String[]{"userId", "userName"},null,null,null,null,null);
 
+            final AlertDialog[] dialog = new AlertDialog[1];
+
             SelectAccountsAdapter adapter = new SelectAccountsAdapter(this);
             adapter.setOnImageButtonClickListener(i -> {
-                PreferenceManager.getDefaultSharedPreferences(this)
-                        .edit()
-                        .putString("AccountPoint",String.valueOf(i))
-                        .apply();
-                ((GlobalApplication) getApplication()).initTwitter(helper.getAccessToken(i));
-                startActivity(
-                        new Intent(this, MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                );
+
+                AccessToken token = helper.getAccessToken(i);
+                if (token.getUserId() != GlobalApplication.userId){
+                    PreferenceManager.getDefaultSharedPreferences(this)
+                            .edit()
+                            .putString("AccountPoint",String.valueOf(i))
+                            .apply();
+                    ((GlobalApplication) getApplication()).initTwitter(token);
+                    startActivity(
+                            new Intent(this, MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    );
+                } else {
+                    dialog[0].cancel();
+                }
                 helper.close();
             });
             adapter.setOnAddButtonClickListener(v1 -> {
@@ -168,7 +177,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
             recyclerView.setPadding(0, topPadding, 0, bottomPadding);
             recyclerView.setAdapter(adapter);
 
-            new AlertDialog.Builder(this)
+            dialog[0] = new AlertDialog.Builder(this)
                     .setTitle(R.string.account)
                     .setView(recyclerView)
                     .show();

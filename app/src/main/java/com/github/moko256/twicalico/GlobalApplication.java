@@ -197,18 +197,13 @@ public class GlobalApplication extends Application {
 
         OkHttpClient client = null;
 
+        if (twitter != null){
+            client = GlobalApplication.getOkHttpClient();
+        }
+
         if (accessToken.getTokenSecret().matches(".*\\..*")){
-            if (twitter != null && twitter instanceof MastodonTwitterImpl) {
-                client = GlobalApplication.getOkHttpClient();
-                new GlideModule().registerComponents(this, GlideApp.get(this), GlideApp.get(this).getRegistry());
-            }
             twitter = new MastodonTwitterImpl(accessToken);
         } else {
-            if (twitter != null && !(twitter instanceof MastodonTwitterImpl)) {
-                client = GlobalApplication.getOkHttpClient();
-                new GlideModule().registerComponents(this, GlideApp.get(this), GlideApp.get(this).getRegistry());
-            }
-
             Configuration conf=new ConfigurationBuilder()
                     .setTweetModeExtended(true)
                     .setOAuthConsumerKey(consumerKey)
@@ -222,6 +217,8 @@ public class GlobalApplication extends Application {
 
         if (client != null) {
             try {
+                client.connectionPool().evictAll();
+                client.cache().evictAll();
                 if (twitter instanceof MastodonTwitterImpl){
                     MastodonClient mc = ((MastodonTwitterImpl) twitter).getClient();
                     Field clientField = MastodonClient.class.getDeclaredField("client");

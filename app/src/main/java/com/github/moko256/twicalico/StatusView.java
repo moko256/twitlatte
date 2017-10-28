@@ -259,7 +259,7 @@ public class StatusView extends FrameLayout {
                         result->{
                             Status status = (Status) result;
                             GlobalApplication.statusCache.add(status);
-                            setStatus(status);
+                            updateView();
                             Toast.makeText(getContext(), R.string.succeeded, Toast.LENGTH_SHORT).show();
                         },
                         throwable -> {
@@ -289,7 +289,7 @@ public class StatusView extends FrameLayout {
                         result->{
                             Status status = (Status) result;
                             GlobalApplication.statusCache.add(status);
-                            setStatus(status);
+                            updateView();
                             Toast.makeText(getContext(), R.string.succeeded, Toast.LENGTH_SHORT).show();
                         },
                         throwable -> {

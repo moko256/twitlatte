@@ -43,7 +43,7 @@ public class GlideModule extends AppGlideModule {
 
     @Override
     public void registerComponents(Context context, Glide glide, Registry registry) {
-        registry.append(
+        registry.replace(
                 GlideUrl.class,
                 InputStream.class,
                 new OkHttpUrlLoader.Factory(
