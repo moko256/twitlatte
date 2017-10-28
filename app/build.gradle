@@ -34,7 +34,7 @@ android {
         buildConfigField "int" , "CACHE_DATABASE_VERSION" , "1"
 
         vectorDrawables.useSupportLibrary = true
-
+        resConfigs "en","ja"
     }
     buildTypes {
         release {
