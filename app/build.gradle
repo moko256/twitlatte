@@ -26,7 +26,7 @@ android {
         minSdkVersion 17
         targetSdkVersion 27
         versionCode 31
-        versionName "0.8.1.1"
+        versionName "0.8.1.2"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
         buildConfigField "String", "CONSUMER_KEY", "\"${CONSUMER_KEY}\""
