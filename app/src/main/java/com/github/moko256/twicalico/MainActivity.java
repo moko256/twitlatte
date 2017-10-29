@@ -45,6 +45,8 @@ import com.github.moko256.twicalico.database.CachedUsersSQLiteOpenHelper;
 import com.github.moko256.twicalico.database.TokenSQLiteOpenHelper;
 import com.github.moko256.twicalico.text.TwitterStringUtils;
 
+import java.util.ArrayList;
+
 import rx.Single;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -122,8 +124,6 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
 
         userImage.setOnLongClickListener(v -> {
             TokenSQLiteOpenHelper helper = new TokenSQLiteOpenHelper(this);
-            SQLiteDatabase database = helper.getReadableDatabase();
-            Cursor c=database.query("AccountTokenList",new String[]{"userId", "userName"},null,null,null,null,null);
 
             final AlertDialog[] dialog = new AlertDialog[1];
 
@@ -154,17 +154,40 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                 startActivity(new Intent(this, OAuthActivity.class));
             });
 
-            while (c.moveToNext()){
-                long id = Long.valueOf(c.getString(0));
-                User user = new CachedUsersSQLiteOpenHelper(this, id).getCachedUser(id);
-                adapter.getImagesList().add(new Pair<>(
-                        Uri.parse(user.getProfileImageURLHttps()),
-                        TwitterStringUtils.plusAtMark(c.getString(1))
-                ));
-            }
-
-            c.close();
-            database.close();
+            Single.create(
+                    singleSubscriber -> {
+                        SQLiteDatabase database = helper.getReadableDatabase();
+                        Cursor c=database.query("AccountTokenList",new String[]{"userId", "userName"},null,null,null,null,null);
+                        ArrayList<Pair<Uri, String>> r = new ArrayList<>();
+                        while (c.moveToNext()){
+                            long id = Long.valueOf(c.getString(0));
+                            User user = new CachedUsersSQLiteOpenHelper(this, id).getCachedUser(id);
+                            if (user ==  null){
+                                try {
+                                    user = ((GlobalApplication) getApplication()).getTwitterInstance(helper.getAccessToken(c.getPosition())).verifyCredentials();
+                                    new CachedUsersSQLiteOpenHelper(this, user.getId()).addCachedUser(user);
+                                } catch (TwitterException e) {
+                                    singleSubscriber.onError(e);
+                                }
+                            }
+                            r.add(new Pair<>(
+                                    Uri.parse(user.getProfileImageURLHttps()),
+                                    TwitterStringUtils.plusAtMark(c.getString(1))
+                            ));
+                        }
+                        c.close();
+                        database.close();
+                        singleSubscriber.onSuccess(r);
+                    })
+                    .subscribeOn(Schedulers.newThread())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(
+                            o -> {
+                                adapter.getImagesList().addAll((ArrayList<Pair<Uri, String>>) o);
+                                adapter.notifyDataSetChanged();
+                            },
+                            Throwable::printStackTrace
+                    );
 
             float dp = Math.round(getResources().getDisplayMetrics().density);
 

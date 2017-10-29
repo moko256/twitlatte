@@ -194,15 +194,21 @@ public class GlobalApplication extends Application {
 
     public void initTwitter(AccessToken accessToken){
         userId = accessToken.getUserId();
+        twitter = getTwitterInstance(accessToken);
+        userCache = new UserCacheMap(this, userId);
+        statusCache = new StatusCacheMap(this, userId);
+    }
 
+    public Twitter getTwitterInstance(AccessToken accessToken){
         OkHttpClient client = null;
+        Twitter t;
 
         if (twitter != null){
             client = GlobalApplication.getOkHttpClient();
         }
 
         if (accessToken.getTokenSecret().matches(".*\\..*")){
-            twitter = new MastodonTwitterImpl(accessToken);
+            t = new MastodonTwitterImpl(accessToken);
         } else {
             Configuration conf=new ConfigurationBuilder()
                     .setTweetModeExtended(true)
@@ -212,15 +218,15 @@ public class GlobalApplication extends Application {
                     .setOAuthAccessTokenSecret(accessToken.getTokenSecret())
                     .build();
 
-            twitter = new TwitterFactory(conf).getInstance();
+            t = new TwitterFactory(conf).getInstance();
         }
 
         if (client != null) {
             try {
                 client.connectionPool().evictAll();
                 client.cache().evictAll();
-                if (twitter instanceof MastodonTwitterImpl){
-                    MastodonClient mc = ((MastodonTwitterImpl) twitter).getClient();
+                if (t instanceof MastodonTwitterImpl){
+                    MastodonClient mc = ((MastodonTwitterImpl) t).getClient();
                     Field clientField = MastodonClient.class.getDeclaredField("client");
                     clientField.setAccessible(true);
                     clientField.set(mc, client);
@@ -229,15 +235,13 @@ public class GlobalApplication extends Application {
                     httpField.setAccessible(true);
                     Field clientField = AlternativeHttpClientImpl.class.getDeclaredField("okHttpClient");
                     clientField.setAccessible(true);
-                    clientField.set(httpField.get(twitter), client);
+                    clientField.set(httpField.get(t), client);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-
-        userCache=new UserCacheMap(this, userId);
-        statusCache=new StatusCacheMap(this, userId);
+        return t;
     }
 
     public static OkHttpClient getOkHttpClient(){
