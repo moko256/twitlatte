@@ -19,12 +19,10 @@ package com.github.moko256.twicalico;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.util.Pair;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -32,25 +30,11 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 
 import com.github.moko256.twicalico.database.TokenSQLiteOpenHelper;
-import com.google.gson.Gson;
-import com.sys1yagi.mastodon4j.MastodonClient;
-import com.sys1yagi.mastodon4j.api.Scope;
-import com.sys1yagi.mastodon4j.api.entity.Account;
-import com.sys1yagi.mastodon4j.api.entity.auth.AppRegistration;
-import com.sys1yagi.mastodon4j.api.exception.Mastodon4jRequestException;
-import com.sys1yagi.mastodon4j.api.method.Accounts;
-import com.sys1yagi.mastodon4j.api.method.Apps;
+import com.github.moko256.twicalico.model.base.OAuthModel;
 
-import okhttp3.OkHttpClient;
-import rx.Single;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
-import twitter4j.TwitterException;
 import twitter4j.auth.AccessToken;
-import twitter4j.auth.OAuthAuthorization;
-import twitter4j.auth.RequestToken;
-import twitter4j.conf.Configuration;
-import twitter4j.conf.ConfigurationContext;
 
 /**
  * Created by moko256 on 2016/04/29.
@@ -58,7 +42,7 @@ import twitter4j.conf.ConfigurationContext;
  * @author moko256
  */
 public class OAuthActivity extends AppCompatActivity {
-    public RequestToken req;
+    private OAuthModel model;
     public boolean requirePin=false;
 
     @Override
@@ -71,186 +55,17 @@ public class OAuthActivity extends AppCompatActivity {
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         Uri uri = intent.getData();
-        if(requirePin||(uri != null && uri.toString().startsWith(getString(R.string.app_name) + "://OAuthActivity"))){
-
-            if (!requirePin){
-                initToken(uri.getQueryParameter("oauth_verifier"));
-            }
+        if(!requirePin && uri != null && uri.toString().startsWith(getString(R.string.app_name) + "://OAuthActivity")){
+            initToken(uri.getQueryParameter("oauth_verifier"));
         }
     }
 
-    private void startUrlAuth(){
-        Configuration conf = ConfigurationContext.getInstance();
-        final OAuthAuthorization oauth =new OAuthAuthorization(conf);
-
-        oauth.setOAuthConsumer(GlobalApplication.consumerKey,GlobalApplication.consumerSecret);
-
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            public Void doInBackground(Void... params) {
-                try {
-                    req = oauth.getOAuthRequestToken(getString(R.string.app_name) + "://OAuthActivity");
-                } catch (TwitterException e) {
-                    e.printStackTrace();
-                }
-                return null;
-            }
-
-            @Override
-            public void onPostExecute(Void n) {
-                startBrowser(req.getAuthorizationURL());
-            }
-        }.execute();
-    }
-
-    private void startPinAuth(){
-        Configuration conf = ConfigurationContext.getInstance();
-        final OAuthAuthorization oauth =new OAuthAuthorization(conf);
-        requirePin=true;
-        oauth.setOAuthConsumer(GlobalApplication.consumerKey,GlobalApplication.consumerSecret);
-
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            public Void doInBackground(Void... params) {
-                try {
-                    req = oauth.getOAuthRequestToken("oob");
-                } catch (TwitterException e) {
-                    e.printStackTrace();
-                }
-                return null;
-            }
-
-            @Override
-            public void onPostExecute(Void n) {
-                startBrowser(req.getAuthorizationURL());
-            }
-        }.execute();
-
-        EditText editText=new EditText(this);
-        editText.setHint("PIN");
-        editText.setInputType(EditorInfo.TYPE_NUMBER_FLAG_DECIMAL);
-        new AlertDialog.Builder(this)
-                .setView(editText)
-                .setPositiveButton(android.R.string.ok,(dialog, which) -> initToken(editText.getText().toString()))
-                .setCancelable(false)
-                .show();
-    }
-
-    private void startMastodonAuth(){
-        EditText editText=new EditText(this);
-        editText.setHint("URL");
-        editText.setInputType(EditorInfo.TYPE_TEXT_VARIATION_URI);
-        new AlertDialog.Builder(this)
-                .setView(editText)
-                .setPositiveButton(android.R.string.ok,(dialog, which) -> initMastodonToken(editText.getText().toString()))
-                .setCancelable(false)
-                .show();
-    }
-
-    private void startBrowser(String url){
-        new CustomTabsIntent.Builder()
-                .setShowTitle(false)
-                .setToolbarColor(ContextCompat.getColor(this, R.color.colorPrimary))
-                .setSecondaryToolbarColor(ContextCompat.getColor(this, R.color.colorPrimaryDark))
-                .build()
-                .launchUrl(OAuthActivity.this, Uri.parse(url));
-    }
-
     private void initToken(String verifier){
-        OAuthAuthorization oauth;
-
-        Configuration conf = ConfigurationContext.getInstance();
-        oauth =new OAuthAuthorization(conf);
-
-        Single.create(
-                subscriber -> {
-                    try {
-                        subscriber.onSuccess(oauth.getOAuthAccessToken(req,verifier));
-                    } catch (TwitterException e) {
-                        subscriber.onError(e);
-                    }
-                })
+        model.initToken(verifier)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        result-> storeAccessToken(((AccessToken) result)),
-                        Throwable::printStackTrace
-                );
-    }
-
-    private void initMastodonToken(String url){
-        MastodonClient.Builder clientBuilder = new MastodonClient.Builder(url, new OkHttpClient.Builder(), new Gson());
-        Apps apps = new Apps(clientBuilder.build());
-        Single.create(
-                subscriber -> {
-                    try {
-                        subscriber.onSuccess(apps.createApp(
-                                "twicalico",
-                                "urn:ietf:wg:oauth:2.0:oob",
-                                new Scope(Scope.Name.ALL),
-                                "https://github.com/moko256/twicalico"
-                        ).execute());
-                    } catch (Mastodon4jRequestException e) {
-                        subscriber.onError(e);
-                    }
-                })
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .flatMap(it -> Single.create(singleSubscriber -> {
-                    AppRegistration appRegistration = (AppRegistration) it;
-                    startBrowser((apps.getOAuthUrl(
-                            appRegistration.getClientId(),
-                            new Scope(Scope.Name.ALL),
-                            appRegistration.getRedirectUri()
-                    )));
-                    EditText editText=new EditText(this);
-                    editText.setHint("PIN");
-                    editText.setInputType(EditorInfo.TYPE_NUMBER_VARIATION_PASSWORD);
-                    new AlertDialog.Builder(this)
-                            .setView(editText)
-                            .setPositiveButton(android.R.string.ok, (dialog, which) -> {
-                                singleSubscriber.onSuccess(new Pair<>(editText.getText().toString(), appRegistration));
-                            })
-                            .setCancelable(false)
-                            .show();
-                }))
-                .observeOn(Schedulers.newThread())
-                .flatMap(it -> Single.create(singleSubscriber -> {
-                    Pair<String, AppRegistration> pair = (Pair<String, AppRegistration>) it;
-                    String pin = pair.first;
-                    AppRegistration registration = pair.second;
-                    try {
-                        com.sys1yagi.mastodon4j.api.entity.auth.AccessToken accessToken = apps.getAccessToken(
-                                registration.getClientId(),
-                                registration.getClientSecret(),
-                                registration.getRedirectUri(),
-                                pin,
-                                "authorization_code"
-                        ).execute();
-                        Account account = new Accounts(clientBuilder.accessToken(accessToken.getAccessToken()).build()).getVerifyCredentials().execute();
-                        singleSubscriber.onSuccess(new Pair(accessToken, account));
-                    } catch (Mastodon4jRequestException e) {
-                        singleSubscriber.onError(e);
-                    }
-                }))
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        result -> {
-                            Pair<com.sys1yagi.mastodon4j.api.entity.auth.AccessToken, Account> pair = (Pair<com.sys1yagi.mastodon4j.api.entity.auth.AccessToken, Account>) result;
-                            com.sys1yagi.mastodon4j.api.entity.auth.AccessToken accessToken = pair.first;
-                            AccessToken storeToken = new AccessToken(accessToken.getAccessToken(), url){
-                                @Override
-                                public String getScreenName() {
-                                    return pair.second.getAcct() + "@" + url;
-                                }
-
-                                @Override
-                                public long getUserId() {
-                                    return pair.second.getId();
-                                }
-                            };
-                            storeAccessToken(storeToken);
-                        },
+                        this::storeAccessToken,
                         Throwable::printStackTrace
                 );
     }
@@ -274,18 +89,66 @@ public class OAuthActivity extends AppCompatActivity {
     }
 
     public void onStartUrlAuthClick(View view) {
-        startUrlAuth();
+        model = new com.github.moko256.twicalico.model.impl.twitter.OAuthModelImpl();
+        model.getCallbackAuthUrl("twitter.com", GlobalApplication.consumerKey, GlobalApplication.consumerSecret, getString(R.string.app_name))
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(this::startBrowser, Throwable::printStackTrace);
     }
 
     public void onStartPinAuthClick(View view) {
-        startPinAuth();
+        model = new com.github.moko256.twicalico.model.impl.twitter.OAuthModelImpl();
+        requirePin = true;
+        model.getPinAuthUrl("twitter.com", GlobalApplication.consumerKey, GlobalApplication.consumerSecret)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(this::startBrowser, Throwable::printStackTrace);
+        showPinDialog();
     }
 
     public void onStartMastodonAuthClick(View view) {
-        startMastodonAuth();
+        model = new com.github.moko256.twicalico.model.impl.mastodon.OAuthModelImpl();
+        EditText editText=new EditText(this);
+        editText.setHint("URL");
+        editText.setInputType(EditorInfo.TYPE_TEXT_VARIATION_URI);
+        new AlertDialog.Builder(this)
+                .setView(editText)
+                .setPositiveButton(android.R.string.ok,(dialog, which) -> {
+                    model.getPinAuthUrl(editText.getText().toString(), "", "")
+                            .subscribeOn(Schedulers.newThread())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(
+                                    this::startBrowser,
+                                    Throwable::printStackTrace
+                            );
+                    showPinDialog();
+                })
+                .setCancelable(false)
+                .show();
     }
 
     public void onSettingClick(View view) {
         startActivity(new Intent(this, SettingsActivity.class));
     }
+
+    private void showPinDialog(){
+        EditText editText=new EditText(this);
+        editText.setHint("PIN");
+        editText.setInputType(EditorInfo.TYPE_NUMBER_FLAG_DECIMAL);
+        new AlertDialog.Builder(this)
+                .setView(editText)
+                .setPositiveButton(android.R.string.ok,(dialog, which) -> initToken(editText.getText().toString()))
+                .setCancelable(false)
+                .show();
+    }
+
+    private void startBrowser(String url){
+        new CustomTabsIntent.Builder()
+                .setShowTitle(false)
+                .setToolbarColor(ContextCompat.getColor(this, R.color.colorPrimary))
+                .setSecondaryToolbarColor(ContextCompat.getColor(this, R.color.colorPrimaryDark))
+                .build()
+                .launchUrl(OAuthActivity.this, Uri.parse(url));
+    }
+
 }

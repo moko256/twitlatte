@@ -47,7 +47,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.github.moko256.twicalico.model.base.PostTweetModel;
-import com.github.moko256.twicalico.model.impl.PostTweetModelImpl;
+import com.github.moko256.twicalico.model.impl.PostTweetModelCreator;
 import com.github.moko256.twicalico.text.TwitterStringUtils;
 import com.twitter.Validator;
 
@@ -86,7 +86,7 @@ public class PostTweetActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_send_tweet);
 
-        model = new PostTweetModelImpl(GlobalApplication.twitter, getContentResolver());
+        model = PostTweetModelCreator.getInstance(GlobalApplication.twitter, getContentResolver());
         subscription = new CompositeSubscription();
 
         if (savedInstanceState != null){

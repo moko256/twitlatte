@@ -31,7 +31,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.moko256.twicalico.model.base.PostTweetModel;
-import com.github.moko256.twicalico.model.impl.PostTweetModelImpl;
+import com.github.moko256.twicalico.model.impl.PostTweetModelCreator;
 import com.github.moko256.twicalico.text.TwitterStringUtils;
 
 import java.text.DateFormat;
@@ -131,7 +131,7 @@ public class ShowTweetActivity extends AppCompatActivity {
                                     replyText.setText(TwitterStringUtils.convertToReplyTopString(item.getUser().getScreenName(), users));
                                     replyButton.setOnClickListener(v -> {
                                         replyButton.setEnabled(false);
-                                        PostTweetModel model = new PostTweetModelImpl(GlobalApplication.twitter, getContentResolver());
+                                        PostTweetModel model = PostTweetModelCreator.getInstance(GlobalApplication.twitter, getContentResolver());
                                         model.setTweetText(replyText.getText().toString());
                                         model.setInReplyToStatusId(item.getId());
                                         subscriptions.add(
