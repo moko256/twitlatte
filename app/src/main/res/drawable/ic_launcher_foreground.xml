@@ -5,6 +5,7 @@
     android:height="108dp"
     android:viewportHeight="108"
     android:viewportWidth="108">
+    <!--
     <path
         android:fillType="evenOdd"
         android:pathData="M144,108l-68-68h-44v28l32,32"
@@ -26,6 +27,7 @@
             </gradient>
         </aapt:attr>
     </path>
+    -->
     <path
         android:fillColor="#BDBDBD"
         android:fillType="nonZero"
