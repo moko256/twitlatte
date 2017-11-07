@@ -40,6 +40,7 @@
     <string name="app_settings">アプリケーションの設定</string>
     <string name="add_account">他のアカウントを追加</string>
     <string name="logout">ログアウトする</string>
+    <string name="new_tweet">新しいツイート</string>
     <string name="permission_denied">権限が拒否されました</string>
     <string name="location_is">所在地: %s</string>
     <string name="url_is">URL: %s</string>

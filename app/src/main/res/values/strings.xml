@@ -50,6 +50,7 @@
     <string name="app_settings">Application Settings</string>
     <string name="add_account">Add other account</string>
     <string name="logout">Logout</string>
+    <string name="new_tweet">New tweet</string>
     <string name="permission_denied">Permission Denied</string>
     <string name="location_is">Location: %s</string>
     <string name="url_is">URL: %s</string>
