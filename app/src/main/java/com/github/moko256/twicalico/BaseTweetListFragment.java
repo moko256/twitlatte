@@ -197,6 +197,8 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        statusIdsDatabase.close();
+        statusIdsDatabase = null;
         subscription = null;
         list=null;
     }
