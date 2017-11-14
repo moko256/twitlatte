@@ -36,13 +36,9 @@ import android.widget.Toast;
 import com.github.moko256.twicalico.database.TokenSQLiteOpenHelper;
 import com.github.moko256.twicalico.text.TwitterStringUtils;
 
-import java.text.DateFormat;
 import java.util.Date;
 
-import twitter4j.TwitterFactory;
 import twitter4j.auth.AccessToken;
-import twitter4j.conf.Configuration;
-import twitter4j.conf.ConfigurationBuilder;
 
 /**
  * Created by moko256 on 2016/03/28.
@@ -180,11 +176,10 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 Date birthday=new Date(1446956982000L);
                 Toast.makeText(
                         getContext(),
-                        "This application was born on "+
-                                DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.FULL).format(birthday),
+                        getString(R.string.birthday_of_this_app_is, birthday),
                         Toast.LENGTH_SHORT
                 ).show();
-                Toast.makeText(getContext(), "This application is "+String.valueOf((int)Math.floor((new Date().getTime()-birthday.getTime())/(31557600000L)))+"years old.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), getString(R.string.age_of_this_app_is, (int) Math.floor((new Date().getTime()-birthday.getTime())/(31557600000L))), Toast.LENGTH_SHORT).show();
                 return false;
             });
         } else if(getArguments().getString(ARG_PREFERENCE_ROOT).equals("license")){

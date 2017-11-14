@@ -44,9 +44,9 @@
     <string name="permission_denied">権限が拒否されました</string>
     <string name="location_is">所在地: %s</string>
     <string name="url_is">URL: %s</string>
-    <string name="tweet_counts_is">ツイート数: %s</string>
-    <string name="follow_counts_is">フォロー数: %s</string>
-    <string name="follower_counts_is">フォロワー数: %s</string>
+    <string name="tweet_counts_is">ツイート数: %d</string>
+    <string name="follow_counts_is">フォロー数: %d</string>
+    <string name="follower_counts_is">フォロワー数: %d</string>
     <string name="other">その他</string>
     <string name="share">共有する</string>
     <string name="add_to_list">リストに追加</string>
@@ -70,6 +70,8 @@
     <string name="is_load_timeline_image">タイムラインの画像を読み込むか</string>
     <string name="version_text">バージョン</string>
     <string name="about">概要</string>
+    <string name="birthday_of_this_app_is">このアプリケーションの誕生日:\n%tc</string>
+    <string name="age_of_this_app_is">このアプリケーションは%d才です</string>
     <string name="license_at_this_app">このアプリケーションのライセンス</string>
     <string name="open_source_license">オープンソースライセンス</string>
     <string name="enable">有効</string>
