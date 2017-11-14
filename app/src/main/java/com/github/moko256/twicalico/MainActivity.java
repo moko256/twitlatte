@@ -121,8 +121,9 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
         TextView userIdText = headerView.findViewById(R.id.user_id);
         ImageView userImage = headerView.findViewById(R.id.user_image);
         ImageView userBackgroundImage = headerView.findViewById(R.id.user_bg_image);
+        ImageView toggleAccount = headerView.findViewById(R.id.toggle_account);
 
-        userImage.setOnLongClickListener(v -> {
+        toggleAccount.setOnClickListener(v -> {
             TokenSQLiteOpenHelper helper = new TokenSQLiteOpenHelper(this);
 
             final AlertDialog[] dialog = new AlertDialog[1];
@@ -204,8 +205,6 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                     .setTitle(R.string.account)
                     .setView(recyclerView)
                     .show();
-
-            return true;
         });
 
         Single.create(

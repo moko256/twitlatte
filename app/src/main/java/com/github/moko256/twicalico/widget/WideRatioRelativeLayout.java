@@ -18,7 +18,7 @@ package com.github.moko256.twicalico.widget;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 /**
  * Created by moko256 on 2017/03/05.
@@ -26,17 +26,17 @@ import android.widget.LinearLayout;
  * @author moko256
  */
 
-public class WideRatioLinearLayout extends LinearLayout {
+public class WideRatioRelativeLayout extends RelativeLayout {
 
-    public WideRatioLinearLayout(Context context) {
+    public WideRatioRelativeLayout(Context context) {
         this(context, null);
     }
 
-    public WideRatioLinearLayout(Context context, AttributeSet attrs) {
+    public WideRatioRelativeLayout(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public WideRatioLinearLayout(Context context, AttributeSet attrs, int defStyle) {
+    public WideRatioRelativeLayout(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
 

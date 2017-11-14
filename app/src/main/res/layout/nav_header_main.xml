@@ -17,6 +17,7 @@
 
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
@@ -28,7 +29,7 @@
         android:fitsSystemWindows="false"
         tools:src="@android:color/darker_gray"/>
 
-    <com.github.moko256.twicalico.widget.WideRatioLinearLayout
+    <com.github.moko256.twicalico.widget.WideRatioRelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fitsSystemWindows="true"
@@ -52,6 +53,7 @@
             android:layout_marginTop="8dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Body2"
             android:textColor="#FFFFFF"
+            android:layout_below="@id/user_image"
             tools:text="User name"/>
 
         <TextView
@@ -60,8 +62,18 @@
             android:layout_height="wrap_content"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:textColor="#deFFFFFF"
+            android:layout_below="@id/user_name"
             tools:text="\@user_name"/>
 
-    </com.github.moko256.twicalico.widget.WideRatioLinearLayout>
+        <ImageView
+            android:id="@+id/toggle_account"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            app:srcCompat="@drawable/ic_arrow_drop_down_white_24dp"
+            />
+
+    </com.github.moko256.twicalico.widget.WideRatioRelativeLayout>
 
 </FrameLayout>

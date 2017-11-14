@@ -197,6 +197,8 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        statusIdsDatabase.close();
+        statusIdsDatabase = null;
         subscription = null;
         list=null;
     }
@@ -253,7 +255,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                                             statusIdsDatabase.insertIds(0, ids);
                                             adapter.notifyItemRangeInserted(0, ids.size());
                                             TypedValue value=new TypedValue();
-                                            Toast t=Toast.makeText(getContext(),"New Tweet",Toast.LENGTH_SHORT);
+                                            Toast t=Toast.makeText(getContext(),R.string.new_tweet,Toast.LENGTH_SHORT);
                                             t.setGravity(
                                                     Gravity.TOP|Gravity.CENTER,
                                                     0,
