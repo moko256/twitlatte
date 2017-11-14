@@ -70,6 +70,8 @@ public class GlobalApplication extends Application {
     public static UserCacheMap userCache;
     public static StatusCacheMap statusCache;
 
+    public static int statusLimit;
+
     @Override
     public void onCreate() {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
@@ -197,6 +199,7 @@ public class GlobalApplication extends Application {
         twitter = getTwitterInstance(accessToken);
         userCache = new UserCacheMap(this, userId);
         statusCache = new StatusCacheMap(this, userId);
+        statusLimit = twitter instanceof MastodonTwitterImpl? 40: 200;
     }
 
     public Twitter getTwitterInstance(AccessToken accessToken){
