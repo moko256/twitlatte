@@ -80,7 +80,7 @@
     <string name="is_load_timeline_image">Load the images on the timeline</string>
     <string name="version_text">Version</string>
     <string name="about">About</string>
-    <string name="birthday_of_this_app_is">Birthday of this application:\n%tc</string>
+    <string name="birthday_of_this_app_is">Birthday of this application:\n%1$TF %1$TT %1$TZ</string>
     <string name="age_of_this_app_is">Age of this application is %d</string>
     <string name="license_at_this_app">License at this application</string>
     <string name="apache_license_2_0" translatable="false">Apache License, Version 2.0</string>

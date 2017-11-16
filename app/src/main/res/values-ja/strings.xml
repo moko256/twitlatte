@@ -70,7 +70,7 @@
     <string name="is_load_timeline_image">タイムラインの画像を読み込むか</string>
     <string name="version_text">バージョン</string>
     <string name="about">概要</string>
-    <string name="birthday_of_this_app_is">このアプリケーションの誕生日:\n%tc</string>
+    <string name="birthday_of_this_app_is">このアプリケーションの誕生日:\n%1$TF %1$TT %1$TZ</string>
     <string name="age_of_this_app_is">このアプリケーションは%d才です</string>
     <string name="license_at_this_app">このアプリケーションのライセンス</string>
     <string name="open_source_license">オープンソースライセンス</string>
