@@ -62,8 +62,6 @@ public class PostTweetModelImpl implements PostTweetModel {
     private List<Uri> uriList = new ArrayList<>();
     private GeoLocation location;
 
-    private Validator validator = new Validator();
-
     public PostTweetModelImpl(MastodonClient client, ContentResolver contentResolver){
         this.client = client;
         this.contentResolver = contentResolver;
@@ -101,7 +99,12 @@ public class PostTweetModelImpl implements PostTweetModel {
 
     @Override
     public int getTweetLength() {
-        return validator.getTweetLength(tweetText);
+        return tweetText.codePointCount(0, tweetText.length());
+    }
+
+    @Override
+    public int getMaxTweetLength() {
+        return 500;
     }
 
     @Override
@@ -111,7 +114,8 @@ public class PostTweetModelImpl implements PostTweetModel {
 
     @Override
     public boolean isValidTweet() {
-        return uriList.size() > 0 || validator.isValidTweet(tweetText);
+        int tweetLength = getTweetLength();
+        return uriList.size() > 0 || tweetLength != 0 && tweetLength <= getMaxTweetLength();
     }
 
     @Override

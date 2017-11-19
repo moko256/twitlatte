@@ -96,6 +96,11 @@ public class PostTweetModelImpl implements PostTweetModel {
     }
 
     @Override
+    public int getMaxTweetLength() {
+        return Validator.MAX_TWEET_LENGTH;
+    }
+
+    @Override
     public boolean isReply() {
         return inReplyToStatusId != -1;
     }

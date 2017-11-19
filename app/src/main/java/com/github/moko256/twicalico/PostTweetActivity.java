@@ -49,7 +49,6 @@ import android.widget.TextView;
 import com.github.moko256.twicalico.model.base.PostTweetModel;
 import com.github.moko256.twicalico.model.impl.PostTweetModelCreator;
 import com.github.moko256.twicalico.text.TwitterStringUtils;
-import com.twitter.Validator;
 
 import rx.Single;
 import rx.subscriptions.CompositeSubscription;
@@ -110,7 +109,7 @@ public class PostTweetActivity extends AppCompatActivity {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 model.setTweetText(s.toString());
 
-                counterTextView.setText(String.valueOf(model.getTweetLength())+" / "+String.valueOf(Validator.MAX_TWEET_LENGTH));
+                counterTextView.setText(String.valueOf(model.getTweetLength())+" / "+String.valueOf(model.getMaxTweetLength()));
                 counterTextView.setTextColor(model.isValidTweet()? Color.GRAY: Color.RED);
             }
 

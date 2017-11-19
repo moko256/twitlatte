@@ -42,6 +42,8 @@ public interface PostTweetModel {
     void setTweetText(String tweetText);
 
     int getTweetLength();
+    int getMaxTweetLength();
+
     boolean isReply();
     boolean isValidTweet();
 
