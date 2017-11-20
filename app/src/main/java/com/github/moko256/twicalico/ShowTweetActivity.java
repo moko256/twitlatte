@@ -19,6 +19,7 @@ package com.github.moko256.twicalico;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
@@ -56,6 +57,7 @@ import static android.view.View.VISIBLE;
 public class ShowTweetActivity extends AppCompatActivity {
 
     CompositeSubscription subscriptions;
+    long statusId;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -70,92 +72,54 @@ public class ShowTweetActivity extends AppCompatActivity {
             actionBar.setHomeAsUpIndicator(R.drawable.ic_back_white_24dp);
         }
 
-        subscriptions.add(
-                Single.create(
-                        subscriber -> {
-                            long statusId;
-                            Status status;
-                            statusId = getIntent().getLongExtra("statusId", -1);
-                            if (statusId == -1) {
-                                ShowTweetActivity.this.finish();
-                                return;
-                            }
-                            status = GlobalApplication.statusCache.get(statusId);
-                            if (status == null){
-                                try {
-                                    status = GlobalApplication.twitter.showStatus(statusId);
-                                    GlobalApplication.statusCache.add(status);
-                                } catch (TwitterException e) {
-                                    subscriber.onError(e);
-                                }
-                            }
-                            subscriber.onSuccess(status);
-                        })
+        statusId = getIntent().getLongExtra("statusId", -1);
+        if (statusId == -1) {
+            ShowTweetActivity.this.finish();
+            return;
+        }
+        Status status = GlobalApplication.statusCache.get(statusId);
+        if (status == null){
+            subscriptions.add(
+                    updateStatus()
+                            .subscribeOn(Schedulers.newThread())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(
+                                    result->{
+                                        if (result == null) {
+                                            finish();
+                                            return;
+                                        }
+                                        updateView(result);
+                                    },
+                                    e->{
+                                        e.printStackTrace();
+                                        finish();
+                                    })
+            );
+        } else {
+            updateView(status);
+        }
+
+        SwipeRefreshLayout swipeRefreshLayout = findViewById(R.id.tweet_show_swipe_refresh);
+        swipeRefreshLayout.setColorSchemeResources(R.color.colorAccent);
+        swipeRefreshLayout.setOnRefreshListener(() -> subscriptions.add(
+                updateStatus()
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
-                                result->{
+                                result -> {
                                     if (result == null) {
                                         finish();
                                         return;
                                     }
-                                    Status item=(Status) result;
-
-                                    TextView tweetIsReply = findViewById(R.id.tweet_show_is_reply_text);
-                                    long replyTweetId = item.getInReplyToStatusId();
-                                    if (replyTweetId != -1){
-                                        tweetIsReply.setVisibility(VISIBLE);
-                                        tweetIsReply.setOnClickListener(v -> startActivity(getIntent(this, replyTweetId)));
-                                    } else {
-                                        tweetIsReply.setVisibility(GONE);
-                                    }
-
-                                    StatusView statusView = new StatusView(this);
-                                    statusView.setStatus(((Status) result));
-                                    ViewGroup cview = (ViewGroup) statusView.getChildAt(0);
-                                    ViewGroup sview = (ViewGroup) cview.getChildAt(0);
-                                    cview.removeView(sview);
-                                    ((FrameLayout) findViewById(R.id.tweet_show_tweet)).addView(sview);
-
-                                    ((TextView)findViewById(R.id.tweet_show_timestamp)).setText(
-                                            DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.FULL)
-                                                    .format(item.getCreatedAt())
-                                    );
-                                    TextView viaText= findViewById(R.id.tweet_show_via);
-                                    viaText.setText(Html.fromHtml("via:"+item.getSource()));
-                                    viaText.setMovementMethod(new LinkMovementMethod());
-
-                                    AppCompatEditText replyText= findViewById(R.id.tweet_show_tweet_reply_text);
-                                    AppCompatButton replyButton= findViewById(R.id.tweet_show_tweet_reply_button);
-                                    UserMentionEntity[] users = item.getUserMentionEntities();
-                                    replyText.setText(TwitterStringUtils.convertToReplyTopString(item.getUser().getScreenName(), users));
-                                    replyButton.setOnClickListener(v -> {
-                                        replyButton.setEnabled(false);
-                                        PostTweetModel model = PostTweetModelCreator.getInstance(GlobalApplication.twitter, getContentResolver());
-                                        model.setTweetText(replyText.getText().toString());
-                                        model.setInReplyToStatusId(item.getId());
-                                        subscriptions.add(
-                                                model.postTweet()
-                                                        .subscribe(
-                                                                it -> {
-                                                                    replyText.setText(TwitterStringUtils.convertToReplyTopString(item.getUser().getScreenName(), users));
-                                                                    replyButton.setEnabled(true);
-                                                                    Toast.makeText(ShowTweetActivity.this,R.string.succeeded,Toast.LENGTH_SHORT).show();
-                                                                },
-                                                                e->{
-                                                                    e.printStackTrace();
-                                                                    Toast.makeText(ShowTweetActivity.this,R.string.error_occurred,Toast.LENGTH_SHORT).show();
-                                                                    replyButton.setEnabled(true);
-                                                                }
-                                                        )
-                                        );
-                                    });
+                                    updateView(result);
+                                    swipeRefreshLayout.setRefreshing(false);
                                 },
                                 e->{
                                     e.printStackTrace();
-                                    finish();
+                                    Toast.makeText(this, R.string.error_occurred, Toast.LENGTH_SHORT).show();
                                 })
-        );
+        ));
     }
 
     @Override
@@ -173,6 +137,73 @@ public class ShowTweetActivity extends AppCompatActivity {
 
     public static Intent getIntent(Context context, long statusId){
         return new Intent(context, ShowTweetActivity.class).putExtra("statusId", statusId);
+    }
+
+    private Single<Status> updateStatus(){
+        return Single.create(
+                subscriber -> {
+                    try {
+                        Status status = GlobalApplication.twitter.showStatus(statusId);
+                        GlobalApplication.statusCache.add(status);
+                        subscriber.onSuccess(status);
+                    } catch (TwitterException e) {
+                        subscriber.onError(e);
+                    }
+                });
+    }
+
+    private void updateView(Status item){
+        TextView tweetIsReply = findViewById(R.id.tweet_show_is_reply_text);
+        long replyTweetId = item.getInReplyToStatusId();
+        if (replyTweetId != -1){
+            tweetIsReply.setVisibility(VISIBLE);
+            tweetIsReply.setOnClickListener(v -> startActivity(getIntent(this, replyTweetId)));
+        } else {
+            tweetIsReply.setVisibility(GONE);
+        }
+
+        StatusView statusView = new StatusView(this);
+        statusView.setStatus(item);
+        ViewGroup cview = (ViewGroup) statusView.getChildAt(0);
+        ViewGroup sview = (ViewGroup) cview.getChildAt(0);
+        cview.removeView(sview);
+        FrameLayout statusViewFrame = findViewById(R.id.tweet_show_tweet);
+        statusViewFrame.removeAllViews();
+        statusViewFrame.addView(sview);
+
+        ((TextView)findViewById(R.id.tweet_show_timestamp)).setText(
+                DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.FULL)
+                        .format(item.getCreatedAt())
+        );
+        TextView viaText= findViewById(R.id.tweet_show_via);
+        viaText.setText(Html.fromHtml("via:"+item.getSource()));
+        viaText.setMovementMethod(new LinkMovementMethod());
+
+        AppCompatEditText replyText= findViewById(R.id.tweet_show_tweet_reply_text);
+        AppCompatButton replyButton= findViewById(R.id.tweet_show_tweet_reply_button);
+        UserMentionEntity[] users = item.getUserMentionEntities();
+        replyText.setText(TwitterStringUtils.convertToReplyTopString(item.getUser().getScreenName(), users));
+        replyButton.setOnClickListener(v -> {
+            replyButton.setEnabled(false);
+            PostTweetModel model = PostTweetModelCreator.getInstance(GlobalApplication.twitter, getContentResolver());
+            model.setTweetText(replyText.getText().toString());
+            model.setInReplyToStatusId(item.getId());
+            subscriptions.add(
+                    model.postTweet()
+                            .subscribe(
+                                    it -> {
+                                        replyText.setText(TwitterStringUtils.convertToReplyTopString(item.getUser().getScreenName(), users));
+                                        replyButton.setEnabled(true);
+                                        Toast.makeText(ShowTweetActivity.this,R.string.succeeded,Toast.LENGTH_SHORT).show();
+                                    },
+                                    e->{
+                                        e.printStackTrace();
+                                        Toast.makeText(ShowTweetActivity.this,R.string.error_occurred,Toast.LENGTH_SHORT).show();
+                                        replyButton.setEnabled(true);
+                                    }
+                            )
+            );
+        });
     }
 
 }

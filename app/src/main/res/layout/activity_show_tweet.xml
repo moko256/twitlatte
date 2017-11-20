@@ -29,52 +29,60 @@
     android:focusableInTouchMode="true"
     tools:context=".ShowTweetActivity">
 
-    <ScrollView
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/tweet_show_swipe_refresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scrollbars="vertical">
-        <RelativeLayout
+        android:layout_above="@id/tweet_show_tweet_reply_text">
+
+        <android.support.v4.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <TextView
-                android:id="@+id/tweet_show_is_reply_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/reply"
-                android:layout_marginBottom="16dp"
-                android:visibility="gone"
-                tools:visibility="visible"/>
-
-            <FrameLayout
-                android:id="@+id/tweet_show_tweet"
-                android:layout_below="@id/tweet_show_is_reply_text"
+            android:layout_height="match_parent"
+            android:scrollbars="vertical">
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/tweet_show_is_reply_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/reply"
+                    android:layout_marginBottom="16dp"
+                    android:visibility="gone"
+                    tools:visibility="visible"/>
 
-            <TextView
-                android:id="@+id/tweet_show_via"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/tweet_show_tweet"
-                android:layout_marginTop="0dp"
-                android:layout_marginBottom="2dp"
-                android:textColor="?android:textColorSecondary"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                tools:text="via:Twitter"/>
+                <FrameLayout
+                    android:id="@+id/tweet_show_tweet"
+                    android:layout_below="@id/tweet_show_is_reply_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
 
-            <TextView
-                android:id="@+id/tweet_show_timestamp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/tweet_show_via"
-                android:layout_marginTop="0dp"
-                android:layout_marginBottom="2dp"
-                android:textColor="?android:textColorSecondary"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                tools:text="date tweet was created at"/>
+                <TextView
+                    android:id="@+id/tweet_show_via"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tweet_show_tweet"
+                    android:layout_marginTop="0dp"
+                    android:layout_marginBottom="2dp"
+                    android:textColor="?android:textColorSecondary"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    tools:text="via:Twitter"/>
 
-        </RelativeLayout>
-    </ScrollView>
+                <TextView
+                    android:id="@+id/tweet_show_timestamp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tweet_show_via"
+                    android:layout_marginTop="0dp"
+                    android:layout_marginBottom="2dp"
+                    android:textColor="?android:textColorSecondary"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    tools:text="date tweet was created at"/>
+
+            </RelativeLayout>
+        </android.support.v4.widget.NestedScrollView>
+
+    </android.support.v4.widget.SwipeRefreshLayout>
 
     <android.support.v7.widget.AppCompatButton
         android:id="@+id/tweet_show_tweet_reply_button"
@@ -82,7 +90,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:text="@string/reply"/>
+        android:text="@string/reply"
+        style="@style/Widget.AppCompat.Button.Borderless.Colored"/>
 
     <android.support.v7.widget.AppCompatEditText
         android:id="@+id/tweet_show_tweet_reply_text"

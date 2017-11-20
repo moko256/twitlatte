@@ -20,13 +20,12 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.CardView;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -37,7 +36,6 @@ import java.text.DateFormat;
 import rx.Single;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
-import twitter4j.Status;
 import twitter4j.TwitterException;
 import twitter4j.User;
 
@@ -51,6 +49,8 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
 
     GlideRequests glideRequests;
 
+    SwipeRefreshLayout swipeRefreshLayout;
+
     ImageView header;
     ImageView icon;
 
@@ -63,10 +63,6 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
     TextView userTweetsCount;
     TextView userFollowCount;
     TextView userFollowerCount;
-
-    CardView userLatestTweetCard;
-    TextView userLatestTweetText;
-    Button userLatestTweetLoadMoreButton;
 
     long userId = -1;
 
@@ -85,23 +81,7 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
 
         User cachedUser = GlobalApplication.userCache.get(userId);
         if (cachedUser==null){
-            Single.create(
-                    subscriber -> {
-                        try {
-                            subscriber.onSuccess(GlobalApplication.twitter.showUser(userId));
-                        } catch (TwitterException e) {
-                            subscriber.onError(e);
-                        }
-                    })
-                    .subscribeOn(Schedulers.newThread())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(
-                            result -> setShowUserInfo((User) result),
-                            throwable->{
-                                throwable.printStackTrace();
-                                getActivity().finish();
-                            }
-                    );
+            updateUser();
         }
     }
 
@@ -112,22 +92,32 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
 
         glideRequests =GlideApp.with(this);
 
+        swipeRefreshLayout = view.findViewById(R.id.show_user_swipe_refresh);
+        swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
+        swipeRefreshLayout.setOnRefreshListener(() -> updateUser()
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        result -> {
+                            setShowUserInfo(result);
+                            swipeRefreshLayout.setRefreshing(false);
+                        },
+                        Throwable::printStackTrace
+                ));
+
         header= view.findViewById(R.id.show_user_bgimage);
         icon= view.findViewById(R.id.show_user_image);
 
         userNameText= view.findViewById(R.id.show_user_name);
         userIdText= view.findViewById(R.id.show_user_id);
         userBioText = view.findViewById(R.id.show_user_bio);
+        userBioText.setMovementMethod(LinkMovementMethod.getInstance());
         userLocation = view.findViewById(R.id.show_user_location);
         userUrl = view.findViewById(R.id.show_user_url);
         userCreatedAt= view.findViewById(R.id.show_user_created_at);
         userTweetsCount= view.findViewById(R.id.show_user_tweets_count);
         userFollowCount= view.findViewById(R.id.show_user_follow_count);
         userFollowerCount= view.findViewById(R.id.show_user_follower_count);
-
-        userLatestTweetCard= view.findViewById(R.id.show_user_latest_tweet);
-        userLatestTweetText= view.findViewById(R.id.show_user_latest_tweet_text);
-        userLatestTweetLoadMoreButton= view.findViewById(R.id.show_user_latest_tweet_see_more_button);
 
         User cachedUser = GlobalApplication.userCache.get(userId);
         if (cachedUser!=null){
@@ -158,7 +148,6 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
         userIdText.setText(TwitterStringUtils.plusAtMark(user.getScreenName()));
         getActivity().setTitle(user.getName());
         userBioText.setText(TwitterStringUtils.getProfileLinkedSequence(getContext(), user));
-        userBioText.setMovementMethod(LinkMovementMethod.getInstance());
 
         if (!TextUtils.isEmpty(user.getLocation())){
             userLocation.setText(getString(R.string.location_is, user.getLocation()));
@@ -177,12 +166,18 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
         userTweetsCount.setText(getContext().getString(R.string.tweet_counts_is, user.getStatusesCount()));
         userFollowCount.setText(getContext().getString(R.string.follow_counts_is, user.getFriendsCount()));
         userFollowerCount.setText(getContext().getString(R.string.follower_counts_is, user.getFollowersCount()));
+    }
 
-        Status status=user.getStatus();
-        if (status == null) {
-            userLatestTweetCard.setVisibility(View.GONE);
-        } else {
-            userLatestTweetText.setText(status.getText());
-        }
+    private Single<User> updateUser(){
+        return Single.create(
+                subscriber -> {
+                    try {
+                        User user = GlobalApplication.twitter.showUser(userId);
+                        GlobalApplication.userCache.add(user);
+                        subscriber.onSuccess(user);
+                    } catch (TwitterException e) {
+                        subscriber.onError(e);
+                    }
+                });
     }
 }

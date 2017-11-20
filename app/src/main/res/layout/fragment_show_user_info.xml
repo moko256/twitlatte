@@ -15,191 +15,152 @@
   ~ limitations under the License.
   -->
 
-<android.support.v4.widget.NestedScrollView
+<android.support.v4.widget.SwipeRefreshLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:scrollbars="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <RelativeLayout
+    android:layout_height="match_parent"
+    android:id="@+id/show_user_swipe_refresh">
+    <android.support.v4.widget.NestedScrollView
+        android:scrollbars="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <android.support.v7.widget.CardView
+        android:layout_height="match_parent">
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/show_user_top_card"
-            android:layout_marginLeft="-3dp"
-            android:layout_marginRight="-3dp"
-            android:layout_marginTop="-3dp"
-            android:focusable="true"
-            app:cardElevation="2dp"
-            app:contentPaddingBottom="16dp"
-            app:cardUseCompatPadding="true">
-            <RelativeLayout
+            android:layout_height="wrap_content">
+
+            <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <com.github.moko256.twicalico.widget.UserHeaderImageView
+                android:layout_height="wrap_content"
+                android:id="@+id/show_user_top_card"
+                android:layout_marginLeft="-3dp"
+                android:layout_marginRight="-3dp"
+                android:layout_marginTop="-3dp"
+                android:focusable="true"
+                app:cardElevation="2dp"
+                app:contentPaddingBottom="16dp"
+                app:cardUseCompatPadding="true">
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/show_user_bgimage"
-                    tools:src="@android:color/darker_gray"/>
+                    android:layout_height="wrap_content">
+                    <com.github.moko256.twicalico.widget.UserHeaderImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/show_user_bgimage"
+                        tools:src="@android:color/darker_gray"/>
 
-                <ImageView
-                    android:layout_width="64dp"
-                    android:layout_height="64dp"
-                    android:id="@+id/show_user_image"
-                    android:layout_centerHorizontal="true"
-                    android:layout_below="@id/show_user_bgimage"
-                    android:layout_marginTop="-32dp"
-                    tools:src="@android:color/white"/>
+                    <ImageView
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
+                        android:id="@+id/show_user_image"
+                        android:layout_centerHorizontal="true"
+                        android:layout_below="@id/show_user_bgimage"
+                        android:layout_marginTop="-32dp"
+                        tools:src="@android:color/white"/>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/show_user_name"
-                    android:layout_below="@id/show_user_image"
-                    android:layout_centerHorizontal="true"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                    tools:text="User name"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/show_user_name"
+                        android:layout_below="@id/show_user_image"
+                        android:layout_centerHorizontal="true"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                        tools:text="User name"/>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/show_user_id"
-                    android:layout_below="@id/show_user_name"
-                    android:layout_centerHorizontal="true"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-                    tools:text="\@user_name"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/show_user_id"
+                        android:layout_below="@id/show_user_name"
+                        android:layout_centerHorizontal="true"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                        tools:text="\@user_name"/>
 
-                <Button
-                    android:id="@+id/show_user_follow_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/show_user_id"
-                    android:layout_margin="16dp"
-                    android:text="@string/create_follow"
-                    android:layout_centerHorizontal="true"
-                    style="@style/Widget.AppCompat.Button.Colored"/>
+                    <Button
+                        android:id="@+id/show_user_follow_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/show_user_id"
+                        android:layout_margin="16dp"
+                        android:text="@string/create_follow"
+                        android:layout_centerHorizontal="true"
+                        style="@style/Widget.AppCompat.Button.Colored"/>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/show_user_bio"
-                    android:layout_below="@id/show_user_follow_button"
-                    android:layout_centerHorizontal="true"
-                    android:gravity="center"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                    tools:text="User\'s description"/>
-            </RelativeLayout>
-        </android.support.v7.widget.CardView>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/show_user_bio"
+                        android:layout_below="@id/show_user_follow_button"
+                        android:layout_centerHorizontal="true"
+                        android:gravity="center"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                        tools:text="User\'s description"/>
+                </RelativeLayout>
+            </android.support.v7.widget.CardView>
 
-        <android.support.v7.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/show_user_data_card"
-            android:layout_below="@id/show_user_top_card"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginTop="8dp"
-            android:foreground="?android:attr/selectableItemBackground"
-            android:focusable="true"
-            app:cardCornerRadius="2dp"
-            app:cardElevation="2dp"
-            app:cardUseCompatPadding="true"
-            app:contentPadding="16dp">
-            <RelativeLayout
+            <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <TextView
+                android:layout_height="wrap_content"
+                android:id="@+id/show_user_data_card"
+                android:layout_below="@id/show_user_top_card"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginTop="8dp"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:focusable="true"
+                app:cardCornerRadius="2dp"
+                app:cardElevation="2dp"
+                app:cardUseCompatPadding="true"
+                app:contentPadding="16dp">
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/show_user_location"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                    tools:text="location"/>
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/show_user_url"
-                    android:layout_below="@id/show_user_location"
-                    android:autoLink="web"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                    tools:text="url"/>
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/show_user_created_at"
-                    android:layout_below="@id/show_user_url"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                    tools:text="date user was created at"/>
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/show_user_follow_count"
-                    android:layout_below="@id/show_user_created_at"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                    tools:text="@string/follow_counts_is"/>
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/show_user_follower_count"
-                    android:layout_below="@id/show_user_follow_count"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                    tools:text="@string/follower_counts_is"/>
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/show_user_tweets_count"
-                    android:layout_below="@id/show_user_follower_count"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                    tools:text="@string/tweet_counts_is"/>
-            </RelativeLayout>
-        </android.support.v7.widget.CardView>
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/show_user_location"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                        tools:text="location"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/show_user_url"
+                        android:layout_below="@id/show_user_location"
+                        android:autoLink="web"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                        tools:text="url"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/show_user_created_at"
+                        android:layout_below="@id/show_user_url"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                        tools:text="date user was created at"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/show_user_follow_count"
+                        android:layout_below="@id/show_user_created_at"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                        tools:text="@string/follow_counts_is"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/show_user_follower_count"
+                        android:layout_below="@id/show_user_follow_count"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                        tools:text="@string/follower_counts_is"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/show_user_tweets_count"
+                        android:layout_below="@id/show_user_follower_count"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                        tools:text="@string/tweet_counts_is"/>
+                </RelativeLayout>
+            </android.support.v7.widget.CardView>
 
-        <android.support.v7.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/show_user_latest_tweet"
-            android:layout_below="@id/show_user_data_card"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginTop="8dp"
-            android:foreground="?android:attr/selectableItemBackground"
-            android:focusable="true"
-            app:cardCornerRadius="2dp"
-            app:cardElevation="2dp"
-            app:cardUseCompatPadding="true">
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/show_user_latest_tweet_title"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                    android:text="@string/latest_tweet"
-                    android:layout_marginTop="24dp"
-                    android:layout_marginRight="16dp"
-                    android:layout_marginLeft="16dp"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="16dp"
-                    android:id="@+id/show_user_latest_tweet_text"
-                    android:layout_below="@id/show_user_latest_tweet_title"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                    tools:text="Tweet context"/>
-                <Button
-                    android:id="@+id/show_user_latest_tweet_see_more_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="8dp"
-                    android:layout_below="@id/show_user_latest_tweet_text"
-                    android:text="@string/see_more"
-                    style="@style/Widget.AppCompat.Button.Borderless.Colored"/>
-            </RelativeLayout>
-        </android.support.v7.widget.CardView>
-
-    </RelativeLayout>
-</android.support.v4.widget.NestedScrollView>
+        </RelativeLayout>
+    </android.support.v4.widget.NestedScrollView>
+</android.support.v4.widget.SwipeRefreshLayout>
