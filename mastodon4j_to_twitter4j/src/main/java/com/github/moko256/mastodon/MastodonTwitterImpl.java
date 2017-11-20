@@ -631,6 +631,11 @@ public final class MastodonTwitterImpl implements Twitter {
 
             @Override
             public User createBlock(long l) throws TwitterException {
+                try {
+                    new Accounts(client).postBlock(l).execute();
+                } catch (Mastodon4jRequestException e) {
+                    e.printStackTrace();
+                }
                 return null;
             }
 
@@ -641,6 +646,11 @@ public final class MastodonTwitterImpl implements Twitter {
 
             @Override
             public User destroyBlock(long l) throws TwitterException {
+                try {
+                    new Accounts(client).postUnblock(l).execute();
+                } catch (Mastodon4jRequestException e) {
+                    e.printStackTrace();
+                }
                 return null;
             }
 
@@ -661,6 +671,11 @@ public final class MastodonTwitterImpl implements Twitter {
 
             @Override
             public User createMute(long l) throws TwitterException {
+                try {
+                    new Accounts(client).postMute(l).execute();
+                } catch (Mastodon4jRequestException e) {
+                    e.printStackTrace();
+                }
                 return null;
             }
 
@@ -671,6 +686,11 @@ public final class MastodonTwitterImpl implements Twitter {
 
             @Override
             public User destroyMute(long l) throws TwitterException {
+                try {
+                    new Accounts(client).postUnmute(l).execute();
+                } catch (Mastodon4jRequestException e) {
+                    e.printStackTrace();
+                }
                 return null;
             }
 
@@ -681,7 +701,11 @@ public final class MastodonTwitterImpl implements Twitter {
 
             @Override
             public ResponseList<User> lookupUsers(long... longs) throws TwitterException {
-                return null;
+                ResponseList<User> l = new MTResponseList<>();
+                for (long id: longs){
+                    l.add(showUser(id));
+                }
+                return l;
             }
 
             @Override
@@ -691,7 +715,11 @@ public final class MastodonTwitterImpl implements Twitter {
 
             @Override
             public User showUser(long l) throws TwitterException {
-                return null;
+                try {
+                    return new MTUser(new Accounts(client).getAccount(l).execute());
+                } catch (Mastodon4jRequestException e) {
+                    throw new MTException(e);
+                }
             }
 
             @Override
@@ -1784,7 +1812,7 @@ public final class MastodonTwitterImpl implements Twitter {
 
     @Override
     public AccountSettings getAccountSettings() throws TwitterException {
-        return null;
+        return users().getAccountSettings();
     }
 
     @Override
@@ -1794,167 +1822,167 @@ public final class MastodonTwitterImpl implements Twitter {
 
     @Override
     public AccountSettings updateAccountSettings(Integer integer, Boolean aBoolean, String s, String s1, String s2, String s3) throws TwitterException {
-        return null;
+        return users().updateAccountSettings(integer, aBoolean, s, s1, s2, s3);
     }
 
     @Override
     public User updateProfile(String s, String s1, String s2, String s3) throws TwitterException {
-        return null;
+        return users().updateProfile(s, s1, s2, s3);
     }
 
     @Override
     public User updateProfileBackgroundImage(File file, boolean b) throws TwitterException {
-        return null;
+        return users().updateProfileBackgroundImage(file, b);
     }
 
     @Override
     public User updateProfileBackgroundImage(InputStream inputStream, boolean b) throws TwitterException {
-        return null;
+        return users().updateProfileBackgroundImage(inputStream, b);
     }
 
     @Override
     public User updateProfileColors(String s, String s1, String s2, String s3, String s4) throws TwitterException {
-        return null;
+        return users().updateProfileColors(s, s1, s2, s3, s4);
     }
 
     @Override
     public User updateProfileImage(File file) throws TwitterException {
-        return null;
+        return users().updateProfileImage(file);
     }
 
     @Override
     public User updateProfileImage(InputStream inputStream) throws TwitterException {
-        return null;
+        return users().updateProfileImage(inputStream);
     }
 
     @Override
     public PagableResponseList<User> getBlocksList() throws TwitterException {
-        return null;
+        return users().getBlocksList();
     }
 
     @Override
     public PagableResponseList<User> getBlocksList(long l) throws TwitterException {
-        return null;
+        return users().getBlocksList(l);
     }
 
     @Override
     public IDs getBlocksIDs() throws TwitterException {
-        return null;
+        return users().getBlocksIDs();
     }
 
     @Override
     public IDs getBlocksIDs(long l) throws TwitterException {
-        return null;
+        return users().getBlocksIDs(l);
     }
 
     @Override
     public User createBlock(long l) throws TwitterException {
-        return null;
+        return users().createBlock(l);
     }
 
     @Override
     public User createBlock(String s) throws TwitterException {
-        return null;
+        return users().createBlock(s);
     }
 
     @Override
     public User destroyBlock(long l) throws TwitterException {
-        return null;
+        return users().destroyBlock(l);
     }
 
     @Override
     public User destroyBlock(String s) throws TwitterException {
-        return null;
+        return users().destroyBlock(s);
     }
 
     @Override
     public PagableResponseList<User> getMutesList(long l) throws TwitterException {
-        return null;
+        return users().getMutesList(l);
     }
 
     @Override
     public IDs getMutesIDs(long l) throws TwitterException {
-        return null;
+        return users().getMutesIDs(l);
     }
 
     @Override
     public User createMute(long l) throws TwitterException {
-        return null;
+        return users().createMute(l);
     }
 
     @Override
     public User createMute(String s) throws TwitterException {
-        return null;
+        return users().createMute(s);
     }
 
     @Override
     public User destroyMute(long l) throws TwitterException {
-        return null;
+        return users().destroyMute(l);
     }
 
     @Override
     public User destroyMute(String s) throws TwitterException {
-        return null;
+        return users().destroyMute(s);
     }
 
     @Override
     public ResponseList<User> lookupUsers(long... longs) throws TwitterException {
-        return null;
+        return users().lookupUsers(longs);
     }
 
     @Override
     public ResponseList<User> lookupUsers(String... strings) throws TwitterException {
-        return null;
+        return users().lookupUsers(strings);
     }
 
     @Override
     public User showUser(long l) throws TwitterException {
-        return null;
+        return users().showUser(l);
     }
 
     @Override
     public User showUser(String s) throws TwitterException {
-        return null;
+        return users().showUser(s);
     }
 
     @Override
     public ResponseList<User> searchUsers(String s, int i) throws TwitterException {
-        return null;
+        return users().searchUsers(s, i);
     }
 
     @Override
     public ResponseList<User> getContributees(long l) throws TwitterException {
-        return null;
+        return users().getContributees(l);
     }
 
     @Override
     public ResponseList<User> getContributees(String s) throws TwitterException {
-        return null;
+        return users().getContributees(s);
     }
 
     @Override
     public ResponseList<User> getContributors(long l) throws TwitterException {
-        return null;
+        return users().getContributees(l);
     }
 
     @Override
     public ResponseList<User> getContributors(String s) throws TwitterException {
-        return null;
+        return users().getContributees(s);
     }
 
     @Override
     public void removeProfileBanner() throws TwitterException {
-
+        users().removeProfileBanner();
     }
 
     @Override
     public void updateProfileBanner(File file) throws TwitterException {
-
+        users().updateProfileBanner(file);
     }
 
     @Override
     public void updateProfileBanner(InputStream inputStream) throws TwitterException {
-
+        users().updateProfileBanner(inputStream);
     }
 
     @Override
