@@ -101,7 +101,7 @@ public class ShowTweetActivity extends AppCompatActivity {
         }
 
         SwipeRefreshLayout swipeRefreshLayout = findViewById(R.id.tweet_show_swipe_refresh);
-        swipeRefreshLayout.setColorSchemeResources(R.color.colorAccent);
+        swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
         swipeRefreshLayout.setOnRefreshListener(() -> subscriptions.add(
                 updateStatus()
                         .subscribeOn(Schedulers.newThread())
