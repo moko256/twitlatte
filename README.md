@@ -42,10 +42,9 @@ and, built using these tools\:
 
 * Android SDK
 * Android Studio
-* Java Development Kit
+* Open JDK
 * Kotlin
 * Gradle
-* Gradle Retrolambda Plugin
 * Proguard
 
 ## License
