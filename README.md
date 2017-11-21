@@ -1,7 +1,7 @@
 twicalico
 ====
 
-This application is the Twitter client for Android\.
+This application is the Twitter and Mastodon client for Android\.
 
 |Timeline|Post screen|Trends screen|
 |---|---|---|
@@ -9,14 +9,14 @@ This application is the Twitter client for Android\.
 [<img src="https://dply.me/vjtth8/button/large" alt="Try it on your device via DeployGate">](https://dply.me/vjtth8#install)
 
 * Minimum api level is 17
-* Target api level is 26
+* Target api level is 27
 * Material Design
 
 ## Usage
 
 1. Clone this project\.
 2. Open in Android Studio\.
-3. Add gradle.properties file and add CONSUMER_KEY and CONSUMER_SECRET properties\.
+3. Add gradle.properties file and add CONSUMER_KEY and CONSUMER_SECRET properties for Twitter\.
 4. Build\.
 
 ## Dependencies
@@ -29,8 +29,10 @@ This application is built using these libraries\:
 * Android Design Support Library
 * Android Custom Tabs Support Library
 * Glide
+* google-gson
 * PhotoView
 * OkHttp
+* mastodon4j
 * Twitter4J
 * twitter-text
 * RxJava
@@ -41,6 +43,7 @@ and, built using these tools\:
 * Android SDK
 * Android Studio
 * Java Development Kit
+* Kotlin
 * Gradle
 * Gradle Retrolambda Plugin
 * Proguard
