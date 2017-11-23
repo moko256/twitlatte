@@ -181,14 +181,18 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
         if (ids.size() - positions[0] > 1000){
             List<Long> list = ids.subList(positions[0] + 1000, ids.size());
             statusIdsDatabase.deleteIds(list);
-            boolean[] results = statusIdsDatabase.hasIdsOtherTable(list);
-            List<Long> deletableIds = new ArrayList<>();
-            for (int i = 0; i < list.size(); i++) {
-                if (!results[i]) {
-                    deletableIds.add(list.get(i));
+            try {
+                boolean[] results = statusIdsDatabase.hasIdsOtherTable(list);
+                List<Long> deletableIds = new ArrayList<>();
+                for (int i = 0; i < list.size(); i++) {
+                    if (!results[i]) {
+                        deletableIds.add(list.get(i));
+                    }
                 }
+                GlobalApplication.statusCache.delete(deletableIds);
+            } catch(Throwable e){
+                e.printStackTrace();
             }
-            GlobalApplication.statusCache.delete(deletableIds);
         }
     }
 
