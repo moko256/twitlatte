@@ -45,6 +45,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.github.moko256.twicalico.model.base.PostTweetModel;
@@ -72,6 +73,7 @@ public class PostTweetActivity extends AppCompatActivity {
 
     Toolbar toolbar;
     ActionBar actionBar;
+    ImageView userIcon;
     TextView counterTextView;
     AppCompatEditText editText;
     RecyclerView imagesRecyclerView;
@@ -102,6 +104,14 @@ public class PostTweetActivity extends AppCompatActivity {
         actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeAsUpIndicator(R.drawable.ic_clear_white_24dp);
+
+        userIcon = findViewById(R.id.activity_tweet_send_user_icon);
+        GlideApp.with(this)
+                .load(GlobalApplication.userCache.get(GlobalApplication.userId)
+                        .getProfileImageURLHttps()
+                )
+                .circleCrop()
+                .into(userIcon);
 
         counterTextView= findViewById(R.id.tweet_text_edit_counter);
 
@@ -269,7 +279,9 @@ public class PostTweetActivity extends AppCompatActivity {
         imagesRecyclerView = null;
         editText = null;
         counterTextView = null;
+        userIcon = null;
         actionBar = null;
+        toolbar = null;
         model = null;
     }
 
