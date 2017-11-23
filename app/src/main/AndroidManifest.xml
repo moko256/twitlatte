@@ -75,7 +75,8 @@
 
         <activity
             android:name=".PostTweetActivity"
-            android:label="@string/tweet"/>
+            android:label="@string/tweet"
+            android:theme="@style/AppTheme.NoActionBar"/>
 
         <activity
             android:name=".ShowTweetActivity"

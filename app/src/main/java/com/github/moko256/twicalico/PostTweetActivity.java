@@ -38,12 +38,14 @@ import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.github.moko256.twicalico.model.base.PostTweetModel;
@@ -69,7 +71,9 @@ public class PostTweetActivity extends AppCompatActivity {
 
     ViewGroup rootViewGroup;
 
+    Toolbar toolbar;
     ActionBar actionBar;
+    ImageView userIcon;
     TextView counterTextView;
     AppCompatEditText editText;
     RecyclerView imagesRecyclerView;
@@ -83,7 +87,7 @@ public class PostTweetActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_send_tweet);
+        setContentView(R.layout.activity_post_tweet);
 
         model = PostTweetModelCreator.getInstance(GlobalApplication.twitter, getContentResolver());
         subscription = new CompositeSubscription();
@@ -94,9 +98,20 @@ public class PostTweetActivity extends AppCompatActivity {
 
         rootViewGroup= findViewById(R.id.activity_tweet_send_layout_root);
 
-        actionBar=getSupportActionBar();
+        toolbar = findViewById(R.id.activity_tweet_send_toolbar);
+        setSupportActionBar(toolbar);
+
+        actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeAsUpIndicator(R.drawable.ic_clear_white_24dp);
+
+        userIcon = findViewById(R.id.activity_tweet_send_user_icon);
+        GlideApp.with(this)
+                .load(GlobalApplication.userCache.get(GlobalApplication.userId)
+                        .getProfileImageURLHttps()
+                )
+                .circleCrop()
+                .into(userIcon);
 
         counterTextView= findViewById(R.id.tweet_text_edit_counter);
 
@@ -264,7 +279,9 @@ public class PostTweetActivity extends AppCompatActivity {
         imagesRecyclerView = null;
         editText = null;
         counterTextView = null;
+        userIcon = null;
         actionBar = null;
+        toolbar = null;
         model = null;
     }
 
