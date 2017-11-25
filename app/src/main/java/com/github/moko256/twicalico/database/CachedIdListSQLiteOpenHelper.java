@@ -138,6 +138,7 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
         addIdsAtTransaction(l);
         database.setTransactionSuccessful();
         database.endTransaction();
+        database.close();
     }
 
     public synchronized void deleteIds(List<Long> ids){
@@ -175,12 +176,15 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
     public boolean[] hasIdsOtherTable(long[] ids){
         boolean[] result = new boolean[ids.length];
         for (int i = 0; i < ids.length; i++) {
-            Cursor t = idListList.getReadableDatabase().query("IdListList", new String[]{"tableName"}, null, null, null, null, null);
+            SQLiteDatabase idListListDatabase = idListList.getReadableDatabase();
+            Cursor t = idListListDatabase.query("IdListList", new String[]{"tableName"}, null, null, null, null, null);
             result[i] = false;
             while ((!result[i]) && t.moveToNext()){
                 String tableName = t.getString(0);
                 if (!tableName.equals(databaseName)) {
-                    Cursor c = new CachedIdListSQLiteOpenHelper(context, userId, tableName).getReadableDatabase().query(
+                    SQLiteOpenHelper helper = new CachedIdListSQLiteOpenHelper(context, userId, tableName);
+                    SQLiteDatabase database = helper.getReadableDatabase();
+                    Cursor c = database.query(
                             tableName,
                             new String[]{"id"},
                             "id=" + String.valueOf(ids[i]),
@@ -188,9 +192,12 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
                     );
                     result[i] = c.getCount() > 0;
                     c.close();
+                    database.close();
+                    helper.close();
                 }
             }
             t.close();
+            idListListDatabase.close();
         }
         return result;
     }

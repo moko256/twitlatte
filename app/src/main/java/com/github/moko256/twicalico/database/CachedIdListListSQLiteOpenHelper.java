@@ -52,7 +52,9 @@ class CachedIdListListSQLiteOpenHelper extends SQLiteOpenHelper {
     public void addTable(String tableName){
         ContentValues contentValues = new ContentValues(1);
         contentValues.put("tableName", tableName);
-        getWritableDatabase().insert("IdListList", null, contentValues);
+        SQLiteDatabase database = getWritableDatabase();
+        database.insert("IdListList", null, contentValues);
+        database.close();
     }
 
 }
