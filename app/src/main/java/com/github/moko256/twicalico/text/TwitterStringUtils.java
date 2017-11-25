@@ -158,7 +158,7 @@ public class TwitterStringUtils {
             Spanned previewText = Html.fromHtml(tweet);
             textView.setText(previewText);
 
-            int imageSize = Math.round(textView.getTextSize());
+            int imageSize = (int) Math.floor(textView.getTextSize() * 1.15);
 
             List<String> list = new ArrayList<>();
             Pattern pattern = Pattern.compile("(?<=<img src=['\"])[^<>\"']*(?=['\"]>.*</img>)");
