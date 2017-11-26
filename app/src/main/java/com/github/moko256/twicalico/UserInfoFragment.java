@@ -55,6 +55,7 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
     ImageView icon;
 
     TextView userNameText;
+    ImageView userLockIcon;
     TextView userIdText;
     TextView userBioText;
     TextView userLocation;
@@ -108,16 +109,17 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
         header= view.findViewById(R.id.show_user_bgimage);
         icon= view.findViewById(R.id.show_user_image);
 
-        userNameText= view.findViewById(R.id.show_user_name);
-        userIdText= view.findViewById(R.id.show_user_id);
+        userNameText = view.findViewById(R.id.show_user_name);
+        userLockIcon = view.findViewById(R.id.show_user_lock);
+        userIdText = view.findViewById(R.id.show_user_id);
         userBioText = view.findViewById(R.id.show_user_bio);
         userBioText.setMovementMethod(LinkMovementMethod.getInstance());
         userLocation = view.findViewById(R.id.show_user_location);
         userUrl = view.findViewById(R.id.show_user_url);
-        userCreatedAt= view.findViewById(R.id.show_user_created_at);
-        userTweetsCount= view.findViewById(R.id.show_user_tweets_count);
-        userFollowCount= view.findViewById(R.id.show_user_follow_count);
-        userFollowerCount= view.findViewById(R.id.show_user_follower_count);
+        userCreatedAt = view.findViewById(R.id.show_user_created_at);
+        userTweetsCount = view.findViewById(R.id.show_user_tweets_count);
+        userFollowCount = view.findViewById(R.id.show_user_follow_count);
+        userFollowerCount = view.findViewById(R.id.show_user_follower_count);
 
         User cachedUser = GlobalApplication.userCache.get(userId);
         if (cachedUser!=null){
@@ -145,6 +147,7 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
         glideRequests.load(user.getBiggerProfileImageURL()).circleCrop().into(icon);
 
         userNameText.setText(user.getName());
+        userLockIcon.setVisibility(user.isProtected()? View.VISIBLE: View.GONE);
         userIdText.setText(TwitterStringUtils.plusAtMark(user.getScreenName()));
         getActivity().setTitle(user.getName());
         userBioText.setText(TwitterStringUtils.getProfileLinkedSequence(getContext(), user));

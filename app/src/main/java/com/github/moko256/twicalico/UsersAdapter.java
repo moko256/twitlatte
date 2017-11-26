@@ -68,9 +68,10 @@ class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> {
 
         viewHolder.userUserName.setText(item.getName());
         viewHolder.userUserId.setText(TwitterStringUtils.plusAtMark(item.getScreenName()));
-        viewHolder.itemView.setOnClickListener(v -> {
-            context.startActivity(ShowUserActivity.getIntent(context, item.getId()));
-        });
+        viewHolder.itemView.setOnClickListener(
+                v -> context.startActivity(ShowUserActivity.getIntent(context, item.getId()))
+        );
+        viewHolder.userLockIcon.setVisibility(item.isProtected()? View.VISIBLE: View.GONE);
 
     }
 
@@ -88,12 +89,14 @@ class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> {
         ImageView userUserImage;
         TextView userUserName;
         TextView userUserId;
+        ImageView userLockIcon;
 
         ViewHolder(final View itemView) {
             super(itemView);
-            userUserImage= itemView.findViewById(R.id.user_user_image);
-            userUserId= itemView.findViewById(R.id.user_user_id);
-            userUserName= itemView.findViewById(R.id.user_user_name);
+            userUserImage = itemView.findViewById(R.id.user_user_image);
+            userUserId = itemView.findViewById(R.id.user_user_id);
+            userUserName = itemView.findViewById(R.id.user_user_name);
+            userLockIcon = itemView.findViewById(R.id.user_user_lock);
         }
     }
 }
