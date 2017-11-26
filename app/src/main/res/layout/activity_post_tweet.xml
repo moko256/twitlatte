@@ -35,12 +35,8 @@
         <ImageView
             android:id="@+id/activity_tweet_send_user_icon"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="36dp"
             android:layout_marginLeft="32dp"
-            android:layout_marginRight="12dp"
-            android:layout_marginTop="12dp"
-            android:layout_marginBottom="12dp"
-            android:layout_gravity="top"
             tools:src="@mipmap/ic_launcher"/>
     </android.support.v7.widget.Toolbar>
     <ScrollView
