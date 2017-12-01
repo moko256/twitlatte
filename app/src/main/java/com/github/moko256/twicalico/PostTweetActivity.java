@@ -31,7 +31,6 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.PermissionChecker;
-import android.support.v4.util.Pair;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatEditText;
@@ -52,6 +51,9 @@ import com.github.moko256.twicalico.model.base.PostTweetModel;
 import com.github.moko256.twicalico.model.impl.PostTweetModelCreator;
 import com.github.moko256.twicalico.text.TwitterStringUtils;
 
+import java.util.Arrays;
+import java.util.List;
+
 import rx.Single;
 import rx.subscriptions.CompositeSubscription;
 import twitter4j.GeoLocation;
@@ -65,6 +67,7 @@ public class PostTweetActivity extends AppCompatActivity {
 
     private static final String INTENT_EXTRA_IN_REPLY_TO_STATUS_ID = "inReplyToStatusId";
     private static final String INTENT_EXTRA_TWEET_TEXT = "text";
+    private static final String OUT_STATE_EXTRA_IMAGE_URI_LIST = "image_uri_list";
     private static final int REQUEST_GET_IMAGE = 10;
 
     PostTweetModel model;
@@ -91,10 +94,6 @@ public class PostTweetActivity extends AppCompatActivity {
 
         model = PostTweetModelCreator.getInstance(GlobalApplication.twitter, getContentResolver());
         subscription = new CompositeSubscription();
-
-        if (savedInstanceState != null){
-            model.setInReplyToStatusId(savedInstanceState.getLong(INTENT_EXTRA_IN_REPLY_TO_STATUS_ID, -1));
-        }
 
         rootViewGroup= findViewById(R.id.activity_tweet_send_layout_root);
 
@@ -244,9 +243,24 @@ public class PostTweetActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        if (savedInstanceState != null){
+            model.setInReplyToStatusId(savedInstanceState.getLong(INTENT_EXTRA_IN_REPLY_TO_STATUS_ID, -1));
+            List<Uri> urls = Arrays.asList((Uri[]) savedInstanceState.getSerializable(OUT_STATE_EXTRA_IMAGE_URI_LIST));
+            model.getUriList().addAll(urls);
+            addedImagesAdapter.getImagesList().addAll(urls);
+        }
+
+    }
+
+    @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putLong(INTENT_EXTRA_IN_REPLY_TO_STATUS_ID, model.getInReplyToStatusId());
+        Uri[] uris = new Uri[model.getUriList().size()];
+        model.getUriList().toArray(uris);
+        outState.putSerializable(OUT_STATE_EXTRA_IMAGE_URI_LIST, uris);
     }
 
     @Override
@@ -256,7 +270,7 @@ public class PostTweetActivity extends AppCompatActivity {
             if (data != null){
                 Uri resultUri = data.getData();
                 if (resultUri != null){
-                    addedImagesAdapter.getImagesList().add(new Pair<>(resultUri, resultUri.getLastPathSegment()));
+                    addedImagesAdapter.getImagesList().add(resultUri);
                     model.getUriList().add(resultUri);
                     addedImagesAdapter.notifyItemInserted(addedImagesAdapter.getImagesList().size());
                     possiblySensitiveSwitch.setEnabled(true);

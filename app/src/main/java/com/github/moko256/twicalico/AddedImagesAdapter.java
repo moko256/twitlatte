@@ -42,7 +42,7 @@ public class AddedImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     Context context;
 
-    private ArrayList<Pair<Uri, String>> images = new ArrayList<>();
+    private ArrayList<Uri> images = new ArrayList<>();
     private int limit = -1;
 
     private View.OnClickListener onAddButtonClickListener;
@@ -69,9 +69,8 @@ public class AddedImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (getItemViewType(position) == VIEW_TYPE_IMAGE){
             ImageChildViewHolder viewHolder = (ImageChildViewHolder) holder;
-            Pair<Uri, String> pair = images.get(position);
-            Uri image = pair.first;
-            viewHolder.title.setText(pair.second);
+            Uri image = images.get(position);
+            viewHolder.title.setText(image.getLastPathSegment());
             GlideApp.with(context).load(image).into(viewHolder.image);
         } else {
             holder.itemView.setOnClickListener(onAddButtonClickListener);
@@ -100,7 +99,7 @@ public class AddedImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         this.limit = limit;
     }
 
-    public ArrayList<Pair<Uri, String>> getImagesList() {
+    public ArrayList<Uri> getImagesList() {
         return images;
     }
 
