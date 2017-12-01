@@ -17,9 +17,9 @@
 package com.github.moko256.twicalico;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.net.Uri;
-import android.support.annotation.StringRes;
-import android.support.v4.util.Pair;
+import android.provider.MediaStore;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -70,7 +70,20 @@ public class AddedImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         if (getItemViewType(position) == VIEW_TYPE_IMAGE){
             ImageChildViewHolder viewHolder = (ImageChildViewHolder) holder;
             Uri image = images.get(position);
-            viewHolder.title.setText(image.getLastPathSegment());
+
+            String fileName = null;
+            Cursor cursor = context.getContentResolver().query(
+                    image,
+                    new String[]{MediaStore.MediaColumns.DISPLAY_NAME},
+                    null, null, null);
+            if (cursor != null && cursor.moveToNext()){
+                fileName = cursor.getString(
+                        cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DISPLAY_NAME)
+                );
+            }
+            cursor.close();
+
+            viewHolder.title.setText(fileName != null? fileName : image.getLastPathSegment());
             GlideApp.with(context).load(image).into(viewHolder.image);
         } else {
             holder.itemView.setOnClickListener(onAddButtonClickListener);
