@@ -39,7 +39,27 @@ class OAuthModelImpl : OAuthModel {
     var appRegistration: AppRegistration? = null
 
     override fun getCallbackAuthUrl(url: String, consumerKey: String, consumerSecret: String, callbackUrl: String): Single<String> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        clientBuilder = MastodonClient.Builder(url, OkHttpClient.Builder(), Gson())
+        apps = Apps(clientBuilder?.build()!!)
+        return Single.create {
+            try {
+                appRegistration = apps?.createApp(
+                        "twicalico",
+                        callbackUrl + "://OAuthActivity",
+                        Scope(Scope.Name.ALL),
+                        "https://github.com/moko256/twicalico"
+                )?.execute()
+
+                it.onSuccess(
+                        apps?.getOAuthUrl(
+                                appRegistration?.clientId!!,
+                                Scope(Scope.Name.ALL),
+                                appRegistration?.redirectUri!!
+                        ))
+            } catch (e: Mastodon4jRequestException) {
+                it.onError(e)
+            }
+        }
     }
 
     override fun getPinAuthUrl(url: String, consumerKey: String, consumerSecret: String): Single<String> {

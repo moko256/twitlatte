@@ -42,8 +42,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/oauth_using_pin_button"
-        android:onClick="onStartMastodonAuthClick"
+        android:onClick="onStartMastodonAuthPinClick"
         style="@style/Widget.AppCompat.Button.Colored"/>
+
+    <Button
+        android:id="@+id/oauth_mastodon_button_callback"
+        android:text="@string/oauth_mastodon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/oauth_mastodon_button"
+        android:onClick="onStartMastodonAuthUrlClick"
+        style="@style/Widget.AppCompat.Button.Colored"/>
+
 
     <Button
         android:id="@+id/settings"

@@ -106,7 +106,7 @@ public class OAuthActivity extends AppCompatActivity {
         showPinDialog();
     }
 
-    public void onStartMastodonAuthClick(View view) {
+    public void onStartMastodonAuthPinClick(View view) {
         model = new com.github.moko256.twicalico.model.impl.mastodon.OAuthModelImpl();
         EditText editText=new EditText(this);
         editText.setHint("URL");
@@ -123,6 +123,26 @@ public class OAuthActivity extends AppCompatActivity {
                             );
                     showPinDialog();
                 })
+                .setCancelable(false)
+                .show();
+    }
+
+    public void onStartMastodonAuthUrlClick(View view) {
+        model = new com.github.moko256.twicalico.model.impl.mastodon.OAuthModelImpl();
+        EditText editText=new EditText(this);
+        editText.setHint("URL");
+        editText.setInputType(EditorInfo.TYPE_TEXT_VARIATION_URI);
+        new AlertDialog.Builder(this)
+                .setView(editText)
+                .setPositiveButton(android.R.string.ok,(dialog, which) -> {
+                    model.getCallbackAuthUrl(editText.getText().toString(), "", "", getString(R.string.app_name))
+                            .subscribeOn(Schedulers.newThread())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(
+                                    this::startBrowser,
+                                    Throwable::printStackTrace
+                            );
+                 })
                 .setCancelable(false)
                 .show();
     }
