@@ -59,6 +59,8 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
 
     CachedIdListSQLiteOpenHelper statusIdsDatabase;
 
+    int INIT_LIST_POSITION;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         list=new ArrayList<>();
@@ -138,7 +140,8 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
             adapter.notifyDataSetChanged();
         }
 
-        getRecyclerView().getLayoutManager().scrollToPosition(statusIdsDatabase.getListViewPosition());
+        INIT_LIST_POSITION = statusIdsDatabase.getListViewPosition();
+        getRecyclerView().getLayoutManager().scrollToPosition(INIT_LIST_POSITION);
 
         return view;
     }
@@ -166,17 +169,8 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
 
     @Override
     public void onDestroyView() {
-        super.onDestroyView();
-        subscription.unsubscribe();
-        adapter=null;
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
         StaggeredGridLayoutManager layoutManager = (StaggeredGridLayoutManager) getRecyclerView().getLayoutManager();
         int[] positions = layoutManager.findFirstVisibleItemPositions(null);
-        statusIdsDatabase.setListViewPosition(positions[0]);
         ArrayList<Long> ids = statusIdsDatabase.getIds();
         if (ids.size() - positions[0] > 1000){
             List<Long> list = ids.subList(positions[0] + 1000, ids.size());
@@ -190,6 +184,19 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                 }
             }
             GlobalApplication.statusCache.delete(deletableIds);
+        }
+        super.onDestroyView();
+        subscription.unsubscribe();
+        adapter=null;
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        StaggeredGridLayoutManager layoutManager = (StaggeredGridLayoutManager) getRecyclerView().getLayoutManager();
+        int[] positions = layoutManager.findFirstVisibleItemPositions(null);
+        if (positions[0]!= INIT_LIST_POSITION){
+            statusIdsDatabase.setListViewPosition(positions[0]);
         }
     }
 
