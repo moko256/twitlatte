@@ -20,38 +20,38 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <Button
-        android:id="@+id/oauth_using_url_scheme_button"
-        android:text="@string/oauth_using_url_scheme"
+        android:id="@+id/start_twitter_callback_auth_button"
+        android:text="@string/twitter_callback_auth"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="onStartUrlAuthClick"
+        android:onClick="onStartTwitterCallbackAuthClick"
         style="@style/Widget.AppCompat.Button.Colored"/>
 
     <Button
-        android:id="@+id/oauth_using_pin_button"
-        android:text="@string/oauth_using_pin"
+        android:id="@+id/start_twitter_code_auth_button"
+        android:text="@string/twitter_code_auth"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/oauth_using_url_scheme_button"
-        android:onClick="onStartPinAuthClick"
+        android:layout_below="@id/start_twitter_callback_auth_button"
+        android:onClick="onStartTwitterCodeAuthClick"
         style="@style/Widget.AppCompat.Button.Colored"/>
 
     <Button
-        android:id="@+id/oauth_mastodon_button"
-        android:text="@string/oauth_mastodon"
+        android:id="@+id/start_mastodon_callback_auth_button"
+        android:text="@string/mastodon_callback_auth"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/oauth_using_pin_button"
-        android:onClick="onStartMastodonAuthPinClick"
+        android:layout_below="@id/start_twitter_code_auth_button"
+        android:onClick="onStartMastodonCallbackAuthClick"
         style="@style/Widget.AppCompat.Button.Colored"/>
 
     <Button
-        android:id="@+id/oauth_mastodon_button_callback"
-        android:text="@string/oauth_mastodon"
+        android:id="@+id/start_mastodon_code_auth_button"
+        android:text="@string/mastodon_code_auth"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/oauth_mastodon_button"
-        android:onClick="onStartMastodonAuthUrlClick"
+        android:layout_below="@id/start_mastodon_callback_auth_button"
+        android:onClick="onStartMastodonCodeAuthClick"
         style="@style/Widget.AppCompat.Button.Colored"/>
 
 

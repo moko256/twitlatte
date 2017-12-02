@@ -102,9 +102,11 @@
     <string name="use_tweet_source_mute">Use Regex client mute</string>
     <string name="tweet_source_mute_regex_pattern">Tweet posted client mute Regex pattern</string>
     <string name="muted_tweet">Muted tweet</string>
-    <string name="oauth_using_url_scheme">Not using PIN authorization</string>
-    <string name="oauth_using_pin">Using PIN authorization</string>
-    <string name="oauth_mastodon">Mastodon authorization</string>
+
+    <string name="twitter_callback_auth">Twitter callback authorization</string>
+    <string name="twitter_code_auth">Twitter code authorization</string>
+    <string name="mastodon_callback_auth">Mastodon callback authorization</string>
+    <string name="mastodon_code_auth">Mastodon code authorization</string>
 
     <string name="mode_image_level_none">Do not load images on the timeline</string>
     <string name="mode_image_level_normal">Load images on the timeline</string>

@@ -62,7 +62,7 @@ class OAuthModelImpl : OAuthModel {
         }
     }
 
-    override fun getPinAuthUrl(url: String, consumerKey: String, consumerSecret: String): Single<String> {
+    override fun getCodeAuthUrl(url: String, consumerKey: String, consumerSecret: String): Single<String> {
         clientBuilder = MastodonClient.Builder(url, OkHttpClient.Builder(), Gson())
         apps = Apps(clientBuilder?.build()!!)
         return Single.create {

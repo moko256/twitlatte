@@ -56,7 +56,11 @@ public class OAuthActivity extends AppCompatActivity {
         super.onNewIntent(intent);
         Uri uri = intent.getData();
         if(!requirePin && uri != null && uri.toString().startsWith(getString(R.string.app_name) + "://OAuthActivity")){
-            initToken(uri.getQueryParameter("oauth_verifier"));
+            String string = uri.getQueryParameter("oauth_verifier");
+            if (string != null) {
+                initToken(string);
+            }
+            initToken(uri.getQueryParameter("code"));
         }
     }
 
@@ -88,7 +92,7 @@ public class OAuthActivity extends AppCompatActivity {
         finish();
     }
 
-    public void onStartUrlAuthClick(View view) {
+    public void onStartTwitterCallbackAuthClick(View view) {
         model = new com.github.moko256.twicalico.model.impl.twitter.OAuthModelImpl();
         model.getCallbackAuthUrl("twitter.com", GlobalApplication.consumerKey, GlobalApplication.consumerSecret, getString(R.string.app_name))
                 .subscribeOn(Schedulers.newThread())
@@ -96,38 +100,17 @@ public class OAuthActivity extends AppCompatActivity {
                 .subscribe(this::startBrowser, Throwable::printStackTrace);
     }
 
-    public void onStartPinAuthClick(View view) {
+    public void onStartTwitterCodeAuthClick(View view) {
         model = new com.github.moko256.twicalico.model.impl.twitter.OAuthModelImpl();
         requirePin = true;
-        model.getPinAuthUrl("twitter.com", GlobalApplication.consumerKey, GlobalApplication.consumerSecret)
+        model.getCodeAuthUrl("twitter.com", GlobalApplication.consumerKey, GlobalApplication.consumerSecret)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this::startBrowser, Throwable::printStackTrace);
         showPinDialog();
     }
 
-    public void onStartMastodonAuthPinClick(View view) {
-        model = new com.github.moko256.twicalico.model.impl.mastodon.OAuthModelImpl();
-        EditText editText=new EditText(this);
-        editText.setHint("URL");
-        editText.setInputType(EditorInfo.TYPE_TEXT_VARIATION_URI);
-        new AlertDialog.Builder(this)
-                .setView(editText)
-                .setPositiveButton(android.R.string.ok,(dialog, which) -> {
-                    model.getPinAuthUrl(editText.getText().toString(), "", "")
-                            .subscribeOn(Schedulers.newThread())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(
-                                    this::startBrowser,
-                                    Throwable::printStackTrace
-                            );
-                    showPinDialog();
-                })
-                .setCancelable(false)
-                .show();
-    }
-
-    public void onStartMastodonAuthUrlClick(View view) {
+    public void onStartMastodonCallbackAuthClick(View view) {
         model = new com.github.moko256.twicalico.model.impl.mastodon.OAuthModelImpl();
         EditText editText=new EditText(this);
         editText.setHint("URL");
@@ -142,7 +125,28 @@ public class OAuthActivity extends AppCompatActivity {
                                     this::startBrowser,
                                     Throwable::printStackTrace
                             );
-                 })
+                })
+                .setCancelable(false)
+                .show();
+    }
+
+    public void onStartMastodonCodeAuthClick(View view) {
+        model = new com.github.moko256.twicalico.model.impl.mastodon.OAuthModelImpl();
+        EditText editText=new EditText(this);
+        editText.setHint("URL");
+        editText.setInputType(EditorInfo.TYPE_TEXT_VARIATION_URI);
+        new AlertDialog.Builder(this)
+                .setView(editText)
+                .setPositiveButton(android.R.string.ok,(dialog, which) -> {
+                    model.getCodeAuthUrl(editText.getText().toString(), "", "")
+                            .subscribeOn(Schedulers.newThread())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(
+                                    this::startBrowser,
+                                    Throwable::printStackTrace
+                            );
+                    showPinDialog();
+                })
                 .setCancelable(false)
                 .show();
     }

@@ -48,7 +48,7 @@ class OAuthModelImpl : OAuthModel {
         }
     }
 
-    override fun getPinAuthUrl(url: String, consumerKey: String, consumerSecret: String): Single<String> {
+    override fun getCodeAuthUrl(url: String, consumerKey: String, consumerSecret: String): Single<String> {
         val conf = ConfigurationContext.getInstance()
         val oauth = OAuthAuthorization(conf)
         oauth.setOAuthConsumer(consumerKey, consumerSecret)

@@ -26,7 +26,7 @@ import twitter4j.auth.AccessToken
  */
 public interface OAuthModel {
     fun getCallbackAuthUrl(url: String, consumerKey: String, consumerSecret: String, callbackUrl: String): Single<String>
-    fun getPinAuthUrl(url: String, consumerKey: String, consumerSecret: String): Single<String>
+    fun getCodeAuthUrl(url: String, consumerKey: String, consumerSecret: String): Single<String>
 
     fun initToken(pin: String): Single<AccessToken>
 }
