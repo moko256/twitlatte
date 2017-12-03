@@ -59,7 +59,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
 
     CachedIdListSQLiteOpenHelper statusIdsDatabase;
 
-    int INIT_LIST_POSITION;
+    int LAST_SAVED_LIST_POSITION;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -140,10 +140,16 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
             adapter.notifyDataSetChanged();
         }
 
-        INIT_LIST_POSITION = statusIdsDatabase.getListViewPosition();
-        getRecyclerView().getLayoutManager().scrollToPosition(INIT_LIST_POSITION);
+        LAST_SAVED_LIST_POSITION = statusIdsDatabase.getListViewPosition();
+        getRecyclerView().getLayoutManager().scrollToPosition(LAST_SAVED_LIST_POSITION);
 
         return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        LAST_SAVED_LIST_POSITION = statusIdsDatabase.getListViewPosition();
     }
 
     @Override
@@ -195,7 +201,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
         super.onStop();
         StaggeredGridLayoutManager layoutManager = (StaggeredGridLayoutManager) getRecyclerView().getLayoutManager();
         int[] positions = layoutManager.findFirstVisibleItemPositions(null);
-        if (positions[0]!= INIT_LIST_POSITION){
+        if (positions[0]!= LAST_SAVED_LIST_POSITION){
             statusIdsDatabase.setListViewPosition(positions[0]);
         }
     }
