@@ -205,13 +205,12 @@ public class StatusView extends FrameLayout {
 
         timeStampText.setText(timeSpanConverter.toTimeSpanString(item.getCreatedAt().getTime()));
         userImage.setOnClickListener(v-> getContext().startActivity(ShowUserActivity.getIntent(getContext(), item.getUser().getId())));
-        setOnLongClickListener(v -> {
+        setOnClickListener(v -> {
             ViewCompat.setTransitionName(userImage,"tweet_user_image");
             getContext().startActivity(
                     ShowTweetActivity.getIntent(getContext(), item.getId()),
                     ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) getContext(), userImage,"tweet_user_image").toBundle()
             );
-            return true;
         });
 
         Status quotedStatus=item.getQuotedStatus();
