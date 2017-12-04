@@ -182,7 +182,11 @@ public class ShowTweetActivity extends AppCompatActivity {
         AppCompatEditText replyText= findViewById(R.id.tweet_show_tweet_reply_text);
         AppCompatButton replyButton= findViewById(R.id.tweet_show_tweet_reply_button);
         UserMentionEntity[] users = item.getUserMentionEntities();
-        replyText.setText(TwitterStringUtils.convertToReplyTopString(item.getUser().getScreenName(), users));
+        replyText.setText(TwitterStringUtils.convertToReplyTopString(
+                GlobalApplication.userCache.get(GlobalApplication.userId).getScreenName(),
+                item.getUser().getScreenName(),
+                users
+        ));
         replyButton.setOnClickListener(v -> {
             replyButton.setEnabled(false);
             PostTweetModel model = PostTweetModelCreator.getInstance(GlobalApplication.twitter, getContentResolver());
@@ -192,7 +196,10 @@ public class ShowTweetActivity extends AppCompatActivity {
                     model.postTweet()
                             .subscribe(
                                     it -> {
-                                        replyText.setText(TwitterStringUtils.convertToReplyTopString(item.getUser().getScreenName(), users));
+                                        replyText.setText(TwitterStringUtils.convertToReplyTopString(
+                                                GlobalApplication.userCache.get(GlobalApplication.userId).getScreenName(),
+                                                item.getUser().getScreenName(), users
+                                        ));
                                         replyButton.setEnabled(true);
                                         Toast.makeText(ShowTweetActivity.this,R.string.succeeded,Toast.LENGTH_SHORT).show();
                                     },

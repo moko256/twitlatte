@@ -303,7 +303,15 @@ public class StatusView extends FrameLayout {
         retweetButton.setEnabled(GlobalApplication.twitter instanceof MastodonTwitterImpl || !(item.getUser().isProtected()) || item.getUser().getId() == GlobalApplication.userId);
 
         replyButton.setOnClickListener(
-                v -> getContext().startActivity(PostTweetActivity.getIntent(getContext(), item.getId(), TwitterStringUtils.convertToReplyTopString(item.getUser().getScreenName(), item.getUserMentionEntities()).toString()))
+                v -> getContext().startActivity(PostTweetActivity.getIntent(
+                        getContext(),
+                        item.getId(),
+                        TwitterStringUtils.convertToReplyTopString(
+                                GlobalApplication.userCache.get(GlobalApplication.userId).getScreenName(),
+                                item.getUser().getScreenName(),
+                                item.getUserMentionEntities()
+                        ).toString()
+                ))
         );
 
         likeCount.setText((item.getFavoriteCount() != 0)? TwitterStringUtils.convertToSIUnitString(item.getFavoriteCount()): "");

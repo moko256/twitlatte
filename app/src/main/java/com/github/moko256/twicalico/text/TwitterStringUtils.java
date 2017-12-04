@@ -94,17 +94,26 @@ public class TwitterStringUtils {
         return (isNegative? "-": "") + String.valueOf(Math.round(g)) + "G";
     }
 
-
-    public static CharSequence convertToReplyTopString(String userScreenName, UserMentionEntity[] users){
+    @NonNull
+    public static CharSequence convertToReplyTopString(@NonNull String userScreenName,
+                                                       @NonNull String replyToScreenName,
+                                                       @NonNull UserMentionEntity[] users){
         StringBuilder userIdsStr = new StringBuilder();
-        userIdsStr.append("@").append(userScreenName).append(" ");
+
+        if (!userScreenName.equals(replyToScreenName)) {
+            userIdsStr.append("@").append(replyToScreenName).append(" ");
+        }
+
         for (UserMentionEntity user : users) {
-            userIdsStr.append("@").append(user.getScreenName()).append(" ");
+            String screenName = user.getScreenName();
+            if (!(screenName.equals(userScreenName) || screenName.equals(replyToScreenName))) {
+                userIdsStr.append("@").append(screenName).append(" ");
+            }
         }
         return userIdsStr;
     }
 
-    public static String convertErrorToText(Throwable e){
+    public static String convertErrorToText(@NonNull Throwable e){
         if (e instanceof TwitterException && !TextUtils.isEmpty(((TwitterException) e).getErrorMessage())){
             return ((TwitterException) e).getErrorMessage();
         } else {
