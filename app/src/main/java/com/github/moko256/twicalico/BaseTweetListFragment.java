@@ -16,16 +16,20 @@
 
 package com.github.moko256.twicalico;
 
+import android.content.Context;
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.TypedValue;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.github.moko256.twicalico.database.CachedIdListSQLiteOpenHelper;
@@ -327,10 +331,21 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
 
     @Override
     protected RecyclerView.LayoutManager initializeRecyclerViewLayoutManager() {
-            return new StaggeredGridLayoutManager(
-                    (int) Math.ceil(getContext().getResources().getConfiguration().smallestScreenWidthDp/300),
-                    StaggeredGridLayoutManager.VERTICAL
-            );
+        WindowManager wm = (WindowManager) getActivity().getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+
+        Point size = new Point();
+        display.getSize(size);
+
+        return new StaggeredGridLayoutManager(
+                (int) Math.ceil(
+                        (double)
+                                //Calculated as:
+                                //Picture area: (16 : 9) + Other content: (16 : 3)
+                                (size.x * 12) / (size.y * 16)
+                ),
+                StaggeredGridLayoutManager.VERTICAL
+        );
     }
 
     protected abstract String getCachedIdsDatabaseName();
