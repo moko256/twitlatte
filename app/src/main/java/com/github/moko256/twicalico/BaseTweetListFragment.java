@@ -90,7 +90,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                 super.getItemOffsets(outRect, view, parent, state);
 
                 int span = ((StaggeredGridLayoutManager.LayoutParams) view.getLayoutParams()).getSpanIndex();
-                float dens = getContext().getResources().getDisplayMetrics().density;
+                float dens = getResources().getDisplayMetrics().density;
 
                 outRect.left = Math.round(dens * (span == 0 ? 8f : 4f));
                 outRect.right = Math.round(dens * (span == ((StaggeredGridLayoutManager) parent.getLayoutManager()).getSpanCount() - 1 ? 8f : 4f));
