@@ -144,8 +144,10 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
             adapter.notifyDataSetChanged();
         }
 
-        LAST_SAVED_LIST_POSITION = statusIdsDatabase.getListViewPosition();
-        getRecyclerView().getLayoutManager().scrollToPosition(LAST_SAVED_LIST_POSITION);
+        if (savedInstanceState == null) {
+            LAST_SAVED_LIST_POSITION = statusIdsDatabase.getListViewPosition();
+            getRecyclerView().getLayoutManager().scrollToPosition(LAST_SAVED_LIST_POSITION);
+        }
 
         return view;
     }
