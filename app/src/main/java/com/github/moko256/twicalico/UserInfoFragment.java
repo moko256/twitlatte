@@ -36,6 +36,7 @@ import java.text.DateFormat;
 import rx.Single;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
+import rx.subscriptions.CompositeSubscription;
 import twitter4j.TwitterException;
 import twitter4j.User;
 
@@ -46,6 +47,8 @@ import twitter4j.User;
  */
 
 public class UserInfoFragment extends Fragment implements ToolbarTitleInterface {
+
+    CompositeSubscription subscription;
 
     GlideRequests glideRequests;
 
@@ -78,11 +81,20 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        subscription = new CompositeSubscription();
         userId = getArguments().getLong("userId");
 
         User cachedUser = GlobalApplication.userCache.get(userId);
         if (cachedUser==null){
-            updateUser();
+            subscription.add(
+                    updateUser()
+                            .subscribeOn(Schedulers.newThread())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(
+                                    this::setShowUserInfo,
+                                    Throwable::printStackTrace
+                            )
+            );
         }
     }
 
@@ -95,7 +107,7 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
 
         swipeRefreshLayout = view.findViewById(R.id.show_user_swipe_refresh);
         swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
-        swipeRefreshLayout.setOnRefreshListener(() -> updateUser()
+        swipeRefreshLayout.setOnRefreshListener(() -> subscription.add(updateUser()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -104,7 +116,7 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
                             swipeRefreshLayout.setRefreshing(false);
                         },
                         Throwable::printStackTrace
-                ));
+                )));
 
         header= view.findViewById(R.id.show_user_bgimage);
         icon= view.findViewById(R.id.show_user_image);
@@ -127,6 +139,13 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
         }
 
         return view;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        subscription.unsubscribe();
+        subscription = null;
     }
 
     @Override

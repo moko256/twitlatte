@@ -37,6 +37,7 @@ import rx.Completable;
 import rx.Single;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
+import rx.subscriptions.CompositeSubscription;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.User;
@@ -48,6 +49,8 @@ import twitter4j.User;
  */
 public class ShowUserActivity extends AppCompatActivity implements BaseListFragment.GetSnackBarParentContainerId {
 
+    CompositeSubscription subscription;
+
     User user;
 
     ActionBar actionBar;
@@ -58,6 +61,8 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_user);
+
+        subscription = new CompositeSubscription();
 
         setSupportActionBar(findViewById(R.id.toolbar_show_user));
 
@@ -92,20 +97,24 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
                 startActivity(PostTweetActivity.getIntent(this, TwitterStringUtils.plusAtMark(user.getScreenName())+" "));
             }
         });
-
-        getUserSingle()
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        it -> viewPager.setAdapter(new ShowUserFragmentsPagerAdapter(getSupportFragmentManager(),this,it.getId())),
-                        e -> Snackbar.make(findViewById(getSnackBarParentContainerId()), TwitterStringUtils.convertErrorToText(e), Snackbar.LENGTH_INDEFINITE)
-                                .show()
-                );
+        subscription.add(
+                getUserSingle()
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                                it -> viewPager.setAdapter(new ShowUserFragmentsPagerAdapter(getSupportFragmentManager(),this,it.getId())),
+                                e -> Snackbar.make(findViewById(getSnackBarParentContainerId()), TwitterStringUtils.convertErrorToText(e), Snackbar.LENGTH_INDEFINITE)
+                                        .show()
+                        )
+        );
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+
+        subscription.unsubscribe();
+        subscription = null;
 
         tabLayout=null;
         viewPager=null;
