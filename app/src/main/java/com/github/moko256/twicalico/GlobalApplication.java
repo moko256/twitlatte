@@ -27,7 +27,6 @@ import android.graphics.Color;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatDelegate;
 
 import com.github.moko256.mastodon.MastodonTwitterImpl;
@@ -82,6 +81,8 @@ public class GlobalApplication extends Application {
             );
             channel.setDescription(getString(R.string.crash_log_channel_description));
             channel.setLightColor(Color.RED);
+            channel.enableLights(true);
+            channel.setShowBadge(false);
             channel.setLockscreenVisibility(Notification.VISIBILITY_SECRET);
 
             ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).createNotificationChannel(channel);
@@ -105,7 +106,8 @@ public class GlobalApplication extends Application {
                                 .setContentText(e.toString())
                                 .setWhen(new Date().getTime())
                                 .setShowWhen(true)
-                                .setColor(ContextCompat.getColor(this, R.color.colorAccent))
+                                .setColorized(true)
+                                .setColor(Color.RED)
                                 .setContentIntent(PendingIntent.getActivity(
                                         this,
                                         401,
