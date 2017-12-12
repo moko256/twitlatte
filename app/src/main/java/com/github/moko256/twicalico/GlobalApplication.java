@@ -90,6 +90,7 @@ public class GlobalApplication extends Application {
         final Thread.UncaughtExceptionHandler defaultUnCaughtExceptionHandler=Thread.getDefaultUncaughtExceptionHandler();
         Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
             try {
+                e.printStackTrace();
                 StringWriter stringWriter=new StringWriter();
                 PrintWriter printWriter=new PrintWriter(stringWriter);
                 e.printStackTrace(printWriter);
