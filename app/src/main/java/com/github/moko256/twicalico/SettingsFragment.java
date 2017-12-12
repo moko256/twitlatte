@@ -150,6 +150,12 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                     }
             );
 
+            Preference causeError = findPreference("cause_error");
+            causeError.setOnPreferenceClickListener(preference -> {
+                getActivity().finish();
+                throw new NullPointerException();
+            });
+
             Preference licenseThisApp=findPreference("license_at_this_app");
             licenseThisApp.setOnPreferenceClickListener(preference -> {
                 getContext().startActivity(

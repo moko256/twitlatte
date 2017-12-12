@@ -87,6 +87,8 @@
     <string name="open_source_license">Open source license</string>
     <string name="enable">Enable</string>
     <string name="disable">Disable</string>
+    <string name="debug">Debug</string>
+    <string name="cause_error">Cause error</string>
     <string name="crash_log">Crash Log</string>
     <string name="crash_log_channel_description">Notify crash log when twicalico crashed</string>
     <string name="high_power_mute">High Power Mute</string>
