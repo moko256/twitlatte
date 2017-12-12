@@ -76,6 +76,12 @@ class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> {
     }
 
     @Override
+    public void onViewRecycled(ViewHolder holder) {
+        super.onViewRecycled(holder);
+        glideRequests.clear(holder.userUserImage);
+    }
+
+    @Override
     public int getItemCount() {
         if (data != null) {
             return data.size();

@@ -133,6 +133,7 @@ public class StatusView extends FrameLayout {
             this.status = status;
             updateView();
         } else {
+            glideRequests.clear(userImage);
             imageTableView.clearImages();
         }
     }

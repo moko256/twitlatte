@@ -50,6 +50,7 @@ import java.util.ArrayList;
 import rx.Single;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
+import rx.subscriptions.CompositeSubscription;
 import twitter4j.TwitterException;
 import twitter4j.User;
 import twitter4j.auth.AccessToken;
@@ -61,11 +62,15 @@ import twitter4j.auth.AccessToken;
  */
 public class MainActivity extends AppCompatActivity implements BaseListFragment.GetSnackBarParentContainerId {
 
+    CompositeSubscription subscription;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        subscription = new CompositeSubscription();
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -155,40 +160,42 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                 startActivity(new Intent(this, OAuthActivity.class));
             });
 
-            Single.create(
-                    singleSubscriber -> {
-                        SQLiteDatabase database = helper.getReadableDatabase();
-                        Cursor c=database.query("AccountTokenList",new String[]{"userId", "userName"},null,null,null,null,null);
-                        ArrayList<Pair<Uri, String>> r = new ArrayList<>();
-                        while (c.moveToNext()){
-                            long id = Long.valueOf(c.getString(0));
-                            User user = new CachedUsersSQLiteOpenHelper(this, id).getCachedUser(id);
-                            if (user ==  null){
-                                try {
-                                    user = ((GlobalApplication) getApplication()).getTwitterInstance(helper.getAccessToken(c.getPosition())).verifyCredentials();
-                                    new CachedUsersSQLiteOpenHelper(this, user.getId()).addCachedUser(user);
-                                } catch (TwitterException e) {
-                                    singleSubscriber.onError(e);
+            subscription.add(
+                    Single.create(
+                            singleSubscriber -> {
+                                SQLiteDatabase database = helper.getReadableDatabase();
+                                Cursor c=database.query("AccountTokenList",new String[]{"userId", "userName"},null,null,null,null,null);
+                                ArrayList<Pair<Uri, String>> r = new ArrayList<>();
+                                while (c.moveToNext()){
+                                    long id = Long.valueOf(c.getString(0));
+                                    User user = new CachedUsersSQLiteOpenHelper(this, id).getCachedUser(id);
+                                    if (user ==  null){
+                                        try {
+                                            user = ((GlobalApplication) getApplication()).getTwitterInstance(helper.getAccessToken(c.getPosition())).verifyCredentials();
+                                            new CachedUsersSQLiteOpenHelper(this, user.getId()).addCachedUser(user);
+                                        } catch (TwitterException e) {
+                                            singleSubscriber.onError(e);
+                                        }
+                                    }
+                                    r.add(new Pair<>(
+                                            Uri.parse(user.getProfileImageURLHttps()),
+                                            TwitterStringUtils.plusAtMark(c.getString(1))
+                                    ));
                                 }
-                            }
-                            r.add(new Pair<>(
-                                    Uri.parse(user.getProfileImageURLHttps()),
-                                    TwitterStringUtils.plusAtMark(c.getString(1))
-                            ));
-                        }
-                        c.close();
-                        database.close();
-                        singleSubscriber.onSuccess(r);
-                    })
-                    .subscribeOn(Schedulers.newThread())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(
-                            o -> {
-                                adapter.getImagesList().addAll((ArrayList<Pair<Uri, String>>) o);
-                                adapter.notifyDataSetChanged();
-                            },
-                            Throwable::printStackTrace
-                    );
+                                c.close();
+                                database.close();
+                                singleSubscriber.onSuccess(r);
+                            })
+                            .subscribeOn(Schedulers.newThread())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(
+                                    o -> {
+                                        adapter.getImagesList().addAll((ArrayList<Pair<Uri, String>>) o);
+                                        adapter.notifyDataSetChanged();
+                                    },
+                                    Throwable::printStackTrace
+                            )
+            );
 
             float dp = Math.round(getResources().getDisplayMetrics().density);
 
@@ -207,25 +214,27 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                     .show();
         });
 
-        Single.create(
-                subscriber->{
-                    try {
-                        User me = GlobalApplication.userCache.get(GlobalApplication.userId);
-                        if (me == null){
-                            me = GlobalApplication.twitter.verifyCredentials();
-                            GlobalApplication.userCache.add(me);
-                        }
-                        subscriber.onSuccess(me);
-                    } catch (TwitterException e) {
-                        subscriber.onError(e);
-                    }
-                })
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        result -> setDrawerHeader((User) result, userNameText, userIdText, userImage, userBackgroundImage),
-                        Throwable::printStackTrace
-                );
+        subscription.add(
+                Single.create(
+                        subscriber->{
+                            try {
+                                User me = GlobalApplication.userCache.get(GlobalApplication.userId);
+                                if (me == null){
+                                    me = GlobalApplication.twitter.verifyCredentials();
+                                    GlobalApplication.userCache.add(me);
+                                }
+                                subscriber.onSuccess(me);
+                            } catch (TwitterException e) {
+                                subscriber.onError(e);
+                            }
+                        })
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                                result -> setDrawerHeader((User) result, userNameText, userIdText, userImage, userBackgroundImage),
+                                Throwable::printStackTrace
+                        )
+        );
 
         findViewById(R.id.fab).setOnClickListener(v -> startActivity(new Intent(this, PostTweetActivity.class)));
 
@@ -254,6 +263,13 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
             attachFragment(top, navigationView, tabLayout);
         }
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        subscription.unsubscribe();
+        subscription = null;
     }
 
     @Override
