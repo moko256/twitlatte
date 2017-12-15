@@ -20,9 +20,12 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.text.util.LinkifyCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
+import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -178,7 +181,9 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
         }
 
         if (!TextUtils.isEmpty(user.getURL())){
-            userUrl.setText(getString(R.string.url_is, user.getURL()));
+            SpannableStringBuilder builder = new SpannableStringBuilder(getString(R.string.url_is, user.getURL()));
+            LinkifyCompat.addLinks(builder, Linkify.WEB_URLS);
+            userUrl.setText(TwitterStringUtils.convertUrlSpanToCustomTabs(builder, getContext()));
             userUrl.setMovementMethod(LinkMovementMethod.getInstance());
         } else {
             userUrl.setVisibility(View.GONE);

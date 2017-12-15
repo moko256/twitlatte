@@ -90,7 +90,14 @@ public class MTStatus implements twitter4j.Status{
     @Override
     public String getSource() {
         if (status.getApplication() != null) {
-            return "<a href='" + status.getApplication().getWebsite() + "'>" + status.getApplication().getName() + "</a>";
+            //This null check is needed
+            // because status.getApplication.getWebsite may be null though its return type is written non null.
+            //Kotlin 1.2.10
+            if (status.getApplication().getWebsite() != null && !status.getApplication().getWebsite().equals("")) {
+                return "<a href='" + status.getApplication().getWebsite() + "'>" + status.getApplication().getName() + "</a>";
+            } else {
+                return status.getApplication().getName();
+            }
         } else {
             return "unknown";
         }

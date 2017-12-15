@@ -31,6 +31,7 @@ import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.ClickableSpan;
+import android.text.style.URLSpan;
 import android.view.View;
 import android.widget.TextView;
 
@@ -164,7 +165,7 @@ public class TwitterStringUtils {
         String tweet = item.getText();
 
         if (GlobalApplication.twitter instanceof MastodonTwitterImpl){
-            Spanned previewText = Html.fromHtml(tweet);
+            Spanned previewText = convertUrlSpanToCustomTabs(Html.fromHtml(tweet), context);
             textView.setText(previewText);
 
             int imageSize = (int) Math.floor(textView.getTextSize() * 1.15);
@@ -201,14 +202,14 @@ public class TwitterStringUtils {
                 @Override
                 protected void onPostExecute(Void aVoid) {
                     if (previewText.toString().equals(textView.getText().toString())) {
-                        textView.setText(Html.fromHtml(tweet, key ->{
+                        textView.setText(convertUrlSpanToCustomTabs(Html.fromHtml(tweet, key ->{
                             Drawable value = map.get(key);
                             if (value instanceof GifDrawable){
                                 value.setCallback(new Drawable.Callback() {
                                     @Override
                                     public void invalidateDrawable(@NonNull Drawable who) {
                                         if (previewText.toString().equals(textView.getText().toString())) {
-                                            textView.setText(Html.fromHtml(tweet, map::get, null));
+                                            textView.setText(convertUrlSpanToCustomTabs(Html.fromHtml(tweet, map::get, null), context));
                                         }
                                     }
 
@@ -226,7 +227,7 @@ public class TwitterStringUtils {
                                 ((GifDrawable) value).start();
                             }
                             return value;
-                        }, null));
+                        }, null), context));
                     }
                 }
             }.execute();
@@ -315,7 +316,7 @@ public class TwitterStringUtils {
         String description = user.getDescription();
 
         if (GlobalApplication.twitter instanceof MastodonTwitterImpl){
-            return Html.fromHtml(description);
+            return convertUrlSpanToCustomTabs(Html.fromHtml(description), context);
         }
 
         URLEntity[] urlEntities = user.getDescriptionURLEntities();
@@ -351,6 +352,25 @@ public class TwitterStringUtils {
         }
 
         return spannableStringBuilder;
+    }
+
+    public static Spanned convertUrlSpanToCustomTabs(Spanned spanned, Context context){
+        SpannableStringBuilder builder = new SpannableStringBuilder(spanned);
+        URLSpan[] spans = spanned.getSpans(0, spanned.length(), URLSpan.class);
+        for (URLSpan span : spans) {
+            builder.removeSpan(span);
+            builder.setSpan(new ClickableSpan() {
+                @Override
+                public void onClick(View view) {
+                    new CustomTabsIntent.Builder()
+                            .setToolbarColor(ContextCompat.getColor(context, R.color.colorPrimary))
+                            .setSecondaryToolbarColor(ContextCompat.getColor(context, R.color.colorPrimaryDark))
+                            .build()
+                            .launchUrl(context, Uri.parse(span.getURL()));
+                }
+            }, spanned.getSpanStart(span), spanned.getSpanEnd(span), spanned.getSpanFlags(span));
+        }
+        return builder;
     }
 
 }

@@ -176,7 +176,7 @@ public class ShowTweetActivity extends AppCompatActivity {
                         .format(item.getCreatedAt())
         );
         TextView viaText= findViewById(R.id.tweet_show_via);
-        viaText.setText(Html.fromHtml("via:"+item.getSource()));
+        viaText.setText(TwitterStringUtils.convertUrlSpanToCustomTabs(Html.fromHtml("via:"+item.getSource()), this));
         viaText.setMovementMethod(new LinkMovementMethod());
 
         AppCompatEditText replyText= findViewById(R.id.tweet_show_tweet_reply_text);
