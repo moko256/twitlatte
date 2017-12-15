@@ -182,10 +182,15 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 Date birthday=new Date(1446956982000L);
                 Toast.makeText(
                         getContext(),
-                        getString(R.string.birthday_of_this_app_is, birthday),
-                        Toast.LENGTH_SHORT
+                        getString(
+                                R.string.birthday_of_this_app_is,
+                                birthday
+                        ) + "\n\n" + getString(
+                                R.string.age_of_this_app_is,
+                                (int) Math.floor((new Date().getTime()-birthday.getTime())/(31557600000L))
+                        ),
+                        Toast.LENGTH_LONG
                 ).show();
-                Toast.makeText(getContext(), getString(R.string.age_of_this_app_is, (int) Math.floor((new Date().getTime()-birthday.getTime())/(31557600000L))), Toast.LENGTH_SHORT).show();
                 return false;
             });
         } else if(getArguments().getString(ARG_PREFERENCE_ROOT).equals("license")){
