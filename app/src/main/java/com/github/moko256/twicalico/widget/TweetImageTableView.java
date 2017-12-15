@@ -86,6 +86,7 @@ public class TweetImageTableView extends GridLayout {
             ));
             covers[i] = new FrameLayout(context);
             covers[i].addView(imageViews[i]);
+            covers[i].setOnLongClickListener(v -> TweetImageTableView.this.performLongClick());
         }
     }
 

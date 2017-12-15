@@ -192,7 +192,7 @@ class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         void setStatus(Status status) {
             Status item = status.isRetweet()? status.getRetweetedStatus(): status;
             tweetImageTableView.setMediaEntities(item.getMediaEntities());
-            itemView.setOnLongClickListener(v -> {
+            tweetImageTableView.setOnLongClickListener(v -> {
                 context.startActivity(ShowTweetActivity.getIntent(context, item.getId()));
                 return true;
             });
