@@ -235,7 +235,7 @@ public class StatusView extends FrameLayout {
 
         if (mediaEntities.length!=0){
             imageTableView.setVisibility(View.VISIBLE);
-            imageTableView.setMediaEntities(mediaEntities);
+            imageTableView.setMediaEntities(mediaEntities, item.isPossiblySensitive());
         }
         else{
             imageTableView.setVisibility(View.GONE);

@@ -31,6 +31,7 @@ import com.github.moko256.twicalico.GlobalApplication;
 import com.github.moko256.twicalico.R;
 import com.github.moko256.twicalico.ShowImageActivity;
 
+import jp.wasabeef.glide.transformations.BlurTransformation;
 import twitter4j.MediaEntity;
 
 /**
@@ -43,6 +44,8 @@ public class TweetImageTableView extends GridLayout {
     private ImageView imageViews[];
     private MediaEntity mediaEntities[];
     private FrameLayout covers[];
+
+    private boolean isOpen = true;
 
     /* {row,column,rowSpan,colSpan} */
     private final int params[][][]={
@@ -142,7 +145,7 @@ public class TweetImageTableView extends GridLayout {
         return params;
     }
 
-    public void setMediaEntities(MediaEntity[] mediaEntities) {
+    public void setMediaEntities(MediaEntity[] mediaEntities, boolean sensitive) {
         this.mediaEntities = mediaEntities;
         updateImageNumber();
         int imageNum = mediaEntities.length;
@@ -151,16 +154,46 @@ public class TweetImageTableView extends GridLayout {
         }
         for (int ii = 0; ii < imageNum; ii++) {
             int finalIi = ii;
-            covers[ii].setOnClickListener(v-> getContext().startActivity(ShowImageActivity.getIntent(getContext(),mediaEntities, finalIi)));
+            covers[ii].setOnClickListener(v -> {
+                if (isOpen){
+                    getContext().startActivity(ShowImageActivity.getIntent(getContext(),mediaEntities, finalIi));
+                } else {
+                    isOpen = true;
+                    for (int iii = 0; iii < mediaEntities.length; iii++){
+                        GlideApp.with(getContext())
+                                .load(GlobalApplication.twitter instanceof MastodonTwitterImpl?
+                                        mediaEntities[iii].getMediaURLHttps().replace("original", "small"):
+                                        mediaEntities[iii].getMediaURLHttps() + ":small"
+                                )
+                                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                                .into(imageViews[iii]);
+                    }
+                }
+
+            });
 
             if (GlobalApplication.configuration.isTimelineImageLoad()){
-                GlideApp.with(getContext())
-                        .load(GlobalApplication.twitter instanceof MastodonTwitterImpl?
-                                mediaEntities[ii].getMediaURLHttps().replace("original", "small"):
-                                mediaEntities[ii].getMediaURLHttps() + ":small"
-                        )
-                        .diskCacheStrategy(DiskCacheStrategy.NONE)
-                        .into(imageViews[ii]);
+
+                if (sensitive){
+                    isOpen = false;
+                    GlideApp.with(getContext())
+                            .load(GlobalApplication.twitter instanceof MastodonTwitterImpl?
+                                    mediaEntities[ii].getMediaURLHttps().replace("original", "small"):
+                                    mediaEntities[ii].getMediaURLHttps() + ":small"
+                            )
+                            .transform(new BlurTransformation())
+                            .diskCacheStrategy(DiskCacheStrategy.NONE)
+                            .into(imageViews[ii]);
+                } else {
+                    isOpen = true;
+                    GlideApp.with(getContext())
+                            .load(GlobalApplication.twitter instanceof MastodonTwitterImpl?
+                                    mediaEntities[ii].getMediaURLHttps().replace("original", "small"):
+                                    mediaEntities[ii].getMediaURLHttps() + ":small"
+                            )
+                            .diskCacheStrategy(DiskCacheStrategy.NONE)
+                            .into(imageViews[ii]);
+                }
                 if (mediaEntities[ii].getType().equals("video")){
                     covers[ii].setForeground(AppCompatResources.getDrawable(getContext(), R.drawable.player_foreground));
                 } else if (mediaEntities[ii].getType().equals("animated_gif")){

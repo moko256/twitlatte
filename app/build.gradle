@@ -81,6 +81,8 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.4.0'
     implementation 'com.github.bumptech.glide:okhttp3-integration:4.4.0'
 
+    implementation 'jp.wasabeef:glide-transformations:3.0.1'
+
     implementation project(":mastodon4j_to_twitter4j")
 
     implementation 'com.github.chrisbanes:PhotoView:2.1.3'
