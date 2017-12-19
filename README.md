@@ -6,13 +6,16 @@ This application is the Twitter and Mastodon client for Android\.
 |Timeline|Post screen|Trends screen|
 |---|---|---|
 |![Timeline](readme_image/home.png)|![Post screen](readme_image/post.png)|![Trends screen](readme_image/trends.png)|
-[<img src="https://dply.me/vjtth8/button/large" alt="Try it on your device via DeployGate">](https://dply.me/vjtth8#install)
 
 * Minimum api level is 17
 * Target api level is 27
 * Material Design
 
-## Usage
+## Install
+
+[<img src="https://dply.me/vjtth8/button/large" alt="Try it on your device via DeployGate">](https://dply.me/vjtth8#install)
+
+## Build
 
 1. Clone this project\.
 2. Open in Android Studio\.
@@ -29,6 +32,7 @@ This application is built using these libraries\:
 * Android Design Support Library
 * Android Custom Tabs Support Library
 * Glide
+* Glide Transformations
 * google-gson
 * PhotoView
 * OkHttp
