@@ -19,7 +19,12 @@ apply plugin: 'java'
 
 dependencies {
     //compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.github.sys1yagi.mastodon4j:mastodon4j:1.5.0'
+    compile 'com.github.sys1yagi.mastodon4j:mastodon4j:1.6.0'
+
+    //Compiling forked twitter4j(https://github.com/moko256/twitter4j)
+    //compile 'org.twitter4j:twitter4j-core:4.0.6'
+    //compile 'org.twitter4j:twitter4j-http2-support:4.0.6'
     compile files('libs/twitter4j-http2-support.jar')
+
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }

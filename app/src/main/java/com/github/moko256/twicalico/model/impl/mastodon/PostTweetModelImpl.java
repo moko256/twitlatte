@@ -28,7 +28,6 @@ import com.sys1yagi.mastodon4j.api.entity.Attachment;
 import com.sys1yagi.mastodon4j.api.exception.Mastodon4jRequestException;
 import com.sys1yagi.mastodon4j.api.method.Media;
 import com.sys1yagi.mastodon4j.api.method.Statuses;
-import com.twitter.Validator;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

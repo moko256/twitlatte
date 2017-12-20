@@ -20,7 +20,9 @@ import android.content.ContentResolver;
 import android.net.Uri;
 
 import com.github.moko256.twicalico.model.base.PostTweetModel;
-import com.twitter.Validator;
+import com.twitter.twittertext.TwitterTextConfiguration;
+import com.twitter.twittertext.TwitterTextParseResults;
+import com.twitter.twittertext.TwitterTextParser;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -53,7 +55,8 @@ public class PostTweetModelImpl implements PostTweetModel {
     private List<Uri> uriList = new ArrayList<>();
     private GeoLocation location;
 
-    private Validator validator = new Validator();
+    private TwitterTextParseResults resultCache = null;
+    private int MAX_TWEET_LENGTH = TwitterTextParser.TWITTER_TEXT_WEIGHTED_CHAR_COUNT_CONFIG.getMaxWeightedTweetLength();
 
     public PostTweetModelImpl(Twitter twitter, ContentResolver contentResolver){
         this.twitter = twitter;
@@ -88,16 +91,18 @@ public class PostTweetModelImpl implements PostTweetModel {
     @Override
     public void setTweetText(String tweetText) {
         this.tweetText = tweetText;
+        resultCache = null;
     }
 
     @Override
     public int getTweetLength() {
-        return validator.getTweetLength(tweetText);
+        updateCounter();
+        return resultCache.weightedLength;
     }
 
     @Override
     public int getMaxTweetLength() {
-        return Validator.MAX_TWEET_LENGTH;
+        return MAX_TWEET_LENGTH;
     }
 
     @Override
@@ -107,7 +112,14 @@ public class PostTweetModelImpl implements PostTweetModel {
 
     @Override
     public boolean isValidTweet() {
-        return uriList.size() > 0 || validator.isValidTweet(tweetText);
+        updateCounter();
+        return uriList.size() > 0 || resultCache.isValid;
+    }
+
+    private void updateCounter(){
+        if (resultCache == null){
+            resultCache = TwitterTextParser.parseTweet(tweetText);
+        }
     }
 
     @Override
