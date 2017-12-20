@@ -59,8 +59,9 @@ public class OAuthActivity extends AppCompatActivity {
             String string = uri.getQueryParameter("oauth_verifier");
             if (string != null) {
                 initToken(string);
+            } else {
+                initToken(uri.getQueryParameter("code"));
             }
-            initToken(uri.getQueryParameter("code"));
         }
     }
 
@@ -117,15 +118,22 @@ public class OAuthActivity extends AppCompatActivity {
         editText.setInputType(EditorInfo.TYPE_TEXT_VARIATION_URI);
         new AlertDialog.Builder(this)
                 .setView(editText)
-                .setPositiveButton(android.R.string.ok,(dialog, which) -> {
-                    model.getCallbackAuthUrl(editText.getText().toString(), "", "", getString(R.string.app_name))
-                            .subscribeOn(Schedulers.newThread())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(
-                                    this::startBrowser,
-                                    Throwable::printStackTrace
-                            );
-                })
+                .setPositiveButton(
+                        android.R.string.ok,
+                        (dialog, which) -> model
+                                .getCallbackAuthUrl(
+                                        editText.getText().toString(),
+                                        "",
+                                        "",
+                                        getString(R.string.app_name)
+                                )
+                                .subscribeOn(Schedulers.newThread())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(
+                                        this::startBrowser,
+                                        Throwable::printStackTrace
+                                )
+                )
                 .setCancelable(false)
                 .show();
     }
