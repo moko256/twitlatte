@@ -50,6 +50,7 @@ import android.widget.TextView;
 import com.github.moko256.twicalico.model.base.PostTweetModel;
 import com.github.moko256.twicalico.model.impl.PostTweetModelCreator;
 import com.github.moko256.twicalico.text.TwitterStringUtils;
+import com.github.moko256.twicalico.widget.ImageKeyboardEditText;
 
 import java.util.Arrays;
 import java.util.List;
@@ -78,7 +79,7 @@ public class PostTweetActivity extends AppCompatActivity {
     ActionBar actionBar;
     ImageView userIcon;
     TextView counterTextView;
-    AppCompatEditText editText;
+    ImageKeyboardEditText editText;
     RecyclerView imagesRecyclerView;
     AddedImagesAdapter addedImagesAdapter;
     SwitchCompat possiblySensitiveSwitch;
@@ -129,6 +130,12 @@ public class PostTweetActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {}
+        });
+        editText.setImageAddedListener(imageUri -> {
+            addedImagesAdapter.getImagesList().add(imageUri);
+            model.getUriList().add(imageUri);
+            addedImagesAdapter.notifyItemInserted(addedImagesAdapter.getImagesList().size());
+            possiblySensitiveSwitch.setEnabled(true);
         });
 
         if (getIntent()!=null){

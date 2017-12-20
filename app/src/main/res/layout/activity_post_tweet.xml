@@ -60,7 +60,7 @@
                 android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                 android:layout_marginBottom="8dp"/>
 
-            <android.support.v7.widget.AppCompatEditText
+            <com.github.moko256.twicalico.widget.ImageKeyboardEditText
                 android:id="@+id/tweet_text_edit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
