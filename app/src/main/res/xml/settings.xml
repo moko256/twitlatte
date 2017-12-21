@@ -134,6 +134,9 @@
                 android:key="license_lib_support_v7"
                 android:title="Android Compatibility Library v7"/>
             <Preference
+                android:key="license_lib_support_v13"
+                android:title="Android Compatibility Library v13"/>
+            <Preference
                 android:key="license_lib_support_v14"
                 android:title="Android Compatibility Library v14"/>
             <Preference

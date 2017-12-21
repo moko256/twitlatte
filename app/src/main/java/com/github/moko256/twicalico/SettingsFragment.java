@@ -197,6 +197,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             final String license_keys[]=new String[]{
                     "support_v4",
                     "support_v7",
+                    "support_v13",
                     "support_v14",
                     "support_design",
                     "support_custom_tabs",
