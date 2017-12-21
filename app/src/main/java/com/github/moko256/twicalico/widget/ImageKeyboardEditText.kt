@@ -18,14 +18,14 @@ package com.github.moko256.twicalico.widget
 
 import android.content.Context
 import android.net.Uri
+import android.os.Build
+import android.support.v13.view.inputmethod.EditorInfoCompat
+import android.support.v13.view.inputmethod.InputConnectionCompat
+import android.support.v13.view.inputmethod.InputContentInfoCompat
+import android.support.v7.widget.AppCompatEditText
 import android.util.AttributeSet
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputConnection
-import android.widget.EditText
-import android.support.v13.view.inputmethod.InputConnectionCompat
-import android.support.v4.os.BuildCompat
-import android.support.v13.view.inputmethod.EditorInfoCompat
-import android.support.v7.widget.AppCompatEditText
 
 
 /**
@@ -35,29 +35,38 @@ import android.support.v7.widget.AppCompatEditText
  */
 class ImageKeyboardEditText : AppCompatEditText {
 
-    constructor(context: Context, attrs: AttributeSet, defStyle: Int) : super(context, attrs, defStyle) {}
+    constructor(context: Context, attrs: AttributeSet?, defStyle: Int) : super(context, attrs, defStyle) {}
 
-    constructor(context: Context, attrs: AttributeSet) : this(context, attrs, 0) {}
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {}
+
+    constructor(context: Context) : super(context) {}
 
 
     var imageAddedListener: OnImageAddedListener? = null
 
+    private var permitInputContentInfo: InputContentInfoCompat? = null
+
     override fun onCreateInputConnection(outAttrs: EditorInfo): InputConnection {
         val ic = super.onCreateInputConnection(outAttrs)
         EditorInfoCompat.setContentMimeTypes(outAttrs, arrayOf("image/*"))
-        return InputConnectionCompat.createWrapper(ic, outAttrs) { inputContentInfo, flags, opts ->
-            if (BuildCompat.isAtLeastNMR1() && flags and InputConnectionCompat.INPUT_CONTENT_GRANT_READ_URI_PERMISSION != 0) {
+        return InputConnectionCompat.createWrapper(ic, outAttrs) { inputContentInfo, flags, _ ->
+            if (Build.VERSION.SDK_INT >= 25 && flags and InputConnectionCompat.INPUT_CONTENT_GRANT_READ_URI_PERMISSION != 0) {
                 try {
                     inputContentInfo.requestPermission()
+                    permitInputContentInfo = inputContentInfo
                 } catch (e: Exception) {
                     return@createWrapper false
                 }
 
             }
             imageAddedListener?.onAdded(inputContentInfo.contentUri)
-            inputContentInfo.releasePermission()
             true
         }
+    }
+
+    fun close(){
+        permitInputContentInfo?.releasePermission()
+        imageAddedListener = null
     }
 
     interface OnImageAddedListener{

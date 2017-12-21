@@ -81,7 +81,9 @@ public class AddedImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                         cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DISPLAY_NAME)
                 );
             }
-            cursor.close();
+            if (cursor != null) {
+                cursor.close();
+            }
 
             viewHolder.title.setText(fileName != null? fileName : image.getLastPathSegment());
             GlideApp.with(context).load(image).into(viewHolder.image);

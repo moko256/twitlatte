@@ -298,6 +298,7 @@ public class PostTweetActivity extends AppCompatActivity {
         addedImagesAdapter.clearImages();
         addedImagesAdapter = null;
         imagesRecyclerView = null;
+        editText.close();
         editText = null;
         counterTextView = null;
         userIcon = null;
