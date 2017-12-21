@@ -16,11 +16,11 @@
 
 <shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
     <shortcut
-        android:shortcutId="tweet"
+        android:shortcutId="post"
         android:enabled="true"
         android:icon="@drawable/app_shortcut_tweet"
-        android:shortcutShortLabel="@string/tweet"
-        android:shortcutLongLabel="@string/tweet">
+        android:shortcutShortLabel="@string/post"
+        android:shortcutLongLabel="@string/post">
         <intent
             android:action="android.intent.action.VIEW"
             android:targetPackage="com.github.moko256.twicalico.debug"
