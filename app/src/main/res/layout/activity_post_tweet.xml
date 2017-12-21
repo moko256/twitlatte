@@ -55,7 +55,7 @@
                 android:id="@+id/activity_tweet_send_edit_text_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/tweet"
+                android:text="@string/post"
                 android:textColor="@color/colorAccent"
                 android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                 android:layout_marginBottom="8dp"/>

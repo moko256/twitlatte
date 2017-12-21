@@ -52,24 +52,24 @@
                 <SwitchPreference
                     android:key="patternTweetMuteEnabled"
                     android:defaultValue="false"
-                    android:title="@string/use_tweet_regex_mute"
+                    android:title="@string/use_post_regex_mute"
                     android:summaryOn="@string/enable"
                     android:summaryOff="@string/disable"/>
                 <EditTextPreference
                     android:key="tweetMutePattern"
-                    android:title="@string/tweet_mute_regex_pattern"
+                    android:title="@string/post_mute_regex_pattern"
                     android:summary="%s"
                     android:dialogTitle="@string/edit_pattern"/>
 
                 <SwitchPreference
                     android:key="patternTweetMuteShowOnlyImageEnabled"
                     android:defaultValue="false"
-                    android:title="@string/use_tweet_regex_mute_show_only_image"
+                    android:title="@string/use_post_regex_mute_show_only_image"
                     android:summaryOn="@string/enable"
                     android:summaryOff="@string/disable"/>
                 <EditTextPreference
                     android:key="tweetMuteShowOnlyImagePattern"
-                    android:title="@string/tweet_mute_regex_pattern_show_only_image"
+                    android:title="@string/post_mute_regex_pattern_show_only_image"
                     android:summary="%s"
                     android:dialogTitle="@string/edit_pattern"/>
 

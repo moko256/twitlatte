@@ -55,7 +55,7 @@ public class UserTimelineFragment extends BaseTweetListFragment implements Toolb
 
     @Override
     public int getTitleResourceId() {
-        return R.string.tweet;
+        return R.string.post;
     }
 
     @Override

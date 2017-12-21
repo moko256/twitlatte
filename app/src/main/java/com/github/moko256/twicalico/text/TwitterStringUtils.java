@@ -124,12 +124,12 @@ public class TwitterStringUtils {
 
     public static CharSequence getStatusTextSequence(Status item){
 
-        String tweet = item.getText();
-        StringBuilder builder = new StringBuilder(tweet);
+        String postText = item.getText();
+        StringBuilder builder = new StringBuilder(postText);
 
         URLEntity[] urlEntities = item.getURLEntities();
 
-        int tweetLength = tweet.codePointCount(0, tweet.length());
+        int tweetLength = postText.codePointCount(0, postText.length());
         int sp = 0;
 
         for (URLEntity entity : urlEntities) {
@@ -140,7 +140,7 @@ public class TwitterStringUtils {
             int displayUrlLength = displayUrl.codePointCount(0, displayUrl.length());
             if (entity.getStart() <= tweetLength && entity.getEnd() <= tweetLength) {
                 int dusp = displayUrlLength - urlLength;
-                builder.replace(tweet.offsetByCodePoints(0,entity.getStart()) + sp, tweet.offsetByCodePoints(0,entity.getEnd()) + sp, displayUrl);
+                builder.replace(postText.offsetByCodePoints(0,entity.getStart()) + sp, postText.offsetByCodePoints(0,entity.getEnd()) + sp, displayUrl);
 
                 sp+=dusp;
             }

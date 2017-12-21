@@ -40,7 +40,7 @@
             android:id="@+id/tweet_retweet_user_name"
             android:textAppearance="@style/TextAppearance.AppCompat.Caption"
             android:layout_marginLeft="16dp"
-            tools:text="@string/retweet_by"/>
+            tools:text="@string/repeat_by"/>
 
         <TextView
             android:layout_width="match_parent"
@@ -217,7 +217,7 @@
             android:layout_marginBottom="4dp"
             android:layout_marginLeft="18dp"
             android:layout_marginRight="6dp"
-            app:toggle_drawable="@drawable/ic_retweet_black_24dp"
+            app:toggle_drawable="@drawable/ic_repeat_black_24dp"
             app:buttonTint="@color/toggle_button_color_stateful"/>
 
         <!--

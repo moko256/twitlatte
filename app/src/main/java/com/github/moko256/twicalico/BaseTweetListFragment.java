@@ -273,7 +273,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                                             statusIdsDatabase.insertIds(0, ids);
                                             adapter.notifyItemRangeInserted(0, ids.size());
                                             TypedValue value=new TypedValue();
-                                            Toast t=Toast.makeText(getContext(),R.string.new_tweet,Toast.LENGTH_SHORT);
+                                            Toast t=Toast.makeText(getContext(),R.string.new_post,Toast.LENGTH_SHORT);
                                             t.setGravity(
                                                     Gravity.TOP|Gravity.CENTER,
                                                     0,

@@ -145,7 +145,7 @@ public class StatusView extends FrameLayout {
             if(retweetUserName.getVisibility()!= View.VISIBLE){
                 retweetUserName.setVisibility(View.VISIBLE);
             }
-            retweetUserName.setText(getContext().getString(R.string.retweet_by,status.getUser().getName()));
+            retweetUserName.setText(getContext().getString(R.string.repeat_by,status.getUser().getName()));
         }
         else{
             if(retweetUserName.getVisibility()!=View.GONE){

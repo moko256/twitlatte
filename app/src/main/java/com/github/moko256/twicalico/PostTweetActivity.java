@@ -33,7 +33,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.PermissionChecker;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
@@ -154,7 +153,7 @@ public class PostTweetActivity extends AppCompatActivity {
             }
         }
 
-        editText.setHint(model.isReply()? R.string.reply: R.string.tweet);
+        editText.setHint(model.isReply()? R.string.reply: R.string.post);
 
         imagesRecyclerView = findViewById(R.id.activity_tweet_send_images_recycler_view);
         addedImagesAdapter = new AddedImagesAdapter(this);
@@ -241,7 +240,7 @@ public class PostTweetActivity extends AppCompatActivity {
                             it -> {
                                 model.setLocation(new GeoLocation(it.getLatitude(), it.getLongitude()));
                                 locationText.setVisibility(View.VISIBLE);
-                                locationText.setText(it.getLatitude() + " " + it.getLongitude());
+                                locationText.setText(getString(R.string.lat_and_lon, it.getLatitude(), it.getLongitude()));
                             },
                             Throwable::printStackTrace
                     )

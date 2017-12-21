@@ -75,12 +75,12 @@
 
         <activity
             android:name=".PostTweetActivity"
-            android:label="@string/tweet"
+            android:label="@string/post"
             android:theme="@style/AppTheme.NoActionBar"/>
 
         <activity
             android:name=".ShowTweetActivity"
-            android:label="@string/tweet"/>
+            android:label="@string/post"/>
 
         <activity
             android:name=".ShowUserActivity"
