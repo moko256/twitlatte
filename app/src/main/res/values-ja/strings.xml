@@ -22,11 +22,11 @@
     <string name="timeline">タイムライン</string>
     <string name="mentions">メンション</string>
     <string name="post">投稿</string>
+    <string name="create_post">投稿を作成</string>
     <string name="reply">返信</string>
     <string name="like">お気に入り</string>
     <string name="follower">フォロワー</string>
     <string name="follow">フォロー</string>
-    <string name="your_post">あなたの投稿</string>
     <string name="account">アカウント</string>
     <string name="follow_and_follower">フォロー・フォロワー</string>
     <string name="theme">テーマ</string>

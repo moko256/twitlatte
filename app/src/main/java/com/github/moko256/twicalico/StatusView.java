@@ -303,7 +303,7 @@ public class StatusView extends FrameLayout {
         retweetButton.setEnabled(GlobalApplication.twitter instanceof MastodonTwitterImpl || !(item.getUser().isProtected()) || item.getUser().getId() == GlobalApplication.userId);
 
         replyButton.setOnClickListener(
-                v -> getContext().startActivity(PostTweetActivity.getIntent(
+                v -> getContext().startActivity(PostActivity.getIntent(
                         getContext(),
                         item.getId(),
                         TwitterStringUtils.convertToReplyTopString(

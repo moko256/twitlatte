@@ -24,7 +24,7 @@
         <intent
             android:action="android.intent.action.VIEW"
             android:targetPackage="com.github.moko256.twicalico"
-            android:targetClass="com.github.moko256.twicalico.PostTweetActivity"/>
+            android:targetClass="com.github.moko256.twicalico.PostActivity"/>
         <categories android:name="android.shortcut.conversation"/>
     </shortcut>
 </shortcuts>

@@ -42,7 +42,7 @@ public class SplashActivity extends AppCompatActivity {
                     switch (data.getHost()) {
                         case "post":
                             String replyId = data.getQueryParameter("in_reply_to_status_id");
-                            intent = PostTweetActivity.getIntent(
+                            intent = PostActivity.getIntent(
                                     this,
                                     replyId != null ? Long.valueOf(replyId) : -1,
                                     data.getQueryParameter("message")
@@ -63,7 +63,7 @@ public class SplashActivity extends AppCompatActivity {
                     break;
                 case "https":
                     if (data.getQueryParameter("status") != null){
-                        intent = PostTweetActivity.getIntent(this, data.getQueryParameter("status"));
+                        intent = PostActivity.getIntent(this, data.getQueryParameter("status"));
                     } else if (data.getPath().matches("/.+/status/.+")){
                         intent = ShowTweetActivity.getIntent(this, Long.parseLong(data.getPathSegments().get(2)));
                     } else if (data.getPathSegments().size() == 1){

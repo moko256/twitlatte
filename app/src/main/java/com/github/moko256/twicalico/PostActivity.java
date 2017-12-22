@@ -63,7 +63,7 @@ import twitter4j.GeoLocation;
  *
  * @author moko256
  */
-public class PostTweetActivity extends AppCompatActivity {
+public class PostActivity extends AppCompatActivity {
 
     private static final String INTENT_EXTRA_IN_REPLY_TO_STATUS_ID = "inReplyToStatusId";
     private static final String INTENT_EXTRA_TWEET_TEXT = "text";
@@ -90,7 +90,7 @@ public class PostTweetActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_post_tweet);
+        setContentView(R.layout.activity_post);
 
         model = PostTweetModelCreator.getInstance(GlobalApplication.twitter, getContentResolver());
         subscription = new CompositeSubscription();
@@ -348,10 +348,10 @@ public class PostTweetActivity extends AppCompatActivity {
     }
 
     public static Intent getIntent(Context context, String text){
-        return new Intent(context,PostTweetActivity.class).putExtra(INTENT_EXTRA_TWEET_TEXT, text);
+        return new Intent(context,PostActivity.class).putExtra(INTENT_EXTRA_TWEET_TEXT, text);
     }
 
     public static Intent getIntent(Context context, long inReplyToStatusId, String text){
-        return PostTweetActivity.getIntent(context, text).putExtra(INTENT_EXTRA_IN_REPLY_TO_STATUS_ID, inReplyToStatusId);
+        return PostActivity.getIntent(context, text).putExtra(INTENT_EXTRA_IN_REPLY_TO_STATUS_ID, inReplyToStatusId);
     }
 }

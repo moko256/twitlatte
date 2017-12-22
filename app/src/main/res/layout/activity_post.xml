@@ -23,7 +23,7 @@
     android:layout_height="match_parent"
     android:id="@+id/activity_tweet_send_layout_root"
     android:orientation="vertical"
-    tools:context=".PostTweetActivity">
+    tools:context=".PostActivity">
     <android.support.v7.widget.Toolbar
         android:id="@+id/activity_tweet_send_toolbar"
         android:layout_width="match_parent"

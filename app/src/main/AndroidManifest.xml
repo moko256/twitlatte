@@ -74,8 +74,8 @@
             android:theme="@style/MainActivityTheme"/>
 
         <activity
-            android:name=".PostTweetActivity"
-            android:label="@string/post"
+            android:name=".PostActivity"
+            android:label="@string/create_post"
             android:theme="@style/AppTheme.NoActionBar"/>
 
         <activity

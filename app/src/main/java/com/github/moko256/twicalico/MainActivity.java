@@ -126,9 +126,8 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
         TextView userIdText = headerView.findViewById(R.id.user_id);
         ImageView userImage = headerView.findViewById(R.id.user_image);
         ImageView userBackgroundImage = headerView.findViewById(R.id.user_bg_image);
-        ImageView toggleAccount = headerView.findViewById(R.id.toggle_account);
 
-        toggleAccount.setOnClickListener(v -> {
+        userBackgroundImage.setOnClickListener(v -> {
             TokenSQLiteOpenHelper helper = new TokenSQLiteOpenHelper(this);
 
             final AlertDialog[] dialog = new AlertDialog[1];
@@ -236,7 +235,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                         )
         );
 
-        findViewById(R.id.fab).setOnClickListener(v -> startActivity(new Intent(this, PostTweetActivity.class)));
+        findViewById(R.id.fab).setOnClickListener(v -> startActivity(new Intent(this, PostActivity.class)));
 
         TabLayout tabLayout= findViewById(R.id.toolbar_tab);
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {

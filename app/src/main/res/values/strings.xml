@@ -32,11 +32,11 @@
     <string name="timeline">TimeLine</string>
     <string name="mentions">Mentions</string>
     <string name="post">Post</string>
+    <string name="create_post">Create post</string>
     <string name="reply">Reply</string>
     <string name="follow">follow</string>
     <string name="follower">follower</string>
     <string name="like">Like</string>
-    <string name="your_post">Your post</string>
     <string name="account">Account</string>
     <string name="theme">Theme</string>
     <string name="images">Images</string>

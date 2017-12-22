@@ -94,7 +94,7 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
 
         findViewById(R.id.activity_show_user_fab).setOnClickListener(v -> {
             if (user!=null){
-                startActivity(PostTweetActivity.getIntent(this, TwitterStringUtils.plusAtMark(user.getScreenName())+" "));
+                startActivity(PostActivity.getIntent(this, TwitterStringUtils.plusAtMark(user.getScreenName())+" "));
             }
         });
         subscription.add(
