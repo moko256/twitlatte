@@ -189,7 +189,7 @@ public class PostTweetActivity extends AppCompatActivity {
                                     it -> {
                                         model.setLocation(new GeoLocation(it.getLatitude(), it.getLongitude()));
                                         locationText.setVisibility(View.VISIBLE);
-                                        locationText.setText(it.getLatitude() + " " + it.getLongitude());
+                                        locationText.setText(getString(R.string.lat_and_lon, it.getLatitude(), it.getLongitude()));
                                     },
                                     Throwable::printStackTrace
                             )
