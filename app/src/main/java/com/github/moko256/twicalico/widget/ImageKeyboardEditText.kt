@@ -35,11 +35,11 @@ import android.view.inputmethod.InputConnection
  */
 class ImageKeyboardEditText : AppCompatEditText {
 
-    constructor(context: Context, attrs: AttributeSet?, defStyle: Int) : super(context, attrs, defStyle) {}
+    constructor(context: Context, attrs: AttributeSet?, defStyle: Int) : super(context, attrs, defStyle)
 
-    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {}
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
 
-    constructor(context: Context) : super(context) {}
+    constructor(context: Context) : super(context)
 
 
     var imageAddedListener: OnImageAddedListener? = null
