@@ -57,9 +57,11 @@ class ImageKeyboardEditText : AppCompatEditText {
                 } catch (e: Exception) {
                     return@createWrapper false
                 }
-
             }
             imageAddedListener?.onAdded(inputContentInfo.contentUri)
+            if (inputContentInfo.linkUri != null) {
+                text.append(" " + inputContentInfo.linkUri?.toString())
+            }
             true
         }
     }
