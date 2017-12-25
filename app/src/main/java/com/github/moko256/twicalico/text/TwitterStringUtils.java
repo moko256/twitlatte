@@ -43,7 +43,9 @@ import com.github.moko256.twicalico.GlobalApplication;
 import com.github.moko256.twicalico.R;
 import com.github.moko256.twicalico.SearchResultActivity;
 import com.github.moko256.twicalico.ShowUserActivity;
+import com.sys1yagi.mastodon4j.api.exception.Mastodon4jRequestException;
 
+import java.io.IOException;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
@@ -117,6 +119,14 @@ public class TwitterStringUtils {
     public static String convertErrorToText(@NonNull Throwable e){
         if (e instanceof TwitterException && !TextUtils.isEmpty(((TwitterException) e).getErrorMessage())){
             return ((TwitterException) e).getErrorMessage();
+        } else if (e instanceof Mastodon4jRequestException
+                && ((Mastodon4jRequestException) e).isErrorResponse()) {
+            try {
+                return ((Mastodon4jRequestException) e).getResponse().body().string();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+                return e.getMessage();
+            }
         } else {
             return e.getMessage();
         }

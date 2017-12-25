@@ -27,7 +27,25 @@ import twitter4j.TwitterException;
  */
 
 class MTException extends TwitterException {
+    private Mastodon4jRequestException exception;
+
     MTException(Mastodon4jRequestException e){
-        super(e.getMessage(), e, e.getResponse().code());
+        super(e);
+        exception = e;
+    }
+
+    @Override
+    public String getMessage() {
+        String message;
+        if (exception.isErrorResponse()) {
+            try {
+                message = exception.getResponse().body().string();
+            } catch (Exception e1){
+                message = "Unknown";
+            }
+        } else {
+            message = exception.getMessage();
+        }
+        return message;
     }
 }
