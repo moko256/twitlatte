@@ -20,7 +20,6 @@ import android.content.ContentResolver;
 import android.net.Uri;
 
 import com.github.moko256.twicalico.model.base.PostTweetModel;
-import com.twitter.twittertext.TwitterTextConfiguration;
 import com.twitter.twittertext.TwitterTextParseResults;
 import com.twitter.twittertext.TwitterTextParser;
 
@@ -113,7 +112,11 @@ public class PostTweetModelImpl implements PostTweetModel {
     @Override
     public boolean isValidTweet() {
         updateCounter();
-        return uriList.size() > 0 || resultCache.isValid;
+        if (tweetText.length() == 0){
+            return uriList.size() > 0;
+        } else {
+            return resultCache.isValid;
+        }
     }
 
     private void updateCounter(){

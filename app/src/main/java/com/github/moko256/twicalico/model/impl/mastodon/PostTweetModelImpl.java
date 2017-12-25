@@ -114,7 +114,7 @@ public class PostTweetModelImpl implements PostTweetModel {
     @Override
     public boolean isValidTweet() {
         int tweetLength = getTweetLength();
-        return uriList.size() > 0 || tweetLength != 0 && tweetLength <= getMaxTweetLength();
+        return tweetLength != 0 && tweetLength <= getMaxTweetLength();
     }
 
     @Override
