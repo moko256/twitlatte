@@ -8,6 +8,7 @@
 /.idea/modules.xml
 .DS_Store
 /build
+/app/release
 /release
 /capture
 *.jks
