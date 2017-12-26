@@ -131,6 +131,11 @@ public class PostTweetModelImpl implements PostTweetModel {
     }
 
     @Override
+    public int getUriListSizeLimit() {
+        return 4;
+    }
+
+    @Override
     public GeoLocation getLocation() {
         return location;
     }

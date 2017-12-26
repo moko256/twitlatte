@@ -58,8 +58,8 @@ class ImageKeyboardEditText : AppCompatEditText {
                     return@createWrapper false
                 }
             }
-            imageAddedListener?.onAdded(inputContentInfo.contentUri)
-            if (inputContentInfo.linkUri != null) {
+            val result = imageAddedListener?.onAdded(inputContentInfo.contentUri)
+            if (inputContentInfo.linkUri != null && result == true) {
                 text.append(" " + inputContentInfo.linkUri?.toString())
             }
             true
@@ -72,6 +72,6 @@ class ImageKeyboardEditText : AppCompatEditText {
     }
 
     interface OnImageAddedListener{
-        fun onAdded(imageUri: Uri)
+        fun onAdded(imageUri: Uri): Boolean
     }
 }

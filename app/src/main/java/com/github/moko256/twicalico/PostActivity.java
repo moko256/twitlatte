@@ -131,10 +131,15 @@ public class PostActivity extends AppCompatActivity {
             public void afterTextChanged(Editable s) {}
         });
         editText.setImageAddedListener(imageUri -> {
-            addedImagesAdapter.getImagesList().add(imageUri);
-            model.getUriList().add(imageUri);
-            addedImagesAdapter.notifyItemInserted(addedImagesAdapter.getImagesList().size());
-            possiblySensitiveSwitch.setEnabled(true);
+            if (model.getUriList().size() < model.getUriListSizeLimit()) {
+                addedImagesAdapter.getImagesList().add(imageUri);
+                model.getUriList().add(imageUri);
+                addedImagesAdapter.notifyItemInserted(addedImagesAdapter.getImagesList().size());
+                possiblySensitiveSwitch.setEnabled(true);
+                return true;
+            } else {
+                return false;
+            }
         });
 
         if (getIntent()!=null){
@@ -160,7 +165,7 @@ public class PostActivity extends AppCompatActivity {
 
         imagesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        addedImagesAdapter.setLimit(4);
+        addedImagesAdapter.setLimit(model.getUriListSizeLimit());
         addedImagesAdapter.setOnAddButtonClickListener(v -> {
             Intent intent;
             if (Build.VERSION.SDK_INT < 19){

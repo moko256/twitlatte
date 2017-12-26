@@ -106,6 +106,7 @@ public class PostTweetModelImpl implements PostTweetModel {
         return 500;
     }
 
+
     @Override
     public boolean isReply() {
         return inReplyToStatusId != -1;
@@ -120,6 +121,11 @@ public class PostTweetModelImpl implements PostTweetModel {
     @Override
     public List<Uri> getUriList() {
         return uriList;
+    }
+
+    @Override
+    public int getUriListSizeLimit() {
+        return 4;
     }
 
     @Override
