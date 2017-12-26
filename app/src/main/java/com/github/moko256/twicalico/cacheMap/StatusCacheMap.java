@@ -21,6 +21,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.util.LruCache;
 
+import com.github.moko256.mastodon.MTStatus;
 import com.github.moko256.twicalico.GlobalApplication;
 import com.github.moko256.twicalico.database.CachedStatusesSQLiteOpenHelper;
 
@@ -131,7 +132,7 @@ public class StatusCacheMap {
         diskCache.deleteCachedStatuses(idsArray);
     }
 
-    private static class CachedStatus implements Status{
+    public static class CachedStatus implements Status{
 
         /* Based on twitter4j.StatusJSONImpl */
 
@@ -172,6 +173,8 @@ public class StatusCacheMap {
 
         private final long userId;
 
+        private final String url;
+
         public CachedStatus(Status status){
             createdAt=new Date(status.getCreatedAt().getTime());
             id=status.getId();
@@ -210,6 +213,12 @@ public class StatusCacheMap {
 
             userId=status.getUser().getId();
 
+            url = (status instanceof MTStatus)
+                    ? ((MTStatus) status).status.getUrl()
+                    : "https://twitter.com/"
+                            + status.getUser().getScreenName()
+                            + "/status/"
+                            + String.valueOf(status.getId());
         }
 
         @Override
@@ -385,6 +394,10 @@ public class StatusCacheMap {
         @Override
         public RateLimitStatus getRateLimitStatus() {
             return null;
+        }
+
+        public String getRemoteUrl(){
+            return url;
         }
 
         @Override

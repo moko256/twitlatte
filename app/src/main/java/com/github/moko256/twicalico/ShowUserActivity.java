@@ -31,6 +31,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.github.moko256.mastodon.MastodonTwitterImpl;
 import com.github.moko256.twicalico.text.TwitterStringUtils;
 
 import rx.Completable;
@@ -142,11 +143,31 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
 
         switch (item.getItemId()){
             case R.id.action_share:
-                startActivity(
-                        new Intent()
-                                .setAction(Intent.ACTION_SEND)
-                                .setType("text/plain")
-                                .putExtra(Intent.EXTRA_TEXT, "https://twitter.com/" + user.getScreenName())
+                String url;
+                if (GlobalApplication.twitter instanceof MastodonTwitterImpl){
+                    String baseUrl;
+                    String userName;
+                    if (user.getScreenName().matches(".*@.*")){
+                        String[] split = user.getScreenName().split("@");
+                        baseUrl = split[1];
+                        userName = split[0];
+                    } else {
+                        baseUrl = ((MastodonTwitterImpl) GlobalApplication.twitter).client.getInstanceName();
+                        userName = user.getScreenName();
+                    }
+
+                    url = "https://"
+                            + baseUrl
+                            + "/@"
+                            + userName;
+                } else {
+                    url = "https://twitter.com/"
+                            + user.getScreenName();
+                }
+                startActivity(new Intent()
+                        .setAction(Intent.ACTION_SEND)
+                        .setType("text/plain")
+                        .putExtra(Intent.EXTRA_TEXT, url)
                 );
                 break;
             case R.id.action_create_follow:

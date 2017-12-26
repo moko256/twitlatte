@@ -26,11 +26,15 @@ import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatEditText;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.moko256.mastodon.MastodonTwitterImpl;
+import com.github.moko256.twicalico.cacheMap.StatusCacheMap;
 import com.github.moko256.twicalico.model.base.PostTweetModel;
 import com.github.moko256.twicalico.model.impl.PostTweetModelCreator;
 import com.github.moko256.twicalico.text.TwitterStringUtils;
@@ -127,6 +131,32 @@ public class ShowTweetActivity extends AppCompatActivity {
         super.onDestroy();
         subscriptions.unsubscribe();
         subscriptions=null;
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_show_tweet_toolbar,menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.action_share:
+                startActivity(new Intent()
+                        .setAction(Intent.ACTION_SEND)
+                        .setType("text/plain")
+                        .putExtra(
+                                Intent.EXTRA_TEXT,
+                                ((StatusCacheMap.CachedStatus)
+                                        GlobalApplication.statusCache.get(statusId))
+                                        .getRemoteUrl()
+                        )
+                );
+                break;
+            }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
