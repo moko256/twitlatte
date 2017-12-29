@@ -35,9 +35,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
-import okhttp3.ConnectionPool;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
@@ -120,7 +118,6 @@ public final class MastodonTwitterImpl implements Twitter {
         protocols.add(Protocol.HTTP_1_1);
         protocols.add(Protocol.HTTP_2);
         builder.protocols(protocols);
-        builder.connectionPool(new ConnectionPool(3, 300, TimeUnit.MILLISECONDS));
 
         client = new MastodonClient.Builder(accessToken.getTokenSecret(), builder, new GsonBuilder().create())
                 .accessToken(accessToken.getToken())

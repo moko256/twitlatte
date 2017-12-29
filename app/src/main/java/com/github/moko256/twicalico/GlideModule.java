@@ -47,7 +47,7 @@ public class GlideModule extends AppGlideModule {
                 GlideUrl.class,
                 InputStream.class,
                 new OkHttpUrlLoader.Factory(
-                        GlobalApplication.getOkHttpClient()
+                        request -> GlobalApplication.getOkHttpClient().newCall(request)
                 )
         );
     }
