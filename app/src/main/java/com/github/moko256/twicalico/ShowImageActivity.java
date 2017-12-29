@@ -29,7 +29,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -71,7 +70,7 @@ public class ShowImageActivity extends AppCompatActivity {
         actionBar.setHomeAsUpIndicator(R.drawable.ic_clear_white_24dp);
 
         pager= findViewById(R.id.activity_show_image_view_pager);
-        pager.setAdapter(new ImagePagerAdapter(getSupportFragmentManager(),mediaEntities,this));
+        pager.setAdapter(new ImagePagerAdapter(getSupportFragmentManager(),mediaEntities));
         pager.setCurrentItem(position);
     }
 

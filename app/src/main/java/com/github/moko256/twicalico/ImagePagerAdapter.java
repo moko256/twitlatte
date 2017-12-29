@@ -16,7 +16,6 @@
 
 package com.github.moko256.twicalico;
 
-import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -30,9 +29,9 @@ import twitter4j.MediaEntity;
  */
 class ImagePagerAdapter extends FragmentPagerAdapter {
 
-    ImagePagerChildFragment[] fragments;
+    private ImagePagerChildFragment[] fragments;
 
-    ImagePagerAdapter(FragmentManager fm, MediaEntity[] mediaEntities, Context context) {
+    ImagePagerAdapter(FragmentManager fm, MediaEntity[] mediaEntities) {
         super(fm);
         int length=mediaEntities.length;
         fragments=new ImagePagerChildFragment[length];
