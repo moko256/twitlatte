@@ -17,6 +17,7 @@
 package com.github.moko256.twicalico;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
@@ -32,7 +33,7 @@ public class MyFollowFollowerFragment extends Fragment implements ToolbarTitleIn
     ViewPager viewPager;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
 
         View view=inflater.inflate(R.layout.fragment_follow_follower, null);
 

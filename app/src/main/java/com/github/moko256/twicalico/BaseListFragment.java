@@ -20,6 +20,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
@@ -56,7 +57,7 @@ public abstract class BaseListFragment extends Fragment implements MoveableTopIn
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         super.onCreateView(inflater,container,savedInstanceState);
 
         View view=inflater.inflate(getLayoutResourceId(), container ,false);
@@ -107,7 +108,7 @@ public abstract class BaseListFragment extends Fragment implements MoveableTopIn
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean("isProgressCircleLoading", isProgressCircleLoading);
     }
@@ -167,7 +168,7 @@ public abstract class BaseListFragment extends Fragment implements MoveableTopIn
     }
 
     private void updateProgressCircleLoading(){
-        if (progressBar != null) progressBar.setVisibility(isProgressCircleLoading? View.VISIBLE: View.GONE);
+        if (progressBar != null) progressBar.setVisibility(isProgressCircleLoading? View.VISIBLE: View.INVISIBLE);
     }
 
 }

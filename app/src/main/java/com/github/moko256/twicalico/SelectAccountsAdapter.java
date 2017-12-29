@@ -18,7 +18,6 @@ package com.github.moko256.twicalico;
 
 import android.content.Context;
 import android.net.Uri;
-import android.support.annotation.StringRes;
 import android.support.v4.util.Pair;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;

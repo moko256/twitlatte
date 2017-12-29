@@ -20,6 +20,7 @@ import android.graphics.Rect;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -74,7 +75,7 @@ public class TrendsFragment extends BaseListFragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view=super.onCreateView(inflater, container, savedInstanceState);
 
         getRecyclerView().addItemDecoration(new RecyclerView.ItemDecoration() {
@@ -82,7 +83,7 @@ public class TrendsFragment extends BaseListFragment {
             public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
                 super.getItemOffsets(outRect, view, parent, state);
                 if (parent.getChildAdapterPosition(view)==0){
-                    outRect.top=Math.round(getContext().getResources().getDisplayMetrics().density*8f);
+                    outRect.top=Math.round(getResources().getDisplayMetrics().density*8f);
                 }
             }
         });
@@ -112,7 +113,7 @@ public class TrendsFragment extends BaseListFragment {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState){
+    public void onSaveInstanceState(@NonNull Bundle outState){
         super.onSaveInstanceState(outState);
         outState.putSerializable("list", list);
     }
@@ -150,8 +151,12 @@ public class TrendsFragment extends BaseListFragment {
                                 },
                                 e -> {
                                     e.printStackTrace();
+                                    setProgressCircleLoading(false);
                                     Snackbar.make(getSnackBarParentContainer(), TwitterStringUtils.convertErrorToText(e), Snackbar.LENGTH_INDEFINITE)
-                                            .setAction(R.string.retry, v -> onInitializeList())
+                                            .setAction(R.string.retry, v -> {
+                                                setProgressCircleLoading(true);
+                                                onInitializeList();
+                                            })
                                             .show();
                                 }
                         )

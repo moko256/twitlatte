@@ -18,6 +18,7 @@ package com.github.moko256.twicalico;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.text.util.LinkifyCompat;
@@ -103,7 +104,7 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view=inflater.inflate(R.layout.fragment_show_user_info,container,false);
 
         glideRequests =GlideApp.with(this);
@@ -190,9 +191,9 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
         }
 
         userCreatedAt.setText(DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.FULL).format(user.getCreatedAt()));
-        userTweetsCount.setText(getContext().getString(R.string.post_counts_is, user.getStatusesCount()));
-        userFollowCount.setText(getContext().getString(R.string.follow_counts_is, user.getFriendsCount()));
-        userFollowerCount.setText(getContext().getString(R.string.follower_counts_is, user.getFollowersCount()));
+        userTweetsCount.setText(getString(R.string.post_counts_is, user.getStatusesCount()));
+        userFollowCount.setText(getString(R.string.follow_counts_is, user.getFriendsCount()));
+        userFollowerCount.setText(getString(R.string.follower_counts_is, user.getFollowersCount()));
     }
 
     private Single<User> updateUser(){
