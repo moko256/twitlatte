@@ -66,11 +66,17 @@ class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @Override
     public int getItemViewType(int position) {
-        if (data.get(position) == -1L){
+        if (data.get(position) == -1L ){
             return 1;
         }
         Status status=GlobalApplication.statusCache.get(data.get(position));
+        if (status == null){
+            return 1;
+        }
         Status item = status.isRetweet()?status.getRetweetedStatus():status;
+        if (item == null){
+            return 1;
+        }
         AppConfiguration conf=GlobalApplication.configuration;
         if((conf.isPatternTweetMuteEnabled() && item.getText().matches(conf.getTweetMutePattern())) ||
                 (conf.isPatternUserScreenNameMuteEnabled() && conf.getUserScreenNameMutePattern().matcher(item.getUser().getScreenName()).matches()) ||
