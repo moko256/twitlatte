@@ -35,41 +35,58 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Intent intent = null;
 
-        if (getIntent() != null && getIntent().getData() != null){
-            Uri data = getIntent().getData();
-            switch (data.getScheme()){
-                case "twitter":
-                    switch (data.getHost()) {
-                        case "post":
-                            String replyId = data.getQueryParameter("in_reply_to_status_id");
+        if (getIntent() != null){
+            if (getIntent().getExtras() != null && getIntent().getExtras().getCharSequence(Intent.EXTRA_TEXT) != null){
+                intent = PostActivity.getIntent(
+                        this,
+                        -1,
+                        String.valueOf(getIntent().getExtras().getCharSequence(Intent.EXTRA_TEXT))
+                );
+            } else if (getIntent().getData() != null){
+                Uri data = getIntent().getData();
+                switch (data.getScheme()){
+                    case "twitter":
+                        switch (data.getHost()) {
+                            case "post":
+                                String replyId = data.getQueryParameter("in_reply_to_status_id");
+                                intent = PostActivity.getIntent(
+                                        this,
+                                        replyId != null ? Long.valueOf(replyId) : -1,
+                                        data.getQueryParameter("message")
+                                );
+                                break;
+                            case "status":
+                                intent = ShowTweetActivity.getIntent(this, Long.parseLong(data.getQueryParameter("id")));
+                                break;
+                            case "user":
+                                String userId = data.getQueryParameter("id");
+                                if (userId != null){
+                                    intent = ShowUserActivity.getIntent(this, Long.valueOf(userId));
+                                } else {
+                                    intent = ShowUserActivity.getIntent(this, data.getQueryParameter("screen_name"));
+                                }
+                                break;
+                        }
+                        break;
+                    case "https":
+                        if (data.getQueryParameter("status") != null){
+                            intent = PostActivity.getIntent(this, data.getQueryParameter("status"));
+                        } else if (data.getPath().matches("/.+/status/.+")){
+                            intent = ShowTweetActivity.getIntent(this, Long.parseLong(data.getPathSegments().get(2)));
+                        } else if (data.getPathSegments().size() == 1){
+                            intent = ShowUserActivity.getIntent(this, data.getLastPathSegment());
+                        }
+                        break;
+                    case "web+mastodon":
+                        if (data.getHost().equals("post")) {
                             intent = PostActivity.getIntent(
                                     this,
-                                    replyId != null ? Long.valueOf(replyId) : -1,
-                                    data.getQueryParameter("message")
+                                    -1,
+                                    data.getQueryParameter("text")
                             );
-                            break;
-                        case "status":
-                            intent = ShowTweetActivity.getIntent(this, Long.parseLong(data.getQueryParameter("id")));
-                            break;
-                        case "user":
-                            String userId = data.getQueryParameter("id");
-                            if (userId != null){
-                                intent = ShowUserActivity.getIntent(this, Long.valueOf(userId));
-                            } else {
-                                intent = ShowUserActivity.getIntent(this, data.getQueryParameter("screen_name"));
-                            }
-                            break;
-                    }
-                    break;
-                case "https":
-                    if (data.getQueryParameter("status") != null){
-                        intent = PostActivity.getIntent(this, data.getQueryParameter("status"));
-                    } else if (data.getPath().matches("/.+/status/.+")){
-                        intent = ShowTweetActivity.getIntent(this, Long.parseLong(data.getPathSegments().get(2)));
-                    } else if (data.getPathSegments().size() == 1){
-                        intent = ShowUserActivity.getIntent(this, data.getLastPathSegment());
-                    }
-                    break;
+                        }
+                        break;
+                }
             }
         }
 
