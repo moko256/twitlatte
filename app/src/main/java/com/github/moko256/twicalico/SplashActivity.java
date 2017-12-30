@@ -78,7 +78,7 @@ public class SplashActivity extends AppCompatActivity {
                         }
                         break;
                     case "web+mastodon":
-                        if (data.getHost().equals("post")) {
+                        if (data.getHost().equals("share")) {
                             intent = PostActivity.getIntent(
                                     this,
                                     -1,
