@@ -104,6 +104,7 @@ public final class MastodonTwitterImpl implements Twitter {
 
     public final AccessToken accessToken;
     public final MastodonClient client;
+    public final OkHttpClient okHttpClient;
 
     /**
      * This constructor uses AccessToken$tokenSecret as an instance url, because Mastodon API doesn't use tokenSecret.
@@ -113,19 +114,16 @@ public final class MastodonTwitterImpl implements Twitter {
     public MastodonTwitterImpl(AccessToken accessToken){
         this.accessToken = accessToken;
 
-        OkHttpClient.Builder builder = new OkHttpClient.Builder();
         List<Protocol> protocols = new ArrayList<>();
         protocols.add(Protocol.HTTP_1_1);
         protocols.add(Protocol.HTTP_2);
-        builder.protocols(protocols);
+        okHttpClient = new OkHttpClient.Builder()
+                .protocols(protocols)
+                .build();
 
-        client = new MastodonClient.Builder(accessToken.getTokenSecret(), builder, new GsonBuilder().create())
+        client = new MastodonClient.Builder(accessToken.getTokenSecret(), okHttpClient.newBuilder(), new GsonBuilder().create())
                 .accessToken(accessToken.getToken())
                 .build();
-    }
-
-    public MastodonClient getClient(){
-        return client;
     }
 
     @Override

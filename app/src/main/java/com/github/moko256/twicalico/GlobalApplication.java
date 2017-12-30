@@ -32,10 +32,7 @@ import com.github.moko256.twicalico.cacheMap.UserCacheMap;
 import com.github.moko256.twicalico.config.AppConfiguration;
 import com.github.moko256.twicalico.database.TokenSQLiteOpenHelper;
 import com.github.moko256.twicalico.notification.ExceptionNotification;
-import com.sys1yagi.mastodon4j.MastodonClient;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.regex.Pattern;
 
 import okhttp3.OkHttpClient;
@@ -201,7 +198,7 @@ public class GlobalApplication extends Application {
             OkHttpClient client = null;
 
             if (twitter instanceof MastodonTwitterImpl){
-                client = ((MastodonTwitterImpl) twitter).client.getOkHttpClient();
+                client = ((MastodonTwitterImpl) twitter).okHttpClient;
             } else {
                 HttpClient httpClient = HttpClientFactory.getInstance(twitter.getConfiguration().getHttpClientConfiguration());
                 if (httpClient instanceof AlternativeHttpClientImpl) {
