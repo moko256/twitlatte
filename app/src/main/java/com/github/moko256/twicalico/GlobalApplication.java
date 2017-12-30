@@ -40,6 +40,8 @@ import java.util.regex.Pattern;
 
 import okhttp3.OkHttpClient;
 import twitter4j.AlternativeHttpClientImpl;
+import twitter4j.HttpClient;
+import twitter4j.HttpClientFactory;
 import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
 import twitter4j.auth.AccessToken;
@@ -196,32 +198,21 @@ public class GlobalApplication extends Application {
 
     @NonNull
     public static OkHttpClient getOkHttpClient(){
-        try {
-            OkHttpClient client;
+            OkHttpClient client = null;
 
             if (twitter instanceof MastodonTwitterImpl){
-                MastodonClient mc = ((MastodonTwitterImpl) twitter).getClient();
-                Field clientField = MastodonClient.class.getDeclaredField("client");
-                clientField.setAccessible(true);
-                client = (OkHttpClient) clientField.get(mc);
+                client = ((MastodonTwitterImpl) twitter).client.getOkHttpClient();
             } else {
-                Field httpField = Class.forName("twitter4j.TwitterBaseImpl").getDeclaredField("http");
-                httpField.setAccessible(true);
-                Field clientField = AlternativeHttpClientImpl.class.getDeclaredField("okHttpClient");
-                clientField.setAccessible(true);
-                client = (OkHttpClient) clientField.get(httpField.get(twitter));
-                if (client == null){
-                    Method init = AlternativeHttpClientImpl.class.getDeclaredMethod("prepareOkHttpClient");
-                    init.setAccessible(true);
-                    init.invoke(httpField.get(twitter));
-                    client = (OkHttpClient) clientField.get(httpField.get(twitter));
+                HttpClient httpClient = HttpClientFactory.getInstance(twitter.getConfiguration().getHttpClientConfiguration());
+                if (httpClient instanceof AlternativeHttpClientImpl) {
+                    client = ((AlternativeHttpClientImpl) httpClient).getOkHttpClient();
                 }
             }
 
+            if (client == null){
+                throw new IllegalStateException("Couldn't get OkHttpClient.");
+            }
+
             return client;
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new IllegalStateException("Couldn't get OkHttpClient");
-        }
     }
 }
