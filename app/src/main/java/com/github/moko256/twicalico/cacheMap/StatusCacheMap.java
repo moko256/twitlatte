@@ -25,6 +25,7 @@ import com.github.moko256.mastodon.MTStatus;
 import com.github.moko256.twicalico.GlobalApplication;
 import com.github.moko256.twicalico.database.CachedStatusesSQLiteOpenHelper;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
@@ -75,6 +76,7 @@ public class StatusCacheMap {
         }
     }
 
+    @Nullable
     public Status get(Long id){
         Status memoryCache = statusCache.get(id);
         if (memoryCache == null){
@@ -125,9 +127,10 @@ public class StatusCacheMap {
                 idsSet.add(id);
             }
         }
-        long[] idsArray = new long[ids.size()];
-        for (int i = 0; i < ids.size(); i++) {
-            idsArray[i] = ids.get(i);
+        List<Long> list = new ArrayList<>(idsSet);
+        long[] idsArray = new long[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+            idsArray[i] = list.get(i);
         }
         diskCache.deleteCachedStatuses(idsArray);
     }

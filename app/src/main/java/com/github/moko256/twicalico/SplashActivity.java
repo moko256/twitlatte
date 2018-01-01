@@ -66,15 +66,53 @@ public class SplashActivity extends AppCompatActivity {
                                     intent = ShowUserActivity.getIntent(this, data.getQueryParameter("screen_name"));
                                 }
                                 break;
+                            default:
+                                intent = Intent.createChooser(new Intent(Intent.ACTION_VIEW, data), "");
                         }
                         break;
                     case "https":
-                        if (data.getQueryParameter("status") != null){
-                            intent = PostActivity.getIntent(this, data.getQueryParameter("status"));
-                        } else if (data.getPath().matches("/.+/status/.+")){
+                        if (data.getPath().equals("/share") || data.getPath().equals("/intent/tweet")){
+                            StringBuilder tweet = new StringBuilder(data.getQueryParameter("text"));
+                            if (data.getQueryParameter("url") != null){
+                                tweet.append(" ")
+                                        .append(data.getQueryParameter("url"));
+                            }
+                            if (data.getQueryParameter("hashtags") != null){
+                                String[] hashtags = data.getQueryParameter("hashtags").split(",");
+                                for (String hashtag: hashtags){
+                                    tweet.append(" #")
+                                            .append(hashtag);
+                                }
+                            }
+                            if (data.getQueryParameter("via") != null){
+                                tweet.append(" via @")
+                                        .append(data.getQueryParameter("via"));
+                            }
+                            if (data.getQueryParameter("related") != null){
+                                String[] relates = data.getQueryParameter("related").split(",");
+                                for (String related: relates){
+                                    tweet.append(" @")
+                                            .append(related);
+                                }
+                            }
+
+                            intent = PostActivity.getIntent(
+                                    this,
+                                    data.getQueryParameter("in-reply-to") != null
+                                            ? Long.valueOf(data.getQueryParameter("in-reply-to"))
+                                            :-1L,
+                                    tweet.toString()
+                                    );
+                        } else if (data.getPath().equals("/search")){
+                            intent = SearchResultActivity.getIntent(this, data.getQueryParameter("q"));
+                        } else if (data.getPath().matches("/.+/status(es)*/.+")){
                             intent = ShowTweetActivity.getIntent(this, Long.parseLong(data.getPathSegments().get(2)));
                         } else if (data.getPathSegments().size() == 1){
                             intent = ShowUserActivity.getIntent(this, data.getLastPathSegment());
+                        } else if (data.getQueryParameter("status") != null){
+                            intent = PostActivity.getIntent(this, data.getQueryParameter("status"));
+                        } else {
+                            intent = Intent.createChooser(new Intent(Intent.ACTION_VIEW, data), "");
                         }
                         break;
                     case "web+mastodon":

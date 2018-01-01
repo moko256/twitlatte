@@ -16,9 +16,7 @@
 
 package com.github.moko256.twicalico.text;
 
-import android.app.SearchManager;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -259,9 +257,7 @@ public class TwitterStringUtils {
             spannableStringBuilder.setSpan(new ClickableSpan() {
                 @Override
                 public void onClick(View view) {
-                    context.startActivity(new Intent(context,SearchResultActivity.class)
-                            .setAction(Intent.ACTION_SEARCH)
-                            .putExtra(SearchManager.QUERY,"#"+hashtagEntity.getText())
+                    context.startActivity(SearchResultActivity.getIntent(context, "#"+hashtagEntity.getText())
                     );
                 }
             }, tweet.offsetByCodePoints(0,hashtagEntity.getStart()), tweet.offsetByCodePoints(0,hashtagEntity.getEnd()), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
