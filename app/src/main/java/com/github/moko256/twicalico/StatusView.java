@@ -16,13 +16,10 @@
 
 package com.github.moko256.twicalico;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
-import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.Space;
 import android.support.v7.content.res.AppCompatResources;
 import android.text.method.LinkMovementMethod;
@@ -206,13 +203,7 @@ public class StatusView extends FrameLayout {
 
         timeStampText.setText(timeSpanConverter.toTimeSpanString(item.getCreatedAt().getTime()));
         userImage.setOnClickListener(v-> getContext().startActivity(ShowUserActivity.getIntent(getContext(), item.getUser().getId())));
-        setOnClickListener(v -> {
-            ViewCompat.setTransitionName(userImage,"tweet_user_image");
-            getContext().startActivity(
-                    ShowTweetActivity.getIntent(getContext(), item.getId()),
-                    ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) getContext(), userImage,"tweet_user_image").toBundle()
-            );
-        });
+        setOnClickListener(v -> getContext().startActivity(ShowTweetActivity.getIntent(getContext(), item.getId())));
 
         Status quotedStatus=item.getQuotedStatus();
         if(quotedStatus!=null){
@@ -260,8 +251,7 @@ public class StatusView extends FrameLayout {
                         result->{
                             Status status = (Status) result;
                             GlobalApplication.statusCache.add(status);
-                            this.status = status;
-                            updateView();
+                            setStatus(GlobalApplication.statusCache.get(this.status.getId()));
                             Toast.makeText(getContext(), R.string.succeeded, Toast.LENGTH_SHORT).show();
                         },
                         throwable -> {
@@ -291,8 +281,7 @@ public class StatusView extends FrameLayout {
                         result->{
                             Status status = (Status) result;
                             GlobalApplication.statusCache.add(status);
-                            this.status = status;
-                            updateView();
+                            setStatus(GlobalApplication.statusCache.get(this.status.getId()));
                             Toast.makeText(getContext(), R.string.succeeded, Toast.LENGTH_SHORT).show();
                         },
                         throwable -> {
