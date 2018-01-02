@@ -16,19 +16,10 @@
 #   public *;
 #}
 
--keep class com.github.moko256.mastodon.MastodonTwitterImpl.** {
-    com.sys1yagi.mastodon4j.MastodonClient client;
-}
-
 -dontwarn twitter4j.**
 -keep class twitter4j.** { *; }
 
--dontwarn com.sys1yagi.mastodon4j.**
--keep class com.sys1yagi.mastodon4j.** { *; }
-
 -keep class android.support.v7.widget.SearchView { *; }
-
--keep public class * implements com.bumptech.glide.module.GlideModule
 
 -dontwarn java.lang.invoke.*
 -dontwarn **$$Lambda$*
@@ -83,7 +74,7 @@
 #-keep class com.google.gson.stream.** { *; }
 
 # Application classes that will be serialized/deserialized over Gson
--keep class com.google.gson.examples.android.model.** { *; }
+#-keep class com.google.gson.examples.android.model.** { *; }
 
 # Prevent proguard from stripping interface information from TypeAdapterFactory,
 # JsonSerializer, JsonDeserializer instances (so they can be used in @JsonAdapter)
