@@ -36,11 +36,18 @@ public class SplashActivity extends AppCompatActivity {
         Intent intent = null;
 
         if (getIntent() != null){
-            if (getIntent().getExtras() != null && getIntent().getExtras().getCharSequence(Intent.EXTRA_TEXT) != null){
+            Bundle extras = getIntent().getExtras();
+            if (extras != null && extras.getCharSequence(Intent.EXTRA_TEXT) != null){
+                CharSequence subject = extras.getCharSequence(Intent.EXTRA_SUBJECT);
+                StringBuilder text = new StringBuilder();
+                if (subject != null){
+                    text.append(subject).append(" ");
+                }
+                text.append(extras.getCharSequence(Intent.EXTRA_TEXT));
                 intent = PostActivity.getIntent(
                         this,
                         -1,
-                        String.valueOf(getIntent().getExtras().getCharSequence(Intent.EXTRA_TEXT))
+                        text.toString()
                 );
             } else if (getIntent().getData() != null){
                 Uri data = getIntent().getData();
