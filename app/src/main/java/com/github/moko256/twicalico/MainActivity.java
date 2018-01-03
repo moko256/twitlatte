@@ -173,6 +173,8 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                                             new CachedUsersSQLiteOpenHelper(this, user.getId()).addCachedUser(user);
                                         } catch (TwitterException e) {
                                             singleSubscriber.onError(e);
+                                            dialog[0].cancel();
+                                            return;
                                         }
                                     }
                                     r.add(new Pair<>(
