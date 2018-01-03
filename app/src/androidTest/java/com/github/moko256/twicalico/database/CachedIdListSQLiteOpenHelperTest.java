@@ -78,9 +78,12 @@ public class CachedIdListSQLiteOpenHelperTest {
 
     private void hasIdOtherTableTest(){
         CachedIdListSQLiteOpenHelper helper2 = new CachedIdListSQLiteOpenHelper(InstrumentationRegistry.getTargetContext(), 0, "testIdDatabase2");
-        boolean[] result = helper2.hasIdsOtherTable(new long[]{100, 105});
-        assertTrue(result[0]);
-        assertFalse(result[1]);
+        boolean[] result1 = helper2.hasIdsOtherTable(new long[]{100, 105});
+        assertTrue(result1[0]);
+        assertFalse(result1[1]);
+        helper2.deleteIds(new long[]{100});
+        boolean[] result2 = helper2.hasIdsOtherTable(new long[]{100});
+        assertFalse(result2[0]);
     }
 
     private void deleteIdTest(){

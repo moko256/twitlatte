@@ -20,7 +20,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.github.moko256.twicalico.BuildConfig;
@@ -38,22 +37,17 @@ import java.util.List;
 
 public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
 
-    private CachedIdListListSQLiteOpenHelper idListList;
+    private CachedStatusesCountSQLiteOpenHelper statusesCounts;
     private String databaseName;
-    private Context context;
-    private long userId;
 
     public CachedIdListSQLiteOpenHelper(Context context, long userId, String name){
         super(context, new File(context.getCacheDir(), String.valueOf(userId) + "/" + name + ".db").getAbsolutePath(), null, BuildConfig.CACHE_DATABASE_VERSION);
         databaseName = name;
-        idListList = new CachedIdListListSQLiteOpenHelper(context, userId);
-        this.context = context;
-        this.userId = userId;
+        statusesCounts = new CachedStatusesCountSQLiteOpenHelper(context, userId);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        idListList.addTable(databaseName);
         db.execSQL("create table " + databaseName + "(id);");
         db.execSQL("create table ListViewPosition(position);");
         //db.execSQL("create table ListViewPositionOffset(offset);");
@@ -105,6 +99,22 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
 
     private void addIdsAtTransaction(long... ids){
         SQLiteDatabase database=getWritableDatabase();
+        List<Long> idsList = new ArrayList<>();
+
+        for (int i = ids.length - 1; i >= 0; i--) {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put("id", ids[i]);
+
+            database.insert(databaseName, "", contentValues);
+            if (ids[i] != -1L){
+                idsList.add(ids[i]);
+            }
+            statusesCounts.incrementCounts(idsList);
+        }
+    }
+
+    private void addIdsOnlyAtTransaction(long... ids){
+        SQLiteDatabase database=getWritableDatabase();
 
         for (int i = ids.length - 1; i >= 0; i--) {
             ContentValues contentValues = new ContentValues();
@@ -133,9 +143,9 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
 
         SQLiteDatabase database = getWritableDatabase();
         database.beginTransaction();
-        deleteIdsAtTransaction(l);
+        deleteOnlyIdsAtTransaction(l);
         addIdsAtTransaction(ids);
-        addIdsAtTransaction(l);
+        addIdsOnlyAtTransaction(l);
         database.setTransactionSuccessful();
         database.endTransaction();
         database.close();
@@ -160,6 +170,19 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
 
     private void deleteIdsAtTransaction(long[] ids){
         SQLiteDatabase database = getWritableDatabase();
+        List<Long> idsList = new ArrayList<>();
+        for (long id : ids) {
+            database.delete(databaseName, "id=" + String.valueOf(id), null);
+
+            if (id != -1L){
+                idsList.add(id);
+            }
+            statusesCounts.decrementCounts(idsList);
+        }
+    }
+
+    private void deleteOnlyIdsAtTransaction(long[] ids){
+        SQLiteDatabase database = getWritableDatabase();
         for (long id : ids) {
             database.delete(databaseName, "id=" + String.valueOf(id), null);
         }
@@ -176,28 +199,7 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
     public boolean[] hasIdsOtherTable(long[] ids){
         boolean[] result = new boolean[ids.length];
         for (int i = 0; i < ids.length; i++) {
-            SQLiteDatabase idListListDatabase = idListList.getReadableDatabase();
-            Cursor t = idListListDatabase.query("IdListList", new String[]{"tableName"}, null, null, null, null, null);
-            result[i] = false;
-            while ((!result[i]) && t.moveToNext()){
-                String tableName = t.getString(0);
-                if (!tableName.equals(databaseName)) {
-                    SQLiteOpenHelper helper = new CachedIdListSQLiteOpenHelper(context, userId, tableName);
-                    SQLiteDatabase database = helper.getReadableDatabase();
-                    Cursor c = database.query(
-                            tableName,
-                            new String[]{"id"},
-                            "id=" + String.valueOf(ids[i]),
-                            null, null, null, null, "1"
-                    );
-                    result[i] = c.getCount() > 0;
-                    c.close();
-                    database.close();
-                    helper.close();
-                }
-            }
-            t.close();
-            idListListDatabase.close();
+            result[i] = !(ids[i] != -1 && statusesCounts.getCount(ids[i]) == 0);
         }
         return result;
     }
