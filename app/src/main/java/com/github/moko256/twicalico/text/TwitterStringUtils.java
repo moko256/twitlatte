@@ -371,6 +371,7 @@ public class TwitterStringUtils {
                     new CustomTabsIntent.Builder()
                             .setToolbarColor(ContextCompat.getColor(context, R.color.colorPrimary))
                             .setSecondaryToolbarColor(ContextCompat.getColor(context, R.color.colorPrimaryDark))
+                            .addDefaultShareMenuItem()
                             .build()
                             .launchUrl(context, Uri.parse(span.getURL()));
                 }
