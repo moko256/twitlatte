@@ -136,6 +136,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
             adapter.setOnImageButtonClickListener(i -> {
 
                 AccessToken token = helper.getAccessToken(i);
+                dialog[0].cancel();
                 if (token.getUserId() != GlobalApplication.userId){
                     PreferenceManager.getDefaultSharedPreferences(this)
                             .edit()
@@ -145,8 +146,6 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                     startActivity(
                             new Intent(this, MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                     );
-                } else {
-                    dialog[0].cancel();
                 }
                 helper.close();
             });

@@ -171,6 +171,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 new CustomTabsIntent.Builder()
                         .setToolbarColor(ContextCompat.getColor(getContext(), R.color.colorPrimary))
                         .setSecondaryToolbarColor(ContextCompat.getColor(getContext(), R.color.colorPrimaryDark))
+                        .addDefaultShareMenuItem()
                         .build()
                         .launchUrl(getContext(), Uri.parse("https://github.com/moko256/twicalico"));
                 return false;
