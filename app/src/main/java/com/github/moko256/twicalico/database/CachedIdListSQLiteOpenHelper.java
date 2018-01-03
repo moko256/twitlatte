@@ -109,8 +109,8 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
             if (ids[i] != -1L){
                 idsList.add(ids[i]);
             }
-            statusesCounts.incrementCounts(idsList);
         }
+        statusesCounts.incrementCounts(idsList);
     }
 
     private void addIdsOnlyAtTransaction(long... ids){
@@ -177,8 +177,8 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
             if (id != -1L){
                 idsList.add(id);
             }
-            statusesCounts.decrementCounts(idsList);
         }
+        statusesCounts.decrementCounts(idsList);
     }
 
     private void deleteOnlyIdsAtTransaction(long[] ids){
