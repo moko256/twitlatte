@@ -69,7 +69,7 @@ public class LicensesActivity extends AppCompatActivity {
                             break;
 
                         default:
-                            path = "license_"+libName+".txt";
+                            path = "licenses/"+libName+".txt";
                             break;
                     }
 
