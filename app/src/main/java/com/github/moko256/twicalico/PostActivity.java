@@ -220,7 +220,7 @@ public class PostActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId() == R.id.activity_post_tweet_send){
+        if(item.getItemId() == R.id.action_send){
             item.setEnabled(false);
             model.postTweet()
                     .subscribe(
