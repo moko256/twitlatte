@@ -28,7 +28,6 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 
 /**
  * Created by moko256 on 2016/10/09.
@@ -39,7 +38,6 @@ public abstract class BaseListFragment extends Fragment implements MoveableTopIn
 
     private RecyclerView recyclerView;
     private SwipeRefreshLayout swipeRefreshLayout;
-    private ProgressBar progressBar;
 
     private boolean isProgressCircleLoading = true;
 
@@ -82,9 +80,6 @@ public abstract class BaseListFragment extends Fragment implements MoveableTopIn
                 onInitializeList();
             }
         });
-
-        progressBar = view.findViewById(R.id.loadingProgress);
-        updateProgressCircleLoading();
 
         return view;
     }
@@ -160,15 +155,6 @@ public abstract class BaseListFragment extends Fragment implements MoveableTopIn
     public interface GetSnackBarParentContainerId {
         @IdRes
         int getSnackBarParentContainerId();
-    }
-
-    protected void setProgressCircleLoading(boolean isLoading){
-        isProgressCircleLoading = isLoading;
-        updateProgressCircleLoading();
-    }
-
-    private void updateProgressCircleLoading(){
-        if (progressBar != null) progressBar.setVisibility(isProgressCircleLoading? View.VISIBLE: View.INVISIBLE);
     }
 
 }

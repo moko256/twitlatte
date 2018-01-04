@@ -25,7 +25,7 @@
     app:cardCornerRadius="2dp"
     app:cardElevation="2dp"
     app:cardUseCompatPadding="true"
-    app:contentPadding="16dp">
+    app:contentPadding="8dp">
     <TextView
         android:id="@+id/layout_list_load_more_text_view"
         android:layout_width="wrap_content"

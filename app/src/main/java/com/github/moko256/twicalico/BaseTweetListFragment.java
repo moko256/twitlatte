@@ -75,7 +75,6 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
             ArrayList<Long> c = statusIdsDatabase.getIds();
             if (c.size() > 0) {
                 list.addAll(c);
-                setProgressCircleLoading(false);
             }
         }
         super.onCreate(savedInstanceState);
@@ -208,7 +207,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
         super.onStop();
         StaggeredGridLayoutManager layoutManager = (StaggeredGridLayoutManager) getRecyclerView().getLayoutManager();
         int[] positions = layoutManager.findFirstVisibleItemPositions(null);
-        if (positions[0]!= LAST_SAVED_LIST_POSITION){
+        if (positions[0] != LAST_SAVED_LIST_POSITION){
             statusIdsDatabase.setListViewPosition(positions[0]);
         }
     }
@@ -224,6 +223,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
 
     @Override
     protected void onInitializeList() {
+        getSwipeRefreshLayout().setRefreshing(true);
         subscription.add(
                 getResponseSingle(new Paging(1,20))
                         .subscribeOn(Schedulers.newThread())
@@ -238,17 +238,16 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                                     statusIdsDatabase.addIds(ids);
                                     adapter.notifyDataSetChanged();
                                     getSwipeRefreshLayout().setRefreshing(false);
-                                    setProgressCircleLoading(false);
                                 },
                                 e -> {
                                     e.printStackTrace();
-                                    setProgressCircleLoading(false);
                                     Snackbar.make(getSnackBarParentContainer(), TwitterStringUtils.convertErrorToText(e), Snackbar.LENGTH_INDEFINITE)
                                             .setAction(R.string.retry, v -> {
-                                                setProgressCircleLoading(true);
+                                                getSwipeRefreshLayout().setRefreshing(true);
                                                 onInitializeList();
                                             })
                                             .show();
+                                    getSwipeRefreshLayout().setRefreshing(false);
                                 }
                         )
         );
@@ -293,10 +292,13 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                                 },
                                 e -> {
                                     e.printStackTrace();
-                                    getSwipeRefreshLayout().setRefreshing(false);
                                     Snackbar.make(getSnackBarParentContainer(), TwitterStringUtils.convertErrorToText(e), Snackbar.LENGTH_INDEFINITE)
-                                            .setAction(R.string.retry, v -> onUpdateList())
+                                            .setAction(R.string.retry, v -> {
+                                                getSwipeRefreshLayout().setRefreshing(true);
+                                                onUpdateList();
+                                            })
                                             .show();
+                                    getSwipeRefreshLayout().setRefreshing(false);
                                 }
                         )
         );
