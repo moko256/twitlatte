@@ -25,8 +25,8 @@ android {
         applicationId "com.github.moko256.twicalico"
         minSdkVersion 17
         targetSdkVersion 27
-        versionCode 58
-        versionName "0.9.5"
+        versionCode 59
+        versionName "0.9.6"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
         buildConfigField "String", "CONSUMER_KEY", "\"${CONSUMER_KEY}\""
