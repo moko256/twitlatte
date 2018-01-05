@@ -17,6 +17,7 @@
 package com.github.moko256.twicalico.cacheMap;
 
 import android.content.Context;
+import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.util.LruCache;
@@ -114,9 +115,7 @@ public class StatusCacheMap {
             cachedStatusObservable.forEach(status -> statusCache.put(status.getId(), status));
             HashSet<Status> cacheStatusSet = new HashSet<>(cachedStatusObservable.toList().toSingle().toBlocking().value());
 
-            Status[] diskCacheStatuses = new Status[cacheStatusSet.size()];
-            cacheStatusSet.toArray(diskCacheStatuses);
-            diskCache.addCachedStatuses(diskCacheStatuses);
+            diskCache.addCachedStatuses(cacheStatusSet);
         }
     }
 
@@ -128,13 +127,10 @@ public class StatusCacheMap {
             }
         }
         List<Long> list = new ArrayList<>(idsSet);
-        long[] idsArray = new long[list.size()];
-        for (int i = 0; i < list.size(); i++) {
-            idsArray[i] = list.get(i);
-        }
-        diskCache.deleteCachedStatuses(idsArray);
+        diskCache.deleteCachedStatuses(list);
     }
 
+    @Keep
     public static class CachedStatus implements Status{
 
         /* Based on twitter4j.StatusJSONImpl */

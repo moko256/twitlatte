@@ -59,7 +59,7 @@ public class CachedTrendsSQLiteOpenHelperTest {
     private void setTrendsTest(){
         helper.setTrends(createTestTrends(input0));
 
-        ArrayList<Trend> result0 = helper.getTrends();
+        List<Trend> result0 = helper.getTrends();
         for (int i = 0; i < result0.size() ; i++) {
             assertEquals(result0.get(i).getName(), input0[i]);
         }
@@ -67,14 +67,14 @@ public class CachedTrendsSQLiteOpenHelperTest {
 
     private void updateTrendsTest(){
         helper.setTrends(createTestTrends(input1));
-        ArrayList<Trend> result1 = helper.getTrends();
+        List<Trend> result1 = helper.getTrends();
         for (int i = 0; i < result1.size() ; i++) {
             assertEquals(result1.get(i).getName(), input1[i]);
         }
     }
 
     private List<Trend> createTestTrends(String[] names){
-        ArrayList<Trend> r = new ArrayList<>(names.length);
+        List<Trend> r = new ArrayList<>(names.length);
         for (String name : names) {
             r.add(new Trend() {
                 @Override

@@ -20,6 +20,8 @@ import android.support.annotation.NonNull;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
+import com.github.moko256.twicalico.array.ArrayUtils;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -84,10 +86,10 @@ public class CachedUsersSQLiteOpenHelperTest {
     }
 
     private void addUsersTest(){
-        helper.addCachedUsers(new User[]{
+        helper.addCachedUsers(ArrayUtils.convertToList(
                 new TestUser(TEST_DUMMY_USER_ID_1, TEST_DUMMY_USER_NAME_0),
-                new TestUser(TEST_DUMMY_USER_ID_2, TEST_DUMMY_USER_NAME_1)
-        });
+                new TestUser(TEST_DUMMY_USER_ID_2, TEST_DUMMY_USER_NAME_1))
+        );
 
         assertEquals(helper.getCachedUser(TEST_DUMMY_USER_ID_1).getName(), TEST_DUMMY_USER_NAME_0);
         assertEquals(helper.getCachedUser(TEST_DUMMY_USER_ID_2).getName(), TEST_DUMMY_USER_NAME_1);

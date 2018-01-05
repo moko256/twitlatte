@@ -23,7 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import twitter4j.Trend;
 
@@ -34,10 +34,10 @@ import twitter4j.Trend;
  */
 
 public class TrendsAdapter extends RecyclerView.Adapter<TrendsAdapter.ViewHolder> {
-    private ArrayList<Trend> data;
+    private List<Trend> data;
     private Context context;
 
-    TrendsAdapter(Context context, ArrayList<Trend> data) {
+    TrendsAdapter(Context context, List<Trend> data) {
         this.context = context;
         this.data = data;
 

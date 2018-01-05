@@ -54,10 +54,10 @@ public class CachedTrendsSQLiteOpenHelper extends SQLiteOpenHelper {
 
     }
 
-    public synchronized ArrayList<Trend> getTrends(){
+    public synchronized List<Trend> getTrends(){
         SQLiteDatabase database=getReadableDatabase();
         Cursor c=database.query("Trends", new String[]{"name"}, null, null, null,null,null);
-        ArrayList<Trend> trends = new ArrayList<>(c.getCount());
+        List<Trend> trends = new ArrayList<>(c.getCount());
 
         while (c.moveToNext()){
             trends.add(new CachedTrend(c.getString(0)));

@@ -34,6 +34,7 @@ import com.github.moko256.twicalico.text.TwitterStringUtils;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 
 import rx.Single;
@@ -53,7 +54,7 @@ import twitter4j.TwitterException;
 
 public class TrendsFragment extends BaseListFragment {
     TrendsAdapter adapter;
-    ArrayList<Trend> list;
+    List<Trend> list;
 
     CompositeSubscription subscription;
 
@@ -65,10 +66,10 @@ public class TrendsFragment extends BaseListFragment {
         subscription = new CompositeSubscription();
         helper = new CachedTrendsSQLiteOpenHelper(getContext(), GlobalApplication.userId);
         if (savedInstanceState == null) {
-            ArrayList<Trend> trends = helper.getTrends();
+            List<Trend> trends = helper.getTrends();
             if (trends.size() > 0){
                 list = trends;
-                setProgressCircleLoading(false);
+                getSwipeRefreshLayout().setRefreshing(false);
             }
         }
         super.onCreate(savedInstanceState);
@@ -115,7 +116,7 @@ public class TrendsFragment extends BaseListFragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState){
         super.onSaveInstanceState(outState);
-        outState.putSerializable("list", list);
+        outState.putSerializable("list", (ArrayList<Trend>) list);
     }
 
     @Override
@@ -136,6 +137,7 @@ public class TrendsFragment extends BaseListFragment {
 
     @Override
     protected void onInitializeList() {
+        getSwipeRefreshLayout().setRefreshing(true);
         subscription.add(
                 getGeoLocationSingle()
                         .flatMap(geolocation-> getResponseSingle(geolocation).subscribeOn(Schedulers.newThread()))
@@ -147,17 +149,16 @@ public class TrendsFragment extends BaseListFragment {
                                     list.addAll(Arrays.asList(result.getTrends()));
                                     adapter.notifyDataSetChanged();
                                     getSwipeRefreshLayout().setRefreshing(false);
-                                    setProgressCircleLoading(false);
                                 },
                                 e -> {
                                     e.printStackTrace();
-                                    setProgressCircleLoading(false);
                                     Snackbar.make(getSnackBarParentContainer(), TwitterStringUtils.convertErrorToText(e), Snackbar.LENGTH_INDEFINITE)
                                             .setAction(R.string.retry, v -> {
-                                                setProgressCircleLoading(true);
+                                                getSwipeRefreshLayout().setRefreshing(true);
                                                 onInitializeList();
                                             })
                                             .show();
+                                    getSwipeRefreshLayout().setRefreshing(false);
                                 }
                         )
         );

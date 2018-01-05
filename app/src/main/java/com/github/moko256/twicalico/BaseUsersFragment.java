@@ -121,6 +121,7 @@ public abstract class BaseUsersFragment extends BaseListFragment {
 
     @Override
     protected void onInitializeList() {
+        getSwipeRefreshLayout().setRefreshing(true);
         subscription.add(
                 getResponseSingle(-1)
                         .subscribeOn(Schedulers.newThread())
@@ -135,17 +136,17 @@ public abstract class BaseUsersFragment extends BaseListFragment {
                                     );
                                     adapter.notifyDataSetChanged();
                                     getSwipeRefreshLayout().setRefreshing(false);
-                                    setProgressCircleLoading(false);
                                 },
                                 e -> {
                                     e.printStackTrace();
-                                    setProgressCircleLoading(false);
                                     Snackbar.make(getSnackBarParentContainer(), TwitterStringUtils.convertErrorToText(e), Snackbar.LENGTH_INDEFINITE)
                                             .setAction(R.string.retry, v -> {
-                                                setProgressCircleLoading(true);
+
+                                                getSwipeRefreshLayout().setRefreshing(true);
                                                 onInitializeList();
                                             })
                                             .show();
+                                    getSwipeRefreshLayout().setRefreshing(false);
                                 }
                         )
         );

@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Arrays;
+import java.util.Collection;
 
 import twitter4j.Status;
 
@@ -333,7 +334,7 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
         database.close();
     }
 
-    public synchronized void addCachedStatuses(Status[] statuses){
+    public synchronized void addCachedStatuses(Collection<? extends Status> statuses){
         SQLiteDatabase database=getWritableDatabase();
         database.beginTransaction();
         for (Status status : statuses) {
@@ -381,7 +382,7 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
         database.close();
     }
 
-    public synchronized void deleteCachedStatuses(long[] ids){
+    public synchronized void deleteCachedStatuses(Collection<Long> ids){
         SQLiteDatabase database=getWritableDatabase();
         database.beginTransaction();
         for (long id : ids) {

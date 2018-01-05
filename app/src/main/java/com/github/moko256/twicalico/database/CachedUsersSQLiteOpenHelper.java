@@ -29,6 +29,7 @@ import com.github.moko256.twicalico.GlobalApplication;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 
 import twitter4j.RateLimitStatus;
@@ -523,7 +524,7 @@ public class CachedUsersSQLiteOpenHelper extends SQLiteOpenHelper {
         database.close();
     }
 
-    public synchronized void addCachedUsers(User[] users){
+    public synchronized void addCachedUsers(Collection<? extends User> users){
         SQLiteDatabase database=getWritableDatabase();
         database.beginTransaction();
         for (User user : users) {

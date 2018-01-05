@@ -81,14 +81,6 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
     }
 
     public synchronized void addIds(List<Long> ids){
-        long[] l = new long[ids.size()];
-        for (int i = 0; i < ids.size(); i++) {
-            l[i] = ids.get(i);
-        }
-        addIds(l);
-    }
-
-    public synchronized void addIds(long... ids){
         SQLiteDatabase database=getWritableDatabase();
         database.beginTransaction();
         addIdsAtTransaction(ids);
@@ -97,69 +89,48 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
         database.close();
     }
 
-    private void addIdsAtTransaction(long... ids){
+    private void addIdsAtTransaction(List<Long> ids){
         SQLiteDatabase database=getWritableDatabase();
         List<Long> idsList = new ArrayList<>();
 
-        for (int i = ids.length - 1; i >= 0; i--) {
+        for (int i = ids.size() - 1; i >= 0; i--) {
             ContentValues contentValues = new ContentValues();
-            contentValues.put("id", ids[i]);
+            contentValues.put("id", ids.get(i));
 
             database.insert(databaseName, "", contentValues);
-            if (ids[i] != -1L){
-                idsList.add(ids[i]);
+            if (ids.get(i) != -1L){
+                idsList.add(ids.get(i));
             }
         }
         statusesCounts.incrementCounts(idsList);
     }
 
-    private void addIdsOnlyAtTransaction(long... ids){
+    private void addIdsOnlyAtTransaction(List<Long> ids){
         SQLiteDatabase database=getWritableDatabase();
 
-        for (int i = ids.length - 1; i >= 0; i--) {
+        for (int i = ids.size() - 1; i >= 0; i--) {
             ContentValues contentValues = new ContentValues();
-            contentValues.put("id", ids[i]);
+            contentValues.put("id", ids.get(i));
 
             database.insert(databaseName, "", contentValues);
         }
     }
 
     public synchronized void insertIds(int bottomPosition, List<Long> ids){
-        long[] l = new long[ids.size()];
-        for (int i = 0; i < ids.size(); i++) {
-            l[i] = ids.get(i);
-        }
-        insertIds(bottomPosition, l);
-    }
-
-    public synchronized void insertIds(int bottomPosition, long... ids){
         ArrayList<Long> n = getIds();
         List<Long> d = n.subList(0, bottomPosition);
 
-        long[] l = new long[d.size()];
-        for (int i = 0; i < d.size(); i++) {
-            l[i] = d.get(i);
-        }
-
         SQLiteDatabase database = getWritableDatabase();
         database.beginTransaction();
-        deleteOnlyIdsAtTransaction(l);
+        deleteOnlyIdsAtTransaction(d);
         addIdsAtTransaction(ids);
-        addIdsOnlyAtTransaction(l);
+        addIdsOnlyAtTransaction(d);
         database.setTransactionSuccessful();
         database.endTransaction();
         database.close();
     }
 
     public synchronized void deleteIds(List<Long> ids){
-        long[] l = new long[ids.size()];
-        for (int i = 0; i < ids.size(); i++) {
-            l[i] = ids.get(i);
-        }
-        deleteIds(l);
-    }
-
-    public synchronized void deleteIds(long[] ids){
         SQLiteDatabase database=getWritableDatabase();
         database.beginTransaction();
         deleteIdsAtTransaction(ids);
@@ -168,7 +139,7 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
         database.close();
     }
 
-    private void deleteIdsAtTransaction(long[] ids){
+    private void deleteIdsAtTransaction(List<Long> ids){
         SQLiteDatabase database = getWritableDatabase();
         List<Long> idsList = new ArrayList<>();
         for (long id : ids) {
@@ -181,7 +152,7 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
         statusesCounts.decrementCounts(idsList);
     }
 
-    private void deleteOnlyIdsAtTransaction(long[] ids){
+    private void deleteOnlyIdsAtTransaction(List<Long> ids){
         SQLiteDatabase database = getWritableDatabase();
         for (long id : ids) {
             database.delete(databaseName, "id=" + String.valueOf(id), null);
@@ -189,17 +160,9 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
     }
 
     public boolean[] hasIdsOtherTable(List<Long> ids){
-        long[] l = new long[ids.size()];
+        boolean[] result = new boolean[ids.size()];
         for (int i = 0; i < ids.size(); i++) {
-            l[i] = ids.get(i);
-        }
-        return hasIdsOtherTable(l);
-    }
-
-    public boolean[] hasIdsOtherTable(long[] ids){
-        boolean[] result = new boolean[ids.length];
-        for (int i = 0; i < ids.length; i++) {
-            result[i] = !(ids[i] != -1 && statusesCounts.getCount(ids[i]) == 0);
+            result[i] = !(ids.get(0) != -1 && statusesCounts.getCount(ids.get(i)) == 0);
         }
         return result;
     }

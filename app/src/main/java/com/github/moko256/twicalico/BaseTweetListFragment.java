@@ -33,6 +33,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import com.github.moko256.twicalico.array.ArrayUtils;
 import com.github.moko256.twicalico.database.CachedIdListSQLiteOpenHelper;
 import com.github.moko256.twicalico.text.TwitterStringUtils;
 
@@ -111,7 +112,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                                 result -> {
                                     if (result.size() > 0) {
                                         list.remove(position);
-                                        statusIdsDatabase.deleteIds(new long[]{-1L});
+                                        statusIdsDatabase.deleteIds(ArrayUtils.convertToLongList(-1L));
                                         adapter.notifyItemRemoved(position);
                                         List<Long>ids = Observable
                                                 .from(result)
@@ -127,7 +128,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                                         adapter.notifyItemRangeInserted(position, ids.size());
                                     } else {
                                         list.remove(position);
-                                        statusIdsDatabase.deleteIds(new long[]{-1L});
+                                        statusIdsDatabase.deleteIds(ArrayUtils.convertToLongList(-1L));
                                         adapter.notifyItemRemoved(position);
                                     }
                                 },
