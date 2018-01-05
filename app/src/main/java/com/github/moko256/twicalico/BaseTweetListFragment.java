@@ -224,7 +224,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
 
     @Override
     protected void onInitializeList() {
-        getSwipeRefreshLayout().setRefreshing(true);
+        setRefreshing(true);
         subscription.add(
                 getResponseSingle(new Paging(1,20))
                         .subscribeOn(Schedulers.newThread())
@@ -238,17 +238,17 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                                     list.addAll(ids);
                                     statusIdsDatabase.addIds(ids);
                                     adapter.notifyDataSetChanged();
-                                    getSwipeRefreshLayout().setRefreshing(false);
+                                    setRefreshing(false);
                                 },
                                 e -> {
                                     e.printStackTrace();
                                     Snackbar.make(getSnackBarParentContainer(), TwitterStringUtils.convertErrorToText(e), Snackbar.LENGTH_INDEFINITE)
                                             .setAction(R.string.retry, v -> {
-                                                getSwipeRefreshLayout().setRefreshing(true);
+                                                setRefreshing(true);
                                                 onInitializeList();
                                             })
                                             .show();
-                                    getSwipeRefreshLayout().setRefreshing(false);
+                                    setRefreshing(false);
                                 }
                         )
         );
@@ -289,17 +289,17 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                                             t.show();
                                         }
                                     }
-                                    getSwipeRefreshLayout().setRefreshing(false);
+                                    setRefreshing(false);
                                 },
                                 e -> {
                                     e.printStackTrace();
                                     Snackbar.make(getSnackBarParentContainer(), TwitterStringUtils.convertErrorToText(e), Snackbar.LENGTH_INDEFINITE)
                                             .setAction(R.string.retry, v -> {
-                                                getSwipeRefreshLayout().setRefreshing(true);
+                                                setRefreshing(true);
                                                 onUpdateList();
                                             })
                                             .show();
-                                    getSwipeRefreshLayout().setRefreshing(false);
+                                    setRefreshing(false);
                                 }
                         )
         );

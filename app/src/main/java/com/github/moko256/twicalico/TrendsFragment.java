@@ -69,7 +69,7 @@ public class TrendsFragment extends BaseListFragment {
             List<Trend> trends = helper.getTrends();
             if (trends.size() > 0){
                 list = trends;
-                getSwipeRefreshLayout().setRefreshing(false);
+                setRefreshing(false);
             }
         }
         super.onCreate(savedInstanceState);
@@ -137,7 +137,7 @@ public class TrendsFragment extends BaseListFragment {
 
     @Override
     protected void onInitializeList() {
-        getSwipeRefreshLayout().setRefreshing(true);
+        setRefreshing(true);
         subscription.add(
                 getGeoLocationSingle()
                         .flatMap(geolocation-> getResponseSingle(geolocation).subscribeOn(Schedulers.newThread()))
@@ -148,17 +148,17 @@ public class TrendsFragment extends BaseListFragment {
                                     list.clear();
                                     list.addAll(Arrays.asList(result.getTrends()));
                                     adapter.notifyDataSetChanged();
-                                    getSwipeRefreshLayout().setRefreshing(false);
+                                    setRefreshing(false);
                                 },
                                 e -> {
                                     e.printStackTrace();
                                     Snackbar.make(getSnackBarParentContainer(), TwitterStringUtils.convertErrorToText(e), Snackbar.LENGTH_INDEFINITE)
                                             .setAction(R.string.retry, v -> {
-                                                getSwipeRefreshLayout().setRefreshing(true);
+                                                setRefreshing(true);
                                                 onInitializeList();
                                             })
                                             .show();
-                                    getSwipeRefreshLayout().setRefreshing(false);
+                                    setRefreshing(false);
                                 }
                         )
         );

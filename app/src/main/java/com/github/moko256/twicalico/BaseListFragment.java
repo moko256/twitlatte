@@ -39,7 +39,7 @@ public abstract class BaseListFragment extends Fragment implements MoveableTopIn
     private RecyclerView recyclerView;
     private SwipeRefreshLayout swipeRefreshLayout;
 
-    private boolean isProgressCircleLoading = true;
+    private boolean isProgressCircleLoading = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -73,10 +73,11 @@ public abstract class BaseListFragment extends Fragment implements MoveableTopIn
 
         swipeRefreshLayout= view.findViewById(R.id.srl);
         swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
+        swipeRefreshLayout.setRefreshing(isProgressCircleLoading);
         swipeRefreshLayout.setOnRefreshListener(()->{
             if (isInitializedList()){
                 onUpdateList();
-            }else{
+            } else {
                 onInitializeList();
             }
         });
@@ -102,14 +103,8 @@ public abstract class BaseListFragment extends Fragment implements MoveableTopIn
         recyclerView=null;
     }
 
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putBoolean("isProgressCircleLoading", isProgressCircleLoading);
-    }
-
     public void onRestoreInstanceState(Bundle savedInstanceState){
-        isProgressCircleLoading = savedInstanceState.getBoolean("isProgressCircleLoading", true);
+
     }
 
     protected abstract void onInitializeList();
@@ -141,6 +136,13 @@ public abstract class BaseListFragment extends Fragment implements MoveableTopIn
 
     protected void setAdapter(RecyclerView.Adapter adapter) {
         recyclerView.setAdapter(adapter);
+    }
+
+    protected void setRefreshing(boolean b){
+        isProgressCircleLoading = b;
+        if (swipeRefreshLayout != null) {
+            swipeRefreshLayout.setRefreshing(b);
+        }
     }
 
     protected View getSnackBarParentContainer(){
