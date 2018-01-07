@@ -88,11 +88,6 @@ public class MTUser implements User {
     }
 
     @Override
-    public String get400x400ProfileImageURLHttps() {
-        return account.getAvatar();
-    }
-
-    @Override
     public String getBiggerProfileImageURL() {
         return account.getAvatar();
     }
@@ -109,6 +104,11 @@ public class MTUser implements User {
 
     @Override
     public String getProfileImageURLHttps() {
+        return account.getAvatar();
+    }
+
+    @Override
+    public String get400x400ProfileImageURLHttps() {
         return account.getAvatar();
     }
 

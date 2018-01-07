@@ -220,6 +220,12 @@ public class CachedUsersSQLiteOpenHelper extends SQLiteOpenHelper {
                 }
 
                 @Override
+                public String get400x400ProfileImageURL() {
+                    return toResizedURL(profileImageURL, "_400x400");
+                }
+
+
+                @Override
                 public String getBiggerProfileImageURL() {
                     return toResizedURL(profileImageURL, "_bigger");
                 }
@@ -237,6 +243,11 @@ public class CachedUsersSQLiteOpenHelper extends SQLiteOpenHelper {
                 @Override
                 public String getProfileImageURLHttps() {
                     return profileImageURLHttps;
+                }
+
+                @Override
+                public String get400x400ProfileImageURLHttps() {
+                    return toResizedURL(profileImageURLHttps, "_400x400");
                 }
 
                 @Override
