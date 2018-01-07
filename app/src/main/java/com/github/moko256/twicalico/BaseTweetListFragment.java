@@ -73,7 +73,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
         subscription = new CompositeSubscription();
         statusIdsDatabase = new CachedIdListSQLiteOpenHelper(getContext(), GlobalApplication.userId, getCachedIdsDatabaseName());
         if (savedInstanceState == null){
-            ArrayList<Long> c = statusIdsDatabase.getIds();
+            List<Long> c = statusIdsDatabase.getIds();
             if (c.size() > 0) {
                 list.addAll(c);
             }
@@ -184,7 +184,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
     public void onDestroyView() {
         StaggeredGridLayoutManager layoutManager = (StaggeredGridLayoutManager) getRecyclerView().getLayoutManager();
         int[] positions = layoutManager.findFirstVisibleItemPositions(null);
-        ArrayList<Long> ids = statusIdsDatabase.getIds();
+        List<Long> ids = statusIdsDatabase.getIds();
         if (ids.size() - positions[0] > 1000){
             List<Long> list = ids.subList(positions[0] + 1000, ids.size());
             statusIdsDatabase.deleteIds(list);

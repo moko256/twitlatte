@@ -24,7 +24,6 @@ import com.github.moko256.twicalico.array.ArrayUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -64,7 +63,7 @@ public class CachedIdListSQLiteOpenHelperTest {
     private void addIdTest(){
         helper.addIds(addInput);
 
-        ArrayList<Long> result1 = helper.getIds();
+        List<Long> result1 = helper.getIds();
         for (int i = 0; i < result1.size() ; i++) {
             assertEquals(result1.get(i), addInput.get(i));
         }
@@ -73,7 +72,7 @@ public class CachedIdListSQLiteOpenHelperTest {
     private void insertIdTest(){
         helper.insertIds(1, insertInput);
 
-        ArrayList<Long> result2 = helper.getIds();
+        List<Long> result2 = helper.getIds();
         for (int i = 0; i < insertInput.size(); i++) {
             assertEquals(insertInput.get(i), result2.get(i + 1));
         }

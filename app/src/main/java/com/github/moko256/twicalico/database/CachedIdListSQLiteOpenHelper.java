@@ -64,10 +64,10 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
         */
     }
 
-    public synchronized ArrayList<Long> getIds(){
+    public synchronized List<Long> getIds(){
         SQLiteDatabase database=getReadableDatabase();
         Cursor c=database.query(databaseName, new String[]{"id"}, null, null, null,null,null);
-        ArrayList<Long> ids = new ArrayList<>(c.getCount());
+        List<Long> ids = new ArrayList<>(c.getCount());
 
         while (c.moveToNext()){
             ids.add(c.getLong(0));
@@ -117,7 +117,7 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
     }
 
     public synchronized void insertIds(int bottomPosition, List<Long> ids){
-        ArrayList<Long> n = getIds();
+        List<Long> n = getIds();
         List<Long> d = n.subList(0, bottomPosition);
 
         SQLiteDatabase database = getWritableDatabase();
