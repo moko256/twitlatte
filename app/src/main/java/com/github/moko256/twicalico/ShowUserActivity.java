@@ -164,11 +164,13 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
                     url = "https://twitter.com/"
                             + user.getScreenName();
                 }
-                startActivity(new Intent()
-                        .setAction(Intent.ACTION_SEND)
-                        .setType("text/plain")
-                        .putExtra(Intent.EXTRA_TEXT, url)
-                );
+                startActivity(Intent.createChooser(
+                                new Intent()
+                                        .setAction(Intent.ACTION_SEND)
+                                        .setType("text/plain")
+                                        .putExtra(Intent.EXTRA_TEXT, url),
+                                getString(R.string.share)
+                ));
                 break;
             case R.id.action_create_follow:
                 throwableFunc=()->twitter.createFriendship(user.getId());

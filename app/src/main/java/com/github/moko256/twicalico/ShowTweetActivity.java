@@ -143,16 +143,17 @@ public class ShowTweetActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.action_share:
-                startActivity(new Intent()
-                        .setAction(Intent.ACTION_SEND)
-                        .setType("text/plain")
-                        .putExtra(
-                                Intent.EXTRA_TEXT,
-                                ((StatusCacheMap.CachedStatus)
-                                        GlobalApplication.statusCache.get(statusId))
-                                        .getRemoteUrl()
-                        )
-                );
+                startActivity(Intent.createChooser(
+                        new Intent()
+                                .setAction(Intent.ACTION_SEND)
+                                .setType("text/plain")
+                                .putExtra(
+                                        Intent.EXTRA_TEXT,
+                                        ((StatusCacheMap.CachedStatus)
+                                                GlobalApplication.statusCache.get(statusId))
+                                                .getRemoteUrl()
+                                ),
+                        getString(R.string.share)));
                 break;
             }
         return super.onOptionsItemSelected(item);
