@@ -102,13 +102,9 @@ public class TrendsFragment extends BaseListFragment {
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         if (savedInstanceState != null){
-            ArrayList l=(ArrayList) savedInstanceState.getSerializable("list");
+            Trend[] l = (Trend[]) savedInstanceState.getSerializable("list");
             if(l!=null){
-                Trend trends[] = new Trend[l.size()];
-                for (int i = 0; i < trends.length; i++) {
-                    trends[i] = (Trend)l.get(i);
-                }
-                list.addAll(Arrays.asList(trends));
+                list.addAll(Arrays.asList(l));
             }
         }
     }
@@ -116,7 +112,7 @@ public class TrendsFragment extends BaseListFragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState){
         super.onSaveInstanceState(outState);
-        outState.putSerializable("list", (ArrayList<Trend>) list);
+        outState.putSerializable("list", list.toArray(new Trend[list.size()]));
     }
 
     @Override

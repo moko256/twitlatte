@@ -27,6 +27,7 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -258,20 +259,32 @@ public class PostActivity extends AppCompatActivity {
         super.onRestoreInstanceState(savedInstanceState);
         if (savedInstanceState != null){
             model.setInReplyToStatusId(savedInstanceState.getLong(INTENT_EXTRA_IN_REPLY_TO_STATUS_ID, -1));
-            List<Uri> urls = Arrays.asList((Uri[]) savedInstanceState.getSerializable(OUT_STATE_EXTRA_IMAGE_URI_LIST));
-            model.getUriList().addAll(urls);
-            addedImagesAdapter.getImagesList().addAll(urls);
+            Parcelable[] l = savedInstanceState.getParcelableArray(OUT_STATE_EXTRA_IMAGE_URI_LIST);
+            if (l != null) {
+                for (Parcelable p : l) {
+                    Uri uri = (Uri) p;
+                    model.getUriList().add(uri);
+                    addedImagesAdapter.getImagesList().add(uri);
+                }
+            }
         }
-
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putLong(INTENT_EXTRA_IN_REPLY_TO_STATUS_ID, model.getInReplyToStatusId());
-        Uri[] uris = new Uri[model.getUriList().size()];
-        model.getUriList().toArray(uris);
-        outState.putSerializable(OUT_STATE_EXTRA_IMAGE_URI_LIST, uris);
+
+        long inReplyToStatusId = model.getInReplyToStatusId();
+        if (inReplyToStatusId != -1){
+            outState.putLong(INTENT_EXTRA_IN_REPLY_TO_STATUS_ID, inReplyToStatusId);
+        }
+
+        int size = model.getUriList().size();
+        if (size > 0){
+            Uri[] uris = new Uri[size];
+            model.getUriList().toArray(uris);
+            outState.putParcelableArray(OUT_STATE_EXTRA_IMAGE_URI_LIST, uris);
+        }
     }
 
     @Override

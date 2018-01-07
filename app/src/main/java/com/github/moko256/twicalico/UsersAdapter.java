@@ -26,7 +26,7 @@ import android.widget.TextView;
 
 import com.github.moko256.twicalico.text.TwitterStringUtils;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import twitter4j.User;
 
@@ -37,12 +37,12 @@ import twitter4j.User;
  */
 class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> {
 
-    private ArrayList<Long> data;
+    private List<Long> data;
     private Context context;
 
     private GlideRequests glideRequests;
 
-    UsersAdapter(Context context, ArrayList<Long> data) {
+    UsersAdapter(Context context, List<Long> data) {
         this.context = context;
         this.data = data;
         glideRequests = GlideApp.with(context);

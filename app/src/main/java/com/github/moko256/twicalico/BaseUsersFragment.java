@@ -29,6 +29,7 @@ import com.github.moko256.twicalico.text.TwitterStringUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import rx.Observable;
 import rx.Single;
@@ -47,7 +48,7 @@ import twitter4j.User;
 public abstract class BaseUsersFragment extends BaseListFragment {
 
     UsersAdapter adapter;
-    ArrayList<Long> list;
+    List<Long> list;
     long next_cursor;
 
     CompositeSubscription subscription;
@@ -86,13 +87,9 @@ public abstract class BaseUsersFragment extends BaseListFragment {
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         if (savedInstanceState != null) {
-            ArrayList l=(ArrayList) savedInstanceState.getSerializable("list");
-            if(l!=null){
-                Long longs[] = new Long[l.size()];
-                for (int i = 0; i < longs.length; i++) {
-                    longs[i] = (Long)l.get(i);
-                }
-                list.addAll(Arrays.asList(longs));
+            Long[] l = (Long[]) savedInstanceState.getSerializable("list");
+            if(l != null){
+                list.addAll(Arrays.asList(l));
             }
             next_cursor=savedInstanceState.getLong("next_cursor",-1);
         }
@@ -101,7 +98,7 @@ public abstract class BaseUsersFragment extends BaseListFragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState){
         super.onSaveInstanceState(outState);
-        outState.putSerializable("list", list);
+        outState.putSerializable("list", list.toArray(new Long[list.size()]));
         outState.putLong("next_cursor", next_cursor);
     }
 
