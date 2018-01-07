@@ -60,6 +60,7 @@
     <string name="follower_counts_is">Followers: %d</string>
     <string name="other">Others</string>
     <string name="share">Share…</string>
+    <string name="open_in_browser">Open in browser</string>
     <string name="add_to_list">Add to list</string>
     <string name="show_list">Show lists</string>
     <string name="load_more">Load more…</string>

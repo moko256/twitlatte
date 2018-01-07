@@ -23,6 +23,10 @@
         android:title="@string/share"
         app:showAsAction="never" />
     <item
+        android:id="@+id/action_open_in_browser"
+        android:title="@string/open_in_browser"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/action_add_to_list"
         android:title="@string/add_to_list"
         app:showAsAction="never" />

@@ -50,6 +50,7 @@
     <string name="follower_counts_is">フォロワー数: %d</string>
     <string name="other">その他</string>
     <string name="share">共有する</string>
+    <string name="open_in_browser">ブラウザで開く</string>
     <string name="add_to_list">リストに追加</string>
     <string name="show_list">リストを見る</string>
     <string name="load_more">もっと見る</string>

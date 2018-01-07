@@ -18,11 +18,14 @@ package com.github.moko256.twicalico;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.customtabs.CustomTabsIntent;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -136,6 +139,31 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
         return super.onCreateOptionsMenu(menu);
     }
 
+    private String getShareUrl(){
+        String url;
+        if (GlobalApplication.twitter instanceof MastodonTwitterImpl){
+            String baseUrl;
+            String userName;
+            if (user.getScreenName().matches(".*@.*")){
+                String[] split = user.getScreenName().split("@");
+                baseUrl = split[1];
+                userName = split[0];
+            } else {
+                baseUrl = ((MastodonTwitterImpl) GlobalApplication.twitter).client.getInstanceName();
+                userName = user.getScreenName();
+            }
+
+            url = "https://"
+                    + baseUrl
+                    + "/@"
+                    + userName;
+        } else {
+            url = "https://twitter.com/"
+                    + user.getScreenName();
+        }
+        return url;
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         ThrowableFunc throwableFunc=null;
@@ -143,35 +171,21 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
 
         switch (item.getItemId()){
             case R.id.action_share:
-                String url;
-                if (GlobalApplication.twitter instanceof MastodonTwitterImpl){
-                    String baseUrl;
-                    String userName;
-                    if (user.getScreenName().matches(".*@.*")){
-                        String[] split = user.getScreenName().split("@");
-                        baseUrl = split[1];
-                        userName = split[0];
-                    } else {
-                        baseUrl = ((MastodonTwitterImpl) GlobalApplication.twitter).client.getInstanceName();
-                        userName = user.getScreenName();
-                    }
-
-                    url = "https://"
-                            + baseUrl
-                            + "/@"
-                            + userName;
-                } else {
-                    url = "https://twitter.com/"
-                            + user.getScreenName();
-                }
                 startActivity(Intent.createChooser(
                                 new Intent()
                                         .setAction(Intent.ACTION_SEND)
                                         .setType("text/plain")
-                                        .putExtra(Intent.EXTRA_TEXT, url),
+                                        .putExtra(Intent.EXTRA_TEXT, getShareUrl()),
                                 getString(R.string.share)
                 ));
                 break;
+            case R.id.action_open_in_browser:
+                new CustomTabsIntent.Builder()
+                        .setToolbarColor(ContextCompat.getColor(this, R.color.colorPrimary))
+                        .setSecondaryToolbarColor(ContextCompat.getColor(this, R.color.colorPrimaryDark))
+                        .addDefaultShareMenuItem()
+                        .build()
+                        .launchUrl(this, Uri.parse(getShareUrl()));
             case R.id.action_create_follow:
                 throwableFunc=()->twitter.createFriendship(user.getId());
                 break;

@@ -18,7 +18,10 @@ package com.github.moko256.twicalico;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.customtabs.CustomTabsIntent;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -139,7 +142,11 @@ public class ShowTweetActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
-    @Override
+    private String getShareUrl() {
+        return ((StatusCacheMap.CachedStatus) GlobalApplication.statusCache.get(statusId)).getRemoteUrl();
+    }
+
+        @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.action_share:
@@ -147,13 +154,16 @@ public class ShowTweetActivity extends AppCompatActivity {
                         new Intent()
                                 .setAction(Intent.ACTION_SEND)
                                 .setType("text/plain")
-                                .putExtra(
-                                        Intent.EXTRA_TEXT,
-                                        ((StatusCacheMap.CachedStatus)
-                                                GlobalApplication.statusCache.get(statusId))
-                                                .getRemoteUrl()
-                                ),
+                                .putExtra(Intent.EXTRA_TEXT, getShareUrl()),
                         getString(R.string.share)));
+                break;
+            case R.id.action_open_in_browser:
+                new CustomTabsIntent.Builder()
+                        .setToolbarColor(ContextCompat.getColor(this, R.color.colorPrimary))
+                        .setSecondaryToolbarColor(ContextCompat.getColor(this, R.color.colorPrimaryDark))
+                        .addDefaultShareMenuItem()
+                        .build()
+                        .launchUrl(this, Uri.parse(getShareUrl()));
                 break;
             }
         return super.onOptionsItemSelected(item);
