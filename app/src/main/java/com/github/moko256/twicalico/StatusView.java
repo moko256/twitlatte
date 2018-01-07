@@ -269,7 +269,7 @@ public class StatusView extends FrameLayout {
                             subscriber.onSuccess(GlobalApplication.twitter.retweetStatus(item.getId()));
                         }
                         else if((!b)&&item.isRetweeted()){
-                            subscriber.onSuccess(GlobalApplication.twitter.destroyStatus(item.getCurrentUserRetweetId()));
+                            subscriber.onSuccess(GlobalApplication.twitter.unRetweetStatus(item.getId()));
                         }
                     } catch (TwitterException e) {
                         subscriber.onError(e);

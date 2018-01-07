@@ -285,6 +285,15 @@ public final class MastodonTwitterImpl implements Twitter {
             }
 
             @Override
+            public Status unRetweetStatus(long statusId) throws TwitterException {
+                try {
+                    return new MTStatus(new Statuses(client).postUnreblog(statusId).execute());
+                } catch (Mastodon4jRequestException e) {
+                    throw new MTException(e);
+                }
+            }
+
+            @Override
             public OEmbed getOEmbed(OEmbedRequest oEmbedRequest) throws TwitterException {
                 return null;
             }
@@ -1783,6 +1792,11 @@ public final class MastodonTwitterImpl implements Twitter {
     @Override
     public Status retweetStatus(long l) throws TwitterException {
         return tweets().retweetStatus(l);
+    }
+
+    @Override
+    public Status unRetweetStatus(long statusId) throws TwitterException {
+        return tweets().unRetweetStatus(statusId);
     }
 
     @Override

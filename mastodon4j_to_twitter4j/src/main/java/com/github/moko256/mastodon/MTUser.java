@@ -83,6 +83,16 @@ public class MTUser implements User {
     }
 
     @Override
+    public String get400x400ProfileImageURL() {
+        return account.getAvatar();
+    }
+
+    @Override
+    public String get400x400ProfileImageURLHttps() {
+        return account.getAvatar();
+    }
+
+    @Override
     public String getBiggerProfileImageURL() {
         return account.getAvatar();
     }

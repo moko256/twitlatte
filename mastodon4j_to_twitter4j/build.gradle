@@ -26,5 +26,6 @@ dependencies {
     //Compiling forked twitter4j(https://github.com/moko256/twitter4j)
     //api 'org.twitter4j:twitter4j-core:4.0.6'
     //api 'org.twitter4j:twitter4j-http2-support:4.0.6'
-    compile files('libs/twitter4j-http2-support.jar')
+    compile files('libs/twitter4j-core-4.0.6.jar')
+    compile files('libs/twitter4j-http2-support-4.0.6.jar')
 }
