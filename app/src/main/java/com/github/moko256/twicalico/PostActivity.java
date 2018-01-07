@@ -173,9 +173,10 @@ public class PostActivity extends AppCompatActivity {
                 intent = new Intent(Intent.ACTION_GET_CONTENT);
             } else {
                 intent = new Intent(Intent.ACTION_OPEN_DOCUMENT).addCategory(Intent.CATEGORY_OPENABLE);
+                intent.putExtra(Intent.EXTRA_MIME_TYPES, new String[]{"image/*", "video/*"});
             }
-            intent.setType("image/*");
-            startActivityForResult(intent, REQUEST_GET_IMAGE);
+            intent.setType("image/*|video/*");
+            startActivityForResult(Intent.createChooser(intent, getString(R.string.add_image)), REQUEST_GET_IMAGE);
         });
         imagesRecyclerView.setAdapter(addedImagesAdapter);
         addedImagesAdapter.notifyDataSetChanged();
