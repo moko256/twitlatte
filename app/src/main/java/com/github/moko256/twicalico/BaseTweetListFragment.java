@@ -59,7 +59,7 @@ import twitter4j.TwitterException;
 public abstract class BaseTweetListFragment extends BaseListFragment {
 
     StatusesAdapter adapter;
-    ArrayList<Long> list;
+    List<Long> list;
 
     CompositeSubscription subscription;
 
@@ -163,13 +163,9 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         if (savedInstanceState != null){
-            ArrayList l=(ArrayList) savedInstanceState.getSerializable("list");
+            Long[] l=(Long[]) savedInstanceState.getSerializable("list");
             if(l!=null){
-                Long longs[] = new Long[l.size()];
-                for (int i = 0; i < longs.length; i++) {
-                    longs[i] = (Long)l.get(i);
-                }
-                list.addAll(Arrays.asList(longs));
+                list.addAll(Arrays.asList(l));
             }
         }
     }
@@ -177,7 +173,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState){
         super.onSaveInstanceState(outState);
-        outState.putSerializable("list", list);
+        outState.putSerializable("list", list.toArray(new Long[list.size()]));
     }
 
     @Override

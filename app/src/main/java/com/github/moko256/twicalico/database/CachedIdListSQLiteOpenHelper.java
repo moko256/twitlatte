@@ -142,7 +142,7 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
     private void deleteIdsAtTransaction(List<Long> ids){
         SQLiteDatabase database = getWritableDatabase();
         List<Long> idsList = new ArrayList<>();
-        for (long id : ids) {
+        for (Long id : ids) {
             database.delete(databaseName, "id=" + String.valueOf(id), null);
 
             if (id != -1L){
@@ -154,7 +154,7 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
 
     private void deleteOnlyIdsAtTransaction(List<Long> ids){
         SQLiteDatabase database = getWritableDatabase();
-        for (long id : ids) {
+        for (Long id : ids) {
             database.delete(databaseName, "id=" + String.valueOf(id), null);
         }
     }

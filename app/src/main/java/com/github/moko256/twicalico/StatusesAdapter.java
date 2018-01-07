@@ -29,7 +29,7 @@ import com.github.moko256.twicalico.config.AppConfiguration;
 import com.github.moko256.twicalico.text.TwitterStringUtils;
 import com.github.moko256.twicalico.widget.TweetImageTableView;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import twitter4j.Status;
 
@@ -40,11 +40,11 @@ import twitter4j.Status;
  */
 class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private ArrayList<Long> data;
+    private List<Long> data;
     private Context context;
     private OnLoadMoreClickListener onLoadMoreClick;
 
-    StatusesAdapter(Context context, ArrayList<Long> data) {
+    StatusesAdapter(Context context, List<Long> data) {
         this.context = context;
         this.data = data;
 

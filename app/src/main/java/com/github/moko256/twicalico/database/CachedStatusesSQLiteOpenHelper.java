@@ -385,7 +385,7 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
     public synchronized void deleteCachedStatuses(Collection<Long> ids){
         SQLiteDatabase database=getWritableDatabase();
         database.beginTransaction();
-        for (long id : ids) {
+        for (Long id : ids) {
             deleteCachedStatusAtTransaction(id);
         }
         database.setTransactionSuccessful();
@@ -393,7 +393,7 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
         database.close();
     }
 
-    private void deleteCachedStatusAtTransaction(long id) {
+    private void deleteCachedStatusAtTransaction(Long id) {
         getWritableDatabase().delete("CachedStatuses", "id=" + String.valueOf(id), null);
     }
 }
