@@ -54,7 +54,7 @@ import twitter4j.UserMentionEntity;
 
 public class StatusCacheMap {
 
-    private LruCache<Long, Status> statusCache=new LruCache<>(1000);
+    private LruCache<Long, Status> statusCache=new LruCache<>(GlobalApplication.statusCacheListLimit / 4);
     private CachedStatusesSQLiteOpenHelper diskCache;
 
     public StatusCacheMap(Context context, long userId){

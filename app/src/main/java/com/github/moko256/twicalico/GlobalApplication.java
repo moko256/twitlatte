@@ -64,6 +64,7 @@ public class GlobalApplication extends Application {
     public static StatusCacheMap statusCache;
 
     public static int statusLimit;
+    public static int statusCacheListLimit = 1000;
 
     @Override
     public void onCreate() {

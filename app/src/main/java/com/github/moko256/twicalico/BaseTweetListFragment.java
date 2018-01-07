@@ -181,8 +181,8 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
         StaggeredGridLayoutManager layoutManager = (StaggeredGridLayoutManager) getRecyclerView().getLayoutManager();
         int[] positions = layoutManager.findFirstVisibleItemPositions(null);
         List<Long> ids = statusIdsDatabase.getIds();
-        if (ids.size() - positions[0] > 1000){
-            List<Long> list = ids.subList(positions[0] + 1000, ids.size());
+        if (ids.size() - positions[0] > GlobalApplication.statusCacheListLimit){
+            List<Long> list = ids.subList(positions[0] + GlobalApplication.statusCacheListLimit, ids.size());
             statusIdsDatabase.deleteIds(list);
 
             boolean[] results = statusIdsDatabase.hasIdsOtherTable(list);

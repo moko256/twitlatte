@@ -19,6 +19,7 @@ package com.github.moko256.twicalico.cacheMap;
 import android.content.Context;
 import android.support.v4.util.LruCache;
 
+import com.github.moko256.twicalico.GlobalApplication;
 import com.github.moko256.twicalico.database.CachedUsersSQLiteOpenHelper;
 
 import java.util.Collection;
@@ -35,7 +36,7 @@ import twitter4j.User;
 public class UserCacheMap {
 
     private CachedUsersSQLiteOpenHelper diskCache;
-    private LruCache<Long, User> cache=new LruCache<>(1000);
+    private LruCache<Long, User> cache=new LruCache<>(GlobalApplication.statusCacheListLimit / 4);
 
     public UserCacheMap(Context context, long userId){
         diskCache = new CachedUsersSQLiteOpenHelper(context, userId);
