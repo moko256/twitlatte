@@ -108,7 +108,7 @@ public class PostActivity extends AppCompatActivity {
         userIcon = findViewById(R.id.activity_tweet_send_user_icon);
         GlideApp.with(this)
                 .load(GlobalApplication.userCache.get(GlobalApplication.userId)
-                        .getProfileImageURLHttps()
+                        .get400x400ProfileImageURLHttps()
                 )
                 .circleCrop()
                 .into(userIcon);

@@ -178,7 +178,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                                         }
                                     }
                                     r.add(new Pair<>(
-                                            Uri.parse(user.getProfileImageURLHttps()),
+                                            Uri.parse(user.get400x400ProfileImageURLHttps()),
                                             TwitterStringUtils.plusAtMark(c.getString(1))
                                     ));
                                 }
