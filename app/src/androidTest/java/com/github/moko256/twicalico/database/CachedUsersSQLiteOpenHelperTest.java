@@ -42,7 +42,7 @@ import static org.junit.Assert.assertEquals;
 @RunWith(AndroidJUnit4.class)
 public class CachedUsersSQLiteOpenHelperTest {
 
-    private CachedUsersSQLiteOpenHelper helper = new CachedUsersSQLiteOpenHelper(InstrumentationRegistry.getTargetContext(), 0);
+    private CachedUsersSQLiteOpenHelper helper = new CachedUsersSQLiteOpenHelper(InstrumentationRegistry.getTargetContext(), 0, true);
 
     private static final long TEST_DUMMY_USER_ID_1 = 1L;
     private static final long TEST_DUMMY_USER_ID_2 = 2L;
@@ -147,6 +147,11 @@ public class CachedUsersSQLiteOpenHelperTest {
         }
 
         @Override
+        public String get400x400ProfileImageURL() {
+            return null;
+        }
+
+        @Override
         public String getBiggerProfileImageURL() {
             return null;
         }
@@ -158,6 +163,11 @@ public class CachedUsersSQLiteOpenHelperTest {
 
         @Override
         public String getOriginalProfileImageURL() {
+            return null;
+        }
+
+        @Override
+        public String get400x400ProfileImageURLHttps() {
             return null;
         }
 
