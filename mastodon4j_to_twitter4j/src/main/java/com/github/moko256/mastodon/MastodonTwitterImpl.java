@@ -39,7 +39,6 @@ import java.util.Map;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
-import okhttp3.Protocol;
 import okhttp3.RequestBody;
 import twitter4j.AccountSettings;
 import twitter4j.Category;
@@ -102,27 +101,22 @@ import twitter4j.util.function.Consumer;
 
 public final class MastodonTwitterImpl implements Twitter {
 
-    public final AccessToken accessToken;
     public final MastodonClient client;
-    public final OkHttpClient okHttpClient;
+
+    private Configuration configuration;
+    private long userId;
 
     /**
      * This constructor uses AccessToken$tokenSecret as an instance url, because Mastodon API doesn't use tokenSecret.
      *
-     * @param accessToken AccessToken (tokenSecret is instance url)
+     * @param configuration Configuration (tokenSecret is instance url)
+     * @param builder OkHttpClient.Builder
      */
-    public MastodonTwitterImpl(AccessToken accessToken){
-        this.accessToken = accessToken;
-
-        List<Protocol> protocols = new ArrayList<>();
-        protocols.add(Protocol.HTTP_1_1);
-        protocols.add(Protocol.HTTP_2);
-        okHttpClient = new OkHttpClient.Builder()
-                .protocols(protocols)
-                .build();
-
-        client = new MastodonClient.Builder(accessToken.getTokenSecret(), okHttpClient.newBuilder(), new GsonBuilder().create())
-                .accessToken(accessToken.getToken())
+    public MastodonTwitterImpl(Configuration configuration, long userId, OkHttpClient.Builder builder){
+        this.configuration = configuration;
+        this.userId = userId;
+        client = new MastodonClient.Builder(configuration.getOAuthAccessTokenSecret(), builder, new GsonBuilder().create())
+                .accessToken(configuration.getOAuthAccessToken())
                 .build();
     }
 
@@ -176,7 +170,7 @@ public final class MastodonTwitterImpl implements Twitter {
 
             @Override
             public ResponseList<Status> getUserTimeline(Paging paging) throws TwitterException {
-                return getUserTimeline(accessToken.getUserId(), paging);
+                return getUserTimeline(userId, paging);
             }
 
             @Override
@@ -807,7 +801,7 @@ public final class MastodonTwitterImpl implements Twitter {
 
             @Override
             public ResponseList<Status> getFavorites(long l, Paging paging) throws TwitterException {
-                if (l == accessToken.getUserId()) {
+                if (l == userId) {
                     return getFavorites(paging);
                 } else {
                     return new MTResponseList<>();
@@ -901,7 +895,7 @@ public final class MastodonTwitterImpl implements Twitter {
 
     @Override
     public Configuration getConfiguration() {
-        return null;
+        return configuration;
     }
 
     @Override

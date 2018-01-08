@@ -38,6 +38,7 @@ import java.util.regex.Pattern;
 import okhttp3.OkHttpClient;
 import twitter4j.AlternativeHttpClientImpl;
 import twitter4j.HttpClient;
+import twitter4j.HttpClientConfiguration;
 import twitter4j.HttpClientFactory;
 import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
@@ -177,17 +178,17 @@ public class GlobalApplication extends Application {
     public Twitter getTwitterInstance(@NonNull AccessToken accessToken){
         Twitter t;
 
-        if (accessToken.getTokenSecret().matches(".*\\..*")){
-            t = new MastodonTwitterImpl(accessToken);
-        } else {
-            Configuration conf=new ConfigurationBuilder()
-                    .setTweetModeExtended(true)
-                    .setOAuthConsumerKey(consumerKey)
-                    .setOAuthConsumerSecret(consumerSecret)
-                    .setOAuthAccessToken(accessToken.getToken())
-                    .setOAuthAccessTokenSecret(accessToken.getTokenSecret())
-                    .build();
+        Configuration conf=new ConfigurationBuilder()
+                .setTweetModeExtended(true)
+                .setOAuthConsumerKey(consumerKey)
+                .setOAuthConsumerSecret(consumerSecret)
+                .setOAuthAccessToken(accessToken.getToken())
+                .setOAuthAccessTokenSecret(accessToken.getTokenSecret())
+                .build();
 
+        if (accessToken.getTokenSecret().matches(".*\\..*")){
+            t = new MastodonTwitterImpl(conf, accessToken.getUserId(), getOkHttpClient(conf.getHttpClientConfiguration()).newBuilder());
+        } else {
             t = new TwitterFactory(conf).getInstance();
         }
 
@@ -196,21 +197,16 @@ public class GlobalApplication extends Application {
 
     @NonNull
     public static OkHttpClient getOkHttpClient(){
-            OkHttpClient client = null;
+        return getOkHttpClient(twitter.getConfiguration().getHttpClientConfiguration());
+    }
 
-            if (twitter instanceof MastodonTwitterImpl){
-                client = ((MastodonTwitterImpl) twitter).okHttpClient;
-            } else {
-                HttpClient httpClient = HttpClientFactory.getInstance(twitter.getConfiguration().getHttpClientConfiguration());
-                if (httpClient instanceof AlternativeHttpClientImpl) {
-                    client = ((AlternativeHttpClientImpl) httpClient).getOkHttpClient();
-                }
-            }
-
-            if (client == null){
-                throw new IllegalStateException("Couldn't get OkHttpClient.");
-            }
-
-            return client;
+    @NonNull
+    private static OkHttpClient getOkHttpClient(HttpClientConfiguration configuration){
+        HttpClient httpClient = HttpClientFactory.getInstance(configuration);
+        if (httpClient instanceof AlternativeHttpClientImpl) {
+            return ((AlternativeHttpClientImpl) httpClient).getOkHttpClient();
+        } else {
+            throw new IllegalStateException("Couldn't get OkHttpClient.");
+        }
     }
 }
