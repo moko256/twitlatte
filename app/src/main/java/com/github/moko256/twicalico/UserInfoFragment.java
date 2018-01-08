@@ -167,7 +167,7 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
                 header.setBackgroundColor(Color.parseColor("#" + colorStr));
             }
         }
-        glideRequests.load(user.getBiggerProfileImageURL()).circleCrop().into(icon);
+        glideRequests.load(user.get400x400ProfileImageURLHttps()).circleCrop().into(icon);
 
         userNameText.setText(user.getName());
         userLockIcon.setVisibility(user.isProtected()? View.VISIBLE: View.GONE);

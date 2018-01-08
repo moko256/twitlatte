@@ -166,15 +166,17 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                                 ArrayList<Pair<Uri, String>> r = new ArrayList<>();
                                 while (c.moveToNext()){
                                     long id = Long.valueOf(c.getString(0));
-                                    User user = new CachedUsersSQLiteOpenHelper(this, id).getCachedUser(id);
+                                    CachedUsersSQLiteOpenHelper userHelper = new CachedUsersSQLiteOpenHelper(this, id, !c.getString(1).matches(".*@.*"));
+                                    User user = userHelper.getCachedUser(id);
                                     if (user ==  null){
                                         try {
                                             user = ((GlobalApplication) getApplication()).getTwitterInstance(helper.getAccessToken(c.getPosition())).verifyCredentials();
-                                            new CachedUsersSQLiteOpenHelper(this, user.getId()).addCachedUser(user);
+                                            userHelper.addCachedUser(user);
                                         } catch (TwitterException e) {
                                             singleSubscriber.onError(e);
-                                            dialog[0].cancel();
                                             return;
+                                        } finally {
+                                            userHelper.close();
                                         }
                                     }
                                     r.add(new Pair<>(
@@ -193,7 +195,10 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                                         adapter.getImagesList().addAll((ArrayList<Pair<Uri, String>>) o);
                                         adapter.notifyDataSetChanged();
                                     },
-                                    Throwable::printStackTrace
+                                    e -> {
+                                        e.printStackTrace();
+                                        dialog[0].cancel();
+                                    }
                             )
             );
 
@@ -362,7 +367,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
 
         GlideRequests requests=GlideApp.with(this);
 
-        requests.load(user.getBiggerProfileImageURL()).circleCrop().into(userImage);
+        requests.load(user.get400x400ProfileImageURLHttps()).circleCrop().into(userImage);
         requests.load(user.getProfileBannerRetinaURL()).centerCrop().into(userBackgroundImage);
     }
 

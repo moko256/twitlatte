@@ -38,8 +38,8 @@ public class UserCacheMap {
     private CachedUsersSQLiteOpenHelper diskCache;
     private LruCache<Long, User> cache=new LruCache<>(GlobalApplication.statusCacheListLimit / 4);
 
-    public UserCacheMap(Context context, long userId){
-        diskCache = new CachedUsersSQLiteOpenHelper(context, userId);
+    public UserCacheMap(Context context, long userId, boolean isTwitter){
+        diskCache = new CachedUsersSQLiteOpenHelper(context, userId, isTwitter);
     }
 
     public int size() {

@@ -168,7 +168,7 @@ public class GlobalApplication extends Application {
     public void initTwitter(@NonNull AccessToken accessToken){
         userId = accessToken.getUserId();
         twitter = getTwitterInstance(accessToken);
-        userCache = new UserCacheMap(this, userId);
+        userCache = new UserCacheMap(this, userId, !(twitter instanceof MastodonTwitterImpl));
         statusCache = new StatusCacheMap(this, userId);
         statusLimit = twitter instanceof MastodonTwitterImpl? 40: 200;
     }
