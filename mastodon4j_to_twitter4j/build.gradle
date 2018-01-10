@@ -21,7 +21,7 @@ dependencies {
     //implementation fileTree(include: ['*.jar'], dir: 'libs')
 
     compile 'com.github.sys1yagi.mastodon4j:mastodon4j:1.6.0'
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 
     //Compiling forked twitter4j(https://github.com/moko256/twitter4j)
     //api 'org.twitter4j:twitter4j-core:4.0.6'
