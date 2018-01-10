@@ -37,7 +37,7 @@ class MTResponseList<T> extends ArrayList<T> implements ResponseList<T> {
     }
 
     static ResponseList<Status> convert(Pageable<com.sys1yagi.mastodon4j.api.entity.Status> statusPageable){
-        ResponseList<Status> responseList = new MTResponseList<Status>();
+        ResponseList<Status> responseList = new MTResponseList<>();
         for (com.sys1yagi.mastodon4j.api.entity.Status status : statusPageable.getPart()) {
             responseList.add(new MTStatus(status));
         }

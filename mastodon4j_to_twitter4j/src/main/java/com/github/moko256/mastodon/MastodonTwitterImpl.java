@@ -16,7 +16,7 @@
 
 package com.github.moko256.mastodon;
 
-import com.google.gson.GsonBuilder;
+import com.google.gson.Gson;
 import com.sys1yagi.mastodon4j.MastodonClient;
 import com.sys1yagi.mastodon4j.api.Range;
 import com.sys1yagi.mastodon4j.api.entity.Attachment;
@@ -101,6 +101,12 @@ import twitter4j.util.function.Consumer;
 
 public final class MastodonTwitterImpl implements Twitter {
 
+    private static Gson gson;
+
+    static {
+        gson = new Gson();
+    }
+
     public final MastodonClient client;
 
     private Configuration configuration;
@@ -115,7 +121,7 @@ public final class MastodonTwitterImpl implements Twitter {
     public MastodonTwitterImpl(Configuration configuration, long userId, OkHttpClient.Builder builder){
         this.configuration = configuration;
         this.userId = userId;
-        client = new MastodonClient.Builder(configuration.getOAuthAccessTokenSecret(), builder, new GsonBuilder().create())
+        client = new MastodonClient.Builder(configuration.getOAuthAccessTokenSecret(), builder, gson)
                 .accessToken(configuration.getOAuthAccessToken())
                 .build();
     }
