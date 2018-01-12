@@ -25,6 +25,7 @@ import android.graphics.Color;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.v4.util.LruCache;
 import android.support.v7.app.AppCompatDelegate;
 
 import com.github.moko256.mastodon.MastodonTwitterImpl;
@@ -57,6 +58,7 @@ public class GlobalApplication extends Application {
     static final String consumerKey=BuildConfig.CONSUMER_KEY;
     static final String consumerSecret=BuildConfig.CONSUMER_SECRET;
 
+    public static LruCache<Configuration, Twitter> twitterCache = new LruCache<>(4);
     public static Twitter twitter;
     static long userId;
 
@@ -179,7 +181,7 @@ public class GlobalApplication extends Application {
     public Twitter getTwitterInstance(@NonNull AccessToken accessToken){
         Twitter t;
 
-        Configuration conf=new ConfigurationBuilder()
+        Configuration conf = new ConfigurationBuilder()
                 .setTweetModeExtended(true)
                 .setOAuthConsumerKey(consumerKey)
                 .setOAuthConsumerSecret(consumerSecret)
@@ -187,10 +189,15 @@ public class GlobalApplication extends Application {
                 .setOAuthAccessTokenSecret(accessToken.getTokenSecret())
                 .build();
 
-        if (accessToken.getTokenSecret().matches(".*\\..*")){
-            t = new MastodonTwitterImpl(conf, accessToken.getUserId(), getOkHttpClient(conf.getHttpClientConfiguration()).newBuilder());
-        } else {
-            t = new TwitterFactory(conf).getInstance();
+        t = twitterCache.get(conf);
+
+        if (t == null) {
+            if (accessToken.getTokenSecret().matches(".*\\..*")){
+                t = new MastodonTwitterImpl(conf, accessToken.getUserId(), getOkHttpClient(conf.getHttpClientConfiguration()).newBuilder());
+            } else {
+                t = new TwitterFactory(conf).getInstance();
+            }
+            twitterCache.put(conf, t);
         }
 
         return t;
