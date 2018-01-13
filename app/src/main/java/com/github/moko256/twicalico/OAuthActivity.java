@@ -30,11 +30,11 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 
 import com.github.moko256.twicalico.database.TokenSQLiteOpenHelper;
+import com.github.moko256.twicalico.entity.AccessToken;
 import com.github.moko256.twicalico.model.base.OAuthModel;
 
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
-import twitter4j.auth.AccessToken;
 
 /**
  * Created by moko256 on 2016/04/29.

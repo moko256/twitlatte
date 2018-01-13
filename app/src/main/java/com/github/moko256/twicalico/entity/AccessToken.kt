@@ -14,19 +14,26 @@
  * limitations under the License.
  */
 
-package com.github.moko256.twicalico.model.base
-
-import com.github.moko256.twicalico.entity.AccessToken
-import rx.Single
+package com.github.moko256.twicalico.entity
 
 /**
- * Created by moko256 on 2017/10/29.
+ * Created by moko256 on 2018/01/13.
  *
  * @author moko256
  */
-public interface OAuthModel {
-    fun getCallbackAuthUrl(url: String, consumerKey: String, consumerSecret: String, callbackUrl: String): Single<String>
-    fun getCodeAuthUrl(url: String, consumerKey: String, consumerSecret: String): Single<String>
 
-    fun initToken(pin: String): Single<AccessToken>
+public data class AccessToken(
+        val type: Int,
+        val url: String,
+        val userId: Long,
+        val screenName: String,
+        val token: String,
+        val tokenSecret: String? = null
+)
+
+public class Type{
+    companion object{
+        const val TWITTER = 0
+        const val MASTODON = 1
+    }
 }

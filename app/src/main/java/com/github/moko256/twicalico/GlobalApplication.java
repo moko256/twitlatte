@@ -33,6 +33,8 @@ import com.github.moko256.twicalico.cacheMap.StatusCacheMap;
 import com.github.moko256.twicalico.cacheMap.UserCacheMap;
 import com.github.moko256.twicalico.config.AppConfiguration;
 import com.github.moko256.twicalico.database.TokenSQLiteOpenHelper;
+import com.github.moko256.twicalico.entity.AccessToken;
+import com.github.moko256.twicalico.entity.Type;
 import com.github.moko256.twicalico.notification.ExceptionNotification;
 
 import java.util.regex.Pattern;
@@ -44,7 +46,6 @@ import twitter4j.HttpClientConfiguration;
 import twitter4j.HttpClientFactory;
 import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
-import twitter4j.auth.AccessToken;
 import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
 
@@ -181,23 +182,37 @@ public class GlobalApplication extends Application {
     public Twitter getTwitterInstance(@NonNull AccessToken accessToken){
         Twitter t;
 
-        Configuration conf = new ConfigurationBuilder()
-                .setTweetModeExtended(true)
-                .setOAuthConsumerKey(consumerKey)
-                .setOAuthConsumerSecret(consumerSecret)
-                .setOAuthAccessToken(accessToken.getToken())
-                .setOAuthAccessTokenSecret(accessToken.getTokenSecret())
-                .build();
+        Configuration conf;
 
-        t = twitterCache.get(conf);
+        if (accessToken.getType() == Type.TWITTER){
+            conf = new ConfigurationBuilder()
+                    .setTweetModeExtended(true)
+                    .setOAuthConsumerKey(consumerKey)
+                    .setOAuthConsumerSecret(consumerSecret)
+                    .setOAuthAccessToken(accessToken.getToken())
+                    .setOAuthAccessTokenSecret(accessToken.getTokenSecret())
+                    .build();
+            t = twitterCache.get(conf);
 
-        if (t == null) {
-            if (accessToken.getTokenSecret().matches(".*\\..*")){
-                t = new MastodonTwitterImpl(conf, accessToken.getUserId(), getOkHttpClient(conf.getHttpClientConfiguration()).newBuilder());
-            } else {
+            if (t == null) {
                 t = new TwitterFactory(conf).getInstance();
+                twitterCache.put(conf, t);
             }
-            twitterCache.put(conf, t);
+        } else {
+            conf = new ConfigurationBuilder()
+                    .setOAuthAccessToken(accessToken.getToken())
+                    .setRestBaseURL(accessToken.getUrl())
+                    .build();
+            t = twitterCache.get(conf);
+
+            if (t == null) {
+                t = new MastodonTwitterImpl(
+                        conf,
+                        accessToken.getUserId(),
+                        getOkHttpClient(conf.getHttpClientConfiguration()).newBuilder()
+                );
+                twitterCache.put(conf, t);
+            }
         }
 
         return t;

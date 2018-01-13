@@ -16,6 +16,8 @@
 
 package com.github.moko256.twicalico.model.impl.mastodon
 
+import com.github.moko256.twicalico.entity.AccessToken
+import com.github.moko256.twicalico.entity.Type
 import com.github.moko256.twicalico.model.base.OAuthModel
 import com.google.gson.Gson
 import com.sys1yagi.mastodon4j.MastodonClient
@@ -26,7 +28,6 @@ import com.sys1yagi.mastodon4j.api.method.Accounts
 import com.sys1yagi.mastodon4j.api.method.Apps
 import okhttp3.OkHttpClient
 import rx.Single
-import twitter4j.auth.AccessToken
 
 /**
  * Created by moko256 on 2017/10/29.
@@ -96,17 +97,16 @@ class OAuthModelImpl : OAuthModel {
                         pin,
                         "authorization_code"
                 )?.execute()
-                val url = clientBuilder?.build()?.getInstanceName()
+                val url = clientBuilder?.build()?.getInstanceName() ?: ""
                 val account = Accounts(clientBuilder?.accessToken(accessToken?.accessToken!!)?.build()!!).getVerifyCredentials().execute()
-                val storeToken = object : AccessToken(accessToken?.accessToken, url) {
-                    override fun getScreenName(): String {
-                        return account.acct + "@" + url
-                    }
-
-                    override fun getUserId(): Long {
-                        return account.id
-                    }
-                }
+                val storeToken = AccessToken(
+                        Type.MASTODON,
+                        url,
+                        account.id,
+                        account.acct,
+                        accessToken?.accessToken ?: "",
+                        null
+                )
                 it.onSuccess(storeToken)
             } catch (e: Mastodon4jRequestException) {
                 it.onError(e)

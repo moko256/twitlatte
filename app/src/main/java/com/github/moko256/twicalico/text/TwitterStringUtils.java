@@ -70,8 +70,12 @@ import twitter4j.UserMentionEntity;
 public class TwitterStringUtils {
 
     @NonNull
-    public static String plusAtMark(String string){
-        return "@" + string;
+    public static String plusAtMark(String... strings){
+        StringBuilder stringBuilder = new StringBuilder();
+        for (String string: strings) {
+            stringBuilder.append("@").append(string);
+        }
+        return stringBuilder.toString();
     }
 
     public static String removeHtmlTags(String html){

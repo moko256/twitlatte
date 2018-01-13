@@ -17,8 +17,6 @@
 package com.github.moko256.twicalico;
 
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -43,6 +41,8 @@ import android.widget.TextView;
 
 import com.github.moko256.twicalico.database.CachedUsersSQLiteOpenHelper;
 import com.github.moko256.twicalico.database.TokenSQLiteOpenHelper;
+import com.github.moko256.twicalico.entity.AccessToken;
+import com.github.moko256.twicalico.entity.Type;
 import com.github.moko256.twicalico.text.TwitterStringUtils;
 
 import java.util.ArrayList;
@@ -53,7 +53,6 @@ import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
 import twitter4j.TwitterException;
 import twitter4j.User;
-import twitter4j.auth.AccessToken;
 
 /**
  * Created by moko256 on 2015/11/08.
@@ -129,13 +128,15 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
 
         userBackgroundImage.setOnClickListener(v -> {
             TokenSQLiteOpenHelper helper = new TokenSQLiteOpenHelper(this);
+            AccessToken[] accessTokens = helper.getAccessTokens();
+            helper.close();
 
             final AlertDialog[] dialog = new AlertDialog[1];
 
             SelectAccountsAdapter adapter = new SelectAccountsAdapter(this);
             adapter.setOnImageButtonClickListener(i -> {
 
-                AccessToken token = helper.getAccessToken(i);
+                AccessToken token = accessTokens[i];
                 dialog[0].cancel();
                 if (token.getUserId() != GlobalApplication.userId){
                     PreferenceManager.getDefaultSharedPreferences(this)
@@ -147,7 +148,6 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                             new Intent(this, MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                     );
                 }
-                helper.close();
             });
             adapter.setOnAddButtonClickListener(v1 -> {
                 PreferenceManager.getDefaultSharedPreferences(this)
@@ -161,16 +161,14 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
             subscription.add(
                     Single.create(
                             singleSubscriber -> {
-                                SQLiteDatabase database = helper.getReadableDatabase();
-                                Cursor c=database.query("AccountTokenList",new String[]{"userId", "userName"},null,null,null,null,null);
                                 ArrayList<Pair<Uri, String>> r = new ArrayList<>();
-                                while (c.moveToNext()){
-                                    long id = Long.valueOf(c.getString(0));
-                                    CachedUsersSQLiteOpenHelper userHelper = new CachedUsersSQLiteOpenHelper(this, id, !c.getString(1).matches(".*@.*"));
+                                for (AccessToken accessToken : accessTokens){
+                                    long id = accessToken.getUserId();
+                                    CachedUsersSQLiteOpenHelper userHelper = new CachedUsersSQLiteOpenHelper(this, id, accessToken.getType() == Type.TWITTER);
                                     User user = userHelper.getCachedUser(id);
                                     if (user ==  null){
                                         try {
-                                            user = ((GlobalApplication) getApplication()).getTwitterInstance(helper.getAccessToken(c.getPosition())).verifyCredentials();
+                                            user = ((GlobalApplication) getApplication()).getTwitterInstance(accessToken).verifyCredentials();
                                             userHelper.addCachedUser(user);
                                         } catch (TwitterException e) {
                                             singleSubscriber.onError(e);
@@ -181,11 +179,9 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                                     }
                                     r.add(new Pair<>(
                                             Uri.parse(user.get400x400ProfileImageURLHttps()),
-                                            TwitterStringUtils.plusAtMark(c.getString(1))
+                                            TwitterStringUtils.plusAtMark(accessToken.getScreenName(), accessToken.getUrl())
                                     ));
                                 }
-                                c.close();
-                                database.close();
                                 singleSubscriber.onSuccess(r);
                             })
                             .subscribeOn(Schedulers.newThread())

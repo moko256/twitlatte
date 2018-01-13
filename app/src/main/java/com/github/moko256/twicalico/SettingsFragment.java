@@ -18,9 +18,6 @@ package com.github.moko256.twicalico;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.database.DatabaseUtils;
-import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.customtabs.CustomTabsIntent;
@@ -34,11 +31,10 @@ import android.support.v7.preference.PreferenceManager;
 import android.widget.Toast;
 
 import com.github.moko256.twicalico.database.TokenSQLiteOpenHelper;
+import com.github.moko256.twicalico.entity.AccessToken;
 import com.github.moko256.twicalico.text.TwitterStringUtils;
 
 import java.util.Date;
-
-import twitter4j.auth.AccessToken;
 
 /**
  * Created by moko256 on 2016/03/28.
@@ -60,22 +56,21 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             SharedPreferences defaultSharedPreferences= PreferenceManager.getDefaultSharedPreferences(getContext());
 
             TokenSQLiteOpenHelper helper=new TokenSQLiteOpenHelper(getContext());
-            SQLiteDatabase database=helper.getReadableDatabase();
-            Cursor c=database.query("AccountTokenList",new String[]{"userName"},null,null,null,null,null);
 
-            CharSequence[] entries=new CharSequence[(int) DatabaseUtils.queryNumEntries(database,"AccountTokenList")+1];
-            CharSequence[] entryValues=new CharSequence[(int) DatabaseUtils.queryNumEntries(database,"AccountTokenList")+1];
+            AccessToken[] accessTokens = helper.getAccessTokens();
 
-            while (c.moveToNext()){
-                entries[c.getPosition()]= TwitterStringUtils.plusAtMark(c.getString(0));
-                entryValues[c.getPosition()]=String.valueOf(c.getPosition());
+            CharSequence[] entries=new CharSequence[accessTokens.length + 1];
+            CharSequence[] entryValues=new CharSequence[accessTokens.length + 1];
+
+            for (int i = 0; i < accessTokens.length; i++) {
+                AccessToken accessToken = accessTokens[i];
+
+                entries[i] = TwitterStringUtils.plusAtMark(accessToken.getScreenName(), accessToken.getUrl());
+                entryValues[i] = String.valueOf(i);
             }
 
             entries[entries.length-1]=getString(R.string.add_account);
             entryValues[entryValues.length-1]="-1";
-
-            c.close();
-            database.close();
 
             ListPreference nowAccountList=(ListPreference) findPreference("AccountPoint");
             nowAccountList.setEntries(entries);

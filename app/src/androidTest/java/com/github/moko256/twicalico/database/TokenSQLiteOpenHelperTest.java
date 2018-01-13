@@ -19,10 +19,10 @@ package com.github.moko256.twicalico.database;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
+import com.github.moko256.twicalico.entity.AccessToken;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import twitter4j.auth.AccessToken;
 
 import static org.junit.Assert.assertEquals;
 
@@ -105,16 +105,6 @@ public class TokenSQLiteOpenHelperTest {
     }
 
     private AccessToken generateAccessToken(final long userId, final String screenName, final String token, final String tokenSecret){
-        return new AccessToken(token, tokenSecret){
-            @Override
-            public String getScreenName() {
-                return screenName;
-            }
-
-            @Override
-            public long getUserId() {
-                return userId;
-            }
-        };
+        return new AccessToken(0, "example.com", userId, screenName, token, tokenSecret);
     }
 }

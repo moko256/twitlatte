@@ -16,10 +16,12 @@
 
 package com.github.moko256.twicalico.model.impl.twitter
 
+import com.github.moko256.twicalico.database.TokenSQLiteOpenHelper
+import com.github.moko256.twicalico.entity.AccessToken
+import com.github.moko256.twicalico.entity.Type
 import com.github.moko256.twicalico.model.base.OAuthModel
 import rx.Single
 import twitter4j.TwitterException
-import twitter4j.auth.AccessToken
 import twitter4j.auth.OAuthAuthorization
 import twitter4j.auth.RequestToken
 import twitter4j.conf.ConfigurationContext
@@ -71,7 +73,15 @@ class OAuthModelImpl : OAuthModel {
 
         return Single.create {
             try {
-                it.onSuccess(oauth.getOAuthAccessToken(req, pin))
+                val accessToken = oauth.getOAuthAccessToken(req, pin)
+                it.onSuccess(AccessToken(
+                        Type.TWITTER,
+                        TokenSQLiteOpenHelper.TWITTER_URL,
+                        accessToken.userId,
+                        accessToken.screenName,
+                        accessToken.token,
+                        accessToken.tokenSecret
+                ))
             } catch (e: TwitterException) {
                 it.onError(e)
             }

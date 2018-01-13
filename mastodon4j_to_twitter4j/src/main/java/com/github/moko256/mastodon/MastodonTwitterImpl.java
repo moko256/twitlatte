@@ -119,15 +119,13 @@ public final class MastodonTwitterImpl implements Twitter {
     private FavoritesResources favoritesResources;
 
     /**
-     * This constructor uses AccessToken$tokenSecret as an instance url, because Mastodon API doesn't use tokenSecret.
-     *
-     * @param configuration Configuration (tokenSecret is instance url)
+     * @param configuration Configuration (getRestBaseURL expects instance url)
      * @param builder OkHttpClient.Builder
      */
     public MastodonTwitterImpl(Configuration configuration, long userId, OkHttpClient.Builder builder){
         this.configuration = configuration;
         this.userId = userId;
-        client = new MastodonClient.Builder(configuration.getOAuthAccessTokenSecret(), builder, gson)
+        client = new MastodonClient.Builder(configuration.getRestBaseURL(), builder, gson)
                 .accessToken(configuration.getOAuthAccessToken())
                 .build();
     }
