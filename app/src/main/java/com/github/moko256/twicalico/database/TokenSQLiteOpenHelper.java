@@ -43,7 +43,7 @@ public class TokenSQLiteOpenHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL(
-                "create table AccountTokenList(userName string , userId integer primary key , token string , tokenSecret string , url string , type string);"
+                "create table AccountTokenList(userName string , userId integer , token string , tokenSecret string , url string , type string , primary key(userName , url));"
         );
     }
 
@@ -77,6 +77,7 @@ public class TokenSQLiteOpenHelper extends SQLiteOpenHelper {
                 );
             }
             c.close();
+            sqLiteDatabase.beginTransaction();
             sqLiteDatabase.execSQL("DROP TABLE AccountTokenList");
             onCreate(sqLiteDatabase);
             for (AccessToken accessToken : accessTokens) {
@@ -90,6 +91,8 @@ public class TokenSQLiteOpenHelper extends SQLiteOpenHelper {
 
                 sqLiteDatabase.replace("AccountTokenList", null, contentValues);
             }
+            sqLiteDatabase.setTransactionSuccessful();
+            sqLiteDatabase.endTransaction();
         }
     }
 
