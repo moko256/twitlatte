@@ -48,33 +48,49 @@ public class TokenSQLiteOpenHelper extends SQLiteOpenHelper {
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
-        Cursor c = sqLiteDatabase.query("AccountTokenList", new String[]{"userName", "userId", "token", "tokenSecret"}, null, null, null, null, null);
-        while (c.moveToNext()){
-            Integer type;
-            String url;
-            String userName;
-            String tokenSecret = null;
-            if (c.getString(3).matches(".*\\..*")){
-                type = Type.MASTODON;
-                userName = c.getString(0).split("@")[0];
-                url = c.getString(3);
-            } else {
-                type = Type.TWITTER;
-                userName = c.getString(0);
-                url = TWITTER_URL;
-                tokenSecret = c.getString(3);
+    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
+        if (oldVersion == 1) {
+            Cursor c = sqLiteDatabase.query("AccountTokenList", new String[]{"userName", "userId", "token", "tokenSecret"}, null, null, null, null, null);
+            AccessToken[] accessTokens = new AccessToken[c.getCount()];
+            while (c.moveToNext()) {
+                Integer type;
+                String url;
+                String userName;
+                String tokenSecret = null;
+                if (c.getString(3).matches(".*\\..*")) {
+                    type = Type.MASTODON;
+                    userName = c.getString(0).split("@")[0];
+                    url = c.getString(3);
+                } else {
+                    type = Type.TWITTER;
+                    userName = c.getString(0);
+                    url = TWITTER_URL;
+                    tokenSecret = c.getString(3);
+                }
+                accessTokens[c.getPosition()] = new AccessToken(
+                        type,
+                        url,
+                        Long.valueOf(c.getString(1)),
+                        userName,
+                        c.getString(2),
+                        tokenSecret
+                );
             }
-            addAccessToken(new AccessToken(
-                    type,
-                    url,
-                    Long.valueOf(c.getString(1)),
-                    userName,
-                    c.getString(2),
-                    tokenSecret
-            ));
+            c.close();
+            sqLiteDatabase.execSQL("DROP TABLE AccountTokenList");
+            onCreate(sqLiteDatabase);
+            for (AccessToken accessToken : accessTokens) {
+                ContentValues contentValues = new ContentValues();
+                contentValues.put("type", accessToken.getType());
+                contentValues.put("url", accessToken.getUrl());
+                contentValues.put("userName", accessToken.getScreenName());
+                contentValues.put("userId", String.valueOf(accessToken.getUserId()));
+                contentValues.put("token", accessToken.getToken());
+                contentValues.put("tokenSecret", accessToken.getTokenSecret());
+
+                sqLiteDatabase.replace("AccountTokenList", null, contentValues);
+            }
         }
-        c.close();
     }
 
     public AccessToken[] getAccessTokens(){
