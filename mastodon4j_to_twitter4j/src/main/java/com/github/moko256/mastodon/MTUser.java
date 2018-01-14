@@ -36,7 +36,7 @@ import twitter4j.User;
  */
 
 public class MTUser implements User {
-    Account account;
+    private Account account;
 
     MTUser(Account account){
         this.account = account;
@@ -134,7 +134,7 @@ public class MTUser implements User {
 
     @Override
     public String getURL() {
-        return account.getUrl();
+        return null;
     }
 
     @Override
