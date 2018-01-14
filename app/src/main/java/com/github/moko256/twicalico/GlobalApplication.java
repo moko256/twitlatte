@@ -61,6 +61,10 @@ public class GlobalApplication extends Application {
 
     public static LruCache<Configuration, Twitter> twitterCache = new LruCache<>(4);
     public static Twitter twitter;
+
+    @Type.ClientTypeInt
+    public static int clientType = -1;
+
     static long userId;
 
     public static AppConfiguration configuration;
@@ -172,10 +176,11 @@ public class GlobalApplication extends Application {
 
     public void initTwitter(@NonNull AccessToken accessToken){
         userId = accessToken.getUserId();
+        clientType = accessToken.getType();
         twitter = getTwitterInstance(accessToken);
-        userCache = new UserCacheMap(this, userId, !(twitter instanceof MastodonTwitterImpl));
+        userCache = new UserCacheMap(this, userId, clientType == Type.TWITTER);
         statusCache = new StatusCacheMap(this, userId);
-        statusLimit = twitter instanceof MastodonTwitterImpl? 40: 200;
+        statusLimit = clientType == Type.TWITTER? 200: 40;
     }
 
     @NonNull
@@ -226,10 +231,6 @@ public class GlobalApplication extends Application {
     @NonNull
     private static OkHttpClient getOkHttpClient(HttpClientConfiguration configuration){
         HttpClient httpClient = HttpClientFactory.getInstance(configuration);
-        if (httpClient instanceof AlternativeHttpClientImpl) {
-            return ((AlternativeHttpClientImpl) httpClient).getOkHttpClient();
-        } else {
-            throw new IllegalStateException("Couldn't get OkHttpClient.");
-        }
+        return ((AlternativeHttpClientImpl) httpClient).getOkHttpClient();
     }
 }

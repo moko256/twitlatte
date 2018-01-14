@@ -33,7 +33,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.github.moko256.mastodon.MastodonTwitterImpl;
+import com.github.moko256.twicalico.entity.Type;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -142,7 +142,7 @@ public class ShowImageActivity extends AppCompatActivity {
             case "photo":
             default:
                 String[] pathSplitWithDot=mediaEntity.getMediaURLHttps().split("\\.");
-                path=mediaEntity.getMediaURLHttps() + (GlobalApplication.twitter instanceof MastodonTwitterImpl ?"":":large");
+                path=mediaEntity.getMediaURLHttps() + ((GlobalApplication.clientType == Type.TWITTER)?":large":"");
                 ext=pathSplitWithDot[pathSplitWithDot.length-1];
                 break;
         }
@@ -154,6 +154,7 @@ public class ShowImageActivity extends AppCompatActivity {
                 "/" + getString(R.string.app_name) + "/"+fileName
         );
         request.setTitle(fileName);
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
         manager.enqueue(request);
     }
 

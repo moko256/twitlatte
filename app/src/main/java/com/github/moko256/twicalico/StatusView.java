@@ -34,7 +34,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.github.moko256.mastodon.MastodonTwitterImpl;
+import com.github.moko256.twicalico.entity.Type;
 import com.github.moko256.twicalico.text.TwitterStringUtils;
 import com.github.moko256.twicalico.widget.TweetImageTableView;
 
@@ -291,7 +291,7 @@ public class StatusView extends FrameLayout {
                 )
         );
         retweetButton.setChecked(item.isRetweeted());
-        retweetButton.setEnabled(GlobalApplication.twitter instanceof MastodonTwitterImpl || !(item.getUser().isProtected()) || item.getUser().getId() == GlobalApplication.userId);
+        retweetButton.setEnabled(GlobalApplication.clientType == Type.MASTODON || !(item.getUser().isProtected()) || item.getUser().getId() == GlobalApplication.userId);
 
         replyButton.setOnClickListener(
                 v -> getContext().startActivity(PostActivity.getIntent(

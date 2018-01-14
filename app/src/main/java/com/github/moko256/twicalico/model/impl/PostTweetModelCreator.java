@@ -17,16 +17,12 @@
 package com.github.moko256.twicalico.model.impl;
 
 import android.content.ContentResolver;
-import android.net.Uri;
 
 import com.github.moko256.mastodon.MastodonTwitterImpl;
+import com.github.moko256.twicalico.GlobalApplication;
+import com.github.moko256.twicalico.entity.Type;
 import com.github.moko256.twicalico.model.base.PostTweetModel;
 
-import java.util.List;
-
-import rx.Single;
-import twitter4j.GeoLocation;
-import twitter4j.Status;
 import twitter4j.Twitter;
 
 /**
@@ -37,7 +33,7 @@ import twitter4j.Twitter;
 
 public class PostTweetModelCreator {
     public static PostTweetModel getInstance(Twitter twitter, ContentResolver resolver) {
-        if (twitter instanceof MastodonTwitterImpl){
+        if (GlobalApplication.clientType == Type.MASTODON){
             return new com.github.moko256.twicalico.model.impl.mastodon.PostTweetModelImpl(((MastodonTwitterImpl) twitter).client, resolver);
         } else {
             return new com.github.moko256.twicalico.model.impl.twitter.PostTweetModelImpl(twitter, resolver);

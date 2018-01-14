@@ -34,13 +34,13 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.bumptech.glide.load.resource.gif.GifDrawable;
-import com.github.moko256.mastodon.MastodonTwitterImpl;
 import com.github.moko256.twicalico.GlideApp;
 import com.github.moko256.twicalico.GlideRequests;
 import com.github.moko256.twicalico.GlobalApplication;
 import com.github.moko256.twicalico.R;
 import com.github.moko256.twicalico.SearchResultActivity;
 import com.github.moko256.twicalico.ShowUserActivity;
+import com.github.moko256.twicalico.entity.Type;
 import com.sys1yagi.mastodon4j.api.exception.Mastodon4jRequestException;
 
 import java.io.IOException;
@@ -176,7 +176,7 @@ public class TwitterStringUtils {
 
         String tweet = item.getText();
 
-        if (GlobalApplication.twitter instanceof MastodonTwitterImpl){
+        if (GlobalApplication.clientType == Type.MASTODON){
             Spanned previewText = convertUrlSpanToCustomTabs(Html.fromHtml(tweet), context);
             textView.setText(previewText);
 
@@ -326,7 +326,7 @@ public class TwitterStringUtils {
 
         String description = user.getDescription();
 
-        if (GlobalApplication.twitter instanceof MastodonTwitterImpl){
+        if (GlobalApplication.clientType == Type.MASTODON){
             return convertUrlSpanToCustomTabs(Html.fromHtml(description), context);
         }
 

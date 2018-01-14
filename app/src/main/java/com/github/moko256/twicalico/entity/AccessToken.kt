@@ -16,6 +16,9 @@
 
 package com.github.moko256.twicalico.entity
 
+import android.support.annotation.IntDef
+import kotlin.annotation.Retention
+
 /**
  * Created by moko256 on 2018/01/13.
  *
@@ -23,7 +26,7 @@ package com.github.moko256.twicalico.entity
  */
 
 public data class AccessToken(
-        val type: Int,
+        @Type.ClientTypeInt val type: Int,
         val url: String,
         val userId: Long,
         val screenName: String,
@@ -32,8 +35,13 @@ public data class AccessToken(
 )
 
 public class Type{
+
+    @Retention(AnnotationRetention.SOURCE)
+    @IntDef(Type.TWITTER.toLong(), Type.MASTODON.toLong())
+    annotation class ClientTypeInt
+
     companion object{
-        const val TWITTER = 0
-        const val MASTODON = 1
+        const val TWITTER: Int = 0
+        const val MASTODON: Int = 1
     }
 }

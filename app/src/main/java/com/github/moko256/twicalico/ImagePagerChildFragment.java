@@ -31,6 +31,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.github.moko256.mastodon.MastodonTwitterImpl;
+import com.github.moko256.twicalico.entity.Type;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlayerFactory;
@@ -208,7 +209,7 @@ public class ImagePagerChildFragment extends Fragment {
                     }
                 });
                 GlideApp.with(this)
-                        .load(mediaEntity.getMediaURLHttps() + (GlobalApplication.twitter instanceof MastodonTwitterImpl?"":":large"))
+                        .load(mediaEntity.getMediaURLHttps() + ((GlobalApplication.clientType == Type.TWITTER)?":large":""))
                         .fitCenter()
                         .thumbnail(
                                 GlideApp.with(this)
