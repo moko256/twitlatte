@@ -187,6 +187,7 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
                         .addDefaultShareMenuItem()
                         .build()
                         .launchUrl(this, Uri.parse(getShareUrl()));
+                break;
             case R.id.action_create_follow:
                 throwableFunc=()->twitter.createFriendship(user.getId());
                 break;

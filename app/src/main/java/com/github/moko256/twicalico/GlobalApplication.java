@@ -27,6 +27,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.util.LruCache;
 import android.support.v7.app.AppCompatDelegate;
+import android.widget.Toast;
 
 import com.github.moko256.mastodon.MastodonTwitterImpl;
 import com.github.moko256.twicalico.cacheMap.StatusCacheMap;
@@ -38,6 +39,7 @@ import com.github.moko256.twicalico.entity.Type;
 import com.github.moko256.twicalico.notification.ExceptionNotification;
 
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import okhttp3.OkHttpClient;
 import twitter4j.AlternativeHttpClientImpl;
@@ -112,27 +114,57 @@ public class GlobalApplication extends Application {
 
         configuration.setPatternTweetMuteEnabled(defaultSharedPreferences.getBoolean("patternTweetMuteEnabled",false));
         if(configuration.isPatternTweetMuteEnabled()){
-            configuration.setTweetMutePattern(defaultSharedPreferences.getString("tweetMutePattern",""));
+            try {
+                configuration.setTweetMutePattern(defaultSharedPreferences.getString("tweetMutePattern",""));
+            } catch (PatternSyntaxException e){
+                e.printStackTrace();
+                configuration.setPatternTweetMuteEnabled(false);
+                Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
         }
 
         configuration.setPatternTweetMuteShowOnlyImageEnabled(defaultSharedPreferences.getBoolean("patternTweetMuteShowOnlyImageEnabled",false));
         if(configuration.isPatternTweetMuteShowOnlyImageEnabled()){
-            configuration.setTweetMuteShowOnlyImagePattern(Pattern.compile(defaultSharedPreferences.getString("tweetMuteShowOnlyImagePattern","")));
+            try {
+                configuration.setTweetMuteShowOnlyImagePattern(Pattern.compile(defaultSharedPreferences.getString("tweetMuteShowOnlyImagePattern","")));
+            } catch (PatternSyntaxException e){
+                e.printStackTrace();
+                configuration.setPatternTweetMuteShowOnlyImageEnabled(false);
+                Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
         }
 
         configuration.setPatternUserScreenNameMuteEnabled(defaultSharedPreferences.getBoolean("patternUserScreenNameMuteEnabled",false));
         if(configuration.isPatternUserScreenNameMuteEnabled()){
-            configuration.setUserScreenNameMutePattern(Pattern.compile(defaultSharedPreferences.getString("userScreenNameMutePattern","")));
+            try {
+                configuration.setUserScreenNameMutePattern(Pattern.compile(defaultSharedPreferences.getString("userScreenNameMutePattern","")));
+            } catch (PatternSyntaxException e){
+                e.printStackTrace();
+                configuration.setPatternUserScreenNameMuteEnabled(false);
+                Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
         }
 
         configuration.setPatternUserNameMuteEnabled(defaultSharedPreferences.getBoolean("patternUserNameMuteEnabled",false));
         if(configuration.isPatternUserNameMuteEnabled()){
-            configuration.setUserNameMutePattern(Pattern.compile(defaultSharedPreferences.getString("userNameMutePattern","")));
+            try {
+                configuration.setUserNameMutePattern(Pattern.compile(defaultSharedPreferences.getString("userNameMutePattern","")));
+            } catch (PatternSyntaxException e){
+                e.printStackTrace();
+                configuration.setPatternUserNameMuteEnabled(false);
+                Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
         }
 
         configuration.setPatternTweetSourceMuteEnabled(defaultSharedPreferences.getBoolean("patternTweetSourceMuteEnabled",false));
         if(configuration.isPatternTweetSourceMuteEnabled()){
-            configuration.setTweetSourceMutePattern(Pattern.compile(defaultSharedPreferences.getString("tweetSourceMutePattern","")));
+            try {
+                configuration.setTweetSourceMutePattern(Pattern.compile(defaultSharedPreferences.getString("tweetSourceMutePattern","")));
+            } catch (PatternSyntaxException e){
+                e.printStackTrace();
+                configuration.setPatternTweetSourceMuteEnabled(false);
+                Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
         }
 
         configuration.setTimelineImageLoad(Boolean.valueOf(defaultSharedPreferences.getString("isTimelineImageLoad","true")));
