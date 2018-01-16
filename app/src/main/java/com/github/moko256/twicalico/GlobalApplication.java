@@ -58,9 +58,6 @@ import twitter4j.conf.ConfigurationBuilder;
  */
 public class GlobalApplication extends Application {
 
-    static final String consumerKey=BuildConfig.CONSUMER_KEY;
-    static final String consumerSecret=BuildConfig.CONSUMER_SECRET;
-
     public static LruCache<Configuration, Twitter> twitterCache = new LruCache<>(4);
     public static Twitter twitter;
 
@@ -224,8 +221,8 @@ public class GlobalApplication extends Application {
         if (accessToken.getType() == Type.TWITTER){
             conf = new ConfigurationBuilder()
                     .setTweetModeExtended(true)
-                    .setOAuthConsumerKey(consumerKey)
-                    .setOAuthConsumerSecret(consumerSecret)
+                    .setOAuthConsumerKey(BuildConfig.CONSUMER_KEY)
+                    .setOAuthConsumerSecret(BuildConfig.CONSUMER_SECRET)
                     .setOAuthAccessToken(accessToken.getToken())
                     .setOAuthAccessTokenSecret(accessToken.getTokenSecret())
                     .build();
