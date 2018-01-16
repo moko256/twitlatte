@@ -25,6 +25,7 @@ import android.support.v4.util.LruCache;
 import com.github.moko256.mastodon.MTStatus;
 import com.github.moko256.twicalico.GlobalApplication;
 import com.github.moko256.twicalico.database.CachedStatusesSQLiteOpenHelper;
+import com.github.moko256.twicalico.entity.AccessToken;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -54,15 +55,21 @@ import twitter4j.UserMentionEntity;
 
 public class StatusCacheMap {
 
-    private LruCache<Long, Status> statusCache=new LruCache<>(GlobalApplication.statusCacheListLimit / 4);
+    private LruCache<Long, Status> cache =new LruCache<>(GlobalApplication.statusCacheListLimit / 4);
     private CachedStatusesSQLiteOpenHelper diskCache;
 
-    public StatusCacheMap(Context context, long userId){
-        diskCache = new CachedStatusesSQLiteOpenHelper(context, userId);
+    public void prepare(Context context, AccessToken accessToken){
+        if (diskCache != null){
+            diskCache.close();
+        }
+        if (cache.size() > 0){
+            cache.evictAll();
+        }
+        diskCache = new CachedStatusesSQLiteOpenHelper(context, accessToken.getUserId());
     }
 
     public int size() {
-        return statusCache.size();
+        return cache.size();
     }
 
     public void add(@Nullable final Status status) {
@@ -72,18 +79,18 @@ public class StatusCacheMap {
                 add(status.getRetweetedStatus());
             }
             Status cacheStatus = new CachedStatus(status);
-            statusCache.put(status.getId(), cacheStatus);
+            cache.put(status.getId(), cacheStatus);
             diskCache.addCachedStatus(cacheStatus);
         }
     }
 
     @Nullable
     public Status get(Long id){
-        Status memoryCache = statusCache.get(id);
+        Status memoryCache = cache.get(id);
         if (memoryCache == null){
             Status storageCache = diskCache.getCachedStatus(id);
             if (storageCache != null) {
-                statusCache.put(storageCache.getId(), storageCache);
+                cache.put(storageCache.getId(), storageCache);
             }
             return  storageCache;
         } else {
@@ -112,7 +119,7 @@ public class StatusCacheMap {
 
             Observable<Status> cachedStatusObservable = statusesObservable.map(CachedStatus::new);
 
-            cachedStatusObservable.forEach(status -> statusCache.put(status.getId(), status));
+            cachedStatusObservable.forEach(status -> cache.put(status.getId(), status));
             HashSet<Status> cacheStatusSet = new HashSet<>(cachedStatusObservable.toList().toSingle().toBlocking().value());
 
             diskCache.addCachedStatuses(cacheStatusSet);

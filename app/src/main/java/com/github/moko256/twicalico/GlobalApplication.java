@@ -58,6 +58,9 @@ import twitter4j.conf.ConfigurationBuilder;
  */
 public class GlobalApplication extends Application {
 
+    public static int statusLimit;
+    public static int statusCacheListLimit = 1000;
+
     public static LruCache<Configuration, Twitter> twitterCache = new LruCache<>(4);
     public static Twitter twitter;
 
@@ -68,11 +71,8 @@ public class GlobalApplication extends Application {
 
     public static AppConfiguration configuration;
 
-    public static UserCacheMap userCache;
-    public static StatusCacheMap statusCache;
-
-    public static int statusLimit;
-    public static int statusCacheListLimit = 1000;
+    public static UserCacheMap userCache = new UserCacheMap();
+    public static StatusCacheMap statusCache = new StatusCacheMap();
 
     @Override
     public void onCreate() {
@@ -207,8 +207,8 @@ public class GlobalApplication extends Application {
         userId = accessToken.getUserId();
         clientType = accessToken.getType();
         twitter = getTwitterInstance(accessToken);
-        userCache = new UserCacheMap(this, userId, clientType == Type.TWITTER);
-        statusCache = new StatusCacheMap(this, userId);
+        userCache.prepare(this, accessToken);
+        statusCache.prepare(this, accessToken);
         statusLimit = clientType == Type.TWITTER? 200: 40;
     }
 

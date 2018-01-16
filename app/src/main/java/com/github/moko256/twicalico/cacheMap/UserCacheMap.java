@@ -21,6 +21,8 @@ import android.support.v4.util.LruCache;
 
 import com.github.moko256.twicalico.GlobalApplication;
 import com.github.moko256.twicalico.database.CachedUsersSQLiteOpenHelper;
+import com.github.moko256.twicalico.entity.AccessToken;
+import com.github.moko256.twicalico.entity.Type;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -38,8 +40,18 @@ public class UserCacheMap {
     private CachedUsersSQLiteOpenHelper diskCache;
     private LruCache<Long, User> cache=new LruCache<>(GlobalApplication.statusCacheListLimit / 4);
 
-    public UserCacheMap(Context context, long userId, boolean isTwitter){
-        diskCache = new CachedUsersSQLiteOpenHelper(context, userId, isTwitter);
+    public void prepare(Context context, AccessToken accessToken){
+        if (diskCache != null){
+            diskCache.close();
+        }
+        if (cache.size() > 0){
+            cache.evictAll();
+        }
+        diskCache = new CachedUsersSQLiteOpenHelper(
+                context,
+                accessToken.getUserId(),
+                accessToken.getType() == Type.TWITTER
+        );
     }
 
     public int size() {
