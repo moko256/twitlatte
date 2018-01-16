@@ -95,7 +95,7 @@ public class OAuthActivity extends AppCompatActivity {
 
     public void onStartTwitterCallbackAuthClick(View view) {
         model = new com.github.moko256.twicalico.model.impl.twitter.OAuthModelImpl();
-        model.getCallbackAuthUrl("twitter.com", GlobalApplication.consumerKey, GlobalApplication.consumerSecret, getString(R.string.app_name))
+        model.getCallbackAuthUrl("twitter.com", BuildConfig.CONSUMER_KEY, BuildConfig.CONSUMER_SECRET, getString(R.string.app_name))
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this::startBrowser, Throwable::printStackTrace);
@@ -104,7 +104,7 @@ public class OAuthActivity extends AppCompatActivity {
     public void onStartTwitterCodeAuthClick(View view) {
         model = new com.github.moko256.twicalico.model.impl.twitter.OAuthModelImpl();
         requirePin = true;
-        model.getCodeAuthUrl("twitter.com", GlobalApplication.consumerKey, GlobalApplication.consumerSecret)
+        model.getCodeAuthUrl("twitter.com", BuildConfig.CONSUMER_KEY, BuildConfig.CONSUMER_SECRET)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this::startBrowser, Throwable::printStackTrace);
