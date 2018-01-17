@@ -45,6 +45,7 @@ public class TokenSQLiteOpenHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(
                 "create table AccountTokenList(userName string , userId integer , token string , tokenSecret string , url string , type string , primary key(userName , url));"
         );
+        sqLiteDatabase.execSQL("create unique index idindex on AccountTokenList(userName , url)");
     }
 
     @Override

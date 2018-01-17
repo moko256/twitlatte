@@ -102,6 +102,7 @@ public class CachedUsersSQLiteOpenHelper extends SQLiteOpenHelper {
         db.execSQL(
                 "create table CachedUsers(" + columnsStr.substring(1, columnsStr.length() - 1) + ", primary key(id));"
         );
+        db.execSQL("create unique index idindex on CachedUsers(id)");
     }
 
     @Override

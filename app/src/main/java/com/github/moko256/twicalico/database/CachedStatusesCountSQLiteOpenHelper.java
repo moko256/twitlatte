@@ -42,6 +42,7 @@ class CachedStatusesCountSQLiteOpenHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL("create table StatusesCount(id, count, primary key(id));");
+        sqLiteDatabase.execSQL("create unique index idindex on StatusesCount(id)");
     }
 
     @Override

@@ -87,6 +87,8 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
         db.execSQL(
                 "create table CachedStatuses(" + columnsStr.substring(1, columnsStr.length() - 1) + ", primary key(id));"
         );
+        db.execSQL("create unique index idindex on CachedStatuses(id)");
+
     }
 
     @Override
