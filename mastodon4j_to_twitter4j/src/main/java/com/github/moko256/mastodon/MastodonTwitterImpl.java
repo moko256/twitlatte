@@ -700,7 +700,7 @@ public final class MastodonTwitterImpl implements Twitter {
                 @Override
                 public User showUser(String s) throws TwitterException {
                     try {
-                        return new MTUser(new Accounts(client).getAccountSearch(s, 1).execute().get(1));
+                        return new MTUser(new Accounts(client).getAccountSearch(s, 1).execute().get(0));
                     } catch (Mastodon4jRequestException e) {
                         throw new MTException(e);
                     }
