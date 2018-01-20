@@ -156,10 +156,10 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                             .edit()
                             .putString("AccountPoint",String.valueOf(i))
                             .apply();
+                    drawer.closeDrawer(GravityCompat.START);
                     ((GlobalApplication) getApplication()).initTwitter(token);
                     updateDrawerImage();
-                    getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                    prepareFragment();
+                    clearAndPrepareFragment();
                 }
             });
             adapter.setOnAddButtonClickListener(v1 -> {
@@ -385,6 +385,19 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
     private void prepareFragment(){
         Fragment top=new HomeTimeLineFragment();
         addFragment(top);
+        attachFragment(top, navigationView, tabLayout);
+    }
+
+    private void clearAndPrepareFragment(){
+        Fragment top=new HomeTimeLineFragment();
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        fragmentManager
+                .beginTransaction()
+                .replace(R.id.mainLayout, top)
+                .commit();
+
         attachFragment(top, navigationView, tabLayout);
     }
 
