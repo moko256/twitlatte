@@ -23,6 +23,7 @@ import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.util.Pair;
 import android.support.v4.view.GravityCompat;
@@ -63,6 +64,18 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
 
     CompositeSubscription subscription;
 
+    Toolbar toolbar;
+    DrawerLayout drawer;
+    NavigationView navigationView;
+
+    View headerView;
+    TextView userNameText;
+    TextView userIdText;
+    ImageView userImage;
+    ImageView userBackgroundImage;
+
+    TabLayout tabLayout;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
@@ -71,7 +84,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
 
         subscription = new CompositeSubscription();
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         toolbar.getChildAt(0).setOnClickListener(v -> {
@@ -81,12 +94,12 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
             }
         });
 
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(item-> {
             int id = item.getItemId();
 
@@ -119,12 +132,12 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
 
         });
 
-        View headerView = navigationView.inflateHeaderView(R.layout.nav_header_main);
+        headerView = navigationView.inflateHeaderView(R.layout.nav_header_main);
 
-        TextView userNameText = headerView.findViewById(R.id.user_name);
-        TextView userIdText = headerView.findViewById(R.id.user_id);
-        ImageView userImage = headerView.findViewById(R.id.user_image);
-        ImageView userBackgroundImage = headerView.findViewById(R.id.user_bg_image);
+        userNameText = headerView.findViewById(R.id.user_name);
+        userIdText = headerView.findViewById(R.id.user_id);
+        userImage = headerView.findViewById(R.id.user_image);
+        userBackgroundImage = headerView.findViewById(R.id.user_bg_image);
 
         userBackgroundImage.setOnClickListener(v -> {
             TokenSQLiteOpenHelper helper = new TokenSQLiteOpenHelper(this);
@@ -144,9 +157,9 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                             .putString("AccountPoint",String.valueOf(i))
                             .apply();
                     ((GlobalApplication) getApplication()).initTwitter(token);
-                    startActivity(
-                            new Intent(this, MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                    );
+                    updateDrawerImage();
+                    getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                    prepareFragment();
                 }
             });
             adapter.setOnAddButtonClickListener(v1 -> {
@@ -215,31 +228,11 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                     .show();
         });
 
-        subscription.add(
-                Single.create(
-                        subscriber->{
-                            try {
-                                User me = GlobalApplication.userCache.get(GlobalApplication.userId);
-                                if (me == null){
-                                    me = GlobalApplication.twitter.verifyCredentials();
-                                    GlobalApplication.userCache.add(me);
-                                }
-                                subscriber.onSuccess(me);
-                            } catch (TwitterException e) {
-                                subscriber.onError(e);
-                            }
-                        })
-                        .subscribeOn(Schedulers.newThread())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(
-                                result -> setDrawerHeader((User) result, userNameText, userIdText, userImage, userBackgroundImage),
-                                Throwable::printStackTrace
-                        )
-        );
+        updateDrawerImage();
 
         findViewById(R.id.fab).setOnClickListener(v -> startActivity(new Intent(this, PostActivity.class)));
 
-        TabLayout tabLayout= findViewById(R.id.toolbar_tab);
+        tabLayout= findViewById(R.id.toolbar_tab);
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {}
@@ -259,9 +252,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
         getSupportFragmentManager().addOnBackStackChangedListener(() -> attachFragment(getMainFragment(), navigationView, tabLayout));
 
         if(savedInstanceState==null){
-            Fragment top=new HomeTimeLineFragment();
-            addFragment(top);
-            attachFragment(top, navigationView, tabLayout);
+            prepareFragment();
         }
 
     }
@@ -355,16 +346,46 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
         }
     }
 
-    private void setDrawerHeader(User user, TextView userNameText, TextView userIdText, ImageView userImage, ImageView userBackgroundImage){
-        userNameText.setText(user.getName());
-        userIdText.setText(TwitterStringUtils.plusAtMark(user.getScreenName()));
+    private void updateDrawerImage(){
+        subscription.add(
+                Single.create(
+                        subscriber->{
+                            try {
+                                User me = GlobalApplication.userCache.get(GlobalApplication.userId);
+                                if (me == null){
+                                    me = GlobalApplication.twitter.verifyCredentials();
+                                    GlobalApplication.userCache.add(me);
+                                }
+                                subscriber.onSuccess(me);
+                            } catch (TwitterException e) {
+                                subscriber.onError(e);
+                            }
+                        })
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                                result -> {
+                                    User user = (User) result;
+                                    userNameText.setText(user.getName());
+                                    userIdText.setText(TwitterStringUtils.plusAtMark(user.getScreenName()));
 
-        userImage.setOnClickListener(v -> startMyUserActivity());
+                                    userImage.setOnClickListener(v -> startMyUserActivity());
 
-        GlideRequests requests=GlideApp.with(this);
+                                    GlideRequests requests=GlideApp.with(this);
 
-        requests.load(user.get400x400ProfileImageURLHttps()).circleCrop().into(userImage);
-        requests.load(user.getProfileBannerRetinaURL()).centerCrop().into(userBackgroundImage);
+                                    requests.load(user.get400x400ProfileImageURLHttps()).circleCrop().into(userImage);
+                                    requests.load(user.getProfileBannerRetinaURL()).centerCrop().into(userBackgroundImage);
+                                },
+                                Throwable::printStackTrace
+                        )
+        );
+
+    }
+
+    private void prepareFragment(){
+        Fragment top=new HomeTimeLineFragment();
+        addFragment(top);
+        attachFragment(top, navigationView, tabLayout);
     }
 
 }
