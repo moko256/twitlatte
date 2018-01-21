@@ -18,14 +18,11 @@ package com.github.moko256.twicalico;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.support.customtabs.CustomTabsIntent;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -36,6 +33,7 @@ import android.widget.Toast;
 
 import com.github.moko256.mastodon.MastodonTwitterImpl;
 import com.github.moko256.twicalico.entity.Type;
+import com.github.moko256.twicalico.intent.AppCustomTabsKt;
 import com.github.moko256.twicalico.text.TwitterStringUtils;
 
 import rx.Completable;
@@ -181,12 +179,7 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
                 ));
                 break;
             case R.id.action_open_in_browser:
-                new CustomTabsIntent.Builder()
-                        .setToolbarColor(ContextCompat.getColor(this, R.color.colorPrimary))
-                        .setSecondaryToolbarColor(ContextCompat.getColor(this, R.color.colorPrimaryDark))
-                        .addDefaultShareMenuItem()
-                        .build()
-                        .launchUrl(this, Uri.parse(getShareUrl()));
+                AppCustomTabsKt.launchChromeCustomTabs(this, getShareUrl());
                 break;
             case R.id.action_create_follow:
                 throwableFunc=()->twitter.createFriendship(user.getId());

@@ -18,11 +18,8 @@ package com.github.moko256.twicalico.text;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
-import android.support.customtabs.CustomTabsIntent;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.util.ArrayMap;
 import android.text.Html;
 import android.text.SpannableStringBuilder;
@@ -37,10 +34,10 @@ import com.bumptech.glide.load.resource.gif.GifDrawable;
 import com.github.moko256.twicalico.GlideApp;
 import com.github.moko256.twicalico.GlideRequests;
 import com.github.moko256.twicalico.GlobalApplication;
-import com.github.moko256.twicalico.R;
 import com.github.moko256.twicalico.SearchResultActivity;
 import com.github.moko256.twicalico.ShowUserActivity;
 import com.github.moko256.twicalico.entity.Type;
+import com.github.moko256.twicalico.intent.AppCustomTabsKt;
 import com.sys1yagi.mastodon4j.api.exception.Mastodon4jRequestException;
 
 import java.io.IOException;
@@ -295,12 +292,7 @@ public class TwitterStringUtils {
                 spannableStringBuilder.setSpan(new ClickableSpan() {
                     @Override
                     public void onClick(View view) {
-                        new CustomTabsIntent.Builder()
-                                .setToolbarColor(ContextCompat.getColor(context, R.color.colorPrimary))
-                                .setSecondaryToolbarColor(ContextCompat.getColor(context, R.color.colorPrimaryDark))
-                                .addDefaultShareMenuItem()
-                                .build()
-                                .launchUrl(context, Uri.parse(entity.getExpandedURL()));
+                        AppCustomTabsKt.launchChromeCustomTabs(context, entity.getExpandedURL());
                     }
                 }, tweet.offsetByCodePoints(0, entity.getStart()) + sp, tweet.offsetByCodePoints(0, entity.getEnd()) + sp + dusp, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
 
@@ -350,12 +342,7 @@ public class TwitterStringUtils {
                 spannableStringBuilder.setSpan(new ClickableSpan() {
                     @Override
                     public void onClick(View view) {
-                        new CustomTabsIntent.Builder()
-                                .setToolbarColor(ContextCompat.getColor(context, R.color.colorPrimary))
-                                .setSecondaryToolbarColor(ContextCompat.getColor(context, R.color.colorPrimaryDark))
-                                .addDefaultShareMenuItem()
-                                .build()
-                                .launchUrl(context, Uri.parse(entity.getExpandedURL()));
+                        AppCustomTabsKt.launchChromeCustomTabs(context, entity.getExpandedURL());
                     }
                 }, description.offsetByCodePoints(0, entity.getStart()) + sp, description.offsetByCodePoints(0, entity.getEnd()) + sp + dusp, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
 
@@ -374,12 +361,7 @@ public class TwitterStringUtils {
             builder.setSpan(new ClickableSpan() {
                 @Override
                 public void onClick(View view) {
-                    new CustomTabsIntent.Builder()
-                            .setToolbarColor(ContextCompat.getColor(context, R.color.colorPrimary))
-                            .setSecondaryToolbarColor(ContextCompat.getColor(context, R.color.colorPrimaryDark))
-                            .addDefaultShareMenuItem()
-                            .build()
-                            .launchUrl(context, Uri.parse(span.getURL()));
+                    AppCustomTabsKt.launchChromeCustomTabs(context, span.getURL());
                 }
             }, spanned.getSpanStart(span), spanned.getSpanEnd(span), spanned.getSpanFlags(span));
         }
