@@ -150,7 +150,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
             adapter.setOnImageButtonClickListener(i -> {
 
                 AccessToken token = accessTokens[i];
-                dialog[0].cancel();
+
                 if (token.getUserId() != GlobalApplication.userId){
                     PreferenceManager.getDefaultSharedPreferences(this)
                             .edit()
@@ -161,6 +161,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                     updateDrawerImage();
                     clearAndPrepareFragment();
                 }
+                dialog[0].cancel();
             });
             adapter.setOnAddButtonClickListener(v1 -> {
                 PreferenceManager.getDefaultSharedPreferences(this)
