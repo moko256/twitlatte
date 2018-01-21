@@ -33,13 +33,15 @@ import twitter4j.User;
  */
 
 public class MTPagableResponseList<E extends TwitterResponse> extends ArrayList<E> implements PagableResponseList<E> {
-    Long previous;
-    Long next;
+    private Long previous;
+    private Long next;
 
     MTPagableResponseList(Pageable p){
         super();
-        next = p.getLink().getMaxId();
-        previous = p.getLink().getSinceId();
+        if (p.getLink() != null) {
+            next = p.getLink().getMaxId();
+            previous = p.getLink().getSinceId();
+        }
     }
 
     static MTPagableResponseList<User> convert(Pageable<Account> p){
