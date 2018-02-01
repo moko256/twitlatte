@@ -55,10 +55,4 @@
             android:title="@string/action_settings" />
     </group>
 
-    <!-- Content of this group will added automatically -->
-    <group
-        android:id="@+id/drawer_menu_accounts"
-        android:visible="false"
-        android:checkableBehavior="single" />
-
 </menu>
