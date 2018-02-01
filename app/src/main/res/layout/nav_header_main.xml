@@ -27,7 +27,7 @@
         android:layout_height="match_parent"
         android:id="@+id/user_bg_image"
         android:fitsSystemWindows="false"
-        tools:src="@android:color/darker_gray"/>
+        tools:src="@android:color/darker_gray" />
 
     <com.github.moko256.twicalico.widget.WideRatioRelativeLayout
         android:layout_width="match_parent"
@@ -44,7 +44,7 @@
             android:id="@+id/user_image"
             android:layout_width="64dp"
             android:layout_height="64dp"
-            tools:src="@android:color/white"/>
+            tools:src="@android:color/white" />
 
         <TextView
             android:id="@+id/user_name"
@@ -54,7 +54,7 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Body2"
             android:textColor="#FFFFFF"
             android:layout_below="@id/user_image"
-            tools:text="User name"/>
+            tools:text="User name" />
 
         <TextView
             android:id="@+id/user_id"
@@ -63,7 +63,7 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:textColor="#deFFFFFF"
             android:layout_below="@id/user_name"
-            tools:text="\@user_name"/>
+            tools:text="\@user_name" />
 
         <ImageView
             android:id="@+id/toggle_account"
@@ -71,8 +71,7 @@
             android:layout_height="24dp"
             android:layout_alignParentRight="true"
             android:layout_alignParentBottom="true"
-            app:srcCompat="@drawable/ic_arrow_drop_down_white_24dp"
-            />
+            app:srcCompat="@drawable/ic_arrow_drop_down_white_24dp" />
 
     </com.github.moko256.twicalico.widget.WideRatioRelativeLayout>
 
