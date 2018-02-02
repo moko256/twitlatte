@@ -21,6 +21,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
+import com.github.moko256.twicalico.entity.Type;
+
 /**
  * Created by moko256 on 2017/01/15.
  *
@@ -34,13 +36,23 @@ public class ShowUserFragmentsPagerAdapter extends FragmentPagerAdapter {
     ShowUserFragmentsPagerAdapter(FragmentManager fm, Context context, long userId) {
         super(fm);
 
-        mFragments=new Fragment[]{
-                UserInfoFragment.newInstance(userId),
-                UserTimelineFragment.newInstance(userId),
-                UserLikeFragment.newInstance(userId),
-                UserFollowsFragment.newInstance(userId),
-                UserFollowersFragment.newInstance(userId)
-        };
+        if (GlobalApplication.clientType == Type.MASTODON && userId != GlobalApplication.userId){
+            mFragments=new Fragment[]{
+                    UserInfoFragment.newInstance(userId),
+                    UserTimelineFragment.newInstance(userId),
+                    UserFollowsFragment.newInstance(userId),
+                    UserFollowersFragment.newInstance(userId)
+            };
+        } else {
+            mFragments = new Fragment[]{
+                    UserInfoFragment.newInstance(userId),
+                    UserTimelineFragment.newInstance(userId),
+                    UserLikeFragment.newInstance(userId),
+                    UserFollowsFragment.newInstance(userId),
+                    UserFollowersFragment.newInstance(userId)
+            };
+        }
+
         mContext=context;
     }
 
