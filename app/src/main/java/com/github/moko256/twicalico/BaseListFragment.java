@@ -72,7 +72,7 @@ public abstract class BaseListFragment extends Fragment implements MoveableTopIn
         });
 
         swipeRefreshLayout= view.findViewById(R.id.srl);
-        swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
+        swipeRefreshLayout.setColorSchemeResources(R.color.color_primary);
         swipeRefreshLayout.setRefreshing(isProgressCircleLoading);
         swipeRefreshLayout.setOnRefreshListener(()->{
             if (isInitializedList()){

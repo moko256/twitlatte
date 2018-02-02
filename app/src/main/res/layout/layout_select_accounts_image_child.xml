@@ -27,7 +27,7 @@
         android:layout_height="40dp"
         android:layout_marginLeft="16dp"
         android:layout_centerVertical="true"
-        tools:src="@color/colorAccent"/>
+        tools:src="@color/color_accent"/>
     <TextView
         android:id="@+id/layout_images_adapter_image_child_title"
         android:layout_toRightOf="@+id/layout_images_adapter_image_child_image"

@@ -36,8 +36,8 @@ import com.github.moko256.twicalico.R
  */
 fun launchChromeCustomTabs(context: Context, uri: String){
     CustomTabsIntent.Builder()
-            .setToolbarColor(ContextCompat.getColor(context, R.color.colorPrimary))
-            .setSecondaryToolbarColor(ContextCompat.getColor(context, R.color.colorPrimaryDark))
+            .setToolbarColor(ContextCompat.getColor(context, R.color.color_primary))
+            .setSecondaryToolbarColor(ContextCompat.getColor(context, R.color.color_primary_dark))
             .addDefaultShareMenuItem()
             .build()
             .launchUrl(context, Uri.parse(uri))

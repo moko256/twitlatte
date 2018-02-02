@@ -18,9 +18,9 @@
 
     <style name="BaseAppTheme" parent="Theme.AppCompat.DayNight">
 
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorPrimary">@color/color_primary</item>
+        <item name="colorPrimaryDark">@color/color_primary_dark</item>
+        <item name="colorAccent">@color/color_accent</item>
 
         <item name="actionBarTheme">@style/AppTheme.AppBarOverlay</item>
         <item name="popupTheme">@style/AppTheme.PopupOverlay</item>
@@ -36,7 +36,7 @@
     </style>
 
     <style name="BaseSplashTheme" parent="AppTheme.NoActionBar">
-        <item name="android:windowBackground">@color/colorPrimary</item>
+        <item name="android:windowBackground">@color/color_primary</item>
     </style>
 
     <style name="SplashTheme" parent="BaseSplashTheme"/>

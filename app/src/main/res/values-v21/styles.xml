@@ -18,7 +18,7 @@
 
     <style name="BaseAppThemeV21" parent="BaseAppTheme">
         <item name="android:windowContentTransitions">true</item>
-        <item name="android:navigationBarColor">@color/colorPrimaryDark</item>
+        <item name="android:navigationBarColor">@color/color_primary_dark</item>
     </style>
     <style name="BaseTheme" parent="BaseAppThemeV21"/>
 

@@ -110,7 +110,7 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
         glideRequests =GlideApp.with(this);
 
         swipeRefreshLayout = view.findViewById(R.id.show_user_swipe_refresh);
-        swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
+        swipeRefreshLayout.setColorSchemeResources(R.color.color_primary);
         swipeRefreshLayout.setOnRefreshListener(() -> subscription.add(updateUser()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
