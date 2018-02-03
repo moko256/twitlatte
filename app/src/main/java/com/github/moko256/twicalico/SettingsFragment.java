@@ -107,7 +107,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                                                     Integer.valueOf(
                                                             defaultSharedPreferences.getString("AccountPoint","-1")
                                                     ))
-                                                    .getUserId()
                                     )-1;
                                     defaultSharedPreferences
                                             .edit()

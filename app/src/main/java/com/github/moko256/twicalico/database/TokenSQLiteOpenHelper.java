@@ -43,9 +43,9 @@ public class TokenSQLiteOpenHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL(
-                "create table AccountTokenList(userName string , userId integer , token string , tokenSecret string , url string , type string , primary key(userName , url));"
+                "create table AccountTokenList(userName string , userId integer , token string , tokenSecret string , url string , type string , primary key(userId , url));"
         );
-        sqLiteDatabase.execSQL("create unique index idindex on AccountTokenList(userName , url)");
+        sqLiteDatabase.execSQL("create unique index idindex on AccountTokenList(userId , url)");
     }
 
     @Override
@@ -147,13 +147,12 @@ public class TokenSQLiteOpenHelper extends SQLiteOpenHelper {
         return count;
     }
 
-    public long deleteAccessToken(long userId){
+    public long deleteAccessToken(AccessToken accessToken){
         SQLiteDatabase database=getWritableDatabase();
-        database.delete("AccountTokenList", "userId=" + String.valueOf(userId), null);
+        database.delete("AccountTokenList", "url = '" + accessToken.getUrl() + "' AND " + "userId = " + String.valueOf(accessToken.getUserId()), null);
         long count = DatabaseUtils.queryNumEntries(database,"AccountTokenList");
         database.close();
         return count;
     }
-
 
 }

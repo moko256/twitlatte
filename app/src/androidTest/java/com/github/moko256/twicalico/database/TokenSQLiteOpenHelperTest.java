@@ -49,7 +49,7 @@ public class TokenSQLiteOpenHelperTest {
     @Test
     public void test() throws Exception {
         try {
-            helper.getWritableDatabase().execSQL("delete from AccountTokenList;");
+            helper.getWritableDatabase().execSQL("delete from AccountTokenList");
         } catch (Exception e) {
             //Do nothing
         }
@@ -100,11 +100,18 @@ public class TokenSQLiteOpenHelperTest {
     }
 
     private void deleteToken(){
-        final long deleteAccessTokenResult = helper.deleteAccessToken(TEST_USER_1_USER_ID);
+        final long deleteAccessTokenResult = helper.deleteAccessToken(
+                generateAccessToken(
+                        TEST_USER_1_USER_ID,
+                        "",
+                        "",
+                        ""
+                )
+        );
         assertEquals(deleteAccessTokenResult, 0);
     }
 
     private AccessToken generateAccessToken(final long userId, final String screenName, final String token, final String tokenSecret){
-        return new AccessToken(0, "example.com", userId, screenName, token, tokenSecret);
+        return new AccessToken(1, "example.com", userId, screenName, token, tokenSecret);
     }
 }
