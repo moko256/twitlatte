@@ -17,6 +17,7 @@
 package com.github.moko256.twicalico;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -29,6 +30,7 @@ import android.support.v4.util.Pair;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -187,14 +189,46 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                 clearAndPrepareFragment();
             }
         });
-        adapter.setOnAddButtonClickListener(v1 -> {
+        adapter.setOnAddButtonClickListener(v -> {
             PreferenceManager.getDefaultSharedPreferences(this)
                     .edit()
                     .putString("AccountKey", "-1")
                     .apply();
             GlobalApplication.twitter = null;
-            startActivity(new Intent(this, OAuthActivity.class));
+            startActivity(new Intent(this, OAuthActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
         });
+        adapter.setOnRemoveButtonClickListener(v -> new AlertDialog.Builder(this)
+                .setMessage(R.string.confirm_logout)
+                .setCancelable(true)
+                .setPositiveButton(R.string.do_logout,
+                        (dialog, i) -> {
+                            SharedPreferences defaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+                            TokenSQLiteOpenHelper helper = new TokenSQLiteOpenHelper(this);
+                            helper.deleteAccessToken(
+                                    helper.getAccessToken(
+                                            defaultSharedPreferences.getString("AccountKey","-1")
+                                    )
+                            );
+
+                            int point = helper.getSize() - 1;
+                            if (point != -1) {
+                                AccessToken accessToken = helper.getAccessTokens()[point];
+                                defaultSharedPreferences
+                                        .edit()
+                                        .putString("AccountKey", accessToken.getKeyString())
+                                        .apply();
+                                ((GlobalApplication) getApplication()).initTwitter(accessToken);
+                                updateDrawerImage();
+                                clearAndPrepareFragment();
+                            } else {
+                                adapter.getOnAddButtonClickListener().onClick(v);
+                            }
+                            helper.close();
+                        }
+                )
+                .setNeutralButton(R.string.back,(dialog, i) -> dialog.cancel())
+                .show());
         accountListView.setAdapter(adapter);
 
         subscription.add(

@@ -88,7 +88,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
                             ((GlobalApplication) getActivity().getApplication()).initTwitter(accessToken);
                             startActivity(
-                                    new Intent(getContext(),MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                                    new Intent(getContext(),MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
                             );
                         }
                         return true;
@@ -107,17 +107,29 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                                             )
                                     );
 
-                                    AccessToken accessToken = helper.getAccessTokens()[helper.getSize() - 1];
+                                    int point = helper.getSize() - 1;
+                                    if (point != -1) {
+                                        AccessToken accessToken = helper.getAccessTokens()[point];
 
-                                    defaultSharedPreferences
-                                            .edit()
-                                            .putString("AccountKey", accessToken.getKeyString())
-                                            .apply();
+                                        defaultSharedPreferences
+                                                .edit()
+                                                .putString("AccountKey", accessToken.getKeyString())
+                                                .apply();
 
-                                    ((GlobalApplication) getActivity().getApplication()).initTwitter(accessToken);
-                                    startActivity(
-                                            new Intent(getContext(),MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                                    );
+                                        ((GlobalApplication) getActivity().getApplication()).initTwitter(accessToken);
+                                        startActivity(
+                                                new Intent(getContext(), MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
+                                        );
+                                    } else {
+                                        defaultSharedPreferences
+                                                .edit()
+                                                .putString("AccountKey", "-1")
+                                                .apply();
+                                        GlobalApplication.twitter = null;
+                                        startActivity(
+                                                new Intent(getContext(), OAuthActivity.class)
+                                        );
+                                    }
                                 }
                         )
                         .setNeutralButton(R.string.back,(dialog, i) -> dialog.cancel())
