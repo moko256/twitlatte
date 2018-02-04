@@ -18,6 +18,7 @@
 <resources>
     <string name="action_settings">設定</string>
     <string name="action_search">検索</string>
+    <string name="back">戻る</string>
     <string name="trends">トレンド</string>
     <string name="timeline">タイムライン</string>
     <string name="mentions">メンション</string>
@@ -39,7 +40,9 @@
     <string name="mention_to">%sさんへの言及</string>
     <string name="app_settings">アプリケーションの設定</string>
     <string name="add_account">他のアカウントを追加</string>
-    <string name="logout">ログアウトする</string>
+    <string name="logout">ログアウト</string>
+    <string name="do_logout">ログアウトする</string>
+    <string name="confirm_logout">ログアウトしますか？</string>
     <string name="new_post">新しい投稿</string>
     <string name="permission_denied">権限が拒否されました</string>
     <string name="lat_and_lon">緯度:%f 経度:%f</string>

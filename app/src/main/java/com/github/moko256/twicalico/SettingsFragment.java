@@ -97,10 +97,9 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
             findPreference("logout").setOnPreferenceClickListener(preference -> {
                 new AlertDialog.Builder(getContext())
-                        .setTitle(R.string.logout)
-                        .setMessage(R.string.confirm_message)
+                        .setMessage(R.string.confirm_logout)
                         .setCancelable(true)
-                        .setPositiveButton(android.R.string.ok,
+                        .setPositiveButton(R.string.do_logout,
                                 (dialog, i) -> {
                                     helper.deleteAccessToken(
                                             helper.getAccessToken(
@@ -121,7 +120,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                                     );
                                 }
                         )
-                        .setNegativeButton(android.R.string.cancel,(dialog, i) -> dialog.cancel())
+                        .setNeutralButton(R.string.back,(dialog, i) -> dialog.cancel())
                         .show();
                 return false;
             });
