@@ -61,18 +61,20 @@ public class TokenSQLiteOpenHelperTest {
     }
 
     private void addToken(){
-        final long addAccessTokenResult = helper.addAccessToken(
-                generateAccessToken(
-                        TEST_USER_1_USER_ID,
-                        TEST_USER_1_USER_SCREEN_NAME_1,
-                        TEST_USER_1_USER_TOKEN_1,
-                        TEST_USER_1_USER_TOKEN_SECRET_1
-                )
+        AccessToken accessToken = generateAccessToken(
+                TEST_USER_1_USER_ID,
+                TEST_USER_1_USER_SCREEN_NAME_1,
+                TEST_USER_1_USER_TOKEN_1,
+                TEST_USER_1_USER_TOKEN_SECRET_1
         );
+
+        helper.addAccessToken(accessToken);
+
+        final long addAccessTokenResult = helper.getSize();
 
         assertEquals(addAccessTokenResult, 1);
 
-        AccessToken addedAccessTokenResult = helper.getAccessToken(0);
+        AccessToken addedAccessTokenResult = helper.getAccessToken(accessToken.getKeyString());
 
         assertEquals(addedAccessTokenResult.getUserId(), TEST_USER_1_USER_ID);
         assertEquals(addedAccessTokenResult.getScreenName(), TEST_USER_1_USER_SCREEN_NAME_1);
@@ -81,18 +83,23 @@ public class TokenSQLiteOpenHelperTest {
     }
 
     private void updateToken(){
-        final long updateAccessTokenResult = helper.addAccessToken(
-                generateAccessToken(
-                        TEST_USER_1_USER_ID,
-                        TEST_USER_1_USER_SCREEN_NAME_2,
-                        TEST_USER_1_USER_TOKEN_2,
-                        TEST_USER_1_USER_TOKEN_SECRET_2
-                )
+
+        AccessToken accessToken = generateAccessToken(
+                TEST_USER_1_USER_ID,
+                TEST_USER_1_USER_SCREEN_NAME_2,
+                TEST_USER_1_USER_TOKEN_2,
+                TEST_USER_1_USER_TOKEN_SECRET_2
         );
+
+        helper.addAccessToken(
+                accessToken
+        );
+
+        final long updateAccessTokenResult = helper.getSize();
 
         assertEquals(updateAccessTokenResult, 1);
 
-        AccessToken updatedAccessTokenResult = helper.getAccessToken(0);
+        AccessToken updatedAccessTokenResult = helper.getAccessToken(accessToken.getKeyString());
 
         assertEquals(updatedAccessTokenResult.getScreenName(), TEST_USER_1_USER_SCREEN_NAME_2);
         assertEquals(updatedAccessTokenResult.getToken(), TEST_USER_1_USER_TOKEN_2);
@@ -100,7 +107,7 @@ public class TokenSQLiteOpenHelperTest {
     }
 
     private void deleteToken(){
-        final long deleteAccessTokenResult = helper.deleteAccessToken(
+        helper.deleteAccessToken(
                 generateAccessToken(
                         TEST_USER_1_USER_ID,
                         "",
@@ -108,6 +115,9 @@ public class TokenSQLiteOpenHelperTest {
                         ""
                 )
         );
+
+        final long deleteAccessTokenResult = helper.getSize();
+
         assertEquals(deleteAccessTokenResult, 0);
     }
 

@@ -26,7 +26,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.github.moko256.twicalico.entity.AccessToken;
+import com.github.moko256.twicalico.text.TwitterStringUtils;
+
 import java.util.ArrayList;
+
+import twitter4j.User;
 
 /**
  * Created by moko256 on 2017/10/26.
@@ -41,7 +46,7 @@ public class SelectAccountsAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
     Context context;
 
-    private ArrayList<Pair<Uri, String>> images = new ArrayList<>();
+    private ArrayList<Pair<User, AccessToken>> images = new ArrayList<>();
 
     private View.OnClickListener onAddButtonClickListener;
     private OnImageClickListener onImageButtonClickListener;
@@ -68,15 +73,23 @@ public class SelectAccountsAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (getItemViewType(position) == VIEW_TYPE_IMAGE){
             ImageChildViewHolder viewHolder = (ImageChildViewHolder) holder;
-            Pair<Uri, String> pair = images.get(position);
-            Uri image = pair.first;
-            viewHolder.title.setText(pair.second);
-            GlideApp.with(context).load(image).circleCrop().into(viewHolder.image);
-            viewHolder.itemView.setOnClickListener(v -> {
-                if (onImageButtonClickListener != null){
-                    onImageButtonClickListener.onClick(position);
-                }
-            });
+
+            Pair<User, AccessToken> pair = images.get(position);
+            User user = pair.first;
+            AccessToken accessToken = pair.second;
+
+            if (user != null && accessToken != null) {
+
+                Uri image = Uri.parse(user.get400x400ProfileImageURLHttps());
+                viewHolder.title.setText(TwitterStringUtils.plusAtMark(user.getScreenName(), accessToken.getUrl()));
+                GlideApp.with(context).load(image).circleCrop().into(viewHolder.image);
+                viewHolder.itemView.setOnClickListener(v -> {
+                    if (onImageButtonClickListener != null) {
+                        onImageButtonClickListener.onClick(accessToken);
+                    }
+                });
+
+            }
         } else {
             holder.itemView.setOnClickListener(onAddButtonClickListener);
         }
@@ -104,7 +117,7 @@ public class SelectAccountsAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         this.onImageButtonClickListener = onImageButtonClickListener;
     }
 
-    public ArrayList<Pair<Uri, String>> getImagesList() {
+    public ArrayList<Pair<User, AccessToken>> getImagesList() {
         return images;
     }
 
@@ -133,6 +146,6 @@ public class SelectAccountsAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     }
 
     public interface OnImageClickListener {
-        void onClick(int index);
+        void onClick(AccessToken accessToken);
     }
 }

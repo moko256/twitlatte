@@ -17,7 +17,6 @@
 package com.github.moko256.twicalico;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -174,21 +173,16 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
         accountListView.setVisibility(View.GONE);
         navigationView.addHeaderView(accountListView);
 
-        TokenSQLiteOpenHelper helper = new TokenSQLiteOpenHelper(this);
-        AccessToken[] accessTokens = helper.getAccessTokens();
-        helper.close();
         SelectAccountsAdapter adapter = new SelectAccountsAdapter(this);
-        adapter.setOnImageButtonClickListener(i -> {
-            AccessToken token = accessTokens[i];
-
+        adapter.setOnImageButtonClickListener(accessToken -> {
             drawer.closeDrawer(GravityCompat.START);
 
-            if (token.getUserId() != GlobalApplication.userId) {
+            if (accessToken.getUserId() != GlobalApplication.userId) {
                 PreferenceManager.getDefaultSharedPreferences(this)
                         .edit()
-                        .putString("AccountPoint", String.valueOf(i))
+                        .putString("AccountKey", accessToken.getKeyString())
                         .apply();
-                ((GlobalApplication) getApplication()).initTwitter(token);
+                ((GlobalApplication) getApplication()).initTwitter(accessToken);
                 updateDrawerImage();
                 clearAndPrepareFragment();
             }
@@ -196,7 +190,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
         adapter.setOnAddButtonClickListener(v1 -> {
             PreferenceManager.getDefaultSharedPreferences(this)
                     .edit()
-                    .putString("AccountPoint", "-1")
+                    .putString("AccountKey", "-1")
                     .apply();
             GlobalApplication.twitter = null;
             startActivity(new Intent(this, OAuthActivity.class));
@@ -206,7 +200,11 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
         subscription.add(
                 Single.create(
                         singleSubscriber -> {
-                            ArrayList<Pair<Uri, String>> r = new ArrayList<>();
+                            TokenSQLiteOpenHelper helper = new TokenSQLiteOpenHelper(this);
+                            AccessToken[] accessTokens = helper.getAccessTokens();
+                            helper.close();
+
+                            ArrayList<Pair<User, AccessToken>> r = new ArrayList<>();
                             for (AccessToken accessToken : accessTokens){
                                 long id = accessToken.getUserId();
                                 CachedUsersSQLiteOpenHelper userHelper = new CachedUsersSQLiteOpenHelper(this, id, accessToken.getType() == Type.TWITTER);
@@ -222,10 +220,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                                         userHelper.close();
                                     }
                                 }
-                                r.add(new Pair<>(
-                                        Uri.parse(user.get400x400ProfileImageURLHttps()),
-                                        TwitterStringUtils.plusAtMark(accessToken.getScreenName(), accessToken.getUrl())
-                                ));
+                                r.add(new Pair<>(user, accessToken));
                             }
                             singleSubscriber.onSuccess(r);
                         })
@@ -233,7 +228,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
                                 o -> {
-                                    ArrayList<Pair<Uri, String>> pairs = (ArrayList<Pair<Uri, String>>) o;
+                                    ArrayList<Pair<User, AccessToken>> pairs = (ArrayList<Pair<User, AccessToken>>) o;
                                     adapter.getImagesList().addAll(pairs);
                                     adapter.notifyDataSetChanged();
                                 },

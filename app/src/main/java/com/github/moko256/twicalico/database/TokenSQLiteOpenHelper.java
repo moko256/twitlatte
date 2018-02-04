@@ -24,7 +24,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.github.moko256.twicalico.entity.AccessToken;
+import com.github.moko256.twicalico.entity.AccessTokenKt;
 import com.github.moko256.twicalico.entity.Type;
+
+import kotlin.Pair;
 
 /**
  * Created by moko256 on 2016/07/31.
@@ -104,14 +107,7 @@ public class TokenSQLiteOpenHelper extends SQLiteOpenHelper {
         AccessToken[] accessTokens =new AccessToken[c.getCount()];
 
         while (c.moveToNext()){
-            accessTokens[c.getPosition()] = new AccessToken(
-                    c.getInt(5),
-                    c.getString(4),
-                    c.getLong(1),
-                    c.getString(0),
-                    c.getString(2),
-                    c.getString(3)
-            );
+            accessTokens[c.getPosition()] = convertFromCursor(c);
         }
 
         c.close();
@@ -120,16 +116,38 @@ public class TokenSQLiteOpenHelper extends SQLiteOpenHelper {
         return accessTokens;
     }
 
-    public AccessToken getAccessToken(int index){
-        AccessToken[] accessTokens = getAccessTokens();
-        if (index < accessTokens.length){
-            return accessTokens[index];
-        } else {
-            return null;
-        }
+    public AccessToken getAccessToken(String key){
+        Pair<String, Long> pair = AccessTokenKt.splitAccessTokenKey(key);
+
+        SQLiteDatabase database=getReadableDatabase();
+        Cursor c=database.query(
+                "AccountTokenList",
+                new String[]{"userName", "userId", "token", "tokenSecret", "url", "type"},
+                "url = '" + pair.getFirst() + "' AND " + "userId = " + String.valueOf(pair.getSecond()),
+                null,null,null,null, "1");
+
+        AccessToken accessToken;
+
+        c.moveToNext();
+        accessToken = convertFromCursor(c);
+        c.close();
+        database.close();
+
+        return accessToken;
     }
 
-    public long addAccessToken(AccessToken accessToken){
+    private AccessToken convertFromCursor(Cursor c){
+        return new AccessToken(
+                c.getInt(5),
+                c.getString(4),
+                c.getLong(1),
+                c.getString(0),
+                c.getString(2),
+                c.getString(3)
+        );
+    }
+
+    public void addAccessToken(AccessToken accessToken){
         SQLiteDatabase database=getWritableDatabase();
 
         ContentValues contentValues = new ContentValues();
@@ -142,17 +160,20 @@ public class TokenSQLiteOpenHelper extends SQLiteOpenHelper {
 
         database.replace("AccountTokenList", null, contentValues);
 
-        long count = DatabaseUtils.queryNumEntries(database,"AccountTokenList");
         database.close();
-        return count;
     }
 
-    public long deleteAccessToken(AccessToken accessToken){
+    public void deleteAccessToken(AccessToken accessToken){
         SQLiteDatabase database=getWritableDatabase();
         database.delete("AccountTokenList", "url = '" + accessToken.getUrl() + "' AND " + "userId = " + String.valueOf(accessToken.getUserId()), null);
+        database.close();
+    }
+
+    public int getSize(){
+        SQLiteDatabase database = getReadableDatabase();
         long count = DatabaseUtils.queryNumEntries(database,"AccountTokenList");
         database.close();
-        return count;
+        return (int) count;
     }
 
 }
