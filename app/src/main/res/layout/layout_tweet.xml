@@ -192,7 +192,7 @@
             android:layout_marginBottom="4dp"
             android:layout_marginLeft="12dp"
             android:layout_marginRight="6dp"
-            app:toggle_drawable="@drawable/ic_heart_black_24dp"
+            app:toggle_drawable="@drawable/like_button_drawable_stateful"
             app:buttonTint="@color/toggle_button_color_stateful"/>
 
         <TextView
