@@ -79,17 +79,17 @@ public class OAuthActivity extends AppCompatActivity {
         SharedPreferences defaultSharedPreferences= PreferenceManager.getDefaultSharedPreferences(this);
 
         TokenSQLiteOpenHelper tokenOpenHelper = new TokenSQLiteOpenHelper(this);
-        long nowAccountPoint=tokenOpenHelper.addAccessToken(accessToken)-1;
+        tokenOpenHelper.addAccessToken(accessToken);
         tokenOpenHelper.close();
 
         defaultSharedPreferences
                 .edit()
-                .putString("AccountPoint",String.valueOf(nowAccountPoint))
+                .putString("AccountKey", accessToken.getKeyString())
                 .apply();
 
         ((GlobalApplication) getApplication()).initTwitter(accessToken);
 
-        startActivity(new Intent(this,MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+        startActivity(new Intent(this,MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
         finish();
     }
 

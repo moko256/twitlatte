@@ -189,12 +189,12 @@ public class GlobalApplication extends Application {
 
         AppCompatDelegate.setDefaultNightMode(mode);
 
-        int nowAccountPoint = Integer.parseInt(defaultSharedPreferences.getString("AccountPoint","-1"),10);
+        String accountKey = defaultSharedPreferences.getString("AccountKey","-1");
 
-        if (nowAccountPoint==-1)return;
+        if (accountKey.equals("-1")) return;
 
         TokenSQLiteOpenHelper tokenOpenHelper =  new TokenSQLiteOpenHelper(this);
-        AccessToken accessToken=tokenOpenHelper.getAccessToken(nowAccountPoint);
+        AccessToken accessToken=tokenOpenHelper.getAccessToken(accountKey);
         tokenOpenHelper.close();
 
         if (accessToken==null)return;

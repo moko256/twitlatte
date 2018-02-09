@@ -49,7 +49,11 @@ public class MTUser implements User {
 
     @Override
     public String getName() {
-        return account.getDisplayName();
+        String name = account.getDisplayName();
+        if (name.equals("")){
+            name = account.getUserName();
+        }
+        return name;
     }
 
     @Override

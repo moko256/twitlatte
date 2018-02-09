@@ -32,7 +32,16 @@ public data class AccessToken(
         val screenName: String,
         val token: String,
         val tokenSecret: String? = null
-)
+) {
+    fun getKeyString(): String {
+        return url + "@" + userId.toString()
+    }
+}
+
+fun splitAccessTokenKey(accessTokenKey: String): Pair<String, Long> {
+    val splitString = accessTokenKey.split("@")
+    return Pair(splitString[0], splitString[1].toLong())
+}
 
 public class Type{
 

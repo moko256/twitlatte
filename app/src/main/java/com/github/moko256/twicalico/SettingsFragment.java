@@ -64,16 +64,16 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 AccessToken accessToken = accessTokens[i];
 
                 entries[i] = TwitterStringUtils.plusAtMark(accessToken.getScreenName(), accessToken.getUrl());
-                entryValues[i] = String.valueOf(i);
+                entryValues[i] = accessToken.getKeyString();
             }
 
             entries[entries.length-1]=getString(R.string.add_account);
             entryValues[entryValues.length-1]="-1";
 
-            ListPreference nowAccountList=(ListPreference) findPreference("AccountPoint");
+            ListPreference nowAccountList=(ListPreference) findPreference("AccountKey");
             nowAccountList.setEntries(entries);
             nowAccountList.setEntryValues(entryValues);
-            nowAccountList.setDefaultValue(defaultSharedPreferences.getString("AccountPoint","-1"));
+            nowAccountList.setDefaultValue(defaultSharedPreferences.getString("AccountKey","-1"));
             nowAccountList.setOnPreferenceChangeListener(
                     (preference, newValue) -> {
                         if (newValue.equals("-1")){
@@ -83,12 +83,12 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                             );
                         } else {
                             TokenSQLiteOpenHelper tokenOpenHelper = new TokenSQLiteOpenHelper(this.getContext());
-                            AccessToken accessToken=tokenOpenHelper.getAccessToken(Integer.valueOf((String) newValue));
+                            AccessToken accessToken=tokenOpenHelper.getAccessToken((String) newValue);
                             tokenOpenHelper.close();
 
                             ((GlobalApplication) getActivity().getApplication()).initTwitter(accessToken);
                             startActivity(
-                                    new Intent(getContext(),MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                                    new Intent(getContext(),MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
                             );
                         }
                         return true;
@@ -97,33 +97,42 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
             findPreference("logout").setOnPreferenceClickListener(preference -> {
                 new AlertDialog.Builder(getContext())
-                        .setTitle(R.string.logout)
-                        .setMessage(R.string.confirm_message)
+                        .setMessage(R.string.confirm_logout)
                         .setCancelable(true)
-                        .setPositiveButton(android.R.string.ok,
+                        .setPositiveButton(R.string.do_logout,
                                 (dialog, i) -> {
-                                    long p = helper.deleteAccessToken(
+                                    helper.deleteAccessToken(
                                             helper.getAccessToken(
-                                                    Integer.valueOf(
-                                                            defaultSharedPreferences.getString("AccountPoint","-1")
-                                                    ))
-                                                    .getUserId()
-                                    )-1;
-                                    defaultSharedPreferences
-                                            .edit()
-                                            .putString("AccountPoint", String.valueOf(p)).apply();
-
-                                    TokenSQLiteOpenHelper tokenOpenHelper = new TokenSQLiteOpenHelper(this.getContext());
-                                    AccessToken accessToken=tokenOpenHelper.getAccessToken(Long.valueOf(p).intValue());
-                                    tokenOpenHelper.close();
-
-                                    ((GlobalApplication) getActivity().getApplication()).initTwitter(accessToken);
-                                    startActivity(
-                                            new Intent(getContext(),MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                                                    defaultSharedPreferences.getString("AccountKey","-1")
+                                            )
                                     );
+
+                                    int point = helper.getSize() - 1;
+                                    if (point != -1) {
+                                        AccessToken accessToken = helper.getAccessTokens()[point];
+
+                                        defaultSharedPreferences
+                                                .edit()
+                                                .putString("AccountKey", accessToken.getKeyString())
+                                                .apply();
+
+                                        ((GlobalApplication) getActivity().getApplication()).initTwitter(accessToken);
+                                        startActivity(
+                                                new Intent(getContext(), MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
+                                        );
+                                    } else {
+                                        defaultSharedPreferences
+                                                .edit()
+                                                .putString("AccountKey", "-1")
+                                                .apply();
+                                        GlobalApplication.twitter = null;
+                                        startActivity(
+                                                new Intent(getContext(), OAuthActivity.class)
+                                        );
+                                    }
                                 }
                         )
-                        .setNegativeButton(android.R.string.cancel,(dialog, i) -> dialog.cancel())
+                        .setNeutralButton(R.string.back,(dialog, i) -> dialog.cancel())
                         .show();
                 return false;
             });

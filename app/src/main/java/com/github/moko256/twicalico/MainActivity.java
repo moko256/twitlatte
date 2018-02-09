@@ -17,7 +17,7 @@
 package com.github.moko256.twicalico;
 
 import android.content.Intent;
-import android.net.Uri;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -30,6 +30,7 @@ import android.support.v4.util.Pair;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -174,39 +175,70 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
         accountListView.setVisibility(View.GONE);
         navigationView.addHeaderView(accountListView);
 
-        TokenSQLiteOpenHelper helper = new TokenSQLiteOpenHelper(this);
-        AccessToken[] accessTokens = helper.getAccessTokens();
-        helper.close();
         SelectAccountsAdapter adapter = new SelectAccountsAdapter(this);
-        adapter.setOnImageButtonClickListener(i -> {
-            AccessToken token = accessTokens[i];
-
+        adapter.setOnImageButtonClickListener(accessToken -> {
             drawer.closeDrawer(GravityCompat.START);
 
-            if (token.getUserId() != GlobalApplication.userId) {
+            if (accessToken.getUserId() != GlobalApplication.userId) {
                 PreferenceManager.getDefaultSharedPreferences(this)
                         .edit()
-                        .putString("AccountPoint", String.valueOf(i))
+                        .putString("AccountKey", accessToken.getKeyString())
                         .apply();
-                ((GlobalApplication) getApplication()).initTwitter(token);
+                ((GlobalApplication) getApplication()).initTwitter(accessToken);
                 updateDrawerImage();
                 clearAndPrepareFragment();
             }
         });
-        adapter.setOnAddButtonClickListener(v1 -> {
+        adapter.setOnAddButtonClickListener(v -> {
             PreferenceManager.getDefaultSharedPreferences(this)
                     .edit()
-                    .putString("AccountPoint", "-1")
+                    .putString("AccountKey", "-1")
                     .apply();
             GlobalApplication.twitter = null;
-            startActivity(new Intent(this, OAuthActivity.class));
+            startActivity(new Intent(this, OAuthActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
         });
+        adapter.setOnRemoveButtonClickListener(v -> new AlertDialog.Builder(this)
+                .setMessage(R.string.confirm_logout)
+                .setCancelable(true)
+                .setPositiveButton(R.string.do_logout,
+                        (dialog, i) -> {
+                            SharedPreferences defaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+                            TokenSQLiteOpenHelper helper = new TokenSQLiteOpenHelper(this);
+                            helper.deleteAccessToken(
+                                    helper.getAccessToken(
+                                            defaultSharedPreferences.getString("AccountKey","-1")
+                                    )
+                            );
+
+                            int point = helper.getSize() - 1;
+                            if (point != -1) {
+                                AccessToken accessToken = helper.getAccessTokens()[point];
+                                defaultSharedPreferences
+                                        .edit()
+                                        .putString("AccountKey", accessToken.getKeyString())
+                                        .apply();
+                                ((GlobalApplication) getApplication()).initTwitter(accessToken);
+                                updateDrawerImage();
+                                clearAndPrepareFragment();
+                            } else {
+                                adapter.getOnAddButtonClickListener().onClick(v);
+                            }
+                            helper.close();
+                        }
+                )
+                .setNeutralButton(R.string.back,(dialog, i) -> dialog.cancel())
+                .show());
         accountListView.setAdapter(adapter);
 
         subscription.add(
                 Single.create(
                         singleSubscriber -> {
-                            ArrayList<Pair<Uri, String>> r = new ArrayList<>();
+                            TokenSQLiteOpenHelper helper = new TokenSQLiteOpenHelper(this);
+                            AccessToken[] accessTokens = helper.getAccessTokens();
+                            helper.close();
+
+                            ArrayList<Pair<User, AccessToken>> r = new ArrayList<>();
                             for (AccessToken accessToken : accessTokens){
                                 long id = accessToken.getUserId();
                                 CachedUsersSQLiteOpenHelper userHelper = new CachedUsersSQLiteOpenHelper(this, id, accessToken.getType() == Type.TWITTER);
@@ -222,10 +254,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                                         userHelper.close();
                                     }
                                 }
-                                r.add(new Pair<>(
-                                        Uri.parse(user.get400x400ProfileImageURLHttps()),
-                                        TwitterStringUtils.plusAtMark(accessToken.getScreenName(), accessToken.getUrl())
-                                ));
+                                r.add(new Pair<>(user, accessToken));
                             }
                             singleSubscriber.onSuccess(r);
                         })
@@ -233,7 +262,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
                                 o -> {
-                                    ArrayList<Pair<Uri, String>> pairs = (ArrayList<Pair<Uri, String>>) o;
+                                    ArrayList<Pair<User, AccessToken>> pairs = (ArrayList<Pair<User, AccessToken>>) o;
                                     adapter.getImagesList().addAll(pairs);
                                     adapter.notifyDataSetChanged();
                                 },
