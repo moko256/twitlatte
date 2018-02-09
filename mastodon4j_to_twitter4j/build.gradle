@@ -15,10 +15,13 @@
  */
 
 apply plugin: 'java'
+apply plugin: 'kotlin'
 
 
 dependencies {
     //implementation fileTree(include: ['*.jar'], dir: 'libs')
+
+    compile group: 'org.ccil.cowan.tagsoup', name: 'tagsoup', version: '1.2'
 
     compile 'com.github.sys1yagi.mastodon4j:mastodon4j:1.6.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
