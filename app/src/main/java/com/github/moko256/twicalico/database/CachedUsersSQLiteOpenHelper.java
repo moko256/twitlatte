@@ -203,7 +203,7 @@ public class CachedUsersSQLiteOpenHelper extends SQLiteOpenHelper {
                 }
 
                 private String toResizedURL(String originalURL, String sizeSuffix) {
-                    if (null != originalURL && isTwitter) {
+                    if (null != originalURL && originalURL.length() >= 1 && isTwitter) {
                         int index = originalURL.lastIndexOf("_");
                         int suffixIndex = originalURL.lastIndexOf(".");
                         int slashIndex = originalURL.lastIndexOf("/");
