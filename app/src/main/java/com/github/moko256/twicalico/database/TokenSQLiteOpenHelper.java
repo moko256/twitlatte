@@ -128,8 +128,7 @@ public class TokenSQLiteOpenHelper extends SQLiteOpenHelper {
 
         AccessToken accessToken;
 
-        c.moveToNext();
-        if (c.getColumnCount() != 0) {
+        if (c.moveToNext()) {
             accessToken = convertFromCursor(c);
         } else {
             accessToken = null;
