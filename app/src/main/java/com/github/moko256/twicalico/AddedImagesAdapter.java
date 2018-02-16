@@ -40,7 +40,7 @@ public class AddedImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     private static final int VIEW_TYPE_IMAGE = 1;
     private static final int VIEW_TYPE_ADD = 2;
 
-    Context context;
+    private Context context;
 
     private ArrayList<Uri> images = new ArrayList<>();
     private int limit = -1;

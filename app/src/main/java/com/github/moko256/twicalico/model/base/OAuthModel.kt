@@ -24,7 +24,7 @@ import rx.Single
  *
  * @author moko256
  */
-public interface OAuthModel {
+interface OAuthModel {
     fun getCallbackAuthUrl(url: String, consumerKey: String, consumerSecret: String, callbackUrl: String): Single<String>
     fun getCodeAuthUrl(url: String, consumerKey: String, consumerSecret: String): Single<String>
 

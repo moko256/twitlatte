@@ -32,7 +32,7 @@ import twitter4j.conf.ConfigurationContext
  * @author moko256
  */
 class OAuthModelImpl : OAuthModel {
-    var req: RequestToken? = null
+    private var req: RequestToken? = null
 
     override fun getCallbackAuthUrl(url: String, consumerKey: String, consumerSecret: String, callbackUrl: String): Single<String> {
         val conf = ConfigurationContext.getInstance()
@@ -44,7 +44,7 @@ class OAuthModelImpl : OAuthModel {
             try {
                 req = oauth.getOAuthRequestToken(callbackUrl + "://OAuthActivity")
                 it.onSuccess(req?.authorizationURL)
-            } catch (e: TwitterException) {
+            } catch (e: Throwable) {
                 it.onError(e)
             }
         }

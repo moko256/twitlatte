@@ -25,7 +25,6 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
@@ -51,9 +50,6 @@ import com.github.moko256.twicalico.model.base.PostTweetModel;
 import com.github.moko256.twicalico.model.impl.PostTweetModelCreator;
 import com.github.moko256.twicalico.text.TwitterStringUtils;
 import com.github.moko256.twicalico.widget.ImageKeyboardEditText;
-
-import java.util.Arrays;
-import java.util.List;
 
 import rx.Single;
 import rx.subscriptions.CompositeSubscription;

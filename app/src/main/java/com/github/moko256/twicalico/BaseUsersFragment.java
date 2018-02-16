@@ -193,10 +193,10 @@ public abstract class BaseUsersFragment extends BaseListFragment {
         return Single.create(
                 subscriber->{
                     try {
-                        PagableResponseList<User> pagableResponseList=getResponseList(cursor);
-                        next_cursor=pagableResponseList.getNextCursor();
-                        GlobalApplication.userCache.addAll(pagableResponseList);
-                        subscriber.onSuccess(pagableResponseList);
+                        PagableResponseList<User> pageableResponseList=getResponseList(cursor);
+                        next_cursor=pageableResponseList.getNextCursor();
+                        GlobalApplication.userCache.addAll(pageableResponseList);
+                        subscriber.onSuccess(pageableResponseList);
                     } catch (TwitterException e) {
                         subscriber.onError(e);
                     }
