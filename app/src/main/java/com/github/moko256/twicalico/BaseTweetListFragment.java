@@ -180,16 +180,15 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
     public void onDestroyView() {
         StaggeredGridLayoutManager layoutManager = (StaggeredGridLayoutManager) getRecyclerView().getLayoutManager();
         int[] positions = layoutManager.findFirstVisibleItemPositions(null);
-        List<Long> ids = statusIdsDatabase.getIds();
-        if (ids.size() - positions[0] > GlobalApplication.statusCacheListLimit){
-            List<Long> list = ids.subList(positions[0] + GlobalApplication.statusCacheListLimit, ids.size());
-            statusIdsDatabase.deleteIds(list);
+        if (list.size() - positions[0] > GlobalApplication.statusCacheListLimit){
+            List<Long> subList = list.subList(positions[0] + GlobalApplication.statusCacheListLimit, list.size());
+            statusIdsDatabase.deleteIds(subList);
 
-            boolean[] results = statusIdsDatabase.hasIdsOtherTable(list);
+            boolean[] results = statusIdsDatabase.hasIdsOtherTable(subList);
             List<Long> deletableIds = new ArrayList<>();
-            for (int i = 0; i < list.size(); i++) {
+            for (int i = 0; i < subList.size(); i++) {
                 if (!results[i]) {
-                    deletableIds.add(list.get(i));
+                    deletableIds.add(subList.get(i));
                 }
             }
             GlobalApplication.statusCache.delete(deletableIds);
