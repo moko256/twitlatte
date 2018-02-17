@@ -63,7 +63,7 @@ import twitter4j.User;
  *
  * @author moko256
  */
-public class MainActivity extends AppCompatActivity implements BaseListFragment.GetSnackBarParentContainerId {
+public class MainActivity extends AppCompatActivity implements BaseListFragment.GetSnackBarParentContainerId, BaseTweetListFragment.GetRecyclerViewPool, BaseUsersFragment.GetRecyclerViewPool {
 
     CompositeSubscription subscription;
 
@@ -81,6 +81,9 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
     TabLayout tabLayout;
 
     boolean isDrawerAccountsSelection = false;
+
+    RecyclerView.RecycledViewPool tweetListViewPool;
+    RecyclerView.RecycledViewPool userListViewPool;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -289,6 +292,9 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
             }
         });
 
+        tweetListViewPool = new RecyclerView.RecycledViewPool();
+        userListViewPool = new RecyclerView.RecycledViewPool();
+
         getSupportFragmentManager().addOnBackStackChangedListener(() -> attachFragment(getMainFragment(), navigationView, tabLayout));
 
         if(savedInstanceState==null){
@@ -454,4 +460,13 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
         attachFragment(top, navigationView, tabLayout);
     }
 
+    @Override
+    public RecyclerView.RecycledViewPool getTweetListViewPool() {
+        return tweetListViewPool;
+    }
+
+    @Override
+    public RecyclerView.RecycledViewPool getUserListViewPool() {
+        return userListViewPool;
+    }
 }

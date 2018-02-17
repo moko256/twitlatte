@@ -74,6 +74,10 @@ public abstract class BaseUsersFragment extends BaseListFragment {
             }
         });
 
+        if (getActivity() instanceof BaseTweetListFragment.GetRecyclerViewPool) {
+            getRecyclerView().setRecycledViewPool(((GetRecyclerViewPool) getActivity()).getUserListViewPool());
+        }
+
         adapter=new UsersAdapter(getContext(), list);
         setAdapter(adapter);
         if(!isInitializedList()){
@@ -205,5 +209,9 @@ public abstract class BaseUsersFragment extends BaseListFragment {
     }
 
     public abstract PagableResponseList<User> getResponseList(long cursor) throws TwitterException;
+
+    interface GetRecyclerViewPool {
+        RecyclerView.RecycledViewPool getUserListViewPool();
+    }
 
 }

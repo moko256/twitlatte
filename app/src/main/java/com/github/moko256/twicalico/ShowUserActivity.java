@@ -27,6 +27,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -50,7 +51,7 @@ import twitter4j.User;
  *
  * @author moko256
  */
-public class ShowUserActivity extends AppCompatActivity implements BaseListFragment.GetSnackBarParentContainerId {
+public class ShowUserActivity extends AppCompatActivity implements BaseListFragment.GetSnackBarParentContainerId, BaseTweetListFragment.GetRecyclerViewPool, BaseUsersFragment.GetRecyclerViewPool {
 
     CompositeSubscription subscription;
 
@@ -59,6 +60,9 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
     ActionBar actionBar;
     ViewPager viewPager;
     TabLayout tabLayout;
+
+    RecyclerView.RecycledViewPool tweetListViewPool;
+    RecyclerView.RecycledViewPool userListViewPool;
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -94,6 +98,9 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
                 }
             }
         });
+
+        tweetListViewPool = new RecyclerView.RecycledViewPool();
+        userListViewPool = new RecyclerView.RecycledViewPool();
 
         findViewById(R.id.activity_show_user_fab).setOnClickListener(v -> {
             if (user!=null){
@@ -298,6 +305,16 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
     @Override
     public int getSnackBarParentContainerId() {
         return R.id.activity_show_user_coordinator_layout;
+    }
+
+    @Override
+    public RecyclerView.RecycledViewPool getUserListViewPool() {
+        return userListViewPool;
+    }
+
+    @Override
+    public RecyclerView.RecycledViewPool getTweetListViewPool() {
+        return tweetListViewPool;
     }
 
     public static Intent getIntent(Context context, long userId){

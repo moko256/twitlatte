@@ -99,6 +99,10 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
             }
         });
 
+        if (getActivity() instanceof GetRecyclerViewPool) {
+            getRecyclerView().setRecycledViewPool(((GetRecyclerViewPool) getActivity()).getTweetListViewPool());
+        }
+
         adapter=new StatusesAdapter(getContext(), list);
         adapter.setOnLoadMoreClick(position -> subscription.add(
                 getResponseSingle(
@@ -372,5 +376,9 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
     }
 
     public abstract ResponseList<Status> getResponseList(Paging paging) throws TwitterException;
+
+    interface GetRecyclerViewPool {
+        RecyclerView.RecycledViewPool getTweetListViewPool();
+    }
 
 }
