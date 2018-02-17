@@ -18,15 +18,18 @@ package com.github.moko256.mastodon;
 
 import com.google.gson.Gson;
 import com.sys1yagi.mastodon4j.MastodonClient;
+import com.sys1yagi.mastodon4j.api.Pageable;
 import com.sys1yagi.mastodon4j.api.Range;
 import com.sys1yagi.mastodon4j.api.exception.Mastodon4jRequestException;
 import com.sys1yagi.mastodon4j.api.method.Accounts;
 import com.sys1yagi.mastodon4j.api.method.Favourites;
+import com.sys1yagi.mastodon4j.api.method.Public;
 import com.sys1yagi.mastodon4j.api.method.Statuses;
 import com.sys1yagi.mastodon4j.api.method.Timelines;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Map;
 
 import okhttp3.OkHttpClient;
@@ -102,6 +105,7 @@ public final class MastodonTwitterImpl implements Twitter {
 
     private TimelinesResources timelinesResources;
     private TweetsResources tweetsResources;
+    private SearchResource searchResource;
     private FriendsFollowersResources friendsFollowersResources;
     private UsersResources usersResources;
     private FavoritesResources favoritesResources;
@@ -136,7 +140,7 @@ public final class MastodonTwitterImpl implements Twitter {
                 public ResponseList<Status> getUserTimeline(String s, Paging paging) throws TwitterException {
                     Accounts accounts = new Accounts(client);
                     try {
-                        return MTResponseList.convert(accounts.getStatuses(accounts.getAccountSearch(s, 1).execute().get(0).getId(), false, MTRangePagingConverter.convert(paging)).execute());
+                        return MTResponseList.convert(accounts.getStatuses(accounts.getAccountSearch(s, 1).execute().get(0).getId(), false, MTRangeConverter.convert(paging)).execute());
                     } catch (Mastodon4jRequestException e) {
                         throw new MTException(e);
                     }
@@ -146,7 +150,7 @@ public final class MastodonTwitterImpl implements Twitter {
                 public ResponseList<Status> getUserTimeline(long l, Paging paging) throws TwitterException {
                     Accounts accounts = new Accounts(client);
                     try {
-                        return MTResponseList.convert(accounts.getStatuses(l, false, MTRangePagingConverter.convert(paging)).execute());
+                        return MTResponseList.convert(accounts.getStatuses(l, false, MTRangeConverter.convert(paging)).execute());
                     } catch (Mastodon4jRequestException e) {
                         throw new MTException(e);
                     }
@@ -180,7 +184,7 @@ public final class MastodonTwitterImpl implements Twitter {
                 @Override
                 public ResponseList<Status> getHomeTimeline(Paging paging) throws TwitterException {
                     try {
-                        return MTResponseList.convert(new Timelines(client).getHome(MTRangePagingConverter.convert(paging)).execute());
+                        return MTResponseList.convert(new Timelines(client).getHome(MTRangeConverter.convert(paging)).execute());
                     } catch (Mastodon4jRequestException e) {
                         throw new MTException(e);
                     }
@@ -300,7 +304,91 @@ public final class MastodonTwitterImpl implements Twitter {
 
     @Override
     public SearchResource search() {
-        return null;
+        if (searchResource == null){
+            searchResource = query -> {
+                Pageable<com.sys1yagi.mastodon4j.api.entity.Status> pageable = null;
+                try {
+                    pageable = new Public(client).
+                            getLocalTag(query.getQuery(), MTRangeConverter.convert(query))
+                            .execute();
+                } catch (Mastodon4jRequestException e) {
+                    e.printStackTrace();
+                }
+
+                long previous;
+                long next;
+
+                if (pageable == null) return null;
+
+                if (pageable.getLink() != null) {
+                    next = pageable.getLink().getMaxId();
+                    previous = pageable.getLink().getSinceId();
+                } else {
+                    next = -1;
+                    previous = -1;
+                }
+
+                List<com.sys1yagi.mastodon4j.api.entity.Status> part = pageable.getPart();
+                Pageable<com.sys1yagi.mastodon4j.api.entity.Status> finalPageable = pageable;
+                return new QueryResult() {
+                    @Override
+                    public long getSinceId() {
+                        return previous;
+                    }
+
+                    @Override
+                    public long getMaxId() {
+                        return next;
+                    }
+
+                    @Override
+                    public String getRefreshURL() {
+                        return null;
+                    }
+
+                    @Override
+                    public int getCount() {
+                        return part.size();
+                    }
+
+                    @Override
+                    public double getCompletedIn() {
+                        return 0;
+                    }
+
+                    @Override
+                    public String getQuery() {
+                        return query.getQuery();
+                    }
+
+                    @Override
+                    public List<Status> getTweets() {
+                        return MTResponseList.convert(finalPageable);
+                    }
+
+                    @Override
+                    public Query nextQuery() {
+                        return new Query(query.getQuery()).sinceId(next);
+                    }
+
+                    @Override
+                    public boolean hasNext() {
+                        return next != -1;
+                    }
+
+                    @Override
+                    public RateLimitStatus getRateLimitStatus() {
+                        return null;
+                    }
+
+                    @Override
+                    public int getAccessLevel() {
+                        return 0;
+                    }
+                };
+            };
+        }
+        return searchResource;
     }
 
     @Override
@@ -777,7 +865,7 @@ public final class MastodonTwitterImpl implements Twitter {
                 @Override
                 public ResponseList<Status> getFavorites(Paging paging) throws TwitterException {
                     try {
-                        return MTResponseList.convert(new Favourites(client).getFavourites(MTRangePagingConverter.convert(paging)).execute());
+                        return MTResponseList.convert(new Favourites(client).getFavourites(MTRangeConverter.convert(paging)).execute());
                     } catch (Mastodon4jRequestException e) {
                         throw new MTException(e);
                     }

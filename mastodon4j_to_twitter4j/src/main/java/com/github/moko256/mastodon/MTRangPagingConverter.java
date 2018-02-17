@@ -19,6 +19,7 @@ package com.github.moko256.mastodon;
 import com.sys1yagi.mastodon4j.api.Range;
 
 import twitter4j.Paging;
+import twitter4j.Query;
 
 /**
  * Created by moko256 on 2017/10/04.
@@ -26,9 +27,13 @@ import twitter4j.Paging;
  * @author moko256
  */
 
-class MTRangePagingConverter{
+class MTRangeConverter {
     static Range convert(Paging paging){
         return new Range(convertLong(paging.getMaxId()), convertLong(paging.getSinceId()), (paging.getCount() == -1)? 0: paging.getCount());
+    }
+
+    static Range convert(Query query){
+        return new Range(convertLong(query.getMaxId()), convertLong(query.getSinceId()), (query.getCount() == -1)? 0: query.getCount());
     }
 
     private static Long convertLong(long l){

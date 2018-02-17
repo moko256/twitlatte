@@ -201,9 +201,9 @@ public class TrendsFragment extends BaseListFragment {
                         Geocoder geocoder = new Geocoder(getContext());
                         Locale locale = Locale.getDefault();
                         Address address = geocoder.getFromLocationName(locale.getDisplayCountry(), 1).get(0);
-                        if (address.getCountryCode().equals(locale.getCountry())){
+                        if (address.getCountryCode() != null && address.getCountryCode().equals(locale.getCountry())){
                             subscriber.onSuccess(new GeoLocation(address.getLatitude(), address.getLongitude()));
-                        }
+                        } subscriber.onError(new Exception("Cannot use trends"));
                     } catch(IOException e){
                         subscriber.onError(e);
                     }
