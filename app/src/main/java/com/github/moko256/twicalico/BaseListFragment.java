@@ -23,6 +23,7 @@ import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
@@ -62,7 +63,7 @@ public abstract class BaseListFragment extends Fragment implements MoveableTopIn
 
         recyclerView= view.findViewById(R.id.TLlistView);
         recyclerView.setLayoutManager(initializeRecyclerViewLayoutManager());
-        recyclerView.addOnScrollListener(new LoadScrollListener((StaggeredGridLayoutManager) recyclerView.getLayoutManager()) {
+        recyclerView.addOnScrollListener(new LoadScrollListener(recyclerView.getLayoutManager()) {
             @Override
             public void load() {
                 if(isInitializedList()){
@@ -87,8 +88,7 @@ public abstract class BaseListFragment extends Fragment implements MoveableTopIn
 
     @Override
     public void moveToTop() {
-        if (((StaggeredGridLayoutManager) recyclerView.getLayoutManager()).findFirstVisibleItemPositions(null)[0]
-                < 5) {
+        if (getFirstVisibleItemPosition(recyclerView.getLayoutManager()) < 5) {
             getRecyclerView().smoothScrollToPosition(0);
         } else {
             getRecyclerView().scrollToPosition(0);
@@ -114,7 +114,9 @@ public abstract class BaseListFragment extends Fragment implements MoveableTopIn
     protected abstract boolean isInitializedList();
 
     protected RecyclerView.LayoutManager initializeRecyclerViewLayoutManager(){
-        return new StaggeredGridLayoutManager(1,StaggeredGridLayoutManager.VERTICAL);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        layoutManager.setRecycleChildrenOnDetach(true);
+        return layoutManager;
     }
 
     @LayoutRes
@@ -152,6 +154,16 @@ public abstract class BaseListFragment extends Fragment implements MoveableTopIn
         } else {
             return getView();
         }
+    }
+
+    protected int getFirstVisibleItemPosition(RecyclerView.LayoutManager layoutManager){
+        int position;
+        if (layoutManager instanceof StaggeredGridLayoutManager) {
+            position = ((StaggeredGridLayoutManager) layoutManager).findFirstVisibleItemPositions(null)[0];
+        } else {
+            position = ((LinearLayoutManager) layoutManager).findFirstVisibleItemPosition();
+        }
+        return position;
     }
 
     public interface GetSnackBarParentContainerId {

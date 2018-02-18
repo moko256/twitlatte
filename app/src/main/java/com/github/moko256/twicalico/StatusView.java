@@ -16,6 +16,7 @@
 
 package com.github.moko256.twicalico;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
@@ -130,8 +131,10 @@ public class StatusView extends FrameLayout {
             this.status = status;
             updateView();
         } else {
-            glideRequests.clear(userImage);
-            imageTableView.clearImages();
+            if (!((Activity) getContext()).isDestroyed()) {
+                glideRequests.clear(userImage);
+                imageTableView.clearImages();
+            }
         }
     }
     

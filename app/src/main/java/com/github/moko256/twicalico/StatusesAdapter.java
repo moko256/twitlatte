@@ -129,7 +129,6 @@ class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @Override
     public void onViewRecycled(RecyclerView.ViewHolder holder) {
-        super.onViewRecycled(holder);
         if (holder instanceof StatusViewHolder){
             ((StatusViewHolder) holder).setStatus(null);
         }

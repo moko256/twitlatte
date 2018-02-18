@@ -22,6 +22,7 @@ import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.TypedValue;
@@ -90,11 +91,19 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
             public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
                 super.getItemOffsets(outRect, view, parent, state);
 
-                int span = ((StaggeredGridLayoutManager.LayoutParams) view.getLayoutParams()).getSpanIndex();
+                int span;
+                int spanCount;
+                if (view.getLayoutParams() instanceof StaggeredGridLayoutManager.LayoutParams){
+                    span = ((StaggeredGridLayoutManager.LayoutParams) view.getLayoutParams()).getSpanIndex();
+                    spanCount = ((StaggeredGridLayoutManager) parent.getLayoutManager()).getSpanCount();
+                } else {
+                    span = 0;
+                    spanCount = 1;
+                }
                 float dens = getResources().getDisplayMetrics().density;
 
                 outRect.left = Math.round(dens * (span == 0 ? 8f : 4f));
-                outRect.right = Math.round(dens * (span == ((StaggeredGridLayoutManager) parent.getLayoutManager()).getSpanCount() - 1 ? 8f : 4f));
+                outRect.right = Math.round(dens * (span == spanCount - 1 ? 8f : 4f));
                 outRect.top = Math.round(dens * 8f);
             }
         });
@@ -182,10 +191,10 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
 
     @Override
     public void onDestroyView() {
-        StaggeredGridLayoutManager layoutManager = (StaggeredGridLayoutManager) getRecyclerView().getLayoutManager();
-        int[] positions = layoutManager.findFirstVisibleItemPositions(null);
-        if (list.size() - positions[0] > GlobalApplication.statusCacheListLimit){
-            List<Long> subList = list.subList(positions[0] + GlobalApplication.statusCacheListLimit, list.size());
+        RecyclerView.LayoutManager layoutManager = getRecyclerView().getLayoutManager();
+        int position = getFirstVisibleItemPosition(layoutManager);
+        if (list.size() - position > GlobalApplication.statusCacheListLimit){
+            List<Long> subList = list.subList(position + GlobalApplication.statusCacheListLimit, list.size());
             statusIdsDatabase.deleteIds(subList);
 
             boolean[] results = statusIdsDatabase.hasIdsOtherTable(subList);
@@ -205,10 +214,9 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
     @Override
     public void onStop() {
         super.onStop();
-        StaggeredGridLayoutManager layoutManager = (StaggeredGridLayoutManager) getRecyclerView().getLayoutManager();
-        int[] positions = layoutManager.findFirstVisibleItemPositions(null);
-        if (positions[0] != LAST_SAVED_LIST_POSITION){
-            statusIdsDatabase.setListViewPosition(positions[0]);
+        int position = getFirstVisibleItemPosition(getRecyclerView().getLayoutManager());
+        if (position != LAST_SAVED_LIST_POSITION){
+            statusIdsDatabase.setListViewPosition(position);
         }
     }
 
@@ -346,15 +354,22 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
         Point size = new Point();
         display.getSize(size);
 
-        return new StaggeredGridLayoutManager(
-                (int) Math.ceil(
-                        (double)
-                                //Calculated as:
-                                //Picture area: (16 : 9) + Other content: (16 : 3)
-                                (size.x * 12) / (size.y * 16)
-                ),
-                StaggeredGridLayoutManager.VERTICAL
+        int count = (int) Math.ceil(
+                (double)
+                        //Calculated as:
+                        //Picture area: (16 : 9) + Other content: (16 : 3)
+                        (size.x * 12) / (size.y * 16)
         );
+        if (count == 1) {
+            LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+            layoutManager.setRecycleChildrenOnDetach(true);
+            return layoutManager;
+        } else {
+            return new StaggeredGridLayoutManager(
+                    count,
+                    StaggeredGridLayoutManager.VERTICAL
+            );
+        }
     }
 
     protected abstract String getCachedIdsDatabaseName();
