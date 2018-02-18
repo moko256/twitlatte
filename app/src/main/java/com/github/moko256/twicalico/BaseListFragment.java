@@ -40,6 +40,7 @@ public abstract class BaseListFragment extends Fragment implements MoveableTopIn
     private RecyclerView recyclerView;
     private SwipeRefreshLayout swipeRefreshLayout;
 
+    private boolean isShowed = false;
     private boolean isProgressCircleLoading = false;
 
     @Override
@@ -50,7 +51,9 @@ public abstract class BaseListFragment extends Fragment implements MoveableTopIn
             onRestoreInstanceState(savedInstanceState);
         }
 
-        if (!isInitializedList()){
+        isShowed = true;
+
+        if (getUserVisibleHint() && !isInitializedList()){
             onInitializeList();
         }
     }
@@ -84,6 +87,14 @@ public abstract class BaseListFragment extends Fragment implements MoveableTopIn
         });
 
         return view;
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isShowed && isVisibleToUser && !isInitializedList()) {
+            onInitializeList();
+        }
     }
 
     @Override
