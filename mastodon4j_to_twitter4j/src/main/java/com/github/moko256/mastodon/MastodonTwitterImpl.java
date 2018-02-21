@@ -309,7 +309,7 @@ public final class MastodonTwitterImpl implements Twitter {
                 Pageable<com.sys1yagi.mastodon4j.api.entity.Status> pageable = null;
                 try {
                     pageable = new Public(client).
-                            getLocalTag(query.getQuery(), MTRangeConverter.convert(query))
+                            getFederatedTag(query.getQuery(), MTRangeConverter.convert(query))
                             .execute();
                 } catch (Mastodon4jRequestException e) {
                     e.printStackTrace();
