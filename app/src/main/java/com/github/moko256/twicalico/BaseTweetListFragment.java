@@ -93,7 +93,8 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
 
                 int span;
                 int spanCount;
-                if (view.getLayoutParams() instanceof StaggeredGridLayoutManager.LayoutParams){
+                if (parent.getLayoutManager() instanceof StaggeredGridLayoutManager
+                        && view.getLayoutParams() instanceof StaggeredGridLayoutManager.LayoutParams){
                     span = ((StaggeredGridLayoutManager.LayoutParams) view.getLayoutParams()).getSpanIndex();
                     spanCount = ((StaggeredGridLayoutManager) parent.getLayoutManager()).getSpanCount();
                 } else {
