@@ -158,18 +158,10 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
             adapter.notifyDataSetChanged();
         }
 
-        if (savedInstanceState == null) {
-            LAST_SAVED_LIST_POSITION = statusIdsDatabase.getListViewPosition();
-            getRecyclerView().getLayoutManager().scrollToPosition(LAST_SAVED_LIST_POSITION);
-        }
+        LAST_SAVED_LIST_POSITION = statusIdsDatabase.getListViewPosition();
+        getRecyclerView().getLayoutManager().scrollToPosition(LAST_SAVED_LIST_POSITION);
 
         return view;
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        LAST_SAVED_LIST_POSITION = statusIdsDatabase.getListViewPosition();
     }
 
     @Override
@@ -217,6 +209,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
         int position = getFirstVisibleItemPosition(getRecyclerView().getLayoutManager());
         if (position != LAST_SAVED_LIST_POSITION){
             statusIdsDatabase.setListViewPosition(position);
+            LAST_SAVED_LIST_POSITION = position;
         }
     }
 
