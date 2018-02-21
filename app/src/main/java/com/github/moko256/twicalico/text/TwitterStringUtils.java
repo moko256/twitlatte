@@ -363,32 +363,36 @@ public class TwitterStringUtils {
             int spanEnd = spanned.getSpanEnd(span);
 
             ClickableSpan span1;
-            CharSequence firstChar = spanned.subSequence(spanStart, spanStart + 1);
-            if (firstChar.equals("#")) {
-                span1 = new ClickableSpan() {
-                    @Override
-                    public void onClick(View widget) {
-                        context.startActivity(
-                                SearchResultActivity.getIntent(context, String.valueOf(spanned.subSequence(spanStart + 1, spanEnd)))
-                        );
-                    }
-                };
-            } else if (firstChar.equals("@")) {
-                span1 = new ClickableSpan() {
-                    @Override
-                    public void onClick(View widget) {
-                        context.startActivity(
-                                ShowUserActivity.getIntent(context, String.valueOf(spanned.subSequence(spanStart + 1, spanEnd)))
-                        );
-                    }
-                };
-            } else {
-                span1 = new ClickableSpan() {
-                    @Override
-                    public void onClick(View view) {
-                        AppCustomTabsKt.launchChromeCustomTabs(context, span.getURL());
-                    }
-                };
+            String firstChar = String.valueOf(spanned.subSequence(spanStart, spanStart + 1));
+            switch (firstChar) {
+                case "#":
+                    span1 = new ClickableSpan() {
+                        @Override
+                        public void onClick(View widget) {
+                            context.startActivity(
+                                    SearchResultActivity.getIntent(context, String.valueOf(spanned.subSequence(spanStart + 1, spanEnd)))
+                            );
+                        }
+                    };
+                    break;
+                case "@":
+                    span1 = new ClickableSpan() {
+                        @Override
+                        public void onClick(View widget) {
+                            context.startActivity(
+                                    ShowUserActivity.getIntent(context, String.valueOf(spanned.subSequence(spanStart + 1, spanEnd)))
+                            );
+                        }
+                    };
+                    break;
+                default:
+                    span1 = new ClickableSpan() {
+                        @Override
+                        public void onClick(View view) {
+                            AppCustomTabsKt.launchChromeCustomTabs(context, span.getURL());
+                        }
+                    };
+                    break;
             }
 
             builder.setSpan(span1, spanStart, spanEnd, spanned.getSpanFlags(span));
