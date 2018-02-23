@@ -56,6 +56,8 @@ public class ShowUserFragmentsPagerAdapter extends FragmentPagerAdapter {
         mContext=context;
     }
 
+
+
     @Override
     public Fragment getItem(int position) {
         return mFragments[position];

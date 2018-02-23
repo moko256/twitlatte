@@ -35,7 +35,7 @@ import android.view.ViewGroup;
  *
  * @author moko256
  */
-public abstract class BaseListFragment extends Fragment implements MoveableTopInterface {
+public abstract class BaseListFragment extends Fragment implements MovableTopInterface {
 
     private RecyclerView recyclerView;
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -100,9 +100,9 @@ public abstract class BaseListFragment extends Fragment implements MoveableTopIn
     @Override
     public void moveToTop() {
         if (getFirstVisibleItemPosition(recyclerView.getLayoutManager()) < 5) {
-            getRecyclerView().smoothScrollToPosition(0);
+            recyclerView.smoothScrollToPosition(0);
         } else {
-            getRecyclerView().scrollToPosition(0);
+            recyclerView.scrollToPosition(0);
         }
     }
 

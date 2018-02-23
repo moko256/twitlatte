@@ -22,6 +22,6 @@ package com.github.moko256.twicalico;
  * @author moko256
  */
 
-public interface MoveableTopInterface {
+public interface MovableTopInterface {
     void moveToTop();
 }
