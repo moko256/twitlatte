@@ -35,6 +35,7 @@ This application is built using these libraries\:
 * Glide Transformations
 * google-gson
 * PhotoView
+* FlingLayout
 * OkHttp
 * mastodon4j
 * Twitter4J

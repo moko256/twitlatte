@@ -158,6 +158,9 @@
                 android:key="license_lib_photo_view"
                 android:title="PhotoView"/>
             <Preference
+                android:key="license_lib_fling_layout"
+                android:title="FlingLayout"/>
+            <Preference
                 android:key="license_lib_okhttp"
                 android:title="OkHttp"/>
             <Preference

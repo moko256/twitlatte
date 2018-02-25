@@ -16,6 +16,7 @@
 
 package com.github.moko256.twicalico;
 
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
@@ -28,9 +29,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.github.chrisbanes.photoview.PhotoView;
+import com.github.chuross.flinglayout.FlingLayout;
 import com.github.moko256.mastodon.MastodonTwitterImpl;
 import com.github.moko256.twicalico.entity.Type;
 import com.google.android.exoplayer2.DefaultLoadControl;
@@ -51,6 +53,7 @@ import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 
 import java.io.IOException;
 
+import kotlin.Unit;
 import twitter4j.MediaEntity;
 
 /**
@@ -63,7 +66,7 @@ public class ImagePagerChildFragment extends Fragment {
 
     private static String FRAG_MEDIA_ENTITY="media_entity";
 
-    ImageView imageView;
+    PhotoView imageView;
 
     SimpleExoPlayerView videoPlayView;
     SimpleExoPlayer player;
@@ -71,7 +74,15 @@ public class ImagePagerChildFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view=inflater.inflate(R.layout.fragment_image_pager_child, null);
+        FlingLayout view= (FlingLayout) inflater.inflate(R.layout.fragment_image_pager_child, null);
+        view.setDismissListener(() -> {
+            getActivity().finish();
+            return Unit.INSTANCE;
+        });
+        view.setPositionChangeListener((Integer top, Integer left, Float dragRangeRate) -> {
+            view.setBackgroundColor(Color.argb(Math.round(255 * (1.0F - dragRangeRate)), 0, 0, 0));
+            return Unit.INSTANCE;
+        });
 
         MediaEntity mediaEntity=(MediaEntity) getArguments().getSerializable(FRAG_MEDIA_ENTITY);
 
@@ -212,6 +223,7 @@ public class ImagePagerChildFragment extends Fragment {
                         hideSystemUI();
                     }
                 });
+                imageView.setOnScaleChangeListener((float scaleFactor, float focusX, float focusY) -> view.setDragEnabled(scaleFactor <= 1F));
                 GlideApp.with(this)
                         .load(mediaEntity.getMediaURLHttps() + ((GlobalApplication.clientType == Type.TWITTER)?":large":""))
                         .fitCenter()
