@@ -22,7 +22,6 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -36,6 +35,7 @@ import com.github.moko256.mastodon.MastodonTwitterImpl;
 import com.github.moko256.twicalico.entity.Type;
 import com.github.moko256.twicalico.intent.AppCustomTabsKt;
 import com.github.moko256.twicalico.text.TwitterStringUtils;
+import com.github.moko256.twicalico.widget.FragmentPagerAdapter;
 
 import rx.Completable;
 import rx.Single;
@@ -92,7 +92,7 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-                Fragment fragment = ((FragmentPagerAdapter) viewPager.getAdapter()).getItem(tab.getPosition());
+                Fragment fragment = ((FragmentPagerAdapter) viewPager.getAdapter()).getCurrentFragment();
                 if (fragment instanceof MoveableTopInterface){
                     ((MoveableTopInterface) fragment).moveToTop();
                 }

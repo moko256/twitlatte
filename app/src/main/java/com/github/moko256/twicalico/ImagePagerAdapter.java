@@ -29,24 +29,20 @@ import twitter4j.MediaEntity;
  */
 class ImagePagerAdapter extends FragmentPagerAdapter {
 
-    private ImagePagerChildFragment[] fragments;
+    private MediaEntity[] mediaEntities;
 
     ImagePagerAdapter(FragmentManager fm, MediaEntity[] mediaEntities) {
         super(fm);
-        int length=mediaEntities.length;
-        fragments=new ImagePagerChildFragment[length];
-        for (int i = 0; i < length; i++) {
-            fragments[i]=ImagePagerChildFragment.getInstance(mediaEntities[i]);
-        }
+        this.mediaEntities = mediaEntities;
     }
 
     @Override
     public Fragment getItem(int position) {
-        return fragments[position];
+        return ImagePagerChildFragment.getInstance(mediaEntities[position]);
     }
 
     @Override
     public int getCount() {
-        return fragments.length;
+        return mediaEntities.length;
     }
 }

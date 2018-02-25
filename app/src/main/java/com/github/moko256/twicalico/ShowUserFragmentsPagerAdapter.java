@@ -19,9 +19,9 @@ package com.github.moko256.twicalico;
 import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 
 import com.github.moko256.twicalico.entity.Type;
+import com.github.moko256.twicalico.widget.FragmentPagerAdapter;
 
 /**
  * Created by moko256 on 2017/01/15.
@@ -30,48 +30,63 @@ import com.github.moko256.twicalico.entity.Type;
  */
 
 public class ShowUserFragmentsPagerAdapter extends FragmentPagerAdapter {
-    private Fragment[] mFragments;
-    private Context mContext;
+    private Context context;
+    private long userId;
+    private boolean isShowFavoriteTab;
 
     ShowUserFragmentsPagerAdapter(FragmentManager fm, Context context, long userId) {
         super(fm);
 
-        if (GlobalApplication.clientType == Type.MASTODON && userId != GlobalApplication.userId){
-            mFragments=new Fragment[]{
-                    UserInfoFragment.newInstance(userId),
-                    UserTimelineFragment.newInstance(userId),
-                    UserFollowsFragment.newInstance(userId),
-                    UserFollowersFragment.newInstance(userId)
-            };
-        } else {
-            mFragments = new Fragment[]{
-                    UserInfoFragment.newInstance(userId),
-                    UserTimelineFragment.newInstance(userId),
-                    UserLikeFragment.newInstance(userId),
-                    UserFollowsFragment.newInstance(userId),
-                    UserFollowersFragment.newInstance(userId)
-            };
-        }
-
-        mContext=context;
+        this.context = context;
+        this.userId = userId;
+        isShowFavoriteTab = ! (GlobalApplication.clientType == Type.MASTODON && userId != GlobalApplication.userId);
     }
 
     @Override
     public Fragment getItem(int position) {
-        return mFragments[position];
+        if (isShowFavoriteTab) {
+            switch (position){
+                case 0:
+                    return UserInfoFragment.newInstance(userId);
+                case 1:
+                    return UserTimelineFragment.newInstance(userId);
+                case 2:
+                    return UserLikeFragment.newInstance(userId);
+                case 3:
+                    return UserFollowsFragment.newInstance(userId);
+                case 4:
+                    return UserFollowersFragment.newInstance(userId);
+                default:
+                    return null;
+            }
+        } else {
+            switch (position){
+                case 0:
+                    return UserInfoFragment.newInstance(userId);
+                case 1:
+                    return UserTimelineFragment.newInstance(userId);
+                case 2:
+                    return UserFollowsFragment.newInstance(userId);
+                case 3:
+                    return UserFollowersFragment.newInstance(userId);
+                default:
+                    return null;
+            }
+        }
     }
 
     @Override
     public int getCount() {
-        return mFragments.length;
+        return isShowFavoriteTab? 5: 4;
     }
 
     @Override
     public CharSequence getPageTitle(int position) {
-        Fragment fragment=mFragments[position];
-        if(fragment instanceof ToolbarTitleInterface){
-            return mContext.getString(((ToolbarTitleInterface)fragment).getTitleResourceId());
+        Fragment fragment = getCurrentFragment();
+        if (fragment instanceof ToolbarTitleInterface) {
+            return context.getString(((ToolbarTitleInterface)fragment).getTitleResourceId());
+        } else {
+            return null;
         }
-        else return null;
     }
 }

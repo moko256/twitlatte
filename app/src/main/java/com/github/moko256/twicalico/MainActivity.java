@@ -25,7 +25,6 @@ import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.util.Pair;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -48,6 +47,7 @@ import com.github.moko256.twicalico.database.TokenSQLiteOpenHelper;
 import com.github.moko256.twicalico.entity.AccessToken;
 import com.github.moko256.twicalico.entity.Type;
 import com.github.moko256.twicalico.text.TwitterStringUtils;
+import com.github.moko256.twicalico.widget.FragmentPagerAdapter;
 
 import java.util.ArrayList;
 
@@ -285,7 +285,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-                Fragment fragment = ((FragmentPagerAdapter) ((UseTabsInterface) getMainFragment()).getTabsViewPager().getAdapter()).getItem(tab.getPosition());
+                Fragment fragment = ((FragmentPagerAdapter) ((UseTabsInterface) getMainFragment()).getTabsViewPager().getAdapter()).getCurrentFragment();
                 if (fragment instanceof MoveableTopInterface){
                     ((MoveableTopInterface) fragment).moveToTop();
                 }
