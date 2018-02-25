@@ -25,6 +25,7 @@ import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.preference.PreferenceManager;
+import android.support.v7.preference.PreferenceScreen;
 import android.widget.Toast;
 
 import com.github.moko256.twicalico.database.TokenSQLiteOpenHelper;
@@ -50,15 +51,16 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        if(getArguments()==null||getArguments().getString(ARG_PREFERENCE_ROOT)==null){
-            SharedPreferences defaultSharedPreferences= PreferenceManager.getDefaultSharedPreferences(getContext());
+        String preferenceRoot = getArguments() != null? getArguments().getString(ARG_PREFERENCE_ROOT, null): null;
+        if (preferenceRoot == null){
+            SharedPreferences defaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
 
-            TokenSQLiteOpenHelper helper=new TokenSQLiteOpenHelper(getContext());
+            TokenSQLiteOpenHelper helper = new TokenSQLiteOpenHelper(getContext());
 
             AccessToken[] accessTokens = helper.getAccessTokens();
 
-            CharSequence[] entries=new CharSequence[accessTokens.length + 1];
-            CharSequence[] entryValues=new CharSequence[accessTokens.length + 1];
+            CharSequence[] entries = new CharSequence[accessTokens.length + 1];
+            CharSequence[] entryValues = new CharSequence[accessTokens.length + 1];
 
             for (int i = 0; i < accessTokens.length; i++) {
                 AccessToken accessToken = accessTokens[i];
@@ -191,32 +193,14 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 ).show();
                 return false;
             });
-        } else if(getArguments().getString(ARG_PREFERENCE_ROOT).equals("license")){
-            final String license_keys[]=new String[]{
-                    "support_v4",
-                    "support_v7",
-                    "support_v13",
-                    "support_v14",
-                    "support_design",
-                    "support_custom_tabs",
-                    "exo_player",
-                    "glide",
-                    "gson",
-                    "photo_view",
-                    "okhttp",
-                    "mastodon4j",
-                    "twitter4j",
-                    "twitter_text",
-                    "rx_java",
-                    "rx_android"
-            };
-
-            for (String name : license_keys) {
-                findPreference("license_lib_" + name).setOnPreferenceClickListener(preference -> {
+        } else if (preferenceRoot.equals("license")) {
+            PreferenceScreen license = getPreferenceScreen();
+            for (int i = 0, length = license.getPreferenceCount(); i < length; i++) {
+                license.getPreference(i).setOnPreferenceClickListener(preference -> {
                     getContext().startActivity(
                             new Intent(getContext(), LicensesActivity.class)
                                     .putExtra("title", preference.getTitle())
-                                    .putExtra("library_name", name)
+                                    .putExtra("library_name", preference.getKey().substring(12)) // "license_lib_".length
                     );
                     return true;
                 });
