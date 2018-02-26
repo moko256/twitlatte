@@ -93,8 +93,8 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
                 Fragment fragment = ((FragmentPagerAdapter) viewPager.getAdapter()).getCurrentFragment();
-                if (fragment instanceof MoveableTopInterface){
-                    ((MoveableTopInterface) fragment).moveToTop();
+                if (fragment instanceof MovableTopInterface){
+                    ((MovableTopInterface) fragment).moveToTop();
                 }
             }
         });

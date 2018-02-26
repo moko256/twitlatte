@@ -98,8 +98,8 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
 
         toolbar.getChildAt(0).setOnClickListener(v -> {
             Fragment fragment = getMainFragment();
-            if (fragment instanceof MoveableTopInterface){
-                ((MoveableTopInterface) fragment).moveToTop();
+            if (fragment instanceof MovableTopInterface){
+                ((MovableTopInterface) fragment).moveToTop();
             }
         });
 
@@ -286,8 +286,8 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
                 Fragment fragment = ((FragmentPagerAdapter) ((UseTabsInterface) getMainFragment()).getTabsViewPager().getAdapter()).getCurrentFragment();
-                if (fragment instanceof MoveableTopInterface){
-                    ((MoveableTopInterface) fragment).moveToTop();
+                if (fragment instanceof MovableTopInterface){
+                    ((MovableTopInterface) fragment).moveToTop();
                 }
             }
         });
