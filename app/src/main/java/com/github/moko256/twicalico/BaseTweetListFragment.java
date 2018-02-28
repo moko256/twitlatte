@@ -86,26 +86,15 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view=super.onCreateView(inflater, container, savedInstanceState);
 
+        float dens = getResources().getDisplayMetrics().density;
+
+        getRecyclerView().setPadding(Math.round(8f * dens), 0, 0, 0);
         getRecyclerView().addItemDecoration(new RecyclerView.ItemDecoration() {
             @Override
             public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
                 super.getItemOffsets(outRect, view, parent, state);
-
-                int span;
-                int spanCount;
-                if (parent.getLayoutManager() instanceof StaggeredGridLayoutManager
-                        && view.getLayoutParams() instanceof StaggeredGridLayoutManager.LayoutParams){
-                    span = ((StaggeredGridLayoutManager.LayoutParams) view.getLayoutParams()).getSpanIndex();
-                    spanCount = ((StaggeredGridLayoutManager) parent.getLayoutManager()).getSpanCount();
-                } else {
-                    span = 0;
-                    spanCount = 1;
-                }
-                float dens = getResources().getDisplayMetrics().density;
-
-                outRect.left = Math.round(dens * (span == 0 ? 8f : 4f));
-                outRect.right = Math.round(dens * (span == spanCount - 1 ? 8f : 4f));
-                outRect.top = Math.round(dens * 8f);
+                outRect.right = Math.round(8f * dens);
+                outRect.top = Math.round(8f * dens);
             }
         });
 
