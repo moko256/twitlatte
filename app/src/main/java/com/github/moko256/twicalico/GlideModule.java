@@ -38,7 +38,7 @@ import java.io.InputStream;
 public class GlideModule extends AppGlideModule {
 
     @Override
-    public void applyOptions(Context context, GlideBuilder builder) {
+    public void applyOptions(@NonNull Context context, @NonNull GlideBuilder builder) {
 
     }
 
