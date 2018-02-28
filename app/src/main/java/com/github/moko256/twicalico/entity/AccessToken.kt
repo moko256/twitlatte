@@ -25,7 +25,7 @@ import kotlin.annotation.Retention
  * @author moko256
  */
 
-public data class AccessToken(
+data class AccessToken(
         @Type.ClientTypeInt val type: Int,
         val url: String,
         val userId: Long,
@@ -43,7 +43,7 @@ fun splitAccessTokenKey(accessTokenKey: String): Pair<String, Long> {
     return Pair(splitString[0], splitString[1].toLong())
 }
 
-public class Type{
+class Type{
 
     @Retention(AnnotationRetention.SOURCE)
     @IntDef(Type.TWITTER.toLong(), Type.MASTODON.toLong())
