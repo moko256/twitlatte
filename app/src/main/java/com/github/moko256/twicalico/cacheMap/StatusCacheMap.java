@@ -30,9 +30,7 @@ import com.github.moko256.twicalico.entity.AccessToken;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import rx.Observable;
 import twitter4j.GeoLocation;
@@ -100,9 +98,8 @@ public class StatusCacheMap {
 
     public void addAll(Collection<? extends Status> c) {
         if (c.size() > 0) {
-            HashSet<? extends Status> hashSet = new HashSet<>(c);
             Observable<Status> statusesObservable = Observable.unsafeCreate(subscriber -> {
-                for (Status status : hashSet) {
+                for (Status status : c) {
                     if (status != null) {
                         subscriber.onNext(status);
                         if (status.isRetweet()) {
@@ -113,27 +110,25 @@ public class StatusCacheMap {
                 subscriber.onCompleted();
             });
 
-            GlobalApplication.userCache.addAll(new HashSet<>(
+            GlobalApplication.userCache.addAll(
                     statusesObservable.map(Status::getUser).toList().toSingle().toBlocking().value()
-            ));
+            );
 
             Observable<Status> cachedStatusObservable = statusesObservable.map(CachedStatus::new);
 
             cachedStatusObservable.forEach(status -> cache.put(status.getId(), status));
-            HashSet<Status> cacheStatusSet = new HashSet<>(cachedStatusObservable.toList().toSingle().toBlocking().value());
 
-            diskCache.addCachedStatuses(cacheStatusSet);
+            diskCache.addCachedStatuses(cachedStatusObservable.toList().toSingle().toBlocking().value());
         }
     }
 
     public void delete(List<Long> ids){
-        Set<Long> idsSet = new HashSet<>();
+        List<Long> list = new ArrayList<>();
         for (Long id : ids) {
             if (id != null) {
-                idsSet.add(id);
+                list.add(id);
             }
         }
-        List<Long> list = new ArrayList<>(idsSet);
         diskCache.deleteCachedStatuses(list);
     }
 

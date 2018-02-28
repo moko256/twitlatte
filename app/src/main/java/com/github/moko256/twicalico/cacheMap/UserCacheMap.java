@@ -25,7 +25,6 @@ import com.github.moko256.twicalico.entity.AccessToken;
 import com.github.moko256.twicalico.entity.Type;
 
 import java.util.Collection;
-import java.util.HashSet;
 
 import twitter4j.User;
 
@@ -67,13 +66,12 @@ public class UserCacheMap {
 
     public void addAll(Collection<? extends User> c) {
         if (c.size() > 0) {
-            HashSet<User> hashSet = new HashSet<>(c);
-            for (User user : hashSet) {
+            for (User user : c) {
                 if (user != null) {
                     cache.put(user.getId(), user);
                 }
             }
-            diskCache.addCachedUsers(hashSet);
+            diskCache.addCachedUsers(c);
         }
     }
 
