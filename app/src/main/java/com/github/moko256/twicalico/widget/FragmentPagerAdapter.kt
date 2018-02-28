@@ -19,6 +19,7 @@ package com.github.moko256.twicalico.widget
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
+import android.support.v4.view.ViewPager
 import android.view.ViewGroup
 
 /**
@@ -27,14 +28,18 @@ import android.view.ViewGroup
  * @author moko256
  */
 
-abstract class FragmentPagerAdapter(fm: FragmentManager?) : FragmentPagerAdapter(fm) {
+abstract class FragmentPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
 
-    var currentFragment: Fragment? = null
+    private lateinit var viewGroup: ViewGroup
 
-    override fun setPrimaryItem(container: ViewGroup, position: Int, `object`: Any) {
-        if (`object` is Fragment){
-            currentFragment = `object`
-        }
-        super.setPrimaryItem(container, position, `object`)
+    open fun initAdapter(viewPager: ViewPager) {
+        viewGroup = viewPager
+        viewPager.adapter = this
+    }
+
+    fun getFragment(position: Int): Fragment {
+        val item = instantiateItem(viewGroup, position) as Fragment
+        finishUpdate(viewGroup)
+        return item
     }
 }

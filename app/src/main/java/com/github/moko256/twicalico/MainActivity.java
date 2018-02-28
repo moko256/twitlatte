@@ -285,7 +285,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-                Fragment fragment = ((FragmentPagerAdapter) ((UseTabsInterface) getMainFragment()).getTabsViewPager().getAdapter()).getCurrentFragment();
+                Fragment fragment = ((FragmentPagerAdapter) ((UseTabsInterface) getMainFragment()).getTabsViewPager().getAdapter()).getFragment(tab.getPosition());
                 if (fragment instanceof MovableTopInterface){
                     ((MovableTopInterface) fragment).moveToTop();
                 }

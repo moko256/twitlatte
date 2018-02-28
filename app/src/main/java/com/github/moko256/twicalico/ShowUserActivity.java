@@ -92,7 +92,7 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-                Fragment fragment = ((FragmentPagerAdapter) viewPager.getAdapter()).getCurrentFragment();
+                Fragment fragment = ((FragmentPagerAdapter) viewPager.getAdapter()).getFragment(tab.getPosition());
                 if (fragment instanceof MovableTopInterface){
                     ((MovableTopInterface) fragment).moveToTop();
                 }
@@ -112,7 +112,7 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
-                                it -> viewPager.setAdapter(new ShowUserFragmentsPagerAdapter(getSupportFragmentManager(),this,it.getId())),
+                                it -> new ShowUserFragmentsPagerAdapter(getSupportFragmentManager(),this,it.getId()).initAdapter(viewPager),
                                 e -> Snackbar.make(findViewById(getSnackBarParentContainerId()), TwitterStringUtils.convertErrorToText(e), Snackbar.LENGTH_INDEFINITE)
                                         .show()
                         )

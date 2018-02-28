@@ -82,7 +82,7 @@ public class ShowUserFragmentsPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public CharSequence getPageTitle(int position) {
-        Fragment fragment = getCurrentFragment();
+        Fragment fragment = getFragment(position);
         if (fragment instanceof ToolbarTitleInterface) {
             return context.getString(((ToolbarTitleInterface)fragment).getTitleResourceId());
         } else {
