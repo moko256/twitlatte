@@ -46,7 +46,7 @@ fun splitAccessTokenKey(accessTokenKey: String): Pair<String, Long> {
 class Type{
 
     @Retention(AnnotationRetention.SOURCE)
-    @IntDef(Type.TWITTER.toLong(), Type.MASTODON.toLong())
+    @IntDef(Type.TWITTER, Type.MASTODON)
     annotation class ClientTypeInt
 
     companion object{
