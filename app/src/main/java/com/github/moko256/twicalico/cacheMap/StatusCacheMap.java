@@ -139,6 +139,11 @@ public class StatusCacheMap {
 
         private final Date createdAt;
         private final long id;
+
+        private final long userId;
+
+        private final long retweetedStatusId;
+
         private final String text;
         private final String source;
         private final boolean isTruncated;
@@ -157,7 +162,6 @@ public class StatusCacheMap {
 
         private final long[] contributorsIDs;
 
-        private final long retweetedStatusId;
         private final UserMentionEntity[] userMentionEntities;
         private final URLEntity[] urlEntities;
         private final HashtagEntity[] hashtagEntities;
@@ -172,47 +176,81 @@ public class StatusCacheMap {
         private final int displayTextRangeStart;
         private final int displayTextRangeEnd;
 
-        private final long userId;
-
         private final String url;
 
         public CachedStatus(Status status){
             createdAt=new Date(status.getCreatedAt().getTime());
             id=status.getId();
-            text=status.getText();
-            source=status.getSource();
-            isTruncated=status.isTruncated();
-            inReplyToStatusId=status.getInReplyToStatusId();
-            inReplyToUserId=status.getInReplyToUserId();
-            isFavorited=status.isFavorited();
-            isRetweeted=status.isRetweeted();
-            favoriteCount=status.getFavoriteCount();
-            inReplyToScreenName=status.getInReplyToScreenName();
-            geoLocation = status.getGeoLocation();
-            place = status.getPlace();
-
-            retweetCount=status.getRetweetCount();
-            isPossiblySensitive=status.isPossiblySensitive();
-            lang=status.getLang();
-
-            contributorsIDs=status.getContributors();
-
-            retweetedStatusId=status.isRetweet()?status.getRetweetedStatus().getId():-1;
-            userMentionEntities=status.getUserMentionEntities();
-            urlEntities=status.getURLEntities();
-            hashtagEntities=status.getHashtagEntities();
-            mediaEntities=status.getMediaEntities();
-            symbolEntities=status.getSymbolEntities();
-            currentUserRetweetId = status.getCurrentUserRetweetId();
-            scopes=status.getScopes();
-            withheldInCountries = status.getWithheldInCountries();
-            quotedStatusId = status.getQuotedStatusId();
-            quotedStatus = status.getQuotedStatus();
-
-            displayTextRangeStart = status.getDisplayTextRangeStart();
-            displayTextRangeEnd = status.getDisplayTextRangeEnd();
 
             userId=status.getUser().getId();
+
+            retweetedStatusId=status.isRetweet()?status.getRetweetedStatus().getId():-1;
+
+            if (!isRetweet()) {
+                text=status.getText();
+                source=status.getSource();
+                isTruncated=status.isTruncated();
+                inReplyToStatusId=status.getInReplyToStatusId();
+                inReplyToUserId=status.getInReplyToUserId();
+                isFavorited=status.isFavorited();
+                isRetweeted=status.isRetweeted();
+                favoriteCount=status.getFavoriteCount();
+                inReplyToScreenName=status.getInReplyToScreenName();
+                geoLocation = status.getGeoLocation();
+                place = status.getPlace();
+
+                retweetCount=status.getRetweetCount();
+                isPossiblySensitive=status.isPossiblySensitive();
+                lang=status.getLang();
+
+                contributorsIDs=status.getContributors();
+
+                userMentionEntities=status.getUserMentionEntities();
+                urlEntities=status.getURLEntities();
+                hashtagEntities=status.getHashtagEntities();
+                mediaEntities=status.getMediaEntities();
+                symbolEntities=status.getSymbolEntities();
+                currentUserRetweetId = status.getCurrentUserRetweetId();
+                scopes=status.getScopes();
+                withheldInCountries = status.getWithheldInCountries();
+                quotedStatusId = status.getQuotedStatusId();
+                quotedStatus = status.getQuotedStatus();
+
+                displayTextRangeStart = status.getDisplayTextRangeStart();
+                displayTextRangeEnd = status.getDisplayTextRangeEnd();
+            } else {
+                text=null;
+                source=null;
+                isTruncated=false;
+                inReplyToStatusId=-1;
+                inReplyToUserId=-1;
+                isFavorited=false;
+                isRetweeted=false;
+                favoriteCount=-1;
+                inReplyToScreenName=null;
+                geoLocation = null;
+                place = null;
+
+                retweetCount=-1;
+                isPossiblySensitive=false;
+                lang=null;
+
+                contributorsIDs=null;
+
+                userMentionEntities=null;
+                urlEntities=null;
+                hashtagEntities=null;
+                mediaEntities=null;
+                symbolEntities=null;
+                currentUserRetweetId = -1;
+                scopes=null;
+                withheldInCountries = null;
+                quotedStatusId = -1;
+                quotedStatus = null;
+
+                displayTextRangeStart = -1;
+                displayTextRangeEnd = -1;
+            }
 
             url = (status instanceof MTStatus)
                     ? ((MTStatus) status).status.getUrl()
