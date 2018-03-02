@@ -22,20 +22,20 @@ android {
     buildToolsVersion "27.0.3"
 
     defaultConfig {
-        applicationId "com.github.moko256.twicalico"
+        applicationId 'com.github.moko256.twicalico'
         minSdkVersion 19
         targetSdkVersion 27
         versionCode 61
-        versionName "0.9.8"
+        versionName "0.9.8 (${new Date().toString()})"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
-        buildConfigField "String", "CONSUMER_KEY", "\"${CONSUMER_KEY}\""
-        buildConfigField "String", "CONSUMER_SECRET", "\"${CONSUMER_SECRET}\""
+        buildConfigField 'String', 'CONSUMER_KEY', "\"${CONSUMER_KEY}\""
+        buildConfigField 'String', 'CONSUMER_SECRET', "\"${CONSUMER_SECRET}\""
 
-        buildConfigField "int" , "CACHE_DATABASE_VERSION" , "1"
+        buildConfigField 'int', 'CACHE_DATABASE_VERSION' , '1'
 
         vectorDrawables.useSupportLibrary = true
-        resConfigs "en","ja"
+        resConfigs 'en', 'ja'
     }
     buildTypes {
         release {
@@ -44,7 +44,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         debug {
-            applicationIdSuffix ".debug"
+            applicationIdSuffix '.debug'
         }
     }
     compileOptions {

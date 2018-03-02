@@ -39,10 +39,10 @@ allprojects {
     repositories {
         jcenter()
         maven {
-            url "https://maven.google.com"
+            url 'https://maven.google.com'
             }
         maven {
-            url "https://jitpack.io"
+            url 'https://jitpack.io'
         }
     }
 }
