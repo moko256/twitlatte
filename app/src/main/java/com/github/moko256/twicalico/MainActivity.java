@@ -295,7 +295,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
         tweetListViewPool = new RecyclerView.RecycledViewPool();
         userListViewPool = new RecyclerView.RecycledViewPool();
 
-        getSupportFragmentManager().addOnBackStackChangedListener(() -> attachFragment(getMainFragment(), navigationView, tabLayout));
+        getSupportFragmentManager().addOnBackStackChangedListener(() -> attachFragment(getMainFragment()));
 
         if(savedInstanceState==null){
             prepareFragment();
@@ -313,7 +313,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
     @Override
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        attachFragment(getMainFragment(), findViewById(R.id.nav_view), findViewById(R.id.toolbar_tab));
+        attachFragment(getMainFragment());
     }
 
     @Override
@@ -382,7 +382,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
         return R.id.activity_main_coordinator_layout;
     }
 
-    private void attachFragment(Fragment fragment, NavigationView navigationView, TabLayout tabLayout){
+    private void attachFragment(Fragment fragment){
         if (fragment != null) {
             if(fragment instanceof ToolbarTitleInterface){
                 setTitle(((ToolbarTitleInterface)fragment).getTitleResourceId());
@@ -444,7 +444,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
     private void prepareFragment(){
         Fragment top=new HomeTimeLineFragment();
         addFragment(top);
-        attachFragment(top, navigationView, tabLayout);
+        attachFragment(top);
     }
 
     private void clearAndPrepareFragment(){
@@ -457,7 +457,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                 .replace(R.id.mainLayout, top)
                 .commit();
 
-        attachFragment(top, navigationView, tabLayout);
+        attachFragment(top);
     }
 
     @Override
