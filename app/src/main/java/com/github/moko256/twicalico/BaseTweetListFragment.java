@@ -86,15 +86,14 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view=super.onCreateView(inflater, container, savedInstanceState);
 
-        float dens = getResources().getDisplayMetrics().density;
+        int dp8 = Math.round(8f * getResources().getDisplayMetrics().density);
 
-        getRecyclerView().setPadding(Math.round(8f * dens), 0, 0, 0);
+        getRecyclerView().setPadding(dp8, 0, 0, 0);
         getRecyclerView().addItemDecoration(new RecyclerView.ItemDecoration() {
             @Override
             public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-                super.getItemOffsets(outRect, view, parent, state);
-                outRect.right = Math.round(8f * dens);
-                outRect.top = Math.round(8f * dens);
+                outRect.right = dp8;
+                outRect.top = dp8;
             }
         });
 
