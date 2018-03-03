@@ -40,7 +40,7 @@ data class AccessToken(
 
 fun splitAccessTokenKey(accessTokenKey: String): Pair<String, Long> {
     val splitString = accessTokenKey.split("@")
-    return Pair(splitString[0], splitString[1].toLong())
+    return splitString[0] to splitString[1].toLong()
 }
 
 class Type{
