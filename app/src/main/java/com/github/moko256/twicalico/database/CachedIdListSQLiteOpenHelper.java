@@ -91,7 +91,7 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
 
     private void addIdsAtTransaction(List<Long> ids){
         SQLiteDatabase database=getWritableDatabase();
-        List<Long> idsList = new ArrayList<>();
+        List<Long> idsList = new ArrayList<>(ids.size());
 
         for (int i = ids.size() - 1; i >= 0; i--) {
             ContentValues contentValues = new ContentValues();
@@ -141,7 +141,7 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
 
     private void deleteIdsAtTransaction(List<Long> ids){
         SQLiteDatabase database = getWritableDatabase();
-        List<Long> idsList = new ArrayList<>();
+        List<Long> idsList = new ArrayList<>(ids.size());
         for (Long id : ids) {
             database.delete(databaseName, "id=" + String.valueOf(id), null);
 

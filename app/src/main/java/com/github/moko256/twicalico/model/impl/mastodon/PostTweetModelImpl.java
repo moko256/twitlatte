@@ -144,9 +144,8 @@ public class PostTweetModelImpl implements PostTweetModel {
             try {
                 List<Long> ids = null;
                 if (uriList.size() > 0) {
-                    ids = new ArrayList<>();
-                    for (int i = 0; i < uriList.size(); i++) {
-                        Uri uri = uriList.get(i);
+                    ids = new ArrayList<>(uriList.size());
+                    for (Uri uri: uriList) {
                         InputStream image = contentResolver.openInputStream(uri);
                         ByteArrayOutputStream bout = new ByteArrayOutputStream();
                         byte [] buffer = new byte[1024];

@@ -241,7 +241,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                             AccessToken[] accessTokens = helper.getAccessTokens();
                             helper.close();
 
-                            ArrayList<Pair<User, AccessToken>> r = new ArrayList<>();
+                            ArrayList<Pair<User, AccessToken>> r = new ArrayList<>(accessTokens.length);
                             for (AccessToken accessToken : accessTokens){
                                 long id = accessToken.getUserId();
                                 CachedUsersSQLiteOpenHelper userHelper = new CachedUsersSQLiteOpenHelper(this, id, accessToken.getType() == Type.TWITTER);

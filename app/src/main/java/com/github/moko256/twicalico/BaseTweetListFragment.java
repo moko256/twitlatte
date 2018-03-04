@@ -179,7 +179,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
             statusIdsDatabase.deleteIds(subList);
 
             boolean[] results = statusIdsDatabase.hasIdsOtherTable(subList);
-            List<Long> deletableIds = new ArrayList<>();
+            List<Long> deletableIds = new ArrayList<>(results.length);
             for (int i = 0; i < subList.size(); i++) {
                 if (!results[i]) {
                     deletableIds.add(subList.get(i));
