@@ -43,6 +43,7 @@ import com.sys1yagi.mastodon4j.api.exception.Mastodon4jRequestException;
 import java.io.IOException;
 import java.text.Normalizer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -275,7 +276,9 @@ public class TwitterStringUtils {
             }, tweet.offsetByCodePoints(0,userMentionEntity.getStart()), tweet.offsetByCodePoints(0,userMentionEntity.getEnd()), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
         }
 
-        URLEntity[] urlEntities = item.getURLEntities();
+        List<URLEntity> urlEntities = new ArrayList<>(item.getURLEntities().length + item.getMediaEntities().length);
+        urlEntities.addAll(Arrays.asList(item.getURLEntities()));
+        urlEntities.addAll(Arrays.asList(item.getMediaEntities()));
 
         int tweetLength = tweet.codePointCount(0, tweet.length());
         int sp = 0;
@@ -297,16 +300,6 @@ public class TwitterStringUtils {
                 }, tweet.offsetByCodePoints(0, entity.getStart()) + sp, tweet.offsetByCodePoints(0, entity.getEnd()) + sp + dusp, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
 
                 sp += dusp;
-            }
-        }
-
-        MediaEntity[] mediaEntities = item.getMediaEntities();
-        if (mediaEntities.length > 0){
-            MediaEntity mediaEntity = mediaEntities[0];
-            String text = spannableStringBuilder.toString();
-            int result = text.indexOf(mediaEntity.getURL(), text.offsetByCodePoints(0, mediaEntity.getStart()));
-            if (result != -1){
-                spannableStringBuilder.replace(result, result + mediaEntity.getURL().length(), "");
             }
         }
 
