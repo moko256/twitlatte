@@ -17,6 +17,7 @@
 package com.github.moko256.twicalico;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
@@ -102,8 +103,9 @@ class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         return super.getItemViewType(position);
     }
 
+    @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         if (i == 1){
             return new MoreLoadViewHolder(viewGroup);
         } else if (i == 2) {
@@ -116,7 +118,7 @@ class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, final int i) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, final int i) {
         if (viewHolder instanceof StatusViewHolder) {
             ((StatusViewHolder) viewHolder).setStatus(GlobalApplication.statusCache.get(data.get(i)));
         } else if (viewHolder instanceof ImagesOnlyTweetViewHolder){
@@ -137,7 +139,7 @@ class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     @Override
-    public void onViewRecycled(RecyclerView.ViewHolder holder) {
+    public void onViewRecycled(@NonNull RecyclerView.ViewHolder holder) {
         if (holder instanceof StatusViewHolder){
             ((StatusViewHolder) holder).setStatus(null);
         }
