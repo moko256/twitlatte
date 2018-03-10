@@ -30,13 +30,13 @@ import twitter4j.Status;
  * @author moko256
  */
 
-class MTResponseList<T> extends ArrayList<T> implements ResponseList<T> {
+public class MTResponseList<T> extends ArrayList<T> implements ResponseList<T> {
 
     MTResponseList(){
         super();
     }
 
-    static ResponseList<Status> convert(Pageable<com.sys1yagi.mastodon4j.api.entity.Status> statusPageable){
+    public static ResponseList<Status> convert(Pageable<com.sys1yagi.mastodon4j.api.entity.Status> statusPageable){
         ResponseList<Status> responseList = new MTResponseList<>();
         for (com.sys1yagi.mastodon4j.api.entity.Status status : statusPageable.getPart()) {
             responseList.add(new MTStatus(status));

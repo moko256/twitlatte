@@ -40,6 +40,7 @@
     <string name="like">Like</string>
     <string name="account">Account</string>
     <string name="theme">Theme</string>
+    <string name="media">Media</string>
     <string name="images">Images</string>
     <string name="add_image">Add image…</string>
     <string name="possibly_sensitive">Include sensitivity in the images</string>

@@ -27,12 +27,12 @@ import twitter4j.Query;
  * @author moko256
  */
 
-class MTRangeConverter {
-    static Range convert(Paging paging){
+public class MTRangeConverter {
+    public static Range convert(Paging paging){
         return new Range(convertLong(paging.getMaxId()), convertLong(paging.getSinceId()), (paging.getCount() == -1)? 0: paging.getCount());
     }
 
-    static Range convert(Query query){
+    public static Range convert(Query query){
         return new Range(convertLong(query.getMaxId()), convertLong(query.getSinceId()), (query.getCount() == -1)? 0: query.getCount());
     }
 

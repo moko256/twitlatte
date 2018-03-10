@@ -26,10 +26,10 @@ import twitter4j.TwitterException;
  * @author moko256
  */
 
-class MTException extends TwitterException {
+public class MTException extends TwitterException {
     private Mastodon4jRequestException exception;
 
-    MTException(Mastodon4jRequestException e){
+    public MTException(Mastodon4jRequestException e){
         super(e);
         exception = e;
     }
