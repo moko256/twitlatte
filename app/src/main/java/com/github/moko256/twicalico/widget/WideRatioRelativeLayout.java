@@ -51,9 +51,7 @@ public class WideRatioRelativeLayout extends RelativeLayout {
         if (widthMode!=MeasureSpec.EXACTLY){
             widthMode=MeasureSpec.EXACTLY;
             widthSize=heightSize/9*16;
-        }
-
-        if (heightMode!=MeasureSpec.EXACTLY){
+        } else if (heightMode!=MeasureSpec.EXACTLY){
             heightMode=MeasureSpec.EXACTLY;
             heightSize=widthSize/16*9;
         }
