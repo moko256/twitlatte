@@ -17,6 +17,7 @@
 package com.github.moko256.twicalico;
 
 import android.Manifest;
+import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -51,6 +52,8 @@ import com.github.moko256.twicalico.model.impl.PostTweetModelCreator;
 import com.github.moko256.twicalico.text.TwitterStringUtils;
 import com.github.moko256.twicalico.widget.ImageKeyboardEditText;
 
+import java.util.ArrayList;
+
 import rx.Single;
 import rx.subscriptions.CompositeSubscription;
 import twitter4j.GeoLocation;
@@ -64,6 +67,7 @@ public class PostActivity extends AppCompatActivity {
 
     private static final String INTENT_EXTRA_IN_REPLY_TO_STATUS_ID = "inReplyToStatusId";
     private static final String INTENT_EXTRA_TWEET_TEXT = "text";
+    private static final String INTENT_EXTRA_IMAGE_URI = "imageUri";
     private static final String OUT_STATE_EXTRA_IMAGE_URI_LIST = "image_uri_list";
     private static final int REQUEST_GET_IMAGE = 10;
 
@@ -131,29 +135,13 @@ public class PostActivity extends AppCompatActivity {
             if (model.getUriList().size() < model.getUriListSizeLimit()) {
                 addedImagesAdapter.getImagesList().add(imageUri);
                 model.getUriList().add(imageUri);
-                addedImagesAdapter.notifyItemInserted(addedImagesAdapter.getImagesList().size());
+                addedImagesAdapter.notifyItemChanged(addedImagesAdapter.getImagesList().size() - 1);
                 possiblySensitiveSwitch.setEnabled(true);
                 return true;
             } else {
                 return false;
             }
         });
-
-        if (getIntent()!=null){
-            if (!model.isReply()){
-                model.setInReplyToStatusId(getIntent().getLongExtra(
-                        INTENT_EXTRA_IN_REPLY_TO_STATUS_ID, -1
-                ));
-            }
-
-            String text=getIntent().getStringExtra(INTENT_EXTRA_TWEET_TEXT);
-            if (text!=null) {
-                editText.setText(text);
-                editText.setSelection(text.length());
-            } else {
-                editText.setText("");
-            }
-        }
 
         editText.setHint(model.isReply()? R.string.reply: R.string.post);
 
@@ -163,15 +151,17 @@ public class PostActivity extends AppCompatActivity {
         imagesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         addedImagesAdapter.setLimit(model.getUriListSizeLimit());
-        addedImagesAdapter.setOnAddButtonClickListener(v -> {
-            Intent intent;
-            intent = new Intent(Intent.ACTION_OPEN_DOCUMENT).addCategory(Intent.CATEGORY_OPENABLE);
-            intent.putExtra(Intent.EXTRA_MIME_TYPES, new String[]{"image/*", "video/*"});
-            intent.setType("image/*|video/*");
-            startActivityForResult(Intent.createChooser(intent, getString(R.string.add_image)), REQUEST_GET_IMAGE);
-        });
+        addedImagesAdapter.setOnAddButtonClickListener(v -> startActivityForResult(
+                Intent.createChooser(
+                        new Intent(Intent.ACTION_GET_CONTENT)
+                                .addCategory(Intent.CATEGORY_OPENABLE)
+                                .putExtra(Intent.EXTRA_MIME_TYPES, new String[]{"image/*", "video/*"})
+                                .putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+                                .setType("*/*"), getString(R.string.add_image)
+                ),
+                REQUEST_GET_IMAGE
+        ));
         imagesRecyclerView.setAdapter(addedImagesAdapter);
-        addedImagesAdapter.notifyDataSetChanged();
 
         possiblySensitiveSwitch = findViewById(R.id.activity_tweet_possibly_sensitive_switch);
         possiblySensitiveSwitch.setEnabled(addedImagesAdapter.getImagesList().size() > 0);
@@ -204,6 +194,28 @@ public class PostActivity extends AppCompatActivity {
         locationText = findViewById(R.id.activity_tweet_location_result);
         locationText.setVisibility(View.GONE);
 
+        if (getIntent()!=null){
+            if (!model.isReply()){
+                model.setInReplyToStatusId(getIntent().getLongExtra(
+                        INTENT_EXTRA_IN_REPLY_TO_STATUS_ID, -1
+                ));
+            }
+
+            String text=getIntent().getStringExtra(INTENT_EXTRA_TWEET_TEXT);
+            if (text!=null) {
+                editText.setText(text);
+                editText.setSelection(text.length());
+            } else {
+                editText.setText("");
+            }
+
+            ArrayList<Uri> uris = getIntent().getParcelableArrayListExtra(INTENT_EXTRA_IMAGE_URI);
+            if (uris != null) {
+                addedImagesAdapter.getImagesList().addAll(uris);
+                model.getUriList().addAll(uris);
+                possiblySensitiveSwitch.setEnabled(true);
+            }
+        }
     }
 
     @Override
@@ -286,10 +298,21 @@ public class PostActivity extends AppCompatActivity {
         if (requestCode == REQUEST_GET_IMAGE){
             if (data != null){
                 Uri resultUri = data.getData();
-                if (resultUri != null){
+                ClipData resultUris = data.getClipData();
+                if (resultUri != null) {
                     addedImagesAdapter.getImagesList().add(resultUri);
                     model.getUriList().add(resultUri);
-                    addedImagesAdapter.notifyItemInserted(addedImagesAdapter.getImagesList().size());
+                    addedImagesAdapter.notifyItemChanged(addedImagesAdapter.getImagesList().size() - 1);
+                    possiblySensitiveSwitch.setEnabled(true);
+                } else if (resultUris != null) {
+                    int itemCount = resultUris.getItemCount();
+
+                    for (int i = 0; i < itemCount; i++) {
+                        Uri uri = resultUris.getItemAt(i).getUri();
+                        addedImagesAdapter.getImagesList().add(uri);
+                        model.getUriList().add(uri);
+                    }
+                    addedImagesAdapter.notifyItemRangeChanged(addedImagesAdapter.getImagesList().size() - itemCount, itemCount);
                     possiblySensitiveSwitch.setEnabled(true);
                 }
             }
@@ -364,5 +387,9 @@ public class PostActivity extends AppCompatActivity {
 
     public static Intent getIntent(Context context, long inReplyToStatusId, String text){
         return PostActivity.getIntent(context, text).putExtra(INTENT_EXTRA_IN_REPLY_TO_STATUS_ID, inReplyToStatusId);
+    }
+
+    public static Intent getIntent(Context context, ArrayList<Uri> imageUri){
+        return new Intent(context, PostActivity.class).putExtra(INTENT_EXTRA_IMAGE_URI, imageUri);
     }
 }

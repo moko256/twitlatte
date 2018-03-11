@@ -19,8 +19,11 @@ package com.github.moko256.twicalico;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+
+import java.util.ArrayList;
 
 /**
  * Created by moko256 on 2017/04/16.
@@ -37,18 +40,23 @@ public class SplashActivity extends AppCompatActivity {
 
         if (getIntent() != null){
             Bundle extras = getIntent().getExtras();
-            if (extras != null && extras.getCharSequence(Intent.EXTRA_TEXT) != null){
-                CharSequence subject = extras.getCharSequence(Intent.EXTRA_SUBJECT);
-                StringBuilder text = new StringBuilder();
-                if (subject != null){
-                    text.append(subject).append(" ");
+            if (extras != null){
+                if (extras.getCharSequence(Intent.EXTRA_TEXT) != null) {
+                    CharSequence subject = extras.getCharSequence(Intent.EXTRA_SUBJECT);
+                    StringBuilder text = new StringBuilder();
+                    if (subject != null) {
+                        text.append(subject).append(" ");
+                    }
+                    text.append(extras.getCharSequence(Intent.EXTRA_TEXT));
+                    intent = PostActivity.getIntent(
+                            this,
+                            -1,
+                            text.toString()
+                    );
+                } else if (extras.get(Intent.EXTRA_STREAM) != null) {
+                    ArrayList<Uri> list = extras.getParcelableArrayList(Intent.EXTRA_STREAM);
+                    intent = PostActivity.getIntent(this, list);
                 }
-                text.append(extras.getCharSequence(Intent.EXTRA_TEXT));
-                intent = PostActivity.getIntent(
-                        this,
-                        -1,
-                        text.toString()
-                );
             } else if (getIntent().getData() != null){
                 Uri data = getIntent().getData();
                 switch (data.getScheme()){

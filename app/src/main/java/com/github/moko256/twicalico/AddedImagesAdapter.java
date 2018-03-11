@@ -98,6 +98,15 @@ public class AddedImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
 
+    @Override
+    public long getItemId(int position) {
+        if (position < images.size()){
+            return images.get(position).hashCode();
+        } else {
+            return -1;
+        }
+    }
+
     public View.OnClickListener getOnAddButtonClickListener() {
         return onAddButtonClickListener;
     }
