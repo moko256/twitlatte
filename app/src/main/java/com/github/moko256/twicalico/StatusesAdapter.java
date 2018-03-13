@@ -88,16 +88,16 @@ class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             return 1;
         }
         AppConfiguration conf=GlobalApplication.configuration;
-        if((conf.isPatternTweetMuteEnabled() && item.getText().matches(conf.getTweetMutePattern())) ||
-                (conf.isPatternUserScreenNameMuteEnabled() && conf.getUserScreenNameMutePattern().matcher(item.getUser().getScreenName()).matches()) ||
-                (conf.isPatternUserNameMuteEnabled() && conf.getUserNameMutePattern().matcher(item.getUser().getName()).matches()) ||
-                (conf.isPatternTweetSourceMuteEnabled() && conf.getTweetSourceMutePattern().matcher(TwitterStringUtils.removeHtmlTags(item.getSource())).matches())
+        if((conf.isPatternTweetMuteEnabled() && conf.getTweetMutePattern().matcher(item.getText()).find()) ||
+                (conf.isPatternUserScreenNameMuteEnabled() && conf.getUserScreenNameMutePattern().matcher(item.getUser().getScreenName()).find()) ||
+                (conf.isPatternUserNameMuteEnabled() && conf.getUserNameMutePattern().matcher(item.getUser().getName()).find()) ||
+                (conf.isPatternTweetSourceMuteEnabled() && conf.getTweetSourceMutePattern().matcher(TwitterStringUtils.removeHtmlTags(item.getSource())).find())
                 ){
             return 2;
         }
         if (shouldShowMediaOnly || (conf.isPatternTweetMuteShowOnlyImageEnabled()
                 && item.getMediaEntities().length > 0
-                && conf.getTweetMuteShowOnlyImagePattern().matcher(item.getText()).matches())) {
+                && conf.getTweetMuteShowOnlyImagePattern().matcher(item.getText()).find())) {
             return 3;
         }
         return super.getItemViewType(position);

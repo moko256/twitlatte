@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
 public class AppConfiguration {
 
     private boolean patternTweetMuteEnabled;
-    private String tweetMutePattern;
+    private Pattern tweetMutePattern;
 
     private boolean patternTweetMuteShowOnlyImageEnabled;
     private Pattern tweetMuteShowOnlyImagePattern;
@@ -52,11 +52,11 @@ public class AppConfiguration {
         this.patternTweetMuteEnabled = patternTweetMuteEnabled;
     }
 
-    public String getTweetMutePattern() {
+    public Pattern getTweetMutePattern() {
         return tweetMutePattern;
     }
 
-    public void setTweetMutePattern(String tweetMutePattern) {
+    public void setTweetMutePattern(Pattern tweetMutePattern) {
         this.tweetMutePattern = tweetMutePattern;
     }
 

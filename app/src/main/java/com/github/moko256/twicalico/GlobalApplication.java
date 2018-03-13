@@ -112,7 +112,7 @@ public class GlobalApplication extends Application {
         configuration.setPatternTweetMuteEnabled(defaultSharedPreferences.getBoolean("patternTweetMuteEnabled",false));
         if(configuration.isPatternTweetMuteEnabled()){
             try {
-                configuration.setTweetMutePattern(defaultSharedPreferences.getString("tweetMutePattern",""));
+                configuration.setTweetMutePattern(Pattern.compile(defaultSharedPreferences.getString("tweetMutePattern","")));
             } catch (PatternSyntaxException e){
                 e.printStackTrace();
                 configuration.setPatternTweetMuteEnabled(false);
