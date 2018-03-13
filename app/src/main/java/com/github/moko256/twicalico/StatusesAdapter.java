@@ -177,10 +177,10 @@ class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             super(LayoutInflater.from(context).inflate(R.layout.layout_list_load_more_text, viewGroup, false));
             text = itemView.findViewById(R.id.layout_list_load_more_text_view);
             progressBar = itemView.findViewById(R.id.layout_list_load_more_text_progress);
-            this.isLoading = isLoading;
         }
 
         void setIsLoading(boolean isLoading){
+            this.isLoading = isLoading;
             itemView.setClickable(!isLoading);
             text.setVisibility(isLoading? View.INVISIBLE: View.VISIBLE);
             progressBar.setVisibility(isLoading? View.VISIBLE: View.INVISIBLE);

@@ -46,7 +46,7 @@ class OAuthModelImpl : OAuthModel {
         apps = Apps(clientBuilder?.build()!!)
         return Single.create {
             try {
-                redirectUri = callbackUrl + "://OAuthActivity"
+                redirectUri = "$callbackUrl://OAuthActivity"
                 appRegistration = apps?.createApp(
                         "twicalico",
                         redirectUri,
