@@ -19,7 +19,6 @@ package com.github.moko256.twicalico;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 

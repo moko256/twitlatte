@@ -33,7 +33,6 @@ import com.sys1yagi.mastodon4j.api.method.Accounts;
 import twitter4j.Paging;
 import twitter4j.ResponseList;
 import twitter4j.Status;
-import twitter4j.Twitter;
 import twitter4j.TwitterException;
 
 /**
