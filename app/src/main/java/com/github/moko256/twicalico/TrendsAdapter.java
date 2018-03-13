@@ -17,6 +17,7 @@
 package com.github.moko256.twicalico;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,13 +50,14 @@ public class TrendsAdapter extends RecyclerView.Adapter<TrendsAdapter.ViewHolder
         return data.get(position).getName().hashCode();
     }
 
+    @NonNull
     @Override
-    public TrendsAdapter.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+    public TrendsAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         return new TrendsAdapter.ViewHolder(LayoutInflater.from(context).inflate(R.layout.layout_trend, viewGroup, false));
     }
 
     @Override
-    public void onBindViewHolder(TrendsAdapter.ViewHolder viewHolder, final int i) {
+    public void onBindViewHolder(@NonNull TrendsAdapter.ViewHolder viewHolder, final int i) {
         Trend item=data.get(i);
 
         viewHolder.text.setText(item.getName());

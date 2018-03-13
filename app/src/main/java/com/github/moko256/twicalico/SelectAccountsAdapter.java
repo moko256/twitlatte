@@ -18,6 +18,7 @@ package com.github.moko256.twicalico;
 
 import android.content.Context;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.v4.util.Pair;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.RecyclerView;
@@ -63,8 +64,9 @@ public class SelectAccountsAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         return (position < images.size())? VIEW_TYPE_IMAGE: ((position == images.size())? VIEW_TYPE_ADD: VIEW_TYPE_REMOVE);
     }
 
+    @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if (viewType == VIEW_TYPE_IMAGE){
             return new ImageChildViewHolder(LayoutInflater.from(context).inflate(R.layout.layout_select_accounts_image_child, parent, false));
         } else {
@@ -73,7 +75,7 @@ public class SelectAccountsAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         int type = getItemViewType(position);
         switch (type) {
             case VIEW_TYPE_IMAGE: {

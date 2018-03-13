@@ -20,6 +20,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -56,8 +57,9 @@ public class AddedImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         return ((limit == -1) || ((position < limit))) && (position < images.size())? VIEW_TYPE_IMAGE: VIEW_TYPE_ADD;
     }
 
+    @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if (viewType == VIEW_TYPE_IMAGE){
             return new ImageChildViewHolder(LayoutInflater.from(context).inflate(R.layout.layout_images_adapter_image_child, parent, false));
         } else {
@@ -66,7 +68,7 @@ public class AddedImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if (getItemViewType(position) == VIEW_TYPE_IMAGE){
             ImageChildViewHolder viewHolder = (ImageChildViewHolder) holder;
             Uri image = images.get(position);
