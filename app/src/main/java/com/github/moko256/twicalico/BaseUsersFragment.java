@@ -125,7 +125,7 @@ public abstract class BaseUsersFragment extends BaseListFragment {
         setRefreshing(true);
         subscription.add(
                 getResponseSingle(-1)
-                        .subscribeOn(Schedulers.newThread())
+                        .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
                                 result-> {
@@ -162,7 +162,7 @@ public abstract class BaseUsersFragment extends BaseListFragment {
     protected void onLoadMoreList() {
         subscription.add(
                 getResponseSingle(next_cursor)
-                        .subscribeOn(Schedulers.newThread())
+                        .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
                                 result -> {

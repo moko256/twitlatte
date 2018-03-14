@@ -92,7 +92,7 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
         if (cachedUser==null){
             subscription.add(
                     updateUser()
-                            .subscribeOn(Schedulers.newThread())
+                            .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe(
                                     this::setShowUserInfo,
@@ -112,7 +112,7 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
         swipeRefreshLayout = view.findViewById(R.id.show_user_swipe_refresh);
         swipeRefreshLayout.setColorSchemeResources(R.color.color_primary);
         swipeRefreshLayout.setOnRefreshListener(() -> subscription.add(updateUser()
-                .subscribeOn(Schedulers.newThread())
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         result -> {

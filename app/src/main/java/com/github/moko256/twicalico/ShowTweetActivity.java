@@ -85,7 +85,7 @@ public class ShowTweetActivity extends AppCompatActivity {
         if (status == null){
             subscriptions.add(
                     updateStatus()
-                            .subscribeOn(Schedulers.newThread())
+                            .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe(
                                     result->{
@@ -108,7 +108,7 @@ public class ShowTweetActivity extends AppCompatActivity {
         swipeRefreshLayout.setColorSchemeResources(R.color.color_primary);
         swipeRefreshLayout.setOnRefreshListener(() -> subscriptions.add(
                 updateStatus()
-                        .subscribeOn(Schedulers.newThread())
+                        .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
                                 result -> {
@@ -227,7 +227,7 @@ public class ShowTweetActivity extends AppCompatActivity {
             model.setInReplyToStatusId(item.getId());
             subscriptions.add(
                     model.postTweet()
-                            .subscribeOn(Schedulers.newThread())
+                            .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe(
                                     it -> {

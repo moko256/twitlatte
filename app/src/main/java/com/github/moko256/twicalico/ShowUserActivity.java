@@ -109,7 +109,7 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
         });
         subscription.add(
                 getUserSingle()
-                        .subscribeOn(Schedulers.newThread())
+                        .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
                                 it -> new ShowUserFragmentsPagerAdapter(getSupportFragmentManager(),this,it.getId()).initAdapter(viewPager),
@@ -235,7 +235,7 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
                         subscriber.onError(throwable);
                     }
                 })
-                .subscribeOn(Schedulers.newThread())
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         () -> Toast.makeText(this, R.string.succeeded, Toast.LENGTH_SHORT).show(),

@@ -231,7 +231,7 @@ public class PostActivity extends AppCompatActivity {
         if(item.getItemId() == R.id.action_send){
             item.setEnabled(false);
             model.postTweet()
-                    .subscribeOn(Schedulers.newThread())
+                    .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
                             it -> this.finish(),

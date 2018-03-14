@@ -137,7 +137,7 @@ public class TrendsFragment extends BaseListFragment {
         subscription.add(
                 getGeoLocationSingle()
                         .flatMap(this::getResponseSingle)
-                        .subscribeOn(Schedulers.newThread())
+                        .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
                                 result-> {

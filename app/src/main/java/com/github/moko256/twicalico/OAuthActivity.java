@@ -67,7 +67,7 @@ public class OAuthActivity extends AppCompatActivity {
 
     private void initToken(String verifier){
         model.initToken(verifier)
-                .subscribeOn(Schedulers.newThread())
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         this::storeAccessToken,
@@ -96,7 +96,7 @@ public class OAuthActivity extends AppCompatActivity {
     public void onStartTwitterCallbackAuthClick(View view) {
         model = new com.github.moko256.twicalico.model.impl.twitter.OAuthModelImpl();
         model.getCallbackAuthUrl("twitter.com", BuildConfig.CONSUMER_KEY, BuildConfig.CONSUMER_SECRET, getString(R.string.app_name))
-                .subscribeOn(Schedulers.newThread())
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this::startBrowser, Throwable::printStackTrace);
     }
@@ -105,7 +105,7 @@ public class OAuthActivity extends AppCompatActivity {
         model = new com.github.moko256.twicalico.model.impl.twitter.OAuthModelImpl();
         requirePin = true;
         model.getCodeAuthUrl("twitter.com", BuildConfig.CONSUMER_KEY, BuildConfig.CONSUMER_SECRET)
-                .subscribeOn(Schedulers.newThread())
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this::startBrowser, Throwable::printStackTrace);
         showPinDialog();
@@ -127,7 +127,7 @@ public class OAuthActivity extends AppCompatActivity {
                                         "",
                                         getString(R.string.app_name)
                                 )
-                                .subscribeOn(Schedulers.newThread())
+                                .subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(
                                         this::startBrowser,
@@ -147,7 +147,7 @@ public class OAuthActivity extends AppCompatActivity {
                 .setView(editText)
                 .setPositiveButton(android.R.string.ok,(dialog, which) -> {
                     model.getCodeAuthUrl(editText.getText().toString(), "", "")
-                            .subscribeOn(Schedulers.newThread())
+                            .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe(
                                     this::startBrowser,

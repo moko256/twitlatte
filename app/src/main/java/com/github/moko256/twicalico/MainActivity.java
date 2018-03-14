@@ -261,7 +261,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                             }
                             singleSubscriber.onSuccess(r);
                         })
-                        .subscribeOn(Schedulers.newThread())
+                        .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
                                 o -> {
@@ -420,7 +420,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                                 subscriber.onError(e);
                             }
                         })
-                        .subscribeOn(Schedulers.newThread())
+                        .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
                                 result -> {

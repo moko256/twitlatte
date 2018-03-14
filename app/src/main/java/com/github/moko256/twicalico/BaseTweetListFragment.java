@@ -108,7 +108,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                                 .maxId(list.get(position-1)-1L)
                                 .sinceId(list.get(list.size() >= position + 2? position + 2: position + 1))
                                 .count(GlobalApplication.statusLimit))
-                        .subscribeOn(Schedulers.newThread())
+                        .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
                                 result -> {
@@ -216,7 +216,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
         setRefreshing(true);
         subscription.add(
                 getResponseSingle(new Paging(1,20))
-                        .subscribeOn(Schedulers.newThread())
+                        .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
                                 result-> {
@@ -247,7 +247,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
     protected void onUpdateList() {
         subscription.add(
                 getResponseSingle(new Paging(list.get(list.size() >= 2? 1: 0)).count(GlobalApplication.statusLimit))
-                        .subscribeOn(Schedulers.newThread())
+                        .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
                                 result -> {
@@ -298,7 +298,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
     protected void onLoadMoreList() {
         subscription.add(
                 getResponseSingle(new Paging().maxId(list.get(list.size()-1)-1L).count(GlobalApplication.statusLimit))
-                        .subscribeOn(Schedulers.newThread())
+                        .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
                                 result -> {

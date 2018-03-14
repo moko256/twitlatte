@@ -248,7 +248,7 @@ public class StatusView extends FrameLayout {
                         subscriber.onError(e);
                     }
                 })
-                .subscribeOn(Schedulers.newThread())
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         result->{
@@ -278,7 +278,7 @@ public class StatusView extends FrameLayout {
                         subscriber.onError(e);
                     }
                 })
-                .subscribeOn(Schedulers.newThread())
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         result->{
