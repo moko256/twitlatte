@@ -27,7 +27,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.github.moko256.twicalico.config.AppConfiguration;
-import com.github.moko256.twicalico.text.TwitterStringUtils;
 import com.github.moko256.twicalico.widget.TweetImageTableView;
 
 import java.util.List;
