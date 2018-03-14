@@ -39,8 +39,6 @@ import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import rx.Single;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 import twitter4j.GeoLocation;
 import twitter4j.Status;
 
@@ -140,7 +138,7 @@ public class PostTweetModelImpl implements PostTweetModel {
 
     @Override
     public Single<Status> postTweet() {
-        Single<Status> single = Single.create(subscriber -> {
+        return Single.create(subscriber -> {
             try {
                 List<Long> ids = null;
                 if (uriList.size() > 0) {
@@ -179,9 +177,6 @@ public class PostTweetModelImpl implements PostTweetModel {
                 subscriber.onError(e);
             }
         });
-        return single
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread());
     }
 
 }

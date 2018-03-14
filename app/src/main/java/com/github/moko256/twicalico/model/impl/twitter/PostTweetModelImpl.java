@@ -29,8 +29,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import rx.Single;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 import twitter4j.GeoLocation;
 import twitter4j.Status;
 import twitter4j.StatusUpdate;
@@ -147,7 +145,7 @@ public class PostTweetModelImpl implements PostTweetModel {
 
     @Override
     public Single<Status> postTweet() {
-        Single<Status> single = Single.create(subscriber -> {
+        return Single.create(subscriber -> {
             try {
                 StatusUpdate statusUpdate = new StatusUpdate(tweetText);
                 if (uriList.size() > 0) {
@@ -171,9 +169,6 @@ public class PostTweetModelImpl implements PostTweetModel {
                 subscriber.onError(e);
             }
         });
-        return single
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread());
     }
 
 }

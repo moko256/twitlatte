@@ -136,7 +136,7 @@ public class TrendsFragment extends BaseListFragment {
         setRefreshing(true);
         subscription.add(
                 getGeoLocationSingle()
-                        .flatMap(geolocation-> getResponseSingle(geolocation).subscribeOn(Schedulers.newThread()))
+                        .flatMap(this::getResponseSingle)
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
@@ -201,7 +201,7 @@ public class TrendsFragment extends BaseListFragment {
                         Geocoder geocoder = new Geocoder(getContext());
                         Locale locale = Locale.getDefault();
                         Address address = geocoder.getFromLocationName(locale.getDisplayCountry(), 1).get(0);
-                        if (address.getCountryCode().equals(locale.getCountry())){
+                        if (address != null){
                             subscriber.onSuccess(new GeoLocation(address.getLatitude(), address.getLongitude()));
                         } else {
                             subscriber.onError(new Exception("Cannot use trends"));

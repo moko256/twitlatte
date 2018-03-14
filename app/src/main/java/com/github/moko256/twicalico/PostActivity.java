@@ -55,6 +55,8 @@ import com.github.moko256.twicalico.widget.ImageKeyboardEditText;
 import java.util.ArrayList;
 
 import rx.Single;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
 import twitter4j.GeoLocation;
 
@@ -229,6 +231,8 @@ public class PostActivity extends AppCompatActivity {
         if(item.getItemId() == R.id.action_send){
             item.setEnabled(false);
             model.postTweet()
+                    .subscribeOn(Schedulers.newThread())
+                    .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
                             it -> this.finish(),
                             e->{

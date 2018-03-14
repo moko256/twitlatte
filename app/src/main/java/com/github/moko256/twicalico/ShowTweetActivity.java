@@ -227,6 +227,8 @@ public class ShowTweetActivity extends AppCompatActivity {
             model.setInReplyToStatusId(item.getId());
             subscriptions.add(
                     model.postTweet()
+                            .subscribeOn(Schedulers.newThread())
+                            .observeOn(AndroidSchedulers.mainThread())
                             .subscribe(
                                     it -> {
                                         replyText.setText(TwitterStringUtils.convertToReplyTopString(
