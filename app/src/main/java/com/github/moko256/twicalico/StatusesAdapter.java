@@ -91,7 +91,7 @@ class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         if((conf.isPatternTweetMuteEnabled() && conf.getTweetMutePattern().matcher(item.getText()).find()) ||
                 (conf.isPatternUserScreenNameMuteEnabled() && conf.getUserScreenNameMutePattern().matcher(item.getUser().getScreenName()).find()) ||
                 (conf.isPatternUserNameMuteEnabled() && conf.getUserNameMutePattern().matcher(item.getUser().getName()).find()) ||
-                (conf.isPatternTweetSourceMuteEnabled() && conf.getTweetSourceMutePattern().matcher(TwitterStringUtils.removeHtmlTags(item.getSource())).find())
+                (conf.isPatternTweetSourceMuteEnabled() && conf.getTweetSourceMutePattern().matcher(item.getSource()).find())
                 ){
             return 2;
         }
