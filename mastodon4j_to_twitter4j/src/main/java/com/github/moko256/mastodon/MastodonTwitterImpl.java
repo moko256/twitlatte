@@ -277,7 +277,7 @@ public final class MastodonTwitterImpl implements Twitter {
 
                 @Override
                 public ResponseList<Status> lookup(long... longs) throws TwitterException {
-                    ResponseList<Status> statuses = new MTResponseList<>();
+                    ResponseList<Status> statuses = new MTResponseList<>(longs.length);
                     try {
                         for (long l : longs) {
                             statuses.add(new MTStatus(new Statuses(client).getStatus(l).execute()));
@@ -538,7 +538,7 @@ public final class MastodonTwitterImpl implements Twitter {
                 @Override
                 public PagableResponseList<User> getFriendsList(long l, long l1) throws TwitterException {
                     try {
-                        return MTPagableResponseList.convert(new Accounts(client).getFollowing(l, new Range(l1 != -1? l1: null)).execute());
+                        return MTPageableResponseList.convert(new Accounts(client).getFollowing(l, new Range(l1 != -1? l1: null)).execute());
                     } catch (Mastodon4jRequestException e) {
                         throw new MTException(e);
                     }
@@ -547,7 +547,7 @@ public final class MastodonTwitterImpl implements Twitter {
                 @Override
                 public PagableResponseList<User> getFriendsList(long l, long l1, int i) throws TwitterException {
                     try {
-                        return MTPagableResponseList.convert(new Accounts(client).getFollowing(l, new Range(l1 != -1? l1: null, null, i)).execute());
+                        return MTPageableResponseList.convert(new Accounts(client).getFollowing(l, new Range(l1 != -1? l1: null, null, i)).execute());
                     } catch (Mastodon4jRequestException e) {
                         throw new MTException(e);
                     }
@@ -576,7 +576,7 @@ public final class MastodonTwitterImpl implements Twitter {
                 @Override
                 public PagableResponseList<User> getFollowersList(long l, long l1) throws TwitterException {
                     try {
-                        return MTPagableResponseList.convert(new Accounts(client).getFollowers(l, new Range(l1 != -1? l1: null)).execute());
+                        return MTPageableResponseList.convert(new Accounts(client).getFollowers(l, new Range(l1 != -1? l1: null)).execute());
                     } catch (Mastodon4jRequestException e) {
                         throw new MTException(e);
                     }
@@ -590,7 +590,7 @@ public final class MastodonTwitterImpl implements Twitter {
                 @Override
                 public PagableResponseList<User> getFollowersList(long l, long l1, int i) throws TwitterException {
                     try {
-                        return MTPagableResponseList.convert(new Accounts(client).getFollowers(l, new Range(l1 != -1? l1: null, null, i)).execute());
+                        return MTPageableResponseList.convert(new Accounts(client).getFollowers(l, new Range(l1 != -1? l1: null, null, i)).execute());
                     } catch (Mastodon4jRequestException e) {
                         throw new MTException(e);
                     }
@@ -760,7 +760,7 @@ public final class MastodonTwitterImpl implements Twitter {
 
                 @Override
                 public ResponseList<User> lookupUsers(long... longs) throws TwitterException {
-                    ResponseList<User> l = new MTResponseList<>();
+                    ResponseList<User> l = new MTResponseList<>(longs.length);
                     for (long id: longs){
                         l.add(showUser(id));
                     }
@@ -769,7 +769,7 @@ public final class MastodonTwitterImpl implements Twitter {
 
                 @Override
                 public ResponseList<User> lookupUsers(String... strings) throws TwitterException {
-                    ResponseList<User> l = new MTResponseList<>();
+                    ResponseList<User> l = new MTResponseList<>(strings.length);
                     for (String id: strings){
                         l.add(showUser(id));
                     }

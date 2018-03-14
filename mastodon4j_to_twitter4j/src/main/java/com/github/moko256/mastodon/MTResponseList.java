@@ -19,6 +19,7 @@ package com.github.moko256.mastodon;
 import com.sys1yagi.mastodon4j.api.Pageable;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import twitter4j.RateLimitStatus;
 import twitter4j.ResponseList;
@@ -35,10 +36,14 @@ public class MTResponseList<T> extends ArrayList<T> implements ResponseList<T> {
     MTResponseList(){
         super();
     }
+    MTResponseList(int size){
+        super(size);
+    }
 
     public static ResponseList<Status> convert(Pageable<com.sys1yagi.mastodon4j.api.entity.Status> statusPageable){
-        ResponseList<Status> responseList = new MTResponseList<>();
-        for (com.sys1yagi.mastodon4j.api.entity.Status status : statusPageable.getPart()) {
+        List<com.sys1yagi.mastodon4j.api.entity.Status> part = statusPageable.getPart();
+        ResponseList<Status> responseList = new MTResponseList<>(part.size());
+        for (com.sys1yagi.mastodon4j.api.entity.Status status : part) {
             responseList.add(new MTStatus(status));
         }
         return responseList;

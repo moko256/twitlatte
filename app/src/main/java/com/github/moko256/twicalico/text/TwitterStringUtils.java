@@ -76,10 +76,6 @@ public class TwitterStringUtils {
         return stringBuilder.toString();
     }
 
-    public static String removeHtmlTags(String html){
-        return Normalizer.normalize(html, Normalizer.Form.NFC).replaceAll("<.+?>", "");
-    }
-
     public static String convertToSIUnitString(int num){
         if (num == 0) return "0";
         boolean isNegative = (num < 0);
