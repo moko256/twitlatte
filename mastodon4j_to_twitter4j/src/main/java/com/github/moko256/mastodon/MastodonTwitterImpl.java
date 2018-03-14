@@ -277,7 +277,7 @@ public final class MastodonTwitterImpl implements Twitter {
 
                 @Override
                 public ResponseList<Status> lookup(long... longs) throws TwitterException {
-                    ResponseList<Status> statuses = new MTResponseList<>();
+                    ResponseList<Status> statuses = new MTResponseList<>(longs.length);
                     try {
                         for (long l : longs) {
                             statuses.add(new MTStatus(new Statuses(client).getStatus(l).execute()));
@@ -760,7 +760,7 @@ public final class MastodonTwitterImpl implements Twitter {
 
                 @Override
                 public ResponseList<User> lookupUsers(long... longs) throws TwitterException {
-                    ResponseList<User> l = new MTResponseList<>();
+                    ResponseList<User> l = new MTResponseList<>(longs.length);
                     for (long id: longs){
                         l.add(showUser(id));
                     }
@@ -769,7 +769,7 @@ public final class MastodonTwitterImpl implements Twitter {
 
                 @Override
                 public ResponseList<User> lookupUsers(String... strings) throws TwitterException {
-                    ResponseList<User> l = new MTResponseList<>();
+                    ResponseList<User> l = new MTResponseList<>(strings.length);
                     for (String id: strings){
                         l.add(showUser(id));
                     }
