@@ -144,35 +144,35 @@ public class StatusCacheMap {
 
         private final String text;
         private final String source;
-        private final boolean isTruncated;
+        //private final boolean isTruncated;
         private final long inReplyToStatusId;
         private final long inReplyToUserId;
         private final boolean isFavorited;
         private final boolean isRetweeted;
         private final int favoriteCount;
         private final String inReplyToScreenName;
-        private final GeoLocation geoLocation;
-        private final Place place;
+        //private final GeoLocation geoLocation;
+        //private final Place place;
 
         private final int retweetCount;
         private final boolean isPossiblySensitive;
         private final String lang;
 
-        private final long[] contributorsIDs;
+        //private final long[] contributorsIDs;
 
         private final UserMentionEntity[] userMentionEntities;
         private final URLEntity[] urlEntities;
         private final HashtagEntity[] hashtagEntities;
         private final MediaEntity[] mediaEntities;
         private final SymbolEntity[] symbolEntities;
-        private final long currentUserRetweetId;
-        private final Scopes scopes;
-        private final String[] withheldInCountries;
+        //private final long currentUserRetweetId;
+        //private final Scopes scopes;
+        //private final String[] withheldInCountries;
         private final long quotedStatusId;
         private final Status quotedStatus;
 
-        private final int displayTextRangeStart;
-        private final int displayTextRangeEnd;
+        //private final int displayTextRangeStart;
+        //private final int displayTextRangeEnd;
 
         private final String url;
 
@@ -187,67 +187,67 @@ public class StatusCacheMap {
             if (!isRetweet()) {
                 text=status.getText();
                 source=status.getSource();
-                isTruncated=status.isTruncated();
+                //isTruncated=status.isTruncated();
                 inReplyToStatusId=status.getInReplyToStatusId();
                 inReplyToUserId=status.getInReplyToUserId();
                 isFavorited=status.isFavorited();
                 isRetweeted=status.isRetweeted();
                 favoriteCount=status.getFavoriteCount();
                 inReplyToScreenName=status.getInReplyToScreenName();
-                geoLocation = status.getGeoLocation();
-                place = status.getPlace();
+                //geoLocation = status.getGeoLocation();
+                //place = status.getPlace();
 
                 retweetCount=status.getRetweetCount();
                 isPossiblySensitive=status.isPossiblySensitive();
                 lang=status.getLang();
 
-                contributorsIDs=status.getContributors();
+                //contributorsIDs=status.getContributors();
 
                 userMentionEntities=status.getUserMentionEntities();
                 urlEntities=status.getURLEntities();
                 hashtagEntities=status.getHashtagEntities();
                 mediaEntities=status.getMediaEntities();
                 symbolEntities=status.getSymbolEntities();
-                currentUserRetweetId = status.getCurrentUserRetweetId();
-                scopes=status.getScopes();
-                withheldInCountries = status.getWithheldInCountries();
+                //currentUserRetweetId = status.getCurrentUserRetweetId();
+                //scopes=status.getScopes();
+                //withheldInCountries = status.getWithheldInCountries();
                 quotedStatusId = status.getQuotedStatusId();
                 quotedStatus = status.getQuotedStatus();
 
-                displayTextRangeStart = status.getDisplayTextRangeStart();
-                displayTextRangeEnd = status.getDisplayTextRangeEnd();
+                //displayTextRangeStart = status.getDisplayTextRangeStart();
+                //displayTextRangeEnd = status.getDisplayTextRangeEnd();
             } else {
                 text=null;
                 source=null;
-                isTruncated=false;
+                //isTruncated=false;
                 inReplyToStatusId=-1;
                 inReplyToUserId=-1;
                 isFavorited=false;
                 isRetweeted=false;
                 favoriteCount=-1;
                 inReplyToScreenName=null;
-                geoLocation = null;
-                place = null;
+                //geoLocation = null;
+                //place = null;
 
                 retweetCount=-1;
                 isPossiblySensitive=false;
                 lang=null;
 
-                contributorsIDs=null;
+                //contributorsIDs=null;
 
                 userMentionEntities=null;
                 urlEntities=null;
                 hashtagEntities=null;
                 mediaEntities=null;
                 symbolEntities=null;
-                currentUserRetweetId = -1;
-                scopes=null;
-                withheldInCountries = null;
+                //currentUserRetweetId = -1;
+                //scopes=null;
+                //withheldInCountries = null;
                 quotedStatusId = -1;
                 quotedStatus = null;
 
-                displayTextRangeStart = -1;
-                displayTextRangeEnd = -1;
+                //displayTextRangeStart = -1;
+                //displayTextRangeEnd = -1;
             }
 
             url = (status instanceof MTStatus)
@@ -280,7 +280,7 @@ public class StatusCacheMap {
 
         @Override
         public boolean isTruncated() {
-            return isTruncated;
+            return false;
         }
 
         @Override
@@ -300,12 +300,12 @@ public class StatusCacheMap {
 
         @Override
         public GeoLocation getGeoLocation() {
-            return geoLocation;
+            return null;
         }
 
         @Override
         public Place getPlace() {
-            return place;
+            return null;
         }
 
         @Override
@@ -340,7 +340,7 @@ public class StatusCacheMap {
 
         @Override
         public long[] getContributors() {
-            return contributorsIDs;
+            return null;
         }
 
         @Override
@@ -350,12 +350,12 @@ public class StatusCacheMap {
 
         @Override
         public boolean isRetweetedByMe() {
-            return currentUserRetweetId != -1L;
+            return false;
         }
 
         @Override
         public long getCurrentUserRetweetId() {
-            return currentUserRetweetId;
+            return -1L;
         }
 
         @Override
@@ -370,12 +370,12 @@ public class StatusCacheMap {
 
         @Override
         public Scopes getScopes() {
-            return scopes;
+            return null;
         }
 
         @Override
         public String[] getWithheldInCountries() {
-            return withheldInCountries;
+            return null;
         }
 
         @Override
@@ -390,12 +390,12 @@ public class StatusCacheMap {
 
         @Override
         public int getDisplayTextRangeStart() {
-            return displayTextRangeStart;
+            return -1;
         }
 
         @Override
         public int getDisplayTextRangeEnd() {
-            return displayTextRangeEnd;
+            return -1;
         }
 
         @Override
