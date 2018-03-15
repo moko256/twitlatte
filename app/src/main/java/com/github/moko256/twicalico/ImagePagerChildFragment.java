@@ -33,8 +33,7 @@ import android.widget.Toast;
 
 import com.github.chrisbanes.photoview.PhotoView;
 import com.github.chuross.flinglayout.FlingLayout;
-import com.github.moko256.mastodon.MastodonTwitterImpl;
-import com.github.moko256.twicalico.entity.Type;
+import com.github.moko256.twicalico.text.TwitterStringUtils;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlayerFactory;
@@ -225,14 +224,13 @@ public class ImagePagerChildFragment extends Fragment {
                 });
                 imageView.setOnScaleChangeListener((float scaleFactor, float focusX, float focusY) -> view.setDragEnabled(scaleFactor <= 1F));
                 GlideApp.with(this)
-                        .load(mediaEntity.getMediaURLHttps() + ((GlobalApplication.clientType == Type.TWITTER)?":large":""))
+                        .load(TwitterStringUtils.convertLargeImageUrl(mediaEntity.getMediaURLHttps()))
                         .fitCenter()
                         .thumbnail(
                                 GlideApp.with(this)
-                                        .load(GlobalApplication.twitter instanceof MastodonTwitterImpl?
-                                                mediaEntity.getMediaURLHttps().replace("original", "small"):
-                                                mediaEntity.getMediaURLHttps() + ":small"
-                                        )
+                                        .load(TwitterStringUtils.convertSmallImageUrl(
+                                                mediaEntity.getMediaURLHttps()
+                                        ))
                                         .fitCenter()
                         )
                         .into(imageView);

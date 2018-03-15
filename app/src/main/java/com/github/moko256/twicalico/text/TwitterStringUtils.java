@@ -41,7 +41,6 @@ import com.github.moko256.twicalico.intent.AppCustomTabsKt;
 import com.sys1yagi.mastodon4j.api.exception.Mastodon4jRequestException;
 
 import java.io.IOException;
-import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -387,6 +386,18 @@ public class TwitterStringUtils {
             builder.setSpan(span1, spanStart, spanEnd, spanned.getSpanFlags(span));
         }
         return builder;
+    }
+
+    public static String convertLargeImageUrl(String baseUrl){
+        return (GlobalApplication.clientType == Type.TWITTER)?
+                baseUrl + ":large":
+                baseUrl;
+    }
+
+    public static String convertSmallImageUrl(String baseUrl){
+        return GlobalApplication.clientType == Type.MASTODON?
+                baseUrl.replace("original", "small"):
+                baseUrl + ":small";
     }
 
 }

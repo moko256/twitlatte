@@ -25,12 +25,11 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.github.moko256.mastodon.MastodonTwitterImpl;
 import com.github.moko256.twicalico.GlideApp;
 import com.github.moko256.twicalico.GlobalApplication;
 import com.github.moko256.twicalico.R;
 import com.github.moko256.twicalico.ShowImageActivity;
-import com.github.moko256.twicalico.entity.Type;
+import com.github.moko256.twicalico.text.TwitterStringUtils;
 
 import jp.wasabeef.glide.transformations.BlurTransformation;
 import twitter4j.MediaEntity;
@@ -160,10 +159,9 @@ public class TweetImageTableView extends GridLayout {
                     isOpen = true;
                     for (int iii = 0; iii < mediaEntities.length; iii++){
                         GlideApp.with(getContext())
-                                .load(GlobalApplication.clientType == Type.MASTODON?
-                                        mediaEntities[iii].getMediaURLHttps().replace("original", "small"):
-                                        mediaEntities[iii].getMediaURLHttps() + ":small"
-                                )
+                                .load(TwitterStringUtils.convertSmallImageUrl(
+                                        mediaEntities[iii].getMediaURLHttps()
+                                ))
                                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                                 .into(imageViews[iii]);
                     }
@@ -176,20 +174,18 @@ public class TweetImageTableView extends GridLayout {
                 if (sensitive){
                     isOpen = false;
                     GlideApp.with(getContext())
-                            .load(GlobalApplication.twitter instanceof MastodonTwitterImpl?
-                                    mediaEntities[ii].getMediaURLHttps().replace("original", "small"):
-                                    mediaEntities[ii].getMediaURLHttps() + ":small"
-                            )
+                            .load(TwitterStringUtils.convertSmallImageUrl(
+                                    mediaEntities[ii].getMediaURLHttps()
+                            ))
                             .transform(new BlurTransformation())
                             .diskCacheStrategy(DiskCacheStrategy.NONE)
                             .into(imageViews[ii]);
                 } else {
                     isOpen = true;
                     GlideApp.with(getContext())
-                            .load(GlobalApplication.clientType == Type.MASTODON?
-                                    mediaEntities[ii].getMediaURLHttps().replace("original", "small"):
-                                    mediaEntities[ii].getMediaURLHttps() + ":small"
-                            )
+                            .load(TwitterStringUtils.convertSmallImageUrl(
+                                    mediaEntities[ii].getMediaURLHttps()
+                            ))
                             .diskCacheStrategy(DiskCacheStrategy.NONE)
                             .into(imageViews[ii]);
                 }

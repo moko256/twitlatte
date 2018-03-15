@@ -33,7 +33,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.github.moko256.twicalico.entity.Type;
+import com.github.moko256.twicalico.text.TwitterStringUtils;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -137,8 +137,8 @@ public class ShowImageActivity extends AppCompatActivity {
 
             case "photo":
             default:
-                String[] pathSplitWithDot=mediaEntity.getMediaURLHttps().split("\\.");
-                path=mediaEntity.getMediaURLHttps() + ((GlobalApplication.clientType == Type.TWITTER)?":large":"");
+                String[] pathSplitWithDot=mediaEntity.getMediaURLHttps().split(".");
+                path= TwitterStringUtils.convertLargeImageUrl(mediaEntity.getMediaURLHttps());
                 ext=pathSplitWithDot[pathSplitWithDot.length-1];
                 break;
         }
