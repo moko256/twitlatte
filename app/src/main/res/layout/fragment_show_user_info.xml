@@ -57,6 +57,7 @@
                         android:layout_centerHorizontal="true"
                         android:layout_below="@id/show_user_bgimage"
                         android:layout_marginTop="-32dp"
+                        android:transitionName="icon_image"
                         tools:src="@android:color/white"/>
 
                     <TextView

@@ -16,8 +16,10 @@
 
 package com.github.moko256.twicalico;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -71,7 +73,18 @@ class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> {
         viewHolder.userUserName.setText(item.getName());
         viewHolder.userUserId.setText(TwitterStringUtils.plusAtMark(item.getScreenName()));
         viewHolder.itemView.setOnClickListener(
-                v -> context.startActivity(ShowUserActivity.getIntent(context, item.getId()))
+                v -> {
+                    ActivityOptionsCompat animation = ActivityOptionsCompat
+                            .makeSceneTransitionAnimation(
+                                    ((Activity) context),
+                                    viewHolder.userUserImage,
+                                    "icon_image"
+                            );
+                    context.startActivity(
+                            ShowUserActivity.getIntent(context, item.getId()),
+                            animation.toBundle()
+                    );
+                }
         );
         viewHolder.userLockIcon.setVisibility(item.isProtected()? View.VISIBLE: View.GONE);
 

@@ -19,6 +19,7 @@ package com.github.moko256.twicalico;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.widget.Space;
@@ -205,8 +206,30 @@ public class StatusView extends FrameLayout {
         }
 
         timeStampText.setText(timeSpanConverter.toTimeSpanString(item.getCreatedAt().getTime()));
-        userImage.setOnClickListener(v-> getContext().startActivity(ShowUserActivity.getIntent(getContext(), item.getUser().getId())));
-        setOnClickListener(v -> getContext().startActivity(ShowTweetActivity.getIntent(getContext(), item.getId())));
+        userImage.setOnClickListener(v -> {
+            ActivityOptionsCompat animation = ActivityOptionsCompat
+                    .makeSceneTransitionAnimation(
+                            ((Activity) getContext()),
+                            v,
+                            "icon_image"
+                    );
+            getContext().startActivity(
+                    ShowUserActivity.getIntent(getContext(), item.getUser().getId()),
+                    animation.toBundle()
+            );
+        });
+        setOnClickListener(v -> {
+            ActivityOptionsCompat animation = ActivityOptionsCompat
+                    .makeSceneTransitionAnimation(
+                            ((Activity) getContext()),
+                            userImage,
+                            "icon_image"
+                    );
+            getContext().startActivity(
+                    ShowTweetActivity.getIntent(getContext(), item.getId()),
+                    animation.toBundle()
+            );
+        });
 
         Status quotedStatus=item.getQuotedStatus();
         if(quotedStatus!=null){

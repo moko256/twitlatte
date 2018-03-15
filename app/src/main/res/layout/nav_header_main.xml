@@ -44,6 +44,7 @@
             android:id="@+id/user_image"
             android:layout_width="64dp"
             android:layout_height="64dp"
+            android:transitionName="icon_image"
             tools:src="@android:color/white" />
 
         <TextView

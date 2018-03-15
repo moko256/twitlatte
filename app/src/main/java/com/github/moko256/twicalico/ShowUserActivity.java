@@ -55,6 +55,9 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
 
     CompositeSubscription subscription;
 
+    String userScreenName;
+    long userId;
+
     User user;
 
     ActionBar actionBar;
@@ -103,20 +106,36 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
         userListViewPool = new RecyclerView.RecycledViewPool();
 
         findViewById(R.id.activity_show_user_fab).setOnClickListener(v -> {
-            if (user!=null){
+            if (user != null){
                 startActivity(PostActivity.getIntent(this, TwitterStringUtils.plusAtMark(user.getScreenName())+" "));
             }
         });
-        subscription.add(
-                getUserSingle()
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(
-                                it -> new ShowUserFragmentsPagerAdapter(getSupportFragmentManager(),this,it.getId()).initAdapter(viewPager),
-                                e -> Snackbar.make(findViewById(getSnackBarParentContainerId()), TwitterStringUtils.convertErrorToText(e), Snackbar.LENGTH_INDEFINITE)
-                                        .show()
-                        )
-        );
+
+
+        userScreenName = getIntent().getStringExtra("userScreenName");
+        userId = getIntent().getLongExtra("userId", -1);
+
+        if (userId != -1){
+            user = GlobalApplication.userCache.get(userId);
+        }
+
+        if (user != null) {
+            new ShowUserFragmentsPagerAdapter(getSupportFragmentManager(),this, user.getId()).initAdapter(viewPager);
+        } else {
+            subscription.add(
+                    getUserSingle()
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(
+                                    it -> {
+                                        user = it;
+                                        new ShowUserFragmentsPagerAdapter(getSupportFragmentManager(),this,it.getId()).initAdapter(viewPager);
+                                    },
+                                    e -> Snackbar.make(findViewById(getSnackBarParentContainerId()), TwitterStringUtils.convertErrorToText(e), Snackbar.LENGTH_INDEFINITE)
+                                            .show()
+                            )
+            );
+        }
     }
 
     @Override
@@ -273,30 +292,17 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
         return Single
                 .create(
                         subscriber-> {
-                            if (user==null){
-                                String userScreenName = getIntent().getStringExtra("userScreenName");
-                                long userId = getIntent().getLongExtra("userId", -1);
-
-                                if (userId != -1){
-                                    user = GlobalApplication.userCache.get(userId);
+                            try {
+                                User user = null;
+                                if (userId != -1) {
+                                    user = GlobalApplication.twitter.showUser(userId);
+                                } else if (userScreenName != null) {
+                                    user = GlobalApplication.twitter.showUser(userScreenName);
+                                    GlobalApplication.userCache.add(user);
                                 }
-
-                                if (user==null) {
-                                    try {
-                                        if (userId != -1) {
-                                            user = GlobalApplication.twitter.showUser(userId);
-                                        } else if (userScreenName != null) {
-                                            user = GlobalApplication.twitter.showUser(userScreenName);
-                                            GlobalApplication.userCache.add(user);
-                                        }
-                                    } catch (TwitterException e) {
-                                        subscriber.onError(e);
-                                    }
-                                }
-                            }
-
-                            if (user != null){
                                 subscriber.onSuccess(user);
+                            } catch (TwitterException e) {
+                                subscriber.onError(e);
                             }
                         }
                 );
