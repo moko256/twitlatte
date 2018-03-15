@@ -17,7 +17,6 @@
 package com.github.moko256.twicalico.cacheMap;
 
 import android.content.Context;
-import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.util.LruCache;
@@ -132,7 +131,6 @@ public class StatusCacheMap {
         diskCache.deleteCachedStatuses(list);
     }
 
-    @Keep
     public static class CachedStatus implements Status{
 
         /* Based on twitter4j.StatusJSONImpl */

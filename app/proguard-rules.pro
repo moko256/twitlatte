@@ -17,9 +17,11 @@
 #}
 
 -dontwarn twitter4j.**
--keep class twitter4j.** { *; }
+-keep,allowoptimization class twitter4j.** { *; }
 
--keep class android.support.v7.widget.SearchView { *; }
+-keepclassmembers class android.support.v7.widget.SearchView { *; }
+-keep,allowoptimization class android.support.v7.app.AppCompatViewInflater
+-keep,allowoptimization class com.github.moko256.twicalico.cacheMap.StatusCacheMap$CachedStatus { *; }
 
 -dontwarn java.lang.invoke.*
 -dontwarn **$$Lambda$*
@@ -29,27 +31,27 @@
 
 
 # Proguard configuration for Jackson 2.x (fasterxml package instead of codehaus package)
--keep class com.fasterxml.jackson.databind.ObjectMapper {
+-keep,allowoptimization class com.fasterxml.jackson.databind.ObjectMapper {
     public <methods>;
     protected <methods>;
 }
--keep class com.fasterxml.jackson.databind.ObjectWriter {
+-keep,allowoptimization class com.fasterxml.jackson.databind.ObjectWriter {
     public ** writeValueAsString(**);
 }
 -keepnames class com.fasterxml.jackson.** { *; }
 -dontwarn com.fasterxml.jackson.databind.**
 
 
--keep class rx.schedulers.Schedulers {
+-keep,allowoptimization class rx.schedulers.Schedulers {
     public static <methods>;
 }
--keep class rx.schedulers.ImmediateScheduler {
+-keep,allowoptimization class rx.schedulers.ImmediateScheduler {
     public <methods>;
 }
--keep class rx.schedulers.TestScheduler {
+-keep,allowoptimization class rx.schedulers.TestScheduler {
     public <methods>;
 }
--keep class rx.schedulers.Schedulers {
+-keep,allowoptimization class rx.schedulers.Schedulers {
     public static ** test();
 }
 -keepclassmembers class rx.internal.util.unsafe.*ArrayQueue*Field* {
@@ -75,8 +77,8 @@
 
 # Prevent proguard from stripping interface information from TypeAdapterFactory,
 # JsonSerializer, JsonDeserializer instances (so they can be used in @JsonAdapter)
--keep class * implements com.google.gson.TypeAdapterFactory
--keep class * implements com.google.gson.JsonSerializer
--keep class * implements com.google.gson.JsonDeserializer
+-keep,allowoptimization class * implements com.google.gson.TypeAdapterFactory
+-keep,allowoptimization class * implements com.google.gson.JsonSerializer
+-keep,allowoptimization class * implements com.google.gson.JsonDeserializer
 
 ##---------------End: proguard configuration for Gson  ----------
