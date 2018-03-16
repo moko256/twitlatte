@@ -45,20 +45,14 @@ data class Status(
         val favoriteCount: Int,
         val repeatCount: Int,
 
-        val latitude: Double?,
-        val longitude: Double?,
-        val placeName: String?,
-
         val isSensitive: Boolean,
         val lang: String?,
 
         val userMentions: Array<Pair<String, IntRange>>?,
         val urls: Array<Pair<String, IntRange>>?,
         val hashtags: Array<Pair<String, IntRange>>?,
-        val mediaEntities: Array<Pair<Media, IntRange>>?,
-        val symbolEntities: Array<Pair<String, IntRange>>?,
-
-        val currentUserRepeatId: Long?,
+        val medias: Array<Pair<Media, IntRange>>?,
+        val symbols: Array<Pair<String, IntRange>>?,
 
         val quotedStatusId: Long?
 ) {
@@ -67,32 +61,6 @@ data class Status(
     }
 
     override fun hashCode(): Int {
-        var result = id.hashCode()
-        result = 31 * result + userId.hashCode()
-        result = 31 * result + text.hashCode()
-        result = 31 * result + (source?.hashCode() ?: 0)
-        result = 31 * result + createdAt.hashCode()
-        result = 31 * result + (repeatStatusId?.hashCode() ?: 0)
-        result = 31 * result + (inReplyToStatusId?.hashCode() ?: 0)
-        result = 31 * result + (inReplyToUserId?.hashCode() ?: 0)
-        result = 31 * result + (inReplyToScreenName?.hashCode() ?: 0)
-        result = 31 * result + isFavorited.hashCode()
-        result = 31 * result + isRepeated.hashCode()
-        result = 31 * result + favoriteCount
-        result = 31 * result + repeatCount
-        result = 31 * result + (latitude?.hashCode() ?: 0)
-        result = 31 * result + (longitude?.hashCode() ?: 0)
-        result = 31 * result + (placeName?.hashCode() ?: 0)
-        result = 31 * result + isSensitive.hashCode()
-        result = 31 * result + (lang?.hashCode() ?: 0)
-        result = 31 * result + (userMentions?.let { Arrays.hashCode(it) } ?: 0)
-        result = 31 * result + (urls?.let { Arrays.hashCode(it) } ?: 0)
-        result = 31 * result + (hashtags?.let { Arrays.hashCode(it) } ?: 0)
-        result = 31 * result + (mediaEntities?.let { Arrays.hashCode(it) } ?: 0)
-        result = 31 * result + (symbolEntities?.let { Arrays.hashCode(it) } ?: 0)
-        result = 31 * result + (currentUserRepeatId?.hashCode() ?: 0)
-        result = 31 * result + (quotedStatusId?.hashCode() ?: 0)
-        return result
+        return id.toInt()
     }
-
 }
