@@ -16,7 +16,9 @@
   -->
 
 <resources>
-    <style name="ShowTweetImageActivityTheme" parent="BaseShowTweetImageActivityTheme">
+    <style name="ShowTweetImageActivityThemeV19" parent="BaseShowTweetImageActivityTheme">
         <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
     </style>
+    <style name="ShowTweetImageActivityTheme" parent="ShowTweetImageActivityThemeV19"/>
 </resources>
