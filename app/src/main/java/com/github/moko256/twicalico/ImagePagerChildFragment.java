@@ -90,8 +90,6 @@ public class ImagePagerChildFragment extends Fragment {
             return view;
         }
 
-        showSystemUI();
-
         switch (mediaEntity.getType()){
             case "video":
                 String videoPath = null;
@@ -112,11 +110,13 @@ public class ImagePagerChildFragment extends Fragment {
                 videoPlayView.setControllerVisibilityListener(visibility -> {
                     if (visibility != View.VISIBLE){
                         hideSystemUI();
+                    } else {
+                        showSystemUI();
                     }
                 });
 
                 getActivity().getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(visibility -> {
-                    if (visibility == View.SYSTEM_UI_FLAG_VISIBLE){
+                    if ((visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0){
                         ((AppCompatActivity) getActivity()).getSupportActionBar().show();
                         videoPlayView.showController();
                     }
@@ -163,11 +163,13 @@ public class ImagePagerChildFragment extends Fragment {
                 videoPlayView.setControllerVisibilityListener(visibility -> {
                     if (visibility != View.VISIBLE){
                         hideSystemUI();
+                    } else {
+                        showSystemUI();
                     }
                 });
 
                 getActivity().getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(visibility -> {
-                    if (visibility == View.SYSTEM_UI_FLAG_VISIBLE){
+                    if ((visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0){
                         ((AppCompatActivity) getActivity()).getSupportActionBar().show();
                         videoPlayView.showController();
                     }
@@ -211,16 +213,17 @@ public class ImagePagerChildFragment extends Fragment {
                     ((AppCompatActivity) getActivity()).getSupportActionBar().setBackgroundDrawable(new ColorDrawable(0x80000000));
                 }
                 getActivity().getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(visibility -> {
-                    if (visibility == View.SYSTEM_UI_FLAG_VISIBLE){
+                    if ((visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0){
                         ((AppCompatActivity) getActivity()).getSupportActionBar().show();
                     }
                 });
                 imageView= view.findViewById(R.id.fragment_image_pager_image);
                 imageView.setVisibility(View.VISIBLE);
                 imageView.setOnClickListener(v -> {
-                    if (getActivity().getWindow().getDecorView().getSystemUiVisibility() != View.SYSTEM_UI_FLAG_FULLSCREEN){
-                        ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
+                    if ((getActivity().getWindow().getDecorView().getSystemUiVisibility() & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0){
                         hideSystemUI();
+                    } else {
+                        showSystemUI();
                     }
                 });
                 imageView.setOnScaleChangeListener((float scaleFactor, float focusX, float focusY) -> view.setDragEnabled(scaleFactor <= 1F));
@@ -267,7 +270,8 @@ public class ImagePagerChildFragment extends Fragment {
                         | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                         | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_FULLSCREEN);
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
     }
 
     private void showSystemUI() {
