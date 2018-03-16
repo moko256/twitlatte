@@ -110,7 +110,7 @@ public class StatusCacheMap {
             });
 
             GlobalApplication.userCache.addAll(
-                    statusesObservable.map(Status::getUser).toList().toSingle().toBlocking().value()
+                    statusesObservable.map(Status::getUser).distinct().toList().toSingle().toBlocking().value()
             );
 
             Observable<Status> cachedStatusObservable = statusesObservable.map(CachedStatus::new);
