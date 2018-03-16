@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 The twicalico authors
+ * Copyright 2018 The twicalico authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,12 @@
 
 package com.github.moko256.twicalico;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 
 /**
  * Created by moko256 on 2017/01/26.
@@ -29,7 +29,9 @@ import android.support.v7.app.AppCompatActivity;
  * @author moko256
  */
 
-public class SearchResultActivity extends AppCompatActivity implements BaseListFragment.GetSnackBarParentContainerId {
+public class SearchResultActivity extends AppCompatActivity implements BaseListFragment.GetSnackBarParentContainerId, BaseTweetListFragment.GetRecyclerViewPool {
+
+    RecyclerView.RecycledViewPool tweetListViewPool;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -40,6 +42,8 @@ public class SearchResultActivity extends AppCompatActivity implements BaseListF
         actionBar.setTitle(getIntent().getStringExtra("query"));
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeAsUpIndicator(R.drawable.ic_back_white_24dp);
+
+        tweetListViewPool = new RecyclerView.RecycledViewPool();
 
         if (savedInstanceState == null) {
             getSupportFragmentManager()
@@ -62,5 +66,10 @@ public class SearchResultActivity extends AppCompatActivity implements BaseListF
     @Override
     public int getSnackBarParentContainerId() {
         return R.id.activity_search_fragment_container;
+    }
+
+    @Override
+    public RecyclerView.RecycledViewPool getTweetListViewPool() {
+        return tweetListViewPool;
     }
 }

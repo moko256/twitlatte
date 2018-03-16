@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 The twicalico authors
+ * Copyright 2018 The twicalico authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package com.github.moko256.twicalico;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,7 +27,7 @@ import android.widget.TextView;
 
 import com.github.moko256.twicalico.text.TwitterStringUtils;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import twitter4j.User;
 
@@ -37,12 +38,12 @@ import twitter4j.User;
  */
 class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> {
 
-    private ArrayList<Long> data;
+    private List<Long> data;
     private Context context;
 
     private GlideRequests glideRequests;
 
-    UsersAdapter(Context context, ArrayList<Long> data) {
+    UsersAdapter(Context context, List<Long> data) {
         this.context = context;
         this.data = data;
         glideRequests = GlideApp.with(context);
@@ -55,16 +56,17 @@ class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> {
         return data.get(position);
     }
 
+    @NonNull
     @Override
-    public UsersAdapter.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+    public UsersAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         return new ViewHolder(LayoutInflater.from(context).inflate(R.layout.layout_user, viewGroup, false));
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder viewHolder, final int i) {
+    public void onBindViewHolder(@NonNull ViewHolder viewHolder, final int i) {
         User item=GlobalApplication.userCache.get(data.get(i));
 
-        glideRequests.load(item.getProfileImageURLHttps()).circleCrop().into(viewHolder.userUserImage);
+        glideRequests.load(item.get400x400ProfileImageURLHttps()).circleCrop().into(viewHolder.userUserImage);
 
         viewHolder.userUserName.setText(item.getName());
         viewHolder.userUserId.setText(TwitterStringUtils.plusAtMark(item.getScreenName()));
@@ -76,7 +78,7 @@ class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> {
     }
 
     @Override
-    public void onViewRecycled(ViewHolder holder) {
+    public void onViewRecycled(@NonNull ViewHolder holder) {
         super.onViewRecycled(holder);
         glideRequests.clear(holder.userUserImage);
     }

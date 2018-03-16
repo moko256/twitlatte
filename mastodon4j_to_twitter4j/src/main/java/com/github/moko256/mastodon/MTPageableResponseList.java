@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 The twicalico authors
+ * Copyright 2018 The twicalico authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,18 +32,20 @@ import twitter4j.User;
  * @author moko256
  */
 
-public class MTPagableResponseList<E extends TwitterResponse> extends ArrayList<E> implements PagableResponseList<E> {
-    Long previous;
-    Long next;
+public class MTPageableResponseList<E extends TwitterResponse> extends ArrayList<E> implements PagableResponseList<E> {
+    private Long previous;
+    private Long next;
 
-    MTPagableResponseList(Pageable p){
-        super();
-        next = p.getLink().getMaxId();
-        previous = p.getLink().getSinceId();
+    private MTPageableResponseList(Pageable p){
+        super(p.getPart().size());
+        if (p.getLink() != null) {
+            next = p.getLink().getMaxId();
+            previous = p.getLink().getSinceId();
+        }
     }
 
-    static MTPagableResponseList<User> convert(Pageable<Account> p){
-        MTPagableResponseList<User> users = new MTPagableResponseList<>(p);
+    static MTPageableResponseList<User> convert(Pageable<Account> p){
+        MTPageableResponseList<User> users = new MTPageableResponseList<>(p);
         for (Account a : p.getPart()) {
             users.add(new MTUser(a));
         }

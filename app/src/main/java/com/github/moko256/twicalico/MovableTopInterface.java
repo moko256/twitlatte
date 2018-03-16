@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 The twicalico authors
+ * Copyright 2018 The twicalico authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,6 @@ package com.github.moko256.twicalico;
  * @author moko256
  */
 
-public interface MoveableTopInterface {
+public interface MovableTopInterface {
     void moveToTop();
 }

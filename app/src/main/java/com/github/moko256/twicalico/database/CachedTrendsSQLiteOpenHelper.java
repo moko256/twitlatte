@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 The twicalico authors
+ * Copyright 2018 The twicalico authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,10 +54,10 @@ public class CachedTrendsSQLiteOpenHelper extends SQLiteOpenHelper {
 
     }
 
-    public synchronized ArrayList<Trend> getTrends(){
+    public synchronized List<Trend> getTrends(){
         SQLiteDatabase database=getReadableDatabase();
         Cursor c=database.query("Trends", new String[]{"name"}, null, null, null,null,null);
-        ArrayList<Trend> trends = new ArrayList<>(c.getCount());
+        List<Trend> trends = new ArrayList<>(c.getCount());
 
         while (c.moveToNext()){
             trends.add(new CachedTrend(c.getString(0)));

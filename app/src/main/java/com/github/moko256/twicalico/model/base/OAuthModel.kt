@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 The twicalico authors
+ * Copyright 2018 The twicalico authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,15 @@
 
 package com.github.moko256.twicalico.model.base
 
+import com.github.moko256.twicalico.entity.AccessToken
 import rx.Single
-import twitter4j.auth.AccessToken
 
 /**
  * Created by moko256 on 2017/10/29.
  *
  * @author moko256
  */
-public interface OAuthModel {
+interface OAuthModel {
     fun getCallbackAuthUrl(url: String, consumerKey: String, consumerSecret: String, callbackUrl: String): Single<String>
     fun getCodeAuthUrl(url: String, consumerKey: String, consumerSecret: String): Single<String>
 

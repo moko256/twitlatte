@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 The twicalico authors
+ * Copyright 2018 The twicalico authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ import twitter4j.User;
  */
 
 public class MTUser implements User {
-    Account account;
+    private Account account;
 
     MTUser(Account account){
         this.account = account;
@@ -49,7 +49,11 @@ public class MTUser implements User {
 
     @Override
     public String getName() {
-        return account.getDisplayName();
+        String name = account.getDisplayName();
+        if (name.equals("")){
+            name = account.getUserName();
+        }
+        return name;
     }
 
     @Override
@@ -83,6 +87,11 @@ public class MTUser implements User {
     }
 
     @Override
+    public String get400x400ProfileImageURL() {
+        return account.getAvatar();
+    }
+
+    @Override
     public String getBiggerProfileImageURL() {
         return account.getAvatar();
     }
@@ -99,6 +108,11 @@ public class MTUser implements User {
 
     @Override
     public String getProfileImageURLHttps() {
+        return account.getAvatar();
+    }
+
+    @Override
+    public String get400x400ProfileImageURLHttps() {
         return account.getAvatar();
     }
 
@@ -124,7 +138,7 @@ public class MTUser implements User {
 
     @Override
     public String getURL() {
-        return account.getUrl();
+        return null;
     }
 
     @Override

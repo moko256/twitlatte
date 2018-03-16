@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 The twicalico authors
+ * Copyright 2018 The twicalico authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,13 +17,14 @@
 package com.github.moko256.twicalico;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import twitter4j.Trend;
 
@@ -34,10 +35,10 @@ import twitter4j.Trend;
  */
 
 public class TrendsAdapter extends RecyclerView.Adapter<TrendsAdapter.ViewHolder> {
-    private ArrayList<Trend> data;
+    private List<Trend> data;
     private Context context;
 
-    TrendsAdapter(Context context, ArrayList<Trend> data) {
+    TrendsAdapter(Context context, List<Trend> data) {
         this.context = context;
         this.data = data;
 
@@ -49,13 +50,14 @@ public class TrendsAdapter extends RecyclerView.Adapter<TrendsAdapter.ViewHolder
         return data.get(position).getName().hashCode();
     }
 
+    @NonNull
     @Override
-    public TrendsAdapter.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+    public TrendsAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         return new TrendsAdapter.ViewHolder(LayoutInflater.from(context).inflate(R.layout.layout_trend, viewGroup, false));
     }
 
     @Override
-    public void onBindViewHolder(TrendsAdapter.ViewHolder viewHolder, final int i) {
+    public void onBindViewHolder(@NonNull TrendsAdapter.ViewHolder viewHolder, final int i) {
         Trend item=data.get(i);
 
         viewHolder.text.setText(item.getName());

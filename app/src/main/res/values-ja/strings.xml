@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright 2017 The twicalico authors
+  ~ Copyright 2018 The twicalico authors
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -18,18 +18,20 @@
 <resources>
     <string name="action_settings">設定</string>
     <string name="action_search">検索</string>
+    <string name="back">戻る</string>
     <string name="trends">トレンド</string>
     <string name="timeline">タイムライン</string>
     <string name="mentions">メンション</string>
     <string name="post">投稿</string>
+    <string name="create_post">投稿を作成</string>
     <string name="reply">返信</string>
     <string name="like">お気に入り</string>
     <string name="follower">フォロワー</string>
     <string name="follow">フォロー</string>
-    <string name="your_post">あなたの投稿</string>
     <string name="account">アカウント</string>
     <string name="follow_and_follower">フォロー・フォロワー</string>
     <string name="theme">テーマ</string>
+    <string name="media">メディア</string>
     <string name="images">画像</string>
     <string name="add_image">画像を追加</string>
     <string name="add_location">位置情報を追加</string>
@@ -39,10 +41,12 @@
     <string name="mention_to">%sさんへの言及</string>
     <string name="app_settings">アプリケーションの設定</string>
     <string name="add_account">他のアカウントを追加</string>
-    <string name="logout">ログアウトする</string>
+    <string name="logout">ログアウト</string>
+    <string name="do_logout">ログアウトする</string>
+    <string name="confirm_logout">ログアウトしますか？</string>
     <string name="new_post">新しい投稿</string>
     <string name="permission_denied">権限が拒否されました</string>
-    <string name="lat_and_lon">緯度:%d 経度:%d</string>
+    <string name="lat_and_lon">緯度:%f 経度:%f</string>
     <string name="location_is">所在地: %s</string>
     <string name="url_is">URL: %s</string>
     <string name="post_counts_is">投稿数: %d</string>
@@ -50,6 +54,7 @@
     <string name="follower_counts_is">フォロワー数: %d</string>
     <string name="other">その他</string>
     <string name="share">共有する</string>
+    <string name="open_in_browser">ブラウザで開く</string>
     <string name="add_to_list">リストに追加</string>
     <string name="show_list">リストを見る</string>
     <string name="load_more">もっと見る</string>

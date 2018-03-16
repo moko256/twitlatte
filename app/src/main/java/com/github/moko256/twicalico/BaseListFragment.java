@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 The twicalico authors
+ * Copyright 2018 The twicalico authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,27 +20,28 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 
 /**
  * Created by moko256 on 2016/10/09.
  *
  * @author moko256
  */
-public abstract class BaseListFragment extends Fragment implements MoveableTopInterface {
+public abstract class BaseListFragment extends Fragment implements MovableTopInterface {
 
     private RecyclerView recyclerView;
     private SwipeRefreshLayout swipeRefreshLayout;
-    private ProgressBar progressBar;
 
-    private boolean isProgressCircleLoading = true;
+    private boolean isShowed = false;
+    private boolean isProgressCircleLoading = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -50,20 +51,22 @@ public abstract class BaseListFragment extends Fragment implements MoveableTopIn
             onRestoreInstanceState(savedInstanceState);
         }
 
-        if (!isInitializedList()){
+        isShowed = true;
+
+        if (getUserVisibleHint() && !isInitializedList()){
             onInitializeList();
         }
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         super.onCreateView(inflater,container,savedInstanceState);
 
         View view=inflater.inflate(getLayoutResourceId(), container ,false);
 
         recyclerView= view.findViewById(R.id.TLlistView);
         recyclerView.setLayoutManager(initializeRecyclerViewLayoutManager());
-        recyclerView.addOnScrollListener(new LoadScrollListener((StaggeredGridLayoutManager) recyclerView.getLayoutManager()) {
+        recyclerView.addOnScrollListener(new LoadScrollListener(recyclerView.getLayoutManager()) {
             @Override
             public void load() {
                 if(isInitializedList()){
@@ -73,28 +76,33 @@ public abstract class BaseListFragment extends Fragment implements MoveableTopIn
         });
 
         swipeRefreshLayout= view.findViewById(R.id.srl);
-        swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
+        swipeRefreshLayout.setColorSchemeResources(R.color.color_primary);
+        swipeRefreshLayout.setRefreshing(isProgressCircleLoading);
         swipeRefreshLayout.setOnRefreshListener(()->{
             if (isInitializedList()){
                 onUpdateList();
-            }else{
+            } else {
                 onInitializeList();
             }
         });
-
-        progressBar = view.findViewById(R.id.loadingProgress);
-        updateProgressCircleLoading();
 
         return view;
     }
 
     @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isShowed && isVisibleToUser && !isInitializedList()) {
+            onInitializeList();
+        }
+    }
+
+    @Override
     public void moveToTop() {
-        if (((StaggeredGridLayoutManager) recyclerView.getLayoutManager()).findFirstVisibleItemPositions(null)[0]
-                < 5) {
-            getRecyclerView().smoothScrollToPosition(0);
+        if (getFirstVisibleItemPosition(recyclerView.getLayoutManager()) < 5) {
+            recyclerView.smoothScrollToPosition(0);
         } else {
-            getRecyclerView().scrollToPosition(0);
+            recyclerView.scrollToPosition(0);
         }
     }
 
@@ -106,14 +114,8 @@ public abstract class BaseListFragment extends Fragment implements MoveableTopIn
         recyclerView=null;
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putBoolean("isProgressCircleLoading", isProgressCircleLoading);
-    }
-
     public void onRestoreInstanceState(Bundle savedInstanceState){
-        isProgressCircleLoading = savedInstanceState.getBoolean("isProgressCircleLoading", true);
+
     }
 
     protected abstract void onInitializeList();
@@ -123,7 +125,9 @@ public abstract class BaseListFragment extends Fragment implements MoveableTopIn
     protected abstract boolean isInitializedList();
 
     protected RecyclerView.LayoutManager initializeRecyclerViewLayoutManager(){
-        return new StaggeredGridLayoutManager(1,StaggeredGridLayoutManager.VERTICAL);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        layoutManager.setRecycleChildrenOnDetach(true);
+        return layoutManager;
     }
 
     @LayoutRes
@@ -147,6 +151,13 @@ public abstract class BaseListFragment extends Fragment implements MoveableTopIn
         recyclerView.setAdapter(adapter);
     }
 
+    protected void setRefreshing(boolean b){
+        isProgressCircleLoading = b;
+        if (swipeRefreshLayout != null) {
+            swipeRefreshLayout.setRefreshing(b);
+        }
+    }
+
     protected View getSnackBarParentContainer(){
         Activity parent=getActivity();
         if(parent instanceof GetSnackBarParentContainerId){
@@ -156,18 +167,19 @@ public abstract class BaseListFragment extends Fragment implements MoveableTopIn
         }
     }
 
+    protected int getFirstVisibleItemPosition(RecyclerView.LayoutManager layoutManager){
+        int position;
+        if (layoutManager instanceof StaggeredGridLayoutManager) {
+            position = ((StaggeredGridLayoutManager) layoutManager).findFirstVisibleItemPositions(null)[0];
+        } else {
+            position = ((LinearLayoutManager) layoutManager).findFirstVisibleItemPosition();
+        }
+        return position;
+    }
+
     public interface GetSnackBarParentContainerId {
         @IdRes
         int getSnackBarParentContainerId();
-    }
-
-    protected void setProgressCircleLoading(boolean isLoading){
-        isProgressCircleLoading = isLoading;
-        updateProgressCircleLoading();
-    }
-
-    private void updateProgressCircleLoading(){
-        if (progressBar != null) progressBar.setVisibility(isProgressCircleLoading? View.VISIBLE: View.GONE);
     }
 
 }

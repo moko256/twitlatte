@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 The twicalico authors
+ * Copyright 2018 The twicalico authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,8 @@ package com.github.moko256.twicalico.database;
 import android.support.annotation.NonNull;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
+
+import com.github.moko256.twicalico.array.ArrayUtils;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -91,10 +93,10 @@ public class CachedStatusesSQLiteOpenHelperTest {
     }
 
     private void addStatusesTest(){
-        helper.addCachedStatuses(new Status[]{
+        helper.addCachedStatuses(ArrayUtils.convertToList(
                 new TestStatus(TEST_DUMMY_STATUS_ID_1, TEST_DUMMY_STATUS_TEXT_0),
-                new TestStatus(TEST_DUMMY_STATUS_ID_2, TEST_DUMMY_STATUS_TEXT_1)
-        });
+                new TestStatus(TEST_DUMMY_STATUS_ID_2, TEST_DUMMY_STATUS_TEXT_1))
+        );
 
         assertEquals(helper.getCachedStatus(TEST_DUMMY_STATUS_ID_1).getText(), TEST_DUMMY_STATUS_TEXT_0);
         assertEquals(helper.getCachedStatus(TEST_DUMMY_STATUS_ID_2).getText(), TEST_DUMMY_STATUS_TEXT_1);

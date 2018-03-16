@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 The twicalico authors
+ * Copyright 2018 The twicalico authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package com.github.moko256.twicalico;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.text.util.LinkifyCompat;
@@ -91,7 +92,7 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
         if (cachedUser==null){
             subscription.add(
                     updateUser()
-                            .subscribeOn(Schedulers.newThread())
+                            .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe(
                                     this::setShowUserInfo,
@@ -103,15 +104,15 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view=inflater.inflate(R.layout.fragment_show_user_info,container,false);
 
         glideRequests =GlideApp.with(this);
 
         swipeRefreshLayout = view.findViewById(R.id.show_user_swipe_refresh);
-        swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
+        swipeRefreshLayout.setColorSchemeResources(R.color.color_primary);
         swipeRefreshLayout.setOnRefreshListener(() -> subscription.add(updateUser()
-                .subscribeOn(Schedulers.newThread())
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         result -> {
@@ -166,7 +167,7 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
                 header.setBackgroundColor(Color.parseColor("#" + colorStr));
             }
         }
-        glideRequests.load(user.getBiggerProfileImageURL()).circleCrop().into(icon);
+        glideRequests.load(user.get400x400ProfileImageURLHttps()).circleCrop().into(icon);
 
         userNameText.setText(user.getName());
         userLockIcon.setVisibility(user.isProtected()? View.VISIBLE: View.GONE);
@@ -190,9 +191,9 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
         }
 
         userCreatedAt.setText(DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.FULL).format(user.getCreatedAt()));
-        userTweetsCount.setText(getContext().getString(R.string.post_counts_is, user.getStatusesCount()));
-        userFollowCount.setText(getContext().getString(R.string.follow_counts_is, user.getFriendsCount()));
-        userFollowerCount.setText(getContext().getString(R.string.follower_counts_is, user.getFollowersCount()));
+        userTweetsCount.setText(getString(R.string.post_counts_is, user.getStatusesCount()));
+        userFollowCount.setText(getString(R.string.follow_counts_is, user.getFriendsCount()));
+        userFollowerCount.setText(getString(R.string.follower_counts_is, user.getFollowersCount()));
     }
 
     private Single<User> updateUser(){

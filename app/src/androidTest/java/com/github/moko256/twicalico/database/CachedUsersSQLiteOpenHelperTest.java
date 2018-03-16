@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 The twicalico authors
+ * Copyright 2018 The twicalico authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,8 @@ package com.github.moko256.twicalico.database;
 import android.support.annotation.NonNull;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
+
+import com.github.moko256.twicalico.array.ArrayUtils;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,7 +42,7 @@ import static org.junit.Assert.assertEquals;
 @RunWith(AndroidJUnit4.class)
 public class CachedUsersSQLiteOpenHelperTest {
 
-    private CachedUsersSQLiteOpenHelper helper = new CachedUsersSQLiteOpenHelper(InstrumentationRegistry.getTargetContext(), 0);
+    private CachedUsersSQLiteOpenHelper helper = new CachedUsersSQLiteOpenHelper(InstrumentationRegistry.getTargetContext(), 0, true);
 
     private static final long TEST_DUMMY_USER_ID_1 = 1L;
     private static final long TEST_DUMMY_USER_ID_2 = 2L;
@@ -84,10 +86,10 @@ public class CachedUsersSQLiteOpenHelperTest {
     }
 
     private void addUsersTest(){
-        helper.addCachedUsers(new User[]{
+        helper.addCachedUsers(ArrayUtils.convertToList(
                 new TestUser(TEST_DUMMY_USER_ID_1, TEST_DUMMY_USER_NAME_0),
-                new TestUser(TEST_DUMMY_USER_ID_2, TEST_DUMMY_USER_NAME_1)
-        });
+                new TestUser(TEST_DUMMY_USER_ID_2, TEST_DUMMY_USER_NAME_1))
+        );
 
         assertEquals(helper.getCachedUser(TEST_DUMMY_USER_ID_1).getName(), TEST_DUMMY_USER_NAME_0);
         assertEquals(helper.getCachedUser(TEST_DUMMY_USER_ID_2).getName(), TEST_DUMMY_USER_NAME_1);
@@ -145,6 +147,11 @@ public class CachedUsersSQLiteOpenHelperTest {
         }
 
         @Override
+        public String get400x400ProfileImageURL() {
+            return null;
+        }
+
+        @Override
         public String getBiggerProfileImageURL() {
             return null;
         }
@@ -156,6 +163,11 @@ public class CachedUsersSQLiteOpenHelperTest {
 
         @Override
         public String getOriginalProfileImageURL() {
+            return null;
+        }
+
+        @Override
+        public String get400x400ProfileImageURLHttps() {
             return null;
         }
 

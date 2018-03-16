@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 The twicalico authors
+ * Copyright 2018 The twicalico authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Arrays;
+import java.util.Collection;
 
 import twitter4j.Status;
 
@@ -86,6 +87,8 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
         db.execSQL(
                 "create table CachedStatuses(" + columnsStr.substring(1, columnsStr.length() - 1) + ", primary key(id));"
         );
+        db.execSQL("create unique index idindex on CachedStatuses(id)");
+
     }
 
     @Override
@@ -333,7 +336,7 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
         database.close();
     }
 
-    public synchronized void addCachedStatuses(Status[] statuses){
+    public synchronized void addCachedStatuses(Collection<? extends Status> statuses){
         SQLiteDatabase database=getWritableDatabase();
         database.beginTransaction();
         for (Status status : statuses) {
@@ -381,10 +384,10 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
         database.close();
     }
 
-    public synchronized void deleteCachedStatuses(long[] ids){
+    public synchronized void deleteCachedStatuses(Collection<Long> ids){
         SQLiteDatabase database=getWritableDatabase();
         database.beginTransaction();
-        for (long id : ids) {
+        for (Long id : ids) {
             deleteCachedStatusAtTransaction(id);
         }
         database.setTransactionSuccessful();
@@ -392,7 +395,7 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
         database.close();
     }
 
-    private void deleteCachedStatusAtTransaction(long id) {
+    private void deleteCachedStatusAtTransaction(Long id) {
         getWritableDatabase().delete("CachedStatuses", "id=" + String.valueOf(id), null);
     }
 }

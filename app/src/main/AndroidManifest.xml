@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright 2017 The twicalico authors
+  ~ Copyright 2018 The twicalico authors
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -48,6 +48,18 @@
             </intent-filter>
 
             <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/*" />
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.SEND_MULTIPLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="image/*" />
+            </intent-filter>
+
+            <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
@@ -67,6 +79,15 @@
 
                 <data android:scheme="twitter" />
             </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="web+mastodon" />
+            </intent-filter>
         </activity>
 
         <activity
@@ -74,8 +95,8 @@
             android:theme="@style/MainActivityTheme"/>
 
         <activity
-            android:name=".PostTweetActivity"
-            android:label="@string/post"
+            android:name=".PostActivity"
+            android:label="@string/create_post"
             android:theme="@style/AppTheme.NoActionBar"/>
 
         <activity

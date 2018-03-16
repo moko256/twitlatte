@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 The twicalico authors
+ * Copyright 2018 The twicalico authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,27 +18,22 @@ package com.github.moko256.twicalico;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.database.DatabaseUtils;
-import android.database.sqlite.SQLiteDatabase;
-import android.net.Uri;
 import android.os.Bundle;
-import android.support.customtabs.CustomTabsIntent;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.preference.PreferenceManager;
+import android.support.v7.preference.PreferenceScreen;
 import android.widget.Toast;
 
 import com.github.moko256.twicalico.database.TokenSQLiteOpenHelper;
+import com.github.moko256.twicalico.entity.AccessToken;
+import com.github.moko256.twicalico.intent.AppCustomTabsKt;
 import com.github.moko256.twicalico.text.TwitterStringUtils;
 
 import java.util.Date;
-
-import twitter4j.auth.AccessToken;
 
 /**
  * Created by moko256 on 2016/03/28.
@@ -56,31 +51,31 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        if(getArguments()==null||getArguments().getString(ARG_PREFERENCE_ROOT)==null){
-            SharedPreferences defaultSharedPreferences= PreferenceManager.getDefaultSharedPreferences(getContext());
+        String preferenceRoot = getArguments() != null? getArguments().getString(ARG_PREFERENCE_ROOT, null): null;
+        if (preferenceRoot == null){
+            SharedPreferences defaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
 
-            TokenSQLiteOpenHelper helper=new TokenSQLiteOpenHelper(getContext());
-            SQLiteDatabase database=helper.getReadableDatabase();
-            Cursor c=database.query("AccountTokenList",new String[]{"userName"},null,null,null,null,null);
+            TokenSQLiteOpenHelper helper = new TokenSQLiteOpenHelper(getContext());
 
-            CharSequence[] entries=new CharSequence[(int) DatabaseUtils.queryNumEntries(database,"AccountTokenList")+1];
-            CharSequence[] entryValues=new CharSequence[(int) DatabaseUtils.queryNumEntries(database,"AccountTokenList")+1];
+            AccessToken[] accessTokens = helper.getAccessTokens();
 
-            while (c.moveToNext()){
-                entries[c.getPosition()]= TwitterStringUtils.plusAtMark(c.getString(0));
-                entryValues[c.getPosition()]=String.valueOf(c.getPosition());
+            CharSequence[] entries = new CharSequence[accessTokens.length + 1];
+            CharSequence[] entryValues = new CharSequence[accessTokens.length + 1];
+
+            for (int i = 0; i < accessTokens.length; i++) {
+                AccessToken accessToken = accessTokens[i];
+
+                entries[i] = TwitterStringUtils.plusAtMark(accessToken.getScreenName(), accessToken.getUrl());
+                entryValues[i] = accessToken.getKeyString();
             }
 
             entries[entries.length-1]=getString(R.string.add_account);
             entryValues[entryValues.length-1]="-1";
 
-            c.close();
-            database.close();
-
-            ListPreference nowAccountList=(ListPreference) findPreference("AccountPoint");
+            ListPreference nowAccountList=(ListPreference) findPreference("AccountKey");
             nowAccountList.setEntries(entries);
             nowAccountList.setEntryValues(entryValues);
-            nowAccountList.setDefaultValue(defaultSharedPreferences.getString("AccountPoint","-1"));
+            nowAccountList.setDefaultValue(defaultSharedPreferences.getString("AccountKey","-1"));
             nowAccountList.setOnPreferenceChangeListener(
                     (preference, newValue) -> {
                         if (newValue.equals("-1")){
@@ -90,12 +85,12 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                             );
                         } else {
                             TokenSQLiteOpenHelper tokenOpenHelper = new TokenSQLiteOpenHelper(this.getContext());
-                            AccessToken accessToken=tokenOpenHelper.getAccessToken(Integer.valueOf((String) newValue));
+                            AccessToken accessToken=tokenOpenHelper.getAccessToken((String) newValue);
                             tokenOpenHelper.close();
 
                             ((GlobalApplication) getActivity().getApplication()).initTwitter(accessToken);
                             startActivity(
-                                    new Intent(getContext(),MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                                    new Intent(getContext(),MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
                             );
                         }
                         return true;
@@ -104,33 +99,42 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
             findPreference("logout").setOnPreferenceClickListener(preference -> {
                 new AlertDialog.Builder(getContext())
-                        .setTitle(R.string.logout)
-                        .setMessage(R.string.confirm_message)
+                        .setMessage(R.string.confirm_logout)
                         .setCancelable(true)
-                        .setPositiveButton(android.R.string.ok,
+                        .setPositiveButton(R.string.do_logout,
                                 (dialog, i) -> {
-                                    long p = helper.deleteAccessToken(
+                                    helper.deleteAccessToken(
                                             helper.getAccessToken(
-                                                    Integer.valueOf(
-                                                            defaultSharedPreferences.getString("AccountPoint","-1")
-                                                    ))
-                                                    .getUserId()
-                                    )-1;
-                                    defaultSharedPreferences
-                                            .edit()
-                                            .putString("AccountPoint", String.valueOf(p)).apply();
-
-                                    TokenSQLiteOpenHelper tokenOpenHelper = new TokenSQLiteOpenHelper(this.getContext());
-                                    AccessToken accessToken=tokenOpenHelper.getAccessToken(Long.valueOf(p).intValue());
-                                    tokenOpenHelper.close();
-
-                                    ((GlobalApplication) getActivity().getApplication()).initTwitter(accessToken);
-                                    startActivity(
-                                            new Intent(getContext(),MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                                                    defaultSharedPreferences.getString("AccountKey","-1")
+                                            )
                                     );
+
+                                    int point = helper.getSize() - 1;
+                                    if (point != -1) {
+                                        AccessToken accessToken = helper.getAccessTokens()[point];
+
+                                        defaultSharedPreferences
+                                                .edit()
+                                                .putString("AccountKey", accessToken.getKeyString())
+                                                .apply();
+
+                                        ((GlobalApplication) getActivity().getApplication()).initTwitter(accessToken);
+                                        startActivity(
+                                                new Intent(getContext(), MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
+                                        );
+                                    } else {
+                                        defaultSharedPreferences
+                                                .edit()
+                                                .putString("AccountKey", "-1")
+                                                .apply();
+                                        GlobalApplication.twitter = null;
+                                        startActivity(
+                                                new Intent(getContext(), OAuthActivity.class)
+                                        );
+                                    }
                                 }
                         )
-                        .setNegativeButton(android.R.string.cancel,(dialog, i) -> dialog.cancel())
+                        .setNeutralButton(R.string.back,(dialog, i) -> dialog.cancel())
                         .show();
                 return false;
             });
@@ -168,11 +172,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
             Preference sourceCodeLink=findPreference("source_code_link");
             sourceCodeLink.setOnPreferenceClickListener(preference -> {
-                new CustomTabsIntent.Builder()
-                        .setToolbarColor(ContextCompat.getColor(getContext(), R.color.colorPrimary))
-                        .setSecondaryToolbarColor(ContextCompat.getColor(getContext(), R.color.colorPrimaryDark))
-                        .build()
-                        .launchUrl(getContext(), Uri.parse("https://github.com/moko256/twicalico"));
+                AppCustomTabsKt.launchChromeCustomTabs(getContext(), "https://github.com/moko256/twicalico");
                 return false;
             });
 
@@ -193,32 +193,14 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 ).show();
                 return false;
             });
-        } else if(getArguments().getString(ARG_PREFERENCE_ROOT).equals("license")){
-            final String license_keys[]=new String[]{
-                    "support_v4",
-                    "support_v7",
-                    "support_v13",
-                    "support_v14",
-                    "support_design",
-                    "support_custom_tabs",
-                    "exo_player",
-                    "glide",
-                    "gson",
-                    "photo_view",
-                    "okhttp",
-                    "mastodon4j",
-                    "twitter4j",
-                    "twitter_text",
-                    "rx_java",
-                    "rx_android"
-            };
-
-            for (String name : license_keys) {
-                findPreference("license_lib_" + name).setOnPreferenceClickListener(preference -> {
+        } else if (preferenceRoot.equals("license")) {
+            PreferenceScreen license = getPreferenceScreen();
+            for (int i = 0, length = license.getPreferenceCount(); i < length; i++) {
+                license.getPreference(i).setOnPreferenceClickListener(preference -> {
                     getContext().startActivity(
                             new Intent(getContext(), LicensesActivity.class)
                                     .putExtra("title", preference.getTitle())
-                                    .putExtra("library_name", name)
+                                    .putExtra("library_name", preference.getKey().substring(12)) // "license_lib_".length
                     );
                     return true;
                 });

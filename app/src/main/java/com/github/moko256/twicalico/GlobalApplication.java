@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 The twicalico authors
+ * Copyright 2018 The twicalico authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,34 +20,34 @@ import android.app.Application;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.os.Build;
 import android.preference.PreferenceManager;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
+import android.support.annotation.NonNull;
+import android.support.v4.util.LruCache;
 import android.support.v7.app.AppCompatDelegate;
+import android.widget.Toast;
 
 import com.github.moko256.mastodon.MastodonTwitterImpl;
 import com.github.moko256.twicalico.cacheMap.StatusCacheMap;
 import com.github.moko256.twicalico.cacheMap.UserCacheMap;
 import com.github.moko256.twicalico.config.AppConfiguration;
 import com.github.moko256.twicalico.database.TokenSQLiteOpenHelper;
-import com.sys1yagi.mastodon4j.MastodonClient;
+import com.github.moko256.twicalico.entity.AccessToken;
+import com.github.moko256.twicalico.entity.Type;
+import com.github.moko256.twicalico.notification.ExceptionNotification;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.Date;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import okhttp3.OkHttpClient;
 import twitter4j.AlternativeHttpClientImpl;
+import twitter4j.HttpClient;
+import twitter4j.HttpClientConfiguration;
+import twitter4j.HttpClientFactory;
 import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
-import twitter4j.auth.AccessToken;
 import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
 
@@ -58,22 +58,25 @@ import twitter4j.conf.ConfigurationBuilder;
  */
 public class GlobalApplication extends Application {
 
-    static final String consumerKey=BuildConfig.CONSUMER_KEY;
-    static final String consumerSecret=BuildConfig.CONSUMER_SECRET;
+    public static int statusLimit;
+    public static int statusCacheListLimit = 1000;
 
-    static public Twitter twitter;
+    public static LruCache<Configuration, Twitter> twitterCache = new LruCache<>(4);
+    public static Twitter twitter;
+
+    @Type.ClientTypeInt
+    public static int clientType = -1;
+
     static long userId;
 
     public static AppConfiguration configuration;
 
-    public static UserCacheMap userCache;
-    public static StatusCacheMap statusCache;
-
-    public static int statusLimit;
+    public static UserCacheMap userCache = new UserCacheMap();
+    public static StatusCacheMap statusCache = new StatusCacheMap();
 
     @Override
     public void onCreate() {
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(
                     "crash_log",
                     getString(R.string.crash_log),
@@ -85,44 +88,16 @@ public class GlobalApplication extends Application {
             channel.setShowBadge(false);
             channel.setLockscreenVisibility(Notification.VISIBILITY_SECRET);
 
-            ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).createNotificationChannel(channel);
+            NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            if (manager != null) {
+                manager.createNotificationChannel(channel);
+            }
         }
 
         final Thread.UncaughtExceptionHandler defaultUnCaughtExceptionHandler=Thread.getDefaultUncaughtExceptionHandler();
         Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
             try {
-                e.printStackTrace();
-                StringWriter stringWriter=new StringWriter();
-                PrintWriter printWriter=new PrintWriter(stringWriter);
-                e.printStackTrace(printWriter);
-                printWriter.flush();
-                stringWriter.flush();
-                printWriter.close();
-                stringWriter.close();
-                NotificationCompat.InboxStyle inboxStyle=new NotificationCompat.InboxStyle(
-                        new NotificationCompat.Builder(getApplicationContext(), "crash_log")
-                                .setSmallIcon(android.R.drawable.stat_notify_error)
-                                .setContentTitle("Error : "+e.toString())
-                                .setContentText(e.toString())
-                                .setWhen(new Date().getTime())
-                                .setShowWhen(true)
-                                .setColorized(true)
-                                .setColor(Color.RED)
-                                .setContentIntent(PendingIntent.getActivity(
-                                        this,
-                                        401,
-                                        new Intent(Intent.ACTION_SEND)
-                                                .setType("text/plain")
-                                                .putExtra(Intent.EXTRA_TEXT,stringWriter.toString()),
-                                        PendingIntent.FLAG_UPDATE_CURRENT
-                                )))
-                        .setBigContentTitle("Error : "+e.toString())
-                        .setSummaryText(getResources().getString(R.string.error_occurred));
-                String[] lines=stringWriter.toString().split("\n");
-                for(String s : lines){
-                    inboxStyle.addLine(s);
-                }
-                NotificationManagerCompat.from(getApplicationContext()).notify(NotificationManagerCompat.IMPORTANCE_HIGH, inboxStyle.build());
+                new ExceptionNotification().create(e, getApplicationContext());
             }catch (Throwable fe){
                 fe.printStackTrace();
             } finally {
@@ -136,27 +111,57 @@ public class GlobalApplication extends Application {
 
         configuration.setPatternTweetMuteEnabled(defaultSharedPreferences.getBoolean("patternTweetMuteEnabled",false));
         if(configuration.isPatternTweetMuteEnabled()){
-            configuration.setTweetMutePattern(defaultSharedPreferences.getString("tweetMutePattern",""));
+            try {
+                configuration.setTweetMutePattern(Pattern.compile(defaultSharedPreferences.getString("tweetMutePattern","")));
+            } catch (PatternSyntaxException e){
+                e.printStackTrace();
+                configuration.setPatternTweetMuteEnabled(false);
+                Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
         }
 
         configuration.setPatternTweetMuteShowOnlyImageEnabled(defaultSharedPreferences.getBoolean("patternTweetMuteShowOnlyImageEnabled",false));
         if(configuration.isPatternTweetMuteShowOnlyImageEnabled()){
-            configuration.setTweetMuteShowOnlyImagePattern(Pattern.compile(defaultSharedPreferences.getString("tweetMuteShowOnlyImagePattern","")));
+            try {
+                configuration.setTweetMuteShowOnlyImagePattern(Pattern.compile(defaultSharedPreferences.getString("tweetMuteShowOnlyImagePattern","")));
+            } catch (PatternSyntaxException e){
+                e.printStackTrace();
+                configuration.setPatternTweetMuteShowOnlyImageEnabled(false);
+                Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
         }
 
         configuration.setPatternUserScreenNameMuteEnabled(defaultSharedPreferences.getBoolean("patternUserScreenNameMuteEnabled",false));
         if(configuration.isPatternUserScreenNameMuteEnabled()){
-            configuration.setUserScreenNameMutePattern(Pattern.compile(defaultSharedPreferences.getString("userScreenNameMutePattern","")));
+            try {
+                configuration.setUserScreenNameMutePattern(Pattern.compile(defaultSharedPreferences.getString("userScreenNameMutePattern","")));
+            } catch (PatternSyntaxException e){
+                e.printStackTrace();
+                configuration.setPatternUserScreenNameMuteEnabled(false);
+                Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
         }
 
         configuration.setPatternUserNameMuteEnabled(defaultSharedPreferences.getBoolean("patternUserNameMuteEnabled",false));
         if(configuration.isPatternUserNameMuteEnabled()){
-            configuration.setUserNameMutePattern(Pattern.compile(defaultSharedPreferences.getString("userNameMutePattern","")));
+            try {
+                configuration.setUserNameMutePattern(Pattern.compile(defaultSharedPreferences.getString("userNameMutePattern","")));
+            } catch (PatternSyntaxException e){
+                e.printStackTrace();
+                configuration.setPatternUserNameMuteEnabled(false);
+                Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
         }
 
         configuration.setPatternTweetSourceMuteEnabled(defaultSharedPreferences.getBoolean("patternTweetSourceMuteEnabled",false));
         if(configuration.isPatternTweetSourceMuteEnabled()){
-            configuration.setTweetSourceMutePattern(Pattern.compile(defaultSharedPreferences.getString("tweetSourceMutePattern","")));
+            try {
+                configuration.setTweetSourceMutePattern(Pattern.compile(defaultSharedPreferences.getString("tweetSourceMutePattern","")));
+            } catch (PatternSyntaxException e){
+                e.printStackTrace();
+                configuration.setPatternTweetSourceMuteEnabled(false);
+                Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
         }
 
         configuration.setTimelineImageLoad(Boolean.valueOf(defaultSharedPreferences.getString("isTimelineImageLoad","true")));
@@ -184,11 +189,12 @@ public class GlobalApplication extends Application {
 
         AppCompatDelegate.setDefaultNightMode(mode);
 
-        int nowAccountPoint = Integer.parseInt(defaultSharedPreferences.getString("AccountPoint","-1"),10);
-        if (nowAccountPoint==-1)return;
+        String accountKey = defaultSharedPreferences.getString("AccountKey","-1");
+
+        if (accountKey.equals("-1")) return;
 
         TokenSQLiteOpenHelper tokenOpenHelper =  new TokenSQLiteOpenHelper(this);
-        AccessToken accessToken=tokenOpenHelper.getAccessToken(nowAccountPoint);
+        AccessToken accessToken=tokenOpenHelper.getAccessToken(accountKey);
         tokenOpenHelper.close();
 
         if (accessToken==null)return;
@@ -197,86 +203,63 @@ public class GlobalApplication extends Application {
         super.onCreate();
     }
 
-    public void initTwitter(AccessToken accessToken){
+    public void initTwitter(@NonNull AccessToken accessToken){
         userId = accessToken.getUserId();
+        clientType = accessToken.getType();
         twitter = getTwitterInstance(accessToken);
-        userCache = new UserCacheMap(this, userId);
-        statusCache = new StatusCacheMap(this, userId);
-        statusLimit = twitter instanceof MastodonTwitterImpl? 40: 200;
+        userCache.prepare(this, accessToken);
+        statusCache.prepare(this, accessToken);
+        statusLimit = clientType == Type.TWITTER? 200: 40;
     }
 
-    public Twitter getTwitterInstance(AccessToken accessToken){
-        OkHttpClient client = null;
+    @NonNull
+    public Twitter getTwitterInstance(@NonNull AccessToken accessToken){
         Twitter t;
 
-        if (twitter != null){
-            client = GlobalApplication.getOkHttpClient();
-        }
+        Configuration conf;
 
-        if (accessToken.getTokenSecret().matches(".*\\..*")){
-            t = new MastodonTwitterImpl(accessToken);
-        } else {
-            Configuration conf=new ConfigurationBuilder()
+        if (accessToken.getType() == Type.TWITTER){
+            conf = new ConfigurationBuilder()
                     .setTweetModeExtended(true)
-                    .setOAuthConsumerKey(consumerKey)
-                    .setOAuthConsumerSecret(consumerSecret)
+                    .setOAuthConsumerKey(BuildConfig.CONSUMER_KEY)
+                    .setOAuthConsumerSecret(BuildConfig.CONSUMER_SECRET)
                     .setOAuthAccessToken(accessToken.getToken())
                     .setOAuthAccessTokenSecret(accessToken.getTokenSecret())
                     .build();
+            t = twitterCache.get(conf);
 
-            t = new TwitterFactory(conf).getInstance();
-        }
+            if (t == null) {
+                t = new TwitterFactory(conf).getInstance();
+                twitterCache.put(conf, t);
+            }
+        } else {
+            conf = new ConfigurationBuilder()
+                    .setOAuthAccessToken(accessToken.getToken())
+                    .setRestBaseURL(accessToken.getUrl())
+                    .build();
+            t = twitterCache.get(conf);
 
-        if (client != null) {
-            try {
-                client.connectionPool().evictAll();
-                client.cache().evictAll();
-                if (t instanceof MastodonTwitterImpl){
-                    MastodonClient mc = ((MastodonTwitterImpl) t).getClient();
-                    Field clientField = MastodonClient.class.getDeclaredField("client");
-                    clientField.setAccessible(true);
-                    clientField.set(mc, client);
-                } else {
-                    Field httpField = Class.forName("twitter4j.TwitterBaseImpl").getDeclaredField("http");
-                    httpField.setAccessible(true);
-                    Field clientField = AlternativeHttpClientImpl.class.getDeclaredField("okHttpClient");
-                    clientField.setAccessible(true);
-                    clientField.set(httpField.get(t), client);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
+            if (t == null) {
+                t = new MastodonTwitterImpl(
+                        conf,
+                        accessToken.getUserId(),
+                        getOkHttpClient(conf.getHttpClientConfiguration()).newBuilder()
+                );
+                twitterCache.put(conf, t);
             }
         }
+
         return t;
     }
 
+    @NonNull
     public static OkHttpClient getOkHttpClient(){
-        try {
-            OkHttpClient client;
+        return getOkHttpClient(twitter.getConfiguration().getHttpClientConfiguration());
+    }
 
-            if (twitter instanceof MastodonTwitterImpl){
-                MastodonClient mc = ((MastodonTwitterImpl) twitter).getClient();
-                Field clientField = MastodonClient.class.getDeclaredField("client");
-                clientField.setAccessible(true);
-                client = (OkHttpClient) clientField.get(mc);
-            } else {
-                Field httpField = Class.forName("twitter4j.TwitterBaseImpl").getDeclaredField("http");
-                httpField.setAccessible(true);
-                Field clientField = AlternativeHttpClientImpl.class.getDeclaredField("okHttpClient");
-                clientField.setAccessible(true);
-                client = (OkHttpClient) clientField.get(httpField.get(twitter));
-                if (client == null){
-                    Method init = AlternativeHttpClientImpl.class.getDeclaredMethod("prepareOkHttpClient");
-                    init.setAccessible(true);
-                    init.invoke(httpField.get(twitter));
-                    client = (OkHttpClient) clientField.get(httpField.get(twitter));
-                }
-            }
-
-            return client;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+    @NonNull
+    private static OkHttpClient getOkHttpClient(HttpClientConfiguration configuration){
+        HttpClient httpClient = HttpClientFactory.getInstance(configuration);
+        return ((AlternativeHttpClientImpl) httpClient).getOkHttpClient();
     }
 }

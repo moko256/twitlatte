@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 The twicalico authors
+ * Copyright 2018 The twicalico authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,8 +39,6 @@ import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import rx.Single;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 import twitter4j.GeoLocation;
 import twitter4j.Status;
 
@@ -106,6 +104,7 @@ public class PostTweetModelImpl implements PostTweetModel {
         return 500;
     }
 
+
     @Override
     public boolean isReply() {
         return inReplyToStatusId != -1;
@@ -114,12 +113,17 @@ public class PostTweetModelImpl implements PostTweetModel {
     @Override
     public boolean isValidTweet() {
         int tweetLength = getTweetLength();
-        return uriList.size() > 0 || tweetLength != 0 && tweetLength <= getMaxTweetLength();
+        return tweetLength != 0 && tweetLength <= getMaxTweetLength();
     }
 
     @Override
     public List<Uri> getUriList() {
         return uriList;
+    }
+
+    @Override
+    public int getUriListSizeLimit() {
+        return 4;
     }
 
     @Override
@@ -134,13 +138,12 @@ public class PostTweetModelImpl implements PostTweetModel {
 
     @Override
     public Single<Status> postTweet() {
-        Single<Status> single = Single.create(subscriber -> {
+        return Single.create(subscriber -> {
             try {
                 List<Long> ids = null;
                 if (uriList.size() > 0) {
-                    ids = new ArrayList<>();
-                    for (int i = 0; i < uriList.size(); i++) {
-                        Uri uri = uriList.get(i);
+                    ids = new ArrayList<>(uriList.size());
+                    for (Uri uri: uriList) {
                         InputStream image = contentResolver.openInputStream(uri);
                         ByteArrayOutputStream bout = new ByteArrayOutputStream();
                         byte [] buffer = new byte[1024];
@@ -174,9 +177,6 @@ public class PostTweetModelImpl implements PostTweetModel {
                 subscriber.onError(e);
             }
         });
-        return single
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread());
     }
 
 }

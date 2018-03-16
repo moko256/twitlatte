@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 The twicalico authors
+ * Copyright 2018 The twicalico authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,7 +47,7 @@ import twitter4j.UserMentionEntity;
 
 public class MTStatus implements twitter4j.Status{
 
-    Status status;
+    public Status status;
 
     public MTStatus(Status status){
         this.status = status;

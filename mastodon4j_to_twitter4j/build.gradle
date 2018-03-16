@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 The twicalico authors
+ * Copyright 2018 The twicalico authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,5 +26,6 @@ dependencies {
     //Compiling forked twitter4j(https://github.com/moko256/twitter4j)
     //api 'org.twitter4j:twitter4j-core:4.0.6'
     //api 'org.twitter4j:twitter4j-http2-support:4.0.6'
-    compile files('libs/twitter4j-http2-support.jar')
+    compile files('libs/twitter4j-core-4.0.6.jar')
+    compile files('libs/twitter4j-http2-support-4.0.6.jar')
 }

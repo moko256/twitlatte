@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 The twicalico authors
+ * Copyright 2018 The twicalico authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package com.github.moko256.twicalico;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
@@ -26,10 +27,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.github.moko256.twicalico.config.AppConfiguration;
-import com.github.moko256.twicalico.text.TwitterStringUtils;
 import com.github.moko256.twicalico.widget.TweetImageTableView;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import twitter4j.Status;
 
@@ -40,11 +40,12 @@ import twitter4j.Status;
  */
 class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private ArrayList<Long> data;
+    private List<Long> data;
     private Context context;
     private OnLoadMoreClickListener onLoadMoreClick;
+    private boolean shouldShowMediaOnly = false;
 
-    StatusesAdapter(Context context, ArrayList<Long> data) {
+    StatusesAdapter(Context context, List<Long> data) {
         this.context = context;
         this.data = data;
 
@@ -59,6 +60,14 @@ class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         return onLoadMoreClick;
     }
 
+    public boolean shouldShowMediaOnly() {
+        return shouldShowMediaOnly;
+    }
+
+    public void setShouldShowMediaOnly(boolean shouldShowMediaOnly) {
+        this.shouldShowMediaOnly = shouldShowMediaOnly;
+    }
+
     @Override
     public long getItemId(int position) {
         return data.get(position);
@@ -66,42 +75,49 @@ class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @Override
     public int getItemViewType(int position) {
-        if (data.get(position) == -1L){
+        if (data.get(position) == -1L ){
             return 1;
         }
         Status status=GlobalApplication.statusCache.get(data.get(position));
+        if (status == null){
+            return 1;
+        }
         Status item = status.isRetweet()?status.getRetweetedStatus():status;
+        if (item == null){
+            return 1;
+        }
         AppConfiguration conf=GlobalApplication.configuration;
-        if((conf.isPatternTweetMuteEnabled() && item.getText().matches(conf.getTweetMutePattern())) ||
-                (conf.isPatternUserScreenNameMuteEnabled() && conf.getUserScreenNameMutePattern().matcher(item.getUser().getScreenName()).matches()) ||
-                (conf.isPatternUserNameMuteEnabled() && conf.getUserNameMutePattern().matcher(item.getUser().getName()).matches()) ||
-                (conf.isPatternTweetSourceMuteEnabled() && conf.getTweetSourceMutePattern().matcher(TwitterStringUtils.removeHtmlTags(item.getSource())).matches())
+        if((conf.isPatternTweetMuteEnabled() && conf.getTweetMutePattern().matcher(item.getText()).find()) ||
+                (conf.isPatternUserScreenNameMuteEnabled() && conf.getUserScreenNameMutePattern().matcher(item.getUser().getScreenName()).find()) ||
+                (conf.isPatternUserNameMuteEnabled() && conf.getUserNameMutePattern().matcher(item.getUser().getName()).find()) ||
+                (conf.isPatternTweetSourceMuteEnabled() && conf.getTweetSourceMutePattern().matcher(item.getSource()).find())
                 ){
             return 2;
         }
-        if ((conf.isPatternTweetMuteShowOnlyImageEnabled()
+        if (shouldShowMediaOnly || (conf.isPatternTweetMuteShowOnlyImageEnabled()
                 && item.getMediaEntities().length > 0
-                && conf.getTweetMuteShowOnlyImagePattern().matcher(item.getText()).matches())){
+                && conf.getTweetMuteShowOnlyImagePattern().matcher(item.getText()).find())) {
             return 3;
         }
         return super.getItemViewType(position);
     }
 
+    @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         if (i == 1){
-            return new MoreLoadViewHolder();
+            return new MoreLoadViewHolder(viewGroup);
         } else if (i == 2) {
-            return new MutedTweetViewHolder();
+            return new MutedTweetViewHolder(viewGroup);
         } else if (i == 3){
-            return new ImagesOnlyTweetViewHolder();
+            return new ImagesOnlyTweetViewHolder(viewGroup);
         } else {
             return new StatusViewHolder();
         }
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, final int i) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, final int i) {
         if (viewHolder instanceof StatusViewHolder) {
             ((StatusViewHolder) viewHolder).setStatus(GlobalApplication.statusCache.get(data.get(i)));
         } else if (viewHolder instanceof ImagesOnlyTweetViewHolder){
@@ -122,8 +138,7 @@ class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     @Override
-    public void onViewRecycled(RecyclerView.ViewHolder holder) {
-        super.onViewRecycled(holder);
+    public void onViewRecycled(@NonNull RecyclerView.ViewHolder holder) {
         if (holder instanceof StatusViewHolder){
             ((StatusViewHolder) holder).setStatus(null);
         }
@@ -157,14 +172,14 @@ class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         private boolean isLoading = false;
 
-        MoreLoadViewHolder() {
-            super(LayoutInflater.from(context).inflate(R.layout.layout_list_load_more_text, null));
+        MoreLoadViewHolder(ViewGroup viewGroup) {
+            super(LayoutInflater.from(context).inflate(R.layout.layout_list_load_more_text, viewGroup, false));
             text = itemView.findViewById(R.id.layout_list_load_more_text_view);
             progressBar = itemView.findViewById(R.id.layout_list_load_more_text_progress);
-            this.isLoading = isLoading;
         }
 
         void setIsLoading(boolean isLoading){
+            this.isLoading = isLoading;
             itemView.setClickable(!isLoading);
             text.setVisibility(isLoading? View.INVISIBLE: View.VISIBLE);
             progressBar.setVisibility(isLoading? View.VISIBLE: View.INVISIBLE);
@@ -176,16 +191,16 @@ class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     private class MutedTweetViewHolder extends RecyclerView.ViewHolder {
-        MutedTweetViewHolder() {
-            super(LayoutInflater.from(context).inflate(R.layout.layout_list_muted_text, null));
+        MutedTweetViewHolder(ViewGroup viewGroup) {
+            super(LayoutInflater.from(context).inflate(R.layout.layout_list_muted_text, viewGroup, false));
         }
     }
 
     private class ImagesOnlyTweetViewHolder extends RecyclerView.ViewHolder {
         TweetImageTableView tweetImageTableView;
 
-        ImagesOnlyTweetViewHolder() {
-            super(LayoutInflater.from(context).inflate(R.layout.layout_list_tweet_only_image, null));
+        ImagesOnlyTweetViewHolder(ViewGroup viewGroup) {
+            super(LayoutInflater.from(context).inflate(R.layout.layout_list_tweet_only_image, viewGroup, false));
             tweetImageTableView = itemView.findViewById(R.id.list_tweet_image_container);
         }
 

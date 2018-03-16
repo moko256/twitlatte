@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 The twicalico authors
+ * Copyright 2018 The twicalico authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,9 +20,10 @@ import android.graphics.Rect;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +34,7 @@ import com.github.moko256.twicalico.text.TwitterStringUtils;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 
 import rx.Single;
@@ -52,7 +54,7 @@ import twitter4j.TwitterException;
 
 public class TrendsFragment extends BaseListFragment {
     TrendsAdapter adapter;
-    ArrayList<Trend> list;
+    List<Trend> list;
 
     CompositeSubscription subscription;
 
@@ -64,17 +66,17 @@ public class TrendsFragment extends BaseListFragment {
         subscription = new CompositeSubscription();
         helper = new CachedTrendsSQLiteOpenHelper(getContext(), GlobalApplication.userId);
         if (savedInstanceState == null) {
-            ArrayList<Trend> trends = helper.getTrends();
+            List<Trend> trends = helper.getTrends();
             if (trends.size() > 0){
                 list = trends;
-                setProgressCircleLoading(false);
+                setRefreshing(false);
             }
         }
         super.onCreate(savedInstanceState);
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view=super.onCreateView(inflater, container, savedInstanceState);
 
         getRecyclerView().addItemDecoration(new RecyclerView.ItemDecoration() {
@@ -82,7 +84,7 @@ public class TrendsFragment extends BaseListFragment {
             public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
                 super.getItemOffsets(outRect, view, parent, state);
                 if (parent.getChildAdapterPosition(view)==0){
-                    outRect.top=Math.round(getContext().getResources().getDisplayMetrics().density*8f);
+                    outRect.top=Math.round(getResources().getDisplayMetrics().density*8f);
                 }
             }
         });
@@ -100,21 +102,17 @@ public class TrendsFragment extends BaseListFragment {
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         if (savedInstanceState != null){
-            ArrayList l=(ArrayList) savedInstanceState.getSerializable("list");
+            Trend[] l = (Trend[]) savedInstanceState.getSerializable("list");
             if(l!=null){
-                Trend trends[] = new Trend[l.size()];
-                for (int i = 0; i < trends.length; i++) {
-                    trends[i] = (Trend)l.get(i);
-                }
-                list.addAll(Arrays.asList(trends));
+                list.addAll(Arrays.asList(l));
             }
         }
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState){
+    public void onSaveInstanceState(@NonNull Bundle outState){
         super.onSaveInstanceState(outState);
-        outState.putSerializable("list", list);
+        outState.putSerializable("list", list.toArray(new Trend[list.size()]));
     }
 
     @Override
@@ -135,24 +133,28 @@ public class TrendsFragment extends BaseListFragment {
 
     @Override
     protected void onInitializeList() {
+        setRefreshing(true);
         subscription.add(
                 getGeoLocationSingle()
-                        .flatMap(geolocation-> getResponseSingle(geolocation).subscribeOn(Schedulers.newThread()))
-                        .subscribeOn(Schedulers.newThread())
+                        .flatMap(this::getResponseSingle)
+                        .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
                                 result-> {
                                     list.clear();
                                     list.addAll(Arrays.asList(result.getTrends()));
                                     adapter.notifyDataSetChanged();
-                                    getSwipeRefreshLayout().setRefreshing(false);
-                                    setProgressCircleLoading(false);
+                                    setRefreshing(false);
                                 },
                                 e -> {
                                     e.printStackTrace();
                                     Snackbar.make(getSnackBarParentContainer(), TwitterStringUtils.convertErrorToText(e), Snackbar.LENGTH_INDEFINITE)
-                                            .setAction(R.string.retry, v -> onInitializeList())
+                                            .setAction(R.string.retry, v -> {
+                                                setRefreshing(true);
+                                                onInitializeList();
+                                            })
                                             .show();
+                                    setRefreshing(false);
                                 }
                         )
         );
@@ -173,7 +175,7 @@ public class TrendsFragment extends BaseListFragment {
 
     @Override
     protected RecyclerView.LayoutManager initializeRecyclerViewLayoutManager() {
-        return new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
+        return new LinearLayoutManager(getContext());
     }
 
     public Single<Trends> getResponseSingle(GeoLocation geolocation) {
@@ -199,8 +201,10 @@ public class TrendsFragment extends BaseListFragment {
                         Geocoder geocoder = new Geocoder(getContext());
                         Locale locale = Locale.getDefault();
                         Address address = geocoder.getFromLocationName(locale.getDisplayCountry(), 1).get(0);
-                        if (address.getCountryCode().equals(locale.getCountry())){
+                        if (address != null){
                             subscriber.onSuccess(new GeoLocation(address.getLatitude(), address.getLongitude()));
+                        } else {
+                            subscriber.onError(new Exception("Cannot use trends"));
                         }
                     } catch(IOException e){
                         subscriber.onError(e);

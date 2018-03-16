@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 The twicalico authors
+ * Copyright 2018 The twicalico authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,10 @@
 
 package com.github.moko256.twicalico.text;
 
-import android.app.SearchManager;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
-import android.support.customtabs.CustomTabsIntent;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.util.ArrayMap;
 import android.text.Html;
 import android.text.SpannableStringBuilder;
@@ -36,16 +31,19 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.bumptech.glide.load.resource.gif.GifDrawable;
-import com.github.moko256.mastodon.MastodonTwitterImpl;
 import com.github.moko256.twicalico.GlideApp;
 import com.github.moko256.twicalico.GlideRequests;
 import com.github.moko256.twicalico.GlobalApplication;
-import com.github.moko256.twicalico.R;
 import com.github.moko256.twicalico.SearchResultActivity;
 import com.github.moko256.twicalico.ShowUserActivity;
+import com.github.moko256.twicalico.entity.Type;
+import com.github.moko256.twicalico.intent.AppCustomTabsKt;
+import com.sys1yagi.mastodon4j.api.exception.Mastodon4jRequestException;
 
+import java.io.IOException;
 import java.text.Normalizer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -70,12 +68,12 @@ import twitter4j.UserMentionEntity;
 public class TwitterStringUtils {
 
     @NonNull
-    public static String plusAtMark(String string){
-        return "@" + string;
-    }
-
-    public static String removeHtmlTags(String html){
-        return Normalizer.normalize(html, Normalizer.Form.NFC).replaceAll("<.+?>", "");
+    public static String plusAtMark(String... strings){
+        StringBuilder stringBuilder = new StringBuilder();
+        for (String string: strings) {
+            stringBuilder.append("@").append(string);
+        }
+        return stringBuilder.toString();
     }
 
     public static String convertToSIUnitString(int num){
@@ -117,6 +115,14 @@ public class TwitterStringUtils {
     public static String convertErrorToText(@NonNull Throwable e){
         if (e instanceof TwitterException && !TextUtils.isEmpty(((TwitterException) e).getErrorMessage())){
             return ((TwitterException) e).getErrorMessage();
+        } else if (e instanceof Mastodon4jRequestException
+                && ((Mastodon4jRequestException) e).isErrorResponse()) {
+            try {
+                return ((Mastodon4jRequestException) e).getResponse().body().string();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+                return e.getMessage();
+            }
         } else {
             return e.getMessage();
         }
@@ -164,7 +170,7 @@ public class TwitterStringUtils {
 
         String tweet = item.getText();
 
-        if (GlobalApplication.twitter instanceof MastodonTwitterImpl){
+        if (GlobalApplication.clientType == Type.MASTODON){
             Spanned previewText = convertUrlSpanToCustomTabs(Html.fromHtml(tweet), context);
             textView.setText(previewText);
 
@@ -249,9 +255,7 @@ public class TwitterStringUtils {
             spannableStringBuilder.setSpan(new ClickableSpan() {
                 @Override
                 public void onClick(View view) {
-                    context.startActivity(new Intent(context,SearchResultActivity.class)
-                            .setAction(Intent.ACTION_SEARCH)
-                            .putExtra(SearchManager.QUERY,"#"+hashtagEntity.getText())
+                    context.startActivity(SearchResultActivity.getIntent(context, "#"+hashtagEntity.getText())
                     );
                 }
             }, tweet.offsetByCodePoints(0,hashtagEntity.getStart()), tweet.offsetByCodePoints(0,hashtagEntity.getEnd()), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
@@ -268,7 +272,9 @@ public class TwitterStringUtils {
             }, tweet.offsetByCodePoints(0,userMentionEntity.getStart()), tweet.offsetByCodePoints(0,userMentionEntity.getEnd()), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
         }
 
-        URLEntity[] urlEntities = item.getURLEntities();
+        List<URLEntity> urlEntities = new ArrayList<>(item.getURLEntities().length + item.getMediaEntities().length);
+        urlEntities.addAll(Arrays.asList(item.getURLEntities()));
+        urlEntities.addAll(Arrays.asList(item.getMediaEntities()));
 
         int tweetLength = tweet.codePointCount(0, tweet.length());
         int sp = 0;
@@ -285,25 +291,11 @@ public class TwitterStringUtils {
                 spannableStringBuilder.setSpan(new ClickableSpan() {
                     @Override
                     public void onClick(View view) {
-                        new CustomTabsIntent.Builder()
-                                .setToolbarColor(ContextCompat.getColor(context, R.color.colorPrimary))
-                                .setSecondaryToolbarColor(ContextCompat.getColor(context, R.color.colorPrimaryDark))
-                                .build()
-                                .launchUrl(context, Uri.parse(entity.getExpandedURL()));
+                        AppCustomTabsKt.launchChromeCustomTabs(context, entity.getExpandedURL());
                     }
                 }, tweet.offsetByCodePoints(0, entity.getStart()) + sp, tweet.offsetByCodePoints(0, entity.getEnd()) + sp + dusp, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
 
                 sp += dusp;
-            }
-        }
-
-        MediaEntity[] mediaEntities = item.getMediaEntities();
-        if (mediaEntities.length > 0){
-            MediaEntity mediaEntity = mediaEntities[0];
-            String text = spannableStringBuilder.toString();
-            int result = text.indexOf(mediaEntity.getURL(), text.offsetByCodePoints(0, mediaEntity.getStart()));
-            if (result != -1){
-                spannableStringBuilder.replace(result, result + mediaEntity.getURL().length(), "");
             }
         }
 
@@ -315,7 +307,7 @@ public class TwitterStringUtils {
 
         String description = user.getDescription();
 
-        if (GlobalApplication.twitter instanceof MastodonTwitterImpl){
+        if (GlobalApplication.clientType == Type.MASTODON){
             return convertUrlSpanToCustomTabs(Html.fromHtml(description), context);
         }
 
@@ -339,11 +331,7 @@ public class TwitterStringUtils {
                 spannableStringBuilder.setSpan(new ClickableSpan() {
                     @Override
                     public void onClick(View view) {
-                        new CustomTabsIntent.Builder()
-                                .setToolbarColor(ContextCompat.getColor(context, R.color.colorPrimary))
-                                .setSecondaryToolbarColor(ContextCompat.getColor(context, R.color.colorPrimaryDark))
-                                .build()
-                                .launchUrl(context, Uri.parse(entity.getExpandedURL()));
+                        AppCustomTabsKt.launchChromeCustomTabs(context, entity.getExpandedURL());
                     }
                 }, description.offsetByCodePoints(0, entity.getStart()) + sp, description.offsetByCodePoints(0, entity.getEnd()) + sp + dusp, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
 
@@ -359,16 +347,44 @@ public class TwitterStringUtils {
         URLSpan[] spans = spanned.getSpans(0, spanned.length(), URLSpan.class);
         for (URLSpan span : spans) {
             builder.removeSpan(span);
-            builder.setSpan(new ClickableSpan() {
-                @Override
-                public void onClick(View view) {
-                    new CustomTabsIntent.Builder()
-                            .setToolbarColor(ContextCompat.getColor(context, R.color.colorPrimary))
-                            .setSecondaryToolbarColor(ContextCompat.getColor(context, R.color.colorPrimaryDark))
-                            .build()
-                            .launchUrl(context, Uri.parse(span.getURL()));
-                }
-            }, spanned.getSpanStart(span), spanned.getSpanEnd(span), spanned.getSpanFlags(span));
+
+            int spanStart = spanned.getSpanStart(span);
+            int spanEnd = spanned.getSpanEnd(span);
+
+            ClickableSpan span1;
+            String firstChar = String.valueOf(spanned.subSequence(spanStart, spanStart + 1));
+            switch (firstChar) {
+                case "#":
+                    span1 = new ClickableSpan() {
+                        @Override
+                        public void onClick(View widget) {
+                            context.startActivity(
+                                    SearchResultActivity.getIntent(context, String.valueOf(spanned.subSequence(spanStart + 1, spanEnd)))
+                            );
+                        }
+                    };
+                    break;
+                case "@":
+                    span1 = new ClickableSpan() {
+                        @Override
+                        public void onClick(View widget) {
+                            context.startActivity(
+                                    ShowUserActivity.getIntent(context, String.valueOf(spanned.subSequence(spanStart + 1, spanEnd)))
+                            );
+                        }
+                    };
+                    break;
+                default:
+                    span1 = new ClickableSpan() {
+                        @Override
+                        public void onClick(View view) {
+                            AppCustomTabsKt.launchChromeCustomTabs(context, span.getURL());
+                        }
+                    };
+                    break;
+            }
+
+            builder.setSpan(span1, spanStart, spanEnd, spanned.getSpanFlags(span));
         }
         return builder;
     }

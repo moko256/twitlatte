@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 The twicalico authors
+ * Copyright 2018 The twicalico authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,30 +14,29 @@
  * limitations under the License.
  */
 
-package com.github.moko256.mastodon;
+package com.github.moko256.twicalico.array;
 
-import com.sys1yagi.mastodon4j.api.Range;
-
-import twitter4j.Paging;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
- * Created by moko256 on 2017/10/04.
+ * Created by moko256 on 2018/01/04.
  *
  * @author moko256
  */
 
-class MTRangePagingConverter{
-    static Range convert(Paging paging){
-        return new Range(convertLong(paging.getMaxId()), convertLong(paging.getSinceId()), (paging.getCount() == -1)? 0: paging.getCount());
+public class ArrayUtils {
+    @SafeVarargs
+    public static <T> List<T> convertToList(T... array){
+        return Arrays.asList(array);
     }
 
-    private static Long convertLong(long l){
-        if (l == -1L){
-            return null;
+    public static List<Long> convertToLongList(long... array){
+        List<Long> list = new ArrayList<>(array.length);
+        for (long l : array) {
+            list.add(l);
         }
-        else {
-            return l;
-        }
+        return list;
     }
-
 }

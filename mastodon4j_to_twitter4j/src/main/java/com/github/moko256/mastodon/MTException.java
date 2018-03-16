@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 The twicalico authors
+ * Copyright 2018 The twicalico authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,8 +26,26 @@ import twitter4j.TwitterException;
  * @author moko256
  */
 
-class MTException extends TwitterException {
-    MTException(Mastodon4jRequestException e){
-        super(e.getMessage(), e, e.getResponse().code());
+public class MTException extends TwitterException {
+    private Mastodon4jRequestException exception;
+
+    public MTException(Mastodon4jRequestException e){
+        super(e);
+        exception = e;
+    }
+
+    @Override
+    public String getMessage() {
+        String message;
+        if (exception.isErrorResponse()) {
+            try {
+                message = exception.getResponse().body().string();
+            } catch (Exception e1){
+                message = "Unknown";
+            }
+        } else {
+            message = exception.getMessage();
+        }
+        return message;
     }
 }

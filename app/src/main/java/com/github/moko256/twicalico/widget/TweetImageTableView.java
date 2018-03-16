@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 The twicalico authors
+ * Copyright 2018 The twicalico authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import com.github.moko256.twicalico.GlideApp;
 import com.github.moko256.twicalico.GlobalApplication;
 import com.github.moko256.twicalico.R;
 import com.github.moko256.twicalico.ShowImageActivity;
+import com.github.moko256.twicalico.entity.Type;
 
 import jp.wasabeef.glide.transformations.BlurTransformation;
 import twitter4j.MediaEntity;
@@ -104,9 +105,7 @@ public class TweetImageTableView extends GridLayout {
         if (heightMode==MeasureSpec.EXACTLY){
             widthMode=MeasureSpec.EXACTLY;
             widthSize=heightSize/9*16;
-        }
-
-        if (widthMode==MeasureSpec.EXACTLY){
+        } else if (widthMode==MeasureSpec.EXACTLY){
             heightMode=MeasureSpec.EXACTLY;
             heightSize=widthSize/16*9;
         }
@@ -161,7 +160,7 @@ public class TweetImageTableView extends GridLayout {
                     isOpen = true;
                     for (int iii = 0; iii < mediaEntities.length; iii++){
                         GlideApp.with(getContext())
-                                .load(GlobalApplication.twitter instanceof MastodonTwitterImpl?
+                                .load(GlobalApplication.clientType == Type.MASTODON?
                                         mediaEntities[iii].getMediaURLHttps().replace("original", "small"):
                                         mediaEntities[iii].getMediaURLHttps() + ":small"
                                 )
@@ -187,7 +186,7 @@ public class TweetImageTableView extends GridLayout {
                 } else {
                     isOpen = true;
                     GlideApp.with(getContext())
-                            .load(GlobalApplication.twitter instanceof MastodonTwitterImpl?
+                            .load(GlobalApplication.clientType == Type.MASTODON?
                                     mediaEntities[ii].getMediaURLHttps().replace("original", "small"):
                                     mediaEntities[ii].getMediaURLHttps() + ":small"
                             )

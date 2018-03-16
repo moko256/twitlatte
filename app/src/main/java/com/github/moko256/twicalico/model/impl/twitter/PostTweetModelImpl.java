@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 The twicalico authors
+ * Copyright 2018 The twicalico authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ import android.content.ContentResolver;
 import android.net.Uri;
 
 import com.github.moko256.twicalico.model.base.PostTweetModel;
-import com.twitter.twittertext.TwitterTextConfiguration;
 import com.twitter.twittertext.TwitterTextParseResults;
 import com.twitter.twittertext.TwitterTextParser;
 
@@ -30,8 +29,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import rx.Single;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 import twitter4j.GeoLocation;
 import twitter4j.Status;
 import twitter4j.StatusUpdate;
@@ -113,7 +110,11 @@ public class PostTweetModelImpl implements PostTweetModel {
     @Override
     public boolean isValidTweet() {
         updateCounter();
-        return uriList.size() > 0 || resultCache.isValid;
+        if (tweetText.length() == 0){
+            return uriList.size() > 0;
+        } else {
+            return resultCache.isValid;
+        }
     }
 
     private void updateCounter(){
@@ -128,6 +129,11 @@ public class PostTweetModelImpl implements PostTweetModel {
     }
 
     @Override
+    public int getUriListSizeLimit() {
+        return 4;
+    }
+
+    @Override
     public GeoLocation getLocation() {
         return location;
     }
@@ -139,7 +145,7 @@ public class PostTweetModelImpl implements PostTweetModel {
 
     @Override
     public Single<Status> postTweet() {
-        Single<Status> single = Single.create(subscriber -> {
+        return Single.create(subscriber -> {
             try {
                 StatusUpdate statusUpdate = new StatusUpdate(tweetText);
                 if (uriList.size() > 0) {
@@ -163,9 +169,6 @@ public class PostTweetModelImpl implements PostTweetModel {
                 subscriber.onError(e);
             }
         });
-        return single
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread());
     }
 
 }

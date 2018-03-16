@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 The twicalico authors
+ * Copyright 2018 The twicalico authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package com.github.moko256.twicalico;
 
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -28,6 +29,7 @@ import com.github.moko256.twicalico.text.TwitterStringUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import rx.Observable;
 import rx.Single;
@@ -46,7 +48,7 @@ import twitter4j.User;
 public abstract class BaseUsersFragment extends BaseListFragment {
 
     UsersAdapter adapter;
-    ArrayList<Long> list;
+    List<Long> list;
     long next_cursor;
 
     CompositeSubscription subscription;
@@ -59,7 +61,7 @@ public abstract class BaseUsersFragment extends BaseListFragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view=super.onCreateView(inflater, container, savedInstanceState);
 
         getRecyclerView().addItemDecoration(new RecyclerView.ItemDecoration() {
@@ -67,10 +69,14 @@ public abstract class BaseUsersFragment extends BaseListFragment {
             public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
                 super.getItemOffsets(outRect, view, parent, state);
                 if (parent.getChildAdapterPosition(view)==0){
-                    outRect.top=Math.round(getContext().getResources().getDisplayMetrics().density*8f);
+                    outRect.top=Math.round(getResources().getDisplayMetrics().density*8f);
                 }
             }
         });
+
+        if (getActivity() instanceof BaseTweetListFragment.GetRecyclerViewPool) {
+            getRecyclerView().setRecycledViewPool(((GetRecyclerViewPool) getActivity()).getUserListViewPool());
+        }
 
         adapter=new UsersAdapter(getContext(), list);
         setAdapter(adapter);
@@ -85,22 +91,18 @@ public abstract class BaseUsersFragment extends BaseListFragment {
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         if (savedInstanceState != null) {
-            ArrayList l=(ArrayList) savedInstanceState.getSerializable("list");
-            if(l!=null){
-                Long longs[] = new Long[l.size()];
-                for (int i = 0; i < longs.length; i++) {
-                    longs[i] = (Long)l.get(i);
-                }
-                list.addAll(Arrays.asList(longs));
+            Long[] l = (Long[]) savedInstanceState.getSerializable("list");
+            if(l != null){
+                list.addAll(Arrays.asList(l));
             }
             next_cursor=savedInstanceState.getLong("next_cursor",-1);
         }
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState){
+    public void onSaveInstanceState(@NonNull Bundle outState){
         super.onSaveInstanceState(outState);
-        outState.putSerializable("list", list);
+        outState.putSerializable("list", list.toArray(new Long[list.size()]));
         outState.putLong("next_cursor", next_cursor);
     }
 
@@ -120,9 +122,10 @@ public abstract class BaseUsersFragment extends BaseListFragment {
 
     @Override
     protected void onInitializeList() {
+        setRefreshing(true);
         subscription.add(
                 getResponseSingle(-1)
-                        .subscribeOn(Schedulers.newThread())
+                        .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
                                 result-> {
@@ -133,14 +136,18 @@ public abstract class BaseUsersFragment extends BaseListFragment {
                                                     .toList().toSingle().toBlocking().value()
                                     );
                                     adapter.notifyDataSetChanged();
-                                    getSwipeRefreshLayout().setRefreshing(false);
-                                    setProgressCircleLoading(false);
+                                    setRefreshing(false);
                                 },
                                 e -> {
                                     e.printStackTrace();
                                     Snackbar.make(getSnackBarParentContainer(), TwitterStringUtils.convertErrorToText(e), Snackbar.LENGTH_INDEFINITE)
-                                            .setAction(R.string.retry, v -> onInitializeList())
+                                            .setAction(R.string.retry, v -> {
+
+                                                setRefreshing(true);
+                                                onInitializeList();
+                                            })
                                             .show();
+                                    setRefreshing(false);
                                 }
                         )
         );
@@ -148,14 +155,14 @@ public abstract class BaseUsersFragment extends BaseListFragment {
 
     @Override
     protected void onUpdateList() {
-        getSwipeRefreshLayout().setRefreshing(false);
+        setRefreshing(false);
     }
 
     @Override
     protected void onLoadMoreList() {
         subscription.add(
                 getResponseSingle(next_cursor)
-                        .subscribeOn(Schedulers.newThread())
+                        .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
                                 result -> {
@@ -190,10 +197,10 @@ public abstract class BaseUsersFragment extends BaseListFragment {
         return Single.create(
                 subscriber->{
                     try {
-                        PagableResponseList<User> pagableResponseList=getResponseList(cursor);
-                        next_cursor=pagableResponseList.getNextCursor();
-                        GlobalApplication.userCache.addAll(pagableResponseList);
-                        subscriber.onSuccess(pagableResponseList);
+                        PagableResponseList<User> pageableResponseList=getResponseList(cursor);
+                        next_cursor=pageableResponseList.getNextCursor();
+                        GlobalApplication.userCache.addAll(pageableResponseList);
+                        subscriber.onSuccess(pageableResponseList);
                     } catch (TwitterException e) {
                         subscriber.onError(e);
                     }
@@ -202,5 +209,9 @@ public abstract class BaseUsersFragment extends BaseListFragment {
     }
 
     public abstract PagableResponseList<User> getResponseList(long cursor) throws TwitterException;
+
+    interface GetRecyclerViewPool {
+        RecyclerView.RecycledViewPool getUserListViewPool();
+    }
 
 }

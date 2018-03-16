@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 The twicalico authors
+ * Copyright 2018 The twicalico authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 
 package com.github.moko256.twicalico.model.impl.mastodon
 
+import com.github.moko256.twicalico.entity.AccessToken
+import com.github.moko256.twicalico.entity.Type
 import com.github.moko256.twicalico.model.base.OAuthModel
 import com.google.gson.Gson
 import com.sys1yagi.mastodon4j.MastodonClient
@@ -26,7 +28,6 @@ import com.sys1yagi.mastodon4j.api.method.Accounts
 import com.sys1yagi.mastodon4j.api.method.Apps
 import okhttp3.OkHttpClient
 import rx.Single
-import twitter4j.auth.AccessToken
 
 /**
  * Created by moko256 on 2017/10/29.
@@ -34,18 +35,21 @@ import twitter4j.auth.AccessToken
  * @author moko256
  */
 class OAuthModelImpl : OAuthModel {
-    var clientBuilder: MastodonClient.Builder? = null
-    var apps: Apps? = null
-    var appRegistration: AppRegistration? = null
+    private var clientBuilder: MastodonClient.Builder? = null
+    private var apps: Apps? = null
+    private var appRegistration: AppRegistration? = null
+
+    private lateinit var redirectUri: String
 
     override fun getCallbackAuthUrl(url: String, consumerKey: String, consumerSecret: String, callbackUrl: String): Single<String> {
         clientBuilder = MastodonClient.Builder(url, OkHttpClient.Builder(), Gson())
         apps = Apps(clientBuilder?.build()!!)
         return Single.create {
             try {
+                redirectUri = "$callbackUrl://OAuthActivity"
                 appRegistration = apps?.createApp(
                         "twicalico",
-                        callbackUrl + "://OAuthActivity",
+                        redirectUri,
                         Scope(Scope.Name.ALL),
                         "https://github.com/moko256/twicalico"
                 )?.execute()
@@ -54,7 +58,7 @@ class OAuthModelImpl : OAuthModel {
                         apps?.getOAuthUrl(
                                 appRegistration?.clientId!!,
                                 Scope(Scope.Name.ALL),
-                                appRegistration?.redirectUri!!
+                                redirectUri
                         ))
             } catch (e: Mastodon4jRequestException) {
                 it.onError(e)
@@ -67,9 +71,10 @@ class OAuthModelImpl : OAuthModel {
         apps = Apps(clientBuilder?.build()!!)
         return Single.create {
             try {
+                redirectUri = "urn:ietf:wg:oauth:2.0:oob"
                 appRegistration = apps?.createApp(
                         "twicalico",
-                        "urn:ietf:wg:oauth:2.0:oob",
+                        redirectUri,
                         Scope(Scope.Name.ALL),
                         "https://github.com/moko256/twicalico"
                 )?.execute()
@@ -78,7 +83,7 @@ class OAuthModelImpl : OAuthModel {
                         apps?.getOAuthUrl(
                                 appRegistration?.clientId!!,
                                 Scope(Scope.Name.ALL),
-                                appRegistration?.redirectUri!!
+                                redirectUri
                 ))
             } catch (e: Mastodon4jRequestException) {
                 it.onError(e)
@@ -96,17 +101,16 @@ class OAuthModelImpl : OAuthModel {
                         pin,
                         "authorization_code"
                 )?.execute()
-                val url = clientBuilder?.build()?.getInstanceName()
+                val url = clientBuilder?.build()?.getInstanceName() ?: ""
                 val account = Accounts(clientBuilder?.accessToken(accessToken?.accessToken!!)?.build()!!).getVerifyCredentials().execute()
-                val storeToken = object : AccessToken(accessToken?.accessToken, url) {
-                    override fun getScreenName(): String {
-                        return account.acct + "@" + url
-                    }
-
-                    override fun getUserId(): Long {
-                        return account.id
-                    }
-                }
+                val storeToken = AccessToken(
+                        Type.MASTODON,
+                        url,
+                        account.id,
+                        account.acct,
+                        accessToken?.accessToken ?: "",
+                        null
+                )
                 it.onSuccess(storeToken)
             } catch (e: Mastodon4jRequestException) {
                 it.onError(e)

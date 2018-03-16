@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 The twicalico authors
+ * Copyright 2018 The twicalico authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package com.github.moko256.twicalico;
 
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 
@@ -29,12 +30,10 @@ public abstract class LoadScrollListener extends RecyclerView.OnScrollListener{
     private int previousTotal = 0;
     private boolean loading = true;
 
-    private int[] firstVisibleItems;
+    private RecyclerView.LayoutManager layoutManager;
 
-    private StaggeredGridLayoutManager staggeredGridLayoutManager;
-
-    public LoadScrollListener(StaggeredGridLayoutManager staggeredGridLayoutManager) {
-        this.staggeredGridLayoutManager = staggeredGridLayoutManager;
+    public LoadScrollListener(RecyclerView.LayoutManager layoutManager) {
+        this.layoutManager = layoutManager;
     }
 
     @Override
@@ -42,9 +41,13 @@ public abstract class LoadScrollListener extends RecyclerView.OnScrollListener{
         super.onScrolled(recyclerView,dx,dy);
 
         int visibleItemCount = recyclerView.getChildCount();
-        int totalItemCount = staggeredGridLayoutManager.getItemCount();
-        firstVisibleItems=staggeredGridLayoutManager.findFirstVisibleItemPositions(firstVisibleItems);
-        int firstVisibleItem = firstVisibleItems[0];
+        int totalItemCount = layoutManager.getItemCount();
+        int firstVisibleItem;
+        if (layoutManager instanceof StaggeredGridLayoutManager) {
+            firstVisibleItem = ((StaggeredGridLayoutManager) layoutManager).findFirstVisibleItemPositions(null)[0];
+        } else {
+            firstVisibleItem = ((LinearLayoutManager) layoutManager).findFirstVisibleItemPosition();
+        }
 
         if (loading) {
             if (totalItemCount > previousTotal) {

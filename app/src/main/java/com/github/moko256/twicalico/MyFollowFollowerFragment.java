@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 The twicalico authors
+ * Copyright 2018 The twicalico authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package com.github.moko256.twicalico;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
@@ -32,13 +33,18 @@ public class MyFollowFollowerFragment extends Fragment implements ToolbarTitleIn
     ViewPager viewPager;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
 
         View view=inflater.inflate(R.layout.fragment_follow_follower, null);
 
         viewPager= view.findViewById(R.id.follow_follower_pager);
         viewPager.setOffscreenPageLimit(0);
-        viewPager.setAdapter(new FollowFollowerTabsPagerAdapter(getChildFragmentManager(),getContext(),GlobalApplication.userId));
+
+        new FollowFollowerTabsPagerAdapter(
+                getChildFragmentManager(),
+                getContext(),
+                GlobalApplication.userId
+        ).initAdapter(viewPager);
 
         return view;
     }

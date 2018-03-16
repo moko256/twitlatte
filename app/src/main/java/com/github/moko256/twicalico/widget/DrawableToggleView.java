@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 The twicalico authors
+ * Copyright 2018 The twicalico authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ package com.github.moko256.twicalico.widget;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
-import android.support.graphics.drawable.VectorDrawableCompat;
+import android.support.v7.content.res.AppCompatResources;
 import android.support.v7.widget.AppCompatCheckBox;
 import android.util.AttributeSet;
 
@@ -44,10 +44,9 @@ public class DrawableToggleView extends AppCompatCheckBox {
     public DrawableToggleView(Context context, AttributeSet attrs, int defStyleAttr){
         super(context, attrs, defStyleAttr);
         TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.DrawableToggleView);
-        Drawable drawable = VectorDrawableCompat.create(
-                context.getResources(),
-                array.getResourceId(R.styleable.DrawableToggleView_toggle_drawable, -1),
-                context.getTheme()
+        Drawable drawable = AppCompatResources.getDrawable(
+                context,
+                array.getResourceId(R.styleable.DrawableToggleView_toggle_drawable, -1)
         );
         if (drawable != null){
             setButtonDrawable(drawable);

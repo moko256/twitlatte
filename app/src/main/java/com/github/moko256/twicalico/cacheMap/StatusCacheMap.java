@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 The twicalico authors
+ * Copyright 2018 The twicalico authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,14 +21,15 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.util.LruCache;
 
+import com.github.moko256.mastodon.MTStatus;
 import com.github.moko256.twicalico.GlobalApplication;
 import com.github.moko256.twicalico.database.CachedStatusesSQLiteOpenHelper;
+import com.github.moko256.twicalico.entity.AccessToken;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import rx.Observable;
 import twitter4j.GeoLocation;
@@ -51,15 +52,21 @@ import twitter4j.UserMentionEntity;
 
 public class StatusCacheMap {
 
-    private LruCache<Long, Status> statusCache=new LruCache<>(1000);
+    private LruCache<Long, Status> cache =new LruCache<>(GlobalApplication.statusCacheListLimit / 4);
     private CachedStatusesSQLiteOpenHelper diskCache;
 
-    public StatusCacheMap(Context context, long userId){
-        diskCache = new CachedStatusesSQLiteOpenHelper(context, userId);
+    public void prepare(Context context, AccessToken accessToken){
+        if (diskCache != null){
+            diskCache.close();
+        }
+        if (cache.size() > 0){
+            cache.evictAll();
+        }
+        diskCache = new CachedStatusesSQLiteOpenHelper(context, accessToken.getUserId());
     }
 
     public int size() {
-        return statusCache.size();
+        return cache.size();
     }
 
     public void add(@Nullable final Status status) {
@@ -69,17 +76,18 @@ public class StatusCacheMap {
                 add(status.getRetweetedStatus());
             }
             Status cacheStatus = new CachedStatus(status);
-            statusCache.put(status.getId(), cacheStatus);
+            cache.put(status.getId(), cacheStatus);
             diskCache.addCachedStatus(cacheStatus);
         }
     }
 
+    @Nullable
     public Status get(Long id){
-        Status memoryCache = statusCache.get(id);
+        Status memoryCache = cache.get(id);
         if (memoryCache == null){
             Status storageCache = diskCache.getCachedStatus(id);
             if (storageCache != null) {
-                statusCache.put(storageCache.getId(), storageCache);
+                cache.put(storageCache.getId(), storageCache);
             }
             return  storageCache;
         } else {
@@ -89,9 +97,8 @@ public class StatusCacheMap {
 
     public void addAll(Collection<? extends Status> c) {
         if (c.size() > 0) {
-            HashSet<? extends Status> hashSet = new HashSet<>(c);
             Observable<Status> statusesObservable = Observable.unsafeCreate(subscriber -> {
-                for (Status status : hashSet) {
+                for (Status status : c) {
                     if (status != null) {
                         subscriber.onNext(status);
                         if (status.isRetweet()) {
@@ -102,114 +109,153 @@ public class StatusCacheMap {
                 subscriber.onCompleted();
             });
 
-            GlobalApplication.userCache.addAll(new HashSet<>(
+            GlobalApplication.userCache.addAll(
                     statusesObservable.map(Status::getUser).toList().toSingle().toBlocking().value()
-            ));
+            );
 
             Observable<Status> cachedStatusObservable = statusesObservable.map(CachedStatus::new);
 
-            cachedStatusObservable.forEach(status -> statusCache.put(status.getId(), status));
-            HashSet<Status> cacheStatusSet = new HashSet<>(cachedStatusObservable.toList().toSingle().toBlocking().value());
+            cachedStatusObservable.forEach(status -> cache.put(status.getId(), status));
 
-            Status[] diskCacheStatuses = new Status[cacheStatusSet.size()];
-            cacheStatusSet.toArray(diskCacheStatuses);
-            diskCache.addCachedStatuses(diskCacheStatuses);
+            diskCache.addCachedStatuses(cachedStatusObservable.toList().toSingle().toBlocking().value());
         }
     }
 
     public void delete(List<Long> ids){
-        Set<Long> idsSet = new HashSet<>();
+        List<Long> list = new ArrayList<>();
         for (Long id : ids) {
             if (id != null) {
-                idsSet.add(id);
+                list.add(id);
             }
         }
-        long[] idsArray = new long[ids.size()];
-        for (int i = 0; i < ids.size(); i++) {
-            idsArray[i] = ids.get(i);
-        }
-        diskCache.deleteCachedStatuses(idsArray);
+        diskCache.deleteCachedStatuses(list);
     }
 
-    private static class CachedStatus implements Status{
+    public static class CachedStatus implements Status{
 
         /* Based on twitter4j.StatusJSONImpl */
 
         private final Date createdAt;
         private final long id;
+
+        private final long userId;
+
+        private final long retweetedStatusId;
+
         private final String text;
         private final String source;
-        private final boolean isTruncated;
+        //private final boolean isTruncated;
         private final long inReplyToStatusId;
         private final long inReplyToUserId;
         private final boolean isFavorited;
         private final boolean isRetweeted;
         private final int favoriteCount;
         private final String inReplyToScreenName;
-        private final GeoLocation geoLocation;
-        private final Place place;
+        //private final GeoLocation geoLocation;
+        //private final Place place;
 
         private final int retweetCount;
         private final boolean isPossiblySensitive;
         private final String lang;
 
-        private final long[] contributorsIDs;
+        //private final long[] contributorsIDs;
 
-        private final long retweetedStatusId;
         private final UserMentionEntity[] userMentionEntities;
         private final URLEntity[] urlEntities;
         private final HashtagEntity[] hashtagEntities;
         private final MediaEntity[] mediaEntities;
         private final SymbolEntity[] symbolEntities;
-        private final long currentUserRetweetId;
-        private final Scopes scopes;
-        private final String[] withheldInCountries;
+        //private final long currentUserRetweetId;
+        //private final Scopes scopes;
+        //private final String[] withheldInCountries;
         private final long quotedStatusId;
         private final Status quotedStatus;
 
-        private final int displayTextRangeStart;
-        private final int displayTextRangeEnd;
+        //private final int displayTextRangeStart;
+        //private final int displayTextRangeEnd;
 
-        private final long userId;
+        private final String url;
 
         public CachedStatus(Status status){
             createdAt=new Date(status.getCreatedAt().getTime());
             id=status.getId();
-            text=status.getText();
-            source=status.getSource();
-            isTruncated=status.isTruncated();
-            inReplyToStatusId=status.getInReplyToStatusId();
-            inReplyToUserId=status.getInReplyToUserId();
-            isFavorited=status.isFavorited();
-            isRetweeted=status.isRetweeted();
-            favoriteCount=status.getFavoriteCount();
-            inReplyToScreenName=status.getInReplyToScreenName();
-            geoLocation = status.getGeoLocation();
-            place = status.getPlace();
-
-            retweetCount=status.getRetweetCount();
-            isPossiblySensitive=status.isPossiblySensitive();
-            lang=status.getLang();
-
-            contributorsIDs=status.getContributors();
-
-            retweetedStatusId=status.isRetweet()?status.getRetweetedStatus().getId():-1;
-            userMentionEntities=status.getUserMentionEntities();
-            urlEntities=status.getURLEntities();
-            hashtagEntities=status.getHashtagEntities();
-            mediaEntities=status.getMediaEntities();
-            symbolEntities=status.getSymbolEntities();
-            currentUserRetweetId = status.getCurrentUserRetweetId();
-            scopes=status.getScopes();
-            withheldInCountries = status.getWithheldInCountries();
-            quotedStatusId = status.getQuotedStatusId();
-            quotedStatus = status.getQuotedStatus();
-
-            displayTextRangeStart = status.getDisplayTextRangeStart();
-            displayTextRangeEnd = status.getDisplayTextRangeEnd();
 
             userId=status.getUser().getId();
 
+            retweetedStatusId=status.isRetweet()?status.getRetweetedStatus().getId():-1;
+
+            if (!isRetweet()) {
+                text=status.getText();
+                source=status.getSource();
+                //isTruncated=status.isTruncated();
+                inReplyToStatusId=status.getInReplyToStatusId();
+                inReplyToUserId=status.getInReplyToUserId();
+                isFavorited=status.isFavorited();
+                isRetweeted=status.isRetweeted();
+                favoriteCount=status.getFavoriteCount();
+                inReplyToScreenName=status.getInReplyToScreenName();
+                //geoLocation = status.getGeoLocation();
+                //place = status.getPlace();
+
+                retweetCount=status.getRetweetCount();
+                isPossiblySensitive=status.isPossiblySensitive();
+                lang=status.getLang();
+
+                //contributorsIDs=status.getContributors();
+
+                userMentionEntities=status.getUserMentionEntities();
+                urlEntities=status.getURLEntities();
+                hashtagEntities=status.getHashtagEntities();
+                mediaEntities=status.getMediaEntities();
+                symbolEntities=status.getSymbolEntities();
+                //currentUserRetweetId = status.getCurrentUserRetweetId();
+                //scopes=status.getScopes();
+                //withheldInCountries = status.getWithheldInCountries();
+                quotedStatusId = status.getQuotedStatusId();
+                quotedStatus = status.getQuotedStatus();
+
+                //displayTextRangeStart = status.getDisplayTextRangeStart();
+                //displayTextRangeEnd = status.getDisplayTextRangeEnd();
+            } else {
+                text=null;
+                source=null;
+                //isTruncated=false;
+                inReplyToStatusId=-1;
+                inReplyToUserId=-1;
+                isFavorited=false;
+                isRetweeted=false;
+                favoriteCount=-1;
+                inReplyToScreenName=null;
+                //geoLocation = null;
+                //place = null;
+
+                retweetCount=-1;
+                isPossiblySensitive=false;
+                lang=null;
+
+                //contributorsIDs=null;
+
+                userMentionEntities=null;
+                urlEntities=null;
+                hashtagEntities=null;
+                mediaEntities=null;
+                symbolEntities=null;
+                //currentUserRetweetId = -1;
+                //scopes=null;
+                //withheldInCountries = null;
+                quotedStatusId = -1;
+                quotedStatus = null;
+
+                //displayTextRangeStart = -1;
+                //displayTextRangeEnd = -1;
+            }
+
+            url = (status instanceof MTStatus)
+                    ? ((MTStatus) status).status.getUrl()
+                    : "https://twitter.com/"
+                            + status.getUser().getScreenName()
+                            + "/status/"
+                            + String.valueOf(status.getId());
         }
 
         @Override
@@ -234,7 +280,7 @@ public class StatusCacheMap {
 
         @Override
         public boolean isTruncated() {
-            return isTruncated;
+            return false;
         }
 
         @Override
@@ -254,12 +300,12 @@ public class StatusCacheMap {
 
         @Override
         public GeoLocation getGeoLocation() {
-            return geoLocation;
+            return null;
         }
 
         @Override
         public Place getPlace() {
-            return place;
+            return null;
         }
 
         @Override
@@ -294,7 +340,7 @@ public class StatusCacheMap {
 
         @Override
         public long[] getContributors() {
-            return contributorsIDs;
+            return null;
         }
 
         @Override
@@ -304,12 +350,12 @@ public class StatusCacheMap {
 
         @Override
         public boolean isRetweetedByMe() {
-            return currentUserRetweetId != -1L;
+            return false;
         }
 
         @Override
         public long getCurrentUserRetweetId() {
-            return currentUserRetweetId;
+            return -1L;
         }
 
         @Override
@@ -324,12 +370,12 @@ public class StatusCacheMap {
 
         @Override
         public Scopes getScopes() {
-            return scopes;
+            return null;
         }
 
         @Override
         public String[] getWithheldInCountries() {
-            return withheldInCountries;
+            return null;
         }
 
         @Override
@@ -344,12 +390,12 @@ public class StatusCacheMap {
 
         @Override
         public int getDisplayTextRangeStart() {
-            return displayTextRangeStart;
+            return -1;
         }
 
         @Override
         public int getDisplayTextRangeEnd() {
-            return displayTextRangeEnd;
+            return -1;
         }
 
         @Override
@@ -385,6 +431,10 @@ public class StatusCacheMap {
         @Override
         public RateLimitStatus getRateLimitStatus() {
             return null;
+        }
+
+        public String getRemoteUrl(){
+            return url;
         }
 
         @Override

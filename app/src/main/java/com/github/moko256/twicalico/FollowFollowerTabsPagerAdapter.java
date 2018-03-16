@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 The twicalico authors
+ * Copyright 2018 The twicalico authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,8 @@ package com.github.moko256.twicalico;
 import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
+
+import com.github.moko256.twicalico.widget.FragmentPagerAdapter;
 
 /**
  * Created by moko256 on 2016/05/28.
@@ -27,35 +28,39 @@ import android.support.v4.app.FragmentPagerAdapter;
  * @author moko256
  */
 class FollowFollowerTabsPagerAdapter extends FragmentPagerAdapter {
-    private Fragment[] mFragments;
-    private Context mContext;
+    private Context context;
+    long userId;
 
     FollowFollowerTabsPagerAdapter(FragmentManager fm, Context context,long userId) {
         super(fm);
-
-        mFragments=new Fragment[]{
-                UserFollowsFragment.newInstance(userId),
-                UserFollowersFragment.newInstance(userId)
-        };
-        mContext=context;
+        this.context = context;
+        this.userId = userId;
     }
 
     @Override
     public Fragment getItem(int position) {
-        return mFragments[position];
+        switch (position){
+            case 0:
+                return UserFollowsFragment.newInstance(userId);
+            case 1:
+                return UserFollowersFragment.newInstance(userId);
+            default:
+                return null;
+        }
     }
 
     @Override
     public int getCount() {
-        return mFragments.length;
+        return 2;
     }
 
     @Override
     public CharSequence getPageTitle(int position) {
-        Fragment fragment=mFragments[position];
+        Fragment fragment = getFragment(position);
         if(fragment instanceof ToolbarTitleInterface){
-            return mContext.getString(((ToolbarTitleInterface)fragment).getTitleResourceId());
+            return context.getString(((ToolbarTitleInterface)fragment).getTitleResourceId());
+        } else {
+            return null;
         }
-        else return null;
     }
 }

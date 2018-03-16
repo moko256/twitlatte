@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 The twicalico authors
+ * Copyright 2018 The twicalico authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,33 +16,23 @@
 
 package com.github.moko256.mastodon;
 
-import com.google.gson.GsonBuilder;
+import com.google.gson.Gson;
 import com.sys1yagi.mastodon4j.MastodonClient;
+import com.sys1yagi.mastodon4j.api.Pageable;
 import com.sys1yagi.mastodon4j.api.Range;
-import com.sys1yagi.mastodon4j.api.entity.Attachment;
 import com.sys1yagi.mastodon4j.api.exception.Mastodon4jRequestException;
 import com.sys1yagi.mastodon4j.api.method.Accounts;
 import com.sys1yagi.mastodon4j.api.method.Favourites;
-import com.sys1yagi.mastodon4j.api.method.Media;
+import com.sys1yagi.mastodon4j.api.method.Public;
 import com.sys1yagi.mastodon4j.api.method.Statuses;
 import com.sys1yagi.mastodon4j.api.method.Timelines;
 
 import java.io.File;
 import java.io.InputStream;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
-import okhttp3.ConnectionPool;
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
-import okhttp3.Protocol;
-import okhttp3.RequestBody;
 import twitter4j.AccountSettings;
 import twitter4j.Category;
 import twitter4j.DirectMessage;
@@ -50,8 +40,6 @@ import twitter4j.Friendship;
 import twitter4j.GeoLocation;
 import twitter4j.GeoQuery;
 import twitter4j.IDs;
-import twitter4j.JSONException;
-import twitter4j.JSONObject;
 import twitter4j.Location;
 import twitter4j.OEmbed;
 import twitter4j.OEmbedRequest;
@@ -104,236 +92,303 @@ import twitter4j.util.function.Consumer;
 
 public final class MastodonTwitterImpl implements Twitter {
 
-    public final AccessToken accessToken;
-    public final MastodonClient client;
+    private static Gson gson;
 
-    /**
-     * This constructor uses AccessToken$tokenSecret as an instance url, because Mastodon API doesn't use tokenSecret.
-     *
-     * @param accessToken AccessToken (tokenSecret is instance url)
-     */
-    public MastodonTwitterImpl(AccessToken accessToken){
-        this.accessToken = accessToken;
-
-        OkHttpClient.Builder builder = new OkHttpClient.Builder();
-        List<Protocol> protocols = new ArrayList<>();
-        protocols.add(Protocol.HTTP_1_1);
-        protocols.add(Protocol.HTTP_2);
-        builder.protocols(protocols);
-        builder.connectionPool(new ConnectionPool(3, 300, TimeUnit.MILLISECONDS));
-
-        client = new MastodonClient.Builder(accessToken.getTokenSecret(), builder, new GsonBuilder().create())
-                .accessToken(accessToken.getToken())
-                .build();
+    static {
+        gson = new Gson();
     }
 
-    public MastodonClient getClient(){
-        return client;
+    public final MastodonClient client;
+
+    private Configuration configuration;
+    private long userId;
+
+    private TimelinesResources timelinesResources;
+    private TweetsResources tweetsResources;
+    private SearchResource searchResource;
+    private FriendsFollowersResources friendsFollowersResources;
+    private UsersResources usersResources;
+    private FavoritesResources favoritesResources;
+
+    /**
+     * @param configuration Configuration (getRestBaseURL expects instance url)
+     * @param builder OkHttpClient.Builder
+     */
+    public MastodonTwitterImpl(Configuration configuration, long userId, OkHttpClient.Builder builder){
+        this.configuration = configuration;
+        this.userId = userId;
+        client = new MastodonClient.Builder(configuration.getRestBaseURL(), builder, gson)
+                .accessToken(configuration.getOAuthAccessToken())
+                .build();
     }
 
     @Override
     public TimelinesResources timelines() {
-        return new TimelinesResources() {
-            @Override
-            public ResponseList<Status> getMentionsTimeline() throws TwitterException {
-                return new MTResponseList<>();
-            }
-
-            @Override
-            public ResponseList<Status> getMentionsTimeline(Paging paging) throws TwitterException {
-                return new MTResponseList<>();
-            }
-
-            @Override
-            public ResponseList<Status> getUserTimeline(String s, Paging paging) throws TwitterException {
-                Accounts accounts = new Accounts(client);
-                try {
-                    return MTResponseList.convert(accounts.getStatuses(accounts.getAccountSearch(s, 1).execute().get(0).getId(), false, MTRangePagingConverter.convert(paging)).execute());
-                } catch (Mastodon4jRequestException e) {
-                    throw new MTException(e);
+        if (timelinesResources == null) {
+            timelinesResources = new TimelinesResources() {
+                @Override
+                public ResponseList<Status> getMentionsTimeline() throws TwitterException {
+                    return new MTResponseList<>();
                 }
-            }
 
-            @Override
-            public ResponseList<Status> getUserTimeline(long l, Paging paging) throws TwitterException {
-                Accounts accounts = new Accounts(client);
-                try {
-                    return MTResponseList.convert(accounts.getStatuses(l, false, MTRangePagingConverter.convert(paging)).execute());
-                } catch (Mastodon4jRequestException e) {
-                    throw new MTException(e);
+                @Override
+                public ResponseList<Status> getMentionsTimeline(Paging paging) throws TwitterException {
+                    return new MTResponseList<>();
                 }
-            }
 
-            @Override
-            public ResponseList<Status> getUserTimeline(String s) throws TwitterException {
-                return getUserTimeline(s, new Paging(-1L));
-            }
-
-            @Override
-            public ResponseList<Status> getUserTimeline(long l) throws TwitterException {
-                return getUserTimeline(l, new Paging(-1L));
-            }
-
-            @Override
-            public ResponseList<Status> getUserTimeline() throws TwitterException {
-                return getUserTimeline(new Paging(-1L));
-            }
-
-            @Override
-            public ResponseList<Status> getUserTimeline(Paging paging) throws TwitterException {
-                return getUserTimeline(accessToken.getUserId(), paging);
-            }
-
-            @Override
-            public ResponseList<Status> getHomeTimeline() throws TwitterException {
-                return getHomeTimeline(new Paging(-1L));
-            }
-
-            @Override
-            public ResponseList<Status> getHomeTimeline(Paging paging) throws TwitterException {
-                try {
-                    return MTResponseList.convert(new Timelines(client).getHome(MTRangePagingConverter.convert(paging)).execute());
-                } catch (Mastodon4jRequestException e) {
-                    throw new MTException(e);
+                @Override
+                public ResponseList<Status> getUserTimeline(String s, Paging paging) throws TwitterException {
+                    Accounts accounts = new Accounts(client);
+                    try {
+                        return MTResponseList.convert(accounts.getStatuses(accounts.getAccountSearch(s, 1).execute().get(0).getId(), false, MTRangeConverter.convert(paging)).execute());
+                    } catch (Mastodon4jRequestException e) {
+                        throw new MTException(e);
+                    }
                 }
-            }
 
-            @Override
-            public ResponseList<Status> getRetweetsOfMe() throws TwitterException {
-                return null;
-            }
+                @Override
+                public ResponseList<Status> getUserTimeline(long l, Paging paging) throws TwitterException {
+                    Accounts accounts = new Accounts(client);
+                    try {
+                        return MTResponseList.convert(accounts.getStatuses(l, false, MTRangeConverter.convert(paging)).execute());
+                    } catch (Mastodon4jRequestException e) {
+                        throw new MTException(e);
+                    }
+                }
 
-            @Override
-            public ResponseList<Status> getRetweetsOfMe(Paging paging) throws TwitterException {
-                return null;
-            }
-        };
+                @Override
+                public ResponseList<Status> getUserTimeline(String s) throws TwitterException {
+                    return getUserTimeline(s, new Paging(-1L));
+                }
+
+                @Override
+                public ResponseList<Status> getUserTimeline(long l) throws TwitterException {
+                    return getUserTimeline(l, new Paging(-1L));
+                }
+
+                @Override
+                public ResponseList<Status> getUserTimeline() throws TwitterException {
+                    return getUserTimeline(new Paging(-1L));
+                }
+
+                @Override
+                public ResponseList<Status> getUserTimeline(Paging paging) throws TwitterException {
+                    return getUserTimeline(userId, paging);
+                }
+
+                @Override
+                public ResponseList<Status> getHomeTimeline() throws TwitterException {
+                    return getHomeTimeline(new Paging(-1L));
+                }
+
+                @Override
+                public ResponseList<Status> getHomeTimeline(Paging paging) throws TwitterException {
+                    try {
+                        return MTResponseList.convert(new Timelines(client).getHome(MTRangeConverter.convert(paging)).execute());
+                    } catch (Mastodon4jRequestException e) {
+                        throw new MTException(e);
+                    }
+                }
+
+                @Override
+                public ResponseList<Status> getRetweetsOfMe() throws TwitterException {
+                    return null;
+                }
+
+                @Override
+                public ResponseList<Status> getRetweetsOfMe(Paging paging) throws TwitterException {
+                    return null;
+                }
+            };
+        }
+        return timelinesResources;
     }
 
     @Override
     public TweetsResources tweets() {
-        return new TweetsResources() {
-            @Override
-            public ResponseList<Status> getRetweets(long l) throws TwitterException {
-                return null;
-            }
-
-            @Override
-            public IDs getRetweeterIds(long l, long l1) throws TwitterException {
-                return null;
-            }
-
-            @Override
-            public IDs getRetweeterIds(long l, int i, long l1) throws TwitterException {
-                return null;
-            }
-
-            @Override
-            public Status showStatus(long l) throws TwitterException {
-                try {
-                    return new MTStatus(new Statuses(client).getStatus(l).execute());
-                } catch (Mastodon4jRequestException e) {
-                    throw new MTException(e);
+        if (tweetsResources == null) {
+            tweetsResources = new TweetsResources() {
+                @Override
+                public ResponseList<Status> getRetweets(long l) throws TwitterException {
+                    return null;
                 }
-            }
 
-            @Override
-            public Status destroyStatus(long l) throws TwitterException {
-                try {
-                    new Statuses(client).deleteStatus(l);
-                } catch (Mastodon4jRequestException e) {
-                    throw new MTException(e);
+                @Override
+                public IDs getRetweeterIds(long l, long l1) throws TwitterException {
+                    return null;
                 }
-                return null;
-            }
 
-            @Override
-            public Status updateStatus(String s) throws TwitterException {
-                return updateStatus(new StatusUpdate(s));
-            }
+                @Override
+                public IDs getRetweeterIds(long l, int i, long l1) throws TwitterException {
+                    return null;
+                }
 
-            @Override
-            public Status updateStatus(StatusUpdate statusUpdate) throws TwitterException {
-                try {
-                    Field statusUpdateField = StatusUpdate.class.getDeclaredField("mediaIds");
-                    statusUpdateField.setAccessible(true);
-                    long[] mediaIds = (long[]) statusUpdateField.get(statusUpdate);
-                    List<Long> mediaIdsList = null;
-                    if (mediaIds != null){
-                        mediaIdsList = new ArrayList<>(mediaIds.length);
-                        for (long mediaId : mediaIds) {
-                            mediaIdsList.add(mediaId);
+                @Override
+                public Status showStatus(long l) throws TwitterException {
+                    try {
+                        return new MTStatus(new Statuses(client).getStatus(l).execute());
+                    } catch (Mastodon4jRequestException e) {
+                        throw new MTException(e);
+                    }
+                }
+
+                @Override
+                public Status destroyStatus(long l) throws TwitterException {
+                    try {
+                        new Statuses(client).deleteStatus(l);
+                    } catch (Mastodon4jRequestException e) {
+                        throw new MTException(e);
+                    }
+                    return null;
+                }
+
+                @Override
+                public Status updateStatus(String s) throws TwitterException {
+                    return null;
+                }
+
+                @Override
+                public Status updateStatus(StatusUpdate statusUpdate) throws TwitterException {
+                    return null;
+                }
+
+                @Override
+                public Status retweetStatus(long l) throws TwitterException {
+                    try {
+                        return new MTStatus(new Statuses(client).postReblog(l).execute());
+                    } catch (Mastodon4jRequestException e) {
+                        throw new MTException(e);
+                    }
+                }
+
+                @Override
+                public Status unRetweetStatus(long statusId) throws TwitterException {
+                    try {
+                        return new MTStatus(new Statuses(client).postUnreblog(statusId).execute());
+                    } catch (Mastodon4jRequestException e) {
+                        throw new MTException(e);
+                    }
+                }
+
+                @Override
+                public OEmbed getOEmbed(OEmbedRequest oEmbedRequest) throws TwitterException {
+                    return null;
+                }
+
+                @Override
+                public ResponseList<Status> lookup(long... longs) throws TwitterException {
+                    ResponseList<Status> statuses = new MTResponseList<>(longs.length);
+                    try {
+                        for (long l : longs) {
+                            statuses.add(new MTStatus(new Statuses(client).getStatus(l).execute()));
                         }
+                    } catch (Mastodon4jRequestException e){
+                        throw new MTException(e);
                     }
-                    return new MTStatus(new Statuses(client).postStatus(
-                            statusUpdate.getStatus(),
-                            statusUpdate.getInReplyToStatusId() == -1 ? null : statusUpdate.getInReplyToStatusId(),
-                            mediaIdsList,
-                            statusUpdate.isPossiblySensitive(),
-                            null,
-                            com.sys1yagi.mastodon4j.api.entity.Status.Visibility.Public
-                    ).execute());
-                } catch (Mastodon4jRequestException e) {
-                    throw new MTException(e);
-                } catch (Exception e) {
-                    throw new TwitterException(e.getMessage());
+                    return statuses;
                 }
-            }
 
-            @Override
-            public Status retweetStatus(long l) throws TwitterException {
-                try {
-                    return new MTStatus(new Statuses(client).postReblog(l).execute());
-                } catch (Mastodon4jRequestException e) {
-                    throw new MTException(e);
+                @Override
+                public UploadedMedia uploadMedia(File file) throws TwitterException {
+                    return null;
                 }
-            }
 
-            @Override
-            public OEmbed getOEmbed(OEmbedRequest oEmbedRequest) throws TwitterException {
-                return null;
-            }
-
-            @Override
-            public ResponseList<Status> lookup(long... longs) throws TwitterException {
-                ResponseList<Status> statuses = new MTResponseList<>();
-                try {
-                    for (long l : longs) {
-                        statuses.add(new MTStatus(new Statuses(client).getStatus(l).execute()));
-                    }
-                } catch (Mastodon4jRequestException e){
-                    throw new MTException(e);
+                @Override
+                public UploadedMedia uploadMedia(String s, InputStream inputStream) throws TwitterException {
+                    return null;
                 }
-                return statuses;
-            }
-
-            @Override
-            public UploadedMedia uploadMedia(File file) throws TwitterException {
-                try {
-                    Attachment attachment = new Media(client)
-                            .postMedia(MultipartBody.Part.create(RequestBody.create(MediaType.parse("image"), file)))
-                            .execute();
-                    String json = "{\"media_id\":" + attachment.getId() + "}";
-                    Constructor<UploadedMedia> c = UploadedMedia.class.getDeclaredConstructor(JSONObject.class);
-                    c.setAccessible(true);
-                    return c.newInstance(new JSONObject(json));
-                } catch (Mastodon4jRequestException e) {
-                    throw new MTException(e);
-                } catch (InstantiationException | NoSuchMethodException | IllegalAccessException | InvocationTargetException | JSONException e) {
-                    throw new TwitterException(e.getMessage());
-                }
-            }
-
-            @Override
-            public UploadedMedia uploadMedia(String s, InputStream inputStream) throws TwitterException {
-                throw new TwitterException("This method cannot use in this class. Please mastodon4j instead.");
-            }
-        };
+            };
+        }
+        return tweetsResources;
     }
 
     @Override
     public SearchResource search() {
-        return null;
+        if (searchResource == null){
+            searchResource = query -> {
+                Pageable<com.sys1yagi.mastodon4j.api.entity.Status> pageable = null;
+                try {
+                    pageable = new Public(client).
+                            getFederatedTag(query.getQuery(), MTRangeConverter.convert(query))
+                            .execute();
+                } catch (Mastodon4jRequestException e) {
+                    e.printStackTrace();
+                }
+
+                long previous;
+                long next;
+
+                if (pageable == null) return null;
+
+                if (pageable.getLink() != null) {
+                    next = pageable.getLink().getMaxId();
+                    previous = pageable.getLink().getSinceId();
+                } else {
+                    next = -1;
+                    previous = -1;
+                }
+
+                List<com.sys1yagi.mastodon4j.api.entity.Status> part = pageable.getPart();
+                Pageable<com.sys1yagi.mastodon4j.api.entity.Status> finalPageable = pageable;
+                return new QueryResult() {
+                    @Override
+                    public long getSinceId() {
+                        return previous;
+                    }
+
+                    @Override
+                    public long getMaxId() {
+                        return next;
+                    }
+
+                    @Override
+                    public String getRefreshURL() {
+                        return null;
+                    }
+
+                    @Override
+                    public int getCount() {
+                        return part.size();
+                    }
+
+                    @Override
+                    public double getCompletedIn() {
+                        return 0;
+                    }
+
+                    @Override
+                    public String getQuery() {
+                        return query.getQuery();
+                    }
+
+                    @Override
+                    public List<Status> getTweets() {
+                        return MTResponseList.convert(finalPageable);
+                    }
+
+                    @Override
+                    public Query nextQuery() {
+                        return new Query(query.getQuery()).sinceId(next);
+                    }
+
+                    @Override
+                    public boolean hasNext() {
+                        return next != -1;
+                    }
+
+                    @Override
+                    public RateLimitStatus getRateLimitStatus() {
+                        return null;
+                    }
+
+                    @Override
+                    public int getAccessLevel() {
+                        return 0;
+                    }
+                };
+            };
+        }
+        return searchResource;
     }
 
     @Override
@@ -343,430 +398,444 @@ public final class MastodonTwitterImpl implements Twitter {
 
     @Override
     public FriendsFollowersResources friendsFollowers() {
-        return new FriendsFollowersResources() {
-            @Override
-            public IDs getNoRetweetsFriendships() throws TwitterException {
-                return null;
-            }
-
-            @Override
-            public IDs getFriendsIDs(long l) throws TwitterException {
-                return null;
-            }
-
-            @Override
-            public IDs getFriendsIDs(long l, long l1) throws TwitterException {
-                return null;
-            }
-
-            @Override
-            public IDs getFriendsIDs(long l, long l1, int i) throws TwitterException {
-                return null;
-            }
-
-            @Override
-            public IDs getFriendsIDs(String s, long l) throws TwitterException {
-                return null;
-            }
-
-            @Override
-            public IDs getFriendsIDs(String s, long l, int i) throws TwitterException {
-                return null;
-            }
-
-            @Override
-            public IDs getFollowersIDs(long l) throws TwitterException {
-                return null;
-            }
-
-            @Override
-            public IDs getFollowersIDs(long l, long l1) throws TwitterException {
-                return null;
-            }
-
-            @Override
-            public IDs getFollowersIDs(long l, long l1, int i) throws TwitterException {
-                return null;
-            }
-
-            @Override
-            public IDs getFollowersIDs(String s, long l) throws TwitterException {
-                return null;
-            }
-
-            @Override
-            public IDs getFollowersIDs(String s, long l, int i) throws TwitterException {
-                return null;
-            }
-
-            @Override
-            public ResponseList<Friendship> lookupFriendships(long... longs) throws TwitterException {
-                return null;
-            }
-
-            @Override
-            public ResponseList<Friendship> lookupFriendships(String... strings) throws TwitterException {
-                return null;
-            }
-
-            @Override
-            public IDs getIncomingFriendships(long l) throws TwitterException {
-                return null;
-            }
-
-            @Override
-            public IDs getOutgoingFriendships(long l) throws TwitterException {
-                return null;
-            }
-
-            @Override
-            public User createFriendship(long l) throws TwitterException {
-                try {
-                    new Accounts(client).postFollow(l).execute();
+        if (friendsFollowersResources == null) {
+            friendsFollowersResources = new FriendsFollowersResources() {
+                @Override
+                public IDs getNoRetweetsFriendships() throws TwitterException {
                     return null;
-                } catch (Mastodon4jRequestException e) {
-                    throw new MTException(e);
                 }
-            }
 
-            @Override
-            public User createFriendship(String s) throws TwitterException {
-                return null;
-            }
-
-            @Override
-            public User createFriendship(long l, boolean b) throws TwitterException {
-                return null;
-            }
-
-            @Override
-            public User createFriendship(String s, boolean b) throws TwitterException {
-                return null;
-            }
-
-            @Override
-            public User destroyFriendship(long l) throws TwitterException {
-                try {
-                    new Accounts(client).postUnFollow(l).execute();
+                @Override
+                public IDs getFriendsIDs(long l) throws TwitterException {
                     return null;
-                } catch (Mastodon4jRequestException e) {
-                    throw new MTException(e);
                 }
-            }
 
-            @Override
-            public User destroyFriendship(String s) throws TwitterException {
-                return null;
-            }
-
-            @Override
-            public Relationship updateFriendship(long l, boolean b, boolean b1) throws TwitterException {
-                return null;
-            }
-
-            @Override
-            public Relationship updateFriendship(String s, boolean b, boolean b1) throws TwitterException {
-                return null;
-            }
-
-            @Override
-            public Relationship showFriendship(long l, long l1) throws TwitterException {
-                return null;
-            }
-
-            @Override
-            public Relationship showFriendship(String s, String s1) throws TwitterException {
-                return null;
-            }
-
-            @Override
-            public PagableResponseList<User> getFriendsList(long l, long l1) throws TwitterException {
-                try {
-                    return MTPagableResponseList.convert(new Accounts(client).getFollowing(l, new Range(l1 != -1? l1: null)).execute());
-                } catch (Mastodon4jRequestException e) {
-                    throw new MTException(e);
+                @Override
+                public IDs getFriendsIDs(long l, long l1) throws TwitterException {
+                    return null;
                 }
-            }
 
-            @Override
-            public PagableResponseList<User> getFriendsList(long l, long l1, int i) throws TwitterException {
-                try {
-                    return MTPagableResponseList.convert(new Accounts(client).getFollowing(l, new Range(l1 != -1? l1: null, null, i)).execute());
-                } catch (Mastodon4jRequestException e) {
-                    throw new MTException(e);
+                @Override
+                public IDs getFriendsIDs(long l, long l1, int i) throws TwitterException {
+                    return null;
                 }
-            }
 
-            @Override
-            public PagableResponseList<User> getFriendsList(String s, long l) throws TwitterException {
-                return null;
-            }
-
-            @Override
-            public PagableResponseList<User> getFriendsList(String s, long l, int i) throws TwitterException {
-                return null;
-            }
-
-            @Override
-            public PagableResponseList<User> getFriendsList(long l, long l1, int i, boolean b, boolean b1) throws TwitterException {
-                return null;
-            }
-
-            @Override
-            public PagableResponseList<User> getFriendsList(String s, long l, int i, boolean b, boolean b1) throws TwitterException {
-                return null;
-            }
-
-            @Override
-            public PagableResponseList<User> getFollowersList(long l, long l1) throws TwitterException {
-                try {
-                    return MTPagableResponseList.convert(new Accounts(client).getFollowers(l, new Range(l1 != -1? l1: null)).execute());
-                } catch (Mastodon4jRequestException e) {
-                    throw new MTException(e);
+                @Override
+                public IDs getFriendsIDs(String s, long l) throws TwitterException {
+                    return null;
                 }
-            }
 
-            @Override
-            public PagableResponseList<User> getFollowersList(String s, long l) throws TwitterException {
-                return null;
-            }
-
-            @Override
-            public PagableResponseList<User> getFollowersList(long l, long l1, int i) throws TwitterException {
-                try {
-                    return MTPagableResponseList.convert(new Accounts(client).getFollowers(l, new Range(l1 != -1? l1: null, null, i)).execute());
-                } catch (Mastodon4jRequestException e) {
-                    throw new MTException(e);
+                @Override
+                public IDs getFriendsIDs(String s, long l, int i) throws TwitterException {
+                    return null;
                 }
-            }
 
-            @Override
-            public PagableResponseList<User> getFollowersList(String s, long l, int i) throws TwitterException {
-                return null;
-            }
+                @Override
+                public IDs getFollowersIDs(long l) throws TwitterException {
+                    return null;
+                }
 
-            @Override
-            public PagableResponseList<User> getFollowersList(long l, long l1, int i, boolean b, boolean b1) throws TwitterException {
-                return null;
-            }
+                @Override
+                public IDs getFollowersIDs(long l, long l1) throws TwitterException {
+                    return null;
+                }
 
-            @Override
-            public PagableResponseList<User> getFollowersList(String s, long l, int i, boolean b, boolean b1) throws TwitterException {
-                return null;
-            }
-        };
+                @Override
+                public IDs getFollowersIDs(long l, long l1, int i) throws TwitterException {
+                    return null;
+                }
+
+                @Override
+                public IDs getFollowersIDs(String s, long l) throws TwitterException {
+                    return null;
+                }
+
+                @Override
+                public IDs getFollowersIDs(String s, long l, int i) throws TwitterException {
+                    return null;
+                }
+
+                @Override
+                public ResponseList<Friendship> lookupFriendships(long... longs) throws TwitterException {
+                    return null;
+                }
+
+                @Override
+                public ResponseList<Friendship> lookupFriendships(String... strings) throws TwitterException {
+                    return null;
+                }
+
+                @Override
+                public IDs getIncomingFriendships(long l) throws TwitterException {
+                    return null;
+                }
+
+                @Override
+                public IDs getOutgoingFriendships(long l) throws TwitterException {
+                    return null;
+                }
+
+                @Override
+                public User createFriendship(long l) throws TwitterException {
+                    try {
+                        new Accounts(client).postFollow(l).execute();
+                        return null;
+                    } catch (Mastodon4jRequestException e) {
+                        throw new MTException(e);
+                    }
+                }
+
+                @Override
+                public User createFriendship(String s) throws TwitterException {
+                    return null;
+                }
+
+                @Override
+                public User createFriendship(long l, boolean b) throws TwitterException {
+                    return null;
+                }
+
+                @Override
+                public User createFriendship(String s, boolean b) throws TwitterException {
+                    return null;
+                }
+
+                @Override
+                public User destroyFriendship(long l) throws TwitterException {
+                    try {
+                        new Accounts(client).postUnFollow(l).execute();
+                        return null;
+                    } catch (Mastodon4jRequestException e) {
+                        throw new MTException(e);
+                    }
+                }
+
+                @Override
+                public User destroyFriendship(String s) throws TwitterException {
+                    return null;
+                }
+
+                @Override
+                public Relationship updateFriendship(long l, boolean b, boolean b1) throws TwitterException {
+                    return null;
+                }
+
+                @Override
+                public Relationship updateFriendship(String s, boolean b, boolean b1) throws TwitterException {
+                    return null;
+                }
+
+                @Override
+                public Relationship showFriendship(long l, long l1) throws TwitterException {
+                    return null;
+                }
+
+                @Override
+                public Relationship showFriendship(String s, String s1) throws TwitterException {
+                    return null;
+                }
+
+                @Override
+                public PagableResponseList<User> getFriendsList(long l, long l1) throws TwitterException {
+                    try {
+                        return MTPageableResponseList.convert(new Accounts(client).getFollowing(l, new Range(l1 != -1? l1: null)).execute());
+                    } catch (Mastodon4jRequestException e) {
+                        throw new MTException(e);
+                    }
+                }
+
+                @Override
+                public PagableResponseList<User> getFriendsList(long l, long l1, int i) throws TwitterException {
+                    try {
+                        return MTPageableResponseList.convert(new Accounts(client).getFollowing(l, new Range(l1 != -1? l1: null, null, i)).execute());
+                    } catch (Mastodon4jRequestException e) {
+                        throw new MTException(e);
+                    }
+                }
+
+                @Override
+                public PagableResponseList<User> getFriendsList(String s, long l) throws TwitterException {
+                    return null;
+                }
+
+                @Override
+                public PagableResponseList<User> getFriendsList(String s, long l, int i) throws TwitterException {
+                    return null;
+                }
+
+                @Override
+                public PagableResponseList<User> getFriendsList(long l, long l1, int i, boolean b, boolean b1) throws TwitterException {
+                    return null;
+                }
+
+                @Override
+                public PagableResponseList<User> getFriendsList(String s, long l, int i, boolean b, boolean b1) throws TwitterException {
+                    return null;
+                }
+
+                @Override
+                public PagableResponseList<User> getFollowersList(long l, long l1) throws TwitterException {
+                    try {
+                        return MTPageableResponseList.convert(new Accounts(client).getFollowers(l, new Range(l1 != -1? l1: null)).execute());
+                    } catch (Mastodon4jRequestException e) {
+                        throw new MTException(e);
+                    }
+                }
+
+                @Override
+                public PagableResponseList<User> getFollowersList(String s, long l) throws TwitterException {
+                    return null;
+                }
+
+                @Override
+                public PagableResponseList<User> getFollowersList(long l, long l1, int i) throws TwitterException {
+                    try {
+                        return MTPageableResponseList.convert(new Accounts(client).getFollowers(l, new Range(l1 != -1? l1: null, null, i)).execute());
+                    } catch (Mastodon4jRequestException e) {
+                        throw new MTException(e);
+                    }
+                }
+
+                @Override
+                public PagableResponseList<User> getFollowersList(String s, long l, int i) throws TwitterException {
+                    return null;
+                }
+
+                @Override
+                public PagableResponseList<User> getFollowersList(long l, long l1, int i, boolean b, boolean b1) throws TwitterException {
+                    return null;
+                }
+
+                @Override
+                public PagableResponseList<User> getFollowersList(String s, long l, int i, boolean b, boolean b1) throws TwitterException {
+                    return null;
+                }
+            };
+        }
+        return friendsFollowersResources;
     }
 
     @Override
     public UsersResources users() {
-        return new UsersResources() {
-            @Override
-            public AccountSettings getAccountSettings() throws TwitterException {
-                return null;
-            }
-
-            @Override
-            public User verifyCredentials() throws TwitterException {
-                try {
-                    return new MTUser(new Accounts(client).getVerifyCredentials().execute());
-                } catch (Mastodon4jRequestException e) {
-                    throw new MTException(e);
+        if (usersResources == null) {
+            usersResources = new UsersResources() {
+                @Override
+                public AccountSettings getAccountSettings() throws TwitterException {
+                    return null;
                 }
-            }
 
-            @Override
-            public AccountSettings updateAccountSettings(Integer integer, Boolean aBoolean, String s, String s1, String s2, String s3) throws TwitterException {
-                return null;
-            }
-
-            @Override
-            public User updateProfile(String s, String s1, String s2, String s3) throws TwitterException {
-                return null;
-            }
-
-            @Override
-            public User updateProfileBackgroundImage(File file, boolean b) throws TwitterException {
-                return null;
-            }
-
-            @Override
-            public User updateProfileBackgroundImage(InputStream inputStream, boolean b) throws TwitterException {
-                return null;
-            }
-
-            @Override
-            public User updateProfileColors(String s, String s1, String s2, String s3, String s4) throws TwitterException {
-                return null;
-            }
-
-            @Override
-            public User updateProfileImage(File file) throws TwitterException {
-                return null;
-            }
-
-            @Override
-            public User updateProfileImage(InputStream inputStream) throws TwitterException {
-                return null;
-            }
-
-            @Override
-            public PagableResponseList<User> getBlocksList() throws TwitterException {
-                return null;
-            }
-
-            @Override
-            public PagableResponseList<User> getBlocksList(long l) throws TwitterException {
-                return null;
-            }
-
-            @Override
-            public IDs getBlocksIDs() throws TwitterException {
-                return null;
-            }
-
-            @Override
-            public IDs getBlocksIDs(long l) throws TwitterException {
-                return null;
-            }
-
-            @Override
-            public User createBlock(long l) throws TwitterException {
-                try {
-                    new Accounts(client).postBlock(l).execute();
-                } catch (Mastodon4jRequestException e) {
-                    e.printStackTrace();
+                @Override
+                public User verifyCredentials() throws TwitterException {
+                    try {
+                        return new MTUser(new Accounts(client).getVerifyCredentials().execute());
+                    } catch (Mastodon4jRequestException e) {
+                        throw new MTException(e);
+                    }
                 }
-                return null;
-            }
 
-            @Override
-            public User createBlock(String s) throws TwitterException {
-                return null;
-            }
-
-            @Override
-            public User destroyBlock(long l) throws TwitterException {
-                try {
-                    new Accounts(client).postUnblock(l).execute();
-                } catch (Mastodon4jRequestException e) {
-                    e.printStackTrace();
+                @Override
+                public AccountSettings updateAccountSettings(Integer integer, Boolean aBoolean, String s, String s1, String s2, String s3) throws TwitterException {
+                    return null;
                 }
-                return null;
-            }
 
-            @Override
-            public User destroyBlock(String s) throws TwitterException {
-                return null;
-            }
-
-            @Override
-            public PagableResponseList<User> getMutesList(long l) throws TwitterException {
-                return null;
-            }
-
-            @Override
-            public IDs getMutesIDs(long l) throws TwitterException {
-                return null;
-            }
-
-            @Override
-            public User createMute(long l) throws TwitterException {
-                try {
-                    new Accounts(client).postMute(l).execute();
-                } catch (Mastodon4jRequestException e) {
-                    e.printStackTrace();
+                @Override
+                public User updateProfile(String s, String s1, String s2, String s3) throws TwitterException {
+                    return null;
                 }
-                return null;
-            }
 
-            @Override
-            public User createMute(String s) throws TwitterException {
-                return null;
-            }
-
-            @Override
-            public User destroyMute(long l) throws TwitterException {
-                try {
-                    new Accounts(client).postUnmute(l).execute();
-                } catch (Mastodon4jRequestException e) {
-                    e.printStackTrace();
+                @Override
+                public User updateProfileBackgroundImage(File file, boolean b) throws TwitterException {
+                    return null;
                 }
-                return null;
-            }
 
-            @Override
-            public User destroyMute(String s) throws TwitterException {
-                return null;
-            }
-
-            @Override
-            public ResponseList<User> lookupUsers(long... longs) throws TwitterException {
-                ResponseList<User> l = new MTResponseList<>();
-                for (long id: longs){
-                    l.add(showUser(id));
+                @Override
+                public User updateProfileBackgroundImage(InputStream inputStream, boolean b) throws TwitterException {
+                    return null;
                 }
-                return l;
-            }
 
-            @Override
-            public ResponseList<User> lookupUsers(String... strings) throws TwitterException {
-                return null;
-            }
-
-            @Override
-            public User showUser(long l) throws TwitterException {
-                try {
-                    return new MTUser(new Accounts(client).getAccount(l).execute());
-                } catch (Mastodon4jRequestException e) {
-                    throw new MTException(e);
+                @Override
+                public User updateProfileColors(String s, String s1, String s2, String s3, String s4) throws TwitterException {
+                    return null;
                 }
-            }
 
-            @Override
-            public User showUser(String s) throws TwitterException {
-                return null;
-            }
+                @Override
+                public User updateProfileImage(File file) throws TwitterException {
+                    return null;
+                }
 
-            @Override
-            public ResponseList<User> searchUsers(String s, int i) throws TwitterException {
-                return null;
-            }
+                @Override
+                public User updateProfileImage(InputStream inputStream) throws TwitterException {
+                    return null;
+                }
 
-            @Override
-            public ResponseList<User> getContributees(long l) throws TwitterException {
-                return null;
-            }
+                @Override
+                public PagableResponseList<User> getBlocksList() throws TwitterException {
+                    return null;
+                }
 
-            @Override
-            public ResponseList<User> getContributees(String s) throws TwitterException {
-                return null;
-            }
+                @Override
+                public PagableResponseList<User> getBlocksList(long l) throws TwitterException {
+                    return null;
+                }
 
-            @Override
-            public ResponseList<User> getContributors(long l) throws TwitterException {
-                return null;
-            }
+                @Override
+                public IDs getBlocksIDs() throws TwitterException {
+                    return null;
+                }
 
-            @Override
-            public ResponseList<User> getContributors(String s) throws TwitterException {
-                return null;
-            }
+                @Override
+                public IDs getBlocksIDs(long l) throws TwitterException {
+                    return null;
+                }
 
-            @Override
-            public void removeProfileBanner() throws TwitterException {
+                @Override
+                public User createBlock(long l) throws TwitterException {
+                    try {
+                        new Accounts(client).postBlock(l).execute();
+                    } catch (Mastodon4jRequestException e) {
+                        e.printStackTrace();
+                    }
+                    return null;
+                }
 
-            }
+                @Override
+                public User createBlock(String s) throws TwitterException {
+                    return null;
+                }
 
-            @Override
-            public void updateProfileBanner(File file) throws TwitterException {
+                @Override
+                public User destroyBlock(long l) throws TwitterException {
+                    try {
+                        new Accounts(client).postUnblock(l).execute();
+                    } catch (Mastodon4jRequestException e) {
+                        e.printStackTrace();
+                    }
+                    return null;
+                }
 
-            }
+                @Override
+                public User destroyBlock(String s) throws TwitterException {
+                    return null;
+                }
 
-            @Override
-            public void updateProfileBanner(InputStream inputStream) throws TwitterException {
+                @Override
+                public PagableResponseList<User> getMutesList(long l) throws TwitterException {
+                    return null;
+                }
 
-            }
-        };
+                @Override
+                public IDs getMutesIDs(long l) throws TwitterException {
+                    return null;
+                }
+
+                @Override
+                public User createMute(long l) throws TwitterException {
+                    try {
+                        new Accounts(client).postMute(l).execute();
+                    } catch (Mastodon4jRequestException e) {
+                        e.printStackTrace();
+                    }
+                    return null;
+                }
+
+                @Override
+                public User createMute(String s) throws TwitterException {
+                    return null;
+                }
+
+                @Override
+                public User destroyMute(long l) throws TwitterException {
+                    try {
+                        new Accounts(client).postUnmute(l).execute();
+                    } catch (Mastodon4jRequestException e) {
+                        e.printStackTrace();
+                    }
+                    return null;
+                }
+
+                @Override
+                public User destroyMute(String s) throws TwitterException {
+                    return null;
+                }
+
+                @Override
+                public ResponseList<User> lookupUsers(long... longs) throws TwitterException {
+                    ResponseList<User> l = new MTResponseList<>(longs.length);
+                    for (long id: longs){
+                        l.add(showUser(id));
+                    }
+                    return l;
+                }
+
+                @Override
+                public ResponseList<User> lookupUsers(String... strings) throws TwitterException {
+                    ResponseList<User> l = new MTResponseList<>(strings.length);
+                    for (String id: strings){
+                        l.add(showUser(id));
+                    }
+                    return l;
+                }
+
+                @Override
+                public User showUser(long l) throws TwitterException {
+                    try {
+                        return new MTUser(new Accounts(client).getAccount(l).execute());
+                    } catch (Mastodon4jRequestException e) {
+                        throw new MTException(e);
+                    }
+                }
+
+                @Override
+                public User showUser(String s) throws TwitterException {
+                    try {
+                        return new MTUser(new Accounts(client).getAccountSearch(s, 1).execute().get(0));
+                    } catch (Mastodon4jRequestException e) {
+                        throw new MTException(e);
+                    }
+                }
+
+                @Override
+                public ResponseList<User> searchUsers(String s, int i) throws TwitterException {
+                    return null;
+                }
+
+                @Override
+                public ResponseList<User> getContributees(long l) throws TwitterException {
+                    return null;
+                }
+
+                @Override
+                public ResponseList<User> getContributees(String s) throws TwitterException {
+                    return null;
+                }
+
+                @Override
+                public ResponseList<User> getContributors(long l) throws TwitterException {
+                    return null;
+                }
+
+                @Override
+                public ResponseList<User> getContributors(String s) throws TwitterException {
+                    return null;
+                }
+
+                @Override
+                public void removeProfileBanner() throws TwitterException {
+
+                }
+
+                @Override
+                public void updateProfileBanner(File file) throws TwitterException {
+
+                }
+
+                @Override
+                public void updateProfileBanner(InputStream inputStream) throws TwitterException {
+
+                }
+            };
+        }
+        return usersResources;
     }
 
     @Override
@@ -776,63 +845,66 @@ public final class MastodonTwitterImpl implements Twitter {
 
     @Override
     public FavoritesResources favorites() {
-        return new FavoritesResources() {
-            @Override
-            public ResponseList<Status> getFavorites() throws TwitterException {
-                return getFavorites(new Paging(-1L));
-            }
-
-            @Override
-            public ResponseList<Status> getFavorites(long l) throws TwitterException {
-                return getFavorites(l, new Paging(-1L));
-            }
-
-            @Override
-            public ResponseList<Status> getFavorites(String s) throws TwitterException {
-                return new MTResponseList<>();
-            }
-
-            @Override
-            public ResponseList<Status> getFavorites(Paging paging) throws TwitterException {
-                try {
-                    return MTResponseList.convert(new Favourites(client).getFavourites(MTRangePagingConverter.convert(paging)).execute());
-                } catch (Mastodon4jRequestException e) {
-                    throw new MTException(e);
+        if (favoritesResources == null) {
+            favoritesResources = new FavoritesResources() {
+                @Override
+                public ResponseList<Status> getFavorites() throws TwitterException {
+                    return getFavorites(new Paging(-1L));
                 }
-            }
 
-            @Override
-            public ResponseList<Status> getFavorites(long l, Paging paging) throws TwitterException {
-                if (l == accessToken.getUserId()) {
-                    return getFavorites(paging);
-                } else {
+                @Override
+                public ResponseList<Status> getFavorites(long l) throws TwitterException {
+                    return getFavorites(l, new Paging(-1L));
+                }
+
+                @Override
+                public ResponseList<Status> getFavorites(String s) throws TwitterException {
                     return new MTResponseList<>();
                 }
-            }
 
-            @Override
-            public ResponseList<Status> getFavorites(String s, Paging paging) throws TwitterException {
-                return new MTResponseList<>();
-            }
-
-            @Override
-            public Status createFavorite(long l) throws TwitterException {
-                try {
-                    return new MTStatus(new Statuses(client).postFavourite(l).execute());
-                } catch (Mastodon4jRequestException e) {
-                    throw new MTException(e);
+                @Override
+                public ResponseList<Status> getFavorites(Paging paging) throws TwitterException {
+                    try {
+                        return MTResponseList.convert(new Favourites(client).getFavourites(MTRangeConverter.convert(paging)).execute());
+                    } catch (Mastodon4jRequestException e) {
+                        throw new MTException(e);
+                    }
                 }
-            }
 
-            @Override
-            public Status destroyFavorite(long l) throws TwitterException {
-                try {
-                    return new MTStatus(new Statuses(client).postUnfavourite(l).execute());
-                } catch (Mastodon4jRequestException e) {
-                    throw new MTException(e);
+                @Override
+                public ResponseList<Status> getFavorites(long l, Paging paging) throws TwitterException {
+                    if (l == userId) {
+                        return getFavorites(paging);
+                    } else {
+                        return new MTResponseList<>();
+                    }
                 }
-            }
-        };
+
+                @Override
+                public ResponseList<Status> getFavorites(String s, Paging paging) throws TwitterException {
+                    return new MTResponseList<>();
+                }
+
+                @Override
+                public Status createFavorite(long l) throws TwitterException {
+                    try {
+                        return new MTStatus(new Statuses(client).postFavourite(l).execute());
+                    } catch (Mastodon4jRequestException e) {
+                        throw new MTException(e);
+                    }
+                }
+
+                @Override
+                public Status destroyFavorite(long l) throws TwitterException {
+                    try {
+                        return new MTStatus(new Statuses(client).postUnfavourite(l).execute());
+                    } catch (Mastodon4jRequestException e) {
+                        throw new MTException(e);
+                    }
+                }
+            };
+        }
+        return favoritesResources;
     }
 
     @Override
@@ -897,7 +969,7 @@ public final class MastodonTwitterImpl implements Twitter {
 
     @Override
     public Configuration getConfiguration() {
-        return null;
+        return configuration;
     }
 
     @Override
@@ -1788,6 +1860,11 @@ public final class MastodonTwitterImpl implements Twitter {
     @Override
     public Status retweetStatus(long l) throws TwitterException {
         return tweets().retweetStatus(l);
+    }
+
+    @Override
+    public Status unRetweetStatus(long statusId) throws TwitterException {
+        return tweets().unRetweetStatus(statusId);
     }
 
     @Override

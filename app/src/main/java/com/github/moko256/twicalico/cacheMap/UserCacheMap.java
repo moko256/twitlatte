@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 The twicalico authors
+ * Copyright 2018 The twicalico authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,10 +19,12 @@ package com.github.moko256.twicalico.cacheMap;
 import android.content.Context;
 import android.support.v4.util.LruCache;
 
+import com.github.moko256.twicalico.GlobalApplication;
 import com.github.moko256.twicalico.database.CachedUsersSQLiteOpenHelper;
+import com.github.moko256.twicalico.entity.AccessToken;
+import com.github.moko256.twicalico.entity.Type;
 
 import java.util.Collection;
-import java.util.HashSet;
 
 import twitter4j.User;
 
@@ -35,10 +37,20 @@ import twitter4j.User;
 public class UserCacheMap {
 
     private CachedUsersSQLiteOpenHelper diskCache;
-    private LruCache<Long, User> cache=new LruCache<>(1000);
+    private LruCache<Long, User> cache=new LruCache<>(GlobalApplication.statusCacheListLimit / 4);
 
-    public UserCacheMap(Context context, long userId){
-        diskCache = new CachedUsersSQLiteOpenHelper(context, userId);
+    public void prepare(Context context, AccessToken accessToken){
+        if (diskCache != null){
+            diskCache.close();
+        }
+        if (cache.size() > 0){
+            cache.evictAll();
+        }
+        diskCache = new CachedUsersSQLiteOpenHelper(
+                context,
+                accessToken.getUserId(),
+                accessToken.getType() == Type.TWITTER
+        );
     }
 
     public int size() {
@@ -54,15 +66,12 @@ public class UserCacheMap {
 
     public void addAll(Collection<? extends User> c) {
         if (c.size() > 0) {
-            HashSet<? extends User> hashSet = new HashSet<>(c);
-            for (User user : hashSet) {
+            for (User user : c) {
                 if (user != null) {
                     cache.put(user.getId(), user);
                 }
             }
-            User[] users = new User[hashSet.size()];
-            users = hashSet.toArray(users);
-            diskCache.addCachedUsers(users);
+            diskCache.addCachedUsers(c);
         }
     }
 

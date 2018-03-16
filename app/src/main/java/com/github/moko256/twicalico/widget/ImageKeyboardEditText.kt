@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 The twicalico authors
+ * Copyright 2018 The twicalico authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,11 +35,11 @@ import android.view.inputmethod.InputConnection
  */
 class ImageKeyboardEditText : AppCompatEditText {
 
-    constructor(context: Context, attrs: AttributeSet?, defStyle: Int) : super(context, attrs, defStyle) {}
+    constructor(context: Context, attrs: AttributeSet?, defStyle: Int) : super(context, attrs, defStyle)
 
-    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {}
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
 
-    constructor(context: Context) : super(context) {}
+    constructor(context: Context) : super(context)
 
 
     var imageAddedListener: OnImageAddedListener? = null
@@ -57,9 +57,11 @@ class ImageKeyboardEditText : AppCompatEditText {
                 } catch (e: Exception) {
                     return@createWrapper false
                 }
-
             }
-            imageAddedListener?.onAdded(inputContentInfo.contentUri)
+            val result = imageAddedListener?.onAdded(inputContentInfo.contentUri)
+            if (inputContentInfo.linkUri != null && result == true) {
+                text.append(" " + inputContentInfo.linkUri?.toString())
+            }
             true
         }
     }
@@ -70,6 +72,6 @@ class ImageKeyboardEditText : AppCompatEditText {
     }
 
     interface OnImageAddedListener{
-        fun onAdded(imageUri: Uri)
+        fun onAdded(imageUri: Uri): Boolean
     }
 }

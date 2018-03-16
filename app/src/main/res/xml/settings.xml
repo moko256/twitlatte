@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright 2017 The twicalico authors
+  ~ Copyright 2018 The twicalico authors
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory android:title="@string/account">
         <ListPreference
-            android:key="AccountPoint"
+            android:key="AccountKey"
             android:title="@string/account"
             android:summary="%s"
             android:dialogTitle="@string/account"/>
@@ -157,6 +157,9 @@
             <Preference
                 android:key="license_lib_photo_view"
                 android:title="PhotoView"/>
+            <Preference
+                android:key="license_lib_fling_layout"
+                android:title="FlingLayout"/>
             <Preference
                 android:key="license_lib_okhttp"
                 android:title="OkHttp"/>

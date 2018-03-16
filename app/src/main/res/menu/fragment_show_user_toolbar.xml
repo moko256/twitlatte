@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright 2017 The twicalico authors
+  ~ Copyright 2018 The twicalico authors
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -21,6 +21,10 @@
     <item
         android:id="@+id/action_share"
         android:title="@string/share"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_open_in_browser"
+        android:title="@string/open_in_browser"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_add_to_list"

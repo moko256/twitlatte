@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 The twicalico authors
+ * Copyright 2018 The twicalico authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,35 +16,44 @@
 
 package com.github.moko256.twicalico;
 
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
+import android.widget.Toast;
 
+import com.github.chrisbanes.photoview.PhotoView;
+import com.github.chuross.flinglayout.FlingLayout;
 import com.github.moko256.mastodon.MastodonTwitterImpl;
+import com.github.moko256.twicalico.entity.Type;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSourceFactory;
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.LoopingMediaSource;
+import com.google.android.exoplayer2.source.MediaSourceEventListener;
 import com.google.android.exoplayer2.source.hls.HlsMediaSource;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
+import com.google.android.exoplayer2.upstream.DataSpec;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 
+import java.io.IOException;
+
+import kotlin.Unit;
 import twitter4j.MediaEntity;
 
 /**
@@ -57,15 +66,23 @@ public class ImagePagerChildFragment extends Fragment {
 
     private static String FRAG_MEDIA_ENTITY="media_entity";
 
-    ImageView imageView;
+    PhotoView imageView;
 
     SimpleExoPlayerView videoPlayView;
     SimpleExoPlayer player;
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view=inflater.inflate(R.layout.fragment_image_pager_child, null);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        FlingLayout view= (FlingLayout) inflater.inflate(R.layout.fragment_image_pager_child, null);
+        view.setDismissListener(() -> {
+            getActivity().finish();
+            return Unit.INSTANCE;
+        });
+        view.setPositionChangeListener((Integer top, Integer left, Float dragRangeRate) -> {
+            view.setBackgroundColor(Color.argb(Math.round(255 * (1.0F - dragRangeRate)), 0, 0, 0));
+            return Unit.INSTANCE;
+        });
 
         MediaEntity mediaEntity=(MediaEntity) getArguments().getSerializable(FRAG_MEDIA_ENTITY);
 
@@ -118,25 +135,24 @@ public class ImagePagerChildFragment extends Fragment {
                 videoPlayView.setPlayer(player);
                 player.prepare(
                         (isHls)?
-                                new HlsMediaSource(
-                                        Uri.parse(videoPath),
+                                new HlsMediaSource.Factory(
                                         new OkHttpDataSourceFactory(
                                                 GlobalApplication.getOkHttpClient(),
                                                 getResources().getText(R.string.app_name).toString(),
                                                 null
-                                        ),
-                                        null, null
-                                ):
-                                new ExtractorMediaSource(
+                                        )
+                                ).createMediaSource(Uri.parse(videoPath)):
+
+                                new ExtractorMediaSource.Factory(
+                                        new OkHttpDataSourceFactory(
+                                                GlobalApplication.getOkHttpClient(),
+                                                getResources().getText(R.string.app_name).toString(),
+                                                null
+                                        )
+                                ).createMediaSource(
                                         Uri.parse(mediaEntity.getVideoVariants()[0].getUrl()),
-                                        new OkHttpDataSourceFactory(
-                                                GlobalApplication.getOkHttpClient(),
-                                                getResources().getText(R.string.app_name).toString(),
-                                                null
-                                        ),
-                                        new DefaultExtractorsFactory(),
                                         new Handler(),
-                                        Throwable::printStackTrace
+                                        new ShowErrorListener()
                                 )
                 );
                 break;
@@ -170,16 +186,16 @@ public class ImagePagerChildFragment extends Fragment {
                 videoPlayView.setPlayer(player);
                 player.prepare(
                         new LoopingMediaSource(
-                                new ExtractorMediaSource(
-                                        Uri.parse(mediaEntity.getVideoVariants()[0].getUrl()),
+                                new ExtractorMediaSource.Factory(
                                         new OkHttpDataSourceFactory(
                                                 GlobalApplication.getOkHttpClient(),
                                                 getResources().getText(R.string.app_name).toString(),
                                                 null
-                                        ),
-                                        new DefaultExtractorsFactory(),
+                                        )
+                                ).createMediaSource(
+                                        Uri.parse(mediaEntity.getVideoVariants()[0].getUrl()),
                                         new Handler(),
-                                        Throwable::printStackTrace
+                                        new ShowErrorListener()
                                 )
                         )
                 );
@@ -207,8 +223,9 @@ public class ImagePagerChildFragment extends Fragment {
                         hideSystemUI();
                     }
                 });
+                imageView.setOnScaleChangeListener((float scaleFactor, float focusX, float focusY) -> view.setDragEnabled(scaleFactor <= 1F));
                 GlideApp.with(this)
-                        .load(mediaEntity.getMediaURLHttps() + (GlobalApplication.twitter instanceof MastodonTwitterImpl?"":":large"))
+                        .load(mediaEntity.getMediaURLHttps() + ((GlobalApplication.clientType == Type.TWITTER)?":large":""))
                         .fitCenter()
                         .thumbnail(
                                 GlideApp.with(this)
@@ -225,7 +242,7 @@ public class ImagePagerChildFragment extends Fragment {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         if (player != null){
             outState.putLong("video_time", player.getCurrentPosition());
@@ -258,6 +275,36 @@ public class ImagePagerChildFragment extends Fragment {
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                         | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+    }
+
+    private final class ShowErrorListener implements MediaSourceEventListener {
+        @Override
+        public void onLoadStarted(DataSpec dataSpec, int dataType, int trackType, Format trackFormat, int trackSelectionReason, Object trackSelectionData, long mediaStartTimeMs, long mediaEndTimeMs, long elapsedRealtimeMs) {}
+
+        @Override
+        public void onLoadCompleted(DataSpec dataSpec, int dataType, int trackType, Format trackFormat, int trackSelectionReason, Object trackSelectionData, long mediaStartTimeMs, long mediaEndTimeMs, long elapsedRealtimeMs, long loadDurationMs, long bytesLoaded) {}
+
+        @Override
+        public void onLoadCanceled(DataSpec dataSpec, int dataType, int trackType, Format trackFormat, int trackSelectionReason, Object trackSelectionData, long mediaStartTimeMs, long mediaEndTimeMs, long elapsedRealtimeMs, long loadDurationMs, long bytesLoaded) {}
+
+        @Override
+        public void onLoadError(DataSpec dataSpec, int dataType, int trackType, Format trackFormat, int trackSelectionReason, Object trackSelectionData, long mediaStartTimeMs, long mediaEndTimeMs, long elapsedRealtimeMs, long loadDurationMs, long bytesLoaded, IOException error, boolean wasCanceled) {
+            error.printStackTrace();
+
+            Toast.makeText(
+                    getContext(),
+                    new StringBuilder(getString(R.string.error_occurred))
+                            .append("\n\n")
+                            .append(error.getMessage()),
+                    Toast.LENGTH_SHORT
+            ).show();
+        }
+
+        @Override
+        public void onUpstreamDiscarded(int trackType, long mediaStartTimeMs, long mediaEndTimeMs) {}
+
+        @Override
+        public void onDownstreamFormatChanged(int trackType, Format trackFormat, int trackSelectionReason, Object trackSelectionData, long mediaTimeMs) {}
     }
 
     public static ImagePagerChildFragment getInstance(MediaEntity entity){

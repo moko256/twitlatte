@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 The twicalico authors
+ * Copyright 2018 The twicalico authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,10 +19,8 @@ package com.github.moko256.twicalico;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
-import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.Space;
 import android.support.v7.content.res.AppCompatResources;
 import android.text.method.LinkMovementMethod;
@@ -37,7 +35,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.github.moko256.mastodon.MastodonTwitterImpl;
+import com.github.moko256.twicalico.entity.Type;
 import com.github.moko256.twicalico.text.TwitterStringUtils;
 import com.github.moko256.twicalico.widget.TweetImageTableView;
 
@@ -133,8 +131,10 @@ public class StatusView extends FrameLayout {
             this.status = status;
             updateView();
         } else {
-            glideRequests.clear(userImage);
-            imageTableView.clearImages();
+            if (!((Activity) getContext()).isDestroyed()) {
+                glideRequests.clear(userImage);
+                imageTableView.clearImages();
+            }
         }
     }
     
@@ -183,7 +183,7 @@ public class StatusView extends FrameLayout {
         }
 
         if (GlobalApplication.configuration.isTimelineImageLoad()){
-            glideRequests.load(item.getUser().getProfileImageURLHttps()).circleCrop().into(userImage);
+            glideRequests.load(item.getUser().get400x400ProfileImageURLHttps()).circleCrop().into(userImage);
         } else {
             userImage.setImageResource(R.drawable.border_frame_round);
         }
@@ -206,13 +206,7 @@ public class StatusView extends FrameLayout {
 
         timeStampText.setText(timeSpanConverter.toTimeSpanString(item.getCreatedAt().getTime()));
         userImage.setOnClickListener(v-> getContext().startActivity(ShowUserActivity.getIntent(getContext(), item.getUser().getId())));
-        setOnClickListener(v -> {
-            ViewCompat.setTransitionName(userImage,"tweet_user_image");
-            getContext().startActivity(
-                    ShowTweetActivity.getIntent(getContext(), item.getId()),
-                    ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) getContext(), userImage,"tweet_user_image").toBundle()
-            );
-        });
+        setOnClickListener(v -> getContext().startActivity(ShowTweetActivity.getIntent(getContext(), item.getId())));
 
         Status quotedStatus=item.getQuotedStatus();
         if(quotedStatus!=null){
@@ -254,13 +248,13 @@ public class StatusView extends FrameLayout {
                         subscriber.onError(e);
                     }
                 })
-                .subscribeOn(Schedulers.newThread())
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         result->{
                             Status status = (Status) result;
                             GlobalApplication.statusCache.add(status);
-                            updateView();
+                            setStatus(GlobalApplication.statusCache.get(this.status.getId()));
                             Toast.makeText(getContext(), R.string.succeeded, Toast.LENGTH_SHORT).show();
                         },
                         throwable -> {
@@ -278,19 +272,19 @@ public class StatusView extends FrameLayout {
                             subscriber.onSuccess(GlobalApplication.twitter.retweetStatus(item.getId()));
                         }
                         else if((!b)&&item.isRetweeted()){
-                            subscriber.onSuccess(GlobalApplication.twitter.destroyStatus(item.getCurrentUserRetweetId()));
+                            subscriber.onSuccess(GlobalApplication.twitter.unRetweetStatus(item.getId()));
                         }
                     } catch (TwitterException e) {
                         subscriber.onError(e);
                     }
                 })
-                .subscribeOn(Schedulers.newThread())
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         result->{
                             Status status = (Status) result;
                             GlobalApplication.statusCache.add(status);
-                            updateView();
+                            setStatus(GlobalApplication.statusCache.get(this.status.getId()));
                             Toast.makeText(getContext(), R.string.succeeded, Toast.LENGTH_SHORT).show();
                         },
                         throwable -> {
@@ -300,10 +294,10 @@ public class StatusView extends FrameLayout {
                 )
         );
         retweetButton.setChecked(item.isRetweeted());
-        retweetButton.setEnabled(GlobalApplication.twitter instanceof MastodonTwitterImpl || !(item.getUser().isProtected()) || item.getUser().getId() == GlobalApplication.userId);
+        retweetButton.setEnabled(GlobalApplication.clientType == Type.MASTODON || !(item.getUser().isProtected()) || item.getUser().getId() == GlobalApplication.userId);
 
         replyButton.setOnClickListener(
-                v -> getContext().startActivity(PostTweetActivity.getIntent(
+                v -> getContext().startActivity(PostActivity.getIntent(
                         getContext(),
                         item.getId(),
                         TwitterStringUtils.convertToReplyTopString(

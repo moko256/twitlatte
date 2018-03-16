@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 The twicalico authors
+ * Copyright 2018 The twicalico authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package com.github.moko256.twicalico;
 
 import android.Manifest;
+import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -25,8 +26,8 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -51,10 +52,11 @@ import com.github.moko256.twicalico.model.impl.PostTweetModelCreator;
 import com.github.moko256.twicalico.text.TwitterStringUtils;
 import com.github.moko256.twicalico.widget.ImageKeyboardEditText;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.ArrayList;
 
 import rx.Single;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
 import twitter4j.GeoLocation;
 
@@ -63,10 +65,11 @@ import twitter4j.GeoLocation;
  *
  * @author moko256
  */
-public class PostTweetActivity extends AppCompatActivity {
+public class PostActivity extends AppCompatActivity {
 
     private static final String INTENT_EXTRA_IN_REPLY_TO_STATUS_ID = "inReplyToStatusId";
     private static final String INTENT_EXTRA_TWEET_TEXT = "text";
+    private static final String INTENT_EXTRA_IMAGE_URI = "imageUri";
     private static final String OUT_STATE_EXTRA_IMAGE_URI_LIST = "image_uri_list";
     private static final int REQUEST_GET_IMAGE = 10;
 
@@ -90,7 +93,7 @@ public class PostTweetActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_post_tweet);
+        setContentView(R.layout.activity_post);
 
         model = PostTweetModelCreator.getInstance(GlobalApplication.twitter, getContentResolver());
         subscription = new CompositeSubscription();
@@ -107,7 +110,7 @@ public class PostTweetActivity extends AppCompatActivity {
         userIcon = findViewById(R.id.activity_tweet_send_user_icon);
         GlideApp.with(this)
                 .load(GlobalApplication.userCache.get(GlobalApplication.userId)
-                        .getProfileImageURLHttps()
+                        .get400x400ProfileImageURLHttps()
                 )
                 .circleCrop()
                 .into(userIcon);
@@ -131,27 +134,16 @@ public class PostTweetActivity extends AppCompatActivity {
             public void afterTextChanged(Editable s) {}
         });
         editText.setImageAddedListener(imageUri -> {
-            addedImagesAdapter.getImagesList().add(imageUri);
-            model.getUriList().add(imageUri);
-            addedImagesAdapter.notifyItemInserted(addedImagesAdapter.getImagesList().size());
-            possiblySensitiveSwitch.setEnabled(true);
-        });
-
-        if (getIntent()!=null){
-            if (!model.isReply()){
-                model.setInReplyToStatusId(getIntent().getLongExtra(
-                        INTENT_EXTRA_IN_REPLY_TO_STATUS_ID, -1
-                ));
-            }
-
-            String text=getIntent().getStringExtra(INTENT_EXTRA_TWEET_TEXT);
-            if (text!=null) {
-                editText.setText(text);
-                editText.setSelection(text.length());
+            if (model.getUriList().size() < model.getUriListSizeLimit()) {
+                addedImagesAdapter.getImagesList().add(imageUri);
+                model.getUriList().add(imageUri);
+                addedImagesAdapter.notifyItemChanged(addedImagesAdapter.getImagesList().size() - 1);
+                possiblySensitiveSwitch.setEnabled(true);
+                return true;
             } else {
-                editText.setText("");
+                return false;
             }
-        }
+        });
 
         editText.setHint(model.isReply()? R.string.reply: R.string.post);
 
@@ -160,19 +152,18 @@ public class PostTweetActivity extends AppCompatActivity {
 
         imagesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        addedImagesAdapter.setLimit(4);
-        addedImagesAdapter.setOnAddButtonClickListener(v -> {
-            Intent intent;
-            if (Build.VERSION.SDK_INT < 19){
-                intent = new Intent(Intent.ACTION_GET_CONTENT);
-            } else {
-                intent = new Intent(Intent.ACTION_OPEN_DOCUMENT).addCategory(Intent.CATEGORY_OPENABLE);
-            }
-            intent.setType("image/*");
-            startActivityForResult(intent, REQUEST_GET_IMAGE);
-        });
+        addedImagesAdapter.setLimit(model.getUriListSizeLimit());
+        addedImagesAdapter.setOnAddButtonClickListener(v -> startActivityForResult(
+                Intent.createChooser(
+                        new Intent(Intent.ACTION_GET_CONTENT)
+                                .addCategory(Intent.CATEGORY_OPENABLE)
+                                .putExtra(Intent.EXTRA_MIME_TYPES, new String[]{"image/*", "video/*"})
+                                .putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+                                .setType("*/*"), getString(R.string.add_image)
+                ),
+                REQUEST_GET_IMAGE
+        ));
         imagesRecyclerView.setAdapter(addedImagesAdapter);
-        addedImagesAdapter.notifyDataSetChanged();
 
         possiblySensitiveSwitch = findViewById(R.id.activity_tweet_possibly_sensitive_switch);
         possiblySensitiveSwitch.setEnabled(addedImagesAdapter.getImagesList().size() > 0);
@@ -189,7 +180,7 @@ public class PostTweetActivity extends AppCompatActivity {
                                     it -> {
                                         model.setLocation(new GeoLocation(it.getLatitude(), it.getLongitude()));
                                         locationText.setVisibility(View.VISIBLE);
-                                        locationText.setText(it.getLatitude() + " " + it.getLongitude());
+                                        locationText.setText(getString(R.string.lat_and_lon, it.getLatitude(), it.getLongitude()));
                                     },
                                     Throwable::printStackTrace
                             )
@@ -205,6 +196,28 @@ public class PostTweetActivity extends AppCompatActivity {
         locationText = findViewById(R.id.activity_tweet_location_result);
         locationText.setVisibility(View.GONE);
 
+        if (getIntent()!=null){
+            if (!model.isReply()){
+                model.setInReplyToStatusId(getIntent().getLongExtra(
+                        INTENT_EXTRA_IN_REPLY_TO_STATUS_ID, -1
+                ));
+            }
+
+            String text=getIntent().getStringExtra(INTENT_EXTRA_TWEET_TEXT);
+            if (text!=null) {
+                editText.setText(text);
+                editText.setSelection(text.length());
+            } else {
+                editText.setText("");
+            }
+
+            ArrayList<Uri> uris = getIntent().getParcelableArrayListExtra(INTENT_EXTRA_IMAGE_URI);
+            if (uris != null) {
+                addedImagesAdapter.getImagesList().addAll(uris);
+                model.getUriList().addAll(uris);
+                possiblySensitiveSwitch.setEnabled(true);
+            }
+        }
     }
 
     @Override
@@ -215,9 +228,11 @@ public class PostTweetActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId() == R.id.activity_post_tweet_send){
+        if(item.getItemId() == R.id.action_send){
             item.setEnabled(false);
             model.postTweet()
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
                             it -> this.finish(),
                             e->{
@@ -253,20 +268,32 @@ public class PostTweetActivity extends AppCompatActivity {
         super.onRestoreInstanceState(savedInstanceState);
         if (savedInstanceState != null){
             model.setInReplyToStatusId(savedInstanceState.getLong(INTENT_EXTRA_IN_REPLY_TO_STATUS_ID, -1));
-            List<Uri> urls = Arrays.asList((Uri[]) savedInstanceState.getSerializable(OUT_STATE_EXTRA_IMAGE_URI_LIST));
-            model.getUriList().addAll(urls);
-            addedImagesAdapter.getImagesList().addAll(urls);
+            Parcelable[] l = savedInstanceState.getParcelableArray(OUT_STATE_EXTRA_IMAGE_URI_LIST);
+            if (l != null) {
+                for (Parcelable p : l) {
+                    Uri uri = (Uri) p;
+                    model.getUriList().add(uri);
+                    addedImagesAdapter.getImagesList().add(uri);
+                }
+            }
         }
-
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putLong(INTENT_EXTRA_IN_REPLY_TO_STATUS_ID, model.getInReplyToStatusId());
-        Uri[] uris = new Uri[model.getUriList().size()];
-        model.getUriList().toArray(uris);
-        outState.putSerializable(OUT_STATE_EXTRA_IMAGE_URI_LIST, uris);
+
+        long inReplyToStatusId = model.getInReplyToStatusId();
+        if (inReplyToStatusId != -1){
+            outState.putLong(INTENT_EXTRA_IN_REPLY_TO_STATUS_ID, inReplyToStatusId);
+        }
+
+        int size = model.getUriList().size();
+        if (size > 0){
+            Uri[] uris = new Uri[size];
+            model.getUriList().toArray(uris);
+            outState.putParcelableArray(OUT_STATE_EXTRA_IMAGE_URI_LIST, uris);
+        }
     }
 
     @Override
@@ -275,10 +302,21 @@ public class PostTweetActivity extends AppCompatActivity {
         if (requestCode == REQUEST_GET_IMAGE){
             if (data != null){
                 Uri resultUri = data.getData();
-                if (resultUri != null){
+                ClipData resultUris = data.getClipData();
+                if (resultUri != null) {
                     addedImagesAdapter.getImagesList().add(resultUri);
                     model.getUriList().add(resultUri);
-                    addedImagesAdapter.notifyItemInserted(addedImagesAdapter.getImagesList().size());
+                    addedImagesAdapter.notifyItemChanged(addedImagesAdapter.getImagesList().size() - 1);
+                    possiblySensitiveSwitch.setEnabled(true);
+                } else if (resultUris != null) {
+                    int itemCount = resultUris.getItemCount();
+
+                    for (int i = 0; i < itemCount; i++) {
+                        Uri uri = resultUris.getItemAt(i).getUri();
+                        addedImagesAdapter.getImagesList().add(uri);
+                        model.getUriList().add(uri);
+                    }
+                    addedImagesAdapter.notifyItemRangeChanged(addedImagesAdapter.getImagesList().size() - itemCount, itemCount);
                     possiblySensitiveSwitch.setEnabled(true);
                 }
             }
@@ -348,10 +386,14 @@ public class PostTweetActivity extends AppCompatActivity {
     }
 
     public static Intent getIntent(Context context, String text){
-        return new Intent(context,PostTweetActivity.class).putExtra(INTENT_EXTRA_TWEET_TEXT, text);
+        return new Intent(context,PostActivity.class).putExtra(INTENT_EXTRA_TWEET_TEXT, text);
     }
 
     public static Intent getIntent(Context context, long inReplyToStatusId, String text){
-        return PostTweetActivity.getIntent(context, text).putExtra(INTENT_EXTRA_IN_REPLY_TO_STATUS_ID, inReplyToStatusId);
+        return PostActivity.getIntent(context, text).putExtra(INTENT_EXTRA_IN_REPLY_TO_STATUS_ID, inReplyToStatusId);
+    }
+
+    public static Intent getIntent(Context context, ArrayList<Uri> imageUri){
+        return new Intent(context, PostActivity.class).putExtra(INTENT_EXTRA_IMAGE_URI, imageUri);
     }
 }

@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright 2017 The twicalico authors
+  ~ Copyright 2018 The twicalico authors
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -28,17 +28,19 @@
 
     <string name="action_settings">Settings…</string>
     <string name="action_search">Search…</string>
+    <string name="back">Back</string>
     <string name="trends">Trends</string>
     <string name="timeline">TimeLine</string>
     <string name="mentions">Mentions</string>
     <string name="post">Post</string>
+    <string name="create_post">Create post</string>
     <string name="reply">Reply</string>
     <string name="follow">follow</string>
     <string name="follower">follower</string>
     <string name="like">Like</string>
-    <string name="your_post">Your post</string>
     <string name="account">Account</string>
     <string name="theme">Theme</string>
+    <string name="media">Media</string>
     <string name="images">Images</string>
     <string name="add_image">Add image…</string>
     <string name="possibly_sensitive">Include sensitivity in the images</string>
@@ -50,9 +52,11 @@
     <string name="app_settings">Application Settings</string>
     <string name="add_account">Add other account</string>
     <string name="logout">Logout</string>
+    <string name="do_logout">Logout</string>
+    <string name="confirm_logout">Logout?</string>
     <string name="new_post">New post</string>
     <string name="permission_denied">Permission Denied</string>
-    <string name="lat_and_lon">Latitude:%d Longitude: %d</string>
+    <string name="lat_and_lon">Latitude:%f Longitude: %f</string>
     <string name="location_is">Location: %s</string>
     <string name="url_is">URL: %s</string>
     <string name="post_counts_is">Posts: %d</string>
@@ -60,6 +64,7 @@
     <string name="follower_counts_is">Followers: %d</string>
     <string name="other">Others</string>
     <string name="share">Share…</string>
+    <string name="open_in_browser">Open in browser</string>
     <string name="add_to_list">Add to list</string>
     <string name="show_list">Show lists</string>
     <string name="load_more">Load more…</string>

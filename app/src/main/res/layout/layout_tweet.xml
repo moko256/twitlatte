@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright 2017 The twicalico authors
+  ~ Copyright 2018 The twicalico authors
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -132,7 +132,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginBottom="8dp"
-                android:src="@color/dividerColor"/>
+                android:src="@color/divider_color"/>
 
             <TextView
                 android:id="@+id/tweet_quote_tweet_user_name"
@@ -192,7 +192,7 @@
             android:layout_marginBottom="4dp"
             android:layout_marginLeft="12dp"
             android:layout_marginRight="6dp"
-            app:toggle_drawable="@drawable/ic_heart_black_24dp"
+            app:toggle_drawable="@drawable/like_button_drawable_stateful"
             app:buttonTint="@color/toggle_button_color_stateful"/>
 
         <TextView

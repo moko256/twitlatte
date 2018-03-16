@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 The twicalico authors
+ * Copyright 2018 The twicalico authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,15 +17,14 @@
 package com.github.moko256.twicalico;
 
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.net.Uri;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.util.Pair;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -38,12 +37,17 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.github.moko256.twicalico.database.CachedUsersSQLiteOpenHelper;
 import com.github.moko256.twicalico.database.TokenSQLiteOpenHelper;
+import com.github.moko256.twicalico.entity.AccessToken;
+import com.github.moko256.twicalico.entity.Type;
 import com.github.moko256.twicalico.text.TwitterStringUtils;
+import com.github.moko256.twicalico.widget.FragmentPagerAdapter;
 
 import java.util.ArrayList;
 
@@ -53,16 +57,33 @@ import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
 import twitter4j.TwitterException;
 import twitter4j.User;
-import twitter4j.auth.AccessToken;
 
 /**
  * Created by moko256 on 2015/11/08.
  *
  * @author moko256
  */
-public class MainActivity extends AppCompatActivity implements BaseListFragment.GetSnackBarParentContainerId {
+public class MainActivity extends AppCompatActivity implements BaseListFragment.GetSnackBarParentContainerId, BaseTweetListFragment.GetRecyclerViewPool, BaseUsersFragment.GetRecyclerViewPool {
 
     CompositeSubscription subscription;
+
+    Toolbar toolbar;
+    DrawerLayout drawer;
+    NavigationView navigationView;
+
+    View headerView;
+    TextView userNameText;
+    TextView userIdText;
+    ImageView userImage;
+    ImageView userBackgroundImage;
+    RecyclerView accountListView;
+
+    TabLayout tabLayout;
+
+    boolean isDrawerAccountsSelection = false;
+
+    RecyclerView.RecycledViewPool tweetListViewPool;
+    RecyclerView.RecycledViewPool userListViewPool;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -72,22 +93,40 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
 
         subscription = new CompositeSubscription();
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         toolbar.getChildAt(0).setOnClickListener(v -> {
             Fragment fragment = getMainFragment();
-            if (fragment instanceof MoveableTopInterface){
-                ((MoveableTopInterface) fragment).moveToTop();
+            if (fragment instanceof MovableTopInterface){
+                ((MovableTopInterface) fragment).moveToTop();
             }
         });
 
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = findViewById(R.id.nav_view);
+        drawer.addDrawerListener(new DrawerLayout.DrawerListener() {
+            @Override
+            public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {}
+
+            @Override
+            public void onDrawerOpened(@NonNull View drawerView) {}
+
+            @Override
+            public void onDrawerClosed(@NonNull View drawerView) {
+                if (isDrawerAccountsSelection){
+                    changeIsDrawerAccountsSelection();
+                }
+            }
+
+            @Override
+            public void onDrawerStateChanged(int newState) {}
+        });
+
+        navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(item-> {
             int id = item.getItemId();
 
@@ -120,125 +159,123 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
 
         });
 
-        View headerView = navigationView.inflateHeaderView(R.layout.nav_header_main);
+        headerView = navigationView.inflateHeaderView(R.layout.nav_header_main);
 
-        TextView userNameText = headerView.findViewById(R.id.user_name);
-        TextView userIdText = headerView.findViewById(R.id.user_id);
-        ImageView userImage = headerView.findViewById(R.id.user_image);
-        ImageView userBackgroundImage = headerView.findViewById(R.id.user_bg_image);
-        ImageView toggleAccount = headerView.findViewById(R.id.toggle_account);
+        userNameText = headerView.findViewById(R.id.user_name);
+        userIdText = headerView.findViewById(R.id.user_id);
+        userImage = headerView.findViewById(R.id.user_image);
+        userBackgroundImage = headerView.findViewById(R.id.user_bg_image);
+        userBackgroundImage.setOnClickListener(v -> changeIsDrawerAccountsSelection());
 
-        toggleAccount.setOnClickListener(v -> {
-            TokenSQLiteOpenHelper helper = new TokenSQLiteOpenHelper(this);
+        updateDrawerImage();
 
-            final AlertDialog[] dialog = new AlertDialog[1];
+        accountListView = new RecyclerView(this);
+        accountListView.setLayoutParams(new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT
+        ));
+        accountListView.setLayoutManager(new LinearLayoutManager(this));
+        accountListView.setOverScrollMode(View.OVER_SCROLL_NEVER);
+        accountListView.setVisibility(View.GONE);
+        navigationView.addHeaderView(accountListView);
 
-            SelectAccountsAdapter adapter = new SelectAccountsAdapter(this);
-            adapter.setOnImageButtonClickListener(i -> {
+        SelectAccountsAdapter adapter = new SelectAccountsAdapter(this);
+        adapter.setOnImageButtonClickListener(accessToken -> {
+            drawer.closeDrawer(GravityCompat.START);
 
-                AccessToken token = helper.getAccessToken(i);
-                if (token.getUserId() != GlobalApplication.userId){
-                    PreferenceManager.getDefaultSharedPreferences(this)
-                            .edit()
-                            .putString("AccountPoint",String.valueOf(i))
-                            .apply();
-                    ((GlobalApplication) getApplication()).initTwitter(token);
-                    startActivity(
-                            new Intent(this, MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                    );
-                } else {
-                    dialog[0].cancel();
-                }
-                helper.close();
-            });
-            adapter.setOnAddButtonClickListener(v1 -> {
+            if (accessToken.getUserId() != GlobalApplication.userId) {
                 PreferenceManager.getDefaultSharedPreferences(this)
                         .edit()
-                        .putString("AccountPoint", "-1")
+                        .putString("AccountKey", accessToken.getKeyString())
                         .apply();
-                GlobalApplication.twitter = null;
-                startActivity(new Intent(this, OAuthActivity.class));
-            });
-
-            subscription.add(
-                    Single.create(
-                            singleSubscriber -> {
-                                SQLiteDatabase database = helper.getReadableDatabase();
-                                Cursor c=database.query("AccountTokenList",new String[]{"userId", "userName"},null,null,null,null,null);
-                                ArrayList<Pair<Uri, String>> r = new ArrayList<>();
-                                while (c.moveToNext()){
-                                    long id = Long.valueOf(c.getString(0));
-                                    User user = new CachedUsersSQLiteOpenHelper(this, id).getCachedUser(id);
-                                    if (user ==  null){
-                                        try {
-                                            user = ((GlobalApplication) getApplication()).getTwitterInstance(helper.getAccessToken(c.getPosition())).verifyCredentials();
-                                            new CachedUsersSQLiteOpenHelper(this, user.getId()).addCachedUser(user);
-                                        } catch (TwitterException e) {
-                                            singleSubscriber.onError(e);
-                                        }
-                                    }
-                                    r.add(new Pair<>(
-                                            Uri.parse(user.getProfileImageURLHttps()),
-                                            TwitterStringUtils.plusAtMark(c.getString(1))
-                                    ));
-                                }
-                                c.close();
-                                database.close();
-                                singleSubscriber.onSuccess(r);
-                            })
-                            .subscribeOn(Schedulers.newThread())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(
-                                    o -> {
-                                        adapter.getImagesList().addAll((ArrayList<Pair<Uri, String>>) o);
-                                        adapter.notifyDataSetChanged();
-                                    },
-                                    Throwable::printStackTrace
-                            )
-            );
-
-            float dp = Math.round(getResources().getDisplayMetrics().density);
-
-            int topPadding = Math.round(20 * dp);
-            int bottomPadding = Math.round(8 * dp);
-
-            RecyclerView recyclerView = new RecyclerView(this);
-            recyclerView.setLayoutManager(new LinearLayoutManager(this));
-            recyclerView.setOverScrollMode(View.OVER_SCROLL_NEVER);
-            recyclerView.setPadding(0, topPadding, 0, bottomPadding);
-            recyclerView.setAdapter(adapter);
-
-            dialog[0] = new AlertDialog.Builder(this)
-                    .setTitle(R.string.account)
-                    .setView(recyclerView)
-                    .show();
+                ((GlobalApplication) getApplication()).initTwitter(accessToken);
+                updateDrawerImage();
+                clearAndPrepareFragment();
+            }
         });
+        adapter.setOnAddButtonClickListener(v -> {
+            PreferenceManager.getDefaultSharedPreferences(this)
+                    .edit()
+                    .putString("AccountKey", "-1")
+                    .apply();
+            GlobalApplication.twitter = null;
+            startActivity(new Intent(this, OAuthActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
+        });
+        adapter.setOnRemoveButtonClickListener(v -> new AlertDialog.Builder(this)
+                .setMessage(R.string.confirm_logout)
+                .setCancelable(true)
+                .setPositiveButton(R.string.do_logout,
+                        (dialog, i) -> {
+                            SharedPreferences defaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+                            TokenSQLiteOpenHelper helper = new TokenSQLiteOpenHelper(this);
+                            helper.deleteAccessToken(
+                                    helper.getAccessToken(
+                                            defaultSharedPreferences.getString("AccountKey","-1")
+                                    )
+                            );
+
+                            int point = helper.getSize() - 1;
+                            if (point != -1) {
+                                AccessToken accessToken = helper.getAccessTokens()[point];
+                                defaultSharedPreferences
+                                        .edit()
+                                        .putString("AccountKey", accessToken.getKeyString())
+                                        .apply();
+                                ((GlobalApplication) getApplication()).initTwitter(accessToken);
+                                updateDrawerImage();
+                                clearAndPrepareFragment();
+                            } else {
+                                adapter.getOnAddButtonClickListener().onClick(v);
+                            }
+                            helper.close();
+                        }
+                )
+                .setNeutralButton(R.string.back,(dialog, i) -> dialog.cancel())
+                .show());
+        accountListView.setAdapter(adapter);
 
         subscription.add(
                 Single.create(
-                        subscriber->{
-                            try {
-                                User me = GlobalApplication.userCache.get(GlobalApplication.userId);
-                                if (me == null){
-                                    me = GlobalApplication.twitter.verifyCredentials();
-                                    GlobalApplication.userCache.add(me);
+                        singleSubscriber -> {
+                            TokenSQLiteOpenHelper helper = new TokenSQLiteOpenHelper(this);
+                            AccessToken[] accessTokens = helper.getAccessTokens();
+                            helper.close();
+
+                            ArrayList<Pair<User, AccessToken>> r = new ArrayList<>(accessTokens.length);
+                            for (AccessToken accessToken : accessTokens){
+                                long id = accessToken.getUserId();
+                                CachedUsersSQLiteOpenHelper userHelper = new CachedUsersSQLiteOpenHelper(this, id, accessToken.getType() == Type.TWITTER);
+                                User user = userHelper.getCachedUser(id);
+                                if (user ==  null){
+                                    try {
+                                        user = ((GlobalApplication) getApplication()).getTwitterInstance(accessToken).verifyCredentials();
+                                        userHelper.addCachedUser(user);
+                                    } catch (TwitterException e) {
+                                        singleSubscriber.onError(e);
+                                        return;
+                                    } finally {
+                                        userHelper.close();
+                                    }
                                 }
-                                subscriber.onSuccess(me);
-                            } catch (TwitterException e) {
-                                subscriber.onError(e);
+                                r.add(new Pair<>(user, accessToken));
                             }
+                            singleSubscriber.onSuccess(r);
                         })
-                        .subscribeOn(Schedulers.newThread())
+                        .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
-                                result -> setDrawerHeader((User) result, userNameText, userIdText, userImage, userBackgroundImage),
+                                o -> {
+                                    ArrayList<Pair<User, AccessToken>> pairs = (ArrayList<Pair<User, AccessToken>>) o;
+                                    adapter.getImagesList().addAll(pairs);
+                                    adapter.notifyDataSetChanged();
+                                },
                                 Throwable::printStackTrace
                         )
         );
 
-        findViewById(R.id.fab).setOnClickListener(v -> startActivity(new Intent(this, PostTweetActivity.class)));
+        findViewById(R.id.fab).setOnClickListener(v -> startActivity(new Intent(this, PostActivity.class)));
 
-        TabLayout tabLayout= findViewById(R.id.toolbar_tab);
+        tabLayout= findViewById(R.id.toolbar_tab);
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {}
@@ -248,19 +285,20 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-                Fragment fragment = ((FragmentPagerAdapter) ((UseTabsInterface) getMainFragment()).getTabsViewPager().getAdapter()).getItem(tab.getPosition());
-                if (fragment instanceof MoveableTopInterface){
-                    ((MoveableTopInterface) fragment).moveToTop();
+                Fragment fragment = ((FragmentPagerAdapter) ((UseTabsInterface) getMainFragment()).getTabsViewPager().getAdapter()).getFragment(tab.getPosition());
+                if (fragment instanceof MovableTopInterface){
+                    ((MovableTopInterface) fragment).moveToTop();
                 }
             }
         });
 
-        getSupportFragmentManager().addOnBackStackChangedListener(() -> attachFragment(getMainFragment(), navigationView, tabLayout));
+        tweetListViewPool = new RecyclerView.RecycledViewPool();
+        userListViewPool = new RecyclerView.RecycledViewPool();
+
+        getSupportFragmentManager().addOnBackStackChangedListener(() -> attachFragment(getMainFragment()));
 
         if(savedInstanceState==null){
-            Fragment top=new HomeTimeLineFragment();
-            addFragment(top);
-            attachFragment(top, navigationView, tabLayout);
+            prepareFragment();
         }
 
     }
@@ -275,7 +313,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
     @Override
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        attachFragment(getMainFragment(), findViewById(R.id.nav_view), findViewById(R.id.toolbar_tab));
+        attachFragment(getMainFragment());
     }
 
     @Override
@@ -300,6 +338,19 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
         } else {
             super.onBackPressed();
         }
+    }
+
+    private void changeIsDrawerAccountsSelection() {
+        isDrawerAccountsSelection = !isDrawerAccountsSelection;
+
+        accountListView.setVisibility(isDrawerAccountsSelection? View.VISIBLE: View.GONE);
+
+        navigationView.getMenu().setGroupVisible(R.id.drawer_menu_main, !isDrawerAccountsSelection);
+        navigationView.getMenu().setGroupVisible(R.id.drawer_menu_settings, !isDrawerAccountsSelection);
+
+        ((RecyclerView) navigationView.findViewById(android.support.design.R.id.design_navigation_view))
+                .getAdapter()
+                .notifyDataSetChanged();
     }
 
     private void startMyUserActivity() {
@@ -331,7 +382,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
         return R.id.activity_main_coordinator_layout;
     }
 
-    private void attachFragment(Fragment fragment, NavigationView navigationView, TabLayout tabLayout){
+    private void attachFragment(Fragment fragment){
         if (fragment != null) {
             if(fragment instanceof ToolbarTitleInterface){
                 setTitle(((ToolbarTitleInterface)fragment).getTitleResourceId());
@@ -354,16 +405,68 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
         }
     }
 
-    private void setDrawerHeader(User user, TextView userNameText, TextView userIdText, ImageView userImage, ImageView userBackgroundImage){
-        userNameText.setText(user.getName());
-        userIdText.setText(TwitterStringUtils.plusAtMark(user.getScreenName()));
+    private void updateDrawerImage(){
+        subscription.add(
+                Single.create(
+                        subscriber->{
+                            try {
+                                User me = GlobalApplication.userCache.get(GlobalApplication.userId);
+                                if (me == null){
+                                    me = GlobalApplication.twitter.verifyCredentials();
+                                    GlobalApplication.userCache.add(me);
+                                }
+                                subscriber.onSuccess(me);
+                            } catch (TwitterException e) {
+                                subscriber.onError(e);
+                            }
+                        })
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                                result -> {
+                                    User user = (User) result;
+                                    userNameText.setText(user.getName());
+                                    userIdText.setText(TwitterStringUtils.plusAtMark(user.getScreenName()));
 
-        userImage.setOnClickListener(v -> startMyUserActivity());
+                                    userImage.setOnClickListener(v -> startMyUserActivity());
 
-        GlideRequests requests=GlideApp.with(this);
+                                    GlideRequests requests=GlideApp.with(this);
 
-        requests.load(user.getBiggerProfileImageURL()).circleCrop().into(userImage);
-        requests.load(user.getProfileBannerRetinaURL()).centerCrop().into(userBackgroundImage);
+                                    requests.load(user.get400x400ProfileImageURLHttps()).circleCrop().into(userImage);
+                                    requests.load(user.getProfileBannerRetinaURL()).centerCrop().into(userBackgroundImage);
+                                },
+                                Throwable::printStackTrace
+                        )
+        );
+
     }
 
+    private void prepareFragment(){
+        Fragment top=new HomeTimeLineFragment();
+        addFragment(top);
+        attachFragment(top);
+    }
+
+    private void clearAndPrepareFragment(){
+        Fragment top=new HomeTimeLineFragment();
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        fragmentManager
+                .beginTransaction()
+                .replace(R.id.mainLayout, top)
+                .commit();
+
+        attachFragment(top);
+    }
+
+    @Override
+    public RecyclerView.RecycledViewPool getTweetListViewPool() {
+        return tweetListViewPool;
+    }
+
+    @Override
+    public RecyclerView.RecycledViewPool getUserListViewPool() {
+        return userListViewPool;
+    }
 }

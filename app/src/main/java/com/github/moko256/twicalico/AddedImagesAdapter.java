@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 The twicalico authors
+ * Copyright 2018 The twicalico authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,7 +41,7 @@ public class AddedImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     private static final int VIEW_TYPE_IMAGE = 1;
     private static final int VIEW_TYPE_ADD = 2;
 
-    Context context;
+    private Context context;
 
     private ArrayList<Uri> images = new ArrayList<>();
     private int limit = -1;
@@ -56,8 +57,9 @@ public class AddedImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         return ((limit == -1) || ((position < limit))) && (position < images.size())? VIEW_TYPE_IMAGE: VIEW_TYPE_ADD;
     }
 
+    @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if (viewType == VIEW_TYPE_IMAGE){
             return new ImageChildViewHolder(LayoutInflater.from(context).inflate(R.layout.layout_images_adapter_image_child, parent, false));
         } else {
@@ -66,7 +68,7 @@ public class AddedImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if (getItemViewType(position) == VIEW_TYPE_IMAGE){
             ImageChildViewHolder viewHolder = (ImageChildViewHolder) holder;
             Uri image = images.get(position);
@@ -97,6 +99,15 @@ public class AddedImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         return (limit == -1 || images.size()<limit)? images.size() + 1: limit;
     }
 
+
+    @Override
+    public long getItemId(int position) {
+        if (position < images.size()){
+            return images.get(position).hashCode();
+        } else {
+            return -1;
+        }
+    }
 
     public View.OnClickListener getOnAddButtonClickListener() {
         return onAddButtonClickListener;

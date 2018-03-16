@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright 2017 The twicalico authors
+  ~ Copyright 2018 The twicalico authors
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@
     android:layout_height="match_parent"
     android:id="@+id/activity_tweet_send_layout_root"
     android:orientation="vertical"
-    tools:context=".PostTweetActivity">
+    tools:context=".PostActivity">
     <android.support.v7.widget.Toolbar
         android:id="@+id/activity_tweet_send_toolbar"
         android:layout_width="match_parent"
@@ -56,7 +56,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/post"
-                android:textColor="@color/colorAccent"
+                android:textColor="@color/color_accent"
                 android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                 android:layout_marginBottom="8dp"/>
 
@@ -82,7 +82,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/images"
-                android:textColor="@color/colorAccent"
+                android:textColor="@color/color_accent"
                 android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                 android:layout_marginBottom="8dp"/>
 
@@ -98,7 +98,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/possibly_sensitive"
-                android:textColor="@color/colorAccent"
+                android:textColor="@color/color_accent"
                 android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                 android:layout_marginBottom="8dp"/>
 
@@ -113,7 +113,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/add_location"
-                android:textColor="@color/colorAccent"
+                android:textColor="@color/color_accent"
                 android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                 android:layout_marginBottom="8dp"/>
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 The twicalico authors
+ * Copyright 2018 The twicalico authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,11 +26,15 @@ import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatEditText;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.moko256.twicalico.cacheMap.StatusCacheMap;
+import com.github.moko256.twicalico.intent.AppCustomTabsKt;
 import com.github.moko256.twicalico.model.base.PostTweetModel;
 import com.github.moko256.twicalico.model.impl.PostTweetModelCreator;
 import com.github.moko256.twicalico.text.TwitterStringUtils;
@@ -81,7 +85,7 @@ public class ShowTweetActivity extends AppCompatActivity {
         if (status == null){
             subscriptions.add(
                     updateStatus()
-                            .subscribeOn(Schedulers.newThread())
+                            .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe(
                                     result->{
@@ -101,10 +105,10 @@ public class ShowTweetActivity extends AppCompatActivity {
         }
 
         SwipeRefreshLayout swipeRefreshLayout = findViewById(R.id.tweet_show_swipe_refresh);
-        swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
+        swipeRefreshLayout.setColorSchemeResources(R.color.color_primary);
         swipeRefreshLayout.setOnRefreshListener(() -> subscriptions.add(
                 updateStatus()
-                        .subscribeOn(Schedulers.newThread())
+                        .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
                                 result -> {
@@ -127,6 +131,35 @@ public class ShowTweetActivity extends AppCompatActivity {
         super.onDestroy();
         subscriptions.unsubscribe();
         subscriptions=null;
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_show_tweet_toolbar,menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    private String getShareUrl() {
+        return ((StatusCacheMap.CachedStatus) GlobalApplication.statusCache.get(statusId)).getRemoteUrl();
+    }
+
+        @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.action_share:
+                startActivity(Intent.createChooser(
+                        new Intent()
+                                .setAction(Intent.ACTION_SEND)
+                                .setType("text/plain")
+                                .putExtra(Intent.EXTRA_TEXT, getShareUrl()),
+                        getString(R.string.share)));
+                break;
+            case R.id.action_open_in_browser:
+                AppCustomTabsKt.launchChromeCustomTabs(this, getShareUrl());
+                break;
+            }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -194,6 +227,8 @@ public class ShowTweetActivity extends AppCompatActivity {
             model.setInReplyToStatusId(item.getId());
             subscriptions.add(
                     model.postTweet()
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
                             .subscribe(
                                     it -> {
                                         replyText.setText(TwitterStringUtils.convertToReplyTopString(

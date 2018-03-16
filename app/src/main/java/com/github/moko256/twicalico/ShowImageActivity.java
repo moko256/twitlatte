@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 The twicalico authors
+ * Copyright 2018 The twicalico authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,19 +22,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.github.moko256.mastodon.MastodonTwitterImpl;
+import com.github.moko256.twicalico.entity.Type;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -71,7 +70,7 @@ public class ShowImageActivity extends AppCompatActivity {
         actionBar.setHomeAsUpIndicator(R.drawable.ic_clear_white_24dp);
 
         pager= findViewById(R.id.activity_show_image_view_pager);
-        pager.setAdapter(new ImagePagerAdapter(getSupportFragmentManager(),mediaEntities,this));
+        pager.setAdapter(new ImagePagerAdapter(getSupportFragmentManager(),mediaEntities));
         pager.setCurrentItem(position);
     }
 
@@ -106,13 +105,9 @@ public class ShowImageActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId()==R.id.activity_show_image_download){
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED){
-                    requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},100);
-                } else {
-                    contentDownload();
-                }
+        if(item.getItemId()==R.id.action_download){
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},100);
             } else {
                 contentDownload();
             }
@@ -143,7 +138,7 @@ public class ShowImageActivity extends AppCompatActivity {
             case "photo":
             default:
                 String[] pathSplitWithDot=mediaEntity.getMediaURLHttps().split("\\.");
-                path=mediaEntity.getMediaURLHttps() + (GlobalApplication.twitter instanceof MastodonTwitterImpl ?"":":large");
+                path=mediaEntity.getMediaURLHttps() + ((GlobalApplication.clientType == Type.TWITTER)?":large":"");
                 ext=pathSplitWithDot[pathSplitWithDot.length-1];
                 break;
         }
@@ -155,6 +150,7 @@ public class ShowImageActivity extends AppCompatActivity {
                 "/" + getString(R.string.app_name) + "/"+fileName
         );
         request.setTitle(fileName);
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
         manager.enqueue(request);
     }
 

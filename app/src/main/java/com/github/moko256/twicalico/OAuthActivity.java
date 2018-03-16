@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 The twicalico authors
+ * Copyright 2018 The twicalico authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,11 +30,11 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 
 import com.github.moko256.twicalico.database.TokenSQLiteOpenHelper;
+import com.github.moko256.twicalico.entity.AccessToken;
 import com.github.moko256.twicalico.model.base.OAuthModel;
 
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
-import twitter4j.auth.AccessToken;
 
 /**
  * Created by moko256 on 2016/04/29.
@@ -67,7 +67,7 @@ public class OAuthActivity extends AppCompatActivity {
 
     private void initToken(String verifier){
         model.initToken(verifier)
-                .subscribeOn(Schedulers.newThread())
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         this::storeAccessToken,
@@ -79,24 +79,24 @@ public class OAuthActivity extends AppCompatActivity {
         SharedPreferences defaultSharedPreferences= PreferenceManager.getDefaultSharedPreferences(this);
 
         TokenSQLiteOpenHelper tokenOpenHelper = new TokenSQLiteOpenHelper(this);
-        long nowAccountPoint=tokenOpenHelper.addAccessToken(accessToken)-1;
+        tokenOpenHelper.addAccessToken(accessToken);
         tokenOpenHelper.close();
 
         defaultSharedPreferences
                 .edit()
-                .putString("AccountPoint",String.valueOf(nowAccountPoint))
+                .putString("AccountKey", accessToken.getKeyString())
                 .apply();
 
         ((GlobalApplication) getApplication()).initTwitter(accessToken);
 
-        startActivity(new Intent(this,MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+        startActivity(new Intent(this,MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
         finish();
     }
 
     public void onStartTwitterCallbackAuthClick(View view) {
         model = new com.github.moko256.twicalico.model.impl.twitter.OAuthModelImpl();
-        model.getCallbackAuthUrl("twitter.com", GlobalApplication.consumerKey, GlobalApplication.consumerSecret, getString(R.string.app_name))
-                .subscribeOn(Schedulers.newThread())
+        model.getCallbackAuthUrl("twitter.com", BuildConfig.CONSUMER_KEY, BuildConfig.CONSUMER_SECRET, getString(R.string.app_name))
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this::startBrowser, Throwable::printStackTrace);
     }
@@ -104,8 +104,8 @@ public class OAuthActivity extends AppCompatActivity {
     public void onStartTwitterCodeAuthClick(View view) {
         model = new com.github.moko256.twicalico.model.impl.twitter.OAuthModelImpl();
         requirePin = true;
-        model.getCodeAuthUrl("twitter.com", GlobalApplication.consumerKey, GlobalApplication.consumerSecret)
-                .subscribeOn(Schedulers.newThread())
+        model.getCodeAuthUrl("twitter.com", BuildConfig.CONSUMER_KEY, BuildConfig.CONSUMER_SECRET)
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this::startBrowser, Throwable::printStackTrace);
         showPinDialog();
@@ -127,7 +127,7 @@ public class OAuthActivity extends AppCompatActivity {
                                         "",
                                         getString(R.string.app_name)
                                 )
-                                .subscribeOn(Schedulers.newThread())
+                                .subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(
                                         this::startBrowser,
@@ -147,7 +147,7 @@ public class OAuthActivity extends AppCompatActivity {
                 .setView(editText)
                 .setPositiveButton(android.R.string.ok,(dialog, which) -> {
                     model.getCodeAuthUrl(editText.getText().toString(), "", "")
-                            .subscribeOn(Schedulers.newThread())
+                            .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe(
                                     this::startBrowser,
@@ -177,8 +177,8 @@ public class OAuthActivity extends AppCompatActivity {
     private void startBrowser(String url){
         new CustomTabsIntent.Builder()
                 .setShowTitle(false)
-                .setToolbarColor(ContextCompat.getColor(this, R.color.colorPrimary))
-                .setSecondaryToolbarColor(ContextCompat.getColor(this, R.color.colorPrimaryDark))
+                .setToolbarColor(ContextCompat.getColor(this, R.color.color_primary))
+                .setSecondaryToolbarColor(ContextCompat.getColor(this, R.color.color_primary_dark))
                 .build()
                 .launchUrl(OAuthActivity.this, Uri.parse(url));
     }

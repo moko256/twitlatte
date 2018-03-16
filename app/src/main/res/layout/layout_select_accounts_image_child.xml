@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright 2017 The twicalico authors
+  ~ Copyright 2018 The twicalico authors
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -25,9 +25,9 @@
         android:id="@+id/layout_images_adapter_image_child_image"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_marginLeft="24dp"
+        android:layout_marginLeft="16dp"
         android:layout_centerVertical="true"
-        tools:src="@color/colorAccent"/>
+        tools:src="@color/color_accent"/>
     <TextView
         android:id="@+id/layout_images_adapter_image_child_title"
         android:layout_toRightOf="@+id/layout_images_adapter_image_child_image"
@@ -36,6 +36,8 @@
         android:layout_centerVertical="true"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+        android:ellipsize="end"
+        android:lines="1"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         tools:text="Title"/>
 </RelativeLayout>

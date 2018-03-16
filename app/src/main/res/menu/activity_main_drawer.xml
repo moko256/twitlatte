@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright 2017 The twicalico authors
+  ~ Copyright 2018 The twicalico authors
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@
 
         <item
             android:id="@+id/nav_like"
-            android:icon="@drawable/ic_heart_black_24dp"
+            android:icon="@drawable/ic_favorite_black_24dp"
             android:title="@string/like" />
     </group>
 

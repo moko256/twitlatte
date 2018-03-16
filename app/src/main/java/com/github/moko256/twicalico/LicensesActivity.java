@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 The twicalico authors
+ * Copyright 2018 The twicalico authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,11 +65,11 @@ public class LicensesActivity extends AppCompatActivity {
                         case "support_v14":
                         case "support_design":
                         case "support_custom_tabs":
-                            path = "license_android_support.txt";
+                            path = "licenses/android_support.txt";
                             break;
 
                         default:
-                            path = "license_"+libName+".txt";
+                            path = "licenses/"+libName+".txt";
                             break;
                     }
 

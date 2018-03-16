@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright 2017 The twicalico authors
+  ~ Copyright 2018 The twicalico authors
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -25,13 +25,13 @@
     app:cardCornerRadius="2dp"
     app:cardElevation="2dp"
     app:cardUseCompatPadding="true"
-    app:contentPadding="16dp">
+    app:contentPadding="8dp">
     <TextView
         android:id="@+id/layout_list_load_more_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/load_more"
-        android:textColor="@color/colorAccent"
+        android:textColor="@color/color_accent"
         android:layout_gravity="center"
         android:textAppearance="@style/TextAppearance.AppCompat.Subhead"/>
     <ProgressBar

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 The twicalico authors
+ * Copyright 2018 The twicalico authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,10 +19,12 @@ package com.github.moko256.twicalico.database;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
+import com.github.moko256.twicalico.array.ArrayUtils;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -38,8 +40,8 @@ public class CachedIdListSQLiteOpenHelperTest {
 
     private CachedIdListSQLiteOpenHelper helper = new CachedIdListSQLiteOpenHelper(InstrumentationRegistry.getTargetContext(), 0, "testIdsDatabase");
 
-    private long[] addInput = new long[]{0,1,2};
-    private long[] insertInput = new long[]{100, 101};
+    private List<Long> addInput = ArrayUtils.convertToLongList(0L,1L,2L);
+    private List<Long> insertInput = ArrayUtils.convertToLongList(100L, 101L);
 
     @Test
     public void test() throws Exception{
@@ -61,26 +63,29 @@ public class CachedIdListSQLiteOpenHelperTest {
     private void addIdTest(){
         helper.addIds(addInput);
 
-        ArrayList<Long> result1 = helper.getIds();
+        List<Long> result1 = helper.getIds();
         for (int i = 0; i < result1.size() ; i++) {
-            assertEquals(result1.get(i), Long.valueOf(addInput[i]));
+            assertEquals(result1.get(i), addInput.get(i));
         }
     }
 
     private void insertIdTest(){
         helper.insertIds(1, insertInput);
 
-        ArrayList<Long> result2 = helper.getIds();
-        for (int i = 0; i < insertInput.length; i++) {
-            assertEquals(Long.valueOf(insertInput[i]), result2.get(i + 1));
+        List<Long> result2 = helper.getIds();
+        for (int i = 0; i < insertInput.size(); i++) {
+            assertEquals(insertInput.get(i), result2.get(i + 1));
         }
     }
 
     private void hasIdOtherTableTest(){
         CachedIdListSQLiteOpenHelper helper2 = new CachedIdListSQLiteOpenHelper(InstrumentationRegistry.getTargetContext(), 0, "testIdDatabase2");
-        boolean[] result = helper2.hasIdsOtherTable(new long[]{100, 105});
-        assertTrue(result[0]);
-        assertFalse(result[1]);
+        boolean[] result1 = helper2.hasIdsOtherTable(ArrayUtils.convertToLongList(100, 105));
+        assertTrue(result1[0]);
+        assertFalse(result1[1]);
+        helper2.deleteIds(ArrayUtils.convertToLongList(100));
+        boolean[] result2 = helper2.hasIdsOtherTable(ArrayUtils.convertToLongList(100));
+        assertFalse(result2[0]);
     }
 
     private void deleteIdTest(){

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 The twicalico authors
+ * Copyright 2018 The twicalico authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,10 +19,10 @@ package com.github.moko256.twicalico.database;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
+import com.github.moko256.twicalico.entity.AccessToken;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import twitter4j.auth.AccessToken;
 
 import static org.junit.Assert.assertEquals;
 
@@ -49,7 +49,7 @@ public class TokenSQLiteOpenHelperTest {
     @Test
     public void test() throws Exception {
         try {
-            helper.getWritableDatabase().execSQL("delete from AccountTokenList;");
+            helper.getWritableDatabase().execSQL("delete from AccountTokenList");
         } catch (Exception e) {
             //Do nothing
         }
@@ -61,18 +61,20 @@ public class TokenSQLiteOpenHelperTest {
     }
 
     private void addToken(){
-        final long addAccessTokenResult = helper.addAccessToken(
-                generateAccessToken(
-                        TEST_USER_1_USER_ID,
-                        TEST_USER_1_USER_SCREEN_NAME_1,
-                        TEST_USER_1_USER_TOKEN_1,
-                        TEST_USER_1_USER_TOKEN_SECRET_1
-                )
+        AccessToken accessToken = generateAccessToken(
+                TEST_USER_1_USER_ID,
+                TEST_USER_1_USER_SCREEN_NAME_1,
+                TEST_USER_1_USER_TOKEN_1,
+                TEST_USER_1_USER_TOKEN_SECRET_1
         );
+
+        helper.addAccessToken(accessToken);
+
+        final long addAccessTokenResult = helper.getSize();
 
         assertEquals(addAccessTokenResult, 1);
 
-        AccessToken addedAccessTokenResult = helper.getAccessToken(0);
+        AccessToken addedAccessTokenResult = helper.getAccessToken(accessToken.getKeyString());
 
         assertEquals(addedAccessTokenResult.getUserId(), TEST_USER_1_USER_ID);
         assertEquals(addedAccessTokenResult.getScreenName(), TEST_USER_1_USER_SCREEN_NAME_1);
@@ -81,18 +83,23 @@ public class TokenSQLiteOpenHelperTest {
     }
 
     private void updateToken(){
-        final long updateAccessTokenResult = helper.addAccessToken(
-                generateAccessToken(
-                        TEST_USER_1_USER_ID,
-                        TEST_USER_1_USER_SCREEN_NAME_2,
-                        TEST_USER_1_USER_TOKEN_2,
-                        TEST_USER_1_USER_TOKEN_SECRET_2
-                )
+
+        AccessToken accessToken = generateAccessToken(
+                TEST_USER_1_USER_ID,
+                TEST_USER_1_USER_SCREEN_NAME_2,
+                TEST_USER_1_USER_TOKEN_2,
+                TEST_USER_1_USER_TOKEN_SECRET_2
         );
+
+        helper.addAccessToken(
+                accessToken
+        );
+
+        final long updateAccessTokenResult = helper.getSize();
 
         assertEquals(updateAccessTokenResult, 1);
 
-        AccessToken updatedAccessTokenResult = helper.getAccessToken(0);
+        AccessToken updatedAccessTokenResult = helper.getAccessToken(accessToken.getKeyString());
 
         assertEquals(updatedAccessTokenResult.getScreenName(), TEST_USER_1_USER_SCREEN_NAME_2);
         assertEquals(updatedAccessTokenResult.getToken(), TEST_USER_1_USER_TOKEN_2);
@@ -100,21 +107,21 @@ public class TokenSQLiteOpenHelperTest {
     }
 
     private void deleteToken(){
-        final long deleteAccessTokenResult = helper.deleteAccessToken(TEST_USER_1_USER_ID);
+        helper.deleteAccessToken(
+                generateAccessToken(
+                        TEST_USER_1_USER_ID,
+                        "",
+                        "",
+                        ""
+                )
+        );
+
+        final long deleteAccessTokenResult = helper.getSize();
+
         assertEquals(deleteAccessTokenResult, 0);
     }
 
     private AccessToken generateAccessToken(final long userId, final String screenName, final String token, final String tokenSecret){
-        return new AccessToken(token, tokenSecret){
-            @Override
-            public String getScreenName() {
-                return screenName;
-            }
-
-            @Override
-            public long getUserId() {
-                return userId;
-            }
-        };
+        return new AccessToken(1, "example.com", userId, screenName, token, tokenSecret);
     }
 }

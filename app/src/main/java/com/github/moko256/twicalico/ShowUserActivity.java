@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 The twicalico authors
+ * Copyright 2018 The twicalico authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,16 +22,20 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.github.moko256.mastodon.MastodonTwitterImpl;
+import com.github.moko256.twicalico.entity.Type;
+import com.github.moko256.twicalico.intent.AppCustomTabsKt;
 import com.github.moko256.twicalico.text.TwitterStringUtils;
+import com.github.moko256.twicalico.widget.FragmentPagerAdapter;
 
 import rx.Completable;
 import rx.Single;
@@ -47,7 +51,7 @@ import twitter4j.User;
  *
  * @author moko256
  */
-public class ShowUserActivity extends AppCompatActivity implements BaseListFragment.GetSnackBarParentContainerId {
+public class ShowUserActivity extends AppCompatActivity implements BaseListFragment.GetSnackBarParentContainerId, BaseTweetListFragment.GetRecyclerViewPool, BaseUsersFragment.GetRecyclerViewPool {
 
     CompositeSubscription subscription;
 
@@ -56,6 +60,9 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
     ActionBar actionBar;
     ViewPager viewPager;
     TabLayout tabLayout;
+
+    RecyclerView.RecycledViewPool tweetListViewPool;
+    RecyclerView.RecycledViewPool userListViewPool;
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -85,24 +92,27 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-                Fragment fragment = ((FragmentPagerAdapter) viewPager.getAdapter()).getItem(tab.getPosition());
-                if (fragment instanceof MoveableTopInterface){
-                    ((MoveableTopInterface) fragment).moveToTop();
+                Fragment fragment = ((FragmentPagerAdapter) viewPager.getAdapter()).getFragment(tab.getPosition());
+                if (fragment instanceof MovableTopInterface){
+                    ((MovableTopInterface) fragment).moveToTop();
                 }
             }
         });
 
+        tweetListViewPool = new RecyclerView.RecycledViewPool();
+        userListViewPool = new RecyclerView.RecycledViewPool();
+
         findViewById(R.id.activity_show_user_fab).setOnClickListener(v -> {
             if (user!=null){
-                startActivity(PostTweetActivity.getIntent(this, TwitterStringUtils.plusAtMark(user.getScreenName())+" "));
+                startActivity(PostActivity.getIntent(this, TwitterStringUtils.plusAtMark(user.getScreenName())+" "));
             }
         });
         subscription.add(
                 getUserSingle()
-                        .subscribeOn(Schedulers.newThread())
+                        .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
-                                it -> viewPager.setAdapter(new ShowUserFragmentsPagerAdapter(getSupportFragmentManager(),this,it.getId())),
+                                it -> new ShowUserFragmentsPagerAdapter(getSupportFragmentManager(),this,it.getId()).initAdapter(viewPager),
                                 e -> Snackbar.make(findViewById(getSnackBarParentContainerId()), TwitterStringUtils.convertErrorToText(e), Snackbar.LENGTH_INDEFINITE)
                                         .show()
                         )
@@ -135,6 +145,31 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
         return super.onCreateOptionsMenu(menu);
     }
 
+    private String getShareUrl(){
+        String url;
+        if (GlobalApplication.clientType == Type.MASTODON){
+            String baseUrl;
+            String userName;
+            if (user.getScreenName().matches(".*@.*")){
+                String[] split = user.getScreenName().split("@");
+                baseUrl = split[1];
+                userName = split[0];
+            } else {
+                baseUrl = ((MastodonTwitterImpl) GlobalApplication.twitter).client.getInstanceName();
+                userName = user.getScreenName();
+            }
+
+            url = "https://"
+                    + baseUrl
+                    + "/@"
+                    + userName;
+        } else {
+            url = "https://twitter.com/"
+                    + user.getScreenName();
+        }
+        return url;
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         ThrowableFunc throwableFunc=null;
@@ -142,12 +177,16 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
 
         switch (item.getItemId()){
             case R.id.action_share:
-                startActivity(
-                        new Intent()
-                                .setAction(Intent.ACTION_SEND)
-                                .setType("text/plain")
-                                .putExtra(Intent.EXTRA_TEXT, "https://twitter.com/" + user.getScreenName())
-                );
+                startActivity(Intent.createChooser(
+                                new Intent()
+                                        .setAction(Intent.ACTION_SEND)
+                                        .setType("text/plain")
+                                        .putExtra(Intent.EXTRA_TEXT, getShareUrl()),
+                                getString(R.string.share)
+                ));
+                break;
+            case R.id.action_open_in_browser:
+                AppCustomTabsKt.launchChromeCustomTabs(this, getShareUrl());
                 break;
             case R.id.action_create_follow:
                 throwableFunc=()->twitter.createFriendship(user.getId());
@@ -196,7 +235,7 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
                         subscriber.onError(throwable);
                     }
                 })
-                .subscribeOn(Schedulers.newThread())
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         () -> Toast.makeText(this, R.string.succeeded, Toast.LENGTH_SHORT).show(),
@@ -266,6 +305,16 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
     @Override
     public int getSnackBarParentContainerId() {
         return R.id.activity_show_user_coordinator_layout;
+    }
+
+    @Override
+    public RecyclerView.RecycledViewPool getUserListViewPool() {
+        return userListViewPool;
+    }
+
+    @Override
+    public RecyclerView.RecycledViewPool getTweetListViewPool() {
+        return tweetListViewPool;
     }
 
     public static Intent getIntent(Context context, long userId){
