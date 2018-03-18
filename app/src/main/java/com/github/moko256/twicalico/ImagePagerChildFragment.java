@@ -46,7 +46,7 @@ import com.google.android.exoplayer2.source.MediaSourceEventListener;
 import com.google.android.exoplayer2.source.hls.HlsMediaSource;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
+import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DataSpec;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 
@@ -67,7 +67,7 @@ public class ImagePagerChildFragment extends Fragment {
 
     PhotoView imageView;
 
-    SimpleExoPlayerView videoPlayView;
+    PlayerView videoPlayView;
     SimpleExoPlayer player;
 
     @Nullable

@@ -15,7 +15,7 @@
   ~ limitations under the License.
   -->
 
-<!-- copied from ExoPlayer/library/ui/src/main/res/layout/exo_playback_control_view.xml -->
+<!-- copied from ExoPlayer/library/ui/src/main/res/exo_player_control_view.xml -->
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
