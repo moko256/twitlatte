@@ -1,3 +1,5 @@
+import java.text.SimpleDateFormat
+
 /*
  * Copyright 2018 The twicalico authors
  *
@@ -26,7 +28,7 @@ android {
         minSdkVersion 19
         targetSdkVersion 27
         versionCode 61
-        versionName "0.9.8 (${new Date().toString()})"
+        versionName "0.9.8 (${new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z").format(new Date())})"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
         buildConfigField 'String', 'CONSUMER_KEY', "\"${CONSUMER_KEY}\""
