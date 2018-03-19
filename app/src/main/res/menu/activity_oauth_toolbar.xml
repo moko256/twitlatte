@@ -21,5 +21,6 @@
         android:id="@+id/action_settings"
         android:icon="@drawable/ic_settings_black_24dp"
         android:title="@string/action_settings"
+        app:iconTint="@android:color/white"
         app:showAsAction="always"/>
 </menu>
