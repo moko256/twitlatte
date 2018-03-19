@@ -25,14 +25,18 @@ import android.support.customtabs.CustomTabsIntent;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.CheckBox;
 import android.widget.EditText;
 
 import com.github.moko256.twicalico.database.TokenSQLiteOpenHelper;
 import com.github.moko256.twicalico.entity.AccessToken;
 import com.github.moko256.twicalico.model.base.OAuthModel;
 
+import rx.Single;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -45,10 +49,14 @@ public class OAuthActivity extends AppCompatActivity {
     private OAuthModel model;
     public boolean requirePin=false;
 
+    public CheckBox useAuthCode;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_oauth);
+
+        useAuthCode = findViewById(R.id.use_auth_code);
     }
 
     @Override
@@ -93,25 +101,35 @@ public class OAuthActivity extends AppCompatActivity {
         finish();
     }
 
-    public void onStartTwitterCallbackAuthClick(View view) {
+    public void onStartTwitterAuthClick(View view) {
+        requirePin = useAuthCode.isChecked();
         model = new com.github.moko256.twicalico.model.impl.twitter.OAuthModelImpl();
-        model.getCallbackAuthUrl("twitter.com", BuildConfig.CONSUMER_KEY, BuildConfig.CONSUMER_SECRET, getString(R.string.app_name))
+        Single<String> authSingle;
+        if (requirePin) {
+            showPinDialog();
+            authSingle = model
+                    .getCodeAuthUrl(
+                            "twitter.com",
+                            BuildConfig.CONSUMER_KEY,
+                            BuildConfig.CONSUMER_SECRET
+                    );
+        } else {
+            authSingle = model
+                    .getCallbackAuthUrl(
+                            "twitter.com",
+                            BuildConfig.CONSUMER_KEY,
+                            BuildConfig.CONSUMER_SECRET,
+                            getString(R.string.app_name)
+                    );
+        }
+        authSingle
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this::startBrowser, Throwable::printStackTrace);
     }
 
-    public void onStartTwitterCodeAuthClick(View view) {
-        model = new com.github.moko256.twicalico.model.impl.twitter.OAuthModelImpl();
-        requirePin = true;
-        model.getCodeAuthUrl("twitter.com", BuildConfig.CONSUMER_KEY, BuildConfig.CONSUMER_SECRET)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::startBrowser, Throwable::printStackTrace);
-        showPinDialog();
-    }
-
-    public void onStartMastodonCallbackAuthClick(View view) {
+    public void onStartMastodonAuthClick(View view) {
+        requirePin = useAuthCode.isChecked();
         model = new com.github.moko256.twicalico.model.impl.mastodon.OAuthModelImpl();
         EditText editText=new EditText(this);
         editText.setHint("URL");
@@ -120,52 +138,41 @@ public class OAuthActivity extends AppCompatActivity {
                 .setView(editText)
                 .setPositiveButton(
                         android.R.string.ok,
-                        (dialog, which) -> model
-                                .getCallbackAuthUrl(
-                                        editText.getText().toString(),
-                                        "",
-                                        "",
-                                        getString(R.string.app_name)
-                                )
-                                .subscribeOn(Schedulers.io())
-                                .observeOn(AndroidSchedulers.mainThread())
-                                .subscribe(
-                                        this::startBrowser,
-                                        Throwable::printStackTrace
-                                )
+                        (dialog, which) -> {
+                            Single<String> authSingle;
+                            if (requirePin) {
+                                showPinDialog();
+                                authSingle = model
+                                        .getCodeAuthUrl(
+                                                editText.getText().toString(),
+                                                "",
+                                                ""
+                                        );
+                            } else {
+                                authSingle = model
+                                        .getCallbackAuthUrl(
+                                                editText.getText().toString(),
+                                                "",
+                                                "",
+                                                getString(R.string.app_name)
+                                        );
+                            }
+                            authSingle
+                                    .subscribeOn(Schedulers.io())
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .subscribe(
+                                            this::startBrowser,
+                                            Throwable::printStackTrace
+                                    );
+                        }
                 )
                 .setCancelable(false)
                 .show();
     }
 
-    public void onStartMastodonCodeAuthClick(View view) {
-        model = new com.github.moko256.twicalico.model.impl.mastodon.OAuthModelImpl();
-        EditText editText=new EditText(this);
-        editText.setHint("URL");
-        editText.setInputType(EditorInfo.TYPE_TEXT_VARIATION_URI);
-        new AlertDialog.Builder(this)
-                .setView(editText)
-                .setPositiveButton(android.R.string.ok,(dialog, which) -> {
-                    model.getCodeAuthUrl(editText.getText().toString(), "", "")
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(
-                                    this::startBrowser,
-                                    Throwable::printStackTrace
-                            );
-                    showPinDialog();
-                })
-                .setCancelable(false)
-                .show();
-    }
-
-    public void onSettingClick(View view) {
-        startActivity(new Intent(this, SettingsActivity.class));
-    }
-
     private void showPinDialog(){
         EditText editText=new EditText(this);
-        editText.setHint("PIN");
+        editText.setHint("Code");
         editText.setInputType(EditorInfo.TYPE_NUMBER_FLAG_DECIMAL);
         new AlertDialog.Builder(this)
                 .setView(editText)
@@ -183,4 +190,17 @@ public class OAuthActivity extends AppCompatActivity {
                 .launchUrl(OAuthActivity.this, Uri.parse(url));
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_oauth_toolbar,menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId()==R.id.action_settings){
+            startActivity(new Intent(this, SettingsActivity.class));
+        }
+        return true;
+    }
 }

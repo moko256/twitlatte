@@ -16,6 +16,7 @@
   -->
 
 <resources>
+    <string name="login">ログイン</string>
     <string name="action_settings">設定</string>
     <string name="action_search">検索</string>
     <string name="back">戻る</string>
@@ -99,10 +100,9 @@
     <string name="tweet_source_mute_regex_pattern">投稿したクライアントのミュートの正規表現パターン</string>
     <string name="muted_post">ミュートされた投稿</string>
 
-    <string name="twitter_callback_auth">Twitter コールバック認証</string>
-    <string name="twitter_code_auth">Twitter コード認証</string>
-    <string name="mastodon_callback_auth">Mastodon コールバック認証</string>
-    <string name="mastodon_code_auth">Mastodon コード認証</string>
+    <string name="twitter_auth">Twitterで認証</string>
+    <string name="mastodon_auth">Mastodonで認証</string>
+    <string name="use_auth_code">認証コードを利用する</string>
 
     <string name="mode_image_level_none">タイムラインの画像を読み込まない</string>
     <string name="mode_image_level_normal">タイムラインの画像を読み込む</string>
