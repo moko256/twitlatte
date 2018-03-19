@@ -83,11 +83,13 @@ public class ImagePagerChildFragment extends Fragment {
             return Unit.INSTANCE;
         });
 
-        MediaEntity mediaEntity=(MediaEntity) getArguments().getSerializable(FRAG_MEDIA_ENTITY);
+        MediaEntity mediaEntity;
 
-        if (mediaEntity == null) {
-            return view;
-        }
+        if (getArguments() == null) return view;
+
+        mediaEntity = (MediaEntity) getArguments().getSerializable(FRAG_MEDIA_ENTITY);
+
+        if (mediaEntity == null) return view;
 
         switch (mediaEntity.getType()){
             case "video":
@@ -206,11 +208,6 @@ public class ImagePagerChildFragment extends Fragment {
 
             case "photo":
             default:
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    getActivity().getWindow().setStatusBarColor(0x88000000);
-                    getActivity().getWindow().setNavigationBarColor(0x80000000);
-                    ((AppCompatActivity) getActivity()).getSupportActionBar().setBackgroundDrawable(new ColorDrawable(0x80000000));
-                }
                 getActivity().getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(visibility -> {
                     if ((visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0){
                         ((AppCompatActivity) getActivity()).getSupportActionBar().show();

@@ -33,8 +33,7 @@
     </style>
 
     <style name="ShowTweetImageActivityThemeV21" parent="ShowTweetImageActivityThemeV19">
-        <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:navigationBarColor">@android:color/transparent</item>
+
     </style>
     <style name="ShowTweetImageActivityTheme" parent="ShowTweetImageActivityThemeV21"/>
 
