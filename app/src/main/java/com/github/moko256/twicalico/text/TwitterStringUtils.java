@@ -66,6 +66,14 @@ import twitter4j.UserMentionEntity;
 
 public class TwitterStringUtils {
 
+    private final static Pattern containsImgPattern;
+    private final static Pattern containsOnlyOneEmoji;
+
+    static {
+        containsImgPattern = Pattern.compile("(?<=<img src=['\"])[^<>\"']*(?=['\"]>.*</img>)");
+        containsOnlyOneEmoji = Pattern.compile(":[[A-z]_]*:");
+    }
+
     @NonNull
     public static String plusAtMark(String... strings){
         StringBuilder stringBuilder = new StringBuilder();
@@ -173,11 +181,16 @@ public class TwitterStringUtils {
             Spanned previewText = convertUrlSpanToCustomTabs(Html.fromHtml(tweet), context);
             textView.setText(previewText);
 
-            int imageSize = (int) Math.floor(textView.getTextSize() * 1.15);
+            int imageSize;
+
+            if (containsOnlyOneEmoji.matcher(String.valueOf(previewText).trim()).matches()) {
+                imageSize = (int) Math.floor((textView.getTextSize() * 1.15) * 2.0);
+            } else {
+                imageSize = (int) Math.floor(textView.getTextSize() * 1.15);
+            }
 
             List<String> list = new ArrayList<>();
-            Pattern pattern = Pattern.compile("(?<=<img src=['\"])[^<>\"']*(?=['\"]>.*</img>)");
-            Matcher matcher = pattern.matcher(tweet);
+            Matcher matcher = containsImgPattern.matcher(tweet);
             while (matcher.find()){
                 list.add(matcher.group());
             }
