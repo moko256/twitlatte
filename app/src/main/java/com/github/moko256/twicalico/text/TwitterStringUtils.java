@@ -26,16 +26,18 @@ import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.ClickableSpan;
+import android.text.style.ImageSpan;
 import android.text.style.URLSpan;
 import android.view.View;
 import android.widget.TextView;
 
-import com.bumptech.glide.load.resource.gif.GifDrawable;
 import com.github.moko256.twicalico.GlideApp;
 import com.github.moko256.twicalico.GlideRequests;
 import com.github.moko256.twicalico.GlobalApplication;
 import com.github.moko256.twicalico.SearchResultActivity;
 import com.github.moko256.twicalico.ShowUserActivity;
+import com.github.moko256.twicalico.cacheMap.StatusCacheMap;
+import com.github.moko256.twicalico.entity.Emoji;
 import com.github.moko256.twicalico.entity.Type;
 import com.github.moko256.twicalico.intent.AppCustomTabsKt;
 import com.sys1yagi.mastodon4j.api.exception.Mastodon4jRequestException;
@@ -66,12 +68,10 @@ import twitter4j.UserMentionEntity;
 
 public class TwitterStringUtils {
 
-    private final static Pattern containsImgPattern;
-    private final static Pattern containsOnlyOneEmoji;
+    private final static Pattern containsEmoji;
 
     static {
-        containsImgPattern = Pattern.compile("(?<=<img src=['\"])[^<>\"']*(?=['\"]>.*</img>)");
-        containsOnlyOneEmoji = Pattern.compile(":[[A-z]_]*:");
+        containsEmoji = Pattern.compile(":([[A-z]_]+):");
     }
 
     @NonNull
@@ -178,77 +178,60 @@ public class TwitterStringUtils {
         String tweet = item.getText();
 
         if (GlobalApplication.clientType == Type.MASTODON){
-            Spanned previewText = convertUrlSpanToCustomTabs(Html.fromHtml(tweet), context);
-            textView.setText(previewText);
+            Spanned html = Html.fromHtml(tweet);
+            if (html.length() >= 2) {
+                html = (Spanned) html.subSequence(0, html.length() - 2);
+            }
+            SpannableStringBuilder builder = convertUrlSpanToCustomTabs(html, context);
+            textView.setText(builder);
+
+            Matcher matcher = containsEmoji.matcher(builder);
 
             int imageSize;
-
-            if (containsOnlyOneEmoji.matcher(String.valueOf(previewText).trim()).matches()) {
+            if (matcher.matches()) {
                 imageSize = (int) Math.floor((textView.getTextSize() * 1.15) * 2.0);
             } else {
                 imageSize = (int) Math.floor(textView.getTextSize() * 1.15);
             }
+            matcher.reset();
 
-            List<String> list = new ArrayList<>();
-            Matcher matcher = containsImgPattern.matcher(tweet);
-            while (matcher.find()){
-                list.add(matcher.group());
-            }
-            if (list.size() == 0){
-                return;
-            }
+            List<Emoji> list = ((StatusCacheMap.CachedStatus) item).getEmojis();
 
-            Map<String, Drawable> map = new ArrayMap<>();
+            if (list != null){
+                new AsyncTask<Void, Void, Map<String, Drawable>>(){
+                    @Override
+                    protected Map<String, Drawable> doInBackground(Void... params) {
+                        Map<String, Drawable> map = new ArrayMap<>();
 
-            new AsyncTask<Void, Void, Void>(){
+                        GlideRequests glideRequests = GlideApp.with(context);
+                        for (Emoji emoji : list){
+                            try {
+                                Drawable value = glideRequests.load(emoji.getUrl()).submit().get();
+                                value.setBounds(0, 0, imageSize, imageSize);
+                                map.put(emoji.getShortCode(), value);
+                            } catch (InterruptedException | ExecutionException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        return map;
+                    }
 
-                @Override
-                protected Void doInBackground(Void... params) {
-                    GlideRequests glideRequests = GlideApp.with(context);
-                    for (String s : list){
-                        try {
-                            Drawable value = glideRequests.load(s).submit().get();
-                            value.setBounds(0, 0, imageSize, imageSize);
-                            map.put(s, value);
-                        } catch (InterruptedException | ExecutionException e) {
-                            e.printStackTrace();
+                    @Override
+                    protected void onPostExecute(Map<String, Drawable> map) {
+                        if (builder.toString().equals(textView.getText().toString())) {
+                            while (matcher.find()){
+                                String shortCode = matcher.group(1);
+                                Drawable drawable = map.get(shortCode);
+                                if (drawable != null) {
+                                    builder.setSpan(new ImageSpan(drawable), matcher.start(), matcher.end(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                                }
+                            }
+                            textView.setText(builder);
                         }
                     }
-                    return null;
-                }
+                }.execute();
+            }
 
-                @Override
-                protected void onPostExecute(Void aVoid) {
-                    if (previewText.toString().equals(textView.getText().toString())) {
-                        textView.setText(convertUrlSpanToCustomTabs(Html.fromHtml(tweet, key ->{
-                            Drawable value = map.get(key);
-                            if (value instanceof GifDrawable){
-                                value.setCallback(new Drawable.Callback() {
-                                    @Override
-                                    public void invalidateDrawable(@NonNull Drawable who) {
-                                        if (previewText.toString().equals(textView.getText().toString())) {
-                                            textView.setText(convertUrlSpanToCustomTabs(Html.fromHtml(tweet, map::get, null), context));
-                                        }
-                                    }
-
-                                    @Override
-                                    public void scheduleDrawable(@NonNull Drawable who, @NonNull Runnable what, long when) {
-
-                                    }
-
-                                    @Override
-                                    public void unscheduleDrawable(@NonNull Drawable who, @NonNull Runnable what) {
-
-                                    }
-                                });
-                                ((GifDrawable) value).setLoopCount(GifDrawable.LOOP_FOREVER);
-                                ((GifDrawable) value).start();
-                            }
-                            return value;
-                        }, null), context));
-                    }
-                }
-            }.execute();
             return;
         }
 
@@ -354,7 +337,7 @@ public class TwitterStringUtils {
         return spannableStringBuilder;
     }
 
-    public static Spanned convertUrlSpanToCustomTabs(Spanned spanned, Context context){
+    public static SpannableStringBuilder convertUrlSpanToCustomTabs(Spanned spanned, Context context){
         SpannableStringBuilder builder = new SpannableStringBuilder(spanned);
         URLSpan[] spans = spanned.getSpans(0, spanned.length(), URLSpan.class);
         for (URLSpan span : spans) {

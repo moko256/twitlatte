@@ -70,11 +70,15 @@ public class MTStatus implements twitter4j.Status{
 
     @Override
     public String getText() {
-        String s = status.getSpoilerText() + "\n\n" + status.getContent();
-        for (Emoji e : status.getEmojis()) {
-            s = s.replaceAll(":" + e.getShortcode() + ":", "<img src='" + e.getUrl() + "'></img>");
+        String spoilerText = status.getSpoilerText();
+        String content = status.getContent();
+        String br = "<br />";
+
+        if (spoilerText.equals("")) {
+            return content;
+        } else {
+            return spoilerText + br + content;
         }
-        return s;
     }
 
     @Override

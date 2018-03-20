@@ -178,7 +178,7 @@ public class ShowTweetActivity extends AppCompatActivity {
                     try {
                         Status status = GlobalApplication.twitter.showStatus(statusId);
                         GlobalApplication.statusCache.add(status);
-                        subscriber.onSuccess(status);
+                        subscriber.onSuccess(GlobalApplication.statusCache.get(statusId));
                     } catch (TwitterException e) {
                         subscriber.onError(e);
                     }

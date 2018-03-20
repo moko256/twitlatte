@@ -25,6 +25,7 @@ import com.github.moko256.mastodon.MTStatus;
 import com.github.moko256.twicalico.GlobalApplication;
 import com.github.moko256.twicalico.database.CachedStatusesSQLiteOpenHelper;
 import com.github.moko256.twicalico.entity.AccessToken;
+import com.github.moko256.twicalico.entity.Emoji;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -175,6 +176,7 @@ public class StatusCacheMap {
         //private final int displayTextRangeEnd;
 
         private final String url;
+        private final List<Emoji> emojis;
 
         public CachedStatus(Status status){
             createdAt=new Date(status.getCreatedAt().getTime());
@@ -250,12 +252,21 @@ public class StatusCacheMap {
                 //displayTextRangeEnd = -1;
             }
 
-            url = (status instanceof MTStatus)
-                    ? ((MTStatus) status).status.getUrl()
-                    : "https://twitter.com/"
-                            + status.getUser().getScreenName()
-                            + "/status/"
-                            + String.valueOf(status.getId());
+            if (status instanceof MTStatus) {
+                url = ((MTStatus) status).status.getUrl();
+                List<com.sys1yagi.mastodon4j.api.entity.Emoji> oldEmojis = ((MTStatus) status).status.getEmojis();
+
+                emojis = new ArrayList<>(oldEmojis.size());
+                for (com.sys1yagi.mastodon4j.api.entity.Emoji emoji : oldEmojis) {
+                    emojis.add(new Emoji(emoji.getShortcode(), emoji.getUrl()));
+                }
+            } else {
+                url = "https://twitter.com/"
+                        + status.getUser().getScreenName()
+                        + "/status/"
+                        + String.valueOf(status.getId());
+                emojis = null;
+            }
         }
 
         @Override
@@ -435,6 +446,10 @@ public class StatusCacheMap {
 
         public String getRemoteUrl(){
             return url;
+        }
+
+        public List<Emoji> getEmojis() {
+            return emojis;
         }
 
         @Override
