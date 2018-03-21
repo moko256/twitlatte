@@ -71,7 +71,7 @@ public class TwitterStringUtils {
     private final static Pattern containsEmoji;
 
     static {
-        containsEmoji = Pattern.compile(":([[A-z]_]+):");
+        containsEmoji = Pattern.compile(":([a-zA-Z0-9_]{2,}):");
     }
 
     @NonNull
