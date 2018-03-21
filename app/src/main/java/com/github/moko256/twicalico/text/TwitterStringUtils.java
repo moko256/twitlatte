@@ -347,22 +347,20 @@ public class TwitterStringUtils {
 
     public static SpannableStringBuilder convertUrlSpanToCustomTabs(Spanned spanned, Context context){
         SpannableStringBuilder builder = SpannableStringBuilder.valueOf(spanned);
-        URLSpan[] spans = spanned.getSpans(0, spanned.length(), URLSpan.class);
+        URLSpan[] spans = builder.getSpans(0, builder.length(), URLSpan.class);
         for (URLSpan span : spans) {
-            builder.removeSpan(span);
-
-            int spanStart = spanned.getSpanStart(span);
-            int spanEnd = spanned.getSpanEnd(span);
+            int spanStart = builder.getSpanStart(span);
+            int spanEnd = builder.getSpanEnd(span);
 
             ClickableSpan span1;
-            String firstChar = String.valueOf(spanned.subSequence(spanStart, spanStart + 1));
+            String firstChar = String.valueOf(builder.subSequence(spanStart, spanStart + 1));
             switch (firstChar) {
                 case "#":
                     span1 = new ClickableSpan() {
                         @Override
                         public void onClick(View widget) {
                             context.startActivity(
-                                    SearchResultActivity.getIntent(context, String.valueOf(spanned.subSequence(spanStart + 1, spanEnd)))
+                                    SearchResultActivity.getIntent(context, String.valueOf(builder.subSequence(spanStart + 1, spanEnd)))
                             );
                         }
                     };
@@ -372,7 +370,7 @@ public class TwitterStringUtils {
                         @Override
                         public void onClick(View widget) {
                             context.startActivity(
-                                    ShowUserActivity.getIntent(context, String.valueOf(spanned.subSequence(spanStart + 1, spanEnd)))
+                                    ShowUserActivity.getIntent(context, String.valueOf(builder.subSequence(spanStart + 1, spanEnd)))
                             );
                         }
                     };
@@ -387,7 +385,8 @@ public class TwitterStringUtils {
                     break;
             }
 
-            builder.setSpan(span1, spanStart, spanEnd, spanned.getSpanFlags(span));
+            builder.removeSpan(span);
+            builder.setSpan(span1, spanStart, spanEnd, builder.getSpanFlags(span));
         }
         return builder;
     }
