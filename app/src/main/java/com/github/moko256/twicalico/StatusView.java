@@ -24,6 +24,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.widget.Space;
 import android.support.v7.content.res.AppCompatResources;
+import android.text.format.DateUtils;
 import android.text.method.LinkMovementMethod;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -46,7 +47,6 @@ import rx.schedulers.Schedulers;
 import twitter4j.MediaEntity;
 import twitter4j.Status;
 import twitter4j.TwitterException;
-import twitter4j.util.TimeSpanConverter;
 
 /**
  * Created by moko256 on 2017/02/17.
@@ -78,8 +78,6 @@ public class StatusView extends FrameLayout {
     TextView likeCount;
     TextView retweetCount;
 
-    TimeSpanConverter timeSpanConverter;
-    
     public StatusView(Context context) {
         this(context, null);
     }
@@ -119,8 +117,6 @@ public class StatusView extends FrameLayout {
 
         likeCount = findViewById(R.id.tweet_content_like_count);
         retweetCount = findViewById(R.id.tweet_content_retweet_count);
-
-        timeSpanConverter=new TimeSpanConverter();
     }
 
     public Status getStatus() {
@@ -205,7 +201,11 @@ public class StatusView extends FrameLayout {
             }
         }
 
-        timeStampText.setText(timeSpanConverter.toTimeSpanString(item.getCreatedAt().getTime()));
+        timeStampText.setText(DateUtils.getRelativeTimeSpanString(
+                item.getCreatedAt().getTime(),
+                System.currentTimeMillis(),
+                0
+        ));
         userImage.setOnClickListener(v -> {
             ActivityOptionsCompat animation = ActivityOptionsCompat
                     .makeSceneTransitionAnimation(
