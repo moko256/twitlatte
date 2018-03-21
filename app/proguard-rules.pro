@@ -17,7 +17,7 @@
 #}
 
 -dontwarn twitter4j.**
--keep,allowoptimization class twitter4j.** { *; }
+-keep,allowoptimization class !twitter4j.util.*,twitter4j.** { *; }
 
 -keepclassmembers class android.support.v7.widget.SearchView { *; }
 -keep,allowoptimization class android.support.v7.app.AppCompatViewInflater
