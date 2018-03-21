@@ -16,6 +16,7 @@
 
 package com.github.moko256.twicalico.text;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
@@ -171,6 +172,7 @@ public class TwitterStringUtils {
         return builder;
     }
 
+    @SuppressLint("StaticFieldLeak")
     public static void setLinkedSequenceTo(Status item, TextView textView){
 
         Context context = textView.getContext();
@@ -185,19 +187,20 @@ public class TwitterStringUtils {
             SpannableStringBuilder builder = convertUrlSpanToCustomTabs(html, context);
             textView.setText(builder);
 
-            Matcher matcher = containsEmoji.matcher(builder);
-
-            int imageSize;
-            if (matcher.matches()) {
-                imageSize = (int) Math.floor((textView.getTextSize() * 1.15) * 2.0);
-            } else {
-                imageSize = (int) Math.floor(textView.getTextSize() * 1.15);
-            }
-            matcher.reset();
-
             List<Emoji> list = ((StatusCacheMap.CachedStatus) item).getEmojis();
 
             if (list != null){
+                Matcher matcher = containsEmoji.matcher(builder);
+                boolean matches = matcher.matches();
+
+                int imageSize;
+
+                if (matches) {
+                    imageSize = (int) Math.floor((textView.getTextSize() * 1.15) * 2.0);
+                } else {
+                    imageSize = (int) Math.floor(textView.getTextSize() * 1.15);
+                }
+
                 new AsyncTask<Void, Void, Map<String, Drawable>>(){
                     @Override
                     protected Map<String, Drawable> doInBackground(Void... params) {
@@ -219,7 +222,8 @@ public class TwitterStringUtils {
                     @Override
                     protected void onPostExecute(Map<String, Drawable> map) {
                         if (TextUtils.equals(builder, textView.getText())) {
-                            while (matcher.find()){
+                            boolean found = matches || matcher.find();
+                            while (found){
                                 String shortCode = matcher.group(1);
                                 Drawable drawable = map.get(shortCode);
                                 if (drawable != null) {
@@ -229,6 +233,7 @@ public class TwitterStringUtils {
                                             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
                                     );
                                 }
+                                found = matcher.find();
                             }
                             textView.setText(builder);
                         }
