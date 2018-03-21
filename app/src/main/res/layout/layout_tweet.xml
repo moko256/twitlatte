@@ -51,9 +51,9 @@
             android:layout_marginLeft="16dp"
             tools:text="@string/reply_to"/>
 
-        <android.support.v4.widget.Space
+        <android.widget.Space
             android:id="@+id/tweet_header_bottom_margin"
-            android:layout_below="@+id/tweet_reply_user_name"
+            android:layout_below="@id/tweet_reply_user_name"
             android:layout_width="match_parent"
             android:layout_height="12dp" />
 
@@ -62,7 +62,7 @@
             android:layout_height="40dp"
             android:layout_marginRight="8dp"
             android:id="@+id/tweet_icon"
-            android:layout_below="@+id/tweet_header_bottom_margin"
+            android:layout_below="@id/tweet_header_bottom_margin"
             android:transitionName="icon_image"
             tools:src="@android:color/white"/>
 
@@ -70,7 +70,7 @@
             android:id="@+id/tweet_time_stamp_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/tweet_header_bottom_margin"
+            android:layout_below="@id/tweet_header_bottom_margin"
             android:layout_alignParentRight="true"
             android:textColor="?android:textColorSecondary"
             android:lines="1"
@@ -82,7 +82,7 @@
             android:id="@+id/tweet_user_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/tweet_header_bottom_margin"
+            android:layout_below="@id/tweet_header_bottom_margin"
             android:layout_toLeftOf="@id/tweet_time_stamp_text"
             android:layout_toRightOf="@id/tweet_icon"
             android:ellipsize="end"
@@ -213,7 +213,7 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_below="@id/tweet_quote_tweet"
-            android:layout_toLeftOf="@+id/tweet_content_retweet_count"
+            android:layout_toLeftOf="@id/tweet_content_retweet_count"
             android:layout_marginTop="20dp"
             android:layout_marginBottom="4dp"
             android:layout_marginLeft="18dp"
@@ -230,7 +230,7 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_below="@id/tweet_quote_tweet"
-            android:layout_toLeftOf="@+id/tweet_content_retweet_button"
+            android:layout_toLeftOf="@id/tweet_content_retweet_button"
             android:layout_marginTop="20dp"
             android:layout_marginBottom="4dp"
             android:layout_marginLeft="12dp"
