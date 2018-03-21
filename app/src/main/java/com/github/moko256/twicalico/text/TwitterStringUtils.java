@@ -346,7 +346,7 @@ public class TwitterStringUtils {
     }
 
     public static SpannableStringBuilder convertUrlSpanToCustomTabs(Spanned spanned, Context context){
-        SpannableStringBuilder builder = new SpannableStringBuilder(spanned);
+        SpannableStringBuilder builder = SpannableStringBuilder.valueOf(spanned);
         URLSpan[] spans = spanned.getSpans(0, spanned.length(), URLSpan.class);
         for (URLSpan span : spans) {
             builder.removeSpan(span);
