@@ -26,7 +26,6 @@ import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.ClickableSpan;
-import android.text.style.DynamicDrawableSpan;
 import android.text.style.ImageSpan;
 import android.text.style.URLSpan;
 import android.view.View;
@@ -225,10 +224,7 @@ public class TwitterStringUtils {
                                 Drawable drawable = map.get(shortCode);
                                 if (drawable != null) {
                                     builder.setSpan(
-                                            new ImageSpan(
-                                                    drawable,
-                                                    DynamicDrawableSpan.ALIGN_BASELINE
-                                            ),
+                                            new ImageSpan(drawable),
                                             matcher.start(), matcher.end(),
                                             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
                                     );
