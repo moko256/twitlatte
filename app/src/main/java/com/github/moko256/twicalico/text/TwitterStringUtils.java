@@ -218,7 +218,7 @@ public class TwitterStringUtils {
 
                     @Override
                     protected void onPostExecute(Map<String, Drawable> map) {
-                        if (builder.toString().equals(textView.getText().toString())) {
+                        if (builder == textView.getText()) {
                             while (matcher.find()){
                                 String shortCode = matcher.group(1);
                                 Drawable drawable = map.get(shortCode);
