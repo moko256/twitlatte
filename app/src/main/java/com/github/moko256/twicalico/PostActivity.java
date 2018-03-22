@@ -163,6 +163,18 @@ public class PostActivity extends AppCompatActivity {
                 ),
                 REQUEST_GET_IMAGE
         ));
+        addedImagesAdapter.setOnDeleteButtonListener(position -> {
+            addedImagesAdapter.getImagesList().remove(position);
+            model.getUriList().remove(position);
+            addedImagesAdapter.notifyItemRangeChanged(position, addedImagesAdapter.getImagesList().size() - position + 2);
+            possiblySensitiveSwitch.setEnabled(model.getUriList().size() > 0);
+        });
+        addedImagesAdapter.setOnImageClickListener(position -> {
+            Intent open = new Intent(Intent.ACTION_VIEW)
+                    .setData(model.getUriList().get(position))
+                    .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            startActivity(Intent.createChooser(open, getString(R.string.open_image)));
+        });
         imagesRecyclerView.setAdapter(addedImagesAdapter);
 
         possiblySensitiveSwitch = findViewById(R.id.activity_tweet_possibly_sensitive_switch);

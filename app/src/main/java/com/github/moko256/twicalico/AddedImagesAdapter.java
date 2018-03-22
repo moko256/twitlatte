@@ -25,6 +25,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -47,6 +48,8 @@ public class AddedImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     private int limit = -1;
 
     private View.OnClickListener onAddButtonClickListener;
+    private ImageAction onDeleteButtonListener;
+    private ImageAction onImageClickListener;
 
     public AddedImagesAdapter(Context context){
         this.context = context;
@@ -88,6 +91,12 @@ public class AddedImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             }
 
             viewHolder.title.setText(fileName != null? fileName : image.getLastPathSegment());
+            viewHolder.deleteButton.setOnClickListener(
+                    v -> onDeleteButtonListener.doAction(position)
+            );
+            viewHolder.itemView.setOnClickListener(
+                    v -> onImageClickListener.doAction(position)
+            );
             GlideApp.with(context).load(image).into(viewHolder.image);
         } else {
             holder.itemView.setOnClickListener(onAddButtonClickListener);
@@ -117,6 +126,22 @@ public class AddedImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         this.onAddButtonClickListener = onAddButtonClickListener;
     }
 
+    public ImageAction getOnDeleteButtonListener() {
+        return onDeleteButtonListener;
+    }
+
+    public void setOnDeleteButtonListener(ImageAction onDeleteButtonListener) {
+        this.onDeleteButtonListener = onDeleteButtonListener;
+    }
+
+    public ImageAction getOnImageClickListener() {
+        return onImageClickListener;
+    }
+
+    public void setOnImageClickListener(ImageAction onImageClickListener) {
+        this.onImageClickListener = onImageClickListener;
+    }
+
     public int getLimit() {
         return limit;
     }
@@ -138,11 +163,13 @@ public class AddedImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
         ImageView image;
         TextView title;
+        ImageButton deleteButton;
 
         ImageChildViewHolder(View itemView) {
             super(itemView);
             image = itemView.findViewById(R.id.layout_images_adapter_image_child_image);
             title = itemView.findViewById(R.id.layout_images_adapter_image_child_title);
+            deleteButton = itemView.findViewById(R.id.action_delete);
         }
     }
 
@@ -151,5 +178,9 @@ public class AddedImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         AddImageViewHolder(View itemView) {
             super(itemView);
         }
+    }
+
+    interface ImageAction{
+        void doAction(int position);
     }
 }

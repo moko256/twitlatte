@@ -35,6 +35,7 @@
     <string name="media">メディア</string>
     <string name="images">画像</string>
     <string name="add_image">画像を追加</string>
+    <string name="open_image">画像を開く</string>
     <string name="add_location">位置情報を追加</string>
     <string name="possibly_sensitive">画像に過激な表現を含む</string>
     <string name="repeat_by">%sさんが拡散しました</string>
