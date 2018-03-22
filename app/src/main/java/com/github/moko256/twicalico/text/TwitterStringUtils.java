@@ -181,8 +181,17 @@ public class TwitterStringUtils {
 
         if (GlobalApplication.clientType == Type.MASTODON){
             Spanned html = Html.fromHtml(tweet);
-            if (html.length() >= 2) {
-                html = (Spanned) html.subSequence(0, html.length() - 2);
+            int length = html.length();
+            // Trim unless \n\n made by fromHtml() after post
+            if (length == 3
+                    && item.getMediaEntities().length > 0
+                    && html.charAt(0) == ".".charAt(0)
+                    ){
+                // If post has media only, context of post from Mastodon is "."
+                textView.setText("");
+                return;
+            } else if (length >= 2) {
+                html = (Spanned) html.subSequence(0, length - 2);
             }
             SpannableStringBuilder builder = convertUrlSpanToCustomTabs(html, context);
             textView.setText(builder);
