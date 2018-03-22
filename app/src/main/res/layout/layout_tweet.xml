@@ -183,7 +183,7 @@
             android:textStyle="bold"
             tools:text="20G"/>
 
-        <com.github.moko256.twicalico.widget.DrawableToggleView
+        <android.support.v7.widget.AppCompatCheckBox
             android:id="@+id/tweet_content_like_button"
             android:layout_width="24dp"
             android:layout_height="24dp"
@@ -193,7 +193,7 @@
             android:layout_marginBottom="4dp"
             android:layout_marginLeft="12dp"
             android:layout_marginRight="6dp"
-            app:toggle_drawable="@drawable/like_button_drawable_stateful"
+            android:button="@drawable/like_button_drawable_stateful"
             app:buttonTint="@color/toggle_button_color_stateful"/>
 
         <TextView
@@ -208,7 +208,7 @@
             android:textStyle="bold"
             tools:text="500M"/>
 
-        <com.github.moko256.twicalico.widget.DrawableToggleView
+        <android.support.v7.widget.AppCompatCheckBox
             android:id="@+id/tweet_content_retweet_button"
             android:layout_width="24dp"
             android:layout_height="24dp"
@@ -218,13 +218,9 @@
             android:layout_marginBottom="4dp"
             android:layout_marginLeft="18dp"
             android:layout_marginRight="6dp"
-            app:toggle_drawable="@drawable/ic_repeat_black_24dp"
+            android:button="@drawable/ic_repeat_black_24dp"
             app:buttonTint="@color/toggle_button_color_stateful"/>
 
-        <!--
-         Please set image : drawable/ic_reply_white_24dp
-         and, set tint : color/reply_button_color_stateful
-         -->
         <android.support.v7.widget.AppCompatImageButton
             android:id="@+id/tweet_content_reply_button"
             android:layout_width="24dp"
@@ -236,8 +232,8 @@
             android:layout_marginLeft="12dp"
             android:layout_marginRight="30sp"
             android:background="?attr/controlBackground"
-            tools:src="@drawable/ic_reply_white_24dp"
-            tools:tint="@color/reply_button_color_stateful"
+            app:tint="@color/reply_button_color_stateful"
+            app:srcCompat="@drawable/ic_reply_white_24dp"
             tools:ignore="PrivateResource" />
 
     </RelativeLayout>

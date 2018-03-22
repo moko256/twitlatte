@@ -25,7 +25,5 @@
     <color name="image_toggle_enable">#8A000000</color>
     <color name="image_toggle_disable">#42000000</color>
 
-    <color name="lock_icon_color">?android:textColorPrimary</color>
-
     <color name="divider_color">#1F000000</color>
 </resources>

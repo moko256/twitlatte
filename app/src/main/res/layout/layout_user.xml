@@ -48,7 +48,8 @@
 
     <ImageView
         android:id="@+id/user_user_lock"
-        app:srcCompat="@drawable/ic_lock_text_color_24dp"
+        android:tint="?android:textColorPrimary"
+        app:srcCompat="@drawable/ic_lock_black_24dp"
         android:layout_width="16sp"
         android:layout_height="16sp"
         android:layout_marginTop="16dp"

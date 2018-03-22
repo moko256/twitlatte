@@ -18,11 +18,7 @@ package com.github.moko256.twicalico;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.graphics.drawable.DrawableCompat;
-import android.support.v7.content.res.AppCompatResources;
 import android.text.format.DateUtils;
 import android.text.method.LinkMovementMethod;
 import android.util.AttributeSet;
@@ -109,11 +105,7 @@ public class StatusView extends FrameLayout {
 
         likeButton = findViewById(R.id.tweet_content_like_button);
         retweetButton = findViewById(R.id.tweet_content_retweet_button);
-
         replyButton = findViewById(R.id.tweet_content_reply_button);
-        Drawable replyIcon= DrawableCompat.wrap(AppCompatResources.getDrawable(context, R.drawable.ic_reply_white_24dp));
-        DrawableCompat.setTintList(replyIcon, ContextCompat.getColorStateList(context, R.color.reply_button_color_stateful));
-        replyButton.setImageDrawable(replyIcon);
 
         likeCount = findViewById(R.id.tweet_content_like_count);
         retweetCount = findViewById(R.id.tweet_content_retweet_count);

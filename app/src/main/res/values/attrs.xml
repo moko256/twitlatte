@@ -15,8 +15,4 @@
   ~ limitations under the License.
   -->
 
-<resources>
-    <declare-styleable name="DrawableToggleView">
-        <attr name="toggle_drawable" format="reference"/>
-    </declare-styleable>
-</resources>
+<resources />
