@@ -285,9 +285,12 @@ public class TwitterStringUtils {
             }, tweet.offsetByCodePoints(0,userMentionEntity.getStart()), tweet.offsetByCodePoints(0,userMentionEntity.getEnd()), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
         }
 
-        List<URLEntity> urlEntities = new ArrayList<>(item.getURLEntities().length + item.getMediaEntities().length);
+        boolean hasMedia = item.getMediaEntities().length > 0;
+        List<URLEntity> urlEntities = new ArrayList<>(item.getURLEntities().length + (hasMedia? 1: 0));
         urlEntities.addAll(Arrays.asList(item.getURLEntities()));
-        urlEntities.addAll(Arrays.asList(item.getMediaEntities()));
+        if (hasMedia){
+            urlEntities.add(item.getMediaEntities()[0]);
+        }
 
         int tweetLength = tweet.codePointCount(0, tweet.length());
         int sp = 0;
