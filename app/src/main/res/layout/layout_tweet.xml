@@ -193,7 +193,7 @@
             android:layout_marginBottom="4dp"
             android:layout_marginLeft="12dp"
             android:layout_marginRight="6dp"
-            android:button="@drawable/like_button_drawable_stateful"
+            android:button="@drawable/toggle_like"
             app:buttonTint="@color/toggle_button_color_stateful"/>
 
         <TextView
@@ -218,7 +218,7 @@
             android:layout_marginBottom="4dp"
             android:layout_marginLeft="18dp"
             android:layout_marginRight="6dp"
-            android:button="@drawable/ic_repeat_black_24dp"
+            android:button="@drawable/toggle_repeat"
             app:buttonTint="@color/toggle_button_color_stateful"/>
 
         <android.support.v7.widget.AppCompatImageButton

@@ -79,9 +79,9 @@
                         tools:text="\@user_name"/>
 
 
-                    <ImageView
+                    <android.support.v7.widget.AppCompatImageView
                         android:id="@+id/show_user_lock"
-                        android:tint="?android:textColorPrimary"
+                        app:tint="?android:textColorPrimary"
                         app:srcCompat="@drawable/ic_lock_black_24dp"
                         android:layout_width="20dp"
                         android:layout_height="20dp"
