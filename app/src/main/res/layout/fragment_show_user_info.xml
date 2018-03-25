@@ -44,10 +44,11 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
-                    <com.github.moko256.twicalico.widget.UserHeaderImageView
+                    <com.github.moko256.twicalico.widget.AspectImageView
+                        android:id="@+id/show_user_bgimage"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:id="@+id/show_user_bgimage"
+                        app:aspect_width="3"
                         tools:src="@android:color/darker_gray"/>
 
                     <ImageView

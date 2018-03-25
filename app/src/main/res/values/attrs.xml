@@ -15,4 +15,11 @@
   ~ limitations under the License.
   -->
 
-<resources />
+<resources >
+
+    <declare-styleable name="AspectImageView">
+        <attr name="aspect_width" format="integer" />
+        <attr name="aspect_height" format="integer" />
+    </declare-styleable>
+
+</resources>
