@@ -109,62 +109,62 @@ public class GlobalApplication extends Application {
 
         configuration=new AppConfiguration();
 
-        configuration.setPatternTweetMuteEnabled(defaultSharedPreferences.getBoolean("patternTweetMuteEnabled",false));
-        if(configuration.isPatternTweetMuteEnabled()){
+        configuration.isPatternTweetMuteEnabled = defaultSharedPreferences.getBoolean("isPatternTweetMuteEnabled",false);
+        if(configuration.isPatternTweetMuteEnabled){
             try {
-                configuration.setTweetMutePattern(Pattern.compile(defaultSharedPreferences.getString("tweetMutePattern","")));
+                configuration.tweetMutePattern = Pattern.compile(defaultSharedPreferences.getString("tweetMutePattern",""));
             } catch (PatternSyntaxException e){
                 e.printStackTrace();
-                configuration.setPatternTweetMuteEnabled(false);
+                configuration.isPatternTweetMuteEnabled = false;
                 Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         }
 
-        configuration.setPatternTweetMuteShowOnlyImageEnabled(defaultSharedPreferences.getBoolean("patternTweetMuteShowOnlyImageEnabled",false));
-        if(configuration.isPatternTweetMuteShowOnlyImageEnabled()){
+        configuration.isPatternTweetMuteShowOnlyImageEnabled = defaultSharedPreferences.getBoolean("isPatternTweetMuteShowOnlyImageEnabled",false);
+        if(configuration.isPatternTweetMuteShowOnlyImageEnabled){
             try {
-                configuration.setTweetMuteShowOnlyImagePattern(Pattern.compile(defaultSharedPreferences.getString("tweetMuteShowOnlyImagePattern","")));
+                configuration.tweetMuteShowOnlyImagePattern = Pattern.compile(defaultSharedPreferences.getString("tweetMuteShowOnlyImagePattern",""));
             } catch (PatternSyntaxException e){
                 e.printStackTrace();
-                configuration.setPatternTweetMuteShowOnlyImageEnabled(false);
+                configuration.isPatternTweetMuteShowOnlyImageEnabled = false;
                 Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         }
 
-        configuration.setPatternUserScreenNameMuteEnabled(defaultSharedPreferences.getBoolean("patternUserScreenNameMuteEnabled",false));
-        if(configuration.isPatternUserScreenNameMuteEnabled()){
+        configuration.isPatternUserScreenNameMuteEnabled = defaultSharedPreferences.getBoolean("isPatternUserScreenNameMuteEnabled",false);
+        if(configuration.isPatternUserScreenNameMuteEnabled){
             try {
-                configuration.setUserScreenNameMutePattern(Pattern.compile(defaultSharedPreferences.getString("userScreenNameMutePattern","")));
+                configuration.userScreenNameMutePattern = Pattern.compile(defaultSharedPreferences.getString("userScreenNameMutePattern",""));
             } catch (PatternSyntaxException e){
                 e.printStackTrace();
-                configuration.setPatternUserScreenNameMuteEnabled(false);
+                configuration.isPatternUserScreenNameMuteEnabled = false;
                 Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         }
 
-        configuration.setPatternUserNameMuteEnabled(defaultSharedPreferences.getBoolean("patternUserNameMuteEnabled",false));
-        if(configuration.isPatternUserNameMuteEnabled()){
+        configuration.isPatternUserNameMuteEnabled = defaultSharedPreferences.getBoolean("isPatternUserNameMuteEnabled",false);
+        if(configuration.isPatternUserNameMuteEnabled){
             try {
-                configuration.setUserNameMutePattern(Pattern.compile(defaultSharedPreferences.getString("userNameMutePattern","")));
+                configuration.userNameMutePattern = Pattern.compile(defaultSharedPreferences.getString("userNameMutePattern",""));
             } catch (PatternSyntaxException e){
                 e.printStackTrace();
-                configuration.setPatternUserNameMuteEnabled(false);
+                configuration.isPatternUserNameMuteEnabled = false;
                 Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         }
 
-        configuration.setPatternTweetSourceMuteEnabled(defaultSharedPreferences.getBoolean("patternTweetSourceMuteEnabled",false));
-        if(configuration.isPatternTweetSourceMuteEnabled()){
+        configuration.isPatternTweetSourceMuteEnabled = defaultSharedPreferences.getBoolean("isPatternTweetSourceMuteEnabled",false);
+        if(configuration.isPatternTweetSourceMuteEnabled){
             try {
-                configuration.setTweetSourceMutePattern(Pattern.compile(defaultSharedPreferences.getString("tweetSourceMutePattern","")));
+                configuration.tweetSourceMutePattern = Pattern.compile(defaultSharedPreferences.getString("tweetSourceMutePattern",""));
             } catch (PatternSyntaxException e){
                 e.printStackTrace();
-                configuration.setPatternTweetSourceMuteEnabled(false);
+                configuration.isPatternTweetSourceMuteEnabled = false;
                 Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         }
 
-        configuration.setTimelineImageLoad(Boolean.valueOf(defaultSharedPreferences.getString("isTimelineImageLoad","true")));
+        configuration.isTimelineImageLoad = Boolean.valueOf(defaultSharedPreferences.getString("isTimelineImageLoad","true"));
 
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
 

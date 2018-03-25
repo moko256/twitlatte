@@ -169,7 +169,7 @@ public class TweetImageTableView extends GridLayout {
 
             });
 
-            if (GlobalApplication.configuration.isTimelineImageLoad()){
+            if (GlobalApplication.configuration.isTimelineImageLoad){
 
                 if (sensitive){
                     isOpen = false;

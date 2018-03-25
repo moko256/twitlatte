@@ -26,109 +26,21 @@ import java.util.regex.Pattern;
 
 public class AppConfiguration {
 
-    private boolean patternTweetMuteEnabled;
-    private Pattern tweetMutePattern;
+    public boolean isPatternTweetMuteEnabled;
+    public Pattern tweetMutePattern;
 
-    private boolean patternTweetMuteShowOnlyImageEnabled;
-    private Pattern tweetMuteShowOnlyImagePattern;
+    public boolean isPatternTweetMuteShowOnlyImageEnabled;
+    public Pattern tweetMuteShowOnlyImagePattern;
 
-    private boolean patternUserScreenNameMuteEnabled;
-    private Pattern userScreenNameMutePattern;
+    public boolean isPatternUserScreenNameMuteEnabled;
+    public Pattern userScreenNameMutePattern;
 
-    private boolean patternUserNameMuteEnabled;
-    private Pattern userNameMutePattern;
+    public boolean isPatternUserNameMuteEnabled;
+    public Pattern userNameMutePattern;
 
-    private boolean patternTweetSourceMuteEnabled;
-    private Pattern tweetSourceMutePattern;
+    public boolean isPatternTweetSourceMuteEnabled;
+    public Pattern tweetSourceMutePattern;
 
-    private boolean isTimelineImageLoad;
+    public boolean isTimelineImageLoad;
 
-
-    public boolean isPatternTweetMuteEnabled() {
-        return patternTweetMuteEnabled;
-    }
-
-    public void setPatternTweetMuteEnabled(boolean patternTweetMuteEnabled) {
-        this.patternTweetMuteEnabled = patternTweetMuteEnabled;
-    }
-
-    public Pattern getTweetMutePattern() {
-        return tweetMutePattern;
-    }
-
-    public void setTweetMutePattern(Pattern tweetMutePattern) {
-        this.tweetMutePattern = tweetMutePattern;
-    }
-
-    public boolean isPatternTweetMuteShowOnlyImageEnabled() {
-        return patternTweetMuteShowOnlyImageEnabled;
-    }
-
-    public void setPatternTweetMuteShowOnlyImageEnabled(boolean patternTweetMuteShowOnlyImageEnabled) {
-        this.patternTweetMuteShowOnlyImageEnabled = patternTweetMuteShowOnlyImageEnabled;
-    }
-
-    public Pattern getTweetMuteShowOnlyImagePattern() {
-        return tweetMuteShowOnlyImagePattern;
-    }
-
-    public void setTweetMuteShowOnlyImagePattern(Pattern tweetMuteShowOnlyImagePattern) {
-        this.tweetMuteShowOnlyImagePattern = tweetMuteShowOnlyImagePattern;
-    }
-
-    public boolean isPatternUserScreenNameMuteEnabled() {
-        return patternUserScreenNameMuteEnabled;
-    }
-
-    public void setPatternUserScreenNameMuteEnabled(boolean patternUserScreenNameMuteEnabled) {
-        this.patternUserScreenNameMuteEnabled = patternUserScreenNameMuteEnabled;
-    }
-
-    public Pattern getUserScreenNameMutePattern() {
-        return userScreenNameMutePattern;
-    }
-
-    public void setUserScreenNameMutePattern(Pattern userScreenNameMutePattern) {
-        this.userScreenNameMutePattern = userScreenNameMutePattern;
-    }
-
-    public boolean isPatternUserNameMuteEnabled() {
-        return patternUserNameMuteEnabled;
-    }
-
-    public void setPatternUserNameMuteEnabled(boolean patternUserNameMuteEnabled) {
-        this.patternUserNameMuteEnabled = patternUserNameMuteEnabled;
-    }
-
-    public Pattern getUserNameMutePattern() {
-        return userNameMutePattern;
-    }
-
-    public void setUserNameMutePattern(Pattern userNameMutePattern) {
-        this.userNameMutePattern = userNameMutePattern;
-    }
-
-    public boolean isPatternTweetSourceMuteEnabled() {
-        return patternTweetSourceMuteEnabled;
-    }
-
-    public void setPatternTweetSourceMuteEnabled(boolean patternTweetSourceMuteEnabled) {
-        this.patternTweetSourceMuteEnabled = patternTweetSourceMuteEnabled;
-    }
-
-    public Pattern getTweetSourceMutePattern() {
-        return tweetSourceMutePattern;
-    }
-
-    public void setTweetSourceMutePattern(Pattern tweetSourceMutePattern) {
-        this.tweetSourceMutePattern = tweetSourceMutePattern;
-    }
-
-    public void setTimelineImageLoad(boolean isTimelineImageLoad) {
-        this.isTimelineImageLoad = isTimelineImageLoad;
-    }
-
-    public boolean isTimelineImageLoad() {
-        return isTimelineImageLoad;
-    }
 }
