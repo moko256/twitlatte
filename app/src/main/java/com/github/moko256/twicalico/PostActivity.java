@@ -174,7 +174,9 @@ public class PostActivity extends AppCompatActivity {
             addedImagesAdapter.getImagesList().remove(position);
             model.getUriList().remove(position);
             addedImagesAdapter.notifyDataSetChanged();
-            possiblySensitiveSwitch.setEnabled(model.getUriList().size() > 0);
+            boolean enabled = model.getUriList().size() > 0;
+            possiblySensitiveSwitch.setEnabled(enabled);
+            possiblySensitiveSwitch.setChecked(possiblySensitiveSwitch.isChecked() && enabled);
         });
         addedImagesAdapter.setOnImageClickListener(position -> {
             Intent open = new Intent(Intent.ACTION_VIEW)
