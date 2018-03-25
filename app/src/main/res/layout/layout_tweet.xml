@@ -232,7 +232,7 @@
             android:layout_marginLeft="12dp"
             android:layout_marginRight="30sp"
             android:background="?attr/controlBackground"
-            app:tint="@color/reply_button_color_stateful"
+            app:tint="@color/image_button_color_stateful"
             app:srcCompat="@drawable/ic_reply_white_24dp"
             tools:ignore="PrivateResource" />
 
