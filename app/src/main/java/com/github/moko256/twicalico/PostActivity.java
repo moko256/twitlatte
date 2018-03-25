@@ -21,6 +21,7 @@ import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -150,7 +151,13 @@ public class PostActivity extends AppCompatActivity {
         imagesRecyclerView = findViewById(R.id.activity_tweet_send_images_recycler_view);
         addedImagesAdapter = new AddedImagesAdapter(this);
 
-        imagesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        imagesRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        imagesRecyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
+            @Override
+            public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+                outRect.right = Math.round(getResources().getDisplayMetrics().density);
+            }
+        });
 
         addedImagesAdapter.setLimit(model.getUriListSizeLimit());
         addedImagesAdapter.setOnAddButtonClickListener(v -> startActivityForResult(
@@ -166,7 +173,7 @@ public class PostActivity extends AppCompatActivity {
         addedImagesAdapter.setOnDeleteButtonListener(position -> {
             addedImagesAdapter.getImagesList().remove(position);
             model.getUriList().remove(position);
-            addedImagesAdapter.notifyItemRangeChanged(position, addedImagesAdapter.getImagesList().size() - position + 2);
+            addedImagesAdapter.notifyDataSetChanged();
             possiblySensitiveSwitch.setEnabled(model.getUriList().size() > 0);
         });
         addedImagesAdapter.setOnImageClickListener(position -> {

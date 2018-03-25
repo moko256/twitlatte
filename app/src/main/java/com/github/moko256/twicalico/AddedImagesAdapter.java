@@ -114,7 +114,7 @@ public class AddedImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         if (position < images.size()){
             return images.get(position).hashCode();
         } else {
-            return -1;
+            return 0;
         }
     }
 

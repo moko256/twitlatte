@@ -18,21 +18,23 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="56dp"
+    android:layout_width="144dp"
+    android:layout_height="144dp"
     android:foreground="?attr/selectableItemBackground">
-    <ImageView
+    <android.support.v7.widget.AppCompatImageView
         android:id="@+id/layout_images_adapter_add_image_icon"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="24dp"
         app:srcCompat="@drawable/ic_add_app_shortcut"/>
     <TextView
         android:id="@+id/layout_images_adapter_add_image_title"
-        android:layout_toRightOf="@+id/layout_images_adapter_add_image_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_alignParentBottom="true"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:gravity="center_vertical"
         android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
         android:text="@string/add_image"/>
 </RelativeLayout>
