@@ -27,7 +27,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.github.chrisbanes.photoview.PhotoView;
 import com.github.chuross.flinglayout.FlingLayout;
@@ -35,20 +34,15 @@ import com.github.moko256.twicalico.text.TwitterStringUtils;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlayerFactory;
-import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSourceFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.LoopingMediaSource;
-import com.google.android.exoplayer2.source.MediaSourceEventListener;
 import com.google.android.exoplayer2.source.hls.HlsMediaSource;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.ui.PlayerView;
-import com.google.android.exoplayer2.upstream.DataSpec;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
-
-import java.io.IOException;
 
 import kotlin.Unit;
 import twitter4j.MediaEntity;
@@ -151,7 +145,7 @@ public class ImagePagerChildFragment extends Fragment {
                                 ).createMediaSource(
                                         Uri.parse(mediaEntity.getVideoVariants()[0].getUrl()),
                                         new Handler(),
-                                        new ShowErrorListener()
+                                        null
                                 )
                 );
                 break;
@@ -196,7 +190,7 @@ public class ImagePagerChildFragment extends Fragment {
                                 ).createMediaSource(
                                         Uri.parse(mediaEntity.getVideoVariants()[0].getUrl()),
                                         new Handler(),
-                                        new ShowErrorListener()
+                                        null
                                 )
                         )
                 );
@@ -272,36 +266,6 @@ public class ImagePagerChildFragment extends Fragment {
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                         | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-    }
-
-    private final class ShowErrorListener implements MediaSourceEventListener {
-        @Override
-        public void onLoadStarted(DataSpec dataSpec, int dataType, int trackType, Format trackFormat, int trackSelectionReason, Object trackSelectionData, long mediaStartTimeMs, long mediaEndTimeMs, long elapsedRealtimeMs) {}
-
-        @Override
-        public void onLoadCompleted(DataSpec dataSpec, int dataType, int trackType, Format trackFormat, int trackSelectionReason, Object trackSelectionData, long mediaStartTimeMs, long mediaEndTimeMs, long elapsedRealtimeMs, long loadDurationMs, long bytesLoaded) {}
-
-        @Override
-        public void onLoadCanceled(DataSpec dataSpec, int dataType, int trackType, Format trackFormat, int trackSelectionReason, Object trackSelectionData, long mediaStartTimeMs, long mediaEndTimeMs, long elapsedRealtimeMs, long loadDurationMs, long bytesLoaded) {}
-
-        @Override
-        public void onLoadError(DataSpec dataSpec, int dataType, int trackType, Format trackFormat, int trackSelectionReason, Object trackSelectionData, long mediaStartTimeMs, long mediaEndTimeMs, long elapsedRealtimeMs, long loadDurationMs, long bytesLoaded, IOException error, boolean wasCanceled) {
-            error.printStackTrace();
-
-            Toast.makeText(
-                    getContext(),
-                    new StringBuilder(getString(R.string.error_occurred))
-                            .append("\n\n")
-                            .append(error.getMessage()),
-                    Toast.LENGTH_SHORT
-            ).show();
-        }
-
-        @Override
-        public void onUpstreamDiscarded(int trackType, long mediaStartTimeMs, long mediaEndTimeMs) {}
-
-        @Override
-        public void onDownstreamFormatChanged(int trackType, Format trackFormat, int trackSelectionReason, Object trackSelectionData, long mediaTimeMs) {}
     }
 
     public static ImagePagerChildFragment getInstance(MediaEntity entity){
