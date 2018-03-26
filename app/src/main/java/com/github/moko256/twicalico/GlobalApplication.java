@@ -109,7 +109,7 @@ public class GlobalApplication extends Application {
 
         configuration=new AppConfiguration();
 
-        configuration.isPatternTweetMuteEnabled = defaultSharedPreferences.getBoolean("isPatternTweetMuteEnabled",false);
+        configuration.isPatternTweetMuteEnabled = defaultSharedPreferences.getBoolean("patternTweetMuteEnabled",false);
         if(configuration.isPatternTweetMuteEnabled){
             try {
                 configuration.tweetMutePattern = Pattern.compile(defaultSharedPreferences.getString("tweetMutePattern",""));
@@ -120,7 +120,7 @@ public class GlobalApplication extends Application {
             }
         }
 
-        configuration.isPatternTweetMuteShowOnlyImageEnabled = defaultSharedPreferences.getBoolean("isPatternTweetMuteShowOnlyImageEnabled",false);
+        configuration.isPatternTweetMuteShowOnlyImageEnabled = defaultSharedPreferences.getBoolean("patternTweetMuteShowOnlyImageEnabled",false);
         if(configuration.isPatternTweetMuteShowOnlyImageEnabled){
             try {
                 configuration.tweetMuteShowOnlyImagePattern = Pattern.compile(defaultSharedPreferences.getString("tweetMuteShowOnlyImagePattern",""));
@@ -131,7 +131,7 @@ public class GlobalApplication extends Application {
             }
         }
 
-        configuration.isPatternUserScreenNameMuteEnabled = defaultSharedPreferences.getBoolean("isPatternUserScreenNameMuteEnabled",false);
+        configuration.isPatternUserScreenNameMuteEnabled = defaultSharedPreferences.getBoolean("patternUserScreenNameMuteEnabled",false);
         if(configuration.isPatternUserScreenNameMuteEnabled){
             try {
                 configuration.userScreenNameMutePattern = Pattern.compile(defaultSharedPreferences.getString("userScreenNameMutePattern",""));
@@ -142,7 +142,7 @@ public class GlobalApplication extends Application {
             }
         }
 
-        configuration.isPatternUserNameMuteEnabled = defaultSharedPreferences.getBoolean("isPatternUserNameMuteEnabled",false);
+        configuration.isPatternUserNameMuteEnabled = defaultSharedPreferences.getBoolean("patternUserNameMuteEnabled",false);
         if(configuration.isPatternUserNameMuteEnabled){
             try {
                 configuration.userNameMutePattern = Pattern.compile(defaultSharedPreferences.getString("userNameMutePattern",""));
@@ -153,7 +153,7 @@ public class GlobalApplication extends Application {
             }
         }
 
-        configuration.isPatternTweetSourceMuteEnabled = defaultSharedPreferences.getBoolean("isPatternTweetSourceMuteEnabled",false);
+        configuration.isPatternTweetSourceMuteEnabled = defaultSharedPreferences.getBoolean("patternTweetSourceMuteEnabled",false);
         if(configuration.isPatternTweetSourceMuteEnabled){
             try {
                 configuration.tweetSourceMutePattern = Pattern.compile(defaultSharedPreferences.getString("tweetSourceMutePattern",""));
