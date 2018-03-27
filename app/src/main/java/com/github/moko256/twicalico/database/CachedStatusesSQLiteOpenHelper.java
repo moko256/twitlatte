@@ -23,6 +23,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.github.moko256.twicalico.BuildConfig;
+import com.github.moko256.twicalico.array.ArrayUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -30,7 +31,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.Arrays;
 import java.util.Collection;
 
 import twitter4j.Status;
@@ -84,9 +84,8 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String columnsStr = Arrays.toString(TABLE_COLUMNS);
         db.execSQL(
-                "create table " + TABLE_NAME + "(" + columnsStr.substring(1, columnsStr.length() - 1) + ", primary key(id))"
+                "create table " + TABLE_NAME + "(" + ArrayUtils.toCommaSplitString(TABLE_COLUMNS) + ", primary key(id))"
         );
         db.execSQL("create unique index idindex on " + TABLE_NAME + "(id)");
 

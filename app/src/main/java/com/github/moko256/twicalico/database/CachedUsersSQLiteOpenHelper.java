@@ -24,9 +24,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.support.annotation.NonNull;
 
 import com.github.moko256.twicalico.BuildConfig;
+import com.github.moko256.twicalico.array.ArrayUtils;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 
@@ -99,9 +99,8 @@ public class CachedUsersSQLiteOpenHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String columnsStr = Arrays.toString(TABLE_COLUMNS);
         db.execSQL(
-                "create table " + TABLE_NAME + "(" + columnsStr.substring(1, columnsStr.length() - 1) + ", primary key(id))"
+                "create table " + TABLE_NAME + "(" + ArrayUtils.toCommaSplitString(TABLE_COLUMNS) + ", primary key(id))"
         );
         db.execSQL("create unique index idindex on " + TABLE_NAME + "(id)");
     }
@@ -606,13 +605,13 @@ public class CachedUsersSQLiteOpenHelper extends SQLiteOpenHelper {
             starts[i] = String.valueOf(entity.getStart());
             ends[i] = String.valueOf(entity.getEnd());
         }
-        contentValues.put(TABLE_COLUMNS[36], Arrays.toString(texts).replace("[", "").replace("]", ""));
-        contentValues.put(TABLE_COLUMNS[37], Arrays.toString(URLs).replace("[", "").replace("]", ""));
-        contentValues.put(TABLE_COLUMNS[38], Arrays.toString(expandedURLs).replace("[", "").replace("]", ""));
-        contentValues.put(TABLE_COLUMNS[39], Arrays.toString(displaysURLs).replace("[", "").replace("]", ""));
-        contentValues.put(TABLE_COLUMNS[40], Arrays.toString(starts).replace("[", "").replace("]", ""));
-        contentValues.put(TABLE_COLUMNS[41], Arrays.toString(ends).replace("[", "").replace("]", ""));
-        contentValues.put(TABLE_COLUMNS[42], Arrays.toString(user.getWithheldInCountries()).replace("[", "").replace("]", ""));
+        contentValues.put(TABLE_COLUMNS[36], ArrayUtils.toCommaSplitString(texts).toString());
+        contentValues.put(TABLE_COLUMNS[37], ArrayUtils.toCommaSplitString(URLs).toString());
+        contentValues.put(TABLE_COLUMNS[38], ArrayUtils.toCommaSplitString(expandedURLs).toString());
+        contentValues.put(TABLE_COLUMNS[39], ArrayUtils.toCommaSplitString(displaysURLs).toString());
+        contentValues.put(TABLE_COLUMNS[40], ArrayUtils.toCommaSplitString(starts).toString());
+        contentValues.put(TABLE_COLUMNS[41], ArrayUtils.toCommaSplitString(ends).toString());
+        contentValues.put(TABLE_COLUMNS[42], ArrayUtils.toCommaSplitString(user.getWithheldInCountries()).toString());
 
         database.replace(TABLE_NAME, null, contentValues);
     }
