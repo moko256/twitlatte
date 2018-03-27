@@ -122,6 +122,7 @@ public class ShowTweetActivity extends AppCompatActivity {
                                 e->{
                                     e.printStackTrace();
                                     Toast.makeText(this, R.string.error_occurred, Toast.LENGTH_SHORT).show();
+                                    swipeRefreshLayout.setRefreshing(false);
                                 })
         ));
     }
