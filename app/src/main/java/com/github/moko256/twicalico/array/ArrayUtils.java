@@ -16,6 +16,9 @@
 
 package com.github.moko256.twicalico.array;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -40,16 +43,20 @@ public class ArrayUtils {
         return list;
     }
 
-    public static CharSequence toCommaSplitString(String[] array){
-        int length = array.length;
-        StringBuilder builder = new StringBuilder(length * 10);
-        for (int i = 0; ; i++) {
-            builder.append(array[i]);
-            if (i < length - 1) {
-                builder.append(",");
-            } else {
-                return builder;
+    @NonNull
+    public static CharSequence toCommaSplitString(@Nullable String[] array){
+        if (array != null && array.length > 0) {
+            StringBuilder builder = new StringBuilder(array.length * 10);
+            for (int i = 0; ; i++) {
+                builder.append(array[i]);
+                if (i < array.length - 1) {
+                    builder.append(",");
+                } else {
+                    return builder;
+                }
             }
+        } else {
+            return "";
         }
     }
 }

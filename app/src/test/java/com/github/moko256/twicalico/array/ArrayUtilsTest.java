@@ -49,6 +49,14 @@ public class ArrayUtilsTest {
 
     @Test
     public void toCommaSplitString() {
+        assertTrue(
+                "".contentEquals(ArrayUtils.toCommaSplitString(null))
+        );
+
+        assertTrue(
+                "".contentEquals(ArrayUtils.toCommaSplitString(new String[]{}))
+        );
+
         String[] array = new String[]{"0", "1", "2", "aaa", "@@@", "$$$$$$$"};
         CharSequence result = ArrayUtils.toCommaSplitString(array);
         assertTrue("0,1,2,aaa,@@@,$$$$$$$".contentEquals(result));
