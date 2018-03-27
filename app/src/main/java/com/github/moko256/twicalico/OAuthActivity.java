@@ -31,10 +31,12 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.github.moko256.twicalico.database.TokenSQLiteOpenHelper;
 import com.github.moko256.twicalico.entity.AccessToken;
 import com.github.moko256.twicalico.model.base.OAuthModel;
+import com.github.moko256.twicalico.text.TwitterStringUtils;
 
 import rx.Single;
 import rx.android.schedulers.AndroidSchedulers;
@@ -49,6 +51,7 @@ public class OAuthActivity extends AppCompatActivity {
     private OAuthModel model;
     public boolean requirePin=false;
 
+    private AlertDialog pinDialog;
     public CheckBox useAuthCode;
 
     @Override
@@ -79,7 +82,7 @@ public class OAuthActivity extends AppCompatActivity {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         this::storeAccessToken,
-                        Throwable::printStackTrace
+                        this::onError
                 );
     }
 
@@ -125,7 +128,13 @@ public class OAuthActivity extends AppCompatActivity {
         authSingle
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::startBrowser, Throwable::printStackTrace);
+                .subscribe(
+                        this::startBrowser,
+                        throwable -> {
+                            closePinDialog();
+                            onError(throwable);
+                        }
+                        );
     }
 
     public void onStartMastodonAuthClick(View view) {
@@ -162,7 +171,10 @@ public class OAuthActivity extends AppCompatActivity {
                                     .observeOn(AndroidSchedulers.mainThread())
                                     .subscribe(
                                             this::startBrowser,
-                                            Throwable::printStackTrace
+                                            throwable -> {
+                                                closePinDialog();
+                                                onError(throwable);
+                                            }
                                     );
                         }
                 )
@@ -174,11 +186,17 @@ public class OAuthActivity extends AppCompatActivity {
         EditText editText=new EditText(this);
         editText.setHint("Code");
         editText.setInputType(EditorInfo.TYPE_NUMBER_FLAG_DECIMAL);
-        new AlertDialog.Builder(this)
+        pinDialog = new AlertDialog.Builder(this)
                 .setView(editText)
                 .setPositiveButton(android.R.string.ok,(dialog, which) -> initToken(editText.getText().toString()))
                 .setCancelable(false)
                 .show();
+    }
+
+    private void closePinDialog(){
+        if (pinDialog != null){
+            pinDialog.cancel();
+        }
     }
 
     private void startBrowser(String url){
@@ -188,6 +206,15 @@ public class OAuthActivity extends AppCompatActivity {
                 .setSecondaryToolbarColor(ContextCompat.getColor(this, R.color.color_primary_dark))
                 .build()
                 .launchUrl(OAuthActivity.this, Uri.parse(url));
+    }
+
+    private void onError(Throwable e){
+        e.printStackTrace();
+        Toast.makeText(
+                this,
+                getString(R.string.error_occurred) + "\n\n" + TwitterStringUtils.convertErrorToText(e),
+                Toast.LENGTH_LONG
+        ).show();
     }
 
     @Override
