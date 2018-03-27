@@ -47,7 +47,7 @@ public class TokenSQLiteOpenHelperTest {
     private static final String TEST_USER_1_USER_TOKEN_SECRET_2 = "token_secret2";
 
     @Test
-    public void test() throws Exception {
+    public void test() {
         try {
             helper.getWritableDatabase().execSQL("delete from AccountTokenList");
         } catch (Exception e) {

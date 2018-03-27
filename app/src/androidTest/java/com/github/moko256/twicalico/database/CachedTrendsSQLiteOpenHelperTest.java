@@ -43,7 +43,7 @@ public class CachedTrendsSQLiteOpenHelperTest {
     private String[] input1 = new String[]{"3", "4"};
 
     @Test
-    public void test() throws Exception{
+    public void test() {
         try {
             helper.getWritableDatabase().execSQL("delete from Trends;");
         } catch (Exception e) {

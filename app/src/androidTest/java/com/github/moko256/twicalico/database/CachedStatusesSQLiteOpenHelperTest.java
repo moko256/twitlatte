@@ -58,7 +58,7 @@ public class CachedStatusesSQLiteOpenHelperTest {
     private static final String TEST_DUMMY_STATUS_TEXT_1 = "1";
 
     @Test
-    public void test() throws Exception {
+    public void test() {
         try {
             helper.getWritableDatabase().execSQL("delete from CachedStatuses;");
         } catch (Exception e) {

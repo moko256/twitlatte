@@ -28,7 +28,7 @@ import static org.junit.Assert.assertEquals;
 
 public class TwitterStringUtilsTest {
     @Test
-    public void convertToSIUnitStringTest() throws Exception{
+    public void convertToSIUnitStringTest() {
         assertEquals(TwitterStringUtils.convertToSIUnitString(0), "0");
         assertEquals(TwitterStringUtils.convertToSIUnitString(100), "100");
         assertEquals(TwitterStringUtils.convertToSIUnitString(10000), "10K");

@@ -44,7 +44,7 @@ public class CachedIdListSQLiteOpenHelperTest {
     private List<Long> insertInput = ArrayUtils.convertToLongList(100L, 101L);
 
     @Test
-    public void test() throws Exception{
+    public void test() {
         try {
             helper.getWritableDatabase().execSQL("delete from testIdsDatabase;");
         } catch (Exception e) {

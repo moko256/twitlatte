@@ -51,7 +51,7 @@ public class CachedUsersSQLiteOpenHelperTest {
     private static final String TEST_DUMMY_USER_NAME_1 = "1";
 
     @Test
-    public void test() throws Exception {
+    public void test() {
         try {
             helper.getWritableDatabase().execSQL("delete from CachedUsers;");
         } catch (Exception e) {

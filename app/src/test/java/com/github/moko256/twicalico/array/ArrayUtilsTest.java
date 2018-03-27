@@ -34,7 +34,7 @@ public class ArrayUtilsTest {
         String[] array = new String[]{"0", "1", "2", "aaa", "@@@", "$$$$$$$"};
         List<String> list = ArrayUtils.convertToList(array);
         for (int i = 0, length = array.length; i < length; i++){
-            assertTrue(array[i] == list.get(i));
+            assertTrue(array[i].equals(list.get(i)));
         }
     }
 
