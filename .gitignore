@@ -2,6 +2,7 @@
 .gradle
 /local.properties
 /gradle.properties
+/.idea/caches
 /.idea/workspace.xml
 /.idea/libraries
 /.idea/dictionaries
