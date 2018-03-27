@@ -43,7 +43,8 @@ import twitter4j.Status;
 
 public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
 
-    private final String[] columns = new String[]{
+    private static final String TABLE_NAME = "CachedStatuses";
+    private static final String[] TABLE_COLUMNS = new String[]{
             "id","status"/*
             "flags",
             "createdAt",
@@ -83,11 +84,11 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String columnsStr = Arrays.toString(columns);
+        String columnsStr = Arrays.toString(TABLE_COLUMNS);
         db.execSQL(
-                "create table CachedStatuses(" + columnsStr.substring(1, columnsStr.length() - 1) + ", primary key(id));"
+                "create table " + TABLE_NAME + "(" + columnsStr.substring(1, columnsStr.length() - 1) + ", primary key(id))"
         );
-        db.execSQL("create unique index idindex on CachedStatuses(id)");
+        db.execSQL("create unique index idindex on " + TABLE_NAME + "(id)");
 
     }
 
@@ -100,8 +101,8 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
         Status status = null;
         SQLiteDatabase database=getReadableDatabase();
         Cursor c=database.query(
-                "CachedStatuses",
-                columns,
+                TABLE_NAME,
+                TABLE_COLUMNS,
                 "id=" + String.valueOf(id), null
                 ,null,null,null,"1"
         );
@@ -370,7 +371,7 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
             contentValues.put("id", status.getId());
             contentValues.put("status", serializedStatusByte);
 
-            database.replace("CachedStatuses", null, contentValues);
+            database.replace(TABLE_NAME, null, contentValues);
         }
     }
 
@@ -396,6 +397,6 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
     }
 
     private void deleteCachedStatusAtTransaction(Long id) {
-        getWritableDatabase().delete("CachedStatuses", "id=" + String.valueOf(id), null);
+        getWritableDatabase().delete(TABLE_NAME, "id=" + String.valueOf(id), null);
     }
 }

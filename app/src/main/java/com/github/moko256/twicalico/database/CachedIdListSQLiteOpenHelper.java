@@ -37,19 +37,21 @@ import java.util.List;
 
 public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
 
-    private CachedStatusesCountSQLiteOpenHelper statusesCounts;
-    private String databaseName;
+    private final CachedStatusesCountSQLiteOpenHelper statusesCounts;
+    private final String ID_LIST_TABLE_NAME;
+
+    private static final String POSITION_TABLE_NAME = "ListViewPosition";
 
     public CachedIdListSQLiteOpenHelper(Context context, long userId, String name){
         super(context, new File(context.getCacheDir(), String.valueOf(userId) + "/" + name + ".db").getAbsolutePath(), null, BuildConfig.CACHE_DATABASE_VERSION);
-        databaseName = name;
+        ID_LIST_TABLE_NAME = name;
         statusesCounts = new CachedStatusesCountSQLiteOpenHelper(context, userId);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("create table " + databaseName + "(id);");
-        db.execSQL("create table ListViewPosition(position);");
+        db.execSQL("create table " + ID_LIST_TABLE_NAME + "(id)");
+        db.execSQL("create table " + POSITION_TABLE_NAME + "(position)");
         //db.execSQL("create table ListViewPositionOffset(offset);");
     }
 
@@ -66,7 +68,7 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
 
     public synchronized List<Long> getIds(){
         SQLiteDatabase database=getReadableDatabase();
-        Cursor c=database.query(databaseName, new String[]{"id"}, null, null, null,null,null);
+        Cursor c=database.query(ID_LIST_TABLE_NAME, new String[]{"id"}, null, null, null,null,null);
         List<Long> ids = new ArrayList<>(c.getCount());
 
         while (c.moveToNext()){
@@ -97,7 +99,7 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
             ContentValues contentValues = new ContentValues();
             contentValues.put("id", ids.get(i));
 
-            database.insert(databaseName, "", contentValues);
+            database.insert(ID_LIST_TABLE_NAME, "", contentValues);
             if (ids.get(i) != -1L){
                 idsList.add(ids.get(i));
             }
@@ -112,7 +114,7 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
             ContentValues contentValues = new ContentValues();
             contentValues.put("id", ids.get(i));
 
-            database.insert(databaseName, "", contentValues);
+            database.insert(ID_LIST_TABLE_NAME, "", contentValues);
         }
     }
 
@@ -143,7 +145,7 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
         SQLiteDatabase database = getWritableDatabase();
         List<Long> idsList = new ArrayList<>(ids.size());
         for (Long id : ids) {
-            database.delete(databaseName, "id=" + String.valueOf(id), null);
+            database.delete(ID_LIST_TABLE_NAME, "id=" + String.valueOf(id), null);
 
             if (id != -1L){
                 idsList.add(id);
@@ -155,7 +157,7 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
     private void deleteOnlyIdsAtTransaction(List<Long> ids){
         SQLiteDatabase database = getWritableDatabase();
         for (Long id : ids) {
-            database.delete(databaseName, "id=" + String.valueOf(id), null);
+            database.delete(ID_LIST_TABLE_NAME, "id=" + String.valueOf(id), null);
         }
     }
 
@@ -169,7 +171,7 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
 
     public synchronized int getListViewPosition(){
         SQLiteDatabase database=getReadableDatabase();
-        Cursor c = database.query("ListViewPosition", new String[]{"position"}, null, null, null, null, null);
+        Cursor c = database.query(POSITION_TABLE_NAME, new String[]{"position"}, null, null, null, null, null);
         int r;
         if (c.moveToNext()){
             r = c.getInt(0);
@@ -188,8 +190,8 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
         contentValues.put("position", i);
 
         database.beginTransaction();
-        database.delete("ListViewPosition", null, null);
-        database.insert("ListViewPosition", null, contentValues);
+        database.delete(POSITION_TABLE_NAME, null, null);
+        database.insert(POSITION_TABLE_NAME, null, contentValues);
         database.setTransactionSuccessful();
         database.endTransaction();
         database.close();

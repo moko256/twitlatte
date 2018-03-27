@@ -44,8 +44,9 @@ import twitter4j.User;
 public class CachedUsersSQLiteOpenHelper extends SQLiteOpenHelper {
 
     private boolean isTwitter;
-    
-    private final String[] columns = new String[]{
+
+    private static final String TABLE_NAME = "CachedUsers";
+    private static final String[] TABLE_COLUMNS = new String[]{
             "id",
             "name",
             "email",
@@ -98,11 +99,11 @@ public class CachedUsersSQLiteOpenHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String columnsStr = Arrays.toString(columns);
+        String columnsStr = Arrays.toString(TABLE_COLUMNS);
         db.execSQL(
-                "create table CachedUsers(" + columnsStr.substring(1, columnsStr.length() - 1) + ", primary key(id));"
+                "create table " + TABLE_NAME + "(" + columnsStr.substring(1, columnsStr.length() - 1) + ", primary key(id))"
         );
-        db.execSQL("create unique index idindex on CachedUsers(id)");
+        db.execSQL("create unique index idindex on " + TABLE_NAME + "(id)");
     }
 
     @Override
@@ -114,8 +115,8 @@ public class CachedUsersSQLiteOpenHelper extends SQLiteOpenHelper {
         User user = null;
         SQLiteDatabase database=getReadableDatabase();
         Cursor c=database.query(
-                "CachedUsers",
-                columns,
+                TABLE_NAME,
+                TABLE_COLUMNS,
                 "id=" + String.valueOf(id), null
                 ,null,null,null,"1"
         );
@@ -552,42 +553,42 @@ public class CachedUsersSQLiteOpenHelper extends SQLiteOpenHelper {
         SQLiteDatabase database=getWritableDatabase();
 
         ContentValues contentValues = new ContentValues();
-        contentValues.put(columns[0], user.getId());
-        contentValues.put(columns[1], user.getName());
-        contentValues.put(columns[2], user.getEmail());
-        contentValues.put(columns[3], user.getScreenName());
-        contentValues.put(columns[4], user.getLocation());
-        contentValues.put(columns[5], user.getDescription());
-        contentValues.put(columns[6], user.isContributorsEnabled()? 1: 0);
-        contentValues.put(columns[7], user.getProfileImageURL());
-        contentValues.put(columns[8], user.getProfileImageURLHttps());
-        contentValues.put(columns[9], user.isDefaultProfileImage()? 1: 0);
-        contentValues.put(columns[10], user.getURL());
-        contentValues.put(columns[11], user.isProtected()? 1: 0);
-        contentValues.put(columns[12], user.getFollowersCount());
-        contentValues.put(columns[13], user.getProfileBackgroundColor());
-        contentValues.put(columns[14], user.getProfileTextColor());
-        contentValues.put(columns[15], user.getProfileLinkColor());
-        contentValues.put(columns[16], user.getProfileSidebarFillColor());
-        contentValues.put(columns[17], user.getProfileSidebarBorderColor());
-        contentValues.put(columns[18], user.isProfileUseBackgroundImage()? 1: 0);
-        contentValues.put(columns[19], user.isDefaultProfile()? 1: 0);
-        contentValues.put(columns[20], user.isShowAllInlineMedia()? 1: 0);
-        contentValues.put(columns[21], user.getFriendsCount());
-        contentValues.put(columns[22], user.getCreatedAt().getTime());
-        contentValues.put(columns[23], user.getFavouritesCount());
-        contentValues.put(columns[24], user.getUtcOffset());
-        contentValues.put(columns[25], user.getTimeZone());
-        contentValues.put(columns[26], user.getProfileBackgroundImageURL());
-        contentValues.put(columns[27], user.getProfileBackgroundImageUrlHttps());
-        contentValues.put(columns[28], user.getProfileBannerURL() != null? user.getProfileBannerURL().replaceAll("/web$", ""): null);
-        contentValues.put(columns[29], user.isProfileBackgroundTiled()? 1: 0);
-        contentValues.put(columns[30], user.getLang());
-        contentValues.put(columns[31], user.getStatusesCount());
-        contentValues.put(columns[32], user.isGeoEnabled()? 1: 0);
-        contentValues.put(columns[33], user.isVerified()? 1: 0);
-        contentValues.put(columns[34], user.isTranslator()? 1: 0);
-        contentValues.put(columns[35], user.isFollowRequestSent()? 1: 0);
+        contentValues.put(TABLE_COLUMNS[0], user.getId());
+        contentValues.put(TABLE_COLUMNS[1], user.getName());
+        contentValues.put(TABLE_COLUMNS[2], user.getEmail());
+        contentValues.put(TABLE_COLUMNS[3], user.getScreenName());
+        contentValues.put(TABLE_COLUMNS[4], user.getLocation());
+        contentValues.put(TABLE_COLUMNS[5], user.getDescription());
+        contentValues.put(TABLE_COLUMNS[6], user.isContributorsEnabled()? 1: 0);
+        contentValues.put(TABLE_COLUMNS[7], user.getProfileImageURL());
+        contentValues.put(TABLE_COLUMNS[8], user.getProfileImageURLHttps());
+        contentValues.put(TABLE_COLUMNS[9], user.isDefaultProfileImage()? 1: 0);
+        contentValues.put(TABLE_COLUMNS[10], user.getURL());
+        contentValues.put(TABLE_COLUMNS[11], user.isProtected()? 1: 0);
+        contentValues.put(TABLE_COLUMNS[12], user.getFollowersCount());
+        contentValues.put(TABLE_COLUMNS[13], user.getProfileBackgroundColor());
+        contentValues.put(TABLE_COLUMNS[14], user.getProfileTextColor());
+        contentValues.put(TABLE_COLUMNS[15], user.getProfileLinkColor());
+        contentValues.put(TABLE_COLUMNS[16], user.getProfileSidebarFillColor());
+        contentValues.put(TABLE_COLUMNS[17], user.getProfileSidebarBorderColor());
+        contentValues.put(TABLE_COLUMNS[18], user.isProfileUseBackgroundImage()? 1: 0);
+        contentValues.put(TABLE_COLUMNS[19], user.isDefaultProfile()? 1: 0);
+        contentValues.put(TABLE_COLUMNS[20], user.isShowAllInlineMedia()? 1: 0);
+        contentValues.put(TABLE_COLUMNS[21], user.getFriendsCount());
+        contentValues.put(TABLE_COLUMNS[22], user.getCreatedAt().getTime());
+        contentValues.put(TABLE_COLUMNS[23], user.getFavouritesCount());
+        contentValues.put(TABLE_COLUMNS[24], user.getUtcOffset());
+        contentValues.put(TABLE_COLUMNS[25], user.getTimeZone());
+        contentValues.put(TABLE_COLUMNS[26], user.getProfileBackgroundImageURL());
+        contentValues.put(TABLE_COLUMNS[27], user.getProfileBackgroundImageUrlHttps());
+        contentValues.put(TABLE_COLUMNS[28], user.getProfileBannerURL() != null? user.getProfileBannerURL().replaceAll("/web$", ""): null);
+        contentValues.put(TABLE_COLUMNS[29], user.isProfileBackgroundTiled()? 1: 0);
+        contentValues.put(TABLE_COLUMNS[30], user.getLang());
+        contentValues.put(TABLE_COLUMNS[31], user.getStatusesCount());
+        contentValues.put(TABLE_COLUMNS[32], user.isGeoEnabled()? 1: 0);
+        contentValues.put(TABLE_COLUMNS[33], user.isVerified()? 1: 0);
+        contentValues.put(TABLE_COLUMNS[34], user.isTranslator()? 1: 0);
+        contentValues.put(TABLE_COLUMNS[35], user.isFollowRequestSent()? 1: 0);
 
         int size = user.getDescriptionURLEntities().length;
         String[] texts = new String[size];
@@ -605,21 +606,21 @@ public class CachedUsersSQLiteOpenHelper extends SQLiteOpenHelper {
             starts[i] = String.valueOf(entity.getStart());
             ends[i] = String.valueOf(entity.getEnd());
         }
-        contentValues.put(columns[36], Arrays.toString(texts).replace("[", "").replace("]", ""));
-        contentValues.put(columns[37], Arrays.toString(URLs).replace("[", "").replace("]", ""));
-        contentValues.put(columns[38], Arrays.toString(expandedURLs).replace("[", "").replace("]", ""));
-        contentValues.put(columns[39], Arrays.toString(displaysURLs).replace("[", "").replace("]", ""));
-        contentValues.put(columns[40], Arrays.toString(starts).replace("[", "").replace("]", ""));
-        contentValues.put(columns[41], Arrays.toString(ends).replace("[", "").replace("]", ""));
-        contentValues.put(columns[42], Arrays.toString(user.getWithheldInCountries()).replace("[", "").replace("]", ""));
+        contentValues.put(TABLE_COLUMNS[36], Arrays.toString(texts).replace("[", "").replace("]", ""));
+        contentValues.put(TABLE_COLUMNS[37], Arrays.toString(URLs).replace("[", "").replace("]", ""));
+        contentValues.put(TABLE_COLUMNS[38], Arrays.toString(expandedURLs).replace("[", "").replace("]", ""));
+        contentValues.put(TABLE_COLUMNS[39], Arrays.toString(displaysURLs).replace("[", "").replace("]", ""));
+        contentValues.put(TABLE_COLUMNS[40], Arrays.toString(starts).replace("[", "").replace("]", ""));
+        contentValues.put(TABLE_COLUMNS[41], Arrays.toString(ends).replace("[", "").replace("]", ""));
+        contentValues.put(TABLE_COLUMNS[42], Arrays.toString(user.getWithheldInCountries()).replace("[", "").replace("]", ""));
 
-        database.replace("CachedUsers", null, contentValues);
+        database.replace(TABLE_NAME, null, contentValues);
     }
 
 
     public synchronized void deleteCachedUser(long id){
         SQLiteDatabase database=getWritableDatabase();
-        database.delete("CachedUsers", "id=" + String.valueOf(id), null);
+        database.delete(TABLE_NAME, "id=" + String.valueOf(id), null);
         database.close();
     }
 

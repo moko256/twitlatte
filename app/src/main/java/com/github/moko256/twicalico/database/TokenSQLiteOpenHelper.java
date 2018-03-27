@@ -37,7 +37,10 @@ import kotlin.Pair;
 
 public class TokenSQLiteOpenHelper extends SQLiteOpenHelper {
 
-    public final static String TWITTER_URL = "twitter.com";
+    private static final String TABLE_NAME = "AccountTokenList";
+    private static final String[] TABLE_COLUMNS = new String[]{"userName", "userId", "token", "tokenSecret", "url", "type"};
+
+    public static final String TWITTER_URL = "twitter.com";
 
     public TokenSQLiteOpenHelper(Context context){
         super(context,"AccountTokenList.db",null,2);
@@ -46,9 +49,9 @@ public class TokenSQLiteOpenHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL(
-                "create table AccountTokenList(userName string , userId integer , token string , tokenSecret string , url string , type string , primary key(userId , url));"
+                "create table " + TABLE_NAME + "(userName string , userId integer , token string , tokenSecret string , url string , type string , primary key(userId , url))"
         );
-        sqLiteDatabase.execSQL("create unique index idindex on AccountTokenList(userId , url)");
+        sqLiteDatabase.execSQL("create unique index idindex on " + TABLE_NAME + "(userId , url)");
     }
 
     @Override
@@ -102,7 +105,7 @@ public class TokenSQLiteOpenHelper extends SQLiteOpenHelper {
 
     public AccessToken[] getAccessTokens(){
         SQLiteDatabase database=getReadableDatabase();
-        Cursor c=database.query("AccountTokenList",new String[]{"userName", "userId", "token", "tokenSecret", "url", "type"},null,null,null,null,null);
+        Cursor c=database.query(TABLE_NAME, TABLE_COLUMNS,null,null,null,null,null);
 
         AccessToken[] accessTokens =new AccessToken[c.getCount()];
 
@@ -121,8 +124,8 @@ public class TokenSQLiteOpenHelper extends SQLiteOpenHelper {
 
         SQLiteDatabase database=getReadableDatabase();
         Cursor c=database.query(
-                "AccountTokenList",
-                new String[]{"userName", "userId", "token", "tokenSecret", "url", "type"},
+                TABLE_NAME,
+                TABLE_COLUMNS,
                 "url = '" + pair.getFirst() + "' AND " + "userId = " + String.valueOf(pair.getSecond()),
                 null,null,null,null, "1");
 
@@ -161,20 +164,20 @@ public class TokenSQLiteOpenHelper extends SQLiteOpenHelper {
         contentValues.put("token", accessToken.getToken());
         contentValues.put("tokenSecret", accessToken.getTokenSecret());
 
-        database.replace("AccountTokenList", null, contentValues);
+        database.replace(TABLE_NAME, null, contentValues);
 
         database.close();
     }
 
     public void deleteAccessToken(AccessToken accessToken){
         SQLiteDatabase database=getWritableDatabase();
-        database.delete("AccountTokenList", "url = '" + accessToken.getUrl() + "' AND " + "userId = " + String.valueOf(accessToken.getUserId()), null);
+        database.delete(TABLE_NAME, "url = '" + accessToken.getUrl() + "' AND " + "userId = " + String.valueOf(accessToken.getUserId()), null);
         database.close();
     }
 
     public int getSize(){
         SQLiteDatabase database = getReadableDatabase();
-        long count = DatabaseUtils.queryNumEntries(database,"AccountTokenList");
+        long count = DatabaseUtils.queryNumEntries(database,TABLE_NAME);
         database.close();
         return (int) count;
     }

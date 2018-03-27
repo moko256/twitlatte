@@ -35,14 +35,16 @@ import java.util.List;
 
 class CachedStatusesCountSQLiteOpenHelper extends SQLiteOpenHelper {
 
+    private static final String TABLE_NAME = "StatusesCount";
+
     CachedStatusesCountSQLiteOpenHelper(Context context, long userId){
         super(context, new File(context.getCacheDir(), String.valueOf(userId) + "/StatusesCount.db").getAbsolutePath(), null, BuildConfig.CACHE_DATABASE_VERSION);
     }
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        sqLiteDatabase.execSQL("create table StatusesCount(id, count, primary key(id));");
-        sqLiteDatabase.execSQL("create unique index idindex on StatusesCount(id)");
+        sqLiteDatabase.execSQL("create table " + TABLE_NAME + "(id, count, primary key(id))");
+        sqLiteDatabase.execSQL("create unique index idindex on " + TABLE_NAME + "(id)");
     }
 
     @Override
@@ -87,19 +89,19 @@ class CachedStatusesCountSQLiteOpenHelper extends SQLiteOpenHelper {
         contentValues.put("id", id);
         contentValues.put("count", count + 1);
         SQLiteDatabase database = getWritableDatabase();
-        database.replace("StatusesCount", null, contentValues);
+        database.replace(TABLE_NAME, null, contentValues);
     }
 
     private void decrementCountAtTransaction(long id, int oldCount) {
         SQLiteDatabase database = getWritableDatabase();
         int count = oldCount - 1;
         if (count == 0) {
-            database.delete("StatusesCount", "id=" + String.valueOf(id), null);
+            database.delete(TABLE_NAME, "id=" + String.valueOf(id), null);
         } else {
             ContentValues contentValues = new ContentValues(1);
             contentValues.put("id", id);
             contentValues.put("count", count);
-            database.replace("StatusesCount", null, contentValues);
+            database.replace(TABLE_NAME, null, contentValues);
         }
     }
 
@@ -107,7 +109,7 @@ class CachedStatusesCountSQLiteOpenHelper extends SQLiteOpenHelper {
         int count = 0;
         SQLiteDatabase database = getReadableDatabase();
         Cursor cursor = database.query(
-                "StatusesCount",
+                TABLE_NAME,
                 new String[]{"id", "count"},
                 "id=" + String.valueOf(id), null,
                 null, null, null, "1"

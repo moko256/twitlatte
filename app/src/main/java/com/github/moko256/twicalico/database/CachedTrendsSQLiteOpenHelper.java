@@ -40,13 +40,15 @@ import twitter4j.Trend;
 
 public class CachedTrendsSQLiteOpenHelper extends SQLiteOpenHelper {
 
+    private static final String TABLE_NAME = "Trends";
+
     public CachedTrendsSQLiteOpenHelper(Context context, long userId){
         super(context, new File(context.getCacheDir(), String.valueOf(userId) + "/" + "Trends.db").getAbsolutePath(), null, BuildConfig.CACHE_DATABASE_VERSION);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("create table Trends(name);");
+        db.execSQL("create table " + TABLE_NAME + "(name)");
     }
 
     @Override
@@ -56,7 +58,7 @@ public class CachedTrendsSQLiteOpenHelper extends SQLiteOpenHelper {
 
     public synchronized List<Trend> getTrends(){
         SQLiteDatabase database=getReadableDatabase();
-        Cursor c=database.query("Trends", new String[]{"name"}, null, null, null,null,null);
+        Cursor c=database.query(TABLE_NAME, new String[]{"name"}, null, null, null,null,null);
         List<Trend> trends = new ArrayList<>(c.getCount());
 
         while (c.moveToNext()){
@@ -72,14 +74,14 @@ public class CachedTrendsSQLiteOpenHelper extends SQLiteOpenHelper {
     public synchronized void setTrends(List<Trend> trends){
         SQLiteDatabase database=getWritableDatabase();
         database.beginTransaction();
-        database.delete("Trends", null, null);
+        database.delete(TABLE_NAME, null, null);
 
         for (int i = 0; i < trends.size(); i++) {
             Trend item = trends.get(i);
             ContentValues contentValues = new ContentValues();
             contentValues.put("name", item.getName());
 
-            database.insert("Trends", "", contentValues);
+            database.insert(TABLE_NAME, "", contentValues);
         }
 
         database.setTransactionSuccessful();
