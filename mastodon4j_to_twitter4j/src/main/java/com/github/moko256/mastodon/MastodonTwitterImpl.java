@@ -157,32 +157,32 @@ public final class MastodonTwitterImpl implements Twitter {
 
     @Override
     public ListsResources list() {
-        return null;
+        return this;
     }
 
     @Override
     public SavedSearchesResources savedSearches() {
-        return null;
+        return this;
     }
 
     @Override
     public PlacesGeoResources placesGeo() {
-        return null;
+        return this;
     }
 
     @Override
     public TrendsResources trends() {
-        return null;
+        return this;
     }
 
     @Override
     public SpamReportingResource spamReporting() {
-        return null;
+        return this;
     }
 
     @Override
     public HelpResources help() {
-        return null;
+        return this;
     }
 
     @Override
