@@ -118,7 +118,14 @@ public class ImagePagerChildFragment extends Fragment {
                 player = ExoPlayerFactory.newSimpleInstance(
                         new DefaultRenderersFactory(getContext()),
                         new DefaultTrackSelector(
-                                new AdaptiveTrackSelection.Factory(new DefaultBandwidthMeter())
+                                new AdaptiveTrackSelection.Factory(
+                                        new DefaultBandwidthMeter(),
+                                        Integer.MAX_VALUE,
+                                        AdaptiveTrackSelection.DEFAULT_MIN_DURATION_FOR_QUALITY_INCREASE_MS,
+                                        AdaptiveTrackSelection.DEFAULT_MAX_DURATION_FOR_QUALITY_DECREASE_MS,
+                                        AdaptiveTrackSelection.DEFAULT_MIN_DURATION_TO_RETAIN_AFTER_DISCARD_MS,
+                                        AdaptiveTrackSelection.DEFAULT_BANDWIDTH_FRACTION
+                                )
                         ),
                         new DefaultLoadControl()
                 );
@@ -171,7 +178,14 @@ public class ImagePagerChildFragment extends Fragment {
                 player = ExoPlayerFactory.newSimpleInstance(
                         new DefaultRenderersFactory(getContext()),
                         new DefaultTrackSelector(
-                                new AdaptiveTrackSelection.Factory(new DefaultBandwidthMeter())
+                                new AdaptiveTrackSelection.Factory(
+                                        new DefaultBandwidthMeter(),
+                                        Integer.MAX_VALUE,
+                                        AdaptiveTrackSelection.DEFAULT_MIN_DURATION_FOR_QUALITY_INCREASE_MS,
+                                        AdaptiveTrackSelection.DEFAULT_MAX_DURATION_FOR_QUALITY_DECREASE_MS,
+                                        AdaptiveTrackSelection.DEFAULT_MIN_DURATION_TO_RETAIN_AFTER_DISCARD_MS,
+                                        AdaptiveTrackSelection.DEFAULT_BANDWIDTH_FRACTION
+                                )
                         ),
                         new DefaultLoadControl()
                 );
