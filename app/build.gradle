@@ -28,7 +28,7 @@ android {
         minSdkVersion 19
         targetSdkVersion 27
         versionCode 61
-        versionName "0.9.8 (${new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z").format(new Date())})"
+        versionName '0.9.8'
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
         buildConfigField 'String', 'CONSUMER_KEY', "\"${CONSUMER_KEY}\""
@@ -44,6 +44,7 @@ android {
             shrinkResources true
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            versionNameSuffix " (${new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z").format(new Date())})"
         }
         debug {
             debuggable true
@@ -51,6 +52,7 @@ android {
             useProguard false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'shrinker-rules.pro'
             applicationIdSuffix '.debug'
+            versionNameSuffix '-debug'
         }
     }
     compileOptions {
