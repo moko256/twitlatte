@@ -31,11 +31,13 @@ import java.util.List;
 
 public class ArrayUtils {
     @SafeVarargs
-    public static <T> List<T> convertToList(T... array){
+    @NonNull
+    public static <T> List<T> convertToList(@NonNull T... array){
         return Arrays.asList(array);
     }
 
-    public static List<Long> convertToLongList(long... array){
+    @NonNull
+    public static List<Long> convertToLongList(@NonNull long... array){
         List<Long> list = new ArrayList<>(array.length);
         for (long l : array) {
             list.add(l);
