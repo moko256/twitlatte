@@ -22,7 +22,6 @@ import android.content.Intent
 import android.graphics.Color
 import android.support.v4.app.NotificationCompat
 import android.support.v4.app.NotificationManagerCompat
-import android.widget.Toast
 import com.github.moko256.twicalico.R
 import java.io.PrintWriter
 import java.io.StringWriter
@@ -36,7 +35,6 @@ import java.util.*
 class ExceptionNotification {
     fun create (e: Throwable, applicationContext: Context){
         e.printStackTrace()
-        Toast.makeText(applicationContext, e.toString(), Toast.LENGTH_LONG).show()
         val stringWriter = StringWriter()
         val printWriter = PrintWriter(stringWriter)
         e.printStackTrace(printWriter)
@@ -63,7 +61,7 @@ class ExceptionNotification {
                         )))
                 .setBigContentTitle("Error : " + e.toString())
                 .setSummaryText(applicationContext.getString(R.string.error_occurred))
-        val lines = stringWriter.toString().split("\n".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+        val lines = stringWriter.toString().split("\n".toRegex()).dropLastWhile { it.isEmpty() }
         for (s in lines) {
             inboxStyle.addLine(s)
         }
