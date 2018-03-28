@@ -86,18 +86,24 @@ public class TwitterStringUtils {
     public static String convertToSIUnitString(int num){
         if (num == 0) return "0";
         boolean isNegative = (num < 0);
-        if (isNegative) num *= -1;
+        String sign;
+        if (isNegative) {
+            num *= -1;
+            sign = "-";
+        } else {
+            sign = "";
+        }
 
         float k = num / 1000;
-        if (k < 1) return (isNegative? "-": "") + String.valueOf(num);
+        if (k < 1) return sign + String.valueOf(num);
 
         float m = k / 1000;
-        if (m < 1) return (isNegative? "-": "") + String.valueOf(Math.round(k)) + "K";
+        if (m < 1) return sign + String.valueOf(Math.round(k)) + "K";
 
         float g = m / 1000;
-        if (g < 1) return (isNegative? "-": "") + String.valueOf(Math.round(m)) + "M";
+        if (g < 1) return sign + String.valueOf(Math.round(m)) + "M";
 
-        return (isNegative? "-": "") + String.valueOf(Math.round(g)) + "G";
+        return sign + String.valueOf(Math.round(g)) + "G";
     }
 
     @NonNull
