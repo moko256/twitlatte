@@ -131,42 +131,6 @@ public class TwitterStringUtils {
         }
     }
 
-    public static CharSequence getStatusTextSequence(Status item){
-
-        String postText = item.getText();
-        StringBuilder builder = new StringBuilder(postText);
-
-        URLEntity[] urlEntities = item.getURLEntities();
-
-        int tweetLength = postText.codePointCount(0, postText.length());
-        int sp = 0;
-
-        for (URLEntity entity : urlEntities) {
-            String url = entity.getURL();
-            String displayUrl = entity.getDisplayURL();
-
-            int urlLength = url.codePointCount(0, url.length());
-            int displayUrlLength = displayUrl.codePointCount(0, displayUrl.length());
-            if (entity.getStart() <= tweetLength && entity.getEnd() <= tweetLength) {
-                int dusp = displayUrlLength - urlLength;
-                builder.replace(postText.offsetByCodePoints(0,entity.getStart()) + sp, postText.offsetByCodePoints(0,entity.getEnd()) + sp, displayUrl);
-
-                sp+=dusp;
-            }
-        }
-
-        MediaEntity[] mediaEntities = item.getMediaEntities();
-        if (mediaEntities.length > 0){
-            MediaEntity mediaEntity = mediaEntities[0];
-            int result = builder.indexOf(mediaEntity.getURL(), builder.offsetByCodePoints(0, mediaEntity.getStart()));
-            if (result != -1){
-                builder.replace(result, result + mediaEntity.getURL().length(), "");
-            }
-        }
-
-        return builder;
-    }
-
     @SuppressLint("StaticFieldLeak")
     public static void setLinkedSequenceTo(Status item, TextView textView){
 
