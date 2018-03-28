@@ -35,7 +35,11 @@ public class MTException extends TwitterException {
     }
 
     @Override
-    public String getMessage() {
+    public String getErrorMessage() {
+        return convertErrorString(exception);
+    }
+
+    public static String convertErrorString(Mastodon4jRequestException exception){
         String message;
         if (exception.isErrorResponse()) {
             try {

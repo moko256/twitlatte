@@ -32,6 +32,7 @@ import android.text.style.URLSpan;
 import android.view.View;
 import android.widget.TextView;
 
+import com.github.moko256.mastodon.MTException;
 import com.github.moko256.twicalico.GlideApp;
 import com.github.moko256.twicalico.GlideRequests;
 import com.github.moko256.twicalico.GlobalApplication;
@@ -125,12 +126,7 @@ public class TwitterStringUtils {
             return ((TwitterException) e).getErrorMessage();
         } else if (e instanceof Mastodon4jRequestException
                 && ((Mastodon4jRequestException) e).isErrorResponse()) {
-            try {
-                return ((Mastodon4jRequestException) e).getResponse().body().string();
-            } catch (IOException e1) {
-                e1.printStackTrace();
-                return e.getMessage();
-            }
+            return MTException.convertErrorString((Mastodon4jRequestException) e);
         } else {
             return e.getMessage();
         }
