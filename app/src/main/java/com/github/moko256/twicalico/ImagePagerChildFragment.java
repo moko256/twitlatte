@@ -19,7 +19,6 @@ package com.github.moko256.twicalico;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -133,27 +132,20 @@ public class ImagePagerChildFragment extends Fragment {
                     player.seekTo(savedInstanceState.getLong("video_time", 0));
                 }
                 videoPlayView.setPlayer(player);
+                OkHttpDataSourceFactory okHttpDataSourceFactory = new OkHttpDataSourceFactory(
+                        GlobalApplication.getOkHttpClient(),
+                        null,
+                        null
+                );
                 player.prepare(
                         (isHls)?
-                                new HlsMediaSource.Factory(
-                                        new OkHttpDataSourceFactory(
-                                                GlobalApplication.getOkHttpClient(),
-                                                getResources().getText(R.string.app_name).toString(),
-                                                null
-                                        )
-                                ).createMediaSource(Uri.parse(videoPath)):
+                                new HlsMediaSource.Factory(okHttpDataSourceFactory)
+                                        .createMediaSource(Uri.parse(videoPath)):
 
-                                new ExtractorMediaSource.Factory(
-                                        new OkHttpDataSourceFactory(
-                                                GlobalApplication.getOkHttpClient(),
-                                                getResources().getText(R.string.app_name).toString(),
-                                                null
+                                new ExtractorMediaSource.Factory(okHttpDataSourceFactory)
+                                        .createMediaSource(
+                                                Uri.parse(mediaEntity.getVideoVariants()[0].getUrl())
                                         )
-                                ).createMediaSource(
-                                        Uri.parse(mediaEntity.getVideoVariants()[0].getUrl()),
-                                        new Handler(),
-                                        null
-                                )
                 );
                 break;
 
@@ -198,13 +190,11 @@ public class ImagePagerChildFragment extends Fragment {
                                 new ExtractorMediaSource.Factory(
                                         new OkHttpDataSourceFactory(
                                                 GlobalApplication.getOkHttpClient(),
-                                                getResources().getText(R.string.app_name).toString(),
+                                                null,
                                                 null
                                         )
                                 ).createMediaSource(
-                                        Uri.parse(mediaEntity.getVideoVariants()[0].getUrl()),
-                                        new Handler(),
-                                        null
+                                        Uri.parse(mediaEntity.getVideoVariants()[0].getUrl())
                                 )
                         )
                 );
