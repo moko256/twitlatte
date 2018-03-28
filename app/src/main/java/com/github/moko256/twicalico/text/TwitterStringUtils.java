@@ -44,7 +44,6 @@ import com.github.moko256.twicalico.entity.Type;
 import com.github.moko256.twicalico.intent.AppCustomTabsKt;
 import com.sys1yagi.mastodon4j.api.exception.Mastodon4jRequestException;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
