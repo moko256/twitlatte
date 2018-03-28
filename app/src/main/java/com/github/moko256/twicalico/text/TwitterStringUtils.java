@@ -53,7 +53,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import twitter4j.HashtagEntity;
-import twitter4j.MediaEntity;
 import twitter4j.Status;
 import twitter4j.SymbolEntity;
 import twitter4j.TwitterException;
