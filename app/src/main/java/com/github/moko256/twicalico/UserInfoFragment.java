@@ -21,18 +21,19 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.text.util.LinkifyCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
-import android.text.util.Linkify;
+import android.text.style.ClickableSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.github.moko256.twicalico.intent.AppCustomTabsKt;
 import com.github.moko256.twicalico.text.TwitterStringUtils;
 
 import java.text.DateFormat;
@@ -181,10 +182,18 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
             userLocation.setVisibility(View.GONE);
         }
 
-        if (!TextUtils.isEmpty(user.getURL())){
-            SpannableStringBuilder builder = new SpannableStringBuilder(getString(R.string.url_is, user.getURL()));
-            LinkifyCompat.addLinks(builder, Linkify.WEB_URLS);
-            userUrl.setText(TwitterStringUtils.convertUrlSpanToCustomTabs(builder, getContext()));
+        final String url = user.getURL();
+        if (!TextUtils.isEmpty(url)){
+            String text = getString(R.string.url_is, url);
+            SpannableStringBuilder builder = new SpannableStringBuilder(text);
+            int start = text.indexOf(url);
+            builder.setSpan(new ClickableSpan() {
+                @Override
+                public void onClick(View widget) {
+                    AppCustomTabsKt.launchChromeCustomTabs(getContext(), url);
+                }
+            }, start, start + url.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            userUrl.setText(builder);
             userUrl.setMovementMethod(LinkMovementMethod.getInstance());
         } else {
             userUrl.setVisibility(View.GONE);
