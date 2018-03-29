@@ -18,7 +18,8 @@
 
 -ignorewarnings
 
--keep class twitter4j.** { *; }
+-keep class twitter4j.* { *; }
+-keep class twitter4j.conf.PropertyConfigurationFactory
 
 -keepclassmembers class android.support.v7.widget.SearchView { *; }
 
