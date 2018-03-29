@@ -36,6 +36,14 @@ data class AccessToken(
     fun getKeyString(): String {
         return url + "@" + userId.toString()
     }
+
+    override fun equals(other: Any?): Boolean {
+        return other != null && other is AccessToken && other.getKeyString() == getKeyString()
+    }
+
+    override fun hashCode(): Int {
+        return getKeyString().hashCode()
+    }
 }
 
 fun splitAccessTokenKey(accessTokenKey: String): Pair<String, Long> {

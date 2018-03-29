@@ -33,7 +33,6 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.github.moko256.twicalico.database.TokenSQLiteOpenHelper;
 import com.github.moko256.twicalico.entity.AccessToken;
 import com.github.moko256.twicalico.model.base.OAuthModel;
 import com.github.moko256.twicalico.text.TwitterStringUtils;
@@ -89,9 +88,7 @@ public class OAuthActivity extends AppCompatActivity {
     private void storeAccessToken(AccessToken accessToken){
         SharedPreferences defaultSharedPreferences= PreferenceManager.getDefaultSharedPreferences(this);
 
-        TokenSQLiteOpenHelper tokenOpenHelper = new TokenSQLiteOpenHelper(this);
-        tokenOpenHelper.addAccessToken(accessToken);
-        tokenOpenHelper.close();
+        GlobalApplication.accountsModel.add(accessToken);
 
         defaultSharedPreferences
                 .edit()

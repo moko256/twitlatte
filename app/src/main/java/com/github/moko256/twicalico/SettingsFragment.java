@@ -28,12 +28,13 @@ import android.support.v7.preference.PreferenceManager;
 import android.support.v7.preference.PreferenceScreen;
 import android.widget.Toast;
 
-import com.github.moko256.twicalico.database.TokenSQLiteOpenHelper;
 import com.github.moko256.twicalico.entity.AccessToken;
 import com.github.moko256.twicalico.intent.AppCustomTabsKt;
+import com.github.moko256.twicalico.model.AccountsModel;
 import com.github.moko256.twicalico.text.TwitterStringUtils;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by moko256 on 2016/03/28.
@@ -55,15 +56,14 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         if (preferenceRoot == null){
             SharedPreferences defaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
 
-            TokenSQLiteOpenHelper helper = new TokenSQLiteOpenHelper(getContext());
+            AccountsModel accountsModel = GlobalApplication.accountsModel;
+            List<AccessToken> accessTokens = accountsModel.getAccessTokens();
 
-            AccessToken[] accessTokens = helper.getAccessTokens();
+            CharSequence[] entries = new CharSequence[accessTokens.size() + 1];
+            CharSequence[] entryValues = new CharSequence[accessTokens.size() + 1];
 
-            CharSequence[] entries = new CharSequence[accessTokens.length + 1];
-            CharSequence[] entryValues = new CharSequence[accessTokens.length + 1];
-
-            for (int i = 0; i < accessTokens.length; i++) {
-                AccessToken accessToken = accessTokens[i];
+            for (int i = 0; i < accessTokens.size(); i++) {
+                AccessToken accessToken = accessTokens.get(i);
 
                 entries[i] = TwitterStringUtils.plusAtMark(accessToken.getScreenName(), accessToken.getUrl());
                 entryValues[i] = accessToken.getKeyString();
@@ -84,9 +84,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                                     new Intent(getContext(),OAuthActivity.class)
                             );
                         } else {
-                            TokenSQLiteOpenHelper tokenOpenHelper = new TokenSQLiteOpenHelper(this.getContext());
-                            AccessToken accessToken=tokenOpenHelper.getAccessToken((String) newValue);
-                            tokenOpenHelper.close();
+                            AccessToken accessToken = GlobalApplication.accountsModel.get((String) newValue);
 
                             ((GlobalApplication) getActivity().getApplication()).initTwitter(accessToken);
                             startActivity(
@@ -103,15 +101,13 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                         .setCancelable(true)
                         .setPositiveButton(R.string.do_logout,
                                 (dialog, i) -> {
-                                    helper.deleteAccessToken(
-                                            helper.getAccessToken(
-                                                    defaultSharedPreferences.getString("AccountKey","-1")
-                                            )
-                                    );
+                                    accountsModel.delete(accountsModel.get(
+                                            defaultSharedPreferences.getString("AccountKey","-1")
+                                    ));
 
-                                    int point = helper.getSize() - 1;
+                                    int point = accountsModel.size() - 1;
                                     if (point != -1) {
-                                        AccessToken accessToken = helper.getAccessTokens()[point];
+                                        AccessToken accessToken = accountsModel.getAccessTokens().get(point);
 
                                         defaultSharedPreferences
                                                 .edit()

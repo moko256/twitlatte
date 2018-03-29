@@ -44,13 +44,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.github.moko256.twicalico.database.CachedUsersSQLiteOpenHelper;
-import com.github.moko256.twicalico.database.TokenSQLiteOpenHelper;
 import com.github.moko256.twicalico.entity.AccessToken;
 import com.github.moko256.twicalico.entity.Type;
+import com.github.moko256.twicalico.model.AccountsModel;
 import com.github.moko256.twicalico.text.TwitterStringUtils;
 import com.github.moko256.twicalico.widget.FragmentPagerAdapter;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import rx.Single;
 import rx.android.schedulers.AndroidSchedulers;
@@ -208,16 +209,24 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                         (dialog, i) -> {
                             SharedPreferences defaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
-                            TokenSQLiteOpenHelper helper = new TokenSQLiteOpenHelper(this);
-                            helper.deleteAccessToken(
-                                    helper.getAccessToken(
-                                            defaultSharedPreferences.getString("AccountKey","-1")
-                                    )
-                            );
+                            AccountsModel accountsModel = GlobalApplication.accountsModel;
 
-                            int point = helper.getSize() - 1;
+                            AccessToken token = accountsModel.get(
+                                    defaultSharedPreferences.getString("AccountKey", "-1")
+                            );
+                            accountsModel.delete(token);
+                            ArrayList<Pair<User, AccessToken>> imagesList = adapter.getImagesList();
+                            for (int j = 0; j < imagesList.size(); j++) {
+                                if (imagesList.get(j).second.equals(token)) {
+                                    imagesList.remove(j);
+                                    break;
+                                }
+                            }
+                            adapter.notifyDataSetChanged();
+
+                            int point = accountsModel.size() - 1;
                             if (point != -1) {
-                                AccessToken accessToken = helper.getAccessTokens()[point];
+                                AccessToken accessToken = accountsModel.getAccessTokens().get(point);
                                 defaultSharedPreferences
                                         .edit()
                                         .putString("AccountKey", accessToken.getKeyString())
@@ -228,7 +237,6 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                             } else {
                                 adapter.getOnAddButtonClickListener().onClick(v);
                             }
-                            helper.close();
                         }
                 )
                 .setNeutralButton(R.string.back,(dialog, i) -> dialog.cancel())
@@ -238,11 +246,10 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
         subscription.add(
                 Single.create(
                         singleSubscriber -> {
-                            TokenSQLiteOpenHelper helper = new TokenSQLiteOpenHelper(this);
-                            AccessToken[] accessTokens = helper.getAccessTokens();
-                            helper.close();
+                            AccountsModel accountsModel = GlobalApplication.accountsModel;
+                            List<AccessToken> accessTokens = accountsModel.getAccessTokens();
 
-                            ArrayList<Pair<User, AccessToken>> r = new ArrayList<>(accessTokens.length);
+                            ArrayList<Pair<User, AccessToken>> r = new ArrayList<>(accessTokens.size());
                             for (AccessToken accessToken : accessTokens){
                                 long id = accessToken.getUserId();
                                 CachedUsersSQLiteOpenHelper userHelper = new CachedUsersSQLiteOpenHelper(this, id, accessToken.getType() == Type.TWITTER);

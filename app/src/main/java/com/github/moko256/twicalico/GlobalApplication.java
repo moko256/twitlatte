@@ -33,9 +33,9 @@ import com.github.moko256.mastodon.MastodonTwitterImpl;
 import com.github.moko256.twicalico.cacheMap.StatusCacheMap;
 import com.github.moko256.twicalico.cacheMap.UserCacheMap;
 import com.github.moko256.twicalico.config.AppConfiguration;
-import com.github.moko256.twicalico.database.TokenSQLiteOpenHelper;
 import com.github.moko256.twicalico.entity.AccessToken;
 import com.github.moko256.twicalico.entity.Type;
+import com.github.moko256.twicalico.model.AccountsModel;
 import com.github.moko256.twicalico.notification.ExceptionNotification;
 
 import java.util.regex.Pattern;
@@ -73,6 +73,8 @@ public class GlobalApplication extends Application {
 
     public static UserCacheMap userCache = new UserCacheMap();
     public static StatusCacheMap statusCache = new StatusCacheMap();
+
+    public static AccountsModel accountsModel;
 
     @Override
     public void onCreate() {
@@ -189,13 +191,13 @@ public class GlobalApplication extends Application {
 
         AppCompatDelegate.setDefaultNightMode(mode);
 
+        accountsModel = new AccountsModel(getApplicationContext());
+
         String accountKey = defaultSharedPreferences.getString("AccountKey","-1");
 
         if (accountKey.equals("-1")) return;
 
-        TokenSQLiteOpenHelper tokenOpenHelper =  new TokenSQLiteOpenHelper(this);
-        AccessToken accessToken=tokenOpenHelper.getAccessToken(accountKey);
-        tokenOpenHelper.close();
+        AccessToken accessToken = accountsModel.get(accountKey);
 
         if (accessToken==null)return;
         initTwitter(accessToken);
