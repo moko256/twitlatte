@@ -20,6 +20,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
+import java.util.List;
+
 import twitter4j.MediaEntity;
 
 /**
@@ -29,20 +31,20 @@ import twitter4j.MediaEntity;
  */
 class ImagePagerAdapter extends FragmentPagerAdapter {
 
-    private MediaEntity[] mediaEntities;
+    private List<MediaEntity> mediaEntities;
 
-    ImagePagerAdapter(FragmentManager fm, MediaEntity[] mediaEntities) {
+    ImagePagerAdapter(FragmentManager fm, List<MediaEntity> mediaEntities) {
         super(fm);
         this.mediaEntities = mediaEntities;
     }
 
     @Override
     public Fragment getItem(int position) {
-        return ImagePagerChildFragment.getInstance(mediaEntities[position]);
+        return ImagePagerChildFragment.getInstance(mediaEntities.get(position));
     }
 
     @Override
     public int getCount() {
-        return mediaEntities.length;
+        return mediaEntities.size();
     }
 }

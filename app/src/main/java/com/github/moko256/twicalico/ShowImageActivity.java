@@ -50,7 +50,7 @@ public class ShowImageActivity extends AppCompatActivity {
     public static String FRAG_MEDIA_ENTITIES="MediaEntities";
     private static String FRAG_POSITION="position";
 
-    MediaEntity[] mediaEntities;
+    List<MediaEntity> mediaEntities;
 
     ViewPager pager;
 
@@ -59,9 +59,8 @@ public class ShowImageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_image);
 
-        List<MediaEntity> mediaEntitiesList = (List<MediaEntity>) getIntent().getSerializableExtra(FRAG_MEDIA_ENTITIES);
-        mediaEntities = new MediaEntity[mediaEntitiesList.size()];
-        mediaEntitiesList.toArray(mediaEntities);
+        mediaEntities = (List<MediaEntity>) getIntent().getSerializableExtra(FRAG_MEDIA_ENTITIES);
+
         int position=getIntent().getIntExtra(FRAG_POSITION,0);
 
         ActionBar actionBar = getSupportActionBar();
@@ -119,7 +118,7 @@ public class ShowImageActivity extends AppCompatActivity {
     private void contentDownload(){
         String path="";
         String ext="";
-        MediaEntity mediaEntity=mediaEntities[pager.getCurrentItem()];
+        MediaEntity mediaEntity= mediaEntities.get(pager.getCurrentItem());
         switch (mediaEntity.getType()){
             case "video":
                 for(MediaEntity.Variant variant : mediaEntity.getVideoVariants()){
