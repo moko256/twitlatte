@@ -34,6 +34,7 @@
             android:layout_marginTop="@dimen/activity_vertical_margin"
             android:layout_marginBottom="@dimen/activity_vertical_margin"
             android:typeface="monospace"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             tools:text="Copyright [YEAR] The [NAME] authors\n\n(Example)"/>
     </LinearLayout>
 </ScrollView>
