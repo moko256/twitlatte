@@ -47,8 +47,8 @@ import twitter4j.MediaEntity;
  * @author moko256
  */
 public class ShowImageActivity extends AppCompatActivity {
-    public static String FRAG_MEDIA_ENTITIES="MediaEntities";
-    private static String FRAG_POSITION="position";
+    private static final String FRAG_MEDIA_ENTITIES="MediaEntities";
+    private static final String FRAG_POSITION="position";
 
     List<MediaEntity> mediaEntities;
 
