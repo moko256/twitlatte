@@ -54,7 +54,7 @@ import twitter4j.MediaEntity;
 
 public class ImagePagerChildFragment extends Fragment {
 
-    private static String FRAG_MEDIA_ENTITY="media_entity";
+    private static final String FRAG_MEDIA_ENTITY="media_entity";
 
     PhotoView imageView;
 
