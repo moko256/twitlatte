@@ -288,7 +288,13 @@ public class TwitterStringUtils {
         String description = user.getDescription();
 
         if (GlobalApplication.clientType == Type.MASTODON){
-            return convertUrlSpanToCustomTabs(Html.fromHtml(description), context);
+            Spanned spanned = Html.fromHtml(description);
+            // Trim unless \n\n made by fromHtml() after post
+            int length = spanned.length();
+            if (length >= 2) {
+                spanned = (Spanned) spanned.subSequence(0, length - 2);
+            }
+            return convertUrlSpanToCustomTabs(spanned, context);
         }
 
         URLEntity[] urlEntities = user.getDescriptionURLEntities();
