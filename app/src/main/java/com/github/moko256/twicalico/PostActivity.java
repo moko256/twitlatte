@@ -37,7 +37,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -45,6 +44,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -85,8 +85,8 @@ public class PostActivity extends AppCompatActivity {
     ImageKeyboardEditText editText;
     RecyclerView imagesRecyclerView;
     AddedImagesAdapter addedImagesAdapter;
-    SwitchCompat possiblySensitiveSwitch;
-    SwitchCompat addLocationSwitch;
+    CheckBox isPossiblySensitive;
+    CheckBox addLocation;
     TextView locationText;
 
     CompositeSubscription subscription;
@@ -139,7 +139,7 @@ public class PostActivity extends AppCompatActivity {
                 addedImagesAdapter.getImagesList().add(imageUri);
                 model.getUriList().add(imageUri);
                 addedImagesAdapter.notifyItemChanged(addedImagesAdapter.getImagesList().size() - 1);
-                possiblySensitiveSwitch.setEnabled(true);
+                isPossiblySensitive.setEnabled(true);
                 return true;
             } else {
                 return false;
@@ -175,8 +175,8 @@ public class PostActivity extends AppCompatActivity {
             model.getUriList().remove(position);
             addedImagesAdapter.notifyDataSetChanged();
             boolean enabled = model.getUriList().size() > 0;
-            possiblySensitiveSwitch.setEnabled(enabled);
-            possiblySensitiveSwitch.setChecked(possiblySensitiveSwitch.isChecked() && enabled);
+            isPossiblySensitive.setEnabled(enabled);
+            isPossiblySensitive.setChecked(isPossiblySensitive.isChecked() && enabled);
         });
         addedImagesAdapter.setOnImageClickListener(position -> {
             Intent open = new Intent(Intent.ACTION_VIEW)
@@ -186,14 +186,14 @@ public class PostActivity extends AppCompatActivity {
         });
         imagesRecyclerView.setAdapter(addedImagesAdapter);
 
-        possiblySensitiveSwitch = findViewById(R.id.activity_tweet_possibly_sensitive_switch);
-        possiblySensitiveSwitch.setEnabled(addedImagesAdapter.getImagesList().size() > 0);
-        possiblySensitiveSwitch.setOnCheckedChangeListener(
+        isPossiblySensitive = findViewById(R.id.activity_tweet_is_possibly_sensitive);
+        isPossiblySensitive.setEnabled(addedImagesAdapter.getImagesList().size() > 0);
+        isPossiblySensitive.setOnCheckedChangeListener(
                 (buttonView, isChecked) -> model.setPossiblySensitive(isChecked)
         );
 
-        addLocationSwitch = findViewById(R.id.activity_tweet_location_switch);
-        addLocationSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+        addLocation = findViewById(R.id.activity_tweet_add_location);
+        addLocation.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked){
                 if (PermissionChecker.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PermissionChecker.PERMISSION_GRANTED){
                     subscription.add(
@@ -236,7 +236,7 @@ public class PostActivity extends AppCompatActivity {
             if (uris != null) {
                 addedImagesAdapter.getImagesList().addAll(uris);
                 model.getUriList().addAll(uris);
-                possiblySensitiveSwitch.setEnabled(true);
+                isPossiblySensitive.setEnabled(true);
             }
         }
     }
@@ -328,7 +328,7 @@ public class PostActivity extends AppCompatActivity {
                     addedImagesAdapter.getImagesList().add(resultUri);
                     model.getUriList().add(resultUri);
                     addedImagesAdapter.notifyItemChanged(addedImagesAdapter.getImagesList().size() - 1);
-                    possiblySensitiveSwitch.setEnabled(true);
+                    isPossiblySensitive.setEnabled(true);
                 } else if (resultUris != null) {
                     int itemCount = resultUris.getItemCount();
 
@@ -338,7 +338,7 @@ public class PostActivity extends AppCompatActivity {
                         model.getUriList().add(uri);
                     }
                     addedImagesAdapter.notifyItemRangeChanged(addedImagesAdapter.getImagesList().size() - itemCount, itemCount);
-                    possiblySensitiveSwitch.setEnabled(true);
+                    isPossiblySensitive.setEnabled(true);
                 }
             }
         }
@@ -351,8 +351,8 @@ public class PostActivity extends AppCompatActivity {
         subscription.unsubscribe();
         subscription = null;
         locationText = null;
-        addLocationSwitch = null;
-        possiblySensitiveSwitch = null;
+        addLocation = null;
+        isPossiblySensitive = null;
         addedImagesAdapter.clearImages();
         addedImagesAdapter = null;
         imagesRecyclerView = null;
