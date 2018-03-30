@@ -29,7 +29,6 @@
     <string name="login">Log in</string>
     <string name="action_settings">Settings…</string>
     <string name="action_search">Search…</string>
-    <string name="back">Back</string>
     <string name="trends">Trends</string>
     <string name="timeline">TimeLine</string>
     <string name="mentions">Mentions</string>
@@ -56,6 +55,8 @@
     <string name="logout">Logout</string>
     <string name="do_logout">Logout</string>
     <string name="confirm_logout">Logout?</string>
+    <string name="confirm_discard_post">Discard post?</string>
+    <string name="do_discard">Discard</string>
     <string name="new_post">New post</string>
     <string name="permission_denied">Permission Denied</string>
     <string name="lat_and_lon">Latitude:%f Longitude: %f</string>

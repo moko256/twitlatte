@@ -34,6 +34,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.PermissionChecker;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -238,6 +239,17 @@ public class PostActivity extends AppCompatActivity {
                 model.getUriList().addAll(uris);
                 isPossiblySensitive.setEnabled(true);
             }
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (editText.getText().length() > 0) {
+            new AlertDialog.Builder(this)
+                    .setMessage(R.string.confirm_discard_post)
+                    .setPositiveButton(R.string.do_discard, (dialog, which) -> finish())
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .show();
         }
     }
 

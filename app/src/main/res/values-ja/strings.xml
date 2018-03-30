@@ -19,7 +19,6 @@
     <string name="login">ログイン</string>
     <string name="action_settings">設定</string>
     <string name="action_search">検索</string>
-    <string name="back">戻る</string>
     <string name="trends">トレンド</string>
     <string name="timeline">タイムライン</string>
     <string name="mentions">メンション</string>
@@ -46,6 +45,8 @@
     <string name="logout">ログアウト</string>
     <string name="do_logout">ログアウトする</string>
     <string name="confirm_logout">ログアウトしますか？</string>
+    <string name="confirm_discard_post">投稿を破棄しますか？</string>
+    <string name="do_discard">破棄</string>
     <string name="new_post">新しい投稿</string>
     <string name="permission_denied">権限が拒否されました</string>
     <string name="lat_and_lon">緯度:%f 経度:%f</string>

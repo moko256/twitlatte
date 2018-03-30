@@ -130,7 +130,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                                     }
                                 }
                         )
-                        .setNeutralButton(R.string.back,(dialog, i) -> dialog.cancel())
+                        .setNegativeButton(android.R.string.cancel, null)
                         .show();
                 return false;
             });
