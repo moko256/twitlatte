@@ -244,13 +244,7 @@ public class PostActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (editText.getText().length() > 0) {
-            new AlertDialog.Builder(this)
-                    .setMessage(R.string.confirm_discard_post)
-                    .setPositiveButton(R.string.do_discard, (dialog, which) -> finish())
-                    .setNegativeButton(android.R.string.cancel, null)
-                    .show();
-        }
+        onSupportNavigateUp();
     }
 
     @Override
@@ -379,8 +373,17 @@ public class PostActivity extends AppCompatActivity {
 
     @Override
     public boolean onSupportNavigateUp(){
-        finish();
-        return false;
+        if (editText.getText().length() > 0) {
+            new AlertDialog.Builder(this)
+                    .setMessage(R.string.confirm_discard_post)
+                    .setPositiveButton(R.string.do_discard, (dialog, which) -> finish())
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .show();
+            return false;
+        } else {
+            finish();
+            return true;
+        }
     }
 
     private Single<Location> getLocation(){
