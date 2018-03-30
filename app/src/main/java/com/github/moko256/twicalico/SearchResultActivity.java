@@ -60,7 +60,7 @@ public class SearchResultActivity extends AppCompatActivity implements BaseListF
     @Override
     public boolean onSupportNavigateUp() {
         finish();
-        return false;
+        return true;
     }
 
     @Override

@@ -155,7 +155,7 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
     @Override
     public boolean onSupportNavigateUp(){
         finish();
-        return false;
+        return true;
     }
 
     @Override

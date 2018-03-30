@@ -93,6 +93,6 @@ public class TrendsActivity extends AppCompatActivity {
         @Override
         public boolean onSupportNavigateUp() {
             finish();
-            return false;
+            return true;
         }
 }

@@ -93,7 +93,7 @@ public class ShowImageActivity extends AppCompatActivity {
     @Override
     public boolean onSupportNavigateUp() {
         finish();
-        return false;
+        return true;
     }
 
     @Override
