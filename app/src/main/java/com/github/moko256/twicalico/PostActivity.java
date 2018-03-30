@@ -147,8 +147,6 @@ public class PostActivity extends AppCompatActivity {
             }
         });
 
-        editText.setHint(model.isReply()? R.string.reply: R.string.post);
-
         imagesRecyclerView = findViewById(R.id.activity_tweet_send_images_recycler_view);
         addedImagesAdapter = new AddedImagesAdapter(this);
 
@@ -218,28 +216,30 @@ public class PostActivity extends AppCompatActivity {
         locationText = findViewById(R.id.activity_tweet_location_result);
         locationText.setVisibility(View.GONE);
 
-        if (getIntent()!=null){
-            if (!model.isReply()){
-                model.setInReplyToStatusId(getIntent().getLongExtra(
-                        INTENT_EXTRA_IN_REPLY_TO_STATUS_ID, -1
-                ));
-            }
+        if (getIntent() != null){
+            model.setInReplyToStatusId(getIntent().getLongExtra(
+                    INTENT_EXTRA_IN_REPLY_TO_STATUS_ID, -1
+            ));
 
-            String text=getIntent().getStringExtra(INTENT_EXTRA_TWEET_TEXT);
-            if (text!=null) {
-                editText.setText(text);
-                editText.setSelection(text.length());
-            } else {
-                editText.setText("");
-            }
+            if (savedInstanceState == null) {
+                String text = getIntent().getStringExtra(INTENT_EXTRA_TWEET_TEXT);
+                if (text != null) {
+                    editText.setText(text);
+                    editText.setSelection(text.length());
+                } else {
+                    editText.setText("");
+                }
 
-            ArrayList<Uri> uris = getIntent().getParcelableArrayListExtra(INTENT_EXTRA_IMAGE_URI);
-            if (uris != null) {
-                addedImagesAdapter.getImagesList().addAll(uris);
-                model.getUriList().addAll(uris);
-                isPossiblySensitive.setEnabled(true);
+                ArrayList<Uri> uris = getIntent().getParcelableArrayListExtra(INTENT_EXTRA_IMAGE_URI);
+                if (uris != null) {
+                    addedImagesAdapter.getImagesList().addAll(uris);
+                    model.getUriList().addAll(uris);
+                    isPossiblySensitive.setEnabled(true);
+                }
             }
         }
+
+        editText.setHint(model.isReply()? R.string.reply: R.string.post);
     }
 
     @Override
@@ -287,6 +287,8 @@ public class PostActivity extends AppCompatActivity {
                             Throwable::printStackTrace
                     )
             );
+        } else {
+            addLocation.setChecked(false);
         }
     }
 
@@ -294,7 +296,6 @@ public class PostActivity extends AppCompatActivity {
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         if (savedInstanceState != null){
-            model.setInReplyToStatusId(savedInstanceState.getLong(INTENT_EXTRA_IN_REPLY_TO_STATUS_ID, -1));
             Parcelable[] l = savedInstanceState.getParcelableArray(OUT_STATE_EXTRA_IMAGE_URI_LIST);
             if (l != null) {
                 for (Parcelable p : l) {
@@ -302,6 +303,7 @@ public class PostActivity extends AppCompatActivity {
                     model.getUriList().add(uri);
                     addedImagesAdapter.getImagesList().add(uri);
                 }
+                isPossiblySensitive.setEnabled(true);
             }
         }
     }
@@ -309,11 +311,6 @@ public class PostActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-
-        long inReplyToStatusId = model.getInReplyToStatusId();
-        if (inReplyToStatusId != -1){
-            outState.putLong(INTENT_EXTRA_IN_REPLY_TO_STATUS_ID, inReplyToStatusId);
-        }
 
         int size = model.getUriList().size();
         if (size > 0){
