@@ -27,6 +27,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.github.chrisbanes.photoview.PhotoView;
 import com.github.chuross.flinglayout.FlingLayout;
 import com.github.moko256.twicalico.text.TwitterStringUtils;
@@ -227,6 +228,7 @@ public class ImagePagerChildFragment extends Fragment {
                                         .load(TwitterStringUtils.convertSmallImageUrl(
                                                 mediaEntity.getMediaURLHttps()
                                         ))
+                                        .diskCacheStrategy(DiskCacheStrategy.NONE)
                                         .fitCenter()
                         )
                         .into(imageView);
