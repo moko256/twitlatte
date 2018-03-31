@@ -166,7 +166,7 @@ public class ShowTweetActivity extends AppCompatActivity {
     @Override
     public boolean onSupportNavigateUp(){
         finish();
-        return false;
+        return true;
     }
 
     public static Intent getIntent(Context context, long statusId){

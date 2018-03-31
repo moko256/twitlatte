@@ -239,7 +239,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                             }
                         }
                 )
-                .setNeutralButton(R.string.back,(dialog, i) -> dialog.cancel())
+                .setNegativeButton(android.R.string.cancel, null)
                 .show());
         accountListView.setAdapter(adapter);
 

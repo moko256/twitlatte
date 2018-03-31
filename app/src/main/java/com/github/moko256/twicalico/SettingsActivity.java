@@ -66,7 +66,7 @@ public class SettingsActivity extends AppCompatActivity implements PreferenceFra
     @Override
     public boolean onSupportNavigateUp(){
         finish();
-        return false;
+        return true;
     }
 
     @Override

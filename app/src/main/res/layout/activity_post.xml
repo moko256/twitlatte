@@ -51,41 +51,23 @@
             android:paddingTop="@dimen/activity_vertical_margin"
             android:paddingBottom="@dimen/activity_vertical_margin">
 
-            <TextView
-                android:id="@+id/activity_tweet_send_edit_text_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/post"
-                android:textColor="@color/color_accent"
-                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-                android:layout_marginBottom="8dp"/>
-
             <com.github.moko256.twicalico.widget.ImageKeyboardEditText
                 android:id="@+id/tweet_text_edit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:labelFor="@id/activity_tweet_send_edit_text_label"
                 android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-                android:layout_marginBottom="16dp"/>
+                android:layout_marginBottom="8dp"
+                tools:hint="@string/post" />
 
             <TextView
                 android:id="@+id/tweet_text_edit_counter"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-                android:layout_gravity="right"
+                android:gravity="right"
                 android:layout_marginBottom="16dp"
                 tools:text="0 / 500"/>
 
-
-            <TextView
-                android:id="@+id/activity_tweet_send_images_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/images"
-                android:textColor="@color/color_accent"
-                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-                android:layout_marginBottom="8dp"/>
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/activity_tweet_send_images_recycler_view"
@@ -94,43 +76,28 @@
                 android:layout_marginBottom="16dp"/>
 
 
-            <TextView
-                android:id="@+id/activity_tweet_possibly_sensitive_label"
-                android:layout_width="wrap_content"
+            <CheckBox
+                android:id="@+id/activity_tweet_is_possibly_sensitive"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/possibly_sensitive"
-                android:textColor="@color/color_accent"
-                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-                android:layout_marginBottom="8dp"/>
-
-            <android.support.v7.widget.SwitchCompat
-                android:id="@+id/activity_tweet_possibly_sensitive_switch"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"/>
 
-            <TextView
-                android:id="@+id/activity_tweet_location_label"
-                android:layout_width="wrap_content"
+
+            <CheckBox
+                android:id="@+id/activity_tweet_add_location"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/add_location"
-                android:textColor="@color/color_accent"
-                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                 android:layout_marginBottom="8dp"/>
-
-            <android.support.v7.widget.SwitchCompat
-                android:id="@+id/activity_tweet_location_switch"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"/>
 
             <TextView
                 android:id="@+id/activity_tweet_location_result"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"/>
+                android:layout_marginBottom="16dp"
+                tools:text="Latitude: 30, Longitude: 100"/>
 
         </LinearLayout>
-
     </ScrollView>
 </LinearLayout>
