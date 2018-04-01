@@ -24,7 +24,6 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.github.moko256.twicalico.GlideApp;
 import com.github.moko256.twicalico.GlobalApplication;
 import com.github.moko256.twicalico.R;
@@ -159,10 +158,10 @@ public class TweetImageTableView extends GridLayout {
                     isOpen = true;
                     for (int iii = 0; iii < mediaEntities.length; iii++){
                         GlideApp.with(getContext())
-                                .load(TwitterStringUtils.convertSmallImageUrl(
+                                .load(TwitterStringUtils.convertLargeImageUrl(
                                         mediaEntities[iii].getMediaURLHttps()
                                 ))
-                                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                                .sizeMultiplier(0.5f)
                                 .into(imageViews[iii]);
                     }
                 }
@@ -174,19 +173,19 @@ public class TweetImageTableView extends GridLayout {
                 if (sensitive){
                     isOpen = false;
                     GlideApp.with(getContext())
-                            .load(TwitterStringUtils.convertSmallImageUrl(
+                            .load(TwitterStringUtils.convertLargeImageUrl(
                                     mediaEntities[ii].getMediaURLHttps()
                             ))
+                            .sizeMultiplier(0.5f)
                             .transform(new BlurTransformation())
-                            .diskCacheStrategy(DiskCacheStrategy.NONE)
                             .into(imageViews[ii]);
                 } else {
                     isOpen = true;
                     GlideApp.with(getContext())
-                            .load(TwitterStringUtils.convertSmallImageUrl(
+                            .load(TwitterStringUtils.convertLargeImageUrl(
                                     mediaEntities[ii].getMediaURLHttps()
                             ))
-                            .diskCacheStrategy(DiskCacheStrategy.NONE)
+                            .sizeMultiplier(0.5f)
                             .into(imageViews[ii]);
                 }
                 if (mediaEntities[ii].getType().equals("video")){
