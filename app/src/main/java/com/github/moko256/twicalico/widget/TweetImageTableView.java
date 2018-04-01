@@ -188,12 +188,16 @@ public class TweetImageTableView extends GridLayout {
                             .sizeMultiplier(0.5f)
                             .into(imageViews[ii]);
                 }
-                if (mediaEntities[ii].getType().equals("video")){
-                    covers[ii].setForeground(AppCompatResources.getDrawable(getContext(), R.drawable.player_foreground));
-                } else if (mediaEntities[ii].getType().equals("animated_gif")){
-                    covers[ii].setForeground(AppCompatResources.getDrawable(getContext(), R.drawable.gif_foreground));
-                } else {
-                    covers[ii].setForeground(null);
+                switch (mediaEntities[ii].getType()) {
+                    case "video":
+                        covers[ii].setForeground(AppCompatResources.getDrawable(getContext(), R.drawable.player_foreground));
+                        break;
+                    case "animated_gif":
+                        covers[ii].setForeground(AppCompatResources.getDrawable(getContext(), R.drawable.gif_foreground));
+                        break;
+                    default:
+                        covers[ii].setForeground(null);
+                        break;
                 }
             } else {
                 imageViews[ii].setImageResource(R.drawable.border_frame);
