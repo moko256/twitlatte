@@ -40,14 +40,15 @@ import twitter4j.MediaEntity;
  */
 public class TweetImageTableView extends GridLayout {
 
-    private ImageView imageViews[];
+    private final ImageView imageViews[] = new ImageView[4];
+    private final FrameLayout covers[] = new FrameLayout[4];
+
     private MediaEntity mediaEntities[];
-    private FrameLayout covers[];
 
     private boolean isOpen = true;
 
     /* {row,column,rowSpan,colSpan} */
-    private final int params[][][]={
+    private static final int params[][][]={
             {{0,0,2,2},{0,0,0,0},{0,0,0,0},{0,0,0,0}},
             {{0,0,2,1},{0,1,2,1},{0,0,0,0},{0,0,0,0}},
             {{0,0,2,1},{0,1,1,1},{1,1,1,1},{0,0,0,0}},
@@ -55,7 +56,7 @@ public class TweetImageTableView extends GridLayout {
     };
 
     /* {right,bottom} */
-    private final int margins[][][]={
+    private static final int margins[][][]={
             {{0,0},{0,0},{0,0},{0,0}},
             {{4,0},{0,0},{0,0},{0,0}},
             {{4,0},{0,4},{0,0},{0,0}},
@@ -76,10 +77,7 @@ public class TweetImageTableView extends GridLayout {
         setColumnCount(2);
         setRowCount(2);
 
-        imageViews=new ImageView[4];
-        covers = new FrameLayout[4];
-
-        for(int i=0;i<imageViews.length;i++){
+        for (int i=0; i < imageViews.length; i++) {
             imageViews[i] = new ImageView(context);
             imageViews[i].setScaleType(ImageView.ScaleType.CENTER_CROP);
             imageViews[i].setLayoutParams(new FrameLayout.LayoutParams(
@@ -89,6 +87,16 @@ public class TweetImageTableView extends GridLayout {
             covers[i] = new FrameLayout(context);
             covers[i].addView(imageViews[i]);
             covers[i].setOnLongClickListener(v -> TweetImageTableView.this.performLongClick());
+
+            int finalI = i;
+            covers[i].setOnClickListener(v -> {
+                if (isOpen){
+                    getContext().startActivity(ShowImageActivity.getIntent(getContext(),mediaEntities, finalI));
+                } else {
+                    isOpen = true;
+                    updateView();
+                }
+            });
         }
     }
 
@@ -144,50 +152,24 @@ public class TweetImageTableView extends GridLayout {
 
     public void setMediaEntities(MediaEntity[] mediaEntities, boolean sensitive) {
         this.mediaEntities = mediaEntities;
+        isOpen = GlobalApplication.configuration.isTimelineImageLoad && !sensitive;
         updateImageNumber();
+        updateView();
+    }
+
+    private void updateView(){
         int imageNum = mediaEntities.length;
         if (imageNum > 4){
             imageNum = 4;
         }
         for (int ii = 0; ii < imageNum; ii++) {
-            int finalIi = ii;
-            covers[ii].setOnClickListener(v -> {
-                if (isOpen){
-                    getContext().startActivity(ShowImageActivity.getIntent(getContext(),mediaEntities, finalIi));
-                } else {
-                    isOpen = true;
-                    for (int iii = 0; iii < mediaEntities.length; iii++){
-                        GlideApp.with(getContext())
-                                .load(TwitterStringUtils.convertLargeImageUrl(
-                                        mediaEntities[iii].getMediaURLHttps()
-                                ))
-                                .sizeMultiplier(0.5f)
-                                .into(imageViews[iii]);
-                    }
-                }
-
-            });
-
-            if (GlobalApplication.configuration.isTimelineImageLoad){
-
-                if (sensitive){
-                    isOpen = false;
-                    GlideApp.with(getContext())
-                            .load(TwitterStringUtils.convertLargeImageUrl(
-                                    mediaEntities[ii].getMediaURLHttps()
-                            ))
-                            .sizeMultiplier(0.5f)
-                            .transform(new BlurTransformation())
-                            .into(imageViews[ii]);
-                } else {
-                    isOpen = true;
-                    GlideApp.with(getContext())
-                            .load(TwitterStringUtils.convertLargeImageUrl(
-                                    mediaEntities[ii].getMediaURLHttps()
-                            ))
-                            .sizeMultiplier(0.5f)
-                            .into(imageViews[ii]);
-                }
+            if (isOpen) {
+                GlideApp.with(getContext())
+                        .load(TwitterStringUtils.convertLargeImageUrl(
+                                mediaEntities[ii].getMediaURLHttps()
+                        ))
+                        .sizeMultiplier(0.5f)
+                        .into(imageViews[ii]);
                 switch (mediaEntities[ii].getType()) {
                     case "video":
                         covers[ii].setForeground(AppCompatResources.getDrawable(getContext(), R.drawable.player_foreground));
@@ -200,7 +182,17 @@ public class TweetImageTableView extends GridLayout {
                         break;
                 }
             } else {
-                imageViews[ii].setImageResource(R.drawable.border_frame);
+                if (GlobalApplication.configuration.isTimelineImageLoad){
+                    GlideApp.with(getContext())
+                            .load(TwitterStringUtils.convertLargeImageUrl(
+                                    mediaEntities[ii].getMediaURLHttps()
+                            ))
+                            .sizeMultiplier(0.5f)
+                            .transform(new BlurTransformation())
+                            .into(imageViews[ii]);
+                } else {
+                    imageViews[ii].setImageResource(R.drawable.border_frame);
+                }
             }
         }
     }
