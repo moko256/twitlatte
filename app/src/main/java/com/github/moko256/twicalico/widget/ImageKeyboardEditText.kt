@@ -48,7 +48,7 @@ class ImageKeyboardEditText : AppCompatEditText {
 
     override fun onCreateInputConnection(outAttrs: EditorInfo): InputConnection {
         val ic = super.onCreateInputConnection(outAttrs)
-        EditorInfoCompat.setContentMimeTypes(outAttrs, arrayOf("image/*"))
+        EditorInfoCompat.setContentMimeTypes(outAttrs, arrayOf("image/*", "video/*"))
         return InputConnectionCompat.createWrapper(ic, outAttrs) { inputContentInfo, flags, _ ->
             if (Build.VERSION.SDK_INT >= 25 && flags and InputConnectionCompat.INPUT_CONTENT_GRANT_READ_URI_PERMISSION != 0) {
                 try {
