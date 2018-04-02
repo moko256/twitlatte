@@ -348,6 +348,12 @@ public class PostActivity extends AppCompatActivity {
     }
 
     @Override
+    public void finish() {
+        editText.close();
+        super.finish();
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
 
@@ -359,7 +365,6 @@ public class PostActivity extends AppCompatActivity {
         addedImagesAdapter.clearImages();
         addedImagesAdapter = null;
         imagesRecyclerView = null;
-        editText.close();
         editText = null;
         counterTextView = null;
         userIcon = null;

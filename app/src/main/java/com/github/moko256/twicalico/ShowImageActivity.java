@@ -137,7 +137,7 @@ public class ShowImageActivity extends AppCompatActivity {
             case "photo":
             default:
                 String[] pathSplitWithDot=mediaEntity.getMediaURLHttps().split(".");
-                path= TwitterStringUtils.convertLargeImageUrl(mediaEntity.getMediaURLHttps());
+                path= TwitterStringUtils.convertOriginalImageUrl(mediaEntity.getMediaURLHttps());
                 ext=pathSplitWithDot[pathSplitWithDot.length-1];
                 break;
         }

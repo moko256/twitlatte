@@ -222,13 +222,7 @@ public class ImagePagerChildFragment extends Fragment {
                 GlideApp.with(this)
                         .load(TwitterStringUtils.convertLargeImageUrl(mediaEntity.getMediaURLHttps()))
                         .fitCenter()
-                        .thumbnail(
-                                GlideApp.with(this)
-                                        .load(TwitterStringUtils.convertSmallImageUrl(
-                                                mediaEntity.getMediaURLHttps()
-                                        ))
-                                        .fitCenter()
-                        )
+                        .thumbnail(0.5f)
                         .into(imageView);
                 break;
         }

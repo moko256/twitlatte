@@ -374,16 +374,16 @@ public class TwitterStringUtils {
         return builder;
     }
 
+    public static String convertOriginalImageUrl(String baseUrl){
+        return (GlobalApplication.clientType == Type.TWITTER)?
+                baseUrl + ":orig":
+                baseUrl;
+    }
+
     public static String convertLargeImageUrl(String baseUrl){
         return (GlobalApplication.clientType == Type.TWITTER)?
                 baseUrl + ":large":
                 baseUrl;
-    }
-
-    public static String convertSmallImageUrl(String baseUrl){
-        return GlobalApplication.clientType == Type.MASTODON?
-                baseUrl.replace("original", "small"):
-                baseUrl + ":small";
     }
 
 }
