@@ -29,6 +29,9 @@ import com.sys1yagi.mastodon4j.api.method.Timelines;
 
 import java.io.File;
 import java.io.InputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -92,10 +95,21 @@ import twitter4j.util.function.Consumer;
 
 public final class MastodonTwitterImpl implements Twitter {
 
-    private static Gson gson;
+    private static final SimpleDateFormat dateParser;
+    private static final Gson gson;
 
     static {
+        dateParser = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX");
         gson = new Gson();
+    }
+
+    public static synchronized Date parseDate(String date){
+        try {
+            return dateParser.parse(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return new Date(0);
+        }
     }
 
     public final MastodonClient client;
