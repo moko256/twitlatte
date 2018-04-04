@@ -181,20 +181,7 @@ public class StatusView extends FrameLayout {
         userName.setText(item.getUser().getName());
         userId.setText(TwitterStringUtils.plusAtMark(item.getUser().getScreenName()));
 
-        OnClickListener clickListener = v -> {
-            ActivityOptionsCompat animation = ActivityOptionsCompat
-                    .makeSceneTransitionAnimation(
-                            ((Activity) getContext()),
-                            userImage,
-                            "icon_image"
-                    );
-            getContext().startActivity(
-                    ShowTweetActivity.getIntent(getContext(), item.getId()),
-                    animation.toBundle()
-            );
-        };
-
-        tweetContext.setOnClickListener(clickListener);
+        tweetContext.setOnClickListener(v -> callOnClick());
 
         TwitterStringUtils.setLinkedSequenceTo(item, tweetContext);
         if (!tweetContext.getText().toString().trim().isEmpty()) {
@@ -224,7 +211,18 @@ public class StatusView extends FrameLayout {
                     animation.toBundle()
             );
         });
-        setOnClickListener(clickListener);
+        setOnClickListener(v -> {
+            ActivityOptionsCompat animation = ActivityOptionsCompat
+                    .makeSceneTransitionAnimation(
+                            ((Activity) getContext()),
+                            userImage,
+                            "icon_image"
+                    );
+            getContext().startActivity(
+                    ShowTweetActivity.getIntent(getContext(), item.getId()),
+                    animation.toBundle()
+            );
+        });
 
         Status quotedStatus=item.getQuotedStatus();
         if(quotedStatus!=null){
