@@ -147,6 +147,8 @@ public class ImagePagerChildFragment extends Fragment {
                                                 Uri.parse(mediaEntity.getVideoVariants()[0].getUrl())
                                         )
                 );
+                player.setPlayWhenReady(true);
+
                 break;
 
             case "animated_gif":
