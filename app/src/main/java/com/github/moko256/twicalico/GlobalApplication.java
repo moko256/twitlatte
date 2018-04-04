@@ -260,7 +260,7 @@ public class GlobalApplication extends Application {
     }
 
     @NonNull
-    private static OkHttpClient getOkHttpClient(HttpClientConfiguration configuration){
+    public static OkHttpClient getOkHttpClient(HttpClientConfiguration configuration){
         HttpClient httpClient = HttpClientFactory.getInstance(configuration);
         return ((AlternativeHttpClientImpl) httpClient).getOkHttpClient();
     }
