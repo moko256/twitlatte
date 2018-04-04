@@ -134,6 +134,8 @@ public class StatusCacheMap {
 
     public static class CachedStatus implements Status{
 
+        private static final long serialVersionUID = 2895731644139422046L;
+
         /* Based on twitter4j.StatusJSONImpl */
 
         private final Date createdAt;
