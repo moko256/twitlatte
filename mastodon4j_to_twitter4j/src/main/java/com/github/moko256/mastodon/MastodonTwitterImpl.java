@@ -103,9 +103,11 @@ public final class MastodonTwitterImpl implements Twitter {
         gson = new Gson();
     }
 
-    public static synchronized Date parseDate(String date){
+    public static Date parseDate(String date){
         try {
-            return dateParser.parse(date);
+            synchronized (dateParser) {
+                return dateParser.parse(date);
+            }
         } catch (ParseException e) {
             e.printStackTrace();
             return new Date(0);
