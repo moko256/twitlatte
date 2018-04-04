@@ -96,6 +96,7 @@ public class StatusView extends FrameLayout {
         userId = findViewById(R.id.tweet_user_id);
         userName = findViewById(R.id.tweet_user_name);
         tweetContext= findViewById(R.id.tweet_content);
+        tweetContext.setMovementMethod(LinkMovementMethod.getInstance());
         timeStampText = findViewById(R.id.tweet_time_stamp_text);
         quoteTweetLayout = findViewById(R.id.tweet_quote_tweet);
         quoteTweetUserName = findViewById(R.id.tweet_quote_tweet_user_name);
@@ -180,14 +181,27 @@ public class StatusView extends FrameLayout {
         userName.setText(item.getUser().getName());
         userId.setText(TwitterStringUtils.plusAtMark(item.getUser().getScreenName()));
 
+        OnClickListener clickListener = v -> {
+            ActivityOptionsCompat animation = ActivityOptionsCompat
+                    .makeSceneTransitionAnimation(
+                            ((Activity) getContext()),
+                            userImage,
+                            "icon_image"
+                    );
+            getContext().startActivity(
+                    ShowTweetActivity.getIntent(getContext(), item.getId()),
+                    animation.toBundle()
+            );
+        };
+
+        tweetContext.setOnClickListener(clickListener);
+
         TwitterStringUtils.setLinkedSequenceTo(item, tweetContext);
         if (!tweetContext.getText().toString().trim().isEmpty()) {
-            tweetContext.setMovementMethod(LinkMovementMethod.getInstance());
             if (tweetContext.getVisibility() != VISIBLE){
                 tweetContext.setVisibility(VISIBLE);
             }
         } else {
-            tweetContext.setMovementMethod(null);
             if (tweetContext.getVisibility() != GONE){
                 tweetContext.setVisibility(GONE);
             }
@@ -210,18 +224,7 @@ public class StatusView extends FrameLayout {
                     animation.toBundle()
             );
         });
-        setOnClickListener(v -> {
-            ActivityOptionsCompat animation = ActivityOptionsCompat
-                    .makeSceneTransitionAnimation(
-                            ((Activity) getContext()),
-                            userImage,
-                            "icon_image"
-                    );
-            getContext().startActivity(
-                    ShowTweetActivity.getIntent(getContext(), item.getId()),
-                    animation.toBundle()
-            );
-        });
+        setOnClickListener(clickListener);
 
         Status quotedStatus=item.getQuotedStatus();
         if(quotedStatus!=null){
