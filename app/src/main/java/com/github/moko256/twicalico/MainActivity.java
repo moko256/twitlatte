@@ -35,6 +35,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -340,12 +341,31 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
         }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_N){
+            startActivity(new Intent(this, PostActivity.class));
+        } else if (event.isShiftPressed() && keyCode == KeyEvent.KEYCODE_SLASH){
+            new AlertDialog.Builder(this)
+                    .setTitle("KeyBoard Shortcuts")
+                    .setMessage("? : This Dialog\nn : New Post\nCtrl + Tab : Open Drawer\nCtrl+Enter : Post")
+                    .show();
+        } else if (event.isCtrlPressed() && keyCode == KeyEvent.KEYCODE_TAB){
+            if (drawer.isDrawerOpen(GravityCompat.START)) {
+                drawer.closeDrawer(GravityCompat.START);
+            } else {
+                drawer.openDrawer(GravityCompat.START);
+            }
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
     private void changeIsDrawerAccountsSelection() {

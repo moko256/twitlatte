@@ -40,7 +40,10 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
+import android.text.method.KeyListener;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -144,6 +147,45 @@ public class PostActivity extends AppCompatActivity {
                 return true;
             } else {
                 return false;
+            }
+        });
+        editText.setKeyListener(new KeyListener() {
+            @Override
+            public int getInputType() {
+                return InputType.TYPE_CLASS_TEXT;
+            }
+
+            @Override
+            public boolean onKeyDown(View view, Editable text, int keyCode, KeyEvent event) {
+                if (event.isCtrlPressed() && keyCode == KeyEvent.KEYCODE_ENTER){
+                    model.postTweet()
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(
+                                    it -> PostActivity.this.finish(),
+                                    e->{
+                                        e.printStackTrace();
+                                        Snackbar.make(rootViewGroup, TwitterStringUtils.convertErrorToText(e), Snackbar.LENGTH_INDEFINITE).show();
+                                    }
+                            );
+                    return true;
+                }
+                return false;
+            }
+
+            @Override
+            public boolean onKeyUp(View view, Editable text, int keyCode, KeyEvent event) {
+                return false;
+            }
+
+            @Override
+            public boolean onKeyOther(View view, Editable text, KeyEvent event) {
+                return false;
+            }
+
+            @Override
+            public void clearMetaKeyState(View view, Editable content, int states) {
+
             }
         });
 
