@@ -80,6 +80,8 @@ public class PostActivity extends AppCompatActivity {
 
     PostTweetModel model;
 
+    boolean isPosting = false;
+
     ViewGroup rootViewGroup;
 
     Toolbar toolbar;
@@ -157,7 +159,8 @@ public class PostActivity extends AppCompatActivity {
 
             @Override
             public boolean onKeyDown(View view, Editable text, int keyCode, KeyEvent event) {
-                if (event.isCtrlPressed() && keyCode == KeyEvent.KEYCODE_ENTER){
+                if (!isPosting && event.isCtrlPressed() && keyCode == KeyEvent.KEYCODE_ENTER){
+                    isPosting = true;
                     model.postTweet()
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
@@ -165,6 +168,7 @@ public class PostActivity extends AppCompatActivity {
                                     it -> PostActivity.this.finish(),
                                     e->{
                                         e.printStackTrace();
+                                        isPosting = false;
                                         Snackbar.make(rootViewGroup, TwitterStringUtils.convertErrorToText(e), Snackbar.LENGTH_INDEFINITE).show();
                                     }
                             );
@@ -298,6 +302,7 @@ public class PostActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == R.id.action_send){
+            isPosting = true;
             item.setEnabled(false);
             model.postTweet()
                     .subscribeOn(Schedulers.io())
@@ -307,6 +312,7 @@ public class PostActivity extends AppCompatActivity {
                             e->{
                                 e.printStackTrace();
                                 item.setEnabled(true);
+                                isPosting = false;
                                 Snackbar.make(rootViewGroup, TwitterStringUtils.convertErrorToText(e), Snackbar.LENGTH_INDEFINITE).show();
                             }
                     );
