@@ -57,6 +57,7 @@ public class StatusView extends FrameLayout {
 
     ImageView userImage;
     TextView retweetUserName;
+    TextView retweetTimeStamp;
     TextView replyUserName;
     Space headerBottomMargin;
     TextView userName;
@@ -91,6 +92,7 @@ public class StatusView extends FrameLayout {
         
         userImage = findViewById(R.id.tweet_icon);
         retweetUserName = findViewById(R.id.tweet_retweet_user_name);
+        retweetTimeStamp = findViewById(R.id.tweet_retweet_time_stamp_text);
         replyUserName = findViewById(R.id.tweet_reply_user_name);
         headerBottomMargin = findViewById(R.id.tweet_header_bottom_margin);
         userId = findViewById(R.id.tweet_user_id);
@@ -136,6 +138,15 @@ public class StatusView extends FrameLayout {
                 retweetUserName.setVisibility(View.VISIBLE);
             }
             retweetUserName.setText(getContext().getString(R.string.repeat_by,status.getUser().getName()));
+
+            if(retweetTimeStamp.getVisibility()!= View.VISIBLE){
+                retweetTimeStamp.setVisibility(View.VISIBLE);
+            }
+            retweetTimeStamp.setText(DateUtils.getRelativeTimeSpanString(
+                    status.getCreatedAt().getTime(),
+                    System.currentTimeMillis(),
+                    0
+            ));
         }
         else{
             if(retweetUserName.getVisibility()!=View.GONE){

@@ -40,7 +40,20 @@
             android:id="@+id/tweet_retweet_user_name"
             android:textAppearance="@style/TextAppearance.AppCompat.Caption"
             android:layout_marginLeft="16dp"
+            android:layout_marginRight="8dp"
+            android:layout_toLeftOf="@id/tweet_retweet_time_stamp_text"
             tools:text="@string/repeat_by"/>
+
+        <TextView
+            android:id="@+id/tweet_retweet_time_stamp_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:textColor="?android:textColorSecondary"
+            android:lines="1"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:gravity="right"
+            tools:text="time stamp"/>
 
         <TextView
             android:layout_width="match_parent"
