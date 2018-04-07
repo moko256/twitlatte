@@ -113,9 +113,6 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                         .subscribe(
                                 result -> {
                                     if (result.size() > 0) {
-                                        list.remove(position);
-                                        statusIdsDatabase.deleteIds(ArrayUtils.convertToLongList(-1L));
-                                        adapter.notifyItemRemoved(position);
                                         List<Long>ids = Observable
                                                 .from(result)
                                                 .map(Status::getId)
@@ -125,10 +122,17 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                                         } else {
                                             ids.add(-1L);
                                         }
-                                        list.addAll(position, ids);
 
                                         View startView = getRecyclerView().getLayoutManager().findViewByPosition(position);
                                         int offset = (startView == null) ? 0 : (startView.getTop() - getRecyclerView().getPaddingTop());
+
+                                        list.remove(position);
+                                        list.addAll(position, ids);
+
+
+
+                                        statusIdsDatabase.deleteIds(ArrayUtils.convertToLongList(-1L));
+                                        statusIdsDatabase.insertIds(position, ids);
 
                                         RecyclerView.LayoutManager layoutManager = getRecyclerView().getLayoutManager();
                                         if (layoutManager instanceof LinearLayoutManager){
@@ -137,7 +141,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                                             ((StaggeredGridLayoutManager) layoutManager).scrollToPositionWithOffset(position + ids.size(), offset);
                                         }
 
-                                        statusIdsDatabase.insertIds(position, ids);
+                                        adapter.notifyItemRemoved(position);
                                         adapter.notifyItemRangeInserted(position, ids.size());
                                     } else {
                                         list.remove(position);
@@ -257,7 +261,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
     @Override
     protected void onUpdateList() {
         subscription.add(
-                getResponseSingle(new Paging(list.get(list.size() >= 2? 1: 0)).count(GlobalApplication.statusLimit))
+                getResponseSingle(new Paging(list.get(list.size() >= 2? 1: 0)).count(1))
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(

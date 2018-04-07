@@ -128,12 +128,10 @@ class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 ((MoreLoadViewHolder) viewHolder).setIsLoading(true);
                 onLoadMoreClick.onClick(i);
             });
-            ViewGroup.LayoutParams oldParams = viewHolder.itemView.getLayoutParams();
-            StaggeredGridLayoutManager.LayoutParams params = oldParams != null?
-                    new StaggeredGridLayoutManager.LayoutParams(oldParams) :
-                    new StaggeredGridLayoutManager.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            params.setFullSpan(true);
-            viewHolder.itemView.setLayoutParams(params);
+            ViewGroup.LayoutParams layoutParams = viewHolder.itemView.getLayoutParams();
+            if (layoutParams instanceof StaggeredGridLayoutManager.LayoutParams) {
+                ((StaggeredGridLayoutManager.LayoutParams) layoutParams).setFullSpan(true);
+            }
         }
     }
 
