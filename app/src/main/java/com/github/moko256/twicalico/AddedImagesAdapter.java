@@ -39,9 +39,6 @@ import java.util.ArrayList;
 
 public class AddedImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private static final int VIEW_TYPE_IMAGE = 1;
-    private static final int VIEW_TYPE_ADD = 2;
-
     private Context context;
 
     private ArrayList<Uri> images = new ArrayList<>();
@@ -57,22 +54,22 @@ public class AddedImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     @Override
     public int getItemViewType(int position) {
-        return ((limit == -1) || ((position < limit))) && (position < images.size())? VIEW_TYPE_IMAGE: VIEW_TYPE_ADD;
+        return ((limit == -1) || ((position < limit))) && (position < images.size())? R.layout.layout_images_adapter_image_child: R.layout.layout_images_adapter_add_image;
     }
 
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        if (viewType == VIEW_TYPE_IMAGE){
-            return new ImageChildViewHolder(LayoutInflater.from(context).inflate(R.layout.layout_images_adapter_image_child, parent, false));
+        if (viewType == R.layout.layout_images_adapter_image_child){
+            return new ImageChildViewHolder(LayoutInflater.from(context).inflate(viewType, parent, false));
         } else {
-            return new AddImageViewHolder(LayoutInflater.from(context).inflate(R.layout.layout_images_adapter_add_image, parent, false));
+            return new AddImageViewHolder(LayoutInflater.from(context).inflate(viewType, parent, false));
         }
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        if (getItemViewType(position) == VIEW_TYPE_IMAGE){
+        if (holder instanceof ImageChildViewHolder){
             ImageChildViewHolder viewHolder = (ImageChildViewHolder) holder;
             Uri image = images.get(position);
 
@@ -92,10 +89,10 @@ public class AddedImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
             viewHolder.title.setText(fileName != null? fileName : image.getLastPathSegment());
             viewHolder.deleteButton.setOnClickListener(
-                    v -> onDeleteButtonListener.doAction(position)
+                    v -> onDeleteButtonListener.doAction(viewHolder.getLayoutPosition())
             );
             viewHolder.itemView.setOnClickListener(
-                    v -> onImageClickListener.doAction(position)
+                    v -> onImageClickListener.doAction(viewHolder.getLayoutPosition())
             );
             GlideApp.with(context).load(image).into(viewHolder.image);
         } else {
