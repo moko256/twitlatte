@@ -139,6 +139,8 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
 
                                         if (noGap) {
                                             adapter.notifyItemRemoved(position);
+                                        } else {
+                                            adapter.notifyItemChanged(position);
                                         }
                                         adapter.notifyItemRangeInserted(position, ids.size());
                                     } else {
