@@ -134,12 +134,12 @@ public class StatusView extends FrameLayout {
         final Status item = status.isRetweet()?status.getRetweetedStatus():status;
 
         if (status.isRetweet()){
-            if(retweetUserName.getVisibility()!= View.VISIBLE){
+            if(retweetUserName.getVisibility() != View.VISIBLE){
                 retweetUserName.setVisibility(View.VISIBLE);
             }
             retweetUserName.setText(getContext().getString(R.string.repeat_by,status.getUser().getName()));
 
-            if(retweetTimeStamp.getVisibility()!= View.VISIBLE){
+            if(retweetTimeStamp.getVisibility() != View.VISIBLE){
                 retweetTimeStamp.setVisibility(View.VISIBLE);
             }
             retweetTimeStamp.setText(DateUtils.getRelativeTimeSpanString(
@@ -147,10 +147,13 @@ public class StatusView extends FrameLayout {
                     System.currentTimeMillis(),
                     0
             ));
-        }
-        else{
-            if(retweetUserName.getVisibility()!=View.GONE){
+        } else {
+            if(retweetUserName.getVisibility() != View.GONE){
                 retweetUserName.setVisibility(View.GONE);
+            }
+
+            if(retweetTimeStamp.getVisibility() != View.GONE){
+                retweetTimeStamp.setVisibility(View.GONE);
             }
         }
 

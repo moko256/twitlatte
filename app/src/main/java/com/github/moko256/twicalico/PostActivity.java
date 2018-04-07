@@ -40,9 +40,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
-import android.text.InputType;
 import android.text.TextWatcher;
-import android.text.method.KeyListener;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -151,46 +149,23 @@ public class PostActivity extends AppCompatActivity {
                 return false;
             }
         });
-        editText.setKeyListener(new KeyListener() {
-            @Override
-            public int getInputType() {
-                return InputType.TYPE_CLASS_TEXT;
+        editText.setOnKeyListener((v, keyCode, event) -> {
+            if (!isPosting && event.getAction() == KeyEvent.ACTION_DOWN && event.isCtrlPressed() && keyCode == KeyEvent.KEYCODE_ENTER){
+                isPosting = true;
+                model.postTweet()
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                                it -> PostActivity.this.finish(),
+                                e->{
+                                    e.printStackTrace();
+                                    isPosting = false;
+                                    Snackbar.make(rootViewGroup, TwitterStringUtils.convertErrorToText(e), Snackbar.LENGTH_INDEFINITE).show();
+                                }
+                        );
+                return true;
             }
-
-            @Override
-            public boolean onKeyDown(View view, Editable text, int keyCode, KeyEvent event) {
-                if (!isPosting && event.isCtrlPressed() && keyCode == KeyEvent.KEYCODE_ENTER){
-                    isPosting = true;
-                    model.postTweet()
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(
-                                    it -> PostActivity.this.finish(),
-                                    e->{
-                                        e.printStackTrace();
-                                        isPosting = false;
-                                        Snackbar.make(rootViewGroup, TwitterStringUtils.convertErrorToText(e), Snackbar.LENGTH_INDEFINITE).show();
-                                    }
-                            );
-                    return true;
-                }
-                return false;
-            }
-
-            @Override
-            public boolean onKeyUp(View view, Editable text, int keyCode, KeyEvent event) {
-                return false;
-            }
-
-            @Override
-            public boolean onKeyOther(View view, Editable text, KeyEvent event) {
-                return false;
-            }
-
-            @Override
-            public void clearMetaKeyState(View view, Editable content, int states) {
-
-            }
+            return false;
         });
 
         imagesRecyclerView = findViewById(R.id.activity_tweet_send_images_recycler_view);
@@ -301,7 +276,7 @@ public class PostActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId() == R.id.action_send){
+        if(!isPosting && item.getItemId() == R.id.action_send){
             isPosting = true;
             item.setEnabled(false);
             model.postTweet()
