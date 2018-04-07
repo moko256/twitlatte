@@ -113,25 +113,21 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                         .subscribe(
                                 result -> {
                                     if (result.size() > 0) {
+                                        View startView = getRecyclerView().getLayoutManager().findViewByPosition(position);
+                                        int offset = (startView == null) ? 0 : (startView.getTop() - getRecyclerView().getPaddingTop());
+
                                         List<Long>ids = Observable
                                                 .from(result)
                                                 .map(Status::getId)
                                                 .toList().toSingle().toBlocking().value();
-                                        if (ids.get(ids.size() - 1).equals(list.get(position))) {
+                                        boolean noGap = ids.get(ids.size() - 1).equals(list.get(position + 1));
+                                        if (noGap) {
                                             ids.remove(ids.size() - 1);
-                                        } else {
-                                            ids.add(-1L);
+                                            list.remove(position);
+                                            statusIdsDatabase.deleteIds(ArrayUtils.convertToLongList(-1L));
                                         }
 
-                                        View startView = getRecyclerView().getLayoutManager().findViewByPosition(position);
-                                        int offset = (startView == null) ? 0 : (startView.getTop() - getRecyclerView().getPaddingTop());
-
-                                        list.remove(position);
                                         list.addAll(position, ids);
-
-
-
-                                        statusIdsDatabase.deleteIds(ArrayUtils.convertToLongList(-1L));
                                         statusIdsDatabase.insertIds(position, ids);
 
                                         RecyclerView.LayoutManager layoutManager = getRecyclerView().getLayoutManager();
@@ -141,7 +137,9 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                                             ((StaggeredGridLayoutManager) layoutManager).scrollToPositionWithOffset(position + ids.size(), offset);
                                         }
 
-                                        adapter.notifyItemRemoved(position);
+                                        if (noGap) {
+                                            adapter.notifyItemRemoved(position);
+                                        }
                                         adapter.notifyItemRangeInserted(position, ids.size());
                                     } else {
                                         list.remove(position);
@@ -261,7 +259,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
     @Override
     protected void onUpdateList() {
         subscription.add(
-                getResponseSingle(new Paging(list.get(list.size() >= 2? 1: 0)).count(1))
+                getResponseSingle(new Paging(list.get(list.size() >= 2? 1: 0)).count(GlobalApplication.statusLimit))
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
