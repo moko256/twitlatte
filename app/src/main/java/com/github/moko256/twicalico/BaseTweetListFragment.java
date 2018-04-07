@@ -126,6 +126,17 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                                             ids.add(-1L);
                                         }
                                         list.addAll(position, ids);
+
+                                        View startView = getRecyclerView().getLayoutManager().findViewByPosition(position);
+                                        int offset = (startView == null) ? 0 : (startView.getTop() - getRecyclerView().getPaddingTop());
+
+                                        RecyclerView.LayoutManager layoutManager = getRecyclerView().getLayoutManager();
+                                        if (layoutManager instanceof LinearLayoutManager){
+                                            ((LinearLayoutManager) layoutManager).scrollToPositionWithOffset(position + ids.size(), offset);
+                                        } else {
+                                            ((StaggeredGridLayoutManager) layoutManager).scrollToPositionWithOffset(position + ids.size(), offset);
+                                        }
+
                                         statusIdsDatabase.insertIds(position, ids);
                                         adapter.notifyItemRangeInserted(position, ids.size());
                                     } else {
