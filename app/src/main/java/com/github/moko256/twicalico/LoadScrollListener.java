@@ -49,11 +49,9 @@ public abstract class LoadScrollListener extends RecyclerView.OnScrollListener{
             firstVisibleItem = ((LinearLayoutManager) layoutManager).findFirstVisibleItemPosition();
         }
 
-        if (loading) {
-            if (totalItemCount > previousTotal) {
-                loading = false;
-                previousTotal = totalItemCount;
-            }
+        if (loading && totalItemCount > previousTotal) {
+            loading = false;
+            previousTotal = totalItemCount;
         }
 
         if (!loading && (totalItemCount - visibleItemCount) <= (firstVisibleItem + 1)) {
