@@ -30,6 +30,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by moko256 on 2017/03/11.
@@ -42,11 +43,11 @@ public class AddedImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     private Context context;
 
     private ArrayList<Uri> images = new ArrayList<>();
-    private int limit = -1;
+    public int limit = 4;
 
-    private View.OnClickListener onAddButtonClickListener;
-    private ImageAction onDeleteButtonListener;
-    private ImageAction onImageClickListener;
+    public View.OnClickListener onAddButtonClickListener;
+    public ImageAction onDeleteButtonListener;
+    public ImageAction onImageClickListener;
 
     public AddedImagesAdapter(Context context){
         this.context = context;
@@ -54,7 +55,7 @@ public class AddedImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     @Override
     public int getItemViewType(int position) {
-        return ((limit == -1) || ((position < limit))) && (position < images.size())? R.layout.layout_images_adapter_image_child: R.layout.layout_images_adapter_add_image;
+        return position < limit && position < images.size() ? R.layout.layout_images_adapter_image_child: R.layout.layout_images_adapter_add_image;
     }
 
     @NonNull
@@ -102,7 +103,7 @@ public class AddedImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     @Override
     public int getItemCount() {
-        return (limit == -1 || images.size()<limit)? images.size() + 1: limit;
+        return images.size() < limit? images.size() + 1: limit;
     }
 
 
@@ -115,40 +116,38 @@ public class AddedImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         }
     }
 
-    public View.OnClickListener getOnAddButtonClickListener() {
-        return onAddButtonClickListener;
-    }
-
-    public void setOnAddButtonClickListener(View.OnClickListener onAddButtonClickListener) {
-        this.onAddButtonClickListener = onAddButtonClickListener;
-    }
-
-    public ImageAction getOnDeleteButtonListener() {
-        return onDeleteButtonListener;
-    }
-
-    public void setOnDeleteButtonListener(ImageAction onDeleteButtonListener) {
-        this.onDeleteButtonListener = onDeleteButtonListener;
-    }
-
-    public ImageAction getOnImageClickListener() {
-        return onImageClickListener;
-    }
-
-    public void setOnImageClickListener(ImageAction onImageClickListener) {
-        this.onImageClickListener = onImageClickListener;
-    }
-
-    public int getLimit() {
-        return limit;
-    }
-
-    public void setLimit(int limit) {
-        this.limit = limit;
-    }
-
     public ArrayList<Uri> getImagesList() {
         return images;
+    }
+
+    public void addImageAndUpdateView(Uri uri){
+        int oldSize = images.size();
+        if (oldSize + 1 <= limit){
+            notifyItemRemoved(oldSize);
+        }
+        images.add(uri);
+        notifyItemInserted(oldSize);
+    }
+
+    public void addImagesAndUpdateView(List<Uri> uris){
+        int oldSize = images.size();
+        int addedSize = uris.size();
+
+        if (oldSize + addedSize <= limit){
+            notifyItemRemoved(oldSize);
+        }
+
+        images.addAll(uris);
+        notifyItemRangeInserted(oldSize, addedSize);
+    }
+
+    public void removeImageAndUpdateView(int position){
+        int size = images.size();
+        images.remove(position);
+        notifyItemRemoved(position);
+        if (size == limit){
+            notifyItemInserted(size - 1);
+        }
     }
 
     public void clearImages() {

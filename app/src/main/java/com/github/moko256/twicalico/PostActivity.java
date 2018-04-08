@@ -140,9 +140,8 @@ public class PostActivity extends AppCompatActivity {
         });
         editText.setImageAddedListener(imageUri -> {
             if (model.getUriList().size() < model.getUriListSizeLimit()) {
-                addedImagesAdapter.getImagesList().add(imageUri);
+                addedImagesAdapter.addImageAndUpdateView(imageUri);
                 model.getUriList().add(imageUri);
-                addedImagesAdapter.notifyItemChanged(addedImagesAdapter.getImagesList().size() - 1);
                 isPossiblySensitive.setEnabled(true);
                 return true;
             } else {
@@ -179,8 +178,8 @@ public class PostActivity extends AppCompatActivity {
             }
         });
 
-        addedImagesAdapter.setLimit(model.getUriListSizeLimit());
-        addedImagesAdapter.setOnAddButtonClickListener(v -> startActivityForResult(
+        addedImagesAdapter.limit = model.getUriListSizeLimit();
+        addedImagesAdapter.onAddButtonClickListener = v -> startActivityForResult(
                 Intent.createChooser(
                         new Intent(Intent.ACTION_GET_CONTENT)
                                 .addCategory(Intent.CATEGORY_OPENABLE)
@@ -189,21 +188,20 @@ public class PostActivity extends AppCompatActivity {
                                 .setType("*/*"), getString(R.string.add_image)
                 ),
                 REQUEST_GET_IMAGE
-        ));
-        addedImagesAdapter.setOnDeleteButtonListener(position -> {
-            addedImagesAdapter.getImagesList().remove(position);
+        );
+        addedImagesAdapter.onDeleteButtonListener = position -> {
+            addedImagesAdapter.removeImageAndUpdateView(position);
             model.getUriList().remove(position);
-            addedImagesAdapter.notifyDataSetChanged();
             boolean enabled = model.getUriList().size() > 0;
             isPossiblySensitive.setEnabled(enabled);
             isPossiblySensitive.setChecked(isPossiblySensitive.isChecked() && enabled);
-        });
-        addedImagesAdapter.setOnImageClickListener(position -> {
+        };
+        addedImagesAdapter.onImageClickListener = position -> {
             Intent open = new Intent(Intent.ACTION_VIEW)
                     .setData(model.getUriList().get(position))
                     .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             startActivity(Intent.createChooser(open, getString(R.string.open_image)));
-        });
+        };
         imagesRecyclerView.setAdapter(addedImagesAdapter);
 
         isPossiblySensitive = findViewById(R.id.activity_tweet_is_possibly_sensitive);
@@ -351,19 +349,21 @@ public class PostActivity extends AppCompatActivity {
                 Uri resultUri = data.getData();
                 ClipData resultUris = data.getClipData();
                 if (resultUri != null) {
-                    addedImagesAdapter.getImagesList().add(resultUri);
+                    addedImagesAdapter.addImageAndUpdateView(resultUri);
                     model.getUriList().add(resultUri);
-                    addedImagesAdapter.notifyItemChanged(addedImagesAdapter.getImagesList().size() - 1);
                     isPossiblySensitive.setEnabled(true);
                 } else if (resultUris != null) {
-                    int itemCount = resultUris.getItemCount();
+                    int resultSize = resultUris.getItemCount();
+                    int limit = model.getUriListSizeLimit() - model.getUriList().size();
+                    int itemCount = resultSize <= limit? resultSize: limit;
+                    ArrayList<Uri> arrayList = new ArrayList<>(itemCount);
 
                     for (int i = 0; i < itemCount; i++) {
-                        Uri uri = resultUris.getItemAt(i).getUri();
-                        addedImagesAdapter.getImagesList().add(uri);
-                        model.getUriList().add(uri);
+                        arrayList.add(resultUris.getItemAt(i).getUri());
                     }
-                    addedImagesAdapter.notifyItemRangeChanged(addedImagesAdapter.getImagesList().size() - itemCount, itemCount);
+                    addedImagesAdapter.addImagesAndUpdateView(arrayList);
+                    model.getUriList().addAll(arrayList);
+
                     isPossiblySensitive.setEnabled(true);
                 }
             }
