@@ -19,7 +19,6 @@ package com.github.moko256.twicalico;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -140,7 +139,7 @@ public abstract class BaseUsersFragment extends BaseListFragment {
                                 },
                                 e -> {
                                     e.printStackTrace();
-                                    Snackbar.make(getSnackBarParentContainer(), TwitterStringUtils.convertErrorToText(e), Snackbar.LENGTH_INDEFINITE)
+                                    getSnackBar(TwitterStringUtils.convertErrorToText(e))
                                             .setAction(R.string.retry, v -> {
 
                                                 setRefreshing(true);
@@ -180,7 +179,7 @@ public abstract class BaseUsersFragment extends BaseListFragment {
                                 },
                                 e -> {
                                     e.printStackTrace();
-                                    Snackbar.make(getSnackBarParentContainer(), TwitterStringUtils.convertErrorToText(e), Snackbar.LENGTH_INDEFINITE)
+                                    getSnackBar(TwitterStringUtils.convertErrorToText(e))
                                             .setAction(R.string.retry, v -> onLoadMoreList())
                                             .show();
                                 }

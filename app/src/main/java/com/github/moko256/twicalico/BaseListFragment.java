@@ -18,9 +18,9 @@ package com.github.moko256.twicalico;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -158,12 +158,12 @@ public abstract class BaseListFragment extends Fragment implements MovableTopInt
         }
     }
 
-    protected View getSnackBarParentContainer(){
+    protected Snackbar getSnackBar(String string){
         Activity parent=getActivity();
-        if(parent instanceof GetSnackBarParentContainerId){
-            return parent.findViewById(((GetSnackBarParentContainerId) getActivity()).getSnackBarParentContainerId());
+        if(parent instanceof GetSnackBar){
+            return ((GetSnackBar) parent).getSnackBar(string);
         } else {
-            return getView();
+            return Snackbar.make(getView(), string, Snackbar.LENGTH_INDEFINITE);
         }
     }
 
@@ -177,9 +177,8 @@ public abstract class BaseListFragment extends Fragment implements MovableTopInt
         return position;
     }
 
-    public interface GetSnackBarParentContainerId {
-        @IdRes
-        int getSnackBarParentContainerId();
+    public interface GetSnackBar {
+        Snackbar getSnackBar(String string);
     }
 
 }

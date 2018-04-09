@@ -19,6 +19,7 @@ package com.github.moko256.twicalico;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
@@ -29,7 +30,7 @@ import android.support.v7.widget.RecyclerView;
  * @author moko256
  */
 
-public class SearchResultActivity extends AppCompatActivity implements BaseListFragment.GetSnackBarParentContainerId, BaseTweetListFragment.GetRecyclerViewPool {
+public class SearchResultActivity extends AppCompatActivity implements BaseListFragment.GetSnackBar, BaseTweetListFragment.GetRecyclerViewPool {
 
     RecyclerView.RecycledViewPool tweetListViewPool;
 
@@ -64,8 +65,8 @@ public class SearchResultActivity extends AppCompatActivity implements BaseListF
     }
 
     @Override
-    public int getSnackBarParentContainerId() {
-        return R.id.activity_search_fragment_container;
+    public Snackbar getSnackBar(String string) {
+        return Snackbar.make(findViewById(R.id.activity_search_fragment_container), string, Snackbar.LENGTH_INDEFINITE);
     }
 
     @Override

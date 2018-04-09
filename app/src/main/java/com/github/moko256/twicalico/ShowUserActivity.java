@@ -51,7 +51,7 @@ import twitter4j.User;
  *
  * @author moko256
  */
-public class ShowUserActivity extends AppCompatActivity implements BaseListFragment.GetSnackBarParentContainerId, BaseTweetListFragment.GetRecyclerViewPool, BaseUsersFragment.GetRecyclerViewPool {
+public class ShowUserActivity extends AppCompatActivity implements BaseListFragment.GetSnackBar, BaseTweetListFragment.GetRecyclerViewPool, BaseUsersFragment.GetRecyclerViewPool {
 
     CompositeSubscription subscription;
 
@@ -131,7 +131,7 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
                                         user = it;
                                         new ShowUserFragmentsPagerAdapter(getSupportFragmentManager(),this,it.getId()).initAdapter(viewPager);
                                     },
-                                    e -> Snackbar.make(findViewById(getSnackBarParentContainerId()), TwitterStringUtils.convertErrorToText(e), Snackbar.LENGTH_INDEFINITE)
+                                    e -> getSnackBar(TwitterStringUtils.convertErrorToText(e))
                                             .show()
                             )
             );
@@ -309,8 +309,9 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
     }
 
     @Override
-    public int getSnackBarParentContainerId() {
-        return R.id.activity_show_user_coordinator_layout;
+    public Snackbar getSnackBar(String string) {
+        return Snackbar.make(findViewById(R.id.activity_show_user_coordinator_layout), string, Snackbar.LENGTH_INDEFINITE);
+
     }
 
     @Override
