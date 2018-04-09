@@ -1,21 +1,28 @@
 twicalico
 ====
 
-This application is the Twitter and Mastodon client for Android\.
+This application is the SNS client for Android\.
 
 |Timeline|Post screen|Trends screen|
 |---|---|---|
 |![Timeline](readme_image/home.png)|![Post screen](readme_image/post.png)|![Trends screen](readme_image/trends.png)|
 
-* Minimum api level is 17
+* Minimum api level is 19
 * Target api level is 27
+* Using REST API
+* Supported multiple account
 * Material Design
+
+## Available SNS
+* Twitter
+* Mastodon
+* Pleroma
 
 ## Install
 
 [<img src="https://dply.me/vjtth8/button/large" alt="Try it on your device via DeployGate">](https://dply.me/vjtth8#install)
 
-## Build
+## How to build
 
 1. Clone this project\.
 2. Open in Android Studio\.
