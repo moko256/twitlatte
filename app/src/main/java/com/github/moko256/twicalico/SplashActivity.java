@@ -46,9 +46,10 @@ public class SplashActivity extends AppCompatActivity {
             return  new Intent(this, OAuthActivity.class);
         }
 
-        if (getIntent() != null){
+        Intent intent = getIntent();
+        if (intent != null){
 
-            Bundle extras = getIntent().getExtras();
+            Bundle extras = intent.getExtras();
             if (extras != null){
                 if (extras.getCharSequence(Intent.EXTRA_TEXT) != null) {
                     CharSequence subject = extras.getCharSequence(Intent.EXTRA_SUBJECT);
@@ -68,7 +69,7 @@ public class SplashActivity extends AppCompatActivity {
                 }
             }
 
-            Uri data = getIntent().getData();
+            Uri data = intent.getData();
             if (data != null){
                 switch (data.getScheme()){
                     case "twitter":
@@ -97,51 +98,35 @@ public class SplashActivity extends AppCompatActivity {
                         int size = pathSegments.size();
 
                         String lastPathSegment = data.getLastPathSegment();
-
-                        if ((size == 1 && lastPathSegment.equals("share"))
-                                || (size == 2 && pathSegments.get(0).equals("intent") && lastPathSegment.equals("tweet"))){
-                            StringBuilder tweet = new StringBuilder(data.getQueryParameter("text"));
-                            if (data.getQueryParameter("url") != null){
-                                tweet.append(" ")
-                                        .append(data.getQueryParameter("url"));
-                            }
-                            if (data.getQueryParameter("hashtags") != null){
-                                String[] hashtags = data.getQueryParameter("hashtags").split(",");
-                                for (String hashtag: hashtags){
-                                    tweet.append(" #")
-                                            .append(hashtag);
+                        switch (size){
+                            case 1:
+                                switch (lastPathSegment){
+                                    case "share":
+                                        return generatePostIntent(data);
+                                    case "search":
+                                        return SearchResultActivity.getIntent(this, data.getQueryParameter("q"));
+                                    default:
+                                        return ShowUserActivity.getIntent(this, lastPathSegment);
                                 }
-                            }
-                            if (data.getQueryParameter("via") != null){
-                                tweet.append(" via @")
-                                        .append(data.getQueryParameter("via"));
-                            }
-                            if (data.getQueryParameter("related") != null){
-                                String[] relates = data.getQueryParameter("related").split(",");
-                                for (String related: relates){
-                                    tweet.append(" @")
-                                            .append(related);
+                            case 2:
+                                if (pathSegments.get(0).equals("intent") && lastPathSegment.equals("tweet")){
+                                    return generatePostIntent(data);
                                 }
-                            }
+                                break;
 
-                            return PostActivity.getIntent(
-                                    this,
-                                    data.getQueryParameter("in-reply-to") != null
-                                            ? Long.valueOf(data.getQueryParameter("in-reply-to"))
-                                            :-1L,
-                                    tweet.toString()
-                            );
-                        } else if (size == 1 && lastPathSegment.equals("search")){
-                            return SearchResultActivity.getIntent(this, data.getQueryParameter("q"));
-                        } else if (size == 3 && (pathSegments.get(1).equals("status") || pathSegments.get(1).equals("statuses"))){
-                            return ShowTweetActivity.getIntent(this, Long.parseLong(pathSegments.get(2)));
-                        } else if (size == 1){
-                            return ShowUserActivity.getIntent(this, lastPathSegment);
-                        } else if (data.getQueryParameter("status") != null){
-                            return PostActivity.getIntent(this, data.getQueryParameter("status"));
-                        } else {
-                            return Intent.createChooser(new Intent(Intent.ACTION_VIEW, data), "");
+                            case 3:
+                                String s = pathSegments.get(1);
+                                if (s.equals("status") || s.equals("statuses")){
+                                    return ShowTweetActivity.getIntent(this, Long.parseLong(lastPathSegment));
+                                }
+                                break;
                         }
+
+                        if (data.getQueryParameter("status") != null){
+                            return PostActivity.getIntent(this, data.getQueryParameter("status"));
+                        }
+
+                        return Intent.createChooser(new Intent(Intent.ACTION_VIEW, data), "");
                     case "web+mastodon":
                         if (data.getHost().equals("share")) {
                             return PostActivity.getIntent(
@@ -156,5 +141,43 @@ public class SplashActivity extends AppCompatActivity {
         }
 
         return new Intent(this, MainActivity.class);
+    }
+
+    private Intent generatePostIntent(Uri data){
+        StringBuilder tweet = new StringBuilder(data.getQueryParameter("text"));
+        String url = data.getQueryParameter("url");
+        if (url != null){
+            tweet.append(" ")
+                    .append(url);
+        }
+        String hashtagstr = data.getQueryParameter("hashtags");
+        if (hashtagstr != null){
+            String[] hashtags = hashtagstr.split(",");
+            for (String hashtag: hashtags){
+                tweet.append(" #")
+                        .append(hashtag);
+            }
+        }
+        String via = data.getQueryParameter("via");
+        if (via != null){
+            tweet.append(" via @")
+                    .append(via);
+        }
+        String relatedstr = data.getQueryParameter("related");
+        if (relatedstr != null){
+            String[] relates = relatedstr.split(",");
+            for (String related: relates){
+                tweet.append(" @")
+                        .append(related);
+            }
+        }
+
+        return PostActivity.getIntent(
+                this,
+                data.getQueryParameter("in-reply-to") != null
+                        ? Long.valueOf(data.getQueryParameter("in-reply-to"))
+                        :-1L,
+                tweet.toString()
+        );
     }
 }
