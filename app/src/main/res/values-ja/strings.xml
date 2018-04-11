@@ -37,7 +37,7 @@
     <string name="open_image">画像を開く</string>
     <string name="add_location">位置情報を追加</string>
     <string name="possibly_sensitive">画像に過激な表現を含む</string>
-    <string name="repeat_by">%sさんが拡散しました</string>
+    <string name="repeat_by">%1$sさん(%2$s)が拡散しました</string>
     <string name="reply_to">%sさんへの返信</string>
     <string name="mention_to">%sさんへの言及</string>
     <string name="app_settings">アプリケーションの設定</string>

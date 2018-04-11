@@ -47,7 +47,7 @@
     <string name="possibly_sensitive">Include sensitivity in the images</string>
     <string name="add_location">Add location</string>
     <string name="follow_and_follower">Follow and Followers</string>
-    <string name="repeat_by">Repeated by %s</string>
+    <string name="repeat_by">Repeated by %1$s(%2$s)</string>
     <string name="reply_to">Reply to %s</string>
     <string name="mention_to">Mention to %s</string>
     <string name="app_settings">Application Settings</string>
