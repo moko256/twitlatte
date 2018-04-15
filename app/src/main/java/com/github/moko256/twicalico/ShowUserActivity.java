@@ -19,6 +19,7 @@ package com.github.moko256.twicalico;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.StringRes;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -192,6 +193,7 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         ThrowableFunc throwableFunc=null;
+        @StringRes int didAction = -1;
         Twitter twitter = GlobalApplication.twitter;
 
         switch (item.getItemId()){
@@ -209,42 +211,50 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
                 break;
             case R.id.action_create_follow:
                 throwableFunc=()->twitter.createFriendship(user.getId());
+                didAction = R.string.did_follow;
                 break;
             case R.id.action_destroy_follow:
                 throwableFunc=()->twitter.destroyFriendship(user.getId());
+                didAction = R.string.did_unfollow;
                 break;
             case R.id.action_create_mute:
                 throwableFunc=()->twitter.createMute(user.getId());
+                didAction = R.string.did_mute;
                 break;
             case R.id.action_destroy_mute:
                 throwableFunc=()->twitter.destroyMute(user.getId());
+                didAction = R.string.did_unmute;
                 break;
             case R.id.action_create_block:
                 throwableFunc=()->twitter.createBlock(user.getId());
+                didAction = R.string.did_block;
                 break;
             case R.id.action_destroy_block:
                 throwableFunc=()->twitter.destroyBlock(user.getId());
+                didAction = R.string.did_unblock;
                 break;
             case R.id.action_destroy_follow_follower:
                 throwableFunc=()->{
                     twitter.createBlock(user.getId());
                     twitter.destroyBlock(user.getId());
                 };
+                didAction = R.string.did_destroy_ff;
                 break;
             case R.id.action_spam_report:
                 throwableFunc=()->GlobalApplication.twitter.reportSpam(user.getId());
                 break;
         }
 
-        if (throwableFunc != null) {
+        if (throwableFunc != null && didAction != -1) {
             ThrowableFunc finalThrowableFunc = throwableFunc;
-            confirmDialog(item.getTitle(), getString(R.string.confirm_message),()->runAsWorkerThread(finalThrowableFunc));
+            int finalDidAction = didAction;
+            confirmDialog(item.getTitle(), getString(R.string.confirm_message),()->runAsWorkerThread(finalThrowableFunc, finalDidAction));
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    private void runAsWorkerThread(ThrowableFunc func){
+    private void runAsWorkerThread(ThrowableFunc func, @StringRes int didAction){
         Completable.create(
                 subscriber -> {
                     try{
@@ -257,7 +267,7 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        () -> Toast.makeText(this, R.string.succeeded, Toast.LENGTH_SHORT).show(),
+                        () -> Toast.makeText(this, didAction, Toast.LENGTH_SHORT).show(),
                         throwable -> {
                             throwable.printStackTrace();
                             Toast.makeText(this, R.string.error_occurred, Toast.LENGTH_SHORT).show();

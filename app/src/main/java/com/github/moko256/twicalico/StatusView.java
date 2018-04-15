@@ -265,64 +265,106 @@ public class StatusView extends FrameLayout {
             imageTableView.setVisibility(View.GONE);
         }
 
-        likeButton.setOnCheckedChangeListener((compoundButton, b) -> Single
-                .create(subscriber->{
-                    try {
-                        if(b&&(!item.isFavorited())){
-                            subscriber.onSuccess(GlobalApplication.twitter.createFavorite(item.getId()));
-                        }
-                        else if((!b)&&item.isFavorited()){
-                            subscriber.onSuccess(GlobalApplication.twitter.destroyFavorite(item.getId()));
-                        }
-                    } catch (TwitterException e) {
-                        subscriber.onError(e);
-                    }
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        result->{
-                            Status status = (Status) result;
-                            GlobalApplication.statusCache.add(status);
-                            setStatus(GlobalApplication.statusCache.get(this.status.getId()));
-                            Toast.makeText(getContext(), R.string.succeeded, Toast.LENGTH_SHORT).show();
-                        },
-                        throwable -> {
-                            throwable.printStackTrace();
-                            Toast.makeText(getContext(), R.string.error_occurred, Toast.LENGTH_SHORT).show();
-                        }
-                )
-        );
+        likeButton.setOnCheckedChangeListener((compoundButton, b) -> {
+            if (b && (!item.isFavorited())) {
+                Single
+                        .create(subscriber -> {
+                            try {
+                                subscriber.onSuccess(GlobalApplication.twitter.createFavorite(item.getId()));
+                            } catch (TwitterException e) {
+                                subscriber.onError(e);
+                            }
+                        })
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                                result -> {
+                                    Status status = (Status) result;
+                                    GlobalApplication.statusCache.add(status);
+                                    setStatus(GlobalApplication.statusCache.get(this.status.getId()));
+                                    Toast.makeText(getContext(), R.string.did_like, Toast.LENGTH_SHORT).show();
+                                },
+                                throwable -> {
+                                    throwable.printStackTrace();
+                                    Toast.makeText(getContext(), R.string.error_occurred, Toast.LENGTH_SHORT).show();
+                                }
+                        );
+            } else if ((!b) && item.isFavorited()) {
+                Single
+                        .create(subscriber -> {
+                            try {
+                                subscriber.onSuccess(GlobalApplication.twitter.destroyFavorite(item.getId()));
+                            } catch (TwitterException e) {
+                                subscriber.onError(e);
+                            }
+                        })
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                                result -> {
+                                    Status status = (Status) result;
+                                    GlobalApplication.statusCache.add(status);
+                                    setStatus(GlobalApplication.statusCache.get(this.status.getId()));
+                                    Toast.makeText(getContext(), R.string.did_unlike, Toast.LENGTH_SHORT).show();
+                                },
+                                throwable -> {
+                                    throwable.printStackTrace();
+                                    Toast.makeText(getContext(), R.string.error_occurred, Toast.LENGTH_SHORT).show();
+                                }
+                        );
+            }
+        });
         likeButton.setChecked(item.isFavorited());
 
-        retweetButton.setOnCheckedChangeListener((compoundButton, b) -> Single
-                .create(subscriber->{
-                    try {
-                        if(b&&(!item.isRetweeted())){
-                            subscriber.onSuccess(GlobalApplication.twitter.retweetStatus(item.getId()));
-                        }
-                        else if((!b)&&item.isRetweeted()){
-                            subscriber.onSuccess(GlobalApplication.twitter.unRetweetStatus(item.getId()));
-                        }
-                    } catch (TwitterException e) {
-                        subscriber.onError(e);
-                    }
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        result->{
-                            Status status = (Status) result;
-                            GlobalApplication.statusCache.add(status);
-                            setStatus(GlobalApplication.statusCache.get(this.status.getId()));
-                            Toast.makeText(getContext(), R.string.succeeded, Toast.LENGTH_SHORT).show();
-                        },
-                        throwable -> {
-                            throwable.printStackTrace();
-                            Toast.makeText(getContext(),R.string.error_occurred,Toast.LENGTH_SHORT).show();
-                        }
-                )
-        );
+        retweetButton.setOnCheckedChangeListener((compoundButton, b) -> {
+            if (b && (!item.isRetweeted())) {
+                Single
+                        .create(subscriber -> {
+                            try {
+                                subscriber.onSuccess(GlobalApplication.twitter.retweetStatus(item.getId()));
+                            } catch (TwitterException e) {
+                                subscriber.onError(e);
+                            }
+                        })
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                                result -> {
+                                    Status status = (Status) result;
+                                    GlobalApplication.statusCache.add(status);
+                                    setStatus(GlobalApplication.statusCache.get(this.status.getId()));
+                                    Toast.makeText(getContext(), R.string.did_repeat, Toast.LENGTH_SHORT).show();
+                                },
+                                throwable -> {
+                                    throwable.printStackTrace();
+                                    Toast.makeText(getContext(), R.string.error_occurred, Toast.LENGTH_SHORT).show();
+                                }
+                        );
+            } else if ((!b) && item.isRetweeted()) {
+                Single
+                        .create(subscriber -> {
+                            try {
+                                subscriber.onSuccess(GlobalApplication.twitter.unRetweetStatus(item.getId()));
+                            } catch (TwitterException e) {
+                                subscriber.onError(e);
+                            }
+                        })
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                                result -> {
+                                    Status status = (Status) result;
+                                    GlobalApplication.statusCache.add(status);
+                                    setStatus(GlobalApplication.statusCache.get(this.status.getId()));
+                                    Toast.makeText(getContext(), R.string.did_unrepeat, Toast.LENGTH_SHORT).show();
+                                },
+                                throwable -> {
+                                    throwable.printStackTrace();
+                                    Toast.makeText(getContext(), R.string.error_occurred, Toast.LENGTH_SHORT).show();
+                                }
+                        );
+            }
+        });
         retweetButton.setChecked(item.isRetweeted());
         retweetButton.setEnabled(GlobalApplication.clientType == Type.MASTODON || !(item.getUser().isProtected()) || item.getUser().getId() == GlobalApplication.userId);
 

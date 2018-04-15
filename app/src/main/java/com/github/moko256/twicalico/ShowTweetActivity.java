@@ -238,7 +238,7 @@ public class ShowTweetActivity extends AppCompatActivity {
                                                 item.getUser().getScreenName(), users
                                         ));
                                         replyButton.setEnabled(true);
-                                        Toast.makeText(ShowTweetActivity.this,R.string.succeeded,Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(ShowTweetActivity.this,R.string.did_like,Toast.LENGTH_SHORT).show();
                                     },
                                     e->{
                                         e.printStackTrace();
