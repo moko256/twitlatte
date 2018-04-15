@@ -19,7 +19,6 @@ package com.github.moko256.twicalico;
 import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.NonNull;
-import android.support.v4.util.Pair;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -32,6 +31,7 @@ import com.github.moko256.twicalico.entity.AccessToken;
 import com.github.moko256.twicalico.text.TwitterStringUtils;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import twitter4j.User;
 
@@ -47,13 +47,14 @@ public class SelectAccountsAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     private static final int VIEW_TYPE_ADD = 1;
     private static final int VIEW_TYPE_REMOVE = 2;
 
-    Context context;
+    private final Context context;
 
-    private ArrayList<Pair<User, AccessToken>> images = new ArrayList<>();
+    private final ArrayList<User> users = new ArrayList<>();
+    private final ArrayList<AccessToken> accessTokens = new ArrayList<>();
 
-    private OnImageClickListener onImageButtonClickListener;
-    private View.OnClickListener onAddButtonClickListener;
-    private View.OnClickListener onRemoveButtonClickListener;
+    public OnImageClickListener onImageButtonClickListener;
+    public View.OnClickListener onAddButtonClickListener;
+    public View.OnClickListener onRemoveButtonClickListener;
 
     public SelectAccountsAdapter(Context context){
         this.context = context;
@@ -61,7 +62,7 @@ public class SelectAccountsAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
     @Override
     public int getItemViewType(int position) {
-        return (position < images.size())? VIEW_TYPE_IMAGE: ((position == images.size())? VIEW_TYPE_ADD: VIEW_TYPE_REMOVE);
+        return (position < accessTokens.size())? VIEW_TYPE_IMAGE: ((position == accessTokens.size())? VIEW_TYPE_ADD: VIEW_TYPE_REMOVE);
     }
 
     @NonNull
@@ -81,15 +82,23 @@ public class SelectAccountsAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             case VIEW_TYPE_IMAGE: {
                 ImageChildViewHolder viewHolder = (ImageChildViewHolder) holder;
 
-                Pair<User, AccessToken> pair = images.get(position);
-                User user = pair.first;
-                AccessToken accessToken = pair.second;
+                User user = users.get(position);
+                AccessToken accessToken = accessTokens.get(position);
 
-                if (user != null && accessToken != null) {
+                if (user != null) {
 
                     Uri image = Uri.parse(user.get400x400ProfileImageURLHttps());
                     viewHolder.title.setText(TwitterStringUtils.plusAtMark(user.getScreenName(), accessToken.getUrl()));
                     GlideApp.with(context).load(image).circleCrop().into(viewHolder.image);
+                    viewHolder.itemView.setOnClickListener(v -> {
+                        if (onImageButtonClickListener != null) {
+                            onImageButtonClickListener.onClick(accessToken);
+                        }
+                    });
+
+                } else {
+
+                    viewHolder.title.setText(TwitterStringUtils.plusAtMark(accessToken.getScreenName(), accessToken.getUrl()));
                     viewHolder.itemView.setOnClickListener(v -> {
                         if (onImageButtonClickListener != null) {
                             onImageButtonClickListener.onClick(accessToken);
@@ -118,41 +127,25 @@ public class SelectAccountsAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
     @Override
     public int getItemCount() {
-        return images.size() + 2;
-    }
-
-
-    public OnImageClickListener getOnImageButtonClickListener() {
-        return onImageButtonClickListener;
-    }
-
-    public void setOnImageButtonClickListener(OnImageClickListener onImageButtonClickListener) {
-        this.onImageButtonClickListener = onImageButtonClickListener;
-    }
-
-    public View.OnClickListener getOnAddButtonClickListener() {
-        return onAddButtonClickListener;
-    }
-
-    public void setOnAddButtonClickListener(View.OnClickListener onAddButtonClickListener) {
-        this.onAddButtonClickListener = onAddButtonClickListener;
-    }
-
-    public View.OnClickListener getOnRemoveButtonClickListener() {
-        return onRemoveButtonClickListener;
-    }
-
-    public void setOnRemoveButtonClickListener(View.OnClickListener onRemoveButtonClickListener) {
-        this.onRemoveButtonClickListener = onRemoveButtonClickListener;
-    }
-
-    public ArrayList<Pair<User, AccessToken>> getImagesList() {
-        return images;
+        return accessTokens.size() + 2;
     }
 
     public void clearImages() {
-        images.clear();
-        images = null;
+        users.clear();
+        accessTokens.clear();
+    }
+
+    public void addAndUpdate(List<User> userList, List<AccessToken> accessTokenList){
+        users.addAll(userList);
+        accessTokens.addAll(accessTokenList);
+        notifyDataSetChanged();
+    }
+
+    public void removeAccessTokensAndUpdate(AccessToken accessToken){
+        int position = accessTokens.indexOf(accessToken);
+        users.remove(position);
+        accessTokens.remove(position);
+        notifyItemRemoved(position);
     }
 
     class ImageChildViewHolder extends RecyclerView.ViewHolder{

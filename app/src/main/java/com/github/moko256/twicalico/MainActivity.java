@@ -183,7 +183,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
         navigationView.addHeaderView(accountListView);
 
         SelectAccountsAdapter adapter = new SelectAccountsAdapter(this);
-        adapter.setOnImageButtonClickListener(accessToken -> {
+        adapter.onImageButtonClickListener = accessToken -> {
             drawer.closeDrawer(GravityCompat.START);
 
             if (accessToken.getUserId() != GlobalApplication.userId) {
@@ -195,16 +195,16 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                 updateDrawerImage();
                 clearAndPrepareFragment();
             }
-        });
-        adapter.setOnAddButtonClickListener(v -> {
+        };
+        adapter.onAddButtonClickListener = v -> {
             PreferenceManager.getDefaultSharedPreferences(this)
                     .edit()
                     .putString("AccountKey", "-1")
                     .apply();
             GlobalApplication.twitter = null;
             startActivity(new Intent(this, OAuthActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
-        });
-        adapter.setOnRemoveButtonClickListener(v -> new AlertDialog.Builder(this)
+        };
+        adapter.onRemoveButtonClickListener = v -> new AlertDialog.Builder(this)
                 .setMessage(R.string.confirm_logout)
                 .setCancelable(true)
                 .setPositiveButton(R.string.do_logout,
@@ -217,14 +217,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                                     defaultSharedPreferences.getString("AccountKey", "-1")
                             );
                             accountsModel.delete(token);
-                            ArrayList<Pair<User, AccessToken>> imagesList = adapter.getImagesList();
-                            for (int j = 0; j < imagesList.size(); j++) {
-                                if (imagesList.get(j).second.equals(token)) {
-                                    imagesList.remove(j);
-                                    break;
-                                }
-                            }
-                            adapter.notifyDataSetChanged();
+                            adapter.removeAccessTokensAndUpdate(token);
 
                             int point = accountsModel.size() - 1;
                             if (point != -1) {
@@ -237,12 +230,12 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                                 updateDrawerImage();
                                 clearAndPrepareFragment();
                             } else {
-                                adapter.getOnAddButtonClickListener().onClick(v);
+                                adapter.onAddButtonClickListener.onClick(v);
                             }
                         }
                 )
                 .setNegativeButton(android.R.string.cancel, null)
-                .show());
+                .show();
         accountListView.setAdapter(adapter);
 
         subscription.add(
@@ -251,32 +244,31 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                             AccountsModel accountsModel = GlobalApplication.accountsModel;
                             List<AccessToken> accessTokens = accountsModel.getAccessTokens();
 
-                            ArrayList<Pair<User, AccessToken>> r = new ArrayList<>(accessTokens.size());
+                            ArrayList<User> users = new ArrayList<>(accessTokens.size());
                             for (AccessToken accessToken : accessTokens){
                                 long id = accessToken.getUserId();
                                 CachedUsersSQLiteOpenHelper userHelper = new CachedUsersSQLiteOpenHelper(this, id, accessToken.getType() == Type.TWITTER);
                                 User user = userHelper.getCachedUser(id);
-                                if (user ==  null){
+                                if (user == null){
                                     try {
                                         user = ((GlobalApplication) getApplication()).getTwitterInstance(accessToken).verifyCredentials();
                                         userHelper.addCachedUser(user);
                                     } catch (TwitterException e) {
-                                        singleSubscriber.onError(e);
-                                        return;
+                                        e.printStackTrace();
                                     } finally {
                                         userHelper.close();
                                     }
                                 }
-                                r.add(new Pair<>(user, accessToken));
+                                users.add(user);
                             }
-                            singleSubscriber.onSuccess(r);
+                            singleSubscriber.onSuccess(new Pair<>(users, accessTokens));
                         })
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
                                 o -> {
-                                    ArrayList<Pair<User, AccessToken>> pairs = (ArrayList<Pair<User, AccessToken>>) o;
-                                    adapter.getImagesList().addAll(pairs);
+                                    Pair<ArrayList<User>, ArrayList<AccessToken>> pairs = (Pair<ArrayList<User>, ArrayList<AccessToken>>) o;
+                                    adapter.addAndUpdate(pairs.first, pairs.second);
                                     adapter.notifyDataSetChanged();
                                 },
                                 Throwable::printStackTrace
