@@ -168,7 +168,7 @@ public class TweetImageTableView extends GridLayout {
                         .load(TwitterStringUtils.convertLargeImageUrl(
                                 mediaEntities[ii].getMediaURLHttps()
                         ))
-                        .sizeMultiplier(0.5f)
+                        .sizeMultiplier(0.3f)
                         .into(imageViews[ii]);
                 switch (mediaEntities[ii].getType()) {
                     case "video":
@@ -187,7 +187,7 @@ public class TweetImageTableView extends GridLayout {
                             .load(TwitterStringUtils.convertLargeImageUrl(
                                     mediaEntities[ii].getMediaURLHttps()
                             ))
-                            .sizeMultiplier(0.5f)
+                            .sizeMultiplier(0.3f)
                             .transform(new BlurTransformation())
                             .into(imageViews[ii]);
                 } else {
