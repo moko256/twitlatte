@@ -85,10 +85,10 @@
     <string name="error_occurred">Error occurred</string>
     <string name="retry">retry</string>
     <string name="did_post">Posted</string>
-    <string name="did_unpost">Unosted</string>
     <string name="did_like">Liked</string>
     <string name="did_unlike">Unliked</string>
     <string name="did_repeat">Repeated</string>
+    <string name="did_unrepeat">Unrepeated</string>
     <string name="did_follow">Followed</string>
     <string name="did_unfollow">Unfollowed</string>
     <string name="did_mute">Muted</string>
