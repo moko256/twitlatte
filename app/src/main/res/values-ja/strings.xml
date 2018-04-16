@@ -73,7 +73,6 @@
     <string name="save_image">この画像を保存する</string>
     <string name="see_more">もっと見る</string>
     <string name="error_occurred">エラーが発生しました</string>
-    <string name="retry">再試行</string>
     <string name="did_post">投稿しました</string>
     <string name="did_like">お気に入りしました</string>
     <string name="did_unlike">お気に入り解除しました</string>

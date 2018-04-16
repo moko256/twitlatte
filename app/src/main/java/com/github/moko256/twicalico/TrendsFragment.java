@@ -147,12 +147,7 @@ public class TrendsFragment extends BaseListFragment {
                                 },
                                 e -> {
                                     e.printStackTrace();
-                                    getSnackBar(TwitterStringUtils.convertErrorToText(e))
-                                            .setAction(R.string.retry, v -> {
-                                                setRefreshing(true);
-                                                onInitializeList();
-                                            })
-                                            .show();
+                                    getSnackBar(TwitterStringUtils.convertErrorToText(e)).show();
                                     setRefreshing(false);
                                 }
                         )

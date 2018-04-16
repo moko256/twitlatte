@@ -150,9 +150,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                                 },
                                 e -> {
                                     e.printStackTrace();
-                                    getSnackBar(TwitterStringUtils.convertErrorToText(e))
-                                            .setAction(R.string.retry, v -> onLoadMoreList())
-                                            .show();
+                                    getSnackBar(TwitterStringUtils.convertErrorToText(e)).show();
                                 }
                         )
         ));
@@ -245,12 +243,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                                 },
                                 e -> {
                                     e.printStackTrace();
-                                    getSnackBar(TwitterStringUtils.convertErrorToText(e))
-                                            .setAction(R.string.retry, v -> {
-                                                setRefreshing(true);
-                                                onInitializeList();
-                                            })
-                                            .show();
+                                    getSnackBar(TwitterStringUtils.convertErrorToText(e)).show();
                                     setRefreshing(false);
                                 }
                         )
@@ -296,12 +289,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                                 },
                                 e -> {
                                     e.printStackTrace();
-                                    getSnackBar(TwitterStringUtils.convertErrorToText(e))
-                                            .setAction(R.string.retry, v -> {
-                                                setRefreshing(true);
-                                                onUpdateList();
-                                            })
-                                            .show();
+                                    getSnackBar(TwitterStringUtils.convertErrorToText(e)).show();
                                     setRefreshing(false);
                                 }
                         )
@@ -329,9 +317,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                                 },
                                 e -> {
                                     e.printStackTrace();
-                                    getSnackBar(TwitterStringUtils.convertErrorToText(e))
-                                            .setAction(R.string.retry, v -> onLoadMoreList())
-                                            .show();
+                                    getSnackBar(TwitterStringUtils.convertErrorToText(e)).show();
                                 }
                         )
         );
