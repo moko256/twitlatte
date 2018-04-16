@@ -71,6 +71,9 @@ public class ImagePagerChildFragment extends Fragment {
         });
         view.setPositionChangeListener((Integer top, Integer left, Float dragRangeRate) -> {
             view.setBackgroundColor(Color.argb(Math.round(255 * (1.0F - dragRangeRate)), 0, 0, 0));
+            if ((getActivity().getWindow().getDecorView().getSystemUiVisibility() & View.SYSTEM_UI_FLAG_FULLSCREEN) != 0) {
+                showSystemUI();
+            }
             return Unit.INSTANCE;
         });
 
