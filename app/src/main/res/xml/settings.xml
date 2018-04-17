@@ -27,7 +27,7 @@
             android:title="@string/logout"/>
     </PreferenceCategory>
     <PreferenceCategory
-        android:title="@string/app_settings">
+        android:title="@string/application">
         <ListPreference
             android:key="nightModeType"
             android:defaultValue="@string/mode_night_no_value"
