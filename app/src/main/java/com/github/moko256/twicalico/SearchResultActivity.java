@@ -66,7 +66,7 @@ public class SearchResultActivity extends AppCompatActivity implements BaseListF
 
     @Override
     public Snackbar getSnackBar(String string) {
-        return Snackbar.make(findViewById(R.id.activity_search_fragment_container), string, Snackbar.LENGTH_INDEFINITE);
+        return Snackbar.make(findViewById(R.id.activity_search_fragment_container), string, Snackbar.LENGTH_LONG);
     }
 
     @Override

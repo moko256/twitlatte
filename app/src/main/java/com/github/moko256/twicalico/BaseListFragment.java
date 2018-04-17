@@ -163,7 +163,7 @@ public abstract class BaseListFragment extends Fragment implements MovableTopInt
         if(parent instanceof GetSnackBar){
             return ((GetSnackBar) parent).getSnackBar(string);
         } else {
-            return Snackbar.make(getView(), string, Snackbar.LENGTH_INDEFINITE);
+            return Snackbar.make(getView(), string, Snackbar.LENGTH_LONG);
         }
     }
 

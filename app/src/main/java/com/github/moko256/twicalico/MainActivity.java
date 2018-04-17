@@ -405,7 +405,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
 
     @Override
     public Snackbar getSnackBar(String string) {
-        return Snackbar.make(findViewById(R.id.activity_main_coordinator_layout), string, Snackbar.LENGTH_INDEFINITE);
+        return Snackbar.make(findViewById(R.id.activity_main_coordinator_layout), string, Snackbar.LENGTH_LONG);
     }
 
     private void attachFragment(Fragment fragment){

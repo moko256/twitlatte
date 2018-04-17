@@ -320,7 +320,7 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
 
     @Override
     public Snackbar getSnackBar(String string) {
-        return Snackbar.make(findViewById(R.id.activity_show_user_coordinator_layout), string, Snackbar.LENGTH_INDEFINITE);
+        return Snackbar.make(findViewById(R.id.activity_show_user_coordinator_layout), string, Snackbar.LENGTH_LONG);
 
     }
 
