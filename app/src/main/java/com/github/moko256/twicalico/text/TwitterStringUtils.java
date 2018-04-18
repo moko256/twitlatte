@@ -18,8 +18,10 @@ package com.github.moko256.twicalico.text;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.util.ArrayMap;
 import android.text.Html;
@@ -44,6 +46,11 @@ import com.github.moko256.twicalico.entity.Type;
 import com.github.moko256.twicalico.intent.AppCustomTabsKt;
 import com.sys1yagi.mastodon4j.api.exception.Mastodon4jRequestException;
 
+import net.ellerton.japng.android.api.PngAndroid;
+import net.ellerton.japng.error.PngException;
+
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -182,10 +189,12 @@ public class TwitterStringUtils {
                         GlideRequests glideRequests = GlideApp.with(context);
                         for (Emoji emoji : list){
                             try {
-                                Drawable value = glideRequests.load(emoji.getUrl()).submit().get();
+                                FileInputStream inputStream = new FileInputStream(glideRequests.asFile().load(emoji.getUrl()).submit().get());
+                                Drawable value = PngAndroid.readDrawable(textView.getContext(), inputStream);
+                                inputStream.close();
                                 value.setBounds(0, 0, imageSize, imageSize);
                                 map.put(emoji.getShortCode(), value);
-                            } catch (InterruptedException | ExecutionException e) {
+                            } catch (InterruptedException | ExecutionException | PngException | IOException e) {
                                 e.printStackTrace();
                             }
                         }
@@ -205,6 +214,36 @@ public class TwitterStringUtils {
                                             matcher.start(), matcher.end(),
                                             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
                                     );
+                                    if (drawable instanceof Animatable){
+                                        Handler handler = new Handler();
+                                        drawable.setVisible(true, false);
+                                        drawable.setCallback(new Drawable.Callback() {
+                                            @Override
+                                            public void invalidateDrawable(@NonNull Drawable who) {
+                                                if (TextUtils.equals(builder, textView.getText())){
+                                                    textView.invalidate();
+                                                } else {
+                                                    ((Animatable) who).stop();
+                                                }
+                                            }
+
+                                            @Override
+                                            public void scheduleDrawable(@NonNull Drawable who, @NonNull Runnable what, long when) {
+                                                if (TextUtils.equals(builder, textView.getText())){
+                                                    textView.invalidate();
+                                                    handler.postDelayed(what, when);
+                                                } else {
+                                                    ((Animatable) who).stop();
+                                                }
+                                            }
+
+                                            @Override
+                                            public void unscheduleDrawable(@NonNull Drawable who, @NonNull Runnable what) {
+                                                handler.removeCallbacks(what);
+                                            }
+                                        });
+                                        ((Animatable) drawable).start();
+                                    }
                                 }
                                 found = matcher.find();
                             }
