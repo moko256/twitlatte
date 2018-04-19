@@ -117,38 +117,34 @@ public class ShowImageActivity extends AppCompatActivity {
 
     private void contentDownload(){
         String path="";
-        String ext="";
         MediaEntity mediaEntity= mediaEntities.get(pager.getCurrentItem());
         switch (mediaEntity.getType()){
             case "video":
                 for(MediaEntity.Variant variant : mediaEntity.getVideoVariants()){
                     if(variant.getContentType().equals("video/mp4")){
-                        path=variant.getUrl();
-                        ext="mp4";
+                        path = variant.getUrl();
                     }
                 }
                 break;
 
             case "animated_gif":
-                path=mediaEntity.getVideoVariants()[0].getUrl();
-                ext="mp4";
+                path = mediaEntity.getVideoVariants()[0].getUrl();
                 break;
 
             case "photo":
             default:
-                String[] pathSplitWithDot=mediaEntity.getMediaURLHttps().split(".");
-                path= TwitterStringUtils.convertOriginalImageUrl(mediaEntity.getMediaURLHttps());
-                ext=pathSplitWithDot[pathSplitWithDot.length-1];
+                path = TwitterStringUtils.convertOriginalImageUrl(mediaEntity.getMediaURLHttps());
                 break;
         }
         DownloadManager manager=(DownloadManager)getSystemService(DOWNLOAD_SERVICE);
-        DownloadManager.Request request=new DownloadManager.Request(Uri.parse(path));
-        String fileName=String.valueOf(mediaEntity.getId())+"."+ext;
+        Uri uri = Uri.parse(path);
+        DownloadManager.Request request = new DownloadManager.Request(uri);
+        String lastPathSegment = uri.getLastPathSegment();
         request.setDestinationInExternalPublicDir(
                 Environment.DIRECTORY_DOWNLOADS,
-                "/" + getString(R.string.app_name) + "/"+fileName
+                "/" + getString(R.string.app_name) + "/" + lastPathSegment
         );
-        request.setTitle(fileName);
+        request.setTitle(lastPathSegment);
         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
         manager.enqueue(request);
     }
