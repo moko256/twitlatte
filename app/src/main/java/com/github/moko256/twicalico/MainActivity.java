@@ -80,6 +80,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
     TextView userIdText;
     ImageView userImage;
     ImageView userBackgroundImage;
+    ImageView userToggleImage;
     RecyclerView accountListView;
 
     TabLayout tabLayout;
@@ -168,6 +169,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
         userNameText = headerView.findViewById(R.id.user_name);
         userIdText = headerView.findViewById(R.id.user_id);
         userImage = headerView.findViewById(R.id.user_image);
+        userToggleImage = headerView.findViewById(R.id.toggle_account);
         userBackgroundImage = headerView.findViewById(R.id.user_bg_image);
         userBackgroundImage.setOnClickListener(v -> changeIsDrawerAccountsSelection());
 
@@ -366,12 +368,10 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
 
         accountListView.setVisibility(isDrawerAccountsSelection? View.VISIBLE: View.GONE);
 
+        userToggleImage.setRotation(isDrawerAccountsSelection? 180: 0);
+
         navigationView.getMenu().setGroupVisible(R.id.drawer_menu_main, !isDrawerAccountsSelection);
         navigationView.getMenu().setGroupVisible(R.id.drawer_menu_settings, !isDrawerAccountsSelection);
-
-        ((RecyclerView) navigationView.findViewById(android.support.design.R.id.design_navigation_view))
-                .getAdapter()
-                .notifyDataSetChanged();
     }
 
     private void startMyUserActivity() {
