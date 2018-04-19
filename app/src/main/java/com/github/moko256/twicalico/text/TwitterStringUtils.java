@@ -47,10 +47,8 @@ import com.github.moko256.twicalico.intent.AppCustomTabsKt;
 import com.sys1yagi.mastodon4j.api.exception.Mastodon4jRequestException;
 
 import net.ellerton.japng.android.api.PngAndroid;
-import net.ellerton.japng.error.PngException;
 
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -189,12 +187,17 @@ public class TwitterStringUtils {
                         GlideRequests glideRequests = GlideApp.with(context);
                         for (Emoji emoji : list){
                             try {
-                                FileInputStream inputStream = new FileInputStream(glideRequests.asFile().load(emoji.getUrl()).submit().get());
-                                Drawable value = PngAndroid.readDrawable(textView.getContext(), inputStream);
-                                inputStream.close();
+                                Drawable value;
+                                try {
+                                    FileInputStream inputStream = new FileInputStream(glideRequests.asFile().load(emoji.getUrl()).submit().get());
+                                    value =  PngAndroid.readDrawable(textView.getContext(), inputStream);
+                                    inputStream.close();
+                                } catch (Throwable e){
+                                    value = glideRequests.load(emoji.getUrl()).submit().get();
+                                }
                                 value.setBounds(0, 0, imageSize, imageSize);
                                 map.put(emoji.getShortCode(), value);
-                            } catch (InterruptedException | ExecutionException | PngException | IOException e) {
+                            } catch (InterruptedException | ExecutionException e) {
                                 e.printStackTrace();
                             }
                         }
@@ -216,7 +219,6 @@ public class TwitterStringUtils {
                                     );
                                     if (drawable instanceof Animatable){
                                         Handler handler = new Handler();
-                                        drawable.setVisible(true, false);
                                         drawable.setCallback(new Drawable.Callback() {
                                             @Override
                                             public void invalidateDrawable(@NonNull Drawable who) {
@@ -229,12 +231,8 @@ public class TwitterStringUtils {
 
                                             @Override
                                             public void scheduleDrawable(@NonNull Drawable who, @NonNull Runnable what, long when) {
-                                                if (TextUtils.equals(builder, textView.getText())){
-                                                    textView.invalidate();
-                                                    handler.postDelayed(what, when);
-                                                } else {
-                                                    ((Animatable) who).stop();
-                                                }
+                                                who.invalidateSelf();
+                                                handler.postAtTime(what, when);
                                             }
 
                                             @Override
