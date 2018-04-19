@@ -43,6 +43,8 @@ This application is built using these libraries\:
 * google-gson
 * PhotoView
 * FlingLayout
+* japng
+* japng_android
 * OkHttp
 * mastodon4j
 * Twitter4J

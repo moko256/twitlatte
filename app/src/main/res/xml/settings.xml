@@ -161,6 +161,12 @@
                 android:key="license_lib_fling_layout"
                 android:title="FlingLayout"/>
             <Preference
+                android:key="license_lib_japng"
+                android:title="japng"/>
+            <Preference
+                android:key="license_lib_japng_android"
+                android:title="japng_android"/>
+            <Preference
                 android:key="license_lib_okhttp"
                 android:title="OkHttp"/>
             <Preference
