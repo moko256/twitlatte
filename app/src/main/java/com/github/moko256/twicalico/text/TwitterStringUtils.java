@@ -193,6 +193,7 @@ public class TwitterStringUtils {
                                     value =  PngAndroid.readDrawable(textView.getContext(), inputStream);
                                     inputStream.close();
                                 } catch (Throwable e){
+                                    e.printStackTrace();
                                     value = glideRequests.load(emoji.getUrl()).submit().get();
                                 }
                                 value.setBounds(0, 0, imageSize, imageSize);
