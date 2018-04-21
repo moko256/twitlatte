@@ -137,7 +137,10 @@ public class StatusView extends FrameLayout {
             if(retweetUserName.getVisibility() != View.VISIBLE){
                 retweetUserName.setVisibility(View.VISIBLE);
             }
-            retweetUserName.setText(getContext().getString(R.string.repeat_by,status.getUser().getName()));
+            retweetUserName.setText(getContext().getString(
+                    TwitterStringUtils.getRepeatedByStringRes(GlobalApplication.clientType),
+                    status.getUser().getName()
+            ));
 
             if(retweetTimeStamp.getVisibility() != View.VISIBLE){
                 retweetTimeStamp.setVisibility(View.VISIBLE);
@@ -292,7 +295,14 @@ public class StatusView extends FrameLayout {
                                     Status status = (Status) result;
                                     GlobalApplication.statusCache.add(status);
                                     setStatus(GlobalApplication.statusCache.get(this.status.getId()));
-                                    Toast.makeText(getContext(), R.string.did_like, Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(
+                                            getContext(),
+                                            TwitterStringUtils.getDidActionStringRes(
+                                                    GlobalApplication.clientType,
+                                                    TwitterStringUtils.Action.LIKE
+                                            ),
+                                            Toast.LENGTH_SHORT
+                                    ).show();
                                 },
                                 throwable -> {
                                     throwable.printStackTrace();
@@ -315,7 +325,14 @@ public class StatusView extends FrameLayout {
                                     Status status = (Status) result;
                                     GlobalApplication.statusCache.add(status);
                                     setStatus(GlobalApplication.statusCache.get(this.status.getId()));
-                                    Toast.makeText(getContext(), R.string.did_unlike, Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(
+                                            getContext(),
+                                            TwitterStringUtils.getDidActionStringRes(
+                                                    GlobalApplication.clientType,
+                                                    TwitterStringUtils.Action.UNLIKE
+                                            ),
+                                            Toast.LENGTH_SHORT
+                                    ).show();
                                 },
                                 throwable -> {
                                     throwable.printStackTrace();
@@ -343,7 +360,14 @@ public class StatusView extends FrameLayout {
                                     Status status = (Status) result;
                                     GlobalApplication.statusCache.add(status);
                                     setStatus(GlobalApplication.statusCache.get(this.status.getId()));
-                                    Toast.makeText(getContext(), R.string.did_repeat, Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(
+                                            getContext(),
+                                            TwitterStringUtils.getDidActionStringRes(
+                                                    GlobalApplication.clientType,
+                                                    TwitterStringUtils.Action.REPEAT
+                                            ),
+                                            Toast.LENGTH_SHORT
+                                    ).show();
                                 },
                                 throwable -> {
                                     throwable.printStackTrace();
@@ -366,7 +390,14 @@ public class StatusView extends FrameLayout {
                                     Status status = (Status) result;
                                     GlobalApplication.statusCache.add(status);
                                     setStatus(GlobalApplication.statusCache.get(this.status.getId()));
-                                    Toast.makeText(getContext(), R.string.did_unrepeat, Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(
+                                            getContext(),
+                                            TwitterStringUtils.getDidActionStringRes(
+                                                    GlobalApplication.clientType,
+                                                    TwitterStringUtils.Action.UNREPEAT
+                                            ),
+                                            Toast.LENGTH_SHORT
+                                    ).show();
                                 },
                                 throwable -> {
                                     throwable.printStackTrace();

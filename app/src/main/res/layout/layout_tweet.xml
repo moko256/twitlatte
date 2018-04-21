@@ -42,7 +42,7 @@
             android:layout_marginLeft="16dp"
             android:layout_marginRight="8dp"
             android:layout_toLeftOf="@id/tweet_retweet_time_stamp_text"
-            tools:text="@string/repeat_by"/>
+            tools:text="@string/retweeted_by"/>
 
         <TextView
             android:id="@+id/tweet_retweet_time_stamp_text"

@@ -23,6 +23,7 @@ import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.annotation.StringRes;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.util.ArrayMap;
@@ -471,6 +472,63 @@ public class TwitterStringUtils {
         }
 
         textView.setText(result);
+    }
+
+    @StringRes
+    public static int getDidActionStringRes(@Type.ClientTypeInt int type, Action action){
+        switch (type){
+            case Type.TWITTER:
+                switch (action){
+                    case LIKE:
+                        return R.string.did_like;
+                    case UNLIKE:
+                        return R.string.did_unlike;
+                    case REPEAT:
+                        return R.string.did_retweet;
+                    case UNREPEAT:
+                        return R.string.did_unretweet;
+                     default:
+                        return 0;
+                }
+
+            case Type.MASTODON:
+                switch (action){
+                    case LIKE:
+                        return R.string.did_favorite;
+                    case UNLIKE:
+                        return R.string.did_unfavorite;
+                    case REPEAT:
+                        return R.string.did_boost;
+                    case UNREPEAT:
+                        return R.string.did_unboost;
+                    default:
+                        return 0;
+                }
+
+            default:
+                return 0;
+        }
+    }
+
+    @StringRes
+    public static int getRepeatedByStringRes(@Type.ClientTypeInt int type){
+        switch (type){
+            case Type.TWITTER:
+                return R.string.retweeted_by;
+
+            case Type.MASTODON:
+                return R.string.boosted_by;
+
+            default:
+                return 0;
+        }
+    }
+
+    public static enum Action{
+        LIKE,
+        UNLIKE,
+        REPEAT,
+        UNREPEAT
     }
 
 }

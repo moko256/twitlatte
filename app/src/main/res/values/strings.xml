@@ -47,7 +47,8 @@
     <string name="possibly_sensitive">Include sensitivity in the images</string>
     <string name="add_location">Add location</string>
     <string name="follow_and_follower">Follow and Followers</string>
-    <string name="repeat_by">Repeated by %s</string>
+    <string name="retweeted_by">Retweeted by %s</string>
+    <string name="boosted_by">Boosted by %s</string>
     <string name="reply_to">Reply to %s</string>
     <string name="mention_to">Mention to %s</string>
     <string name="application">Application</string>
@@ -76,7 +77,6 @@
     <string name="destroy_follow_follower">Cancel Follow-Follower</string>
     <string name="spam_report">Report this Account as a spam</string>
     <string name="save_image">Save this image</string>
-    <string name="see_more">See more…</string>
     <string name="error_occurred">Error occurred</string>
     <string name="is_load_timeline_image">Load the images on the timeline</string>
     <string name="version_text">Version</string>
@@ -114,10 +114,17 @@
     <string name="confirm_message">Do this action?</string>
 
     <string name="did_post">Posted</string>
+
     <string name="did_like">Liked</string>
     <string name="did_unlike">Unliked</string>
-    <string name="did_repeat">Repeated</string>
-    <string name="did_unrepeat">Unrepeated</string>
+    <string name="did_retweet">Retweeted</string>
+    <string name="did_unretweet">Unretweeted</string>
+
+    <string name="did_favorite">Favorited</string>
+    <string name="did_unfavorite">Unfavorited</string>
+    <string name="did_boost">Boosted</string>
+    <string name="did_unboost">Unboosted</string>
+
     <string name="did_follow">Followed</string>
     <string name="did_unfollow">Unfollowed</string>
     <string name="did_mute">Muted</string>

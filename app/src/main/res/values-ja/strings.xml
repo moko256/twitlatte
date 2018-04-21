@@ -37,7 +37,8 @@
     <string name="open_image">画像を開く</string>
     <string name="add_location">位置情報を追加</string>
     <string name="possibly_sensitive">画像に過激な表現を含む</string>
-    <string name="repeat_by">%sさんがリピートしました</string>
+    <string name="retweeted_by">%sさんがリツイートしました</string>
+    <string name="boosted_by">%sさんがブーストしました</string>
     <string name="reply_to">%sさんへの返信</string>
     <string name="mention_to">%sさんへの言及</string>
     <string name="application">アプリケーション</string>
@@ -66,7 +67,6 @@
     <string name="destroy_follow_follower">FF解除</string>
     <string name="spam_report">スパムとして報告する</string>
     <string name="save_image">この画像を保存する</string>
-    <string name="see_more">もっと見る</string>
     <string name="error_occurred">エラーが発生しました</string>
     <string name="is_load_timeline_image">タイムラインの画像を読み込むか</string>
     <string name="version_text">バージョン</string>
@@ -103,10 +103,17 @@
     <string name="confirm_message">実行しますか？</string>
 
     <string name="did_post">投稿しました</string>
-    <string name="did_like">お気に入りしました</string>
-    <string name="did_unlike">お気に入り解除しました</string>
-    <string name="did_repeat">拡散しました</string>
-    <string name="did_unrepeat">リピート解除しました</string>
+
+    <string name="did_like">いいねしました</string>
+    <string name="did_unlike">いいね解除しました</string>
+    <string name="did_retweet">リツイートしました</string>
+    <string name="did_unretweet">リツイート解除しました</string>
+
+    <string name="did_favorite">お気に入りしました</string>
+    <string name="did_unfavorite">お気に入り解除しました</string>
+    <string name="did_boost">ブーストしました</string>
+    <string name="did_unboost">ブースト解除しました</string>
+
     <string name="did_follow">フォローしました</string>
     <string name="did_unfollow">フォロー解除しました</string>
     <string name="did_mute">ミュートしました</string>
