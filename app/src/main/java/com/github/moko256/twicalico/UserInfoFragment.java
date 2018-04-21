@@ -63,7 +63,6 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
     ImageView icon;
 
     TextView userNameText;
-    ImageView userLockIcon;
     TextView userIdText;
     TextView userBioText;
     TextView userLocation;
@@ -127,7 +126,6 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
         icon= view.findViewById(R.id.show_user_image);
 
         userNameText = view.findViewById(R.id.show_user_name);
-        userLockIcon = view.findViewById(R.id.show_user_lock);
         userIdText = view.findViewById(R.id.show_user_id);
         userBioText = view.findViewById(R.id.show_user_bio);
         userBioText.setMovementMethod(LinkMovementMethod.getInstance());
@@ -170,8 +168,12 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
         }
         glideRequests.load(user.get400x400ProfileImageURLHttps()).circleCrop().into(icon);
 
-        userNameText.setText(user.getName());
-        userLockIcon.setVisibility(user.isProtected()? View.VISIBLE: View.GONE);
+        TwitterStringUtils.plusAndSetMarks(
+                user.getName(),
+                userNameText,
+                user.isProtected(),
+                user.isVerified()
+        );
         userIdText.setText(TwitterStringUtils.plusAtMark(user.getScreenName()));
         getActivity().setTitle(user.getName());
         userBioText.setText(TwitterStringUtils.getProfileLinkedSequence(getContext(), user));

@@ -17,7 +17,6 @@
 
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
@@ -45,17 +44,6 @@
         android:textSize="16sp"
         android:textColor="?android:textColorPrimary"
         tools:text="User name"/>
-
-    <ImageView
-        android:id="@+id/user_user_lock"
-        android:tint="?android:textColorPrimary"
-        app:srcCompat="@drawable/ic_lock_black_24dp"
-        android:layout_width="16sp"
-        android:layout_height="16sp"
-        android:layout_marginTop="16dp"
-        android:layout_marginLeft="-8dp"
-        android:layout_marginRight="16dp"
-        android:layout_toRightOf="@id/user_user_name"/>
 
     <TextView
         android:id="@+id/user_user_id"

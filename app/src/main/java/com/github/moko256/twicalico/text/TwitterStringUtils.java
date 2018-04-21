@@ -23,7 +23,10 @@ import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.util.ArrayMap;
+import android.support.v7.content.res.AppCompatResources;
 import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -38,6 +41,7 @@ import com.github.moko256.mastodon.MTException;
 import com.github.moko256.twicalico.GlideApp;
 import com.github.moko256.twicalico.GlideRequests;
 import com.github.moko256.twicalico.GlobalApplication;
+import com.github.moko256.twicalico.R;
 import com.github.moko256.twicalico.SearchResultActivity;
 import com.github.moko256.twicalico.ShowUserActivity;
 import com.github.moko256.twicalico.cacheMap.StatusCacheMap;
@@ -422,6 +426,51 @@ public class TwitterStringUtils {
         return (GlobalApplication.clientType == Type.TWITTER)?
                 baseUrl + ":large":
                 baseUrl;
+    }
+
+    public static void plusAndSetMarks(String name, TextView textView, boolean isLocked, boolean isAuthorized){
+        if (!isLocked && !isAuthorized){
+            textView.setText(name);
+            return;
+        }
+
+        SpannableStringBuilder result = new SpannableStringBuilder(name);
+
+        Context context = textView.getContext();
+
+        int textSize = Math.round(textView.getLineHeight());
+        int left = Math.round(4 * context.getResources().getDisplayMetrics().density);
+
+        if (isLocked){
+            int length = result.length();
+            result.append("\uFFFC");
+
+            Drawable drawable = AppCompatResources.getDrawable(context, R.drawable.ic_lock_black_24dp);
+            drawable.setBounds(left, 0, textSize + left, textSize
+            );
+
+            DrawableCompat.setTint(drawable, textView.getCurrentTextColor());
+
+            result.setSpan(new ImageSpan(
+                    drawable
+            ), length, length + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+
+        if (isAuthorized){
+            int length = result.length();
+            result.append("\uFFFC");
+
+            Drawable drawable = AppCompatResources.getDrawable(context, R.drawable.ic_check_circle_black_24dp);
+            drawable.setBounds(left, 0, textSize + left, textSize);
+
+            DrawableCompat.setTint(drawable, ContextCompat.getColor(context, R.color.color_accent));
+
+            result.setSpan(new ImageSpan(
+                    drawable
+            ), length, length + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+
+        textView.setText(result);
     }
 
 }

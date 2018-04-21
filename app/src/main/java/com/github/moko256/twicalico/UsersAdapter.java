@@ -70,7 +70,12 @@ class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> {
 
         glideRequests.load(item.get400x400ProfileImageURLHttps()).circleCrop().into(viewHolder.userUserImage);
 
-        viewHolder.userUserName.setText(item.getName());
+        TwitterStringUtils.plusAndSetMarks(
+                item.getName(),
+                viewHolder.userUserName,
+                item.isProtected(),
+                item.isVerified()
+        );
         viewHolder.userUserId.setText(TwitterStringUtils.plusAtMark(item.getScreenName()));
         viewHolder.itemView.setOnClickListener(
                 v -> {
@@ -86,7 +91,6 @@ class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> {
                     );
                 }
         );
-        viewHolder.userLockIcon.setVisibility(item.isProtected()? View.VISIBLE: View.GONE);
 
     }
 
@@ -110,14 +114,12 @@ class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> {
         ImageView userUserImage;
         TextView userUserName;
         TextView userUserId;
-        ImageView userLockIcon;
 
         ViewHolder(final View itemView) {
             super(itemView);
             userUserImage = itemView.findViewById(R.id.user_user_image);
             userUserId = itemView.findViewById(R.id.user_user_id);
             userUserName = itemView.findViewById(R.id.user_user_name);
-            userLockIcon = itemView.findViewById(R.id.user_user_lock);
         }
     }
 }

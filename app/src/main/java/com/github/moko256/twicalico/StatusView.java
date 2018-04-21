@@ -192,7 +192,12 @@ public class StatusView extends FrameLayout {
             userImage.setImageResource(R.drawable.border_frame_round);
         }
 
-        userName.setText(item.getUser().getName());
+        TwitterStringUtils.plusAndSetMarks(
+                item.getUser().getName(),
+                userName,
+                item.getUser().isProtected(),
+                item.getUser().isVerified()
+        );
         userId.setText(TwitterStringUtils.plusAtMark(item.getUser().getScreenName()));
 
         tweetContext.setOnClickListener(v -> callOnClick());
@@ -246,7 +251,12 @@ public class StatusView extends FrameLayout {
             quoteTweetLayout.setOnClickListener(v -> getContext().startActivity(
                     ShowTweetActivity.getIntent(getContext(), quotedStatus.getId())
             ));
-            quoteTweetUserName.setText(quotedStatus.getUser().getName());
+            TwitterStringUtils.plusAndSetMarks(
+                    quotedStatus.getUser().getName(),
+                    quoteTweetUserName,
+                    quotedStatus.getUser().isProtected(),
+                    quotedStatus.getUser().isVerified()
+            );
             quoteTweetUserId.setText(TwitterStringUtils.plusAtMark(quotedStatus.getUser().getScreenName()));
             quoteTweetContext.setText(quotedStatus.getText());
         }else{
