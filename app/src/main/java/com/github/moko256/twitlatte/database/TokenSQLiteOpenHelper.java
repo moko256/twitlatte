@@ -25,7 +25,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import com.github.moko256.twitlatte.entity.AccessToken;
 import com.github.moko256.twitlatte.entity.AccessTokenKt;
-import com.github.moko256.twitlatte.entity.Type;
 
 import kotlin.Pair;
 
@@ -38,69 +37,25 @@ import kotlin.Pair;
 public class TokenSQLiteOpenHelper extends SQLiteOpenHelper {
 
     private static final String TABLE_NAME = "AccountTokenList";
-    private static final String[] TABLE_COLUMNS = new String[]{"userName", "userId", "token", "tokenSecret", "url", "type"};
+    private static final String[] TABLE_COLUMNS = new String[]{ "type", "url", "userId", "userName", "token", "tokenSecret"};
 
     public static final String TWITTER_URL = "twitter.com";
 
     public TokenSQLiteOpenHelper(Context context){
-        super(context,"AccountTokenList.db",null,2);
+        super(context,"AccountTokenList.db",null,1);
     }
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL(
-                "create table " + TABLE_NAME + "(userName string , userId integer , token string , tokenSecret string , url string , type string , primary key(userId , url))"
+                "create table " + TABLE_NAME + "(type string , url string , userId integer , userName string , token string , tokenSecret string , primary key(url , userId))"
         );
-        sqLiteDatabase.execSQL("create unique index idindex on " + TABLE_NAME + "(userId , url)");
+        sqLiteDatabase.execSQL("create unique index idindex on " + TABLE_NAME + "(url , userId)");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
-        if (oldVersion == 1) {
-            Cursor c = sqLiteDatabase.query("AccountTokenList", new String[]{"userName", "userId", "token", "tokenSecret"}, null, null, null, null, null);
-            AccessToken[] accessTokens = new AccessToken[c.getCount()];
-            while (c.moveToNext()) {
-                Integer type;
-                String url;
-                String userName;
-                String tokenSecret = null;
-                if (c.getString(3).matches(".*\\..*")) {
-                    type = Type.MASTODON;
-                    userName = c.getString(0).split("@")[0];
-                    url = c.getString(3);
-                } else {
-                    type = Type.TWITTER;
-                    userName = c.getString(0);
-                    url = TWITTER_URL;
-                    tokenSecret = c.getString(3);
-                }
-                accessTokens[c.getPosition()] = new AccessToken(
-                        type,
-                        url,
-                        Long.valueOf(c.getString(1)),
-                        userName,
-                        c.getString(2),
-                        tokenSecret
-                );
-            }
-            c.close();
-            sqLiteDatabase.beginTransaction();
-            sqLiteDatabase.execSQL("DROP TABLE AccountTokenList");
-            onCreate(sqLiteDatabase);
-            for (AccessToken accessToken : accessTokens) {
-                ContentValues contentValues = new ContentValues();
-                contentValues.put("type", accessToken.getType());
-                contentValues.put("url", accessToken.getUrl());
-                contentValues.put("userName", accessToken.getScreenName());
-                contentValues.put("userId", String.valueOf(accessToken.getUserId()));
-                contentValues.put("token", accessToken.getToken());
-                contentValues.put("tokenSecret", accessToken.getTokenSecret());
 
-                sqLiteDatabase.replace("AccountTokenList", null, contentValues);
-            }
-            sqLiteDatabase.setTransactionSuccessful();
-            sqLiteDatabase.endTransaction();
-        }
     }
 
     public AccessToken[] getAccessTokens(){
@@ -144,12 +99,12 @@ public class TokenSQLiteOpenHelper extends SQLiteOpenHelper {
 
     private AccessToken convertFromCursor(Cursor c){
         return new AccessToken(
-                c.getInt(5),
+                c.getInt(0),
+                c.getString(1),
+                c.getLong(2),
+                c.getString(3),
                 c.getString(4),
-                c.getLong(1),
-                c.getString(0),
-                c.getString(2),
-                c.getString(3)
+                c.getString(5)
         );
     }
 
