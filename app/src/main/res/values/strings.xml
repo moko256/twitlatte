@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright 2015-2018 The twicalico authors
+  ~ Copyright 2015-2018 The twitlatte authors
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 <resources>
     <string
         name="app_name"
-        translatable="false">twicalico</string>
+        translatable="false">twitlatte</string>
 
     <string
         name="navigation_drawer_open"
@@ -91,7 +91,7 @@
     <string name="debug">Debug</string>
     <string name="cause_error">Cause error</string>
     <string name="crash_log">Crash Log</string>
-    <string name="crash_log_channel_description">Notify crash log when twicalico crashed</string>
+    <string name="crash_log_channel_description">Notify crash log when twitlatte crashed</string>
     <string name="high_power_mute">High Power Mute</string>
     <string name="edit_pattern">Edit Regex pattern</string>
     <string name="use_post_regex_mute">Use Regex Posts mute</string>

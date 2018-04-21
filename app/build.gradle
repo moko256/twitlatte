@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2018 The twicalico authors
+ * Copyright 2015-2018 The twitlatte authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ android {
     buildToolsVersion "27.0.3"
 
     defaultConfig {
-        applicationId 'com.github.moko256.twicalico'
+        applicationId 'com.github.moko256.twitlatte'
         minSdkVersion 19
         targetSdkVersion 27
         versionCode 61

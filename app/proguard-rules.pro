@@ -22,7 +22,7 @@
 
 -keepclassmembers class android.support.v7.widget.SearchView { *; }
 -keep,allowoptimization class android.support.v7.app.AppCompatViewInflater
--keep,allowoptimization class com.github.moko256.twicalico.cacheMap.StatusCacheMap$CachedStatus { *; }
+-keep,allowoptimization class com.github.moko256.twitlatte.cacheMap.StatusCacheMap$CachedStatus { *; }
 
 -dontwarn java.lang.invoke.*
 -dontwarn **$$Lambda$*

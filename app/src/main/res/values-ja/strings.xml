@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright 2015-2018 The twicalico authors
+  ~ Copyright 2015-2018 The twitlatte authors
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -80,7 +80,7 @@
     <string name="debug">デバッグ</string>
     <string name="cause_error">エラーを起こす</string>
     <string name="crash_log">クラッシュログ</string>
-    <string name="crash_log_channel_description">twicalicoがクラッシュしたら通知する</string>
+    <string name="crash_log_channel_description">twitlatteがクラッシュしたら通知する</string>
     <string name="high_power_mute">最強のミュート</string>
     <string name="edit_pattern">正規表現パターンの編集</string>
     <string name="use_post_regex_mute">投稿への正規表現ミュートを使用する</string>
