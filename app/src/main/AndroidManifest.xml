@@ -136,6 +136,9 @@
         <activity
             android:name=".LicensesActivity"
             android:label="@string/open_source_license" />
+        <activity
+            android:name=".AboutActivity"
+            android:label="@string/about" />
     </application>
 
 </manifest>
