@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright 2015-2018 The twicalico authors
+  ~ Copyright 2015-2018 The twitlatte authors
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@
     app:cardCornerRadius="2dp"
     app:cardElevation="2dp"
     app:cardUseCompatPadding="true">
-    <com.github.moko256.twicalico.widget.TweetImageTableView
+    <com.github.moko256.twitlatte.widget.TweetImageTableView
         android:id="@+id/list_tweet_image_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>

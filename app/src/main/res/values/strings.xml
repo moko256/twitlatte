@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright 2015-2018 The twicalico authors
+  ~ Copyright 2015-2018 The twitlatte authors
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 <resources>
     <string
         name="app_name"
-        translatable="false">twicalico</string>
+        translatable="false">twitlatte</string>
 
     <string
         name="navigation_drawer_open"
@@ -47,18 +47,15 @@
     <string name="possibly_sensitive">Include sensitivity in the images</string>
     <string name="add_location">Add location</string>
     <string name="follow_and_follower">Follow and Followers</string>
-    <string name="repeat_by">Repeated by %1$s(%2$s)</string>
+    <string name="retweeted_by">Retweeted by %1$s(%2$s)</string>
+    <string name="boosted_by">Boosted by %1$s(%2$s)</string>
     <string name="reply_to">Reply to %s</string>
     <string name="mention_to">Mention to %s</string>
-    <string name="app_settings">Application Settings</string>
+    <string name="application">Application</string>
     <string name="add_account">Add other account</string>
     <string name="logout">Logout</string>
-    <string name="do_logout">Logout</string>
-    <string name="confirm_logout">Logout?</string>
-    <string name="confirm_discard_post">Discard post?</string>
-    <string name="do_discard">Discard</string>
     <string name="new_post">New post</string>
-    <string name="permission_denied">Permission Denied</string>
+    <string name="permission_denied">Permission denied</string>
     <string name="lat_and_lon">Latitude:%f Longitude: %f</string>
     <string name="location_is">Location: %s</string>
     <string name="url_is">URL: %s</string>
@@ -67,11 +64,10 @@
     <string name="follower_counts_is">Followers: %d</string>
     <string name="other">Others</string>
     <string name="share">Share…</string>
-    <string name="open_in_browser">Open in browser</string>
+    <string name="open_in_browser">Open in the browser</string>
     <string name="add_to_list">Add to list</string>
     <string name="show_list">Show lists</string>
     <string name="load_more">Load more…</string>
-    <string name="confirm_message">Do this action?</string>
     <string name="create_follow">Follow</string>
     <string name="destroy_follow">Cancel Follow</string>
     <string name="create_mute">Mute</string>
@@ -81,10 +77,7 @@
     <string name="destroy_follow_follower">Cancel Follow-Follower</string>
     <string name="spam_report">Report this Account as a spam</string>
     <string name="save_image">Save this image</string>
-    <string name="see_more">See more…</string>
     <string name="error_occurred">Error occurred</string>
-    <string name="retry">retry</string>
-    <string name="succeeded">Succeeded</string>
     <string name="is_load_timeline_image">Load the images on the timeline</string>
     <string name="version_text">Version</string>
     <string name="about">About</string>
@@ -98,7 +91,7 @@
     <string name="debug">Debug</string>
     <string name="cause_error">Cause error</string>
     <string name="crash_log">Crash Log</string>
-    <string name="crash_log_channel_description">Notify crash log when twicalico crashed</string>
+    <string name="crash_log_channel_description">Notify crash log when twitlatte crashed</string>
     <string name="high_power_mute">High Power Mute</string>
     <string name="edit_pattern">Edit Regex pattern</string>
     <string name="use_post_regex_mute">Use Regex Posts mute</string>
@@ -112,6 +105,33 @@
     <string name="use_tweet_source_mute">Use Regex client mute</string>
     <string name="tweet_source_mute_regex_pattern">Tweet posted client mute Regex pattern</string>
     <string name="muted_post">Muted post</string>
+
+    <string name="do_logout">Logout</string>
+    <string name="do_discard">Discard</string>
+
+    <string name="confirm_logout">Logout?</string>
+    <string name="confirm_discard_post">Discard post?</string>
+    <string name="confirm_message">Do this action?</string>
+
+    <string name="did_post">Posted</string>
+
+    <string name="did_like">Liked</string>
+    <string name="did_unlike">Unliked</string>
+    <string name="did_retweet">Retweeted</string>
+    <string name="did_unretweet">Unretweeted</string>
+
+    <string name="did_favorite">Favorited</string>
+    <string name="did_unfavorite">Unfavorited</string>
+    <string name="did_boost">Boosted</string>
+    <string name="did_unboost">Unboosted</string>
+
+    <string name="did_follow">Followed</string>
+    <string name="did_unfollow">Unfollowed</string>
+    <string name="did_mute">Muted</string>
+    <string name="did_unmute">Unmuted</string>
+    <string name="did_block">Blocked</string>
+    <string name="did_unblock">Unblocked</string>
+    <string name="did_destroy_ff">Destroyed follow-follower</string>
 
     <string name="twitter_auth">Twitter authorization</string>
     <string name="mastodon_auth">Mastodon authorization</string>

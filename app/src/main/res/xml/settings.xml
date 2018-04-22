@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright 2015-2018 The twicalico authors
+  ~ Copyright 2015-2018 The twitlatte authors
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@
             android:title="@string/logout"/>
     </PreferenceCategory>
     <PreferenceCategory
-        android:title="@string/app_settings">
+        android:title="@string/application">
         <ListPreference
             android:key="nightModeType"
             android:defaultValue="@string/mode_night_no_value"
@@ -160,6 +160,12 @@
             <Preference
                 android:key="license_lib_fling_layout"
                 android:title="FlingLayout"/>
+            <Preference
+                android:key="license_lib_japng"
+                android:title="japng"/>
+            <Preference
+                android:key="license_lib_japng_android"
+                android:title="japng_android"/>
             <Preference
                 android:key="license_lib_okhttp"
                 android:title="OkHttp"/>

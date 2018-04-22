@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright 2015-2018 The twicalico authors
+  ~ Copyright 2015-2018 The twitlatte authors
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@
             android:layout_marginLeft="16dp"
             android:layout_marginRight="8dp"
             android:layout_toLeftOf="@id/tweet_retweet_time_stamp_text"
-            tools:text="@string/repeat_by"/>
+            tools:text="@string/retweeted_by"/>
 
         <TextView
             android:id="@+id/tweet_retweet_time_stamp_text"
@@ -117,7 +117,7 @@
             android:textColor="?android:textColorSecondary"
             tools:text="\@user_id"/>
 
-        <com.github.moko256.twicalico.widget.TweetImageTableView
+        <com.github.moko256.twitlatte.widget.TweetImageTableView
             android:id="@+id/tweet_image_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

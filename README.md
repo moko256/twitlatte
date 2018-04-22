@@ -1,4 +1,4 @@
-twicalico
+twitlatte
 ====
 
 This application is the SNS client for Android\.
@@ -43,6 +43,8 @@ This application is built using these libraries\:
 * google-gson
 * PhotoView
 * FlingLayout
+* japng
+* japng_android
 * OkHttp
 * mastodon4j
 * Twitter4J
@@ -62,7 +64,7 @@ and, built using these tools\:
 ## License
 
 ~~~~
-Copyright 2015-2018 The twicalico authors
+Copyright 2015-2018 The twitlatte authors
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

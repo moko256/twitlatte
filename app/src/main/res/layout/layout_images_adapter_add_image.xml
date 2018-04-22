@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright 2015-2018 The twicalico authors
+  ~ Copyright 2015-2018 The twitlatte authors
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -25,8 +25,9 @@
         android:id="@+id/layout_images_adapter_add_image_icon"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="24dp"
-        app:srcCompat="@drawable/ic_add_app_shortcut"/>
+        android:layout_margin="48dp"
+        app:srcCompat="@drawable/ic_add_to_photos_black_24dp"
+        app:tint="@color/image_toggle_enable"/>
     <TextView
         android:id="@+id/layout_images_adapter_add_image_title"
         android:layout_width="match_parent"

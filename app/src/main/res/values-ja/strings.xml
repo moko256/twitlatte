@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright 2015-2018 The twicalico authors
+  ~ Copyright 2015-2018 The twitlatte authors
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -37,16 +37,13 @@
     <string name="open_image">画像を開く</string>
     <string name="add_location">位置情報を追加</string>
     <string name="possibly_sensitive">画像に過激な表現を含む</string>
-    <string name="repeat_by">%1$sさん(%2$s)が拡散しました</string>
+    <string name="retweeted_by">$1%s(%2$s)がリツイートしました</string>
+    <string name="boosted_by">$1%s(%2$s)がブーストしました</string>
     <string name="reply_to">%sさんへの返信</string>
     <string name="mention_to">%sさんへの言及</string>
-    <string name="app_settings">アプリケーションの設定</string>
+    <string name="application">アプリケーション</string>
     <string name="add_account">他のアカウントを追加</string>
     <string name="logout">ログアウト</string>
-    <string name="do_logout">ログアウトする</string>
-    <string name="confirm_logout">ログアウトしますか？</string>
-    <string name="confirm_discard_post">投稿を破棄しますか？</string>
-    <string name="do_discard">破棄</string>
     <string name="new_post">新しい投稿</string>
     <string name="permission_denied">権限が拒否されました</string>
     <string name="lat_and_lon">緯度:%f 経度:%f</string>
@@ -61,7 +58,6 @@
     <string name="add_to_list">リストに追加</string>
     <string name="show_list">リストを見る</string>
     <string name="load_more">もっと見る</string>
-    <string name="confirm_message">実行しますか？</string>
     <string name="create_follow">フォロー</string>
     <string name="destroy_follow">フォロー解除</string>
     <string name="create_mute">ミュートする</string>
@@ -71,10 +67,7 @@
     <string name="destroy_follow_follower">FF解除</string>
     <string name="spam_report">スパムとして報告する</string>
     <string name="save_image">この画像を保存する</string>
-    <string name="see_more">もっと見る</string>
     <string name="error_occurred">エラーが発生しました</string>
-    <string name="retry">再試行</string>
-    <string name="succeeded">成功しました</string>
     <string name="is_load_timeline_image">タイムラインの画像を読み込むか</string>
     <string name="version_text">バージョン</string>
     <string name="about">概要</string>
@@ -87,7 +80,7 @@
     <string name="debug">デバッグ</string>
     <string name="cause_error">エラーを起こす</string>
     <string name="crash_log">クラッシュログ</string>
-    <string name="crash_log_channel_description">twicalicoがクラッシュしたら通知する</string>
+    <string name="crash_log_channel_description">twitlatteがクラッシュしたら通知する</string>
     <string name="high_power_mute">最強のミュート</string>
     <string name="edit_pattern">正規表現パターンの編集</string>
     <string name="use_post_regex_mute">投稿への正規表現ミュートを使用する</string>
@@ -101,6 +94,33 @@
     <string name="use_tweet_source_mute">クライアントの正規表現ミュートを使用する</string>
     <string name="tweet_source_mute_regex_pattern">投稿したクライアントのミュートの正規表現パターン</string>
     <string name="muted_post">ミュートされた投稿</string>
+
+    <string name="do_logout">ログアウトする</string>
+    <string name="do_discard">破棄</string>
+
+    <string name="confirm_logout">ログアウトしますか？</string>
+    <string name="confirm_discard_post">投稿を破棄しますか？</string>
+    <string name="confirm_message">実行しますか？</string>
+
+    <string name="did_post">投稿しました</string>
+
+    <string name="did_like">いいねしました</string>
+    <string name="did_unlike">いいね解除しました</string>
+    <string name="did_retweet">リツイートしました</string>
+    <string name="did_unretweet">リツイート解除しました</string>
+
+    <string name="did_favorite">お気に入りしました</string>
+    <string name="did_unfavorite">お気に入り解除しました</string>
+    <string name="did_boost">ブーストしました</string>
+    <string name="did_unboost">ブースト解除しました</string>
+
+    <string name="did_follow">フォローしました</string>
+    <string name="did_unfollow">フォロー解除しました</string>
+    <string name="did_mute">ミュートしました</string>
+    <string name="did_unmute">ミュート解除しました</string>
+    <string name="did_block">ブロックしました</string>
+    <string name="did_unblock">ブロック解除しました</string>
+    <string name="did_destroy_ff">FF解除しました</string>
 
     <string name="twitter_auth">Twitterで認証</string>
     <string name="mastodon_auth">Mastodonで認証</string>
