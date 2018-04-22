@@ -16,6 +16,7 @@
   -->
 
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -55,5 +56,14 @@
             android:layout_below="@id/title"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:layout_centerHorizontal="true"/>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="64dp"
+            android:layout_marginRight="64dp"
+            android:layout_below="@id/copyright"
+            android:adjustViewBounds="true"
+            app:srcCompat="@drawable/ee_picture_1_0_0"/>
     </RelativeLayout>
 </ScrollView>
