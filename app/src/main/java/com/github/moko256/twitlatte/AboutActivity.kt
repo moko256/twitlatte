@@ -18,7 +18,10 @@ package com.github.moko256.twitlatte
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.view.View
 import android.widget.ImageView
+import android.widget.Toast
+import java.util.*
 
 /**
  * Created by moko256 on 2018/04/21.
@@ -30,7 +33,31 @@ class AboutActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_about)
 
+        val actionBar = supportActionBar!!
+        actionBar.setDisplayHomeAsUpEnabled(true)
+        actionBar.setHomeAsUpIndicator(R.drawable.ic_back_white_24dp)
+
         val icon = findViewById<ImageView>(R.id.icon)
         icon.setImageDrawable(packageManager.getApplicationIcon(BuildConfig.APPLICATION_ID))
+    }
+
+    fun onPictureClick(view : View){
+        val birthday = Date(1446956982000L)
+        Toast.makeText(
+                this,
+                getString(
+                        R.string.birthday_of_this_app_is,
+                        birthday
+                ) + "\n\n" + getString(
+                        R.string.age_of_this_app_is,
+                        Math.floor(((Date().time - birthday.time) / 31557600000L).toDouble()).toInt()
+                ),
+                Toast.LENGTH_LONG
+        ).show()
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        finish()
+        return true
     }
 }
