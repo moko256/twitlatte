@@ -37,7 +37,6 @@ import java.util.List;
 
 public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
 
-    private final CachedStatusesCountSQLiteOpenHelper statusesCounts;
     private final String ID_LIST_TABLE_NAME;
 
     private static final String POSITION_TABLE_NAME = "ListViewPosition";
@@ -45,7 +44,6 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
     public CachedIdListSQLiteOpenHelper(Context context, long userId, String name){
         super(context, new File(context.getCacheDir(), String.valueOf(userId) + "/" + name + ".db").getAbsolutePath(), null, BuildConfig.CACHE_DATABASE_VERSION);
         ID_LIST_TABLE_NAME = name;
-        statusesCounts = new CachedStatusesCountSQLiteOpenHelper(context, userId);
     }
 
     @Override
@@ -97,18 +95,13 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
 
     private void addIdsAtTransaction(List<Long> ids){
         SQLiteDatabase database=getWritableDatabase();
-        List<Long> idsList = new ArrayList<>(ids.size());
 
         for (int i = ids.size() - 1; i >= 0; i--) {
             ContentValues contentValues = new ContentValues();
             contentValues.put("id", ids.get(i));
 
             database.insert(ID_LIST_TABLE_NAME, "", contentValues);
-            if (ids.get(i) != -1L){
-                idsList.add(ids.get(i));
-            }
         }
-        statusesCounts.incrementCounts(idsList);
     }
 
     private void addIdsOnlyAtTransaction(List<Long> ids){
@@ -151,15 +144,9 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
 
     private void deleteIdsAtTransaction(List<Long> ids){
         SQLiteDatabase database = getWritableDatabase();
-        List<Long> idsList = new ArrayList<>(ids.size());
         for (Long id : ids) {
             database.delete(ID_LIST_TABLE_NAME, "id=" + String.valueOf(id), null);
-
-            if (id != -1L){
-                idsList.add(id);
-            }
         }
-        statusesCounts.decrementCounts(idsList);
     }
 
     private void deleteOnlyIdsAtTransaction(List<Long> ids){
@@ -167,14 +154,6 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
         for (Long id : ids) {
             database.delete(ID_LIST_TABLE_NAME, "id=" + String.valueOf(id), null);
         }
-    }
-
-    public boolean[] hasIdsOtherTable(List<Long> ids){
-        boolean[] result = new boolean[ids.size()];
-        for (int i = 0; i < ids.size(); i++) {
-            result[i] = !(ids.get(0) != -1 && statusesCounts.getCount(ids.get(i)) == 0);
-        }
-        return result;
     }
 
     public int getListViewPosition(){

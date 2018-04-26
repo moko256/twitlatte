@@ -70,15 +70,17 @@ public class StatusCacheMap {
         return cache.size();
     }
 
-    public void add(@Nullable final Status status) {
+    public void add(@Nullable final Status status, boolean incrementCount) {
         if (status != null) {
             GlobalApplication.userCache.add(status.getUser());
             if (status.isRetweet()) {
-                add(status.getRetweetedStatus());
+                add(status.getRetweetedStatus(), incrementCount);
+            } else if (status.getQuotedStatus() != null){
+                add(status.getQuotedStatus(), incrementCount);
             }
             Status cacheStatus = new CachedStatus(status);
             cache.put(status.getId(), cacheStatus);
-            diskCache.addCachedStatus(cacheStatus);
+            diskCache.addCachedStatus(cacheStatus, incrementCount);
         }
     }
 
@@ -96,7 +98,7 @@ public class StatusCacheMap {
         }
     }
 
-    public void addAll(Collection<? extends Status> c) {
+    public void addAll(Collection<? extends Status> c, boolean incrementCount) {
         if (c.size() > 0) {
             Observable<Status> statusesObservable = Observable.unsafeCreate(subscriber -> {
                 for (Status status : c) {
@@ -104,6 +106,8 @@ public class StatusCacheMap {
                         subscriber.onNext(status);
                         if (status.isRetweet()) {
                             subscriber.onNext(status.getRetweetedStatus());
+                        } else if (status.getQuotedStatus() != null){
+                            subscriber.onNext(status.getQuotedStatus());
                         }
                     }
                 }
@@ -118,7 +122,7 @@ public class StatusCacheMap {
 
             cachedStatusObservable.forEach(status -> cache.put(status.getId(), status));
 
-            diskCache.addCachedStatuses(cachedStatusObservable.toList().toSingle().toBlocking().value());
+            diskCache.addCachedStatuses(cachedStatusObservable.toList().toSingle().toBlocking().value(), incrementCount);
         }
     }
 
@@ -133,9 +137,6 @@ public class StatusCacheMap {
     }
 
     public static class CachedStatus implements Status{
-
-        private static final long serialVersionUID = 2895731644139422046L;
-
         /* Based on twitter4j.StatusJSONImpl */
 
         private final Date createdAt;
@@ -172,7 +173,6 @@ public class StatusCacheMap {
         //private final Scopes scopes;
         //private final String[] withheldInCountries;
         private final long quotedStatusId;
-        private final Status quotedStatus;
 
         //private final int displayTextRangeStart;
         //private final int displayTextRangeEnd;
@@ -216,7 +216,6 @@ public class StatusCacheMap {
                 //scopes=status.getScopes();
                 //withheldInCountries = status.getWithheldInCountries();
                 quotedStatusId = status.getQuotedStatusId();
-                quotedStatus = status.getQuotedStatus();
 
                 //displayTextRangeStart = status.getDisplayTextRangeStart();
                 //displayTextRangeEnd = status.getDisplayTextRangeEnd();
@@ -248,7 +247,6 @@ public class StatusCacheMap {
                 //scopes=null;
                 //withheldInCountries = null;
                 quotedStatusId = -1;
-                quotedStatus = null;
 
                 //displayTextRangeStart = -1;
                 //displayTextRangeEnd = -1;
@@ -271,7 +269,7 @@ public class StatusCacheMap {
             }
         }
 
-        public CachedStatus(Date createdAt, long id, long userId, long retweetedStatusId, String text, String source, long inReplyToStatusId, long inReplyToUserId, boolean isFavorited, boolean isRetweeted, int favoriteCount, String inReplyToScreenName, int retweetCount, boolean isPossiblySensitive, String lang, UserMentionEntity[] userMentionEntities, URLEntity[] urlEntities, HashtagEntity[] hashtagEntities, MediaEntity[] mediaEntities, SymbolEntity[] symbolEntities, long quotedStatusId, Status quotedStatus, String url, List<Emoji> emojis) {
+        public CachedStatus(Date createdAt, long id, long userId, long retweetedStatusId, String text, String source, long inReplyToStatusId, long inReplyToUserId, boolean isFavorited, boolean isRetweeted, int favoriteCount, String inReplyToScreenName, int retweetCount, boolean isPossiblySensitive, String lang, UserMentionEntity[] userMentionEntities, URLEntity[] urlEntities, HashtagEntity[] hashtagEntities, MediaEntity[] mediaEntities, SymbolEntity[] symbolEntities, long quotedStatusId, String url, List<Emoji> emojis) {
             this.createdAt = createdAt;
             this.id = id;
             this.userId = userId;
@@ -295,7 +293,6 @@ public class StatusCacheMap {
                 this.mediaEntities = mediaEntities;
                 this.symbolEntities = symbolEntities;
                 this.quotedStatusId = quotedStatusId;
-                this.quotedStatus = quotedStatus;
                 this.url = url;
                 this.emojis = emojis;
             } else {
@@ -326,7 +323,6 @@ public class StatusCacheMap {
                 //this.scopes=null;
                 //this.withheldInCountries = null;
                 this.quotedStatusId = -1;
-                this.quotedStatus = null;
 
                 //this.displayTextRangeStart = -1;
                 //this.displayTextRangeEnd = -1;
@@ -462,7 +458,7 @@ public class StatusCacheMap {
 
         @Override
         public Status getQuotedStatus() {
-            return quotedStatus;
+            return GlobalApplication.statusCache.get(quotedStatusId);
         }
 
         @Override

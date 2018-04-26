@@ -99,7 +99,8 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
             "quotedStatusId",
             "url",
             "Emoji_shortcodes",
-            "Emoji_urls"
+            "Emoji_urls",
+            "count"
     };
 
     public CachedStatusesSQLiteOpenHelper(Context context, long userId){
@@ -117,6 +118,76 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
+    }
+
+    public void incrementCounts(List<Long> ids){
+        int[] counts = new int[ids.size()];
+        for (int i = 0; i < ids.size(); i++) {
+            counts[i] = getCount(ids.get(i));
+        }
+
+        SQLiteDatabase database=getWritableDatabase();
+        database.beginTransaction();
+        for (int i = 0; i < ids.size(); i++) {
+            incrementCountAtTransaction(ids.get(i), counts[i]);
+        }
+        database.setTransactionSuccessful();
+        database.endTransaction();
+        database.close();
+    }
+
+    public void decrementCounts(List<Long> ids){
+        int[] counts = new int[ids.size()];
+        for (int i = 0; i < ids.size(); i++) {
+            counts[i] = getCount(ids.get(i));
+        }
+
+        SQLiteDatabase database=getWritableDatabase();
+        database.beginTransaction();
+        for (int i = 0; i < ids.size(); i++) {
+            decrementCountAtTransaction(ids.get(i), counts[i]);
+        }
+        database.setTransactionSuccessful();
+        database.endTransaction();
+        database.close();
+    }
+
+    private void incrementCountAtTransaction(long id, int count){
+        ContentValues contentValues = new ContentValues(1);
+        contentValues.put("id", id);
+        contentValues.put("count", count + 1);
+        SQLiteDatabase database = getWritableDatabase();
+        database.replace(TABLE_NAME, null, contentValues);
+    }
+
+    private void decrementCountAtTransaction(long id, int oldCount) {
+        SQLiteDatabase database = getWritableDatabase();
+        int count = oldCount - 1;
+        if (count == 0) {
+            database.delete(TABLE_NAME, "id=" + String.valueOf(id), null);
+        } else {
+            ContentValues contentValues = new ContentValues(1);
+            contentValues.put("id", id);
+            contentValues.put("count", count);
+            database.replace(TABLE_NAME, null, contentValues);
+        }
+    }
+
+    public int getCount(long id){
+        int count = 0;
+        SQLiteDatabase database = getReadableDatabase();
+        Cursor cursor = database.query(
+                TABLE_NAME,
+                new String[]{"id", "count"},
+                "id=" + String.valueOf(id), null,
+                null, null, null, "1"
+        );
+        if (cursor.moveToNext()){
+            count = cursor.getInt(1);
+        }
+        cursor.close();
+        database.close();
+        return count;
     }
 
     public Status getCachedStatus(long id){
@@ -185,7 +256,6 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
                             spliteComma(c.getString(41))
                     ),
                     c.getLong(42),
-                    null,
                     c.getString(43),
                     restoreEmojis(
                             spliteComma(c.getString(44)),
@@ -199,18 +269,21 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
         return status;
     }
 
-    public void addCachedStatus(Status status){
+    public void addCachedStatus(Status status, boolean incrementCount){
         ContentValues values = createCachedStatusContentValues(status);
 
         SQLiteDatabase database=getWritableDatabase();
         database.beginTransaction();
         database.replace(TABLE_NAME, null, values);
+        if (incrementCount){
+            database.execSQL("UPDATE " + TABLE_NAME + " SET count = count + 1 WHERE id=" + String.valueOf(status.getId()));
+        }
         database.setTransactionSuccessful();
         database.endTransaction();
         database.close();
     }
 
-    public void addCachedStatuses(Collection<? extends Status> statuses){
+    public void addCachedStatuses(Collection<? extends Status> statuses, boolean incrementCount){
         ArrayList<ContentValues> contentValues = new ArrayList<>(statuses.size());
         for (Status status : statuses) {
             contentValues.add(createCachedStatusContentValues(status));
@@ -220,6 +293,9 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
         database.beginTransaction();
         for (ContentValues values : contentValues) {
             database.replace(TABLE_NAME, null, values);
+            if (incrementCount) {
+                database.execSQL("UPDATE " + TABLE_NAME + " SET count = count + 1 WHERE id=" + String.valueOf(values.get(TABLE_COLUMNS[1])));
+            }
         }
         database.setTransactionSuccessful();
         database.endTransaction();
@@ -273,22 +349,22 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
         if (status.getURLEntities() != null) {
             int size = status.getURLEntities().length;
             String[] texts = new String[size];
-            String[] names = new String[size];
-            String[] screenNames = new String[size];
+            String[] expandedUrls = new String[size];
+            String[] displayUrls = new String[size];
             String[] starts = new String[size];
             String[] ends = new String[size];
 
             for(int i = 0;i < size; i++){
                 URLEntity entity = status.getURLEntities()[i];
                 texts[i] = entity.getText();
-                names[i] = entity.getExpandedURL();
-                screenNames[i] = entity.getDisplayURL();
+                expandedUrls[i] = entity.getExpandedURL();
+                displayUrls[i] = entity.getDisplayURL();
                 starts[i] = String.valueOf(entity.getStart());
                 ends[i] = String.valueOf(entity.getEnd());
             }
             contentValues.put(TABLE_COLUMNS[21], ArrayUtils.toCommaSplitString(texts).toString());
-            contentValues.put(TABLE_COLUMNS[22], ArrayUtils.toCommaSplitString(names).toString());
-            contentValues.put(TABLE_COLUMNS[23], ArrayUtils.toCommaSplitString(screenNames).toString());
+            contentValues.put(TABLE_COLUMNS[22], ArrayUtils.toCommaSplitString(expandedUrls).toString());
+            contentValues.put(TABLE_COLUMNS[23], ArrayUtils.toCommaSplitString(displayUrls).toString());
             contentValues.put(TABLE_COLUMNS[24], ArrayUtils.toCommaSplitString(starts).toString());
             contentValues.put(TABLE_COLUMNS[25], ArrayUtils.toCommaSplitString(ends).toString());
         }
@@ -332,10 +408,12 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
                 mediaURLs[i] = entity.getMediaURL();
                 mediaURLHttpSs[i] = entity.getMediaURLHttps();
                 types[i] = entity.getMediaURL();
-                for (int i1 = 0; i1 < entity.getVideoVariants().length; i1++) {
-                    variants_bitrates[i][i1] = String.valueOf(entity.getVideoVariants()[i1].getBitrate());
-                    variants_contentTypes[i][i1] = entity.getMediaURL();
-                    variants_uris[i][i1] = entity.getMediaURLHttps();
+                if (entity.getVideoVariants() != null) {
+                    for (int i1 = 0; i1 < entity.getVideoVariants().length; i1++) {
+                        variants_bitrates[i][i1] = String.valueOf(entity.getVideoVariants()[i1].getBitrate());
+                        variants_contentTypes[i][i1] = entity.getMediaURL();
+                        variants_uris[i][i1] = entity.getMediaURLHttps();
+                    }
                 }
                 starts[i] = String.valueOf(entity.getStart());
                 ends[i] = String.valueOf(entity.getEnd());
@@ -412,6 +490,7 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
         SQLiteDatabase database = getWritableDatabase();
         database.beginTransaction();
         deleteCachedStatusAtTransaction(database, id);
+        database.delete(TABLE_NAME, "count=0", null);
         database.setTransactionSuccessful();
         database.endTransaction();
         database.close();
@@ -423,13 +502,14 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
         for (Long id : ids) {
             deleteCachedStatusAtTransaction(database, id);
         }
+        database.delete(TABLE_NAME, "count=0", null);
         database.setTransactionSuccessful();
         database.endTransaction();
         database.close();
     }
 
     private void deleteCachedStatusAtTransaction(SQLiteDatabase database, Long id) {
-        database.delete(TABLE_NAME, "id=" + String.valueOf(id), null);
+        database.execSQL("UPDATE " + TABLE_NAME + " SET count = count - 1 WHERE id=" + String.valueOf(id));
     }
 
     @NonNull
@@ -447,6 +527,10 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
                                                            String[] ids,
                                                            String[] starts,
                                                            String[] ends){
+
+        if (texts.length == 1 && texts[0].equals("")){
+            return new UserMentionEntity[0];
+        }
 
         UserMentionEntity[] entities = new UserMentionEntity[texts.length];
         for (int i = 0; i < entities.length; i++){
@@ -492,6 +576,10 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
                                            String[] starts,
                                            String[] ends){
 
+        if (texts.length == 1 && texts[0].equals("")){
+            return new URLEntity[0];
+        }
+
         URLEntity[] entities = new URLEntity[texts.length];
         for (int i = 0; i < entities.length; i++){
             int finalI = i;
@@ -534,6 +622,10 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
                                                String[] starts,
                                                String[] ends){
 
+        if (texts.length == 1 && texts[0].equals("")){
+            return new HashtagEntity[0];
+        }
+
         HashtagEntity[] entities = new HashtagEntity[texts.length];
         for (int i = 0; i < entities.length; i++){
             int finalI = i;
@@ -567,6 +659,10 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
                                                String[][] variants_urls,
                                                String[] starts,
                                                String[] ends){
+
+        if (texts.length == 1 && texts[0].equals("")){
+            return new MediaEntity[0];
+        }
 
         MediaEntity[] entities = new MediaEntity[texts.length];
         for (int i = 0; i < entities.length; i++){
@@ -659,7 +755,7 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
 
                 @Override
                 public String getDisplayURL() {
-                    return null;
+                    return texts[finalI];
                 }
 
                 @Override
@@ -691,6 +787,10 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
     private SymbolEntity[] restoreSymbolEntities(String[] texts,
                                                   String[] starts,
                                                   String[] ends){
+
+        if (texts.length == 1 && texts[0].equals("")){
+            return new SymbolEntity[0];
+        }
 
         SymbolEntity[] entities = new SymbolEntity[texts.length];
         for (int i = 0; i < entities.length; i++){

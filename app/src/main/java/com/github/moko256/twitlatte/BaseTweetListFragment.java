@@ -190,14 +190,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
             List<Long> subList = list.subList(position + GlobalApplication.statusCacheListLimit, list.size());
             statusIdsDatabase.deleteIds(subList);
 
-            boolean[] results = statusIdsDatabase.hasIdsOtherTable(subList);
-            List<Long> deletableIds = new ArrayList<>(results.length);
-            for (int i = 0; i < subList.size(); i++) {
-                if (!results[i]) {
-                    deletableIds.add(subList.get(i));
-                }
-            }
-            GlobalApplication.statusCache.delete(deletableIds);
+            GlobalApplication.statusCache.delete(subList);
         }
         super.onDestroyView();
         subscription.unsubscribe();
@@ -360,7 +353,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                     try {
                         ResponseList<Status> statuses = getResponseList(paging);
                         if (statuses.size() > 0){
-                            GlobalApplication.statusCache.addAll(statuses);
+                            GlobalApplication.statusCache.addAll(statuses, true);
                         }
                         subscriber.onSuccess(statuses);
                     } catch (TwitterException e) {
