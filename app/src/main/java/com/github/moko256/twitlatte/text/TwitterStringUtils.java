@@ -179,9 +179,9 @@ public class TwitterStringUtils {
                 int imageSize;
 
                 if (matches) {
-                    imageSize = (int) Math.floor((textView.getTextSize() * 1.15) * 2.0);
+                    imageSize = Math.round(textView.getLineHeight() * 2);
                 } else {
-                    imageSize = (int) Math.floor(textView.getTextSize() * 1.15);
+                    imageSize = Math.round(textView.getLineHeight());
                 }
 
                 new AsyncTask<Void, Void, Map<String, Drawable>>(){
@@ -194,12 +194,24 @@ public class TwitterStringUtils {
                             try {
                                 Drawable value;
                                 try {
-                                    FileInputStream inputStream = new FileInputStream(glideRequests.asFile().load(emoji.getUrl()).submit().get());
-                                    value =  PngAndroid.readDrawable(textView.getContext(), inputStream);
+                                    FileInputStream inputStream = new FileInputStream(
+                                            glideRequests
+                                                    .asFile()
+                                                    .load(emoji.getUrl())
+                                                    .submit()
+                                                    .get()
+                                    );
+                                    value =  PngAndroid
+                                            .readDrawable(textView.getContext(), inputStream)
+                                            .mutate();
                                     inputStream.close();
                                 } catch (Throwable e){
                                     e.printStackTrace();
-                                    value = glideRequests.load(emoji.getUrl()).submit().get();
+                                    value = glideRequests
+                                            .load(emoji.getUrl())
+                                            .submit()
+                                            .get()
+                                            .mutate();
                                 }
                                 value.setBounds(0, 0, imageSize, imageSize);
                                 map.put(emoji.getShortCode(), value);
@@ -446,7 +458,9 @@ public class TwitterStringUtils {
             int length = result.length();
             result.append("\uFFFC");
 
-            Drawable drawable = AppCompatResources.getDrawable(context, R.drawable.ic_lock_black_24dp);
+            Drawable drawable = AppCompatResources
+                    .getDrawable(context, R.drawable.ic_lock_black_24dp)
+                    .mutate();
             drawable.setBounds(left, 0, textSize + left, textSize
             );
 
@@ -461,7 +475,9 @@ public class TwitterStringUtils {
             int length = result.length();
             result.append("\uFFFC");
 
-            Drawable drawable = AppCompatResources.getDrawable(context, R.drawable.ic_check_circle_black_24dp);
+            Drawable drawable = AppCompatResources
+                    .getDrawable(context, R.drawable.ic_check_circle_black_24dp)
+                    .mutate();
             drawable.setBounds(left, 0, textSize + left, textSize);
 
             DrawableCompat.setTint(drawable, ContextCompat.getColor(context, R.color.color_accent));
@@ -524,7 +540,7 @@ public class TwitterStringUtils {
         }
     }
 
-    public static enum Action{
+    public enum Action{
         LIKE,
         UNLIKE,
         REPEAT,

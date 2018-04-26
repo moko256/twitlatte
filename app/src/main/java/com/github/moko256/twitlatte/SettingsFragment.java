@@ -177,21 +177,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             Preference version=findPreference("app_version");
             version.setSummary(BuildConfig.VERSION_NAME);
             version.setOnPreferenceClickListener(preference -> {
-                if (eggCount > 0) {
-                    Date birthday = new Date(1446956982000L);
-                    Toast.makeText(
-                            getContext(),
-                            getString(
-                                    R.string.birthday_of_this_app_is,
-                                    birthday
-                            ) + "\n\n" + getString(
-                                    R.string.age_of_this_app_is,
-                                    (int) Math.floor((new Date().getTime() - birthday.getTime()) / (31557600000L))
-                            ),
-                            Toast.LENGTH_LONG
-                    ).show();
-                    eggCount--;
-                } else {
+                eggCount--;
+                if (eggCount <= 0) {
                     startActivity(new Intent(getActivity(), AboutActivity.class));
                     eggCount = 3;
                 }
