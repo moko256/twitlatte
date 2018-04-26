@@ -87,6 +87,7 @@
                         android:layout_margin="16dp"
                         android:text="@string/create_follow"
                         android:layout_centerHorizontal="true"
+                        android:visibility="gone"
                         style="@style/Widget.AppCompat.Button.Colored"/>
 
                     <TextView
