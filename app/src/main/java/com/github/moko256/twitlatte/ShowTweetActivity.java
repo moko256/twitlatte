@@ -148,6 +148,12 @@ public class ShowTweetActivity extends AppCompatActivity {
         @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
+            case R.id.action_quote:
+                startActivity(PostActivity.getIntent(
+                        this,
+                        getShareUrl() + " "
+                ));
+                break;
             case R.id.action_share:
                 startActivity(Intent.createChooser(
                         new Intent()

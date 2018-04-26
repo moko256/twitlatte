@@ -33,6 +33,7 @@ import android.widget.Space;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.moko256.twitlatte.cacheMap.StatusCacheMap;
 import com.github.moko256.twitlatte.entity.Type;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
 import com.github.moko256.twitlatte.widget.TweetImageTableView;
@@ -409,6 +410,12 @@ public class StatusView extends FrameLayout {
         });
         retweetButton.setChecked(item.isRetweeted());
         retweetButton.setEnabled(GlobalApplication.clientType == Type.MASTODON || !(item.getUser().isProtected()) || item.getUser().getId() == GlobalApplication.userId);
+        retweetButton.setOnLongClickListener(v -> {
+            getContext().startActivity(
+                    PostActivity.getIntent(getContext(), ((StatusCacheMap.CachedStatus) item).getRemoteUrl() + " ")
+            );
+            return true;
+        });
 
         replyButton.setOnClickListener(
                 v -> getContext().startActivity(PostActivity.getIntent(

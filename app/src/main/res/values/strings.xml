@@ -106,6 +106,7 @@
     <string name="tweet_source_mute_regex_pattern">Tweet posted client mute Regex pattern</string>
     <string name="muted_post">Muted post</string>
 
+    <string name="do_quote">Quote</string>
     <string name="do_logout">Logout</string>
     <string name="do_discard">Discard</string>
 
