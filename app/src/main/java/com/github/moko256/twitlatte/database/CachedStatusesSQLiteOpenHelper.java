@@ -112,7 +112,6 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
                 "create table " + TABLE_NAME + "(" + ArrayUtils.toCommaSplitString(TABLE_COLUMNS) + ", primary key(id))"
         );
         db.execSQL("create unique index idindex on " + TABLE_NAME + "(id)");
-
     }
 
     @Override
@@ -121,114 +120,113 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
     }
 
     public Status getCachedStatus(long id){
-        synchronized (this){
-            Status status = null;
-            SQLiteDatabase database=getReadableDatabase();
-            Cursor c=database.query(
-                    TABLE_NAME,
-                    TABLE_COLUMNS,
-                    "id=" + String.valueOf(id), null
-                    ,null,null,null,"1"
+        Status status = null;
+        SQLiteDatabase database=getReadableDatabase();
+        Cursor c=database.query(
+                TABLE_NAME,
+                TABLE_COLUMNS,
+                "id=" + String.valueOf(id), null
+                ,null,null,null,"1"
+        );
+        if (c.moveToLast()){
+            status = new StatusCacheMap.CachedStatus(
+                    new Date(c.getLong(0)),
+                    c.getLong(1),
+                    c.getLong(2),
+                    c.getLong(3),
+                    c.getString(4),
+                    c.getString(5),
+                    c.getLong(6),
+                    c.getLong(7),
+                    c.getInt(8) != 0,
+                    c.getInt(9) != 0,
+                    c.getInt(10),
+                    c.getString(11),
+                    c.getInt(12),
+                    c.getInt(13) != 0,
+                    c.getString(14),
+                    restoreUserMentionEntities(
+                            spliteComma(c.getString(15)),
+                            spliteComma(c.getString(16)),
+                            spliteComma(c.getString(17)),
+                            spliteComma(c.getString(18)),
+                            spliteComma(c.getString(19)),
+                            spliteComma(c.getString(20))
+                    ),
+                    restoreURLEntities(
+                            spliteComma(c.getString(21)),
+                            spliteComma(c.getString(22)),
+                            spliteComma(c.getString(23)),
+                            spliteComma(c.getString(24)),
+                            spliteComma(c.getString(25))
+                    ),
+                    restoreHashtagEntities(
+                            spliteComma(c.getString(26)),
+                            spliteComma(c.getString(27)),
+                            spliteComma(c.getString(28))
+                    ),
+                    restoreMediaEntities(
+                            spliteComma(c.getString(29)),
+                            spliteComma(c.getString(30)),
+                            spliteComma(c.getString(31)),
+                            spliteComma(c.getString(32)),
+                            spliteComma(c.getString(33)),
+
+                            parse(c.getString(34)),
+                            parse(c.getString(35)),
+                            parse(c.getString(36)),
+
+                            spliteComma(c.getString(37)),
+                            spliteComma(c.getString(38))
+                    ),
+                    restoreSymbolEntities(
+                            spliteComma(c.getString(39)),
+                            spliteComma(c.getString(40)),
+                            spliteComma(c.getString(41))
+                    ),
+                    c.getLong(42),
+                    null,
+                    c.getString(43),
+                    restoreEmojis(
+                            spliteComma(c.getString(44)),
+                            spliteComma(c.getString(45))
+                    )
             );
-            if (c.moveToLast()){
-                status = new StatusCacheMap.CachedStatus(
-                        new Date(c.getLong(0)),
-                        c.getLong(1),
-                        c.getLong(2),
-                        c.getLong(3),
-                        c.getString(4),
-                        c.getString(5),
-                        c.getLong(6),
-                        c.getLong(7),
-                        c.getInt(8) != 0,
-                        c.getInt(9) != 0,
-                        c.getInt(10),
-                        c.getString(11),
-                        c.getInt(12),
-                        c.getInt(13) != 0,
-                        c.getString(14),
-                        restoreUserMentionEntities(
-                                spliteComma(c.getString(15)),
-                                spliteComma(c.getString(16)),
-                                spliteComma(c.getString(17)),
-                                spliteComma(c.getString(18)),
-                                spliteComma(c.getString(19)),
-                                spliteComma(c.getString(20))
-                        ),
-                        restoreURLEntities(
-                                spliteComma(c.getString(21)),
-                                spliteComma(c.getString(22)),
-                                spliteComma(c.getString(23)),
-                                spliteComma(c.getString(24)),
-                                spliteComma(c.getString(25))
-                        ),
-                        restoreHashtagEntities(
-                                spliteComma(c.getString(26)),
-                                spliteComma(c.getString(27)),
-                                spliteComma(c.getString(28))
-                        ),
-                        restoreMediaEntities(
-                                spliteComma(c.getString(29)),
-                                spliteComma(c.getString(30)),
-                                spliteComma(c.getString(31)),
-                                spliteComma(c.getString(32)),
-                                spliteComma(c.getString(33)),
-
-                                parse(c.getString(34)),
-                                parse(c.getString(35)),
-                                parse(c.getString(36)),
-
-                                spliteComma(c.getString(37)),
-                                spliteComma(c.getString(38))
-                        ),
-                        restoreSymbolEntities(
-                                spliteComma(c.getString(39)),
-                                spliteComma(c.getString(40)),
-                                spliteComma(c.getString(41))
-                        ),
-                        c.getLong(42),
-                        null,
-                        c.getString(43),
-                        restoreEmojis(
-                                spliteComma(c.getString(44)),
-                                spliteComma(c.getString(45))
-                        )
-                );
-            }
-
-            c.close();
-            database.close();
-            return status;
         }
+
+        c.close();
+        database.close();
+        return status;
     }
 
     public void addCachedStatus(Status status){
-        synchronized (this){
-            SQLiteDatabase database=getWritableDatabase();
-            database.beginTransaction();
-            addCachedStatusAtTransaction(status);
-            database.setTransactionSuccessful();
-            database.endTransaction();
-            database.close();
-        }
+        ContentValues values = createCachedStatusContentValues(status);
+
+        SQLiteDatabase database=getWritableDatabase();
+        database.beginTransaction();
+        database.replace(TABLE_NAME, null, values);
+        database.setTransactionSuccessful();
+        database.endTransaction();
+        database.close();
     }
 
     public void addCachedStatuses(Collection<? extends Status> statuses){
-        synchronized (this){
-            SQLiteDatabase database=getWritableDatabase();
-            database.beginTransaction();
-            for (Status status : statuses) {
-                addCachedStatusAtTransaction(status);
-            }
-            database.setTransactionSuccessful();
-            database.endTransaction();
-            database.close();
+        ArrayList<ContentValues> contentValues = new ArrayList<>(statuses.size());
+        for (Status status : statuses) {
+            contentValues.add(createCachedStatusContentValues(status));
         }
+
+        SQLiteDatabase database=getWritableDatabase();
+        database.beginTransaction();
+        for (ContentValues values : contentValues) {
+            database.replace(TABLE_NAME, null, values);
+        }
+        database.setTransactionSuccessful();
+        database.endTransaction();
+        database.close();
     }
 
-    private void addCachedStatusAtTransaction(Status status){
-        SQLiteDatabase database = getWritableDatabase();
-
+    private ContentValues createCachedStatusContentValues(Status status){
         ContentValues contentValues = new ContentValues();
         contentValues.put(TABLE_COLUMNS[0], status.getCreatedAt().getTime());
         contentValues.put(TABLE_COLUMNS[1], status.getId());
@@ -312,7 +310,7 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
             contentValues.put(TABLE_COLUMNS[28], ArrayUtils.toCommaSplitString(ends).toString());
         }
 
-        if (status.getUserMentionEntities() != null) {
+        if (status.getMediaEntities() != null) {
             int size = status.getMediaEntities().length;
 
 
@@ -407,36 +405,31 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
             contentValues.put(TABLE_COLUMNS[44], ArrayUtils.toCommaSplitString(shortcodes).toString());
             contentValues.put(TABLE_COLUMNS[45], ArrayUtils.toCommaSplitString(urls).toString());
         }
-
-        database.replace(TABLE_NAME, null, contentValues);
+        return contentValues;
     }
 
     public void deleteCachedStatus(long id){
-        synchronized (this) {
-            SQLiteDatabase database = getWritableDatabase();
-            database.beginTransaction();
-            deleteCachedStatusAtTransaction(id);
-            database.setTransactionSuccessful();
-            database.endTransaction();
-            database.close();
-        }
+        SQLiteDatabase database = getWritableDatabase();
+        database.beginTransaction();
+        deleteCachedStatusAtTransaction(database, id);
+        database.setTransactionSuccessful();
+        database.endTransaction();
+        database.close();
     }
 
     public void deleteCachedStatuses(Collection<Long> ids){
-        synchronized (this) {
-            SQLiteDatabase database = getWritableDatabase();
-            database.beginTransaction();
-            for (Long id : ids) {
-                deleteCachedStatusAtTransaction(id);
-            }
-            database.setTransactionSuccessful();
-            database.endTransaction();
-            database.close();
+        SQLiteDatabase database = getWritableDatabase();
+        database.beginTransaction();
+        for (Long id : ids) {
+            deleteCachedStatusAtTransaction(database, id);
         }
+        database.setTransactionSuccessful();
+        database.endTransaction();
+        database.close();
     }
 
-    private void deleteCachedStatusAtTransaction(Long id) {
-        getWritableDatabase().delete(TABLE_NAME, "id=" + String.valueOf(id), null);
+    private void deleteCachedStatusAtTransaction(SQLiteDatabase database, Long id) {
+        database.delete(TABLE_NAME, "id=" + String.valueOf(id), null);
     }
 
     @NonNull
@@ -481,12 +474,12 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
 
                 @Override
                 public int getStart() {
-                    return Integer.parseInt(starts[finalI].trim());
+                    return Integer.parseInt(starts[finalI]);
                 }
 
                 @Override
                 public int getEnd() {
-                    return Integer.parseInt(ends[finalI].trim());
+                    return Integer.parseInt(ends[finalI]);
                 }
             };
         }
@@ -525,12 +518,12 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
 
                 @Override
                 public int getStart() {
-                    return Integer.valueOf(starts[finalI].trim());
+                    return Integer.valueOf(starts[finalI]);
                 }
 
                 @Override
                 public int getEnd() {
-                    return Integer.valueOf(ends[finalI].trim());
+                    return Integer.valueOf(ends[finalI]);
                 }
             };
         }
@@ -552,12 +545,12 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
 
                 @Override
                 public int getStart() {
-                    return Integer.parseInt(starts[finalI].trim());
+                    return Integer.parseInt(starts[finalI]);
                 }
 
                 @Override
                 public int getEnd() {
-                    return Integer.parseInt(ends[finalI].trim());
+                    return Integer.parseInt(ends[finalI]);
                 }
             };
         }
@@ -671,12 +664,12 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
 
                 @Override
                 public int getStart() {
-                    return Integer.parseInt(starts[finalI].trim());
+                    return Integer.parseInt(starts[finalI]);
                 }
 
                 @Override
                 public int getEnd() {
-                    return Integer.parseInt(ends[finalI].trim());
+                    return Integer.parseInt(ends[finalI]);
                 }
             };
         }
@@ -710,12 +703,12 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
 
                 @Override
                 public int getStart() {
-                    return Integer.parseInt(starts[finalI].trim());
+                    return Integer.parseInt(starts[finalI]);
                 }
 
                 @Override
                 public int getEnd() {
-                    return Integer.parseInt(ends[finalI].trim());
+                    return Integer.parseInt(ends[finalI]);
                 }
             };
         }
