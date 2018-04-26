@@ -18,7 +18,9 @@ package com.github.moko256.twitlatte;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.Build;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.text.Layout;
 import android.text.format.DateUtils;
 import android.text.method.LinkMovementMethod;
 import android.util.AttributeSet;
@@ -100,6 +102,9 @@ public class StatusView extends FrameLayout {
         userName = findViewById(R.id.tweet_user_name);
         tweetContext= findViewById(R.id.tweet_content);
         tweetContext.setMovementMethod(LinkMovementMethod.getInstance());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            tweetContext.setBreakStrategy(Layout.BREAK_STRATEGY_SIMPLE);
+        }
         timeStampText = findViewById(R.id.tweet_time_stamp_text);
         quoteTweetLayout = findViewById(R.id.tweet_quote_tweet);
         quoteTweetUserName = findViewById(R.id.tweet_quote_tweet_user_name);
