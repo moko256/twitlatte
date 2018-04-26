@@ -66,29 +66,33 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
         */
     }
 
-    public synchronized List<Long> getIds(){
-        SQLiteDatabase database=getReadableDatabase();
-        Cursor c=database.query(ID_LIST_TABLE_NAME, new String[]{"id"}, null, null, null,null,null);
-        List<Long> ids = new ArrayList<>(c.getCount());
+    public List<Long> getIds(){
+        synchronized (this) {
+            SQLiteDatabase database = getReadableDatabase();
+            Cursor c = database.query(ID_LIST_TABLE_NAME, new String[]{"id"}, null, null, null, null, null);
+            List<Long> ids = new ArrayList<>(c.getCount());
 
-        while (c.moveToNext()){
-            ids.add(c.getLong(0));
+            while (c.moveToNext()) {
+                ids.add(c.getLong(0));
+            }
+
+            c.close();
+            database.close();
+
+            Collections.reverse(ids);
+            return ids;
         }
-
-        c.close();
-        database.close();
-
-        Collections.reverse(ids);
-        return ids;
     }
 
-    public synchronized void addIds(List<Long> ids){
-        SQLiteDatabase database=getWritableDatabase();
-        database.beginTransaction();
-        addIdsAtTransaction(ids);
-        database.setTransactionSuccessful();
-        database.endTransaction();
-        database.close();
+    public void addIds(List<Long> ids){
+        synchronized (this) {
+            SQLiteDatabase database = getWritableDatabase();
+            database.beginTransaction();
+            addIdsAtTransaction(ids);
+            database.setTransactionSuccessful();
+            database.endTransaction();
+            database.close();
+        }
     }
 
     private void addIdsAtTransaction(List<Long> ids){
@@ -118,27 +122,31 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
         }
     }
 
-    public synchronized void insertIds(int bottomPosition, List<Long> ids){
-        List<Long> n = getIds();
-        List<Long> d = n.subList(0, bottomPosition);
+    public void insertIds(int bottomPosition, List<Long> ids){
+        synchronized (this) {
+            List<Long> n = getIds();
+            List<Long> d = n.subList(0, bottomPosition);
 
-        SQLiteDatabase database = getWritableDatabase();
-        database.beginTransaction();
-        deleteOnlyIdsAtTransaction(d);
-        addIdsAtTransaction(ids);
-        addIdsOnlyAtTransaction(d);
-        database.setTransactionSuccessful();
-        database.endTransaction();
-        database.close();
+            SQLiteDatabase database = getWritableDatabase();
+            database.beginTransaction();
+            deleteOnlyIdsAtTransaction(d);
+            addIdsAtTransaction(ids);
+            addIdsOnlyAtTransaction(d);
+            database.setTransactionSuccessful();
+            database.endTransaction();
+            database.close();
+        }
     }
 
-    public synchronized void deleteIds(List<Long> ids){
-        SQLiteDatabase database=getWritableDatabase();
-        database.beginTransaction();
-        deleteIdsAtTransaction(ids);
-        database.setTransactionSuccessful();
-        database.endTransaction();
-        database.close();
+    public void deleteIds(List<Long> ids){
+        synchronized (this) {
+            SQLiteDatabase database = getWritableDatabase();
+            database.beginTransaction();
+            deleteIdsAtTransaction(ids);
+            database.setTransactionSuccessful();
+            database.endTransaction();
+            database.close();
+        }
     }
 
     private void deleteIdsAtTransaction(List<Long> ids){
@@ -169,32 +177,36 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
         return result;
     }
 
-    public synchronized int getListViewPosition(){
-        SQLiteDatabase database=getReadableDatabase();
-        Cursor c = database.query(POSITION_TABLE_NAME, new String[]{"position"}, null, null, null, null, null);
-        int r;
-        if (c.moveToNext()){
-            r = c.getInt(0);
-        } else {
-            r = 0;
+    public int getListViewPosition(){
+        synchronized (this) {
+            SQLiteDatabase database = getReadableDatabase();
+            Cursor c = database.query(POSITION_TABLE_NAME, new String[]{"position"}, null, null, null, null, null);
+            int r;
+            if (c.moveToNext()) {
+                r = c.getInt(0);
+            } else {
+                r = 0;
+            }
+            c.close();
+            database.close();
+            return r;
         }
-        c.close();
-        database.close();
-        return r;
     }
 
-    public synchronized void setListViewPosition(int i){
-        SQLiteDatabase database=getWritableDatabase();
+    public void setListViewPosition(int i){
+        synchronized (this) {
+            SQLiteDatabase database = getWritableDatabase();
 
-        ContentValues contentValues = new ContentValues();
-        contentValues.put("position", i);
+            ContentValues contentValues = new ContentValues();
+            contentValues.put("position", i);
 
-        database.beginTransaction();
-        database.delete(POSITION_TABLE_NAME, null, null);
-        database.insert(POSITION_TABLE_NAME, null, contentValues);
-        database.setTransactionSuccessful();
-        database.endTransaction();
-        database.close();
+            database.beginTransaction();
+            database.delete(POSITION_TABLE_NAME, null, null);
+            database.insert(POSITION_TABLE_NAME, null, contentValues);
+            database.setTransactionSuccessful();
+            database.endTransaction();
+            database.close();
+        }
     }
 
     /*

@@ -110,442 +110,449 @@ public class CachedUsersSQLiteOpenHelper extends SQLiteOpenHelper {
 
     }
 
-    public synchronized User getCachedUser(long id){
-        User user = null;
-        SQLiteDatabase database=getReadableDatabase();
-        Cursor c=database.query(
-                TABLE_NAME,
-                TABLE_COLUMNS,
-                "id=" + String.valueOf(id), null
-                ,null,null,null,"1"
-        );
-        if (c.moveToLast()){
-            user = new User() {
-                long id = c.getLong(0);
-                String name = c.getString(1);
-                String email = c.getString(2);
-                String screenName = c.getString(3);
-                String location = c.getString(4);
-                String description = c.getString(5);
-                boolean isContributorsEnabled = c.getInt(6) != 0;
-                String profileImageURL = c.getString(7);
-                String profileImageURLHttps = c.getString(8);
-                boolean isDefaultProfileImage = c.getInt(9) != 0;
-                String url = c.getString(10);
-                boolean isProtected = c.getInt(11) != 0;
-                int followersCount = c.getInt(12);
-                String profileBackgroundColor = c.getString(13);
-                String profileTextColor = c.getString(14);
-                String profileLinkColor = c.getString(15);
-                String profileSidebarFillColor = c.getString(16);
-                String profileSidebarBorderColor = c.getString(17);
-                boolean isProfileUseBackgroundImage = c.getInt(18) != 0;
-                boolean isDefaultProfile = c.getInt(19) != 0;
-                boolean isShowAllInlineMedia = c.getInt(20) != 0;
-                int friendsCount = c.getInt(21);
-                Date createdAt = new Date(c.getLong(22));
-                int favoritesCount = c.getInt(23);
-                int utcOffset = c.getInt(24);
-                String timeZone = c.getString(25);
-                String profileBackgroundImageURL = c.getString(26);
-                String profileBackgroundImageURLHttps = c.getString(27);
-                String profileBannerImageUrl = c.getString(28);
-                boolean isProfileBackgroundTiled = c.getInt(29) != 0;
-                String lang = c.getString(30);
-                int statusesCount = c.getInt(31);
-                boolean isGeoEnabled = c.getInt(32) != 0;
-                boolean isVerified = c.getInt(33) != 0;
-                boolean isTranslator = c.getInt(34) != 0;
-                boolean isFollowRequestSent = c.getInt(35) != 0;
-                URLEntity[] descriptionURLEntities = restoreURLEntities(
-                        c.getString(36).split(","),
-                        c.getString(37).split(","),
-                        c.getString(38).split(","),
-                        c.getString(39).split(","),
-                        c.getString(40).split(","),
-                        c.getString(41).split(",")
-                );
-                String[] withheldInCountries = c.getString(42).split(",");
+    public User getCachedUser(long id){
+        synchronized (this) {
+            User user = null;
+            SQLiteDatabase database = getReadableDatabase();
+            Cursor c = database.query(
+                    TABLE_NAME,
+                    TABLE_COLUMNS,
+                    "id=" + String.valueOf(id), null
+                    , null, null, null, "1"
+            );
+            if (c.moveToLast()) {
+                user = new User() {
+                    long id = c.getLong(0);
+                    String name = c.getString(1);
+                    String email = c.getString(2);
+                    String screenName = c.getString(3);
+                    String location = c.getString(4);
+                    String description = c.getString(5);
+                    boolean isContributorsEnabled = c.getInt(6) != 0;
+                    String profileImageURL = c.getString(7);
+                    String profileImageURLHttps = c.getString(8);
+                    boolean isDefaultProfileImage = c.getInt(9) != 0;
+                    String url = c.getString(10);
+                    boolean isProtected = c.getInt(11) != 0;
+                    int followersCount = c.getInt(12);
+                    String profileBackgroundColor = c.getString(13);
+                    String profileTextColor = c.getString(14);
+                    String profileLinkColor = c.getString(15);
+                    String profileSidebarFillColor = c.getString(16);
+                    String profileSidebarBorderColor = c.getString(17);
+                    boolean isProfileUseBackgroundImage = c.getInt(18) != 0;
+                    boolean isDefaultProfile = c.getInt(19) != 0;
+                    boolean isShowAllInlineMedia = c.getInt(20) != 0;
+                    int friendsCount = c.getInt(21);
+                    Date createdAt = new Date(c.getLong(22));
+                    int favoritesCount = c.getInt(23);
+                    int utcOffset = c.getInt(24);
+                    String timeZone = c.getString(25);
+                    String profileBackgroundImageURL = c.getString(26);
+                    String profileBackgroundImageURLHttps = c.getString(27);
+                    String profileBannerImageUrl = c.getString(28);
+                    boolean isProfileBackgroundTiled = c.getInt(29) != 0;
+                    String lang = c.getString(30);
+                    int statusesCount = c.getInt(31);
+                    boolean isGeoEnabled = c.getInt(32) != 0;
+                    boolean isVerified = c.getInt(33) != 0;
+                    boolean isTranslator = c.getInt(34) != 0;
+                    boolean isFollowRequestSent = c.getInt(35) != 0;
+                    URLEntity[] descriptionURLEntities = restoreURLEntities(
+                            c.getString(36).split(","),
+                            c.getString(37).split(","),
+                            c.getString(38).split(","),
+                            c.getString(39).split(","),
+                            c.getString(40).split(","),
+                            c.getString(41).split(",")
+                    );
+                    String[] withheldInCountries = c.getString(42).split(",");
 
-                @Override
-                public long getId() {
-                    return id;
-                }
+                    @Override
+                    public long getId() {
+                        return id;
+                    }
 
-                @Override
-                public String getName() {
-                    return name;
-                }
+                    @Override
+                    public String getName() {
+                        return name;
+                    }
 
-                @Override
-                public String getEmail() {
-                    return email;
-                }
+                    @Override
+                    public String getEmail() {
+                        return email;
+                    }
 
-                @Override
-                public String getScreenName() {
-                    return screenName;
-                }
+                    @Override
+                    public String getScreenName() {
+                        return screenName;
+                    }
 
-                @Override
-                public String getLocation() {
-                    return location;
-                }
+                    @Override
+                    public String getLocation() {
+                        return location;
+                    }
 
-                @Override
-                public String getDescription() {
-                    return description;
-                }
+                    @Override
+                    public String getDescription() {
+                        return description;
+                    }
 
-                @Override
-                public boolean isContributorsEnabled() {
-                    return isContributorsEnabled;
-                }
+                    @Override
+                    public boolean isContributorsEnabled() {
+                        return isContributorsEnabled;
+                    }
 
-                private String toResizedURL(String originalURL, String sizeSuffix) {
-                    if (null != originalURL && originalURL.length() >= 1 && isTwitter) {
-                        int index = originalURL.lastIndexOf("_");
-                        int suffixIndex = originalURL.lastIndexOf(".");
-                        int slashIndex = originalURL.lastIndexOf("/");
-                        String url = originalURL.substring(0, index) + sizeSuffix;
-                        if (suffixIndex > slashIndex) {
-                            url += originalURL.substring(suffixIndex);
+                    private String toResizedURL(String originalURL, String sizeSuffix) {
+                        if (null != originalURL && originalURL.length() >= 1 && isTwitter) {
+                            int index = originalURL.lastIndexOf("_");
+                            int suffixIndex = originalURL.lastIndexOf(".");
+                            int slashIndex = originalURL.lastIndexOf("/");
+                            String url = originalURL.substring(0, index) + sizeSuffix;
+                            if (suffixIndex > slashIndex) {
+                                url += originalURL.substring(suffixIndex);
+                            }
+                            return url;
                         }
+                        return originalURL;
+                    }
+
+                    @Override
+                    public String getProfileImageURL() {
+                        return profileImageURL;
+                    }
+
+                    @Override
+                    public String get400x400ProfileImageURL() {
+                        return toResizedURL(profileImageURL, "_400x400");
+                    }
+
+
+                    @Override
+                    public String getBiggerProfileImageURL() {
+                        return toResizedURL(profileImageURL, "_bigger");
+                    }
+
+                    @Override
+                    public String getMiniProfileImageURL() {
+                        return toResizedURL(profileImageURL, "_mini");
+                    }
+
+                    @Override
+                    public String getOriginalProfileImageURL() {
+                        return toResizedURL(profileImageURL, "");
+                    }
+
+                    @Override
+                    public String getProfileImageURLHttps() {
+                        return profileImageURLHttps;
+                    }
+
+                    @Override
+                    public String get400x400ProfileImageURLHttps() {
+                        return toResizedURL(profileImageURLHttps, "_400x400");
+                    }
+
+                    @Override
+                    public String getBiggerProfileImageURLHttps() {
+                        return toResizedURL(profileImageURLHttps, "_bigger");
+                    }
+
+                    @Override
+                    public String getMiniProfileImageURLHttps() {
+                        return toResizedURL(profileImageURLHttps, "_mini");
+                    }
+
+                    @Override
+                    public String getOriginalProfileImageURLHttps() {
+                        return toResizedURL(profileImageURLHttps, "");
+                    }
+
+                    @Override
+                    public boolean isDefaultProfileImage() {
+                        return isDefaultProfileImage;
+                    }
+
+                    @Override
+                    public String getURL() {
                         return url;
                     }
-                    return originalURL;
-                }
 
-                @Override
-                public String getProfileImageURL() {
-                    return profileImageURL;
-                }
+                    @Override
+                    public boolean isProtected() {
+                        return isProtected;
+                    }
 
-                @Override
-                public String get400x400ProfileImageURL() {
-                    return toResizedURL(profileImageURL, "_400x400");
-                }
+                    @Override
+                    public int getFollowersCount() {
+                        return followersCount;
+                    }
 
+                    @Override
+                    public Status getStatus() {
+                        return null;
+                    }
 
-                @Override
-                public String getBiggerProfileImageURL() {
-                    return toResizedURL(profileImageURL, "_bigger");
-                }
+                    @Override
+                    public String getProfileBackgroundColor() {
+                        return profileBackgroundColor;
+                    }
 
-                @Override
-                public String getMiniProfileImageURL() {
-                    return toResizedURL(profileImageURL, "_mini");
-                }
+                    @Override
+                    public String getProfileTextColor() {
+                        return profileTextColor;
+                    }
 
-                @Override
-                public String getOriginalProfileImageURL() {
-                    return toResizedURL(profileImageURL, "");
-                }
+                    @Override
+                    public String getProfileLinkColor() {
+                        return profileLinkColor;
+                    }
 
-                @Override
-                public String getProfileImageURLHttps() {
-                    return profileImageURLHttps;
-                }
+                    @Override
+                    public String getProfileSidebarFillColor() {
+                        return profileSidebarFillColor;
+                    }
 
-                @Override
-                public String get400x400ProfileImageURLHttps() {
-                    return toResizedURL(profileImageURLHttps, "_400x400");
-                }
+                    @Override
+                    public String getProfileSidebarBorderColor() {
+                        return profileSidebarBorderColor;
+                    }
 
-                @Override
-                public String getBiggerProfileImageURLHttps() {
-                    return toResizedURL(profileImageURLHttps, "_bigger");
-                }
+                    @Override
+                    public boolean isProfileUseBackgroundImage() {
+                        return isProfileUseBackgroundImage;
+                    }
 
-                @Override
-                public String getMiniProfileImageURLHttps() {
-                    return toResizedURL(profileImageURLHttps, "_mini");
-                }
+                    @Override
+                    public boolean isDefaultProfile() {
+                        return isDefaultProfile;
+                    }
 
-                @Override
-                public String getOriginalProfileImageURLHttps() {
-                    return toResizedURL(profileImageURLHttps, "");
-                }
+                    @Override
+                    public boolean isShowAllInlineMedia() {
+                        return isShowAllInlineMedia;
+                    }
 
-                @Override
-                public boolean isDefaultProfileImage() {
-                    return isDefaultProfileImage;
-                }
+                    @Override
+                    public int getFriendsCount() {
+                        return friendsCount;
+                    }
 
-                @Override
-                public String getURL() {
-                    return url;
-                }
+                    @Override
+                    public Date getCreatedAt() {
+                        return createdAt;
+                    }
 
-                @Override
-                public boolean isProtected() {
-                    return isProtected;
-                }
+                    @Override
+                    public int getFavouritesCount() {
+                        return favoritesCount;
+                    }
 
-                @Override
-                public int getFollowersCount() {
-                    return followersCount;
-                }
+                    @Override
+                    public int getUtcOffset() {
+                        return utcOffset;
+                    }
 
-                @Override
-                public Status getStatus() {
-                    return null;
-                }
+                    @Override
+                    public String getTimeZone() {
+                        return timeZone;
+                    }
 
-                @Override
-                public String getProfileBackgroundColor() {
-                    return profileBackgroundColor;
-                }
+                    @Override
+                    public String getProfileBackgroundImageURL() {
+                        return profileBackgroundImageURL;
+                    }
 
-                @Override
-                public String getProfileTextColor() {
-                    return profileTextColor;
-                }
+                    @Override
+                    public String getProfileBackgroundImageUrlHttps() {
+                        return profileBackgroundImageURLHttps;
+                    }
 
-                @Override
-                public String getProfileLinkColor() {
-                    return profileLinkColor;
-                }
+                    @Override
+                    public String getProfileBannerURL() {
+                        return profileBannerImageUrl != null && isTwitter ? profileBannerImageUrl + "/web" : profileBannerImageUrl;
+                    }
 
-                @Override
-                public String getProfileSidebarFillColor() {
-                    return profileSidebarFillColor;
-                }
+                    @Override
+                    public String getProfileBannerRetinaURL() {
+                        return profileBannerImageUrl != null && isTwitter ? profileBannerImageUrl + "/web_retina" : profileBannerImageUrl;
+                    }
 
-                @Override
-                public String getProfileSidebarBorderColor() {
-                    return profileSidebarBorderColor;
-                }
+                    @Override
+                    public String getProfileBannerIPadURL() {
+                        return profileBannerImageUrl != null && isTwitter ? profileBannerImageUrl + "/ipad" : profileBannerImageUrl;
+                    }
 
-                @Override
-                public boolean isProfileUseBackgroundImage() {
-                    return isProfileUseBackgroundImage;
-                }
+                    @Override
+                    public String getProfileBannerIPadRetinaURL() {
+                        return profileBannerImageUrl != null && isTwitter ? profileBannerImageUrl + "/ipad_retina" : profileBannerImageUrl;
+                    }
 
-                @Override
-                public boolean isDefaultProfile() {
-                    return isDefaultProfile;
-                }
+                    @Override
+                    public String getProfileBannerMobileURL() {
+                        return profileBannerImageUrl != null && isTwitter ? profileBannerImageUrl + "/mobile" : profileBannerImageUrl;
+                    }
 
-                @Override
-                public boolean isShowAllInlineMedia() {
-                    return isShowAllInlineMedia;
-                }
+                    @Override
+                    public String getProfileBannerMobileRetinaURL() {
+                        return profileBannerImageUrl != null && isTwitter ? profileBannerImageUrl + "/mobile_retina" : profileBannerImageUrl;
+                    }
 
-                @Override
-                public int getFriendsCount() {
-                    return friendsCount;
-                }
+                    @Override
+                    public String getProfileBanner300x100URL() {
+                        return profileBannerImageUrl != null && isTwitter ? profileBannerImageUrl + "/300x100" : profileBannerImageUrl;
+                    }
 
-                @Override
-                public Date getCreatedAt() {
-                    return createdAt;
-                }
+                    @Override
+                    public String getProfileBanner600x200URL() {
+                        return profileBannerImageUrl != null && isTwitter ? profileBannerImageUrl + "/600x200" : profileBannerImageUrl;
+                    }
 
-                @Override
-                public int getFavouritesCount() {
-                    return favoritesCount;
-                }
+                    @Override
+                    public String getProfileBanner1500x500URL() {
+                        return profileBannerImageUrl != null && isTwitter ? profileBannerImageUrl + "/1500x500" : profileBannerImageUrl;
+                    }
 
-                @Override
-                public int getUtcOffset() {
-                    return utcOffset;
-                }
+                    @Override
+                    public boolean isProfileBackgroundTiled() {
+                        return isProfileBackgroundTiled;
+                    }
 
-                @Override
-                public String getTimeZone() {
-                    return timeZone;
-                }
+                    @Override
+                    public String getLang() {
+                        return lang;
+                    }
 
-                @Override
-                public String getProfileBackgroundImageURL() {
-                    return profileBackgroundImageURL;
-                }
+                    @Override
+                    public int getStatusesCount() {
+                        return statusesCount;
+                    }
 
-                @Override
-                public String getProfileBackgroundImageUrlHttps() {
-                    return profileBackgroundImageURLHttps;
-                }
+                    @Override
+                    public boolean isGeoEnabled() {
+                        return isGeoEnabled;
+                    }
 
-                @Override
-                public String getProfileBannerURL() {
-                    return profileBannerImageUrl != null && isTwitter? profileBannerImageUrl + "/web" : profileBannerImageUrl;
-                }
+                    @Override
+                    public boolean isVerified() {
+                        return isVerified;
+                    }
 
-                @Override
-                public String getProfileBannerRetinaURL() {
-                    return profileBannerImageUrl != null && isTwitter? profileBannerImageUrl + "/web_retina" : profileBannerImageUrl;
-                }
+                    @Override
+                    public boolean isTranslator() {
+                        return isTranslator;
+                    }
 
-                @Override
-                public String getProfileBannerIPadURL() {
-                    return profileBannerImageUrl != null && isTwitter? profileBannerImageUrl + "/ipad" : profileBannerImageUrl;
-                }
+                    @Override
+                    public int getListedCount() {
+                        return 0;
+                    }
 
-                @Override
-                public String getProfileBannerIPadRetinaURL() {
-                    return profileBannerImageUrl != null && isTwitter? profileBannerImageUrl + "/ipad_retina" : profileBannerImageUrl;
-                }
+                    @Override
+                    public boolean isFollowRequestSent() {
+                        return isFollowRequestSent;
+                    }
 
-                @Override
-                public String getProfileBannerMobileURL() {
-                    return profileBannerImageUrl != null && isTwitter? profileBannerImageUrl + "/mobile" : profileBannerImageUrl;
-                }
+                    @Override
+                    public URLEntity[] getDescriptionURLEntities() {
+                        return descriptionURLEntities;
+                    }
 
-                @Override
-                public String getProfileBannerMobileRetinaURL() {
-                    return profileBannerImageUrl != null && isTwitter? profileBannerImageUrl + "/mobile_retina" : profileBannerImageUrl;
-                }
+                    @Override
+                    public URLEntity getURLEntity() {
+                        return url == null ? null : new URLEntity() {
+                            @Override
+                            public String getText() {
+                                return url;
+                            }
 
-                @Override
-                public String getProfileBanner300x100URL() {
-                    return profileBannerImageUrl != null && isTwitter? profileBannerImageUrl + "/300x100" : profileBannerImageUrl;
-                }
+                            @Override
+                            public String getURL() {
+                                return url;
+                            }
 
-                @Override
-                public String getProfileBanner600x200URL() {
-                    return profileBannerImageUrl != null && isTwitter? profileBannerImageUrl + "/600x200" : profileBannerImageUrl;
-                }
+                            @Override
+                            public String getExpandedURL() {
+                                return url;
+                            }
 
-                @Override
-                public String getProfileBanner1500x500URL() {
-                    return profileBannerImageUrl != null && isTwitter? profileBannerImageUrl + "/1500x500" : profileBannerImageUrl;
-                }
+                            @Override
+                            public String getDisplayURL() {
+                                return url;
+                            }
 
-                @Override
-                public boolean isProfileBackgroundTiled() {
-                    return isProfileBackgroundTiled;
-                }
-                @Override
-                public String getLang() {
-                    return lang;
-                }
+                            @Override
+                            public int getStart() {
+                                return 0;
+                            }
 
-                @Override
-                public int getStatusesCount() {
-                    return statusesCount;
-                }
+                            @Override
+                            public int getEnd() {
+                                return url.length();
+                            }
+                        };
+                    }
 
-                @Override
-                public boolean isGeoEnabled() {
-                    return isGeoEnabled;
-                }
+                    @Override
+                    public String[] getWithheldInCountries() {
+                        return withheldInCountries;
+                    }
 
-                @Override
-                public boolean isVerified() {
-                    return isVerified;
-                }
+                    @Override
+                    public int compareTo(@NonNull User that) {
+                        return (int) (this.id - that.getId());
+                    }
 
-                @Override
-                public boolean isTranslator() {
-                    return isTranslator;
-                }
+                    @Override
+                    public RateLimitStatus getRateLimitStatus() {
+                        return null;
+                    }
 
-                @Override
-                public int getListedCount() {
-                    return 0;
-                }
+                    @Override
+                    public int getAccessLevel() {
+                        return 0;
+                    }
 
-                @Override
-                public boolean isFollowRequestSent() {
-                    return isFollowRequestSent;
-                }
+                    @Override
+                    public int hashCode() {
+                        return (int) id;
+                    }
 
-                @Override
-                public URLEntity[] getDescriptionURLEntities() {
-                    return descriptionURLEntities;
-                }
+                    @Override
+                    public boolean equals(Object obj) {
+                        return obj != null && (this == obj || obj instanceof User && ((User) obj).getId() == this.id);
+                    }
+                };
+            }
 
-                @Override
-                public URLEntity getURLEntity() {
-                    return url == null? null: new URLEntity() {
-                        @Override
-                        public String getText() {
-                            return url;
-                        }
-
-                        @Override
-                        public String getURL() {
-                            return url;
-                        }
-
-                        @Override
-                        public String getExpandedURL() {
-                            return url;
-                        }
-
-                        @Override
-                        public String getDisplayURL() {
-                            return url;
-                        }
-
-                        @Override
-                        public int getStart() {
-                            return 0;
-                        }
-
-                        @Override
-                        public int getEnd() {
-                            return url.length();
-                        }
-                    };
-                }
-
-                @Override
-                public String[] getWithheldInCountries() {
-                    return withheldInCountries;
-                }
-
-                @Override
-                public int compareTo(@NonNull User that) {
-                    return (int) (this.id - that.getId());
-                }
-
-                @Override
-                public RateLimitStatus getRateLimitStatus() {
-                    return null;
-                }
-
-                @Override
-                public int getAccessLevel() {
-                    return 0;
-                }
-
-                @Override
-                public int hashCode() {
-                    return (int) id;
-                }
-
-                @Override
-                public boolean equals(Object obj) {
-                    return obj != null && (this == obj || obj instanceof User && ((User) obj).getId() == this.id);
-                }
-            };
+            c.close();
+            database.close();
+            return user;
         }
-
-        c.close();
-        database.close();
-        return user;
     }
 
-    public synchronized void addCachedUser(User user){
-        SQLiteDatabase database=getWritableDatabase();
-        database.beginTransaction();
-        addCachedUserAtTransaction(user);
-        database.setTransactionSuccessful();
-        database.endTransaction();
-        database.close();
-    }
-
-    public synchronized void addCachedUsers(Collection<? extends User> users){
-        SQLiteDatabase database=getWritableDatabase();
-        database.beginTransaction();
-        for (User user : users) {
+    public void addCachedUser(User user){
+        synchronized (this) {
+            SQLiteDatabase database = getWritableDatabase();
+            database.beginTransaction();
             addCachedUserAtTransaction(user);
+            database.setTransactionSuccessful();
+            database.endTransaction();
+            database.close();
         }
-        database.setTransactionSuccessful();
-        database.endTransaction();
-        database.close();
+    }
+
+    public void addCachedUsers(Collection<? extends User> users){
+        synchronized (this) {
+            SQLiteDatabase database = getWritableDatabase();
+            database.beginTransaction();
+            for (User user : users) {
+                addCachedUserAtTransaction(user);
+            }
+            database.setTransactionSuccessful();
+            database.endTransaction();
+            database.close();
+        }
     }
 
     private void addCachedUserAtTransaction(User user){
@@ -658,12 +665,12 @@ public class CachedUsersSQLiteOpenHelper extends SQLiteOpenHelper {
 
                 @Override
                 public int getStart() {
-                    return Integer.valueOf(starts[finalI].trim());
+                    return Integer.parseInt(starts[finalI].trim());
                 }
 
                 @Override
                 public int getEnd() {
-                    return Integer.valueOf(ends[finalI].trim());
+                    return Integer.parseInt(ends[finalI].trim());
                 }
             };
         }

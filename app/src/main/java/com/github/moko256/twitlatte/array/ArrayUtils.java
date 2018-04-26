@@ -61,4 +61,30 @@ public class ArrayUtils {
             return "";
         }
     }
+
+    @NonNull
+    public static CharSequence toCommaAndPipeSplitString(@Nullable String[][] array){
+        if (array != null && array.length > 0) {
+            StringBuilder builder = new StringBuilder(array.length * 10);
+            for (int i = 0; ; i++) {
+                if (array[i] != null && array[i].length > 0) {
+                    for (int i1 = 0; ; i1++) {
+                        builder.append(array[i][i1]);
+                        if (i1 < array[i].length - 1) {
+                            builder.append("|");
+                        } else {
+                            break;
+                        }
+                    }
+                }
+                if (i < array.length - 1) {
+                    builder.append(",");
+                } else {
+                    return builder;
+                }
+            }
+        } else {
+            return "";
+        }
+    }
 }

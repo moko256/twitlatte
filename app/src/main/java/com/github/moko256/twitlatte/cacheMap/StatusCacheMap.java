@@ -271,6 +271,70 @@ public class StatusCacheMap {
             }
         }
 
+        public CachedStatus(Date createdAt, long id, long userId, long retweetedStatusId, String text, String source, long inReplyToStatusId, long inReplyToUserId, boolean isFavorited, boolean isRetweeted, int favoriteCount, String inReplyToScreenName, int retweetCount, boolean isPossiblySensitive, String lang, UserMentionEntity[] userMentionEntities, URLEntity[] urlEntities, HashtagEntity[] hashtagEntities, MediaEntity[] mediaEntities, SymbolEntity[] symbolEntities, long quotedStatusId, Status quotedStatus, String url, List<Emoji> emojis) {
+            this.createdAt = createdAt;
+            this.id = id;
+            this.userId = userId;
+            this.retweetedStatusId = retweetedStatusId;
+
+            if (retweetedStatusId == -1) {
+                this.text = text;
+                this.source = source;
+                this.inReplyToStatusId = inReplyToStatusId;
+                this.inReplyToUserId = inReplyToUserId;
+                this.isFavorited = isFavorited;
+                this.isRetweeted = isRetweeted;
+                this.favoriteCount = favoriteCount;
+                this.inReplyToScreenName = inReplyToScreenName;
+                this.retweetCount = retweetCount;
+                this.isPossiblySensitive = isPossiblySensitive;
+                this.lang = lang;
+                this.userMentionEntities = userMentionEntities;
+                this.urlEntities = urlEntities;
+                this.hashtagEntities = hashtagEntities;
+                this.mediaEntities = mediaEntities;
+                this.symbolEntities = symbolEntities;
+                this.quotedStatusId = quotedStatusId;
+                this.quotedStatus = quotedStatus;
+                this.url = url;
+                this.emojis = emojis;
+            } else {
+                this.text=null;
+                this.source=null;
+                //this.isTruncated=false;
+                this.inReplyToStatusId=-1;
+                this.inReplyToUserId=-1;
+                this.isFavorited=false;
+                this.isRetweeted=false;
+                this.favoriteCount=-1;
+                this.inReplyToScreenName=null;
+                //this.geoLocation = null;
+                //this.place = null;
+
+                this.retweetCount=-1;
+                this.isPossiblySensitive=false;
+                this.lang=null;
+
+                //this.contributorsIDs=null;
+
+                this.userMentionEntities=null;
+                this.urlEntities=null;
+                this.hashtagEntities=null;
+                this.mediaEntities=null;
+                this.symbolEntities=null;
+                //this.currentUserRetweetId = -1;
+                //this.scopes=null;
+                //this.withheldInCountries = null;
+                this.quotedStatusId = -1;
+                this.quotedStatus = null;
+
+                //this.displayTextRangeStart = -1;
+                //this.displayTextRangeEnd = -1;
+                this.url = url;
+                this.emojis = null;
+            }
+        }
+
         @Override
         public Date getCreatedAt() {
             return createdAt;

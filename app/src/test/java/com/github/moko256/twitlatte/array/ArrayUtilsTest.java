@@ -61,4 +61,18 @@ public class ArrayUtilsTest {
         CharSequence result = ArrayUtils.toCommaSplitString(array);
         assertTrue("0,1,2,aaa,@@@,$$$$$$$".contentEquals(result));
     }
-}
+
+    @Test
+    public void toCommaAndPipeSplitString() {
+        assertTrue(
+                "".contentEquals(ArrayUtils.toCommaAndPipeSplitString(null))
+        );
+
+        assertTrue(
+                "".contentEquals(ArrayUtils.toCommaAndPipeSplitString(new String[][]{new String[]{}}))
+        );
+
+        String[][] array = new String[][]{new String[]{"0", "1", "2"}, new String[]{"aaa", "@@@", "$$$$$$$"}};
+        CharSequence result = ArrayUtils.toCommaAndPipeSplitString(array);
+        assertTrue("0|1|2,aaa|@@@|$$$$$$$".contentEquals(result));
+    }}

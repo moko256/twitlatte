@@ -21,6 +21,8 @@
 -keep class twitter4j.* { *; }
 -keep class twitter4j.conf.PropertyConfigurationFactory
 
+-keep class com.github.moko256.twitlatte.** { *; }
+
 -keepclassmembers class android.support.v7.widget.SearchView { *; }
 
 # Proguard configuration for Jackson 2.x (fasterxml package instead of codehaus package)
