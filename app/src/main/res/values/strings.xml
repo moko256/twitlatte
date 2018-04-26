@@ -86,6 +86,7 @@
     <string name="license_at_this_app">License at this application</string>
     <string name="apache_license_2_0" translatable="false">Apache License, Version 2.0</string>
     <string name="open_source_license">Open source license</string>
+    <string name="contributors">Contributors</string>
     <string name="enable">Enable</string>
     <string name="disable">Disable</string>
     <string name="debug">Debug</string>

@@ -188,6 +188,16 @@
         <Preference
             android:key="source_code_link"
             android:title="GitHub" />
+        <PreferenceScreen
+            android:key="contributors"
+            android:title="@string/contributors">
+            <Preference
+                android:key="moko256"
+                android:title="\@moko256"/>
+            <Preference
+                android:key="jiro_aqua"
+                android:title="\@jiro_aqua"/>
+        </PreferenceScreen>
         <Preference
             android:key="app_version"
             android:title="@string/version_text"/>
