@@ -230,6 +230,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                 getResponseSingle(new Paging(1,20))
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
+                        .doAfterTerminate(() -> setRefreshing(false))
                         .subscribe(
                                 result-> {
                                     List<Long> ids = Observable
@@ -239,12 +240,10 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                                     list.addAll(ids);
                                     statusIdsDatabase.addIds(ids);
                                     adapter.notifyDataSetChanged();
-                                    setRefreshing(false);
                                 },
                                 e -> {
                                     e.printStackTrace();
                                     getSnackBar(TwitterStringUtils.convertErrorToText(e)).show();
-                                    setRefreshing(false);
                                 }
                         )
         );
@@ -256,6 +255,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                 getResponseSingle(new Paging(list.get(list.size() >= 2? 1: 0)).count(GlobalApplication.statusLimit))
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
+                        .doAfterTerminate(() -> setRefreshing(false))
                         .subscribe(
                                 result -> {
                                     if (result.size() > 0) {
@@ -285,12 +285,10 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                                             t.show();
                                         }
                                     }
-                                    setRefreshing(false);
                                 },
                                 e -> {
                                     e.printStackTrace();
                                     getSnackBar(TwitterStringUtils.convertErrorToText(e)).show();
-                                    setRefreshing(false);
                                 }
                         )
         );

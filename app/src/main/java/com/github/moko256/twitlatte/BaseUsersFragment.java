@@ -126,8 +126,13 @@ public abstract class BaseUsersFragment extends BaseListFragment {
                 getResponseSingle(-1)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
+                        .doAfterTerminate(() -> setRefreshing(false))
                         .subscribe(
                                 result-> {
+                                    int size = list.size();
+                                    list.clear();
+                                    adapter.notifyItemRangeRemoved(0, size);
+
                                     list.addAll(
                                             Observable
                                                     .from(result)
@@ -135,12 +140,10 @@ public abstract class BaseUsersFragment extends BaseListFragment {
                                                     .toList().toSingle().toBlocking().value()
                                     );
                                     adapter.notifyDataSetChanged();
-                                    setRefreshing(false);
                                 },
                                 e -> {
                                     e.printStackTrace();
                                     getSnackBar(TwitterStringUtils.convertErrorToText(e)).show();
-                                    setRefreshing(false);
                                 }
                         )
         );
@@ -148,7 +151,7 @@ public abstract class BaseUsersFragment extends BaseListFragment {
 
     @Override
     protected void onUpdateList() {
-        setRefreshing(false);
+        onInitializeList();
     }
 
     @Override
