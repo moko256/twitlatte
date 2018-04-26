@@ -21,6 +21,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteStatement;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -84,6 +85,8 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
             "HashtagEntity_starts",
             "HashtagEntity_ends",
             "MediaEntity_texts",
+            "MediaEntity_expandedURLs",
+            "MediaEntity_displayURLs",
             "MediaEntity_ids",
             "MediaEntity_MediaURLs",
             "MediaEntity_MediaURLHttpSs",
@@ -242,24 +245,26 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
                             spliteComma(c.getString(31)),
                             spliteComma(c.getString(32)),
                             spliteComma(c.getString(33)),
+                            spliteComma(c.getString(34)),
+                            spliteComma(c.getString(35)),
 
-                            parse(c.getString(34)),
-                            parse(c.getString(35)),
                             parse(c.getString(36)),
+                            parse(c.getString(37)),
+                            parse(c.getString(38)),
 
-                            spliteComma(c.getString(37)),
-                            spliteComma(c.getString(38))
+                            spliteComma(c.getString(39)),
+                            spliteComma(c.getString(40))
                     ),
                     restoreSymbolEntities(
-                            spliteComma(c.getString(39)),
-                            spliteComma(c.getString(40)),
-                            spliteComma(c.getString(41))
+                            spliteComma(c.getString(41)),
+                            spliteComma(c.getString(42)),
+                            spliteComma(c.getString(43))
                     ),
-                    c.getLong(42),
-                    c.getString(43),
+                    c.getLong(44),
+                    c.getString(45),
                     restoreEmojis(
-                            spliteComma(c.getString(44)),
-                            spliteComma(c.getString(45))
+                            spliteComma(c.getString(46)),
+                            spliteComma(c.getString(47))
                     )
             );
         }
@@ -391,6 +396,8 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
 
 
             String[] texts = new String[size];
+            String[] expandedUrls = new String[size];
+            String[] displayUrls = new String[size];
             String[] ids = new String[size];
             String[] mediaURLs = new String[size];
             String[] mediaURLHttpSs = new String[size];
@@ -404,6 +411,8 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
             for(int i = 0;i < size; i++){
                 MediaEntity entity = status.getMediaEntities()[i];
                 texts[i] = entity.getText();
+                expandedUrls[i] = entity.getExpandedURL();
+                displayUrls[i] = entity.getDisplayURL();
                 ids[i] = String.valueOf(entity.getId());
                 mediaURLs[i] = entity.getMediaURL();
                 mediaURLHttpSs[i] = entity.getMediaURLHttps();
@@ -430,15 +439,17 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
                 ends[i] = String.valueOf(entity.getEnd());
             }
             contentValues.put(TABLE_COLUMNS[29], ArrayUtils.toCommaSplitString(texts).toString());
-            contentValues.put(TABLE_COLUMNS[30], ArrayUtils.toCommaSplitString(ids).toString());
-            contentValues.put(TABLE_COLUMNS[31], ArrayUtils.toCommaSplitString(mediaURLs).toString());
-            contentValues.put(TABLE_COLUMNS[32], ArrayUtils.toCommaSplitString(mediaURLHttpSs).toString());
-            contentValues.put(TABLE_COLUMNS[33], ArrayUtils.toCommaSplitString(types).toString());
-            contentValues.put(TABLE_COLUMNS[34], ArrayUtils.toCommaAndPipeSplitString(variants_bitrates).toString());
-            contentValues.put(TABLE_COLUMNS[35], ArrayUtils.toCommaAndPipeSplitString(variants_contentTypes).toString());
-            contentValues.put(TABLE_COLUMNS[36], ArrayUtils.toCommaAndPipeSplitString(variants_uris).toString());
-            contentValues.put(TABLE_COLUMNS[37], ArrayUtils.toCommaSplitString(starts).toString());
-            contentValues.put(TABLE_COLUMNS[38], ArrayUtils.toCommaSplitString(ends).toString());
+            contentValues.put(TABLE_COLUMNS[30], ArrayUtils.toCommaSplitString(expandedUrls).toString());
+            contentValues.put(TABLE_COLUMNS[31], ArrayUtils.toCommaSplitString(displayUrls).toString());
+            contentValues.put(TABLE_COLUMNS[32], ArrayUtils.toCommaSplitString(ids).toString());
+            contentValues.put(TABLE_COLUMNS[33], ArrayUtils.toCommaSplitString(mediaURLs).toString());
+            contentValues.put(TABLE_COLUMNS[34], ArrayUtils.toCommaSplitString(mediaURLHttpSs).toString());
+            contentValues.put(TABLE_COLUMNS[35], ArrayUtils.toCommaSplitString(types).toString());
+            contentValues.put(TABLE_COLUMNS[36], ArrayUtils.toCommaAndPipeSplitString(variants_bitrates).toString());
+            contentValues.put(TABLE_COLUMNS[37], ArrayUtils.toCommaAndPipeSplitString(variants_contentTypes).toString());
+            contentValues.put(TABLE_COLUMNS[38], ArrayUtils.toCommaAndPipeSplitString(variants_uris).toString());
+            contentValues.put(TABLE_COLUMNS[39], ArrayUtils.toCommaSplitString(starts).toString());
+            contentValues.put(TABLE_COLUMNS[40], ArrayUtils.toCommaSplitString(ends).toString());
         }
 
         if (status.getSymbolEntities() != null) {
@@ -453,12 +464,12 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
                 starts[i] = String.valueOf(entity.getStart());
                 ends[i] = String.valueOf(entity.getEnd());
             }
-            contentValues.put(TABLE_COLUMNS[39], ArrayUtils.toCommaSplitString(texts).toString());
-            contentValues.put(TABLE_COLUMNS[40], ArrayUtils.toCommaSplitString(starts).toString());
-            contentValues.put(TABLE_COLUMNS[41], ArrayUtils.toCommaSplitString(ends).toString());
+            contentValues.put(TABLE_COLUMNS[41], ArrayUtils.toCommaSplitString(texts).toString());
+            contentValues.put(TABLE_COLUMNS[42], ArrayUtils.toCommaSplitString(starts).toString());
+            contentValues.put(TABLE_COLUMNS[43], ArrayUtils.toCommaSplitString(ends).toString());
         }
 
-        contentValues.put(TABLE_COLUMNS[42], status.getQuotedStatusId());
+        contentValues.put(TABLE_COLUMNS[44], status.getQuotedStatusId());
 
         String url;
         List<Emoji> emojis;
@@ -479,7 +490,7 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
             emojis = null;
         }
 
-        contentValues.put(TABLE_COLUMNS[43], url);
+        contentValues.put(TABLE_COLUMNS[45], url);
 
         if (emojis != null){
             int size = emojis.size();
@@ -491,8 +502,8 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
                 shortcodes[i] = emoji.getShortCode();
                 urls[i] = emoji.getUrl();
             }
-            contentValues.put(TABLE_COLUMNS[44], ArrayUtils.toCommaSplitString(shortcodes).toString());
-            contentValues.put(TABLE_COLUMNS[45], ArrayUtils.toCommaSplitString(urls).toString());
+            contentValues.put(TABLE_COLUMNS[46], ArrayUtils.toCommaSplitString(shortcodes).toString());
+            contentValues.put(TABLE_COLUMNS[47], ArrayUtils.toCommaSplitString(urls).toString());
         }
         return contentValues;
     }
@@ -500,7 +511,7 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
     public void deleteCachedStatus(long id){
         SQLiteDatabase database = getWritableDatabase();
         database.beginTransaction();
-        deleteCachedStatusAtTransaction(database, id);
+        database.execSQL("UPDATE " + TABLE_NAME + " SET count = count - 1 WHERE id=" + String.valueOf(id));
         database.delete(TABLE_NAME, "count=0", null);
         database.setTransactionSuccessful();
         database.endTransaction();
@@ -510,17 +521,18 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
     public void deleteCachedStatuses(Collection<Long> ids){
         SQLiteDatabase database = getWritableDatabase();
         database.beginTransaction();
+        SQLiteStatement sqLiteStatement = database
+                .compileStatement(
+                        "UPDATE " + TABLE_NAME + " SET count = count - 1 WHERE id=?"
+                );
         for (Long id : ids) {
-            deleteCachedStatusAtTransaction(database, id);
+            sqLiteStatement.bindLong(0, id);
+            sqLiteStatement.execute();
         }
         database.delete(TABLE_NAME, "count=0", null);
         database.setTransactionSuccessful();
         database.endTransaction();
         database.close();
-    }
-
-    private void deleteCachedStatusAtTransaction(SQLiteDatabase database, Long id) {
-        database.execSQL("UPDATE " + TABLE_NAME + " SET count = count - 1 WHERE id=" + String.valueOf(id));
     }
 
     @NonNull
@@ -547,34 +559,41 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
         for (int i = 0; i < entities.length; i++){
             int finalI = i;
             entities[i] = new UserMentionEntity() {
+                private String text = texts[finalI];
+                private String name = names[finalI];
+                private String screenName = screenNames[finalI];
+                private String id = ids[finalI];
+                private String start = starts[finalI];
+                private String end = ends[finalI];
+                
                 @Override
                 public String getText() {
-                    return texts[finalI];
+                    return text;
                 }
 
                 @Override
                 public String getName() {
-                    return names[finalI];
+                    return name;
                 }
 
                 @Override
                 public String getScreenName() {
-                    return screenNames[finalI];
+                    return screenName;
                 }
 
                 @Override
                 public long getId() {
-                    return Long.parseLong(ids[finalI]);
+                    return Long.parseLong(id);
                 }
 
                 @Override
                 public int getStart() {
-                    return Integer.parseInt(starts[finalI]);
+                    return Integer.parseInt(start);
                 }
 
                 @Override
                 public int getEnd() {
-                    return Integer.parseInt(ends[finalI]);
+                    return Integer.parseInt(end);
                 }
             };
         }
@@ -595,34 +614,40 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
         for (int i = 0; i < entities.length; i++){
             int finalI = i;
             entities[i] = new URLEntity() {
+                private String text = texts[finalI];
+                private String expandedURL = expandedURLs[finalI];
+                private String displaysURL = displaysURLs[finalI];
+                private String start = starts[finalI];
+                private String end = ends[finalI];
+                
                 @Override
                 public String getText() {
-                    return texts[finalI];
+                    return text;
                 }
 
                 @Override
                 public String getURL() {
-                    return texts[finalI];
+                    return text;
                 }
 
                 @Override
                 public String getExpandedURL() {
-                    return expandedURLs[finalI];
+                    return expandedURL;
                 }
 
                 @Override
                 public String getDisplayURL() {
-                    return displaysURLs[finalI];
+                    return displaysURL;
                 }
 
                 @Override
                 public int getStart() {
-                    return Integer.valueOf(starts[finalI]);
+                    return Integer.valueOf(start);
                 }
 
                 @Override
                 public int getEnd() {
-                    return Integer.valueOf(ends[finalI]);
+                    return Integer.valueOf(end);
                 }
             };
         }
@@ -641,19 +666,23 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
         for (int i = 0; i < entities.length; i++){
             int finalI = i;
             entities[i] = new HashtagEntity() {
+                private String text = texts[finalI];
+                private String start = starts[finalI];
+                private String end = ends[finalI];
+                
                 @Override
                 public String getText() {
-                    return texts[finalI];
+                    return text;
                 }
 
                 @Override
                 public int getStart() {
-                    return Integer.parseInt(starts[finalI]);
+                    return Integer.parseInt(start);
                 }
 
                 @Override
                 public int getEnd() {
-                    return Integer.parseInt(ends[finalI]);
+                    return Integer.parseInt(end);
                 }
             };
         }
@@ -661,6 +690,8 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
     }
 
     private MediaEntity[] restoreMediaEntities(String[] texts,
+                                               String[] expandedURLs,
+                                               String[] displaysURLs,
                                                String[] ids,
                                                String[] mediaUrls,
                                                String[] mediaUrlHttpSs,
@@ -679,19 +710,32 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
         for (int i = 0; i < entities.length; i++){
             int finalI = i;
             entities[i] = new MediaEntity() {
+                private String text = texts[finalI];
+                private String expandedURL = expandedURLs[finalI];
+                private String displaysURL = displaysURLs[finalI];
+                private String id = ids[finalI];
+                private String mediaUrl = mediaUrls[finalI];
+                private String mediaUrlHttps = mediaUrlHttpSs[finalI];
+                private String mediaType = types[finalI];
+                private String[] variants_bitrate = variants_bitrates[finalI];
+                private String[] variants_contentType = variants_contentTypes[finalI];
+                private String[] variants_url = variants_urls[finalI];
+                private String start = starts[finalI];
+                private String end = ends[finalI];
+                
                 @Override
                 public long getId() {
-                    return Long.parseLong(ids[finalI]);
+                    return Long.parseLong(id);
                 }
 
                 @Override
                 public String getMediaURL() {
-                    return mediaUrls[finalI];
+                    return mediaUrl;
                 }
 
                 @Override
                 public String getMediaURLHttps() {
-                    return mediaUrlHttpSs[finalI];
+                    return mediaUrlHttps;
                 }
 
                 @Override
@@ -701,7 +745,7 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
 
                 @Override
                 public String getType() {
-                    return types[finalI];
+                    return mediaType;
                 }
 
                 @Override
@@ -721,23 +765,27 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
 
                 @Override
                 public Variant[] getVideoVariants() {
-                    Variant[] result = new Variant[variants_urls.length];
-                    for (int ii = 0; ii < variants_urls[ii].length; ii++){
+                    Variant[] result = new Variant[variants_url.length];
+                    for (int ii = 0; ii < variants_url.length; ii++){
                         int finalIi = ii;
                         result[ii] = new Variant() {
+                            private int bitrate = Integer.parseInt(variants_bitrate[finalIi]);
+                            private String contentType = variants_contentType[finalIi];
+                            private String url = variants_url[finalIi]; 
+
                             @Override
                             public int getBitrate() {
-                                return Integer.parseInt(variants_bitrates[finalI][finalIi]);
+                                return bitrate;
                             }
 
                             @Override
                             public String getContentType() {
-                                return variants_contentTypes[finalI][finalIi];
+                                return contentType;
                             }
 
                             @Override
                             public String getUrl() {
-                                return variants_urls[finalI][finalIi];
+                                return url;
                             }
                         };
                     }
@@ -751,32 +799,32 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
 
                 @Override
                 public String getText() {
-                    return texts[finalI];
+                    return text;
                 }
 
                 @Override
                 public String getURL() {
-                    return texts[finalI];
+                    return text;
                 }
 
                 @Override
                 public String getExpandedURL() {
-                    return null;
+                    return expandedURL;
                 }
 
                 @Override
                 public String getDisplayURL() {
-                    return texts[finalI];
+                    return displaysURL;
                 }
 
                 @Override
                 public int getStart() {
-                    return Integer.parseInt(starts[finalI]);
+                    return Integer.parseInt(start);
                 }
 
                 @Override
                 public int getEnd() {
-                    return Integer.parseInt(ends[finalI]);
+                    return Integer.parseInt(end);
                 }
             };
         }
@@ -807,19 +855,23 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
         for (int i = 0; i < entities.length; i++){
             int finalI = i;
             entities[i] = new SymbolEntity() {
+                private String text = texts[finalI];
+                private String start = starts[finalI];
+                private String end = ends[finalI];
+
                 @Override
                 public String getText() {
-                    return texts[finalI];
+                    return text;
                 }
 
                 @Override
                 public int getStart() {
-                    return Integer.parseInt(starts[finalI]);
+                    return Integer.parseInt(start);
                 }
 
                 @Override
                 public int getEnd() {
-                    return Integer.parseInt(ends[finalI]);
+                    return Integer.parseInt(end);
                 }
             };
         }
