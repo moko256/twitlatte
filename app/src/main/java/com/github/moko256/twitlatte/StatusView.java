@@ -177,7 +177,7 @@ public class StatusView extends FrameLayout {
                     (item.getInReplyToStatusId() != -1)?
                             R.string.reply_to:
                             R.string.mention_to,
-                    item.getInReplyToScreenName()
+                    TwitterStringUtils.plusAtMark(item.getInReplyToScreenName())
             ));
         }
         else{
