@@ -38,6 +38,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import kotlin.collections.ArraysKt;
 import twitter4j.HashtagEntity;
 import twitter4j.MediaEntity;
 import twitter4j.Status;
@@ -218,7 +219,7 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
         database.close();
     }
 
-    public void addCachedStatuses(Collection<? extends Status> statuses, boolean incrementCount){
+    public void addCachedStatuses(Collection<? extends Status> statuses, long... excludeIncrementIds){
         ArrayList<ContentValues> contentValues = new ArrayList<>(statuses.size());
         for (Status status : statuses) {
             contentValues.add(createCachedStatusContentValues(status));
@@ -228,8 +229,9 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
         database.beginTransaction();
         for (ContentValues values : contentValues) {
             database.replace(TABLE_NAME, null, values);
-            if (incrementCount) {
-                database.execSQL("UPDATE " + TABLE_NAME + " SET count = count + 1 WHERE id=" + String.valueOf(values.get(TABLE_COLUMNS[1])));
+            Long id = values.getAsLong(TABLE_COLUMNS[1]);
+            if (excludeIncrementIds.length == 0 || !ArraysKt.contains(excludeIncrementIds, id)) {
+                database.execSQL("UPDATE " + TABLE_NAME + " SET count = count + 1 WHERE id=" + String.valueOf(id));
             }
         }
         database.setTransactionSuccessful();

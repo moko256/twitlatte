@@ -104,9 +104,9 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
         adapter.setOnLoadMoreClick(position -> subscription.add(
                 getResponseSingle(
                         new Paging()
-                                .maxId(list.get(position-1)-1L)
-                                .sinceId(list.get(list.size() >= position + 2? position + 2: position + 1))
-                                .count(GlobalApplication.statusLimit))
+                                .maxId(list.get(position - 1) - 1L)
+                                .sinceId(list.get(list.size() >= position + 2 ? position + 2 : position + 1))
+                                .count(GlobalApplication.statusLimit), list.size() >= position + 2 ? new long[]{list.get(position + 1)}: new long[0])
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
@@ -115,7 +115,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                                         View startView = getRecyclerView().getLayoutManager().findViewByPosition(position);
                                         int offset = (startView == null) ? 0 : (startView.getTop() - getRecyclerView().getPaddingTop());
 
-                                        List<Long>ids = Observable
+                                        List<Long> ids = Observable
                                                 .from(result)
                                                 .map(Status::getId)
                                                 .toList().toSingle().toBlocking().value();
@@ -130,7 +130,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                                         statusIdsDatabase.insertIds(position, ids);
 
                                         RecyclerView.LayoutManager layoutManager = getRecyclerView().getLayoutManager();
-                                        if (layoutManager instanceof LinearLayoutManager){
+                                        if (layoutManager instanceof LinearLayoutManager) {
                                             ((LinearLayoutManager) layoutManager).scrollToPositionWithOffset(position + ids.size(), offset);
                                         } else {
                                             ((StaggeredGridLayoutManager) layoutManager).scrollToPositionWithOffset(position + ids.size(), offset);
@@ -245,7 +245,9 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
     @Override
     protected void onUpdateList() {
         subscription.add(
-                getResponseSingle(new Paging(list.get(list.size() >= 2? 1: 0)).count(GlobalApplication.statusLimit))
+                getResponseSingle(
+                        new Paging(list.get(list.size() >= 2 ? 1 : 0)).count(GlobalApplication.statusLimit),
+                        list.size() >= 2 ? new long[]{list.get(0)}: new long[0])
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .doAfterTerminate(() -> setRefreshing(false))
@@ -347,13 +349,13 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
 
     protected abstract String getCachedIdsDatabaseName();
 
-    public Single<ResponseList<Status>> getResponseSingle(Paging paging) {
+    public Single<ResponseList<Status>> getResponseSingle(Paging paging, long... excludeIds) {
         return Single.create(
                 subscriber->{
                     try {
                         ResponseList<Status> statuses = getResponseList(paging);
                         if (statuses.size() > 0){
-                            GlobalApplication.statusCache.addAll(statuses, true);
+                            GlobalApplication.statusCache.addAll(statuses, excludeIds);
                         }
                         subscriber.onSuccess(statuses);
                     } catch (TwitterException e) {

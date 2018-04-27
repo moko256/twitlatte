@@ -98,7 +98,7 @@ public class StatusCacheMap {
         }
     }
 
-    public void addAll(Collection<? extends Status> c, boolean incrementCount) {
+    public void addAll(Collection<? extends Status> c, long... excludeIncrementIds) {
         if (c.size() > 0) {
             Observable<Status> statusesObservable = Observable.unsafeCreate(subscriber -> {
                 for (Status status : c) {
@@ -122,7 +122,7 @@ public class StatusCacheMap {
 
             cachedStatusObservable.forEach(status -> cache.put(status.getId(), status));
 
-            diskCache.addCachedStatuses(cachedStatusObservable.toList().toSingle().toBlocking().value(), incrementCount);
+            diskCache.addCachedStatuses(cachedStatusObservable.toList().toSingle().toBlocking().value(), excludeIncrementIds);
         }
     }
 
