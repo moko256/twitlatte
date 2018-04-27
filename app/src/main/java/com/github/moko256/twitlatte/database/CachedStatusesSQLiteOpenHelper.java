@@ -557,47 +557,71 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
 
         UserMentionEntity[] entities = new UserMentionEntity[texts.length];
         for (int i = 0; i < entities.length; i++){
-            int finalI = i;
-            entities[i] = new UserMentionEntity() {
-                private String text = texts[finalI];
-                private String name = names[finalI];
-                private String screenName = screenNames[finalI];
-                private String id = ids[finalI];
-                private String start = starts[finalI];
-                private String end = ends[finalI];
-                
-                @Override
-                public String getText() {
-                    return text;
-                }
-
-                @Override
-                public String getName() {
-                    return name;
-                }
-
-                @Override
-                public String getScreenName() {
-                    return screenName;
-                }
-
-                @Override
-                public long getId() {
-                    return Long.parseLong(id);
-                }
-
-                @Override
-                public int getStart() {
-                    return Integer.parseInt(start);
-                }
-
-                @Override
-                public int getEnd() {
-                    return Integer.parseInt(end);
-                }
-            };
+            entities[i] = new CachedUserMentionEntity(
+                    texts[i],
+                    names[i],
+                    screenNames[i],
+                    ids[i],
+                    starts[i],
+                    ends[i]
+            );
         }
         return entities;
+    }
+
+    private class CachedUserMentionEntity implements UserMentionEntity {
+
+        private String text;
+        private String name;
+        private String screenName;
+        private String id;
+        private String start;
+        private String end;
+
+        CachedUserMentionEntity(String text,
+                String name,
+                String screenName,
+                String id,
+                String start,
+                String end){
+            this.text = text;
+            this.name = name;
+            this.screenName = screenName;
+            this.id = id;
+            this.start = start;
+            this.end = end;
+
+        }
+
+        @Override
+        public String getText() {
+            return text;
+        }
+
+        @Override
+        public String getName() {
+            return name;
+        }
+
+        @Override
+        public String getScreenName() {
+            return screenName;
+        }
+
+        @Override
+        public long getId() {
+            return Long.parseLong(id);
+        }
+
+        @Override
+        public int getStart() {
+            return Integer.parseInt(start);
+        }
+
+        @Override
+        public int getEnd() {
+            return Integer.parseInt(end);
+        }
     }
 
     private URLEntity[] restoreURLEntities(String[] texts,
@@ -612,46 +636,67 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
 
         URLEntity[] entities = new URLEntity[texts.length];
         for (int i = 0; i < entities.length; i++){
-            int finalI = i;
-            entities[i] = new URLEntity() {
-                private String text = texts[finalI];
-                private String expandedURL = expandedURLs[finalI];
-                private String displaysURL = displaysURLs[finalI];
-                private String start = starts[finalI];
-                private String end = ends[finalI];
-                
-                @Override
-                public String getText() {
-                    return text;
-                }
-
-                @Override
-                public String getURL() {
-                    return text;
-                }
-
-                @Override
-                public String getExpandedURL() {
-                    return expandedURL;
-                }
-
-                @Override
-                public String getDisplayURL() {
-                    return displaysURL;
-                }
-
-                @Override
-                public int getStart() {
-                    return Integer.valueOf(start);
-                }
-
-                @Override
-                public int getEnd() {
-                    return Integer.valueOf(end);
-                }
-            };
+            entities[i] = new CachedURLEntity(
+                    texts[i],
+                    expandedURLs[i],
+                    displaysURLs[i],
+                    starts[i],
+                    ends[i]
+            );
         }
         return entities;
+    }
+
+    private class CachedURLEntity implements URLEntity {
+
+        private String text;
+        private String expandedURL;
+        private String displaysURL;
+        private String start;
+        private String end;
+
+        CachedURLEntity(String text,
+                String expandedURL,
+                String displaysURL,
+                String start,
+                String end){
+            this.text = text;
+            this.expandedURL = expandedURL;
+            this.displaysURL = displaysURL;
+            this.start = start;
+            this.end = end;
+        }
+
+        @Override
+        public String getText() {
+            return text;
+        }
+
+        @Override
+        public String getURL() {
+            return text;
+        }
+
+        @Override
+        public String getExpandedURL() {
+            return expandedURL;
+        }
+
+        @Override
+        public String getDisplayURL() {
+            return displaysURL;
+        }
+
+        @Override
+        public int getStart() {
+            return Integer.valueOf(start);
+        }
+
+        @Override
+        public int getEnd() {
+            return Integer.valueOf(end);
+        }
+
     }
 
     private HashtagEntity[] restoreHashtagEntities(String[] texts,
@@ -664,29 +709,42 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
 
         HashtagEntity[] entities = new HashtagEntity[texts.length];
         for (int i = 0; i < entities.length; i++){
-            int finalI = i;
-            entities[i] = new HashtagEntity() {
-                private String text = texts[finalI];
-                private String start = starts[finalI];
-                private String end = ends[finalI];
-                
-                @Override
-                public String getText() {
-                    return text;
-                }
-
-                @Override
-                public int getStart() {
-                    return Integer.parseInt(start);
-                }
-
-                @Override
-                public int getEnd() {
-                    return Integer.parseInt(end);
-                }
-            };
+            entities[i] = new CachedHashtagEntity(
+                    texts[i],
+                    starts[i],
+                    ends[i]
+            );
         }
         return entities;
+    }
+
+    private class CachedHashtagEntity implements HashtagEntity {
+        private String text;
+        private String start;
+        private String end;
+
+        CachedHashtagEntity(String text,
+                String start,
+                String end){
+            this.text = text;
+            this.start = start;
+            this.end = end;
+        }
+
+        @Override
+        public String getText() {
+            return text;
+        }
+
+        @Override
+        public int getStart() {
+            return Integer.parseInt(start);
+        }
+
+        @Override
+        public int getEnd() {
+            return Integer.parseInt(end);
+        }
     }
 
     private MediaEntity[] restoreMediaEntities(String[] texts,
@@ -708,127 +766,184 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
 
         MediaEntity[] entities = new MediaEntity[texts.length];
         for (int i = 0; i < entities.length; i++){
-            int finalI = i;
-            entities[i] = new MediaEntity() {
-                private String text = texts[finalI];
-                private String expandedURL = expandedURLs[finalI];
-                private String displaysURL = displaysURLs[finalI];
-                private String id = ids[finalI];
-                private String mediaUrl = mediaUrls[finalI];
-                private String mediaUrlHttps = mediaUrlHttpSs[finalI];
-                private String mediaType = types[finalI];
-                private String[] variants_bitrate = variants_bitrates[finalI];
-                private String[] variants_contentType = variants_contentTypes[finalI];
-                private String[] variants_url = variants_urls[finalI];
-                private String start = starts[finalI];
-                private String end = ends[finalI];
-                
-                @Override
-                public long getId() {
-                    return Long.parseLong(id);
-                }
 
-                @Override
-                public String getMediaURL() {
-                    return mediaUrl;
-                }
+            boolean hasMedia = variants_bitrates.length >= entities.length;
 
-                @Override
-                public String getMediaURLHttps() {
-                    return mediaUrlHttps;
-                }
-
-                @Override
-                public Map<Integer, Size> getSizes() {
-                    return null;
-                }
-
-                @Override
-                public String getType() {
-                    return mediaType;
-                }
-
-                @Override
-                public int getVideoAspectRatioWidth() {
-                    return 0;
-                }
-
-                @Override
-                public int getVideoAspectRatioHeight() {
-                    return 0;
-                }
-
-                @Override
-                public long getVideoDurationMillis() {
-                    return 0;
-                }
-
-                @Override
-                public Variant[] getVideoVariants() {
-                    Variant[] result = new Variant[variants_url.length];
-                    for (int ii = 0; ii < variants_url.length; ii++){
-                        int finalIi = ii;
-                        result[ii] = new Variant() {
-                            private int bitrate = Integer.parseInt(variants_bitrate[finalIi]);
-                            private String contentType = variants_contentType[finalIi];
-                            private String url = variants_url[finalIi]; 
-
-                            @Override
-                            public int getBitrate() {
-                                return bitrate;
-                            }
-
-                            @Override
-                            public String getContentType() {
-                                return contentType;
-                            }
-
-                            @Override
-                            public String getUrl() {
-                                return url;
-                            }
-                        };
-                    }
-                    return result;
-                }
-
-                @Override
-                public String getExtAltText() {
-                    return null;
-                }
-
-                @Override
-                public String getText() {
-                    return text;
-                }
-
-                @Override
-                public String getURL() {
-                    return text;
-                }
-
-                @Override
-                public String getExpandedURL() {
-                    return expandedURL;
-                }
-
-                @Override
-                public String getDisplayURL() {
-                    return displaysURL;
-                }
-
-                @Override
-                public int getStart() {
-                    return Integer.parseInt(start);
-                }
-
-                @Override
-                public int getEnd() {
-                    return Integer.parseInt(end);
-                }
-            };
+            entities[i] = new CachedMediaEntity(
+                    texts[i],
+                    expandedURLs[i],
+                    displaysURLs[i],
+                    ids[i],
+                    mediaUrls[i],
+                    mediaUrlHttpSs[i],
+                    types[i],
+                    hasMedia? variants_bitrates[i]: new String[0],
+                    hasMedia? variants_contentTypes[i]: new String[0],
+                    hasMedia? variants_urls[i]: new String[0],
+                    starts[i],
+                    ends[i]
+            );
         }
         return entities;
+    }
+
+    private class CachedMediaEntity implements MediaEntity{
+
+        private final String text;
+        private final String expandedURL;
+        private final String displaysURL;
+        private final String id;
+        private final String mediaUrl;
+        private final String mediaUrlHttps;
+        private final String mediaType;
+        private final String[] variants_bitrate;
+        private final String[] variants_contentType;
+        private final String[] variants_url;
+        private final String start;
+        private final String end;
+
+        CachedMediaEntity(String text,
+                String expandedURL,
+                String displaysURL,
+                String id,
+                String mediaUrl,
+                String mediaUrlHttps,
+                String mediaType,
+                String[] variants_bitrate,
+                String[] variants_contentType,
+                String[] variants_url,
+                String start,
+                String end){
+
+            this.text = text;
+            this.expandedURL = expandedURL;
+            this.displaysURL = displaysURL;
+            this.id = id;
+            this.mediaUrl = mediaUrl;
+            this.mediaUrlHttps = mediaUrlHttps;
+            this.mediaType = mediaType;
+            this.variants_bitrate = variants_bitrate;
+            this.variants_contentType = variants_contentType;
+            this.variants_url = variants_url;
+            this.start = start;
+            this.end = end;
+        }
+
+        @Override
+        public long getId() {
+            return Long.parseLong(id);
+        }
+
+        @Override
+        public String getMediaURL() {
+            return mediaUrl;
+        }
+
+        @Override
+        public String getMediaURLHttps() {
+            return mediaUrlHttps;
+        }
+
+        @Override
+        public Map<Integer, MediaEntity.Size> getSizes() {
+            return null;
+        }
+
+        @Override
+        public String getType() {
+            return mediaType;
+        }
+
+        @Override
+        public int getVideoAspectRatioWidth() {
+            return 0;
+        }
+
+        @Override
+        public int getVideoAspectRatioHeight() {
+            return 0;
+        }
+
+        @Override
+        public long getVideoDurationMillis() {
+            return 0;
+        }
+
+        @Override
+        public MediaEntity.Variant[] getVideoVariants() {
+            MediaEntity.Variant[] result = new MediaEntity.Variant[variants_url.length];
+            for (int ii = 0; ii < variants_url.length; ii++){
+                result[ii] = new Variant(
+                        variants_bitrate[ii],
+                        variants_contentType[ii],
+                        variants_url[ii]);
+            }
+            return result;
+        }
+
+        @Override
+        public String getExtAltText() {
+            return null;
+        }
+
+        @Override
+        public String getText() {
+            return text;
+        }
+
+        @Override
+        public String getURL() {
+            return text;
+        }
+
+        @Override
+        public String getExpandedURL() {
+            return expandedURL;
+        }
+
+        @Override
+        public String getDisplayURL() {
+            return displaysURL;
+        }
+
+        @Override
+        public int getStart() {
+            return Integer.parseInt(start);
+        }
+
+        @Override
+        public int getEnd() {
+            return Integer.parseInt(end);
+        }
+
+        private class Variant implements MediaEntity.Variant {
+            private String bitrate;
+            private String contentType;
+            private String url;
+
+            Variant(String bitrate,
+                    String contentType,
+                    String url){
+                this.bitrate = bitrate;
+                this.contentType = contentType;
+                this.url = url;
+            }
+
+            @Override
+            public int getBitrate() {
+                return Integer.parseInt(bitrate);
+            }
+
+            @Override
+            public String getContentType() {
+                return contentType;
+            }
+
+            @Override
+            public String getUrl() {
+                return url;
+            }
+        }
     }
 
     private String[][] parse(String string){
@@ -836,6 +951,9 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
             return new String[0][0];
         }
         String[] resultA = string.split(",");
+        if (resultA.length == 1 && resultA[0].equals("")){
+            return new String[0][0];
+        }
         String[][] result = new String[resultA.length][];
         for (int i = 0; i < resultA.length; i++) {
             result[i] = resultA[i].split("\\|");
@@ -853,29 +971,42 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
 
         SymbolEntity[] entities = new SymbolEntity[texts.length];
         for (int i = 0; i < entities.length; i++){
-            int finalI = i;
-            entities[i] = new SymbolEntity() {
-                private String text = texts[finalI];
-                private String start = starts[finalI];
-                private String end = ends[finalI];
-
-                @Override
-                public String getText() {
-                    return text;
-                }
-
-                @Override
-                public int getStart() {
-                    return Integer.parseInt(start);
-                }
-
-                @Override
-                public int getEnd() {
-                    return Integer.parseInt(end);
-                }
-            };
+            entities[i] = new CachedSymbolEntity(
+                    texts[i],
+                    starts[i],
+                    ends[i]
+            );
         }
         return entities;
+    }
+
+    private class CachedSymbolEntity implements SymbolEntity {
+        private String text;
+        private String start;
+        private String end;
+
+        CachedSymbolEntity(String text,
+                            String start,
+                            String end){
+            this.text = text;
+            this.start = start;
+            this.end = end;
+        }
+
+        @Override
+        public String getText() {
+            return text;
+        }
+
+        @Override
+        public int getStart() {
+            return Integer.parseInt(start);
+        }
+
+        @Override
+        public int getEnd() {
+            return Integer.parseInt(end);
+        }
     }
 
     private List<Emoji> restoreEmojis(String[] shortcodes,
