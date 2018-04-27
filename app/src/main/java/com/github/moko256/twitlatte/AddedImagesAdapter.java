@@ -155,7 +155,7 @@ public class AddedImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         images = null;
     }
 
-    class ImageChildViewHolder extends RecyclerView.ViewHolder{
+    private final static class ImageChildViewHolder extends RecyclerView.ViewHolder{
 
         ImageView image;
         TextView title;
@@ -169,7 +169,7 @@ public class AddedImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         }
     }
 
-    class AddImageViewHolder extends RecyclerView.ViewHolder{
+    private final static class AddImageViewHolder extends RecyclerView.ViewHolder{
 
         AddImageViewHolder(View itemView) {
             super(itemView);

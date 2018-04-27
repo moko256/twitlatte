@@ -220,51 +220,51 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
                     c.getInt(13) != 0,
                     c.getString(14),
                     restoreUserMentionEntities(
-                            spliteComma(c.getString(15)),
-                            spliteComma(c.getString(16)),
-                            spliteComma(c.getString(17)),
-                            spliteComma(c.getString(18)),
-                            spliteComma(c.getString(19)),
-                            spliteComma(c.getString(20))
+                            splitComma(c.getString(15)),
+                            splitComma(c.getString(16)),
+                            splitComma(c.getString(17)),
+                            splitComma(c.getString(18)),
+                            splitComma(c.getString(19)),
+                            splitComma(c.getString(20))
                     ),
                     restoreURLEntities(
-                            spliteComma(c.getString(21)),
-                            spliteComma(c.getString(22)),
-                            spliteComma(c.getString(23)),
-                            spliteComma(c.getString(24)),
-                            spliteComma(c.getString(25))
+                            splitComma(c.getString(21)),
+                            splitComma(c.getString(22)),
+                            splitComma(c.getString(23)),
+                            splitComma(c.getString(24)),
+                            splitComma(c.getString(25))
                     ),
                     restoreHashtagEntities(
-                            spliteComma(c.getString(26)),
-                            spliteComma(c.getString(27)),
-                            spliteComma(c.getString(28))
+                            splitComma(c.getString(26)),
+                            splitComma(c.getString(27)),
+                            splitComma(c.getString(28))
                     ),
                     restoreMediaEntities(
-                            spliteComma(c.getString(29)),
-                            spliteComma(c.getString(30)),
-                            spliteComma(c.getString(31)),
-                            spliteComma(c.getString(32)),
-                            spliteComma(c.getString(33)),
-                            spliteComma(c.getString(34)),
-                            spliteComma(c.getString(35)),
+                            splitComma(c.getString(29)),
+                            splitComma(c.getString(30)),
+                            splitComma(c.getString(31)),
+                            splitComma(c.getString(32)),
+                            splitComma(c.getString(33)),
+                            splitComma(c.getString(34)),
+                            splitComma(c.getString(35)),
 
                             parse(c.getString(36)),
                             parse(c.getString(37)),
                             parse(c.getString(38)),
 
-                            spliteComma(c.getString(39)),
-                            spliteComma(c.getString(40))
+                            splitComma(c.getString(39)),
+                            splitComma(c.getString(40))
                     ),
                     restoreSymbolEntities(
-                            spliteComma(c.getString(41)),
-                            spliteComma(c.getString(42)),
-                            spliteComma(c.getString(43))
+                            splitComma(c.getString(41)),
+                            splitComma(c.getString(42)),
+                            splitComma(c.getString(43))
                     ),
                     c.getLong(44),
                     c.getString(45),
                     restoreEmojis(
-                            spliteComma(c.getString(46)),
-                            spliteComma(c.getString(47))
+                            splitComma(c.getString(46)),
+                            splitComma(c.getString(47))
                     )
             );
         }
@@ -416,7 +416,7 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
                 ids[i] = String.valueOf(entity.getId());
                 mediaURLs[i] = entity.getMediaURL();
                 mediaURLHttpSs[i] = entity.getMediaURLHttps();
-                types[i] = entity.getMediaURL();
+                types[i] = entity.getType();
 
                 MediaEntity.Variant[] videoVariants = entity.getVideoVariants();
                 if (videoVariants != null) {
@@ -536,7 +536,7 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
     }
 
     @NonNull
-    private String[] spliteComma(@Nullable String string){
+    private String[] splitComma(@Nullable String string){
         if (string != null) {
             return string.split(",");
         } else {
@@ -569,7 +569,7 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
         return entities;
     }
 
-    private class CachedUserMentionEntity implements UserMentionEntity {
+    private static final class CachedUserMentionEntity implements UserMentionEntity {
 
         private String text;
         private String name;
@@ -647,7 +647,7 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
         return entities;
     }
 
-    private class CachedURLEntity implements URLEntity {
+    private static final class CachedURLEntity implements URLEntity {
 
         private String text;
         private String expandedURL;
@@ -718,7 +718,7 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
         return entities;
     }
 
-    private class CachedHashtagEntity implements HashtagEntity {
+    private static final class CachedHashtagEntity implements HashtagEntity {
         private String text;
         private String start;
         private String end;
@@ -787,7 +787,7 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
         return entities;
     }
 
-    private class CachedMediaEntity implements MediaEntity{
+    private static final class CachedMediaEntity implements MediaEntity{
 
         private final String text;
         private final String expandedURL;
@@ -916,7 +916,7 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
             return Integer.parseInt(end);
         }
 
-        private class Variant implements MediaEntity.Variant {
+        private static final class Variant implements MediaEntity.Variant {
             private String bitrate;
             private String contentType;
             private String url;
@@ -980,7 +980,7 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
         return entities;
     }
 
-    private class CachedSymbolEntity implements SymbolEntity {
+    private static final class CachedSymbolEntity implements SymbolEntity {
         private String text;
         private String start;
         private String end;

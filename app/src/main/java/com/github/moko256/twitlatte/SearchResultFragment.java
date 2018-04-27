@@ -80,7 +80,7 @@ public class SearchResultFragment extends BaseTweetListFragment {
         return result;
     }
 
-    private class SearchResultList extends ArrayList<Status> implements ResponseList<Status>{
+    private static final class SearchResultList extends ArrayList<Status> implements ResponseList<Status>{
 
         @Override
         public int getAccessLevel() {return 0;}

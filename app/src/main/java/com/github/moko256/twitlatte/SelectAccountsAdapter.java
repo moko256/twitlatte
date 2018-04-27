@@ -148,7 +148,7 @@ public class SelectAccountsAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         notifyItemRemoved(position);
     }
 
-    class ImageChildViewHolder extends RecyclerView.ViewHolder{
+    private final static class ImageChildViewHolder extends RecyclerView.ViewHolder{
 
         ImageView image;
         TextView title;
@@ -160,7 +160,7 @@ public class SelectAccountsAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         }
     }
 
-    class ResourceIconImageViewHolder extends RecyclerView.ViewHolder{
+    private final static class ResourceIconImageViewHolder extends RecyclerView.ViewHolder{
         AppCompatImageView image;
         TextView title;
 
