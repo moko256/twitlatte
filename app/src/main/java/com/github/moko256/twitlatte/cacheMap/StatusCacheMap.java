@@ -74,7 +74,7 @@ public class StatusCacheMap {
     public void add(@Nullable final Status status, boolean incrementCount) {
         if (status != null && status.getRetweetedStatus() != null && status.getQuotedStatus() != null) {
             GlobalApplication.userCache.add(status.getUser());
-            Status cacheStatus = new CachedStatus(status);
+            CachedStatus cacheStatus = new CachedStatus(status);
             cache.put(status.getId(), cacheStatus);
             diskCache.addCachedStatus(cacheStatus, incrementCount);
         } else {

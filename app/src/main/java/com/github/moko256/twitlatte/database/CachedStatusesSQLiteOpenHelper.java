@@ -25,7 +25,6 @@ import android.database.sqlite.SQLiteStatement;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.github.moko256.mastodon.MTStatus;
 import com.github.moko256.twitlatte.BuildConfig;
 import com.github.moko256.twitlatte.array.ArrayUtils;
 import com.github.moko256.twitlatte.cacheMap.StatusCacheMap;
@@ -237,7 +236,7 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
         return result;
     }
 
-    public void addCachedStatus(Status status, boolean incrementCount){
+    public void addCachedStatus(StatusCacheMap.CachedStatus status, boolean incrementCount){
         ContentValues values = createCachedStatusContentValues(status);
 
         SQLiteDatabase database=getWritableDatabase();
@@ -253,9 +252,9 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
         database.close();
     }
 
-    public void addCachedStatuses(Collection<? extends Status> statuses, boolean incrementCount, long... excludeIncrementIds){
+    public void addCachedStatuses(Collection<StatusCacheMap.CachedStatus> statuses, boolean incrementCount, long... excludeIncrementIds){
         ArrayList<ContentValues> contentValues = new ArrayList<>(statuses.size());
-        for (Status status : statuses) {
+        for (StatusCacheMap.CachedStatus status : statuses) {
             contentValues.add(createCachedStatusContentValues(status));
         }
 
@@ -280,7 +279,7 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
         return database.compileStatement("UPDATE " + TABLE_NAME + " SET count=count+1 WHERE id=?");
     }
 
-    private ContentValues createCachedStatusContentValues(Status status){
+    private ContentValues createCachedStatusContentValues(StatusCacheMap.CachedStatus status){
         ContentValues contentValues = new ContentValues();
         contentValues.put(TABLE_COLUMNS[0], status.getCreatedAt().getTime());
         contentValues.put(TABLE_COLUMNS[1], status.getId());
@@ -447,21 +446,8 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
         String url;
         List<Emoji> emojis;
 
-        if (status instanceof MTStatus) {
-            url = ((MTStatus) status).status.getUrl();
-            List<com.sys1yagi.mastodon4j.api.entity.Emoji> oldEmojis = ((MTStatus) status).status.getEmojis();
-
-            emojis = new ArrayList<>(oldEmojis.size());
-            for (com.sys1yagi.mastodon4j.api.entity.Emoji emoji : oldEmojis) {
-                emojis.add(new Emoji(emoji.getShortcode(), emoji.getUrl()));
-            }
-        } else {
-            url = "https://twitter.com/"
-                    + status.getUser().getScreenName()
-                    + "/status/"
-                    + String.valueOf(status.getId());
-            emojis = null;
-        }
+        url = status.getRemoteUrl();
+        emojis = status.getEmojis();
 
         contentValues.put(TABLE_COLUMNS[45], url);
 
