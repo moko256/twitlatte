@@ -43,7 +43,7 @@ class OAuthModelImpl : OAuthModel {
         return Single.create {
             try {
                 req = oauth.getOAuthRequestToken("$callbackUrl://OAuthActivity")
-                it.onSuccess(req?.authorizationURL)
+                it.onSuccess(req?.authenticationURL)
             } catch (e: Throwable) {
                 it.onError(e)
             }
@@ -58,7 +58,7 @@ class OAuthModelImpl : OAuthModel {
         return Single.create {
             try {
                 req = oauth.getOAuthRequestToken("oob")
-                it.onSuccess(req?.authorizationURL)
+                it.onSuccess(req?.authenticationURL)
             } catch (e: TwitterException) {
                 it.onError(e)
             }

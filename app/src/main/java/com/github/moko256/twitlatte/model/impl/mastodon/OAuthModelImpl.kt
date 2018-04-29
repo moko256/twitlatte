@@ -40,8 +40,6 @@ class OAuthModelImpl : OAuthModel {
     private lateinit var apps: Apps
     private var appRegistration: AppRegistration? = null
 
-    private lateinit var redirectUri: String
-
     override fun getCallbackAuthUrl(url: String, consumerKey: String, consumerSecret: String, callbackUrl: String): Single<String> {
         clientBuilder = MastodonClient.Builder(
                 url,
@@ -51,7 +49,7 @@ class OAuthModelImpl : OAuthModel {
         apps = Apps(clientBuilder.build())
         return Single.create {
             try {
-                redirectUri = "$callbackUrl://OAuthActivity"
+                val redirectUri = "$callbackUrl://OAuthActivity"
                 appRegistration = apps.createApp(
                         "twitlatte",
                         redirectUri,
@@ -80,19 +78,16 @@ class OAuthModelImpl : OAuthModel {
         apps = Apps(clientBuilder.build())
         return Single.create {
             try {
-                redirectUri = "urn:ietf:wg:oauth:2.0:oob"
                 appRegistration = apps.createApp(
-                        "twitlatte",
-                        redirectUri,
-                        Scope(Scope.Name.ALL),
-                        "https://github.com/moko256/twitlatte"
+                        clientName = "twitlatte",
+                        scope = Scope(Scope.Name.ALL),
+                        website = "https://github.com/moko256/twitlatte"
                 ).execute()
 
                 it.onSuccess(
                         apps.getOAuthUrl(
-                                appRegistration?.clientId!!,
-                                Scope(Scope.Name.ALL),
-                                redirectUri
+                                clientId = appRegistration?.clientId!!,
+                                scope = Scope(Scope.Name.ALL)
                 ))
             } catch (e: Mastodon4jRequestException) {
                 it.onError(e)
@@ -107,8 +102,7 @@ class OAuthModelImpl : OAuthModel {
                         appRegistration?.clientId!!,
                         appRegistration?.clientSecret!!,
                         appRegistration?.redirectUri!!,
-                        pin,
-                        "authorization_code"
+                        pin
                 ).execute()
                 val url = clientBuilder.build().getInstanceName()
                 val account = Accounts(clientBuilder.accessToken(accessToken.accessToken).build()).getVerifyCredentials().execute()
