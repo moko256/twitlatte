@@ -29,10 +29,11 @@ import com.github.moko256.twitlatte.entity.Emoji;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
-import rx.Observable;
 import twitter4j.GeoLocation;
 import twitter4j.HashtagEntity;
 import twitter4j.MediaEntity;
@@ -71,16 +72,13 @@ public class StatusCacheMap {
     }
 
     public void add(@Nullable final Status status, boolean incrementCount) {
-        if (status != null) {
+        if (status != null && status.getRetweetedStatus() != null && status.getQuotedStatus() != null) {
             GlobalApplication.userCache.add(status.getUser());
-            if (status.isRetweet()) {
-                add(status.getRetweetedStatus(), incrementCount);
-            } else if (status.getQuotedStatus() != null){
-                add(status.getQuotedStatus(), incrementCount);
-            }
             Status cacheStatus = new CachedStatus(status);
             cache.put(status.getId(), cacheStatus);
             diskCache.addCachedStatus(cacheStatus, incrementCount);
+        } else {
+            addAll(Collections.singletonList(status), incrementCount);
         }
     }
 
@@ -99,41 +97,79 @@ public class StatusCacheMap {
     }
 
     public void addAll(Collection<? extends Status> c, long... excludeIncrementIds) {
+        addAll(c, true, excludeIncrementIds);
+    }
+
+    private void addAll(Collection<? extends Status> c, boolean incrementCount, long... excludeIncrementIds) {
         if (c.size() > 0) {
-            Observable<Status> statusesObservable = Observable.unsafeCreate(subscriber -> {
-                for (Status status : c) {
-                    if (status != null) {
-                        subscriber.onNext(status);
-                        if (status.isRetweet()) {
-                            subscriber.onNext(status.getRetweetedStatus());
-                        } else if (status.getQuotedStatus() != null){
-                            subscriber.onNext(status.getQuotedStatus());
+            ArrayList<Status> statuses = new ArrayList<>(c.size() * 3);
+            ArrayList<Status> repeats = new ArrayList<>(c.size());
+            ArrayList<Status> quotes = new ArrayList<>(c.size());
+
+            ArrayList<User> users = new ArrayList<>(c.size() * 3);
+
+            for (Status status : c) {
+                if (status != null) {
+                    statuses.add(status);
+                    if (!users.contains(status.getUser())){
+                        users.add(status.getUser());
+                    }
+
+                    if (status.getRetweetedStatus() != null) {
+                        repeats.add(status.getRetweetedStatus());
+                        if (status.getQuotedStatus() != null){
+                            quotes.add(status.getQuotedStatus());
                         }
+                    } else if (status.getQuotedStatus() != null){
+                        quotes.add(status.getQuotedStatus());
                     }
                 }
-                subscriber.onCompleted();
-            });
+            }
 
-            GlobalApplication.userCache.addAll(
-                    statusesObservable.map(Status::getUser).distinct().toList().toSingle().toBlocking().value()
-            );
+            for (Status status : repeats) {
+                if (!statuses.contains(status)) {
+                    statuses.add(status);
+                    if (!users.contains(status.getUser())){
+                        users.add(status.getUser());
+                    }
+                }
+            }
 
-            Observable<Status> cachedStatusObservable = statusesObservable.map(CachedStatus::new);
+            for (Status status : quotes) {
+                if (!statuses.contains(status)) {
+                    statuses.add(status);
+                    if (!users.contains(status.getUser())){
+                        users.add(status.getUser());
+                    }
+                }
+            }
 
-            cachedStatusObservable.forEach(status -> cache.put(status.getId(), status));
+            GlobalApplication.userCache.addAll(users);
 
-            diskCache.addCachedStatuses(cachedStatusObservable.toList().toSingle().toBlocking().value(), excludeIncrementIds);
+            ArrayList<CachedStatus> cachedStatuses = new ArrayList<>(statuses.size());
+            for (Status status : statuses){
+                CachedStatus cachedStatus = new CachedStatus(status);
+                cache.put(status.getId(), cachedStatus);
+                cachedStatuses.add(cachedStatus);
+            }
+
+            diskCache.addCachedStatuses(cachedStatuses, incrementCount, excludeIncrementIds);
         }
     }
 
     public void delete(List<Long> ids){
-        List<Long> list = new ArrayList<>();
+        List<Long> list = new ArrayList<>(ids.size() * 6);
         for (Long id : ids) {
             if (id != null) {
                 list.add(id);
             }
         }
-        diskCache.deleteCachedStatuses(list);
+        List<Long> use = diskCache.getIdsInUse(list);
+
+        HashSet<Long> remove = new HashSet<>();
+        remove.addAll(list);
+        remove.addAll(use);
+        diskCache.deleteCachedStatuses(remove);
     }
 
     public static class CachedStatus implements Status{

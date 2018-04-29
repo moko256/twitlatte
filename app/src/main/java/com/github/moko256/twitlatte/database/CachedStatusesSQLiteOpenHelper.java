@@ -126,8 +126,8 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
 
     public Status getCachedStatus(long id){
         Status status = null;
-        SQLiteDatabase database=getReadableDatabase();
-        Cursor c=database.query(
+        SQLiteDatabase database = getReadableDatabase();
+        Cursor c = database.query(
                 TABLE_NAME,
                 TABLE_COLUMNS,
                 "id=" + String.valueOf(id), null
@@ -205,6 +205,38 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
         return status;
     }
 
+    public List<Long> getIdsInUse(List<Long> ids){
+        ArrayList<Long> result = new ArrayList<>(ids.size() * 5);
+        SQLiteDatabase database = getReadableDatabase();
+        for (long id : ids) {
+            Cursor c = database.query(
+                    TABLE_NAME,
+                    new String[]{TABLE_COLUMNS[1], TABLE_COLUMNS[3], TABLE_COLUMNS[44]},
+                    "id=" + String.valueOf(id), null
+                    , null, null, null
+            );
+            while(c.moveToNext()) {
+                long repeatId = c.getLong(1);
+                long quotedId = c.getLong(2);
+                if (repeatId != -1){
+                    if (!result.contains(repeatId) && !ids.contains(repeatId)) {
+                        result.add(repeatId);
+                    }
+                } else if (quotedId != -1){
+                    if (!result.contains(quotedId) && !ids.contains(quotedId)) {
+                        result.add(quotedId);
+                    }
+                }
+            }
+            c.close();
+        }
+        database.close();
+        if (result.size() > 0) {
+            result.addAll(getIdsInUse(result));
+        }
+        return result;
+    }
+
     public void addCachedStatus(Status status, boolean incrementCount){
         ContentValues values = createCachedStatusContentValues(status);
 
@@ -212,14 +244,16 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
         database.beginTransaction();
         database.replace(TABLE_NAME, null, values);
         if (incrementCount){
-            database.execSQL("UPDATE " + TABLE_NAME + " SET count = count + 1 WHERE id=" + String.valueOf(status.getId()));
+            SQLiteStatement statement = incrementCountStatement(database);
+            statement.bindLong(1, status.getId());
+            statement.execute();
         }
         database.setTransactionSuccessful();
         database.endTransaction();
         database.close();
     }
 
-    public void addCachedStatuses(Collection<? extends Status> statuses, long... excludeIncrementIds){
+    public void addCachedStatuses(Collection<? extends Status> statuses, boolean incrementCount, long... excludeIncrementIds){
         ArrayList<ContentValues> contentValues = new ArrayList<>(statuses.size());
         for (Status status : statuses) {
             contentValues.add(createCachedStatusContentValues(status));
@@ -227,16 +261,23 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
 
         SQLiteDatabase database=getWritableDatabase();
         database.beginTransaction();
+        SQLiteStatement statement = incrementCount? incrementCountStatement(database): null;
         for (ContentValues values : contentValues) {
             database.replace(TABLE_NAME, null, values);
+
             Long id = values.getAsLong(TABLE_COLUMNS[1]);
-            if (excludeIncrementIds.length == 0 || !ArraysKt.contains(excludeIncrementIds, id)) {
-                database.execSQL("UPDATE " + TABLE_NAME + " SET count = count + 1 WHERE id=" + String.valueOf(id));
+            if (incrementCount && (excludeIncrementIds.length == 0 || !ArraysKt.contains(excludeIncrementIds, id))) {
+                statement.bindLong(1, id);
+                statement.execute();
             }
         }
         database.setTransactionSuccessful();
         database.endTransaction();
         database.close();
+    }
+
+    private SQLiteStatement incrementCountStatement(SQLiteDatabase database){
+        return database.compileStatement("UPDATE " + TABLE_NAME + " SET count=count+1 WHERE id=?");
     }
 
     private ContentValues createCachedStatusContentValues(Status status){
@@ -443,7 +484,11 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
     public void deleteCachedStatus(long id){
         SQLiteDatabase database = getWritableDatabase();
         database.beginTransaction();
-        database.execSQL("UPDATE " + TABLE_NAME + " SET count = count - 1 WHERE id=" + String.valueOf(id));
+
+        SQLiteStatement statement = decrementCountStatement(database);
+        statement.bindLong(1, id);
+        statement.execute();
+
         database.delete(TABLE_NAME, "count=0", null);
         database.setTransactionSuccessful();
         database.endTransaction();
@@ -453,18 +498,19 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
     public void deleteCachedStatuses(Collection<Long> ids){
         SQLiteDatabase database = getWritableDatabase();
         database.beginTransaction();
-        SQLiteStatement sqLiteStatement = database
-                .compileStatement(
-                        "UPDATE " + TABLE_NAME + " SET count = count - 1 WHERE id=?"
-                );
+        SQLiteStatement sqLiteStatement = decrementCountStatement(database);
         for (Long id : ids) {
-            sqLiteStatement.bindLong(0, id);
+            sqLiteStatement.bindLong(1, id);
             sqLiteStatement.execute();
         }
         database.delete(TABLE_NAME, "count=0", null);
         database.setTransactionSuccessful();
         database.endTransaction();
         database.close();
+    }
+
+    private SQLiteStatement decrementCountStatement(SQLiteDatabase database){
+        return database.compileStatement("UPDATE " + TABLE_NAME + " SET count=count-1 WHERE id=?");
     }
 
     @NonNull

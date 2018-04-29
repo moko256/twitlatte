@@ -300,7 +300,7 @@ public class StatusView extends FrameLayout {
                         .subscribe(
                                 result -> {
                                     Status status = (Status) result;
-                                    GlobalApplication.statusCache.add(status, true);
+                                    GlobalApplication.statusCache.add(status, false);
                                     setStatus(GlobalApplication.statusCache.get(this.status.getId()));
                                     Toast.makeText(
                                             getContext(),
@@ -330,7 +330,7 @@ public class StatusView extends FrameLayout {
                         .subscribe(
                                 result -> {
                                     Status status = (Status) result;
-                                    GlobalApplication.statusCache.add(status, true);
+                                    GlobalApplication.statusCache.add(status, false);
                                     setStatus(GlobalApplication.statusCache.get(this.status.getId()));
                                     Toast.makeText(
                                             getContext(),
@@ -365,7 +365,7 @@ public class StatusView extends FrameLayout {
                         .subscribe(
                                 result -> {
                                     Status status = (Status) result;
-                                    GlobalApplication.statusCache.add(status, true);
+                                    GlobalApplication.statusCache.add(status, false);
                                     setStatus(GlobalApplication.statusCache.get(this.status.getId()));
                                     Toast.makeText(
                                             getContext(),
@@ -395,7 +395,7 @@ public class StatusView extends FrameLayout {
                         .subscribe(
                                 result -> {
                                     Status status = (Status) result;
-                                    GlobalApplication.statusCache.add(status, true);
+                                    GlobalApplication.statusCache.add(status, false);
                                     setStatus(GlobalApplication.statusCache.get(this.status.getId()));
                                     Toast.makeText(
                                             getContext(),
