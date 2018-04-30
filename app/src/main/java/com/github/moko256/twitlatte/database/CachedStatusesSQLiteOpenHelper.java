@@ -400,10 +400,11 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
                     variants_uris[i] = new String[videosLength];
 
                     for (int i1 = 0; i1 < videosLength; i1++) {
-                        if (videoVariants[i1] != null) {
-                            variants_bitrates[i][i1] = String.valueOf(videoVariants[i1].getBitrate());
-                            variants_contentTypes[i][i1] = entity.getMediaURL();
-                            variants_uris[i][i1] = entity.getMediaURLHttps();
+                        MediaEntity.Variant videoVariant = videoVariants[i1];
+                        if (videoVariant != null) {
+                            variants_bitrates[i][i1] = String.valueOf(videoVariant.getBitrate());
+                            variants_contentTypes[i][i1] = videoVariant.getContentType();
+                            variants_uris[i][i1] = videoVariant.getUrl();
                         }
                     }
                 }

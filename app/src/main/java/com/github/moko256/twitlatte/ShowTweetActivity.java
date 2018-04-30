@@ -63,6 +63,8 @@ public class ShowTweetActivity extends AppCompatActivity {
     CompositeSubscription subscriptions;
     long statusId;
 
+    StatusView statusView;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -130,6 +132,9 @@ public class ShowTweetActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (statusView != null){
+            statusView.setStatus(null);
+        }
         subscriptions.unsubscribe();
         subscriptions=null;
     }
@@ -202,7 +207,7 @@ public class ShowTweetActivity extends AppCompatActivity {
             tweetIsReply.setVisibility(GONE);
         }
 
-        StatusView statusView = new StatusView(this);
+        statusView = new StatusView(this);
         statusView.setStatus(item);
         statusView.setOnClickListener(null);
         ViewGroup cview = (ViewGroup) statusView.getChildAt(0);

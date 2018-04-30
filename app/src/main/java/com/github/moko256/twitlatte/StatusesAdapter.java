@@ -139,6 +139,8 @@ class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public void onViewRecycled(@NonNull RecyclerView.ViewHolder holder) {
         if (holder instanceof StatusViewHolder){
             ((StatusViewHolder) holder).setStatus(null);
+        } else if (holder instanceof ImagesOnlyTweetViewHolder){
+            ((ImagesOnlyTweetViewHolder) holder).setStatus(null);
         }
     }
 
@@ -203,12 +205,16 @@ class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
 
         void setStatus(Status status) {
-            Status item = status.isRetweet()? status.getRetweetedStatus(): status;
-            tweetImageTableView.setMediaEntities(item.getMediaEntities(), item.isPossiblySensitive());
-            tweetImageTableView.setOnLongClickListener(v -> {
-                context.startActivity(ShowTweetActivity.getIntent(context, item.getId()));
-                return true;
-            });
+            if (status != null) {
+                Status item = status.isRetweet() ? status.getRetweetedStatus() : status;
+                tweetImageTableView.setMediaEntities(item.getMediaEntities(), item.isPossiblySensitive());
+                tweetImageTableView.setOnLongClickListener(v -> {
+                    context.startActivity(ShowTweetActivity.getIntent(context, item.getId()));
+                    return true;
+                });
+            } else {
+                tweetImageTableView.clearImages();
+            }
         }
     }
 
