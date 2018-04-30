@@ -27,6 +27,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.github.chrisbanes.photoview.PhotoView;
 import com.github.chuross.flinglayout.FlingLayout;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
@@ -224,10 +225,15 @@ public class ImagePagerChildFragment extends Fragment {
                     }
                 });
                 imageView.setOnScaleChangeListener((float scaleFactor, float focusX, float focusY) -> view.setDragEnabled(scaleFactor <= 1F));
-                GlideApp.with(this)
-                        .load(TwitterStringUtils.convertLargeImageUrl(mediaEntity.getMediaURLHttps()))
+                GlideRequests requests = GlideApp.with(this);
+                String url = mediaEntity.getMediaURLHttps();
+                requests
+                        .load(TwitterStringUtils.convertLargeImageUrl(url))
                         .fitCenter()
-                        .thumbnail(0.3f)
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .thumbnail(requests.load(
+                                TwitterStringUtils.convertSmallImageUrl(url)
+                        ))
                         .into(imageView);
                 break;
         }

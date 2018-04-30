@@ -17,14 +17,19 @@
 package com.github.moko256.twitlatte.widget;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.support.v7.content.res.AppCompatResources;
 import android.support.v7.widget.GridLayout;
 import android.util.AttributeSet;
+import android.view.Gravity;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.github.moko256.twitlatte.GlideApp;
+import com.github.moko256.twitlatte.GlideRequests;
 import com.github.moko256.twitlatte.GlobalApplication;
 import com.github.moko256.twitlatte.R;
 import com.github.moko256.twitlatte.ShowImageActivity;
@@ -40,8 +45,12 @@ import twitter4j.MediaEntity;
  */
 public class TweetImageTableView extends GridLayout {
 
+    private final FrameLayout containers[] = new FrameLayout[4];
+
     private final ImageView imageViews[] = new ImageView[4];
-    private final FrameLayout covers[] = new FrameLayout[4];
+    private final View foregrounds[] = new View[4];
+    private final ImageView playButton[] = new ImageView[4];
+    private final ImageView markImage[] = new ImageView[4];
 
     private MediaEntity mediaEntities[];
 
@@ -77,6 +86,10 @@ public class TweetImageTableView extends GridLayout {
         setColumnCount(2);
         setRowCount(2);
 
+        float dp = context.getResources().getDisplayMetrics().density;
+        Drawable drawable = AppCompatResources.getDrawable(context, R.drawable.ic_play_arrow_white_24dp);
+        Drawable gifMark = AppCompatResources.getDrawable(context, R.drawable.ic_gif_white_24dp);
+
         for (int i=0; i < imageViews.length; i++) {
             imageViews[i] = new ImageView(context);
             imageViews[i].setScaleType(ImageView.ScaleType.CENTER_CROP);
@@ -84,12 +97,35 @@ public class TweetImageTableView extends GridLayout {
                     FrameLayout.LayoutParams.MATCH_PARENT,
                     FrameLayout.LayoutParams.MATCH_PARENT
             ));
-            covers[i] = new FrameLayout(context);
-            covers[i].addView(imageViews[i]);
-            covers[i].setOnLongClickListener(v -> TweetImageTableView.this.performLongClick());
+
+            foregrounds[i] = new View(context);
+            foregrounds[i].setLayoutParams(new FrameLayout.LayoutParams(
+                    FrameLayout.LayoutParams.MATCH_PARENT,
+                    FrameLayout.LayoutParams.MATCH_PARENT
+            ));
+            foregrounds[i].setBackgroundColor(0x99000000);
+
+            playButton[i] = new ImageView(context);
+            int dp48 = Math.round(48 * dp);
+            FrameLayout.LayoutParams playButtonParams = new FrameLayout.LayoutParams(dp48,dp48);
+            playButtonParams.gravity = Gravity.CENTER;
+            playButton[i].setLayoutParams(playButtonParams);
+            playButton[i].setImageDrawable(drawable);
+
+            markImage[i] = new ImageView(context);
+            FrameLayout.LayoutParams markImageParams = new FrameLayout.LayoutParams(dp48,dp48);
+            markImageParams.gravity = Gravity.BOTTOM | Gravity.LEFT;
+            markImage[i].setLayoutParams(markImageParams);
+            markImage[i].setImageDrawable(gifMark);
+
+            containers[i] = new FrameLayout(context);
+            containers[i].addView(imageViews[i]);
+            containers[i].addView(playButton[i]);
+            containers[i].addView(markImage[i]);
+            containers[i].setOnLongClickListener(v -> TweetImageTableView.this.performLongClick());
 
             int finalI = i;
-            covers[i].setOnClickListener(v -> {
+            containers[i].setOnClickListener(v -> {
                 if (isOpen){
                     getContext().startActivity(ShowImageActivity.getIntent(getContext(),mediaEntities, finalI));
                 } else {
@@ -131,7 +167,7 @@ public class TweetImageTableView extends GridLayout {
         }
         removeAllViews();
         for(int i = 0; i < imageNum; i++){
-            addView(covers[i]);
+            addView(containers[i]);
         }
         for(int i = 0; i < imageNum; i++){
             float dens = getContext().getResources().getDisplayMetrics().density;
@@ -139,7 +175,7 @@ public class TweetImageTableView extends GridLayout {
             int margin[] = margins[imageNum -1][i];
             LayoutParams params = makeGridLayoutParams(param[0],param[1],param[2],param[3]);
             params.setMargins(0, 0, Math.round(dens * margin[0]), Math.round(dens * margin[1]));
-            covers[i].setLayoutParams(params);
+            containers[i].setLayoutParams(params);
         }
     }
 
@@ -163,35 +199,62 @@ public class TweetImageTableView extends GridLayout {
             imageNum = 4;
         }
         for (int ii = 0; ii < imageNum; ii++) {
+
+            GlideRequests requests = GlideApp.with(getContext());
+            String url = mediaEntities[ii].getMediaURLHttps();
+            ImageView imageView = imageViews[ii];
+
             if (isOpen) {
-                GlideApp.with(getContext())
-                        .load(TwitterStringUtils.convertLargeImageUrl(
-                                mediaEntities[ii].getMediaURLHttps()
+                requests
+                        .load(TwitterStringUtils.convertLargeImageUrl(url))
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .thumbnail(requests.load(
+                                TwitterStringUtils.convertSmallImageUrl(url)
                         ))
-                        .sizeMultiplier(0.3f)
-                        .into(imageViews[ii]);
+                        .into(imageView);
                 switch (mediaEntities[ii].getType()) {
                     case "video":
-                        covers[ii].setForeground(AppCompatResources.getDrawable(getContext(), R.drawable.player_foreground));
+                        if (foregrounds[ii].getVisibility() != VISIBLE) {
+                            foregrounds[ii].setVisibility(VISIBLE);
+                        }
+                        if (playButton[ii].getVisibility() != VISIBLE) {
+                            playButton[ii].setVisibility(VISIBLE);
+                        }
+                        if (markImage[ii].getVisibility() != GONE) {
+                            markImage[ii].setVisibility(GONE);
+                        }
                         break;
                     case "animated_gif":
-                        covers[ii].setForeground(AppCompatResources.getDrawable(getContext(), R.drawable.gif_foreground));
+                        if (foregrounds[ii].getVisibility() != VISIBLE) {
+                            foregrounds[ii].setVisibility(VISIBLE);
+                        }
+                        if (playButton[ii].getVisibility() != VISIBLE) {
+                            playButton[ii].setVisibility(VISIBLE);
+                        }
+                        if (markImage[ii].getVisibility() != VISIBLE) {
+                            markImage[ii].setVisibility(VISIBLE);
+                        }
                         break;
                     default:
-                        covers[ii].setForeground(null);
+                        if (foregrounds[ii].getVisibility() != GONE) {
+                            foregrounds[ii].setVisibility(GONE);
+                        }
+                        if (playButton[ii].getVisibility() != GONE) {
+                            playButton[ii].setVisibility(GONE);
+                        }
+                        if (markImage[ii].getVisibility() != GONE) {
+                            markImage[ii].setVisibility(GONE);
+                        }
                         break;
                 }
             } else {
                 if (GlobalApplication.configuration.isTimelineImageLoad){
-                    GlideApp.with(getContext())
-                            .load(TwitterStringUtils.convertLargeImageUrl(
-                                    mediaEntities[ii].getMediaURLHttps()
-                            ))
-                            .sizeMultiplier(0.3f)
+                    requests
+                            .load(TwitterStringUtils.convertSmallImageUrl(url))
                             .transform(new BlurTransformation())
-                            .into(imageViews[ii]);
+                            .into(imageView);
                 } else {
-                    imageViews[ii].setImageResource(R.drawable.border_frame);
+                    imageView.setImageResource(R.drawable.border_frame);
                 }
             }
         }

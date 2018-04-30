@@ -429,6 +429,12 @@ public class TwitterStringUtils {
         return builder;
     }
 
+    public static String convertSmallImageUrl(String baseUrl){
+        return (GlobalApplication.clientType == Type.TWITTER)?
+                baseUrl + ":small":
+                baseUrl.replace("original", "small");
+    }
+
     public static String convertOriginalImageUrl(String baseUrl){
         return (GlobalApplication.clientType == Type.TWITTER)?
                 baseUrl + ":orig":
