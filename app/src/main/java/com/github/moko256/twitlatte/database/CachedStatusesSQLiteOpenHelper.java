@@ -22,8 +22,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteStatement;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 
 import com.github.moko256.twitlatte.BuildConfig;
 import com.github.moko256.twitlatte.array.ArrayUtils;
@@ -499,12 +499,12 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
         return database.compileStatement("UPDATE " + TABLE_NAME + " SET count=count-1 WHERE id=?");
     }
 
-    @NonNull
+    @Nullable
     private String[] splitComma(@Nullable String string){
-        if (string != null) {
+        if (!TextUtils.isEmpty(string)) {
             return string.split(",");
         } else {
-            return new String[0];
+            return null;
         }
     }
 
@@ -515,22 +515,22 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
                                                            String[] starts,
                                                            String[] ends){
 
-        if (texts.length == 1 && texts[0].equals("")){
+        if (texts != null){
+            UserMentionEntity[] entities = new UserMentionEntity[texts.length];
+            for (int i = 0; i < entities.length; i++){
+                entities[i] = new CachedUserMentionEntity(
+                        texts[i],
+                        ids[i],
+                        names[i],
+                        screenNames[i],
+                        starts[i],
+                        ends[i]
+                );
+            }
+            return entities;
+        } else {
             return new UserMentionEntity[0];
         }
-
-        UserMentionEntity[] entities = new UserMentionEntity[texts.length];
-        for (int i = 0; i < entities.length; i++){
-            entities[i] = new CachedUserMentionEntity(
-                    texts[i],
-                    ids[i],
-                    names[i],
-                    screenNames[i],
-                    starts[i],
-                    ends[i]
-            );
-        }
-        return entities;
     }
 
     private static final class CachedUserMentionEntity implements UserMentionEntity {
@@ -594,21 +594,21 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
                                            String[] starts,
                                            String[] ends){
 
-        if (texts.length == 1 && texts[0].equals("")){
+        if (texts != null){
+            URLEntity[] entities = new URLEntity[texts.length];
+            for (int i = 0; i < entities.length; i++){
+                entities[i] = new CachedURLEntity(
+                        texts[i],
+                        expandedURLs[i],
+                        displaysURLs[i],
+                        starts[i],
+                        ends[i]
+                );
+            }
+            return entities;
+        } else {
             return new URLEntity[0];
         }
-
-        URLEntity[] entities = new URLEntity[texts.length];
-        for (int i = 0; i < entities.length; i++){
-            entities[i] = new CachedURLEntity(
-                    texts[i],
-                    expandedURLs[i],
-                    displaysURLs[i],
-                    starts[i],
-                    ends[i]
-            );
-        }
-        return entities;
     }
 
     private static final class CachedURLEntity implements URLEntity {
@@ -667,19 +667,19 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
                                                String[] starts,
                                                String[] ends){
 
-        if (texts.length == 1 && texts[0].equals("")){
+        if (texts != null){
+            HashtagEntity[] entities = new HashtagEntity[texts.length];
+            for (int i = 0; i < entities.length; i++){
+                entities[i] = new CachedHashtagEntity(
+                        texts[i],
+                        starts[i],
+                        ends[i]
+                );
+            }
+            return entities;
+        } else {
             return new HashtagEntity[0];
         }
-
-        HashtagEntity[] entities = new HashtagEntity[texts.length];
-        for (int i = 0; i < entities.length; i++){
-            entities[i] = new CachedHashtagEntity(
-                    texts[i],
-                    starts[i],
-                    ends[i]
-            );
-        }
-        return entities;
     }
 
     private static final class CachedHashtagEntity implements HashtagEntity {
@@ -724,31 +724,29 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
                                                String[] starts,
                                                String[] ends){
 
-        if (texts.length == 1 && texts[0].equals("")){
+        if (texts != null){
+            MediaEntity[] entities = new MediaEntity[texts.length];
+            for (int i = 0; i < entities.length; i++){
+                boolean hasMedia = variants_bitrates != null;
+                entities[i] = new CachedMediaEntity(
+                        texts[i],
+                        expandedURLs[i],
+                        displaysURLs[i],
+                        ids[i],
+                        mediaUrls[i],
+                        mediaUrlHttpSs[i],
+                        types[i],
+                        hasMedia? variants_bitrates[i]: null,
+                        hasMedia? variants_contentTypes[i]: null,
+                        hasMedia? variants_urls[i]: null,
+                        starts[i],
+                        ends[i]
+                );
+            }
+            return entities;
+        } else {
             return new MediaEntity[0];
         }
-
-        MediaEntity[] entities = new MediaEntity[texts.length];
-        for (int i = 0; i < entities.length; i++){
-
-            boolean hasMedia = variants_bitrates.length >= entities.length;
-
-            entities[i] = new CachedMediaEntity(
-                    texts[i],
-                    expandedURLs[i],
-                    displaysURLs[i],
-                    ids[i],
-                    mediaUrls[i],
-                    mediaUrlHttpSs[i],
-                    types[i],
-                    hasMedia? variants_bitrates[i]: new String[0],
-                    hasMedia? variants_contentTypes[i]: new String[0],
-                    hasMedia? variants_urls[i]: new String[0],
-                    starts[i],
-                    ends[i]
-            );
-        }
-        return entities;
     }
 
     private static final class CachedMediaEntity implements MediaEntity{
@@ -835,14 +833,18 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
 
         @Override
         public MediaEntity.Variant[] getVideoVariants() {
-            MediaEntity.Variant[] result = new MediaEntity.Variant[variants_url.length];
-            for (int ii = 0; ii < variants_url.length; ii++){
-                result[ii] = new Variant(
-                        variants_bitrate[ii],
-                        variants_contentType[ii],
-                        variants_url[ii]);
+            if (variants_url != null) {
+                MediaEntity.Variant[] result = new MediaEntity.Variant[variants_url.length];
+                for (int ii = 0; ii < variants_url.length; ii++) {
+                    result[ii] = new Variant(
+                            variants_bitrate[ii],
+                            variants_contentType[ii],
+                            variants_url[ii]);
+                }
+                return result;
+            } else {
+                return null;
             }
-            return result;
         }
 
         @Override
@@ -910,13 +912,14 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
         }
     }
 
-    private String[][] parse(String string){
-        if (string == null){
-            return new String[0][0];
+    @Nullable
+    private String[][] parse(@Nullable String string){
+        if (TextUtils.isEmpty(string)){
+            return null;
         }
         String[] resultA = string.split(",");
         if (resultA.length == 1 && resultA[0].equals("")){
-            return new String[0][0];
+            return null;
         }
         String[][] result = new String[resultA.length][];
         for (int i = 0; i < resultA.length; i++) {
@@ -929,19 +932,19 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
                                                   String[] starts,
                                                   String[] ends){
 
-        if (texts.length == 1 && texts[0].equals("")){
+        if (texts != null){
+            SymbolEntity[] entities = new SymbolEntity[texts.length];
+            for (int i = 0; i < entities.length; i++){
+                entities[i] = new CachedSymbolEntity(
+                        texts[i],
+                        starts[i],
+                        ends[i]
+                );
+            }
+            return entities;
+        } else {
             return new SymbolEntity[0];
         }
-
-        SymbolEntity[] entities = new SymbolEntity[texts.length];
-        for (int i = 0; i < entities.length; i++){
-            entities[i] = new CachedSymbolEntity(
-                    texts[i],
-                    starts[i],
-                    ends[i]
-            );
-        }
-        return entities;
     }
 
     private static final class CachedSymbolEntity implements SymbolEntity {
@@ -973,14 +976,19 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
         }
     }
 
-    private List<Emoji> restoreEmojis(String[] shortcodes,
-                                              String[] urls){
+    @Nullable
+    private List<Emoji> restoreEmojis(@Nullable String[] shortcodes,
+                                              @Nullable String[] urls){
 
-        List<Emoji> emojis = new ArrayList<>(shortcodes.length);
-        for (int i = 0; i < shortcodes.length; i++) {
-            emojis.add(new Emoji(shortcodes[i], urls[i]));
+        if (shortcodes != null && urls != null) {
+            List<Emoji> emojis = new ArrayList<>(shortcodes.length);
+            for (int i = 0; i < shortcodes.length; i++) {
+                emojis.add(new Emoji(shortcodes[i], urls[i]));
+            }
+
+            return emojis;
+        } else {
+            return null;
         }
-
-        return emojis;
     }
 }
