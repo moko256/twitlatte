@@ -509,9 +509,9 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
     }
 
     private UserMentionEntity[] restoreUserMentionEntities(String[] texts,
+                                                           String[] ids,
                                                            String[] names,
                                                            String[] screenNames,
-                                                           String[] ids,
                                                            String[] starts,
                                                            String[] ends){
 
@@ -523,9 +523,9 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
         for (int i = 0; i < entities.length; i++){
             entities[i] = new CachedUserMentionEntity(
                     texts[i],
+                    ids[i],
                     names[i],
                     screenNames[i],
-                    ids[i],
                     starts[i],
                     ends[i]
             );
@@ -543,15 +543,15 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
         private String end;
 
         CachedUserMentionEntity(String text,
-                String name,
-                String screenName,
-                String id,
-                String start,
-                String end){
+                                String id,
+                                String name,
+                                String screenName,
+                                String start,
+                                String end){
             this.text = text;
+            this.id = id;
             this.name = name;
             this.screenName = screenName;
-            this.id = id;
             this.start = start;
             this.end = end;
 
