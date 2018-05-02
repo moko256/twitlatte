@@ -728,7 +728,7 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
         if (texts != null){
             MediaEntity[] entities = new MediaEntity[texts.length];
             for (int i = 0; i < entities.length; i++){
-                boolean hasMedia = variants_bitrates != null;
+                boolean hasMedia = variants_bitrates != null && variants_bitrates.length != 0;
                 entities[i] = new CachedMediaEntity(
                         texts[i],
                         expandedURLs[i],
