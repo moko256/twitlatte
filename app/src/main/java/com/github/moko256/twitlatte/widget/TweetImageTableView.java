@@ -206,11 +206,7 @@ public class TweetImageTableView extends GridLayout {
 
             if (isOpen) {
                 requests
-                        .load(TwitterStringUtils.convertLargeImageUrl(url))
-                        .diskCacheStrategy(DiskCacheStrategy.NONE)
-                        .thumbnail(requests.load(
-                                TwitterStringUtils.convertSmallImageUrl(url)
-                        ))
+                        .load(TwitterStringUtils.convertSmallImageUrl(url))
                         .into(imageView);
                 switch (mediaEntities[ii].getType()) {
                     case "video":
