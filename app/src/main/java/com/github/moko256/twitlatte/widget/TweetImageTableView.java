@@ -27,7 +27,6 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.github.moko256.twitlatte.GlideApp;
 import com.github.moko256.twitlatte.GlideRequests;
 import com.github.moko256.twitlatte.GlobalApplication;
@@ -120,6 +119,7 @@ public class TweetImageTableView extends GridLayout {
 
             containers[i] = new FrameLayout(context);
             containers[i].addView(imageViews[i]);
+            containers[i].addView(foregrounds[i]);
             containers[i].addView(playButton[i]);
             containers[i].addView(markImage[i]);
             containers[i].setOnLongClickListener(v -> TweetImageTableView.this.performLongClick());
@@ -251,6 +251,16 @@ public class TweetImageTableView extends GridLayout {
                             .into(imageView);
                 } else {
                     imageView.setImageResource(R.drawable.border_frame);
+                }
+
+                if (foregrounds[ii].getVisibility() != GONE) {
+                    foregrounds[ii].setVisibility(GONE);
+                }
+                if (playButton[ii].getVisibility() != GONE) {
+                    playButton[ii].setVisibility(GONE);
+                }
+                if (markImage[ii].getVisibility() != GONE) {
+                    markImage[ii].setVisibility(GONE);
                 }
             }
         }
