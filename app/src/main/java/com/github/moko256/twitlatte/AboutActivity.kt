@@ -41,7 +41,7 @@ class AboutActivity : AppCompatActivity() {
         icon.setImageDrawable(packageManager.getApplicationIcon(BuildConfig.APPLICATION_ID))
     }
 
-    fun onPictureClick(view : View){
+    fun onPictureClick(@Suppress("UNUSED_PARAMETER") view : View){
         val birthday = Date(1446956982000L)
         Toast.makeText(
                 this,
