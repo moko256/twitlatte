@@ -112,13 +112,6 @@
         </PreferenceScreen>
     </PreferenceCategory>
     <PreferenceCategory
-        android:title="@string/debug">
-        <Preference
-            android:key="cause_error"
-            android:title="@string/cause_error"
-            android:summary="throw new NullPointerException();"/>
-    </PreferenceCategory>
-    <PreferenceCategory
         android:title="@string/about">
         <Preference
             android:key="license_at_this_app"

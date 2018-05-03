@@ -78,8 +78,6 @@
     <string name="contributors">コントリビューター</string>
     <string name="enable">有効</string>
     <string name="disable">無効</string>
-    <string name="debug">デバッグ</string>
-    <string name="cause_error">エラーを起こす</string>
     <string name="crash_log">クラッシュログ</string>
     <string name="crash_log_channel_description">twitlatteがクラッシュしたら通知する</string>
     <string name="high_power_mute">最強のミュート</string>
