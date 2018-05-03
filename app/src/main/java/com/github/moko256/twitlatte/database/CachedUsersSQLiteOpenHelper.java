@@ -111,8 +111,8 @@ public class CachedUsersSQLiteOpenHelper extends SQLiteOpenHelper {
     }
 
     public User getCachedUser(long id){
+        User user = null;
         synchronized (this) {
-            User user = null;
             SQLiteDatabase database = getReadableDatabase();
             Cursor c = database.query(
                     TABLE_NAME,
@@ -527,8 +527,8 @@ public class CachedUsersSQLiteOpenHelper extends SQLiteOpenHelper {
 
             c.close();
             database.close();
-            return user;
         }
+        return user;
     }
 
     public void addCachedUser(User user){
@@ -624,10 +624,12 @@ public class CachedUsersSQLiteOpenHelper extends SQLiteOpenHelper {
     }
 
 
-    public synchronized void deleteCachedUser(long id){
-        SQLiteDatabase database=getWritableDatabase();
-        database.delete(TABLE_NAME, "id=" + String.valueOf(id), null);
-        database.close();
+    public void deleteCachedUser(long id){
+        synchronized (this) {
+            SQLiteDatabase database = getWritableDatabase();
+            database.delete(TABLE_NAME, "id=" + String.valueOf(id), null);
+            database.close();
+        }
     }
 
 

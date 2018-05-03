@@ -125,111 +125,119 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
 
     public Status getCachedStatus(long id){
         Status status = null;
-        SQLiteDatabase database = getReadableDatabase();
-        Cursor c = database.query(
-                TABLE_NAME,
-                TABLE_COLUMNS,
-                "id=" + String.valueOf(id), null
-                ,null,null,null,"1"
-        );
-        if (c.moveToLast()){
-            status = new StatusCacheMap.CachedStatus(
-                    new Date(c.getLong(0)),
-                    c.getLong(1),
-                    c.getLong(2),
-                    c.getLong(3),
-                    c.getString(4),
-                    c.getString(5),
-                    c.getLong(6),
-                    c.getLong(7),
-                    c.getInt(8) != 0,
-                    c.getInt(9) != 0,
-                    c.getInt(10),
-                    c.getString(11),
-                    c.getInt(12),
-                    c.getInt(13) != 0,
-                    c.getString(14),
-                    restoreUserMentionEntities(
-                            splitComma(c.getString(15)),
-                            splitComma(c.getString(16)),
-                            splitComma(c.getString(17)),
-                            splitComma(c.getString(18)),
-                            splitComma(c.getString(19)),
-                            splitComma(c.getString(20))
-                    ),
-                    restoreURLEntities(
-                            splitComma(c.getString(21)),
-                            splitComma(c.getString(22)),
-                            splitComma(c.getString(23)),
-                            splitComma(c.getString(24)),
-                            splitComma(c.getString(25))
-                    ),
-                    restoreHashtagEntities(
-                            splitComma(c.getString(26)),
-                            splitComma(c.getString(27)),
-                            splitComma(c.getString(28))
-                    ),
-                    restoreMediaEntities(
-                            splitComma(c.getString(29)),
-                            splitComma(c.getString(30)),
-                            splitComma(c.getString(31)),
-                            splitComma(c.getString(32)),
-                            splitComma(c.getString(33)),
-                            splitComma(c.getString(34)),
-                            splitComma(c.getString(35)),
 
-                            parse(c.getString(36)),
-                            parse(c.getString(37)),
-                            parse(c.getString(38)),
-
-                            splitComma(c.getString(39)),
-                            splitComma(c.getString(40))
-                    ),
-                    restoreSymbolEntities(
-                            splitComma(c.getString(41)),
-                            splitComma(c.getString(42)),
-                            splitComma(c.getString(43))
-                    ),
-                    c.getLong(44),
-                    c.getString(45),
-                    restoreEmojis(
-                            splitComma(c.getString(46)),
-                            splitComma(c.getString(47))
-                    )
+        synchronized (this) {
+            SQLiteDatabase database = getReadableDatabase();
+            Cursor c = database.query(
+                    TABLE_NAME,
+                    TABLE_COLUMNS,
+                    "id=" + String.valueOf(id), null
+                    , null, null, null, "1"
             );
+            if (c.moveToLast()) {
+                status = new StatusCacheMap.CachedStatus(
+                        new Date(c.getLong(0)),
+                        c.getLong(1),
+                        c.getLong(2),
+                        c.getLong(3),
+                        c.getString(4),
+                        c.getString(5),
+                        c.getLong(6),
+                        c.getLong(7),
+                        c.getInt(8) != 0,
+                        c.getInt(9) != 0,
+                        c.getInt(10),
+                        c.getString(11),
+                        c.getInt(12),
+                        c.getInt(13) != 0,
+                        c.getString(14),
+                        restoreUserMentionEntities(
+                                splitComma(c.getString(15)),
+                                splitComma(c.getString(16)),
+                                splitComma(c.getString(17)),
+                                splitComma(c.getString(18)),
+                                splitComma(c.getString(19)),
+                                splitComma(c.getString(20))
+                        ),
+                        restoreURLEntities(
+                                splitComma(c.getString(21)),
+                                splitComma(c.getString(22)),
+                                splitComma(c.getString(23)),
+                                splitComma(c.getString(24)),
+                                splitComma(c.getString(25))
+                        ),
+                        restoreHashtagEntities(
+                                splitComma(c.getString(26)),
+                                splitComma(c.getString(27)),
+                                splitComma(c.getString(28))
+                        ),
+                        restoreMediaEntities(
+                                splitComma(c.getString(29)),
+                                splitComma(c.getString(30)),
+                                splitComma(c.getString(31)),
+                                splitComma(c.getString(32)),
+                                splitComma(c.getString(33)),
+                                splitComma(c.getString(34)),
+                                splitComma(c.getString(35)),
+
+                                parse(c.getString(36)),
+                                parse(c.getString(37)),
+                                parse(c.getString(38)),
+
+                                splitComma(c.getString(39)),
+                                splitComma(c.getString(40))
+                        ),
+                        restoreSymbolEntities(
+                                splitComma(c.getString(41)),
+                                splitComma(c.getString(42)),
+                                splitComma(c.getString(43))
+                        ),
+                        c.getLong(44),
+                        c.getString(45),
+                        restoreEmojis(
+                                splitComma(c.getString(46)),
+                                splitComma(c.getString(47))
+                        )
+                );
+            }
+
+            c.close();
+            database.close();
         }
 
-        c.close();
-        database.close();
         return status;
     }
 
     public List<Long> getIdsInUse(List<Long> ids){
         ArrayList<Long> result = new ArrayList<>(ids.size() * 5);
-        SQLiteDatabase database = getReadableDatabase();
-        for (long id : ids) {
-            Cursor c = database.query(
-                    TABLE_NAME,
-                    new String[]{TABLE_COLUMNS[1], TABLE_COLUMNS[3], TABLE_COLUMNS[44]},
-                    "id=" + String.valueOf(id), null
-                    , null, null, null
-            );
-            while(c.moveToNext()) {
-                long repeatId = c.getLong(1);
-                long quotedId = c.getLong(2);
-                if (repeatId != -1){
-                    if (!result.contains(repeatId) && !ids.contains(repeatId)) {
-                        result.add(repeatId);
-                    }
-                } else if (quotedId != -1){
-                    if (!result.contains(quotedId) && !ids.contains(quotedId)) {
-                        result.add(quotedId);
+
+        synchronized (this) {
+            SQLiteDatabase database = getReadableDatabase();
+            for (long id : ids) {
+                Cursor c = database.query(
+                        TABLE_NAME,
+                        new String[]{TABLE_COLUMNS[1], TABLE_COLUMNS[3], TABLE_COLUMNS[44]},
+                        "id=" + String.valueOf(id), null
+                        , null, null, null
+                );
+                while (c.moveToNext()) {
+                    long repeatId = c.getLong(1);
+                    long quotedId = c.getLong(2);
+                    if (repeatId != -1) {
+                        if (!result.contains(repeatId) && !ids.contains(repeatId)) {
+                            result.add(repeatId);
+                        }
+                    } else if (quotedId != -1) {
+                        if (!result.contains(quotedId) && !ids.contains(quotedId)) {
+                            result.add(quotedId);
+                        }
                     }
                 }
+                c.close();
             }
-            c.close();
+            database.close();
         }
-        database.close();
+
         if (result.size() > 0) {
             result.addAll(getIdsInUse(result));
         }
@@ -239,17 +247,19 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
     public void addCachedStatus(StatusCacheMap.CachedStatus status, boolean incrementCount){
         ContentValues values = createCachedStatusContentValues(status);
 
-        SQLiteDatabase database=getWritableDatabase();
-        database.beginTransaction();
-        database.replace(TABLE_NAME, null, values);
-        if (incrementCount){
-            SQLiteStatement statement = incrementCountStatement(database);
-            statement.bindLong(1, status.getId());
-            statement.execute();
+        synchronized (this) {
+            SQLiteDatabase database = getWritableDatabase();
+            database.beginTransaction();
+            database.replace(TABLE_NAME, null, values);
+            if (incrementCount) {
+                SQLiteStatement statement = incrementCountStatement(database);
+                statement.bindLong(1, status.getId());
+                statement.execute();
+            }
+            database.setTransactionSuccessful();
+            database.endTransaction();
+            database.close();
         }
-        database.setTransactionSuccessful();
-        database.endTransaction();
-        database.close();
     }
 
     public void addCachedStatuses(Collection<StatusCacheMap.CachedStatus> statuses, boolean incrementCount, long... excludeIncrementIds){
@@ -258,21 +268,23 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
             contentValues.add(createCachedStatusContentValues(status));
         }
 
-        SQLiteDatabase database=getWritableDatabase();
-        database.beginTransaction();
-        SQLiteStatement statement = incrementCount? incrementCountStatement(database): null;
-        for (ContentValues values : contentValues) {
-            database.replace(TABLE_NAME, null, values);
+        synchronized (this) {
+            SQLiteDatabase database = getWritableDatabase();
+            database.beginTransaction();
+            SQLiteStatement statement = incrementCount ? incrementCountStatement(database) : null;
+            for (ContentValues values : contentValues) {
+                database.replace(TABLE_NAME, null, values);
 
-            Long id = values.getAsLong(TABLE_COLUMNS[1]);
-            if (incrementCount && (excludeIncrementIds.length == 0 || !ArraysKt.contains(excludeIncrementIds, id))) {
-                statement.bindLong(1, id);
-                statement.execute();
+                Long id = values.getAsLong(TABLE_COLUMNS[1]);
+                if (incrementCount && (excludeIncrementIds.length == 0 || !ArraysKt.contains(excludeIncrementIds, id))) {
+                    statement.bindLong(1, id);
+                    statement.execute();
+                }
             }
+            database.setTransactionSuccessful();
+            database.endTransaction();
+            database.close();
         }
-        database.setTransactionSuccessful();
-        database.endTransaction();
-        database.close();
     }
 
     private SQLiteStatement incrementCountStatement(SQLiteDatabase database){
@@ -469,31 +481,35 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
     }
 
     public void deleteCachedStatus(long id){
-        SQLiteDatabase database = getWritableDatabase();
-        database.beginTransaction();
+        synchronized (this) {
+            SQLiteDatabase database = getWritableDatabase();
+            database.beginTransaction();
 
-        SQLiteStatement statement = decrementCountStatement(database);
-        statement.bindLong(1, id);
-        statement.execute();
+            SQLiteStatement statement = decrementCountStatement(database);
+            statement.bindLong(1, id);
+            statement.execute();
 
-        database.delete(TABLE_NAME, "count=0", null);
-        database.setTransactionSuccessful();
-        database.endTransaction();
-        database.close();
+            database.delete(TABLE_NAME, "count=0", null);
+            database.setTransactionSuccessful();
+            database.endTransaction();
+            database.close();
+        }
     }
 
     public void deleteCachedStatuses(Collection<Long> ids){
-        SQLiteDatabase database = getWritableDatabase();
-        database.beginTransaction();
-        SQLiteStatement sqLiteStatement = decrementCountStatement(database);
-        for (Long id : ids) {
-            sqLiteStatement.bindLong(1, id);
-            sqLiteStatement.execute();
+        synchronized (this) {
+            SQLiteDatabase database = getWritableDatabase();
+            database.beginTransaction();
+            SQLiteStatement sqLiteStatement = decrementCountStatement(database);
+            for (Long id : ids) {
+                sqLiteStatement.bindLong(1, id);
+                sqLiteStatement.execute();
+            }
+            database.delete(TABLE_NAME, "count=0", null);
+            database.setTransactionSuccessful();
+            database.endTransaction();
+            database.close();
         }
-        database.delete(TABLE_NAME, "count=0", null);
-        database.setTransactionSuccessful();
-        database.endTransaction();
-        database.close();
     }
 
     private SQLiteStatement decrementCountStatement(SQLiteDatabase database){

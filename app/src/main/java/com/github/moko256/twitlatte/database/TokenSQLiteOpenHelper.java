@@ -59,40 +59,46 @@ public class TokenSQLiteOpenHelper extends SQLiteOpenHelper {
     }
 
     public AccessToken[] getAccessTokens(){
-        SQLiteDatabase database=getReadableDatabase();
-        Cursor c=database.query(TABLE_NAME, TABLE_COLUMNS,null,null,null,null,null);
+        AccessToken[] accessTokens;
 
-        AccessToken[] accessTokens =new AccessToken[c.getCount()];
+        synchronized (this) {
+            SQLiteDatabase database = getReadableDatabase();
+            Cursor c = database.query(TABLE_NAME, TABLE_COLUMNS, null, null, null, null, null);
 
-        while (c.moveToNext()){
-            accessTokens[c.getPosition()] = convertFromCursor(c);
+            accessTokens = new AccessToken[c.getCount()];
+
+            while (c.moveToNext()) {
+                accessTokens[c.getPosition()] = convertFromCursor(c);
+            }
+
+            c.close();
+            database.close();
         }
-
-        c.close();
-        database.close();
 
         return accessTokens;
     }
 
     public AccessToken getAccessToken(String key){
         Pair<String, Long> pair = AccessTokenKt.splitAccessTokenKey(key);
-
-        SQLiteDatabase database=getReadableDatabase();
-        Cursor c=database.query(
-                TABLE_NAME,
-                TABLE_COLUMNS,
-                "url = '" + pair.getFirst() + "' AND " + "userId = " + String.valueOf(pair.getSecond()),
-                null,null,null,null, "1");
-
         AccessToken accessToken;
 
-        if (c.moveToNext()) {
-            accessToken = convertFromCursor(c);
-        } else {
-            accessToken = null;
+        synchronized (this) {
+            SQLiteDatabase database = getReadableDatabase();
+            Cursor c = database.query(
+                    TABLE_NAME,
+                    TABLE_COLUMNS,
+                    "url = '" + pair.getFirst() + "' AND " + "userId = " + String.valueOf(pair.getSecond()),
+                    null, null, null, null, "1");
+
+
+            if (c.moveToNext()) {
+                accessToken = convertFromCursor(c);
+            } else {
+                accessToken = null;
+            }
+            c.close();
+            database.close();
         }
-        c.close();
-        database.close();
 
         return accessToken;
     }
@@ -109,32 +115,39 @@ public class TokenSQLiteOpenHelper extends SQLiteOpenHelper {
     }
 
     public void addAccessToken(AccessToken accessToken){
-        SQLiteDatabase database=getWritableDatabase();
+        synchronized (this) {
+            SQLiteDatabase database = getWritableDatabase();
 
-        ContentValues contentValues = new ContentValues();
-        contentValues.put("type", accessToken.getType());
-        contentValues.put("url", accessToken.getUrl());
-        contentValues.put("userName", accessToken.getScreenName());
-        contentValues.put("userId", String.valueOf(accessToken.getUserId()));
-        contentValues.put("token", accessToken.getToken());
-        contentValues.put("tokenSecret", accessToken.getTokenSecret());
+            ContentValues contentValues = new ContentValues();
+            contentValues.put("type", accessToken.getType());
+            contentValues.put("url", accessToken.getUrl());
+            contentValues.put("userName", accessToken.getScreenName());
+            contentValues.put("userId", String.valueOf(accessToken.getUserId()));
+            contentValues.put("token", accessToken.getToken());
+            contentValues.put("tokenSecret", accessToken.getTokenSecret());
 
-        database.replace(TABLE_NAME, null, contentValues);
+            database.replace(TABLE_NAME, null, contentValues);
 
-        database.close();
+            database.close();
+        }
     }
 
     public void deleteAccessToken(AccessToken accessToken){
-        SQLiteDatabase database=getWritableDatabase();
-        database.delete(TABLE_NAME, "url = '" + accessToken.getUrl() + "' AND " + "userId = " + String.valueOf(accessToken.getUserId()), null);
-        database.close();
+        synchronized (this) {
+            SQLiteDatabase database = getWritableDatabase();
+            database.delete(TABLE_NAME, "url = '" + accessToken.getUrl() + "' AND " + "userId = " + String.valueOf(accessToken.getUserId()), null);
+            database.close();
+        }
     }
 
-    public int getSize(){
-        SQLiteDatabase database = getReadableDatabase();
-        long count = DatabaseUtils.queryNumEntries(database,TABLE_NAME);
-        database.close();
-        return (int) count;
+    public long getSize(){
+        long count;
+        synchronized (this) {
+            SQLiteDatabase database = getReadableDatabase();
+            count = DatabaseUtils.queryNumEntries(database, TABLE_NAME);
+            database.close();
+        }
+        return count;
     }
 
 }

@@ -65,10 +65,12 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
     }
 
     public List<Long> getIds(){
+        List<Long> ids;
+
         synchronized (this) {
             SQLiteDatabase database = getReadableDatabase();
             Cursor c = database.query(ID_LIST_TABLE_NAME, new String[]{"id"}, null, null, null, null, null);
-            List<Long> ids = new ArrayList<>(c.getCount());
+            ids = new ArrayList<>(c.getCount());
 
             while (c.moveToNext()) {
                 ids.add(c.getLong(0));
@@ -76,10 +78,10 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
 
             c.close();
             database.close();
-
-            Collections.reverse(ids);
-            return ids;
         }
+
+        Collections.reverse(ids);
+        return ids;
     }
 
     public void addIds(List<Long> ids){
@@ -116,10 +118,10 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
     }
 
     public void insertIds(int bottomPosition, List<Long> ids){
-        synchronized (this) {
-            List<Long> n = getIds();
-            List<Long> d = n.subList(0, bottomPosition);
+        List<Long> n = getIds();
+        List<Long> d = n.subList(0, bottomPosition);
 
+        synchronized (this) {
             SQLiteDatabase database = getWritableDatabase();
             database.beginTransaction();
             deleteOnlyIdsAtTransaction(d);
@@ -157,10 +159,11 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
     }
 
     public int getListViewPosition(){
+        int r;
+
         synchronized (this) {
             SQLiteDatabase database = getReadableDatabase();
             Cursor c = database.query(POSITION_TABLE_NAME, new String[]{"position"}, null, null, null, null, null);
-            int r;
             if (c.moveToNext()) {
                 r = c.getInt(0);
             } else {
@@ -168,8 +171,9 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
             }
             c.close();
             database.close();
-            return r;
         }
+
+        return r;
     }
 
     public void setListViewPosition(int i){

@@ -56,37 +56,43 @@ public class CachedTrendsSQLiteOpenHelper extends SQLiteOpenHelper {
 
     }
 
-    public synchronized List<Trend> getTrends(){
-        SQLiteDatabase database=getReadableDatabase();
-        Cursor c=database.query(TABLE_NAME, new String[]{"name"}, null, null, null,null,null);
-        List<Trend> trends = new ArrayList<>(c.getCount());
+    public List<Trend> getTrends(){
+        List<Trend> trends;
 
-        while (c.moveToNext()){
-            trends.add(new CachedTrend(c.getString(0)));
+        synchronized (this) {
+            SQLiteDatabase database = getReadableDatabase();
+            Cursor c = database.query(TABLE_NAME, new String[]{"name"}, null, null, null, null, null);
+            trends = new ArrayList<>(c.getCount());
+
+            while (c.moveToNext()) {
+                trends.add(new CachedTrend(c.getString(0)));
+            }
+
+            c.close();
+            database.close();
         }
-
-        c.close();
-        database.close();
 
         return trends;
     }
 
-    public synchronized void setTrends(List<Trend> trends){
-        SQLiteDatabase database=getWritableDatabase();
-        database.beginTransaction();
-        database.delete(TABLE_NAME, null, null);
+    public void setTrends(List<Trend> trends){
+        synchronized (this) {
+            SQLiteDatabase database = getWritableDatabase();
+            database.beginTransaction();
+            database.delete(TABLE_NAME, null, null);
 
-        for (int i = 0; i < trends.size(); i++) {
-            Trend item = trends.get(i);
-            ContentValues contentValues = new ContentValues();
-            contentValues.put("name", item.getName());
+            for (int i = 0; i < trends.size(); i++) {
+                Trend item = trends.get(i);
+                ContentValues contentValues = new ContentValues();
+                contentValues.put("name", item.getName());
 
-            database.insert(TABLE_NAME, "", contentValues);
+                database.insert(TABLE_NAME, "", contentValues);
+            }
+
+            database.setTransactionSuccessful();
+            database.endTransaction();
+            database.close();
         }
-
-        database.setTransactionSuccessful();
-        database.endTransaction();
-        database.close();
     }
 
     private static class CachedTrend implements Trend{
