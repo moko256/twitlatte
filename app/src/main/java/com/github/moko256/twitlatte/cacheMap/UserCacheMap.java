@@ -22,7 +22,6 @@ import android.support.v4.util.LruCache;
 import com.github.moko256.twitlatte.GlobalApplication;
 import com.github.moko256.twitlatte.database.CachedUsersSQLiteOpenHelper;
 import com.github.moko256.twitlatte.entity.AccessToken;
-import com.github.moko256.twitlatte.entity.Type;
 
 import java.util.Collection;
 
@@ -46,11 +45,7 @@ public class UserCacheMap {
         if (cache.size() > 0){
             cache.evictAll();
         }
-        diskCache = new CachedUsersSQLiteOpenHelper(
-                context,
-                accessToken.getUserId(),
-                accessToken.getType() == Type.TWITTER
-        );
+        diskCache = new CachedUsersSQLiteOpenHelper(context,accessToken);
     }
 
     public int size() {

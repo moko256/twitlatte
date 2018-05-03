@@ -64,7 +64,7 @@ public class StatusCacheMap {
         if (cache.size() > 0){
             cache.evictAll();
         }
-        diskCache = new CachedStatusesSQLiteOpenHelper(context, accessToken.getUserId());
+        diskCache = new CachedStatusesSQLiteOpenHelper(context, accessToken);
     }
 
     public int size() {

@@ -63,6 +63,7 @@ public class GlobalApplication extends Application {
 
     public static LruCache<Configuration, Twitter> twitterCache = new LruCache<>(4);
     public static Twitter twitter;
+    public static AccessToken accessToken;
 
     @Type.ClientTypeInt
     public static int clientType = -1;
@@ -208,14 +209,15 @@ public class GlobalApplication extends Application {
     public void initTwitter(@NonNull AccessToken accessToken){
         userId = accessToken.getUserId();
         clientType = accessToken.getType();
-        twitter = getTwitterInstance(accessToken);
+        twitter = createTwitterInstance(accessToken);
+        GlobalApplication.accessToken = accessToken;
         userCache.prepare(this, accessToken);
         statusCache.prepare(this, accessToken);
         statusLimit = clientType == Type.TWITTER? 200: 40;
     }
 
     @NonNull
-    public Twitter getTwitterInstance(@NonNull AccessToken accessToken){
+    public Twitter createTwitterInstance(@NonNull AccessToken accessToken){
         Twitter t;
 
         Configuration conf;

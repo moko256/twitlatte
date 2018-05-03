@@ -28,6 +28,7 @@ import android.text.TextUtils;
 import com.github.moko256.twitlatte.BuildConfig;
 import com.github.moko256.twitlatte.array.ArrayUtils;
 import com.github.moko256.twitlatte.cacheMap.StatusCacheMap;
+import com.github.moko256.twitlatte.entity.AccessToken;
 import com.github.moko256.twitlatte.entity.Emoji;
 
 import java.io.File;
@@ -106,8 +107,8 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
             "count"
     };
 
-    public CachedStatusesSQLiteOpenHelper(Context context, long userId){
-        super(context, new File(context.getCacheDir(), String.valueOf(userId) + "/CachedStatuses.db").getAbsolutePath(), null, BuildConfig.CACHE_DATABASE_VERSION);
+    public CachedStatusesSQLiteOpenHelper(Context context, AccessToken accessToken){
+        super(context, accessToken != null? new File(context.getCacheDir(), accessToken.getKeyString() + "/CachedStatuses.db").getAbsolutePath(): null, null, BuildConfig.CACHE_DATABASE_VERSION);
     }
 
     @Override

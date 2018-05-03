@@ -25,6 +25,8 @@ import android.support.annotation.NonNull;
 
 import com.github.moko256.twitlatte.BuildConfig;
 import com.github.moko256.twitlatte.array.ArrayUtils;
+import com.github.moko256.twitlatte.entity.AccessToken;
+import com.github.moko256.twitlatte.entity.Type;
 
 import java.io.File;
 import java.util.Collection;
@@ -92,9 +94,9 @@ public class CachedUsersSQLiteOpenHelper extends SQLiteOpenHelper {
             "withheldInCountries"
     };
 
-    public CachedUsersSQLiteOpenHelper(Context context, long userId, boolean isTwitter){
-        super(context, new File(context.getCacheDir(), String.valueOf(userId) + "/" + "CachedUsers.db").getAbsolutePath(), null, BuildConfig.CACHE_DATABASE_VERSION);
-        this.isTwitter = isTwitter;
+    public CachedUsersSQLiteOpenHelper(Context context, AccessToken accessToken){
+        super(context, accessToken != null? new File(context.getCacheDir(), accessToken.getKeyString() + "/" + "CachedUsers.db").getAbsolutePath(): null, null, BuildConfig.CACHE_DATABASE_VERSION);
+        this.isTwitter = accessToken != null && accessToken.getType() == Type.TWITTER;
     }
 
     @Override

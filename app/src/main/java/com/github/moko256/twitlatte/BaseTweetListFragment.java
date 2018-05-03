@@ -71,7 +71,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
     public void onCreate(Bundle savedInstanceState) {
         list=new ArrayList<>();
         subscription = new CompositeSubscription();
-        statusIdsDatabase = new CachedIdListSQLiteOpenHelper(getContext(), GlobalApplication.userId, getCachedIdsDatabaseName());
+        statusIdsDatabase = new CachedIdListSQLiteOpenHelper(getContext(), GlobalApplication.accessToken, getCachedIdsDatabaseName());
         if (savedInstanceState == null){
             List<Long> c = statusIdsDatabase.getIds();
             if (c.size() > 0) {

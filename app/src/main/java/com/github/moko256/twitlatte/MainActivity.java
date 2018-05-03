@@ -249,11 +249,11 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                             ArrayList<User> users = new ArrayList<>(accessTokens.size());
                             for (AccessToken accessToken : accessTokens){
                                 long id = accessToken.getUserId();
-                                CachedUsersSQLiteOpenHelper userHelper = new CachedUsersSQLiteOpenHelper(this, id, accessToken.getType() == Type.TWITTER);
+                                CachedUsersSQLiteOpenHelper userHelper = new CachedUsersSQLiteOpenHelper(this, accessToken);
                                 User user = userHelper.getCachedUser(id);
                                 if (user == null){
                                     try {
-                                        user = ((GlobalApplication) getApplication()).getTwitterInstance(accessToken).verifyCredentials();
+                                        user = ((GlobalApplication) getApplication()).createTwitterInstance(accessToken).verifyCredentials();
                                         userHelper.addCachedUser(user);
                                     } catch (TwitterException e) {
                                         e.printStackTrace();

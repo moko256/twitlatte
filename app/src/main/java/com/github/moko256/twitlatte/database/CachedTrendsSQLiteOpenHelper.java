@@ -23,6 +23,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.github.moko256.twitlatte.BuildConfig;
+import com.github.moko256.twitlatte.entity.AccessToken;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
@@ -42,8 +43,8 @@ public class CachedTrendsSQLiteOpenHelper extends SQLiteOpenHelper {
 
     private static final String TABLE_NAME = "Trends";
 
-    public CachedTrendsSQLiteOpenHelper(Context context, long userId){
-        super(context, new File(context.getCacheDir(), String.valueOf(userId) + "/" + "Trends.db").getAbsolutePath(), null, BuildConfig.CACHE_DATABASE_VERSION);
+    public CachedTrendsSQLiteOpenHelper(Context context, AccessToken accessToken){
+        super(context, accessToken != null? new File(context.getCacheDir(), accessToken.getKeyString() + "/" + "Trends.db").getAbsolutePath(): null, null, BuildConfig.CACHE_DATABASE_VERSION);
     }
 
     @Override

@@ -23,6 +23,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.github.moko256.twitlatte.BuildConfig;
+import com.github.moko256.twitlatte.entity.AccessToken;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -37,13 +38,12 @@ import java.util.List;
 
 public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
 
-    private final String ID_LIST_TABLE_NAME;
+    private static final String ID_LIST_TABLE_NAME = "IdList";
 
     private static final String POSITION_TABLE_NAME = "ListViewPosition";
 
-    public CachedIdListSQLiteOpenHelper(Context context, long userId, String name){
-        super(context, new File(context.getCacheDir(), String.valueOf(userId) + "/" + name + ".db").getAbsolutePath(), null, BuildConfig.CACHE_DATABASE_VERSION);
-        ID_LIST_TABLE_NAME = name;
+    public CachedIdListSQLiteOpenHelper(Context context, AccessToken accessToken, String name){
+        super(context, accessToken != null? new File(context.getCacheDir(), accessToken.getKeyString() + "/" + name + ".db").getAbsolutePath(): null, null, BuildConfig.CACHE_DATABASE_VERSION);
     }
 
     @Override

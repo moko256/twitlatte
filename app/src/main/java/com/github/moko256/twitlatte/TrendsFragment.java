@@ -63,7 +63,7 @@ public class TrendsFragment extends BaseListFragment {
     public void onCreate(Bundle savedInstanceState) {
         list=new ArrayList<>();
         subscription = new CompositeSubscription();
-        helper = new CachedTrendsSQLiteOpenHelper(getContext(), GlobalApplication.userId);
+        helper = new CachedTrendsSQLiteOpenHelper(getContext(), GlobalApplication.accessToken);
         if (savedInstanceState == null) {
             List<Trend> trends = helper.getTrends();
             if (trends.size() > 0){
