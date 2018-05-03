@@ -44,7 +44,7 @@ android {
             shrinkResources true
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            versionNameSuffix " (${new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z").format(new Date())})"
+            versionNameSuffix " - ${new SimpleDateFormat("yyyy-MM-dd").format(new Date())}"
         }
         debug {
             debuggable true
