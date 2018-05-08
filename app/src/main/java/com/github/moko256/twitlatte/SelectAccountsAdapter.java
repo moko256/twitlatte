@@ -89,7 +89,7 @@ public class SelectAccountsAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
                     Uri image = Uri.parse(user.get400x400ProfileImageURLHttps());
                     viewHolder.title.setText(TwitterStringUtils.plusAtMark(user.getScreenName(), accessToken.getUrl()));
-                    GlideApp.with(context).load(image).circleCrop().into(viewHolder.image);
+                    GlideApp.with(viewHolder.image).load(image).circleCrop().into(viewHolder.image);
                     viewHolder.itemView.setOnClickListener(v -> {
                         if (onImageButtonClickListener != null) {
                             onImageButtonClickListener.onClick(accessToken);

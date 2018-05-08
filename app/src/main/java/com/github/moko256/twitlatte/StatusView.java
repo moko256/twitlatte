@@ -91,7 +91,7 @@ public class StatusView extends FrameLayout {
 
         LayoutInflater.from(getContext()).inflate(R.layout.layout_tweet,this);
 
-        glideRequests = GlideApp.with(context);
+        glideRequests = GlideApp.with(this);
         
         userImage = findViewById(R.id.tweet_icon);
         retweetUserName = findViewById(R.id.tweet_retweet_user_name);
@@ -169,14 +169,16 @@ public class StatusView extends FrameLayout {
 
         boolean isReply = item.getInReplyToScreenName()!=null;
         if (isReply){
+            boolean isEmpty = item.getInReplyToScreenName().isEmpty();
+
             if (replyUserName.getVisibility()!= View.VISIBLE){
                 replyUserName.setVisibility(View.VISIBLE);
             }
 
             replyUserName.setText(getContext().getString(
                     (item.getInReplyToStatusId() != -1)?
-                            R.string.reply_to:
-                            R.string.mention_to,
+                            (isEmpty? R.string.reply: R.string.reply_to):
+                            (isEmpty? R.string.mention: R.string.mention_to),
                     TwitterStringUtils.plusAtMark(item.getInReplyToScreenName())
             ));
         }

@@ -35,6 +35,7 @@
     <string name="post">Post</string>
     <string name="create_post">Create post</string>
     <string name="reply">Reply</string>
+    <string name="mention">Mention</string>
     <string name="follow">follow</string>
     <string name="follower">follower</string>
     <string name="like">Like</string>
@@ -108,6 +109,7 @@
     <string name="do_quote">Quote</string>
     <string name="do_logout">Logout</string>
     <string name="do_discard">Discard</string>
+    <string name="do_reply">Reply</string>
 
     <string name="confirm_logout">Logout?</string>
     <string name="confirm_discard_post">Discard post?</string>

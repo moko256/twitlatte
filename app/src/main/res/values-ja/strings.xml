@@ -25,6 +25,7 @@
     <string name="post">投稿</string>
     <string name="create_post">投稿を作成</string>
     <string name="reply">返信</string>
+    <string name="mention">言及</string>
     <string name="like">お気に入り</string>
     <string name="follower">フォロワー</string>
     <string name="follow">フォロー</string>
@@ -97,6 +98,7 @@
     <string name="do_quote">引用する</string>
     <string name="do_logout">ログアウトする</string>
     <string name="do_discard">破棄</string>
+    <string name="do_reply">返信する</string>
 
     <string name="confirm_logout">ログアウトしますか？</string>
     <string name="confirm_discard_post">投稿を破棄しますか？</string>

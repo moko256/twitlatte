@@ -92,7 +92,7 @@
         android:layout_marginBottom="@dimen/activity_vertical_margin"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:text="@string/reply"
+        android:text="@string/do_reply"
         style="@style/Widget.AppCompat.Button.Borderless.Colored"/>
 
     <android.support.v7.widget.AppCompatEditText

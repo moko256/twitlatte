@@ -200,7 +200,7 @@ public class TweetImageTableView extends GridLayout {
         }
         for (int ii = 0; ii < imageNum; ii++) {
 
-            GlideRequests requests = GlideApp.with(getContext());
+            GlideRequests requests = GlideApp.with(this);
             String url = mediaEntities[ii].getMediaURLHttps();
             ImageView imageView = imageViews[ii];
 
