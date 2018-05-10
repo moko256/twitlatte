@@ -59,4 +59,13 @@
         android:layout_below="@id/start_twitter_auth_button"
         android:onClick="onStartMastodonAuthClick"
         style="@style/Widget.AppCompat.Button.Borderless.Colored"/>
+
+    <Button
+        android:id="@+id/start_gnu_social_auth_button"
+        android:text="gnu social"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/start_mastodon_auth_button"
+        android:onClick="onStartGnuSocialAuthClick"
+        style="@style/Widget.AppCompat.Button.Borderless.Colored"/>
 </RelativeLayout>

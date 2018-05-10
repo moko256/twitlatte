@@ -29,7 +29,7 @@ data class AccessToken(
         @Type.ClientTypeInt val type: Int,
         val url: String,
         val userId: Long,
-        val screenName: String,
+        val screenName: String? = "",
         val token: String,
         val tokenSecret: String? = null
 ) {
@@ -54,11 +54,12 @@ fun splitAccessTokenKey(accessTokenKey: String): Pair<String, Long> {
 class Type{
 
     @Retention(AnnotationRetention.SOURCE)
-    @IntDef(Type.TWITTER, Type.MASTODON)
+    @IntDef(TWITTER, MASTODON, GNU_SOCIAL)
     annotation class ClientTypeInt
 
     companion object{
         const val TWITTER: Int = 0
         const val MASTODON: Int = 1
+        const val GNU_SOCIAL: Int = 2
     }
 }

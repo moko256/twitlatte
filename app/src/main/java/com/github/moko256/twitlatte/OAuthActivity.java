@@ -31,6 +31,7 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.github.moko256.twitlatte.entity.AccessToken;
@@ -132,6 +133,64 @@ public class OAuthActivity extends AppCompatActivity {
                             onError(throwable);
                         }
                         );
+    }
+
+    public void onStartGnuSocialAuthClick(View view) {
+        requirePin = useAuthCode.isChecked();
+        model = new com.github.moko256.twitlatte.model.impl.gnusocial.OAuthModelImpl();
+        LinearLayout dialogView = new LinearLayout(this);
+        dialogView.setOrientation(LinearLayout.VERTICAL);
+        EditText url=new EditText(this);
+        url.setHint("URL");
+        url.setInputType(EditorInfo.TYPE_TEXT_VARIATION_URI);
+
+        EditText consumerKey=new EditText(this);
+        consumerKey.setHint("Token");
+
+        EditText consumerSecret=new EditText(this);
+        consumerSecret.setHint("TokenSecret");
+
+        dialogView.addView(url);
+        dialogView.addView(consumerKey);
+        dialogView.addView(consumerSecret);
+
+        new AlertDialog.Builder(this)
+                .setView(dialogView)
+                .setPositiveButton(
+                        android.R.string.ok,
+                        (dialog, which) -> {
+                            Single<String> authSingle;
+                            if (requirePin) {
+                                showPinDialog();
+                                authSingle = model
+                                        .getCodeAuthUrl(
+                                                url.getText().toString(),
+                                                consumerKey.getText().toString(),
+                                                consumerSecret.getText().toString()
+                                        );
+                            } else {
+                                authSingle = model
+                                        .getCallbackAuthUrl(
+                                                url.getText().toString(),
+                                                consumerKey.getText().toString(),
+                                                consumerSecret.getText().toString(),
+                                                getString(R.string.app_name)
+                                        );
+                            }
+                            authSingle
+                                    .subscribeOn(Schedulers.io())
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .subscribe(
+                                            this::startBrowser,
+                                            throwable -> {
+                                                closePinDialog();
+                                                onError(throwable);
+                                            }
+                                    );
+                        }
+                )
+                .setCancelable(false)
+                .show();
     }
 
     public void onStartMastodonAuthClick(View view) {

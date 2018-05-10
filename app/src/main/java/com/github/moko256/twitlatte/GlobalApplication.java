@@ -213,7 +213,10 @@ public class GlobalApplication extends Application {
         GlobalApplication.accessToken = accessToken;
         userCache.prepare(this, accessToken);
         statusCache.prepare(this, accessToken);
-        statusLimit = clientType == Type.TWITTER? 200: 40;
+        statusLimit =
+                (clientType == Type.TWITTER || clientType == Type.GNU_SOCIAL)
+                        ? 200
+                        : 40;
     }
 
     @NonNull
@@ -229,6 +232,32 @@ public class GlobalApplication extends Application {
                     .setOAuthConsumerSecret(BuildConfig.CONSUMER_SECRET)
                     .setOAuthAccessToken(accessToken.getToken())
                     .setOAuthAccessTokenSecret(accessToken.getTokenSecret())
+                    .build();
+            t = twitterCache.get(conf);
+
+            if (t == null) {
+                t = new TwitterFactory(conf).getInstance();
+                twitterCache.put(conf, t);
+            }
+        } else if (accessToken.getType() == Type.GNU_SOCIAL){
+            String url = "https://" + accessToken.getUrl() + "/api";
+            conf = new ConfigurationBuilder()
+                    .setTweetModeExtended(true)
+                    .setOAuthConsumerKey("")
+                    .setOAuthConsumerSecret("")
+                    .setOAuthAccessToken(accessToken.getToken())
+                    .setOAuthAccessTokenSecret(accessToken.getTokenSecret())
+                    .setOAuthRequestTokenURL(url + "/oauth/request_token")
+                    .setOAuthAuthorizationURL(url + "/oauth/authorize")
+                    .setOAuthAccessTokenURL(url + "/oauth/access_token")
+                    .setOAuthAuthenticationURL(url + "/oauth/authorize")
+                    .setOAuth2TokenURL("")
+                    .setOAuth2InvalidateTokenURL("")
+                    .setRestBaseURL(url + "/")
+                    .setStreamBaseURL("")
+                    .setUserStreamBaseURL("")
+                    .setSiteStreamBaseURL("")
+                    .setUploadBaseURL(url + "/statusnet/media/upload/")
                     .build();
             t = twitterCache.get(conf);
 

@@ -499,6 +499,7 @@ public class TwitterStringUtils {
     @StringRes
     public static int getDidActionStringRes(@Type.ClientTypeInt int type, Action action){
         switch (type){
+            default:
             case Type.TWITTER:
                 switch (action){
                     case LIKE:
@@ -526,23 +527,18 @@ public class TwitterStringUtils {
                     default:
                         return 0;
                 }
-
-            default:
-                return 0;
         }
     }
 
     @StringRes
     public static int getRepeatedByStringRes(@Type.ClientTypeInt int type){
         switch (type){
+            default:
             case Type.TWITTER:
                 return R.string.retweeted_by;
 
             case Type.MASTODON:
                 return R.string.boosted_by;
-
-            default:
-                return 0;
         }
     }
 
