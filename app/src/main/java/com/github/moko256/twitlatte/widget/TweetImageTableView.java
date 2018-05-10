@@ -55,6 +55,8 @@ public class TweetImageTableView extends GridLayout {
 
     private boolean isOpen = true;
 
+    GlideRequests requests;
+
     /* {row,column,rowSpan,colSpan} */
     private static final int params[][][]={
             {{0,0,2,2},{0,0,0,0},{0,0,0,0},{0,0,0,0}},
@@ -133,6 +135,8 @@ public class TweetImageTableView extends GridLayout {
                     updateView();
                 }
             });
+
+            requests = GlideApp.with(this);
         }
     }
 
@@ -200,7 +204,6 @@ public class TweetImageTableView extends GridLayout {
         }
         for (int ii = 0; ii < imageNum; ii++) {
 
-            GlideRequests requests = GlideApp.with(this);
             String url = mediaEntities[ii].getMediaURLHttps();
             ImageView imageView = imageViews[ii];
 
@@ -268,7 +271,7 @@ public class TweetImageTableView extends GridLayout {
 
     public void clearImages(){
         for (int i = 0; i < 4; i++){
-            GlideApp.with(this).clear(imageViews[i]);
+            requests.clear(imageViews[i]);
         }
     }
 }

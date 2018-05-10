@@ -65,7 +65,7 @@ class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, final int i) {
         User item=GlobalApplication.userCache.get(data.get(i));
 
-        GlideApp.with(viewHolder.userUserImage).load(item.get400x400ProfileImageURLHttps()).circleCrop().into(viewHolder.userUserImage);
+        viewHolder.request.load(item.get400x400ProfileImageURLHttps()).circleCrop().into(viewHolder.userUserImage);
 
         TwitterStringUtils.plusAndSetMarks(
                 item.getName(),
@@ -93,8 +93,7 @@ class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> {
 
     @Override
     public void onViewRecycled(@NonNull ViewHolder holder) {
-        super.onViewRecycled(holder);
-        GlideApp.with(holder.userUserImage).clear(holder.userUserImage);
+        holder.request.clear(holder.userUserImage);
     }
 
     @Override
@@ -112,11 +111,14 @@ class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> {
         TextView userUserName;
         TextView userUserId;
 
+        GlideRequests request;
+
         ViewHolder(final View itemView) {
             super(itemView);
             userUserImage = itemView.findViewById(R.id.user_user_image);
             userUserId = itemView.findViewById(R.id.user_user_id);
             userUserName = itemView.findViewById(R.id.user_user_name);
+            request = GlideApp.with(itemView);
         }
     }
 }

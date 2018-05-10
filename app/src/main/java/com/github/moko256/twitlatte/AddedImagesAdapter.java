@@ -95,7 +95,7 @@ public class AddedImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             viewHolder.itemView.setOnClickListener(
                     v -> onImageClickListener.doAction(viewHolder.getLayoutPosition())
             );
-            GlideApp.with(viewHolder.image).load(image).into(viewHolder.image);
+            viewHolder.requests.load(image).into(viewHolder.image);
         } else {
             holder.itemView.setOnClickListener(onAddButtonClickListener);
         }
@@ -161,11 +161,14 @@ public class AddedImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         TextView title;
         ImageButton deleteButton;
 
+        GlideRequests requests;
+
         ImageChildViewHolder(View itemView) {
             super(itemView);
             image = itemView.findViewById(R.id.layout_images_adapter_image_child_image);
             title = itemView.findViewById(R.id.layout_images_adapter_image_child_title);
             deleteButton = itemView.findViewById(R.id.action_delete);
+            requests = GlideApp.with(itemView);
         }
     }
 
