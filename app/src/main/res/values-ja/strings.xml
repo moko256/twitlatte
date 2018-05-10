@@ -126,7 +126,7 @@
 
     <string name="twitter_auth">Twitterで認証</string>
     <string name="mastodon_auth">Mastodonで認証</string>
-    <string name="use_auth_code">認証コードを利用する</string>
+    <string name="use_auth_code">認可コードを手動で入力する</string>
 
     <string name="mode_image_level_none">タイムラインの画像を読み込まない</string>
     <string name="mode_image_level_normal">タイムラインの画像を読み込む</string>
