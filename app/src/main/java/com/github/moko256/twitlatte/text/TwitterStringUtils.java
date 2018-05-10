@@ -184,12 +184,13 @@ public class TwitterStringUtils {
                     imageSize = Math.round(textView.getLineHeight());
                 }
 
+                GlideRequests glideRequests = GlideApp.with(textView);
+
                 new AsyncTask<Void, Void, Map<String, Drawable>>(){
                     @Override
                     protected Map<String, Drawable> doInBackground(Void... params) {
                         Map<String, Drawable> map = new ArrayMap<>();
 
-                        GlideRequests glideRequests = GlideApp.with(context);
                         for (Emoji emoji : list){
                             try {
                                 Drawable value;

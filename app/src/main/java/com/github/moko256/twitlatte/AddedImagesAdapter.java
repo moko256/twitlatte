@@ -95,7 +95,7 @@ public class AddedImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             viewHolder.itemView.setOnClickListener(
                     v -> onImageClickListener.doAction(viewHolder.getLayoutPosition())
             );
-            GlideApp.with(context).load(image).into(viewHolder.image);
+            GlideApp.with(viewHolder.image).load(image).into(viewHolder.image);
         } else {
             holder.itemView.setOnClickListener(onAddButtonClickListener);
         }
