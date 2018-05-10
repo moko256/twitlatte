@@ -20,8 +20,10 @@ apply plugin: 'java'
 dependencies {
     //implementation fileTree(include: ['*.jar'], dir: 'libs')
 
-    compile 'com.github.sys1yagi.mastodon4j:mastodon4j:1.6.0'
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile files('libs/mastodon4j.jar')
+    implementation "com.google.code.gson:gson:$gson_version"
+    implementation "com.squareup.okhttp3:okhttp:$okhttp_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
     //Compiling forked twitter4j(https://github.com/moko256/twitter4j)
     //api 'org.twitter4j:twitter4j-core:4.0.6'

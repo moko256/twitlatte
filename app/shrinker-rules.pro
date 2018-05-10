@@ -25,6 +25,8 @@
 
 -keepclassmembers class android.support.v7.widget.SearchView { *; }
 
+-keep class okio.Okio { *; }
+
 # Proguard configuration for Jackson 2.x (fasterxml package instead of codehaus package)
 -keep class com.fasterxml.jackson.databind.ObjectMapper {
     public <methods>;
