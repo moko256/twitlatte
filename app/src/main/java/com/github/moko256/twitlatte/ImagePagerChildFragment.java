@@ -65,7 +65,7 @@ public class ImagePagerChildFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        FlingLayout view= (FlingLayout) inflater.inflate(R.layout.fragment_image_pager_child, null);
+        FlingLayout view = (FlingLayout) inflater.inflate(R.layout.fragment_image_pager_child, container, false);
         view.setDismissListener(() -> {
             getActivity().finish();
             return Unit.INSTANCE;
