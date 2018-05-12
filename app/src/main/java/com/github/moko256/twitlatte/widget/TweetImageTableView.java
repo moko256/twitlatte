@@ -104,7 +104,7 @@ public class TweetImageTableView extends GridLayout {
                     FrameLayout.LayoutParams.MATCH_PARENT,
                     FrameLayout.LayoutParams.MATCH_PARENT
             ));
-            foregrounds[i].setBackgroundColor(0x99000000);
+            foregrounds[i].setBackgroundColor(0x33000000);
 
             playButton[i] = new ImageView(context);
             int dp48 = Math.round(48 * dp);

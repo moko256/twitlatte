@@ -102,6 +102,7 @@ public class ImagePagerChildFragment extends Fragment {
                 }
 
                 videoPlayView = view.findViewById(R.id.fragment_image_pager_video);
+                videoPlayView.setControllerShowTimeoutMs(1000);
                 videoPlayView.setVisibility(View.VISIBLE);
                 videoPlayView.setControllerVisibilityListener(visibility -> {
                     if (visibility != View.VISIBLE){
@@ -158,6 +159,7 @@ public class ImagePagerChildFragment extends Fragment {
             case "animated_gif":
                 videoPlayView = view.findViewById(R.id.fragment_image_pager_video);
                 videoPlayView.setVisibility(View.VISIBLE);
+                videoPlayView.setControllerShowTimeoutMs(1000);
                 videoPlayView.setControllerVisibilityListener(visibility -> {
                     if (visibility != View.VISIBLE){
                         hideSystemUI();
