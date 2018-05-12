@@ -129,19 +129,20 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                                         list.addAll(position, ids);
                                         statusIdsDatabase.insertIds(position, ids);
 
-                                        RecyclerView.LayoutManager layoutManager = getRecyclerView().getLayoutManager();
-                                        if (layoutManager instanceof LinearLayoutManager) {
-                                            ((LinearLayoutManager) layoutManager).scrollToPositionWithOffset(position + ids.size(), offset);
-                                        } else {
-                                            ((StaggeredGridLayoutManager) layoutManager).scrollToPositionWithOffset(position + ids.size(), offset);
-                                        }
-
                                         if (noGap) {
                                             adapter.notifyItemRemoved(position);
                                         } else {
                                             adapter.notifyItemChanged(position);
                                         }
-                                        adapter.notifyItemRangeInserted(position, ids.size());
+
+                                        RecyclerView.LayoutManager layoutManager = getRecyclerView().getLayoutManager();
+                                        if (layoutManager instanceof LinearLayoutManager) {
+                                            ((LinearLayoutManager) layoutManager).scrollToPositionWithOffset(position + ids.size(), offset);
+                                            adapter.notifyItemRangeInserted(position, ids.size());
+                                        } else {
+                                            ((StaggeredGridLayoutManager) layoutManager).scrollToPositionWithOffset(position + ids.size(), offset);
+                                        }
+
                                     } else {
                                         list.remove(position);
                                         statusIdsDatabase.deleteIds(ArrayUtils.convertToLongList(-1L));
