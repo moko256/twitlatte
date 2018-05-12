@@ -117,8 +117,8 @@ public class StatusCacheMap {
 
                     if (status.getRetweetedStatus() != null) {
                         repeats.add(status.getRetweetedStatus());
-                        if (status.getQuotedStatus() != null){
-                            quotes.add(status.getQuotedStatus());
+                        if (status.getRetweetedStatus().getQuotedStatus() != null){
+                            quotes.add(status.getRetweetedStatus().getQuotedStatus());
                         }
                     } else if (status.getQuotedStatus() != null){
                         quotes.add(status.getQuotedStatus());
