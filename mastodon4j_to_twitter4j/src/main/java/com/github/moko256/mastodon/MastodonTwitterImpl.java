@@ -34,6 +34,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import okhttp3.OkHttpClient;
 import twitter4j.AccountSettings;
@@ -99,7 +100,8 @@ public final class MastodonTwitterImpl implements Twitter {
     private static final Gson gson;
 
     static {
-        dateParser = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX");
+        dateParser = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        dateParser.setTimeZone(TimeZone.getTimeZone("GMT"));
         gson = new Gson();
     }
 
