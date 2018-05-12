@@ -372,7 +372,9 @@ public class PostActivity extends AppCompatActivity {
 
     @Override
     public void finish() {
-        editText.close();
+        if (editText != null) {
+            editText.close();
+        }
         super.finish();
     }
 

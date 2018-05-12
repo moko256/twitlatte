@@ -65,13 +65,24 @@ public class OAuthActivity extends AppCompatActivity {
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         Uri uri = intent.getData();
-        if(!requirePin && uri != null && uri.toString().startsWith(getString(R.string.app_name) + "://OAuthActivity")){
+        if(!requirePin
+                && uri != null
+                && uri.getScheme().equals(getString(R.string.app_name))
+                && uri.getHost().equals("OAuthActivity")){
+
             String string = uri.getQueryParameter("oauth_verifier");
             if (string != null) {
                 initToken(string);
-            } else {
-                initToken(uri.getQueryParameter("code"));
+                return;
             }
+
+            string = uri.getQueryParameter("code");
+            if (string != null) {
+                initToken(string);
+                return;
+            }
+
+            Toast.makeText(this, R.string.error_occurred, Toast.LENGTH_SHORT).show();
         }
     }
 
