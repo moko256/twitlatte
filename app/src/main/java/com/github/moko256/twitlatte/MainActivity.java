@@ -18,9 +18,11 @@ package com.github.moko256.twitlatte;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
@@ -72,6 +74,8 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
     CompositeSubscription subscription;
 
     Toolbar toolbar;
+
+    @Nullable
     DrawerLayout drawer;
     NavigationView navigationView;
 
@@ -109,27 +113,32 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
         });
 
         drawer = findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
 
-        drawer.addDrawerListener(new DrawerLayout.DrawerListener() {
-            @Override
-            public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {}
+        if (drawer != null){
+            ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+            drawer.addDrawerListener(toggle);
+            toggle.syncState();
 
-            @Override
-            public void onDrawerOpened(@NonNull View drawerView) {}
+            drawer.addDrawerListener(new DrawerLayout.DrawerListener() {
+                @Override
+                public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {}
 
-            @Override
-            public void onDrawerClosed(@NonNull View drawerView) {
-                if (isDrawerAccountsSelection){
-                    changeIsDrawerAccountsSelection();
+                @Override
+                public void onDrawerOpened(@NonNull View drawerView) {}
+
+                @Override
+                public void onDrawerClosed(@NonNull View drawerView) {
+                    if (isDrawerAccountsSelection){
+                        changeIsDrawerAccountsSelection();
+                    }
                 }
-            }
 
-            @Override
-            public void onDrawerStateChanged(int newState) {}
-        });
+                @Override
+                public void onDrawerStateChanged(int newState) {}
+            });
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setStatusBarColor(getResources().getColor(R.color.color_primary_dark));
+        }
 
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(item-> {
@@ -158,8 +167,9 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                 }
             }
 
-            drawer.closeDrawer(GravityCompat.START);
-
+            if (drawer != null) {
+                drawer.closeDrawer(GravityCompat.START);
+            }
             return (id != R.id.nav_settings)&&(id != R.id.nav_account);
 
         });
@@ -186,7 +196,11 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
 
         SelectAccountsAdapter adapter = new SelectAccountsAdapter(this);
         adapter.onImageButtonClickListener = accessToken -> {
-            drawer.closeDrawer(GravityCompat.START);
+            if (drawer != null) {
+                drawer.closeDrawer(GravityCompat.START);
+            } else {
+                changeIsDrawerAccountsSelection();
+            }
 
             if (accessToken.getUserId() != GlobalApplication.userId) {
                 PreferenceManager.getDefaultSharedPreferences(this)
@@ -336,7 +350,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
 
     @Override
     public void onBackPressed() {
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
+        if (drawer!= null && drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
@@ -352,7 +366,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                     .setTitle("KeyBoard Shortcuts")
                     .setMessage("? : This Dialog\nn : New Post\nCtrl + Tab : Open Drawer\nCtrl+Enter : Post")
                     .show();
-        } else if (event.isCtrlPressed() && keyCode == KeyEvent.KEYCODE_TAB){
+        } else if (drawer != null && event.isCtrlPressed() && keyCode == KeyEvent.KEYCODE_TAB){
             if (drawer.isDrawerOpen(GravityCompat.START)) {
                 drawer.closeDrawer(GravityCompat.START);
             } else {
