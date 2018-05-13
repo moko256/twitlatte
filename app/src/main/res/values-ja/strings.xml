@@ -128,8 +128,8 @@
     <string name="mastodon_auth">Mastodonで認証</string>
     <string name="use_auth_code">認可コードを手動で入力する</string>
 
-    <string name="mode_image_level_none">タイムラインの画像を読み込まない</string>
-    <string name="mode_image_level_normal">タイムラインの画像を読み込む</string>
+    <string name="mode_image_level_none">読み込まない</string>
+    <string name="mode_image_level_normal">読み込む</string>
 
     <string name="mode_night_no">使用しない</string>
     <string name="mode_night_yes">使用する</string>

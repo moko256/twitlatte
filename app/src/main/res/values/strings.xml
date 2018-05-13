@@ -139,8 +139,8 @@
     <string name="mastodon_auth">Mastodon authorization</string>
     <string name="use_auth_code">Enter the authorization code manually</string>
 
-    <string name="mode_image_level_none">Do not load images on the timeline</string>
-    <string name="mode_image_level_normal">Load images on the timeline</string>
+    <string name="mode_image_level_none">Don\'t load</string>
+    <string name="mode_image_level_normal">Load</string>
 
     <string name="mode_night_no">Not Use</string>
     <string name="mode_night_yes">Use</string>
