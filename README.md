@@ -3,15 +3,14 @@ twitlatte
 
 This application is the SNS client for Android\.
 
-|Timeline|Post screen|Trends screen|
-|---|---|---|
-|![Timeline](readme_image/home.png)|![Post screen](readme_image/post.png)|![Trends screen](readme_image/trends.png)|
+|![Icon](app/src/main/ic_launcher-web.png)|Timeline|Navigation drawer|User screen|Post screen|Trends screen|
+|---|---|---|---|---|---|
+|![Header](readme_image/twitlatte-header.png)|![Timeline](readme_image/home.png)|![Navigation drawer](readme_image/navbar.png)|![User screen](readme_image/user.png)|![Post screen](readme_image/post.png)|![Trends screen](readme_image/trends.png)|
 
-* Minimum api level is 19
-* Target api level is 27
+* Supported Android api level is 19~27
 * Using REST API
 * Supported multiple account
-* Material Design
+* Material design
 
 ## Available SNS
 * Twitter
@@ -20,7 +19,7 @@ This application is the SNS client for Android\.
 
 ## Install
 
-[<img src="https://dply.me/vjtth8/button/large" alt="Try it on your device via DeployGate">](https://dply.me/vjtth8#install)
+[![Get it on Google Play](https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png)](https://play.google.com/store/apps/details?id=com.github.moko256.twitlatte&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1)
 
 ## How to build
 
