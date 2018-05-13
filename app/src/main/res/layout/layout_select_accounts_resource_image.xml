@@ -23,7 +23,7 @@
     android:layout_height="56dp"
     android:foreground="?attr/selectableItemBackground">
     <android.support.v7.widget.AppCompatImageView
-        android:id="@+id/layout_images_adapter_resource_image_icon"
+        android:id="@+id/layout_images_adapter_image"
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_centerVertical="true"
@@ -31,7 +31,7 @@
         app:tint="?android:attr/textColorSecondary"
         tools:srcCompat="@drawable/ic_add_white_24dp" />
     <TextView
-        android:id="@+id/layout_images_adapter_resource_image_title"
+        android:id="@+id/layout_images_adapter_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"

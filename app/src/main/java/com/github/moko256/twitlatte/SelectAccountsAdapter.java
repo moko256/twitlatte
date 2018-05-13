@@ -24,9 +24,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.github.moko256.twitlatte.entity.AccessToken;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
 
@@ -41,7 +41,7 @@ import twitter4j.User;
  * @author moko256
  */
 
-public class SelectAccountsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class SelectAccountsAdapter extends RecyclerView.Adapter<SelectAccountsAdapter.ViewHolder> {
 
     private static final int VIEW_TYPE_IMAGE = 0;
     private static final int VIEW_TYPE_ADD = 1;
@@ -67,30 +67,32 @@ public class SelectAccountsAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
     @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        if (viewType == VIEW_TYPE_IMAGE){
-            return new ImageChildViewHolder(LayoutInflater.from(context).inflate(R.layout.layout_select_accounts_image_child, parent, false));
-        } else {
-            return new ResourceIconImageViewHolder(LayoutInflater.from(context).inflate(R.layout.layout_select_accounts_resource_image, parent, false));
-        }
+    public SelectAccountsAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        int layout = viewType == VIEW_TYPE_IMAGE?
+                R.layout.layout_select_accounts_image_child:
+                R.layout.layout_select_accounts_resource_image;
+        return new ViewHolder(LayoutInflater.from(context).inflate(layout, parent, false));
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull SelectAccountsAdapter.ViewHolder holder, int position) {
         int type = getItemViewType(position);
         switch (type) {
             case VIEW_TYPE_IMAGE: {
-                ImageChildViewHolder viewHolder = (ImageChildViewHolder) holder;
-
                 User user = users.get(position);
                 AccessToken accessToken = accessTokens.get(position);
 
                 if (user != null) {
 
                     Uri image = Uri.parse(user.get400x400ProfileImageURLHttps());
-                    viewHolder.title.setText(TwitterStringUtils.plusAtMark(user.getScreenName(), accessToken.getUrl()));
-                    GlideApp.with(viewHolder.itemView).load(image).circleCrop().into(viewHolder.image);
-                    viewHolder.itemView.setOnClickListener(v -> {
+                    holder.title.setText(TwitterStringUtils.plusAtMark(user.getScreenName(), accessToken.getUrl()));
+                    GlideApp
+                            .with(holder.itemView)
+                            .load(image)
+                            .circleCrop()
+                            .transition(DrawableTransitionOptions.withCrossFade())
+                            .into(holder.image);
+                    holder.itemView.setOnClickListener(v -> {
                         if (onImageButtonClickListener != null) {
                             onImageButtonClickListener.onClick(accessToken);
                         }
@@ -98,8 +100,8 @@ public class SelectAccountsAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
                 } else {
 
-                    viewHolder.title.setText(TwitterStringUtils.plusAtMark(accessToken.getScreenName(), accessToken.getUrl()));
-                    viewHolder.itemView.setOnClickListener(v -> {
+                    holder.title.setText(TwitterStringUtils.plusAtMark(accessToken.getScreenName(), accessToken.getUrl()));
+                    holder.itemView.setOnClickListener(v -> {
                         if (onImageButtonClickListener != null) {
                             onImageButtonClickListener.onClick(accessToken);
                         }
@@ -109,17 +111,15 @@ public class SelectAccountsAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 break;
             }
             case VIEW_TYPE_ADD: {
-                ResourceIconImageViewHolder viewHolder = (ResourceIconImageViewHolder) holder;
-                viewHolder.image.setImageResource(R.drawable.ic_add_white_24dp);
-                viewHolder.title.setText(R.string.add_account);
-                viewHolder.itemView.setOnClickListener(onAddButtonClickListener);
+                holder.image.setImageResource(R.drawable.ic_add_white_24dp);
+                holder.title.setText(R.string.add_account);
+                holder.itemView.setOnClickListener(onAddButtonClickListener);
                 break;
             }
             case VIEW_TYPE_REMOVE: {
-                ResourceIconImageViewHolder viewHolder = (ResourceIconImageViewHolder) holder;
-                viewHolder.image.setImageResource(R.drawable.ic_remove_black_24dp);
-                viewHolder.title.setText(R.string.do_logout);
-                viewHolder.itemView.setOnClickListener(onRemoveButtonClickListener);
+                holder.image.setImageResource(R.drawable.ic_remove_black_24dp);
+                holder.title.setText(R.string.do_logout);
+                holder.itemView.setOnClickListener(onRemoveButtonClickListener);
                 break;
             }
         }
@@ -148,26 +148,14 @@ public class SelectAccountsAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         notifyItemRemoved(position);
     }
 
-    private final static class ImageChildViewHolder extends RecyclerView.ViewHolder{
-
-        ImageView image;
-        TextView title;
-
-        ImageChildViewHolder(View itemView) {
-            super(itemView);
-            image = itemView.findViewById(R.id.layout_images_adapter_image_child_image);
-            title = itemView.findViewById(R.id.layout_images_adapter_image_child_title);
-        }
-    }
-
-    private final static class ResourceIconImageViewHolder extends RecyclerView.ViewHolder{
+    final static class ViewHolder extends RecyclerView.ViewHolder{
         AppCompatImageView image;
         TextView title;
 
-        ResourceIconImageViewHolder(View itemView) {
+        ViewHolder(View itemView) {
             super(itemView);
-            image = itemView.findViewById(R.id.layout_images_adapter_resource_image_icon);
-            title = itemView.findViewById(R.id.layout_images_adapter_resource_image_title);
+            image = itemView.findViewById(R.id.layout_images_adapter_image);
+            title = itemView.findViewById(R.id.layout_images_adapter_title);
         }
     }
 

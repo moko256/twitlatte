@@ -22,15 +22,15 @@
     android:layout_height="56dp"
     android:foreground="?attr/selectableItemBackground">
     <ImageView
-        android:id="@+id/layout_images_adapter_image_child_image"
+        android:id="@+id/layout_images_adapter_image"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginLeft="16dp"
         android:layout_centerVertical="true"
         tools:src="@color/color_accent"/>
     <TextView
-        android:id="@+id/layout_images_adapter_image_child_title"
-        android:layout_toRightOf="@+id/layout_images_adapter_image_child_image"
+        android:id="@+id/layout_images_adapter_title"
+        android:layout_toRightOf="@id/layout_images_adapter_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
