@@ -27,6 +27,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.github.moko256.twitlatte.GlideApp;
 import com.github.moko256.twitlatte.GlideRequests;
 import com.github.moko256.twitlatte.GlobalApplication;
@@ -210,6 +211,7 @@ public class TweetImageTableView extends GridLayout {
             if (isOpen) {
                 requests
                         .load(TwitterStringUtils.convertSmallImageUrl(url))
+                        .transition(DrawableTransitionOptions.withCrossFade())
                         .into(imageView);
                 switch (mediaEntities[ii].getType()) {
                     case "video":
@@ -251,6 +253,7 @@ public class TweetImageTableView extends GridLayout {
                     requests
                             .load(TwitterStringUtils.convertSmallImageUrl(url))
                             .transform(new BlurTransformation())
+                            .transition(DrawableTransitionOptions.withCrossFade())
                             .into(imageView);
                 } else {
                     imageView.setImageResource(R.drawable.border_frame);

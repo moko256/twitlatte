@@ -35,6 +35,7 @@ import android.widget.Space;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.github.moko256.twitlatte.cacheMap.StatusCacheMap;
 import com.github.moko256.twitlatte.entity.Type;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
@@ -201,7 +202,11 @@ public class StatusView extends FrameLayout {
         }
 
         if (GlobalApplication.configuration.isTimelineImageLoad){
-            glideRequests.load(item.getUser().get400x400ProfileImageURLHttps()).circleCrop().into(userImage);
+            glideRequests
+                    .load(item.getUser().get400x400ProfileImageURLHttps())
+                    .circleCrop()
+                    .transition(DrawableTransitionOptions.withCrossFade())
+                    .into(userImage);
         } else {
             userImage.setImageResource(R.drawable.border_frame_round);
         }

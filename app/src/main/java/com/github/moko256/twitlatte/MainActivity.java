@@ -45,9 +45,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.github.moko256.twitlatte.database.CachedUsersSQLiteOpenHelper;
 import com.github.moko256.twitlatte.entity.AccessToken;
-import com.github.moko256.twitlatte.entity.Type;
 import com.github.moko256.twitlatte.model.AccountsModel;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
 import com.github.moko256.twitlatte.widget.FragmentPagerAdapter;
@@ -463,8 +463,14 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
 
                                     GlideRequests requests=GlideApp.with(this);
 
-                                    requests.load(user.get400x400ProfileImageURLHttps()).circleCrop().into(userImage);
-                                    requests.load(user.getProfileBannerRetinaURL()).centerCrop().into(userBackgroundImage);
+                                    requests.load(user.get400x400ProfileImageURLHttps())
+                                            .circleCrop()
+                                            .transition(DrawableTransitionOptions.withCrossFade())
+                                            .into(userImage);
+                                    requests.load(user.getProfileBannerRetinaURL())
+                                            .centerCrop()
+                                            .transition(DrawableTransitionOptions.withCrossFade())
+                                            .into(userBackgroundImage);
                                 },
                                 Throwable::printStackTrace
                         )

@@ -33,6 +33,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.github.moko256.twitlatte.intent.AppCustomTabsKt;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
 
@@ -159,14 +160,21 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
     private void setShowUserInfo(User user) {
         String headerUrl = user.getProfileBanner1500x500URL();
         if (headerUrl != null) {
-            glideRequests.load(headerUrl).into(header);
+            glideRequests
+                    .load(headerUrl)
+                    .transition(DrawableTransitionOptions.withCrossFade())
+                    .into(header);
         } else {
             String colorStr = user.getProfileBackgroundColor();
             if (!TextUtils.isEmpty(colorStr)){
                 header.setBackgroundColor(Color.parseColor("#" + colorStr));
             }
         }
-        glideRequests.load(user.get400x400ProfileImageURLHttps()).circleCrop().into(icon);
+        glideRequests
+                .load(user.get400x400ProfileImageURLHttps())
+                .circleCrop()
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .into(icon);
 
         TwitterStringUtils.plusAndSetMarks(
                 user.getName(),

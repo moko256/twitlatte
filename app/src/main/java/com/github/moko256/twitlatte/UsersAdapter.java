@@ -27,6 +27,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
 
 import java.util.List;
@@ -65,7 +66,11 @@ class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, final int i) {
         User item=GlobalApplication.userCache.get(data.get(i));
 
-        viewHolder.request.load(item.get400x400ProfileImageURLHttps()).circleCrop().into(viewHolder.userUserImage);
+        viewHolder.request
+                .load(item.get400x400ProfileImageURLHttps())
+                .circleCrop()
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .into(viewHolder.userUserImage);
 
         TwitterStringUtils.plusAndSetMarks(
                 item.getName(),
