@@ -145,21 +145,21 @@
                         android:id="@+id/show_user_follow_count"
                         android:layout_below="@id/show_user_created_at"
                         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                        tools:text="@string/follow_counts_is"/>
+                        tools:text="@string/following_counts_is"/>
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:id="@+id/show_user_follower_count"
                         android:layout_below="@id/show_user_follow_count"
                         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                        tools:text="@string/follower_counts_is"/>
+                        tools:text="@string/followers_counts_is"/>
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:id="@+id/show_user_tweets_count"
                         android:layout_below="@id/show_user_follower_count"
                         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                        tools:text="@string/post_counts_is"/>
+                        tools:text="@string/posts_counts_is"/>
                 </RelativeLayout>
             </android.support.v7.widget.CardView>
 

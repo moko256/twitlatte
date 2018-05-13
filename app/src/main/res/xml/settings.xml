@@ -31,9 +31,9 @@
         <ListPreference
             android:key="nightModeType"
             android:defaultValue="@string/mode_night_no_value"
-            android:title="@string/theme"
+            android:title="@string/dark_theme"
             android:summary="%s"
-            android:dialogTitle="@string/theme"
+            android:dialogTitle="@string/dark_theme"
             android:entries="@array/choose_night_mode_entries"
             android:entryValues="@array/choose_night_mode_entries_value"/>
         <ListPreference
@@ -45,10 +45,10 @@
             android:entries="@array/choose_timeline_image_load_entries"
             android:entryValues="@array/choose_timeline_image_load_entries_value"/>
         <PreferenceScreen
-            android:title="@string/high_power_mute"
+            android:title="@string/regex_mute"
             android:key="highPowerMute">
             <PreferenceCategory
-                android:title="@string/high_power_mute">
+                android:title="@string/regex_mute">
                 <SwitchPreference
                     android:key="patternTweetMuteEnabled"
                     android:defaultValue="false"

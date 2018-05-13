@@ -210,9 +210,9 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
         }
 
         userCreatedAt.setText(DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.FULL).format(user.getCreatedAt()));
-        userTweetsCount.setText(getString(R.string.post_counts_is, user.getStatusesCount()));
-        userFollowCount.setText(getString(R.string.follow_counts_is, user.getFriendsCount()));
-        userFollowerCount.setText(getString(R.string.follower_counts_is, user.getFollowersCount()));
+        userTweetsCount.setText(getString(R.string.posts_counts_is, user.getStatusesCount()));
+        userFollowCount.setText(getString(R.string.following_counts_is, user.getFriendsCount()));
+        userFollowerCount.setText(getString(R.string.followers_counts_is, user.getFollowersCount()));
     }
 
     private Single<User> updateUser(){

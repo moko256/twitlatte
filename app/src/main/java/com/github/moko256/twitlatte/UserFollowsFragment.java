@@ -54,7 +54,7 @@ public class UserFollowsFragment extends BaseUsersFragment implements ToolbarTit
 
     @Override
     public int getTitleResourceId() {
-        return R.string.follow;
+        return R.string.following;
     }
 
     @Override

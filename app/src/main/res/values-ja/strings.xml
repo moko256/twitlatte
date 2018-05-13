@@ -26,12 +26,12 @@
     <string name="create_post">投稿を作成</string>
     <string name="reply">返信</string>
     <string name="mention">言及</string>
-    <string name="like">お気に入り</string>
+    <string name="following">フォロー中</string>
     <string name="follower">フォロワー</string>
-    <string name="follow">フォロー</string>
+    <string name="like">お気に入り</string>
     <string name="account">アカウント</string>
-    <string name="follow_and_follower">フォロー・フォロワー</string>
-    <string name="theme">テーマ</string>
+    <string name="following_and_followers">フォロ中ー・フォロワー</string>
+    <string name="dark_theme">ダークテーマ</string>
     <string name="media">メディア</string>
     <string name="images">画像</string>
     <string name="add_image">画像を追加</string>
@@ -50,9 +50,9 @@
     <string name="lat_and_lon">緯度:%f 経度:%f</string>
     <string name="location_is">所在地: %s</string>
     <string name="url_is">URL: %s</string>
-    <string name="post_counts_is">投稿数: %d</string>
-    <string name="follow_counts_is">フォロー数: %d</string>
-    <string name="follower_counts_is">フォロワー数: %d</string>
+    <string name="posts_counts_is">投稿: %d</string>
+    <string name="following_counts_is">フォロー中: %d</string>
+    <string name="followers_counts_is">フォロワー: %d</string>
     <string name="other">その他</string>
     <string name="share">共有する</string>
     <string name="open_in_browser">ブラウザで開く</string>
@@ -81,18 +81,18 @@
     <string name="disable">無効</string>
     <string name="crash_log">クラッシュログ</string>
     <string name="crash_log_channel_description">twitlatteがクラッシュしたら通知する</string>
-    <string name="high_power_mute">最強のミュート</string>
+    <string name="regex_mute">正規表現でのミュート</string>
     <string name="edit_pattern">正規表現パターンの編集</string>
-    <string name="use_post_regex_mute">投稿への正規表現ミュートを使用する</string>
-    <string name="post_mute_regex_pattern">投稿ミュートの正規表現パターン</string>
-    <string name="use_post_regex_mute_show_only_image">投稿への正規表現ミュートを使用する (画像のみ表示)</string>
-    <string name="post_mute_regex_pattern_show_only_image">投稿ミュートの正規表現パターン (画像のみ表示)</string>
-    <string name="use_user_screen_name_regex_mute">スクリーンネームの正規表現ミュートを使用する</string>
-    <string name="user_screen_name_mute_regex_pattern">スクリーンネームミュートの正規表現パターン</string>
-    <string name="use_user_name_regex_mute">ユーザー名の正規表現ミュートを使用する</string>
-    <string name="user_name_mute_regex_pattern">ユーザー名ミュートの正規表現パターン</string>
-    <string name="use_tweet_source_mute">クライアントの正規表現ミュートを使用する</string>
-    <string name="tweet_source_mute_regex_pattern">投稿したクライアントのミュートの正規表現パターン</string>
+    <string name="use_post_regex_mute">本文へ使用して非表示にする</string>
+    <string name="post_mute_regex_pattern">非表示にする投稿の本文のパターン</string>
+    <string name="use_post_regex_mute_show_only_image">本文へ使用して画像のみ表示する</string>
+    <string name="post_mute_regex_pattern_show_only_image">画像のみ表示する投稿の本文のパターン</string>
+    <string name="use_user_screen_name_regex_mute">スクリーンネームへ使用して非表示にする</string>
+    <string name="user_screen_name_mute_regex_pattern">非表示にする投稿のスクリーンネームのパターン</string>
+    <string name="use_user_name_regex_mute">ユーザー名へ使用して非表示にする</string>
+    <string name="user_name_mute_regex_pattern">非表示にする投稿のユーザー名のパターン</string>
+    <string name="use_tweet_source_mute">クライアント名へ使用して非表示にする</string>
+    <string name="tweet_source_mute_regex_pattern">非表示にする投稿のクライアント名のパターン</string>
     <string name="muted_post">ミュートされた投稿</string>
 
     <string name="do_quote">引用する</string>
@@ -133,7 +133,7 @@
 
     <string name="mode_night_no">使用しない</string>
     <string name="mode_night_yes">使用する</string>
-    <string name="mode_night_follow_system">システムの設定に従う(Android 7.0以降で有効)</string>
-    <string name="mode_night_auto">自動(端末の時刻を使用)</string>
+    <string name="mode_night_follow_system">システムの設定に従う</string>
+    <string name="mode_night_auto">時間によって自動的に切り替える</string>
 
 </resources>

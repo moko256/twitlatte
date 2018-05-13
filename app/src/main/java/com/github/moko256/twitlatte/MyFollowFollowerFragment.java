@@ -35,7 +35,7 @@ public class MyFollowFollowerFragment extends Fragment implements ToolbarTitleIn
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
 
-        View view=inflater.inflate(R.layout.fragment_follow_follower, null);
+        View view=inflater.inflate(R.layout.fragment_follow_follower, container, false);
 
         viewPager= view.findViewById(R.id.follow_follower_pager);
         viewPager.setOffscreenPageLimit(0);
@@ -51,7 +51,7 @@ public class MyFollowFollowerFragment extends Fragment implements ToolbarTitleIn
 
     @Override
     public int getTitleResourceId() {
-        return R.string.follow_and_follower;
+        return R.string.following_and_followers;
     }
 
     @Override

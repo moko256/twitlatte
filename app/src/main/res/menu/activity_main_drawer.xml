@@ -38,7 +38,7 @@
         <item
             android:id="@+id/nav_follow_and_follower"
             android:icon="@drawable/ic_supervisor_account_black_24dp"
-            android:title="@string/follow_and_follower" />
+            android:title="@string/following_and_followers" />
 
         <item
             android:id="@+id/nav_like"

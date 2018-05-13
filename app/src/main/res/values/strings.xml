@@ -30,24 +30,24 @@
     <string name="action_settings">Settings…</string>
     <string name="action_search">Search…</string>
     <string name="trends">Trends</string>
-    <string name="timeline">TimeLine</string>
+    <string name="timeline">Timeline</string>
     <string name="mentions">Mentions</string>
     <string name="post">Post</string>
     <string name="create_post">Create post</string>
     <string name="reply">Reply</string>
     <string name="mention">Mention</string>
-    <string name="follow">follow</string>
-    <string name="follower">follower</string>
+    <string name="following">Following</string>
+    <string name="follower">Followers</string>
     <string name="like">Like</string>
     <string name="account">Account</string>
-    <string name="theme">Theme</string>
+    <string name="dark_theme">Dark theme</string>
     <string name="media">Media</string>
     <string name="images">Images</string>
     <string name="add_image">Add image…</string>
     <string name="open_image">Open image…</string>
     <string name="possibly_sensitive">Include sensitivity in the images</string>
     <string name="add_location">Add location</string>
-    <string name="follow_and_follower">Follow and Followers</string>
+    <string name="following_and_followers">Following and followers</string>
     <string name="retweeted_by">Retweeted by %1$s(%2$s)</string>
     <string name="boosted_by">Boosted by %1$s(%2$s)</string>
     <string name="reply_to">Reply to %s</string>
@@ -60,9 +60,9 @@
     <string name="lat_and_lon">Latitude:%f Longitude: %f</string>
     <string name="location_is">Location: %s</string>
     <string name="url_is">URL: %s</string>
-    <string name="post_counts_is">Posts: %d</string>
-    <string name="follow_counts_is">Follows: %d</string>
-    <string name="follower_counts_is">Followers: %d</string>
+    <string name="posts_counts_is">Posts: %d</string>
+    <string name="following_counts_is">Following: %d</string>
+    <string name="followers_counts_is">Followers: %d</string>
     <string name="other">Others</string>
     <string name="share">Share…</string>
     <string name="open_in_browser">Open in the browser</string>
@@ -75,8 +75,8 @@
     <string name="destroy_mute">Cancel Mute</string>
     <string name="create_block">Block</string>
     <string name="destroy_block">Cancel Block</string>
-    <string name="destroy_follow_follower">Cancel Follow-Follower</string>
-    <string name="spam_report">Report this Account as a spam</string>
+    <string name="destroy_follow_follower">Cancel f4f</string>
+    <string name="spam_report">Report this account as a spam</string>
     <string name="save_image">Save this image</string>
     <string name="error_occurred">Error occurred</string>
     <string name="is_load_timeline_image">Load the images on the timeline</string>
@@ -92,18 +92,18 @@
     <string name="disable">Disable</string>
     <string name="crash_log">Crash Log</string>
     <string name="crash_log_channel_description">Notify crash log when twitlatte crashed</string>
-    <string name="high_power_mute">High Power Mute</string>
+    <string name="regex_mute">Regex mute</string>
     <string name="edit_pattern">Edit Regex pattern</string>
-    <string name="use_post_regex_mute">Use Regex Posts mute</string>
-    <string name="post_mute_regex_pattern">Posts mute Regex pattern</string>
-    <string name="use_post_regex_mute_show_only_image">Use Regex Posts mute (Show only image)</string>
-    <string name="post_mute_regex_pattern_show_only_image">Posts mute Regex pattern (Show only image)</string>
-    <string name="use_user_screen_name_regex_mute">Use Regex user screen name mute</string>
-    <string name="user_screen_name_mute_regex_pattern">User screen name mute Regex pattern</string>
-    <string name="use_user_name_regex_mute">Use Regex user name mute</string>
-    <string name="user_name_mute_regex_pattern">User name mute Regex pattern</string>
-    <string name="use_tweet_source_mute">Use Regex client mute</string>
-    <string name="tweet_source_mute_regex_pattern">Tweet posted client mute Regex pattern</string>
+    <string name="use_post_regex_mute">Use for the context and hide post</string>
+    <string name="post_mute_regex_pattern">Context pattern of the hidden post</string>
+    <string name="use_post_regex_mute_show_only_image">Use for the context and show only pictures</string>
+    <string name="post_mute_regex_pattern_show_only_image">Context pattern of the post shown only pictures</string>
+    <string name="use_user_screen_name_regex_mute">Use for the screen name and hide post</string>
+    <string name="user_screen_name_mute_regex_pattern">Screen name pattern of the hidden post</string>
+    <string name="use_user_name_regex_mute">Use for the user name and hide post</string>
+    <string name="user_name_mute_regex_pattern">User name pattern of the hidden post</string>
+    <string name="use_tweet_source_mute">Use for the client name and hide post</string>
+    <string name="tweet_source_mute_regex_pattern">Client name pattern of the hidden post</string>
     <string name="muted_post">Muted post</string>
 
     <string name="do_quote">Quote</string>
@@ -144,8 +144,8 @@
 
     <string name="mode_night_no">Not Use</string>
     <string name="mode_night_yes">Use</string>
-    <string name="mode_night_follow_system">Follow system(enable Android 7.0 later)</string>
-    <string name="mode_night_auto">Automatically(use device\'s date)</string>
+    <string name="mode_night_follow_system">Follow system settings</string>
+    <string name="mode_night_auto">Switch automatically by the time</string>
 
     <string name="mode_night_no_value" translatable="false">mode_night_no</string>
     <string name="mode_night_auto_value" translatable="false">mode_night_auto</string>
