@@ -49,10 +49,9 @@ class OAuthModelImpl : OAuthModel {
         apps = Apps(clientBuilder.build())
         return Single.create {
             try {
-                val redirectUri = "$callbackUrl://OAuthActivity"
                 appRegistration = apps.createApp(
                         "twitlatte",
-                        redirectUri,
+                        callbackUrl,
                         Scope(Scope.Name.ALL),
                         "https://github.com/moko256/twitlatte"
                 ).execute()
@@ -61,7 +60,7 @@ class OAuthModelImpl : OAuthModel {
                         apps.getOAuthUrl(
                                 appRegistration?.clientId!!,
                                 Scope(Scope.Name.ALL),
-                                redirectUri
+                                callbackUrl
                         ))
             } catch (e: Mastodon4jRequestException) {
                 it.onError(e)

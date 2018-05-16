@@ -42,7 +42,7 @@ class OAuthModelImpl : OAuthModel {
 
         return Single.create {
             try {
-                req = oauth.getOAuthRequestToken("$callbackUrl://OAuthActivity")
+                req = oauth.getOAuthRequestToken(callbackUrl)
                 it.onSuccess(req?.authenticationURL)
             } catch (e: Throwable) {
                 it.onError(e)
