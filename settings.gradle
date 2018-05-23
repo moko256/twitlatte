@@ -14,4 +14,5 @@
  * limitations under the License.
  */
 
-include ':app', ':mastodon4j_to_twitter4j'
+include ':app', ':mastodon4j_to_twitter4j', ':japng-android:android_api', ':api'
+project(':api').projectDir = new File('japng-android/japng/api')

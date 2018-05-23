@@ -9,6 +9,9 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/japng-android" />
+            <option value="$PROJECT_DIR$/japng-android/android_api" />
+            <option value="$PROJECT_DIR$/japng-android/japng/api" />
             <option value="$PROJECT_DIR$/mastodon4j_to_twitter4j" />
           </set>
         </option>

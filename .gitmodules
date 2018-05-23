@@ -1,0 +1,3 @@
+[submodule "japng-android"]
+	path = japng-android
+	url = https://github.com/moko256/Japng-Android.git

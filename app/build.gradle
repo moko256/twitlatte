@@ -94,12 +94,13 @@ dependencies {
 
     implementation 'jp.wasabeef:glide-transformations:3.0.1'
 
-    implementation project(":mastodon4j_to_twitter4j")
+    implementation project(':mastodon4j_to_twitter4j')
 
     implementation 'com.github.chrisbanes:PhotoView:2.1.3'
     implementation 'com.github.chuross:flinglayout:0.5.0'
 
-    implementation files('libs/japng-android-0.5.1.aar')
+    implementation project(':japng-android:android_api')
+
     implementation 'com.twitter.twittertext:twitter-text:2.0.10'
 
     implementation 'io.reactivex:rxjava:1.3.8'
