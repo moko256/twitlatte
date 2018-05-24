@@ -1,3 +1,6 @@
 [submodule "japng-android"]
 	path = japng-android
 	url = https://github.com/moko256/Japng-Android.git
+[submodule "mastodon4j"]
+	path = mastodon4j
+	url = https://github.com/moko256/mastodon4j
