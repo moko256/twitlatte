@@ -1,0 +1,3 @@
+0000000000000000000000000000000000000000 f2ff1eaac54468e6cfd21edcd2543bf2c1bcdb5d moko256 <koutaro.mo@gmail.com> 1500160476 +0900	branch: Created from HEAD
+f2ff1eaac54468e6cfd21edcd2543bf2c1bcdb5d cf6afc3ef7de9a480da617cbe7ac54f6e7a5ea48 moko256 <koutaro.mo@gmail.com> 1500160806 +0900	commit: Add User#getProfileBanner300x100URL(),
+cf6afc3ef7de9a480da617cbe7ac54f6e7a5ea48 c96415baf15ec5ce68dfcd74bf6c0fe3634ffe4a moko256 <koutaro.mo@gmail.com> 1505384754 +0900	commit: "/"を追加

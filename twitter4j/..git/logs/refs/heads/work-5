@@ -1,0 +1,2 @@
+0000000000000000000000000000000000000000 f2ff1eaac54468e6cfd21edcd2543bf2c1bcdb5d moko256 <koutaro.mo@gmail.com> 1525529063 +0900	branch: Created from origin/master
+f2ff1eaac54468e6cfd21edcd2543bf2c1bcdb5d 0b6b4b78ccf776665fa85d414a9f5bca41e290f0 moko256 <koutaro.mo@gmail.com> 1525614173 +0900	commit: Add method "setUploadBaseURL()" in ConfigurationBuilder
