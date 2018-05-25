@@ -16,16 +16,26 @@
 
 package com.github.moko256.twitlatte;
 
+import android.Manifest;
+import android.app.DownloadManager;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Pair;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.github.chrisbanes.photoview.PhotoView;
@@ -39,13 +49,15 @@ import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSourceFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.LoopingMediaSource;
 import com.google.android.exoplayer2.source.hls.HlsMediaSource;
-import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.ui.PlayerView;
+import com.google.android.exoplayer2.ui.TrackSelectionView;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 
 import kotlin.Unit;
 import twitter4j.MediaEntity;
+
+import static android.content.Context.DOWNLOAD_SERVICE;
 
 /**
  * Created by moko256 on 2016/10/29.
@@ -57,10 +69,25 @@ public class ImagePagerChildFragment extends Fragment {
 
     private static final String FRAG_MEDIA_ENTITY="media_entity";
 
+    MediaEntity mediaEntity;
+
     PhotoView imageView;
 
     PlayerView videoPlayView;
     SimpleExoPlayer player;
+
+    DefaultTrackSelector trackSelector;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+
+        if (getArguments() == null
+                || (mediaEntity = (MediaEntity) getArguments().getSerializable(FRAG_MEDIA_ENTITY)) == null) {
+            getActivity().finish();
+        }
+    }
 
     @Nullable
     @Override
@@ -77,14 +104,6 @@ public class ImagePagerChildFragment extends Fragment {
             }
             return Unit.INSTANCE;
         });
-
-        MediaEntity mediaEntity;
-
-        if (getArguments() == null) return view;
-
-        mediaEntity = (MediaEntity) getArguments().getSerializable(FRAG_MEDIA_ENTITY);
-
-        if (mediaEntity == null) return view;
 
         switch (mediaEntity.getType()){
             case "video":
@@ -111,6 +130,9 @@ public class ImagePagerChildFragment extends Fragment {
                         showSystemUI();
                     }
                 });
+                videoPlayView.setErrorMessageProvider(
+                        throwable -> Pair.create(0, TwitterStringUtils.convertErrorToText(throwable))
+                );
 
                 getActivity().getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(visibility -> {
                     if ((visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0){
@@ -119,18 +141,11 @@ public class ImagePagerChildFragment extends Fragment {
                     }
                 });
 
+                trackSelector = new DefaultTrackSelector(new DefaultBandwidthMeter());
+
                 player = ExoPlayerFactory.newSimpleInstance(
                         new DefaultRenderersFactory(getContext()),
-                        new DefaultTrackSelector(
-                                new AdaptiveTrackSelection.Factory(
-                                        new DefaultBandwidthMeter(),
-                                        Integer.MAX_VALUE,
-                                        AdaptiveTrackSelection.DEFAULT_MIN_DURATION_FOR_QUALITY_INCREASE_MS,
-                                        AdaptiveTrackSelection.DEFAULT_MAX_DURATION_FOR_QUALITY_DECREASE_MS,
-                                        AdaptiveTrackSelection.DEFAULT_MIN_DURATION_TO_RETAIN_AFTER_DISCARD_MS,
-                                        AdaptiveTrackSelection.DEFAULT_BANDWIDTH_FRACTION
-                                )
-                        ),
+                        trackSelector,
                         new DefaultLoadControl()
                 );
                 if (savedInstanceState != null){
@@ -175,18 +190,11 @@ public class ImagePagerChildFragment extends Fragment {
                     }
                 });
 
+                trackSelector = new DefaultTrackSelector(new DefaultBandwidthMeter());
+
                 player = ExoPlayerFactory.newSimpleInstance(
                         new DefaultRenderersFactory(getContext()),
-                        new DefaultTrackSelector(
-                                new AdaptiveTrackSelection.Factory(
-                                        new DefaultBandwidthMeter(),
-                                        Integer.MAX_VALUE,
-                                        AdaptiveTrackSelection.DEFAULT_MIN_DURATION_FOR_QUALITY_INCREASE_MS,
-                                        AdaptiveTrackSelection.DEFAULT_MAX_DURATION_FOR_QUALITY_DECREASE_MS,
-                                        AdaptiveTrackSelection.DEFAULT_MIN_DURATION_TO_RETAIN_AFTER_DISCARD_MS,
-                                        AdaptiveTrackSelection.DEFAULT_BANDWIDTH_FRACTION
-                                )
-                        ),
+                        trackSelector,
                         new DefaultLoadControl()
                 );
                 if (savedInstanceState != null){
@@ -240,6 +248,86 @@ public class ImagePagerChildFragment extends Fragment {
                 break;
         }
         return view;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (grantResults[0]==PackageManager.PERMISSION_GRANTED){
+            contentDownload();
+        } else {
+            Toast.makeText(getActivity(), R.string.permission_denied,Toast.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.activity_show_image_toolbar, menu);
+        menu.findItem(R.id.action_change_selection).setVisible(trackSelector != null);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_change_selection) {
+            if (trackSelector.getCurrentMappedTrackInfo() != null) {
+                TrackSelectionView.getDialog(
+                        getActivity(),
+                        getString(R.string.action_change_quality),
+                        trackSelector,
+                        0
+                ).first.show();
+            } else {
+                Toast.makeText(
+                        getContext(),
+                        R.string.use_only_movie_loaded,
+                        Toast.LENGTH_SHORT
+                ).show();
+            }
+            return true;
+        } else if(item.getItemId() == R.id.action_download) {
+            if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},100);
+            } else {
+                contentDownload();
+            }
+            return true;
+        } else {
+            return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void contentDownload(){
+        String path="";
+        switch (mediaEntity.getType()){
+            case "video":
+                for(MediaEntity.Variant variant : mediaEntity.getVideoVariants()){
+                    if(variant.getContentType().equals("video/mp4")){
+                        path = variant.getUrl();
+                    }
+                }
+                break;
+
+            case "animated_gif":
+                path = mediaEntity.getVideoVariants()[0].getUrl();
+                break;
+
+            case "photo":
+            default:
+                path = TwitterStringUtils.convertOriginalImageUrl(mediaEntity.getMediaURLHttps());
+                break;
+        }
+        DownloadManager manager=(DownloadManager)getActivity().getSystemService(DOWNLOAD_SERVICE);
+        Uri uri = Uri.parse(path);
+        DownloadManager.Request request = new DownloadManager.Request(uri);
+        String lastPathSegment = uri.getLastPathSegment();
+        request.setDestinationInExternalPublicDir(
+                Environment.DIRECTORY_DOWNLOADS,
+                "/" + getString(R.string.app_name) + "/" + lastPathSegment
+        );
+        request.setTitle(lastPathSegment);
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+        manager.enqueue(request);
     }
 
     @Override

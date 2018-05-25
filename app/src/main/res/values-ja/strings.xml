@@ -19,6 +19,8 @@
     <string name="login">ログイン</string>
     <string name="action_settings">設定</string>
     <string name="action_search">検索</string>
+    <string name="action_change_quality">画質を変更</string>
+    <string name="use_only_movie_loaded">動画がロードされた後にしか使えません</string>
     <string name="trends">トレンド</string>
     <string name="timeline">タイムライン</string>
     <string name="mentions">メンション</string>
