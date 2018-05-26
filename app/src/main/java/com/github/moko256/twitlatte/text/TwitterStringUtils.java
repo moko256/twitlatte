@@ -430,6 +430,12 @@ public class TwitterStringUtils {
         return builder;
     }
 
+    public static String convertThumbImageUrl(String baseUrl){
+        return (GlobalApplication.clientType == Type.TWITTER)?
+                baseUrl + ":thumb":
+                baseUrl.replace("original", "small");
+    }
+
     public static String convertSmallImageUrl(String baseUrl){
         return (GlobalApplication.clientType == Type.TWITTER)?
                 baseUrl + ":small":

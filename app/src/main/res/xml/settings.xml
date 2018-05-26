@@ -37,11 +37,11 @@
             android:entries="@array/choose_night_mode_entries"
             android:entryValues="@array/choose_night_mode_entries_value"/>
         <ListPreference
-            android:key="isTimelineImageLoad"
-            android:defaultValue="true"
-            android:title="@string/is_load_timeline_image"
+            android:key="timelineImageMode"
+            android:defaultValue="normal"
+            android:title="@string/load_timeline_image_mode"
             android:summary="%s"
-            android:dialogTitle="@string/is_load_timeline_image"
+            android:dialogTitle="@string/load_timeline_image_mode"
             android:entries="@array/choose_timeline_image_load_entries"
             android:entryValues="@array/choose_timeline_image_load_entries_value"/>
         <PreferenceScreen

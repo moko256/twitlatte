@@ -167,7 +167,7 @@ public class GlobalApplication extends Application {
             }
         }
 
-        configuration.isTimelineImageLoad = Boolean.valueOf(defaultSharedPreferences.getString("isTimelineImageLoad","true"));
+        configuration.timelineImageLoadMode = defaultSharedPreferences.getString("timelineImageMode","normal");
 
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
 

@@ -81,7 +81,7 @@
     <string name="spam_report">Report this account as a spam</string>
     <string name="save_image">Save this image</string>
     <string name="error_occurred">Error occurred</string>
-    <string name="is_load_timeline_image">Load the images on the timeline</string>
+    <string name="load_timeline_image_mode">Quality of thumbnail on the timeline</string>
     <string name="version_text">Version</string>
     <string name="about">About</string>
     <string name="birthday_of_this_app_is">Birthday of this application:\n%1$TF %1$TT %1$TZ</string>
@@ -141,8 +141,9 @@
     <string name="mastodon_auth">Mastodon authorization</string>
     <string name="use_auth_code">Enter the authorization code manually</string>
 
+    <string name="mode_image_level_normal">Standard</string>
+    <string name="mode_image_level_lowest">Lowest</string>
     <string name="mode_image_level_none">Don\'t load</string>
-    <string name="mode_image_level_normal">Load</string>
 
     <string name="mode_night_no">Not Use</string>
     <string name="mode_night_yes">Use</string>
@@ -154,7 +155,8 @@
     <string name="mode_night_follow_system_value" translatable="false">mode_night_follow_system</string>
     <string name="mode_night_yes_value" translatable="false">mode_night_yes</string>
 
-    <string name="mode_none_value" translatable="false">false</string>
-    <string name="mode_normal_value" translatable="false">true</string>
+    <string name="mode_normal_value" translatable="false">normal</string>
+    <string name="mode_lowest_value" translatable="false">lowest</string>
+    <string name="mode_none_value" translatable="false">none</string>
 
 </resources>

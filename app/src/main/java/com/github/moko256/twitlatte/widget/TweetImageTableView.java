@@ -193,7 +193,7 @@ public class TweetImageTableView extends GridLayout {
 
     public void setMediaEntities(MediaEntity[] mediaEntities, boolean sensitive) {
         this.mediaEntities = mediaEntities;
-        isOpen = GlobalApplication.configuration.isTimelineImageLoad && !sensitive;
+        isOpen = !GlobalApplication.configuration.timelineImageLoadMode.equals("none") && !sensitive;
         updateImageNumber();
         updateView();
     }
@@ -210,7 +210,11 @@ public class TweetImageTableView extends GridLayout {
 
             if (isOpen) {
                 requests
-                        .load(TwitterStringUtils.convertSmallImageUrl(url))
+                        .load(
+                                GlobalApplication.configuration.timelineImageLoadMode.equals("normal")?
+                                        TwitterStringUtils.convertSmallImageUrl(url):
+                                        TwitterStringUtils.convertThumbImageUrl(url)
+                        )
                         .transition(DrawableTransitionOptions.withCrossFade())
                         .into(imageView);
                 switch (mediaEntities[ii].getType()) {
@@ -249,9 +253,14 @@ public class TweetImageTableView extends GridLayout {
                         break;
                 }
             } else {
-                if (GlobalApplication.configuration.isTimelineImageLoad){
+                String timelineImageLoadMode = GlobalApplication.configuration.timelineImageLoadMode;
+                if (!timelineImageLoadMode.equals("none")){
                     requests
-                            .load(TwitterStringUtils.convertSmallImageUrl(url))
+                            .load(
+                                    timelineImageLoadMode.equals("normal")?
+                                            TwitterStringUtils.convertSmallImageUrl(url):
+                                            TwitterStringUtils.convertThumbImageUrl(url)
+                            )
                             .transform(new BlurTransformation())
                             .transition(DrawableTransitionOptions.withCrossFade())
                             .into(imageView);

@@ -41,6 +41,6 @@ public class AppConfiguration {
     public boolean isPatternTweetSourceMuteEnabled;
     public Pattern tweetSourceMutePattern;
 
-    public boolean isTimelineImageLoad;
+    public String timelineImageLoadMode;
 
 }

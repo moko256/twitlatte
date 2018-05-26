@@ -17,12 +17,14 @@
 
 <resources>
     <string-array name="choose_timeline_image_load_entries">
-        <item>@string/mode_image_level_none</item>
         <item>@string/mode_image_level_normal</item>
+        <item>@string/mode_image_level_lowest</item>
+        <item>@string/mode_image_level_none</item>
     </string-array>
     <string-array name="choose_timeline_image_load_entries_value">
-        <item>@string/mode_none_value</item>
         <item>@string/mode_normal_value</item>
+        <item>@string/mode_lowest_value</item>
+        <item>@string/mode_none_value</item>
     </string-array>
 
     <string-array name="choose_night_mode_entries">

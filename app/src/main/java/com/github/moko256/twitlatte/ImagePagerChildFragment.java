@@ -242,7 +242,9 @@ public class ImagePagerChildFragment extends Fragment {
                         .fitCenter()
                         .diskCacheStrategy(DiskCacheStrategy.NONE)
                         .thumbnail(requests.load(
-                                TwitterStringUtils.convertSmallImageUrl(url)
+                                GlobalApplication.configuration.timelineImageLoadMode.equals("normal")?
+                                        TwitterStringUtils.convertSmallImageUrl(url):
+                                        TwitterStringUtils.convertThumbImageUrl(url)
                         ))
                         .into(imageView);
                 break;

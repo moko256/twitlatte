@@ -71,7 +71,7 @@
     <string name="spam_report">スパムとして報告する</string>
     <string name="save_image">この画像を保存する</string>
     <string name="error_occurred">エラーが発生しました</string>
-    <string name="is_load_timeline_image">タイムラインの画像を読み込むか</string>
+    <string name="load_timeline_image_mode">タイムラインのサムネイルの画質</string>
     <string name="version_text">バージョン</string>
     <string name="about">概要</string>
     <string name="birthday_of_this_app_is">このアプリケーションの誕生日:\n%1$TF %1$TT %1$TZ</string>
@@ -130,8 +130,9 @@
     <string name="mastodon_auth">Mastodonで認証</string>
     <string name="use_auth_code">認可コードを手動で入力する</string>
 
+    <string name="mode_image_level_normal">標準</string>
+    <string name="mode_image_level_lowest">最低画質</string>
     <string name="mode_image_level_none">読み込まない</string>
-    <string name="mode_image_level_normal">読み込む</string>
 
     <string name="mode_night_no">使用しない</string>
     <string name="mode_night_yes">使用する</string>

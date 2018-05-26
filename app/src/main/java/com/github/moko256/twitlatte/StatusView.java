@@ -201,9 +201,14 @@ public class StatusView extends FrameLayout {
             }
         }
 
-        if (GlobalApplication.configuration.isTimelineImageLoad){
+        String timelineImageLoadMode = GlobalApplication.configuration.timelineImageLoadMode;
+        if (!timelineImageLoadMode.equals("none")){
             glideRequests
-                    .load(item.getUser().get400x400ProfileImageURLHttps())
+                    .load(
+                            timelineImageLoadMode.equals("normal")?
+                                    item.getUser().get400x400ProfileImageURLHttps():
+                                    item.getUser().getMiniProfileImageURLHttps()
+                    )
                     .circleCrop()
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .into(userImage);
