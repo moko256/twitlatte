@@ -157,15 +157,10 @@ public class ImagePagerChildFragment extends Fragment {
                         null,
                         null
                 );
-                player.prepare(
-                        (isHls)?
-                                new HlsMediaSource.Factory(okHttpDataSourceFactory)
-                                        .createMediaSource(Uri.parse(videoPath)):
-
+                player.prepare((isHls?
+                                new HlsMediaSource.Factory(okHttpDataSourceFactory):
                                 new ExtractorMediaSource.Factory(okHttpDataSourceFactory)
-                                        .createMediaSource(
-                                                Uri.parse(mediaEntity.getVideoVariants()[0].getUrl())
-                                        )
+                        ).createMediaSource(Uri.parse(videoPath))
                 );
                 player.setPlayWhenReady(true);
 
