@@ -21,6 +21,7 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.github.moko256.twitlatte.array.ArrayUtils;
+import com.github.moko256.twitlatte.cacheMap.StatusCacheMap;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -49,7 +50,7 @@ import static org.junit.Assert.assertEquals;
 @RunWith(AndroidJUnit4.class)
 public class CachedStatusesSQLiteOpenHelperTest {
 
-    private CachedStatusesSQLiteOpenHelper helper = new CachedStatusesSQLiteOpenHelper(InstrumentationRegistry.getTargetContext(), 0);
+    private CachedStatusesSQLiteOpenHelper helper = new CachedStatusesSQLiteOpenHelper(InstrumentationRegistry.getTargetContext(), null);
 
     private static final long TEST_DUMMY_STATUS_ID_1 = 1L;
     private static final long TEST_DUMMY_STATUS_ID_2 = 2L;
@@ -73,14 +74,14 @@ public class CachedStatusesSQLiteOpenHelperTest {
     }
 
     private void addCacheTest(){
-        helper.addCachedStatus(new TestStatus(TEST_DUMMY_STATUS_ID_1, TEST_DUMMY_STATUS_TEXT_0));
+        helper.addCachedStatus(new StatusCacheMap.CachedStatus(new TestStatus(TEST_DUMMY_STATUS_ID_1, TEST_DUMMY_STATUS_TEXT_0)), false);
         Status addedStatusResult = helper.getCachedStatus(TEST_DUMMY_STATUS_ID_1);
 
         assertEquals(addedStatusResult.getText(), TEST_DUMMY_STATUS_TEXT_0);
     }
 
     private void updateCacheTest(){
-        helper.addCachedStatus(new TestStatus(TEST_DUMMY_STATUS_ID_1, TEST_DUMMY_STATUS_TEXT_1));
+        helper.addCachedStatus(new StatusCacheMap.CachedStatus(new TestStatus(TEST_DUMMY_STATUS_ID_1, TEST_DUMMY_STATUS_TEXT_1)), false);
         Status updatedStatusResult = helper.getCachedStatus(TEST_DUMMY_STATUS_ID_1);
 
         assertEquals(updatedStatusResult.getText(), TEST_DUMMY_STATUS_TEXT_1);
@@ -94,8 +95,8 @@ public class CachedStatusesSQLiteOpenHelperTest {
 
     private void addStatusesTest(){
         helper.addCachedStatuses(ArrayUtils.convertToList(
-                new TestStatus(TEST_DUMMY_STATUS_ID_1, TEST_DUMMY_STATUS_TEXT_0),
-                new TestStatus(TEST_DUMMY_STATUS_ID_2, TEST_DUMMY_STATUS_TEXT_1))
+                new StatusCacheMap.CachedStatus(new TestStatus(TEST_DUMMY_STATUS_ID_1, TEST_DUMMY_STATUS_TEXT_0)),
+                new StatusCacheMap.CachedStatus(new TestStatus(TEST_DUMMY_STATUS_ID_2, TEST_DUMMY_STATUS_TEXT_1))),false
         );
 
         assertEquals(helper.getCachedStatus(TEST_DUMMY_STATUS_ID_1).getText(), TEST_DUMMY_STATUS_TEXT_0);

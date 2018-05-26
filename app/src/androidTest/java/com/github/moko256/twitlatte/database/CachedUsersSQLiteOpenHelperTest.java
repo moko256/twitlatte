@@ -42,7 +42,7 @@ import static org.junit.Assert.assertEquals;
 @RunWith(AndroidJUnit4.class)
 public class CachedUsersSQLiteOpenHelperTest {
 
-    private CachedUsersSQLiteOpenHelper helper = new CachedUsersSQLiteOpenHelper(InstrumentationRegistry.getTargetContext(), 0, true);
+    private CachedUsersSQLiteOpenHelper helper = new CachedUsersSQLiteOpenHelper(InstrumentationRegistry.getTargetContext(), null);
 
     private static final long TEST_DUMMY_USER_ID_1 = 1L;
     private static final long TEST_DUMMY_USER_ID_2 = 2L;

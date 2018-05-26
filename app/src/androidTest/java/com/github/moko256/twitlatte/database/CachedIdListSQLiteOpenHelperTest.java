@@ -27,8 +27,6 @@ import org.junit.runner.RunWith;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Created by moko256 on 2017/06/08.
@@ -38,7 +36,7 @@ import static org.junit.Assert.assertTrue;
 @RunWith(AndroidJUnit4.class)
 public class CachedIdListSQLiteOpenHelperTest {
 
-    private CachedIdListSQLiteOpenHelper helper = new CachedIdListSQLiteOpenHelper(InstrumentationRegistry.getTargetContext(), 0, "testIdsDatabase");
+    private CachedIdListSQLiteOpenHelper helper = new CachedIdListSQLiteOpenHelper(InstrumentationRegistry.getTargetContext(), null, "testIdsDatabase");
 
     private List<Long> addInput = ArrayUtils.convertToLongList(0L,1L,2L);
     private List<Long> insertInput = ArrayUtils.convertToLongList(100L, 101L);
@@ -53,7 +51,6 @@ public class CachedIdListSQLiteOpenHelperTest {
 
         addIdTest();
         insertIdTest();
-        hasIdOtherTableTest();
         deleteIdTest();
         setListViewPositionTest();
         helper.close();
@@ -76,16 +73,6 @@ public class CachedIdListSQLiteOpenHelperTest {
         for (int i = 0; i < insertInput.size(); i++) {
             assertEquals(insertInput.get(i), result2.get(i + 1));
         }
-    }
-
-    private void hasIdOtherTableTest(){
-        CachedIdListSQLiteOpenHelper helper2 = new CachedIdListSQLiteOpenHelper(InstrumentationRegistry.getTargetContext(), 0, "testIdDatabase2");
-        boolean[] result1 = helper2.hasIdsOtherTable(ArrayUtils.convertToLongList(100, 105));
-        assertTrue(result1[0]);
-        assertFalse(result1[1]);
-        helper2.deleteIds(ArrayUtils.convertToLongList(100));
-        boolean[] result2 = helper2.hasIdsOtherTable(ArrayUtils.convertToLongList(100));
-        assertFalse(result2[0]);
     }
 
     private void deleteIdTest(){
