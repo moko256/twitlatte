@@ -33,11 +33,9 @@ import twitter4j.conf.ConfigurationContext
  */
 class OAuthModelImpl : OAuthModel {
     private var req: RequestToken? = null
+    private val oauth = OAuthAuthorization(ConfigurationContext.getInstance())
 
     override fun getCallbackAuthUrl(url: String, consumerKey: String, consumerSecret: String, callbackUrl: String): Single<String> {
-        val conf = ConfigurationContext.getInstance()
-        val oauth = OAuthAuthorization(conf)
-
         oauth.setOAuthConsumer(consumerKey, consumerSecret)
 
         return Single.create {
@@ -51,8 +49,6 @@ class OAuthModelImpl : OAuthModel {
     }
 
     override fun getCodeAuthUrl(url: String, consumerKey: String, consumerSecret: String): Single<String> {
-        val conf = ConfigurationContext.getInstance()
-        val oauth = OAuthAuthorization(conf)
         oauth.setOAuthConsumer(consumerKey, consumerSecret)
 
         return Single.create {
@@ -66,11 +62,6 @@ class OAuthModelImpl : OAuthModel {
     }
 
     override fun initToken(pin: String): Single<AccessToken> {
-        val oauth: OAuthAuthorization
-
-        val conf = ConfigurationContext.getInstance()
-        oauth = OAuthAuthorization(conf)
-
         return Single.create {
             try {
                 val accessToken = oauth.getOAuthAccessToken(req, pin)
