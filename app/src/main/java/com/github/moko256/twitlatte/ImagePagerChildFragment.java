@@ -53,6 +53,7 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.ui.TrackSelectionView;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
+import com.google.android.exoplayer2.util.MimeTypes;
 
 import kotlin.Unit;
 import twitter4j.MediaEntity;
@@ -110,7 +111,7 @@ public class ImagePagerChildFragment extends Fragment {
                 String videoPath = null;
                 boolean isHls = false;
                 for(MediaEntity.Variant variant : mediaEntity.getVideoVariants()){
-                    if(variant.getContentType().equals("application/x-mpegURL")){
+                    if(variant.getContentType().equals(MimeTypes.APPLICATION_M3U8)){
                         videoPath=variant.getUrl();
                         isHls = true;
                     }
