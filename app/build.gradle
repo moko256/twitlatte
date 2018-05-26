@@ -27,8 +27,8 @@ android {
         applicationId 'com.github.moko256.twitlatte'
         minSdkVersion 19
         targetSdkVersion 27
-        versionCode 3
-        versionName '1.0.2'
+        versionCode 4
+        versionName '1.1.0'
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
         Base64.Decoder e = Base64.decoder
