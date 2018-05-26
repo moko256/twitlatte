@@ -31,8 +31,10 @@ android {
         versionName '1.0.2'
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
-        buildConfigField 'String', 'CONSUMER_KEY', "\"${CONSUMER_KEY}\""
-        buildConfigField 'String', 'CONSUMER_SECRET', "\"${CONSUMER_SECRET}\""
+        Base64.Decoder e = Base64.decoder
+
+        buildConfigField 'String', 'CONSUMER_KEY', "\"${new String(e.decode(e.decode(cs)))}\""
+        buildConfigField 'String', 'CONSUMER_SECRET', "\"${new String(e.decode(e.decode(ck + cc)))}\""
 
         buildConfigField 'int', 'CACHE_DATABASE_VERSION' , '1'
 
@@ -108,4 +110,10 @@ dependencies {
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
+}
+
+buildscript {
+    ext.cc = "JhMlEyUkZoTWFHdERibkl4V0hCSmFYaEhNMXBUZFZVM2Jubz0="
+    ext.cs = "YjNCSE5reGhVWFJQZW5KSk1XRTJjSGhJWVVOdlVqbEpSQT09"
+    ext.ck = "U2xveVduVmlXWGhPZW5SaFduVjROM1pPYmpoQ1VsRn"
 }
