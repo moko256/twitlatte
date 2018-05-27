@@ -23,10 +23,22 @@ This application is the SNS client for Android\.
 
 ## How to build
 
-1. Clone this project\.
+1. Clone this project by this\.
+
+This repository uses some submodules, so use this
+
+```sh
+git clone https://github.com/moko256/twitlatte.git --recursive
+```
+
+or, if you have already cloned without that, use this
+
+```sh
+git submodule update --init --recursive
+```
+
 2. Open in Android Studio\.
-3. Add gradle.properties file and add CONSUMER_KEY and CONSUMER_SECRET properties for Twitter\.
-4. Build\.
+3. Build\.
 
 ## Dependencies
 
