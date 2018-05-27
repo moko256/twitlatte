@@ -31,7 +31,7 @@ This repository uses some submodules, so use this
 git clone https://github.com/moko256/twitlatte.git --recursive
 ```
 
-or, if you have already cloned without that, use this
+or, if you have already cloned without that, use this in it
 
 ```sh
 git submodule update --init --recursive
