@@ -83,7 +83,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                         if (newValue.equals("-1")){
                             GlobalApplication.twitter = null;
                             startActivity(
-                                    new Intent(getContext(),OAuthActivity.class)
+                                    new Intent(getContext(),OAuthActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
                             );
                         } else {
                             AccessToken accessToken = GlobalApplication.accountsModel.get((String) newValue);
