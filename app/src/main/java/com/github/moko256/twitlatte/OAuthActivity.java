@@ -154,9 +154,10 @@ public class OAuthActivity extends AppCompatActivity {
         requirePin = useAuthCode.isChecked();
         model = new com.github.moko256.twitlatte.model.impl.mastodon.OAuthModelImpl();
         EditText editText=new EditText(this);
-        editText.setHint("URL");
+        editText.setHint("e.g. mastodon.social");
         editText.setInputType(EditorInfo.TYPE_TEXT_VARIATION_URI);
         new AlertDialog.Builder(this)
+                .setTitle(R.string.instance_domain)
                 .setView(editText)
                 .setPositiveButton(
                         android.R.string.ok,
@@ -191,7 +192,7 @@ public class OAuthActivity extends AppCompatActivity {
                                     );
                         }
                 )
-                .setCancelable(false)
+                .setNegativeButton(android.R.string.cancel, null)
                 .show();
     }
 

@@ -17,6 +17,7 @@
 
 <resources>
     <string name="login">ログイン</string>
+    <string name="instance_domain">インスタントのドメイン</string>
     <string name="action_settings">設定</string>
     <string name="action_search">検索</string>
     <string name="action_change_quality">画質を変更</string>
