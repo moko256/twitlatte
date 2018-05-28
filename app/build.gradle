@@ -13,9 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-import java.text.SimpleDateFormat
-
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
@@ -46,7 +43,6 @@ android {
             shrinkResources true
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            versionNameSuffix " - ${new SimpleDateFormat("yyyy-MM-dd").format(new Date())}"
         }
         debug {
             debuggable true
