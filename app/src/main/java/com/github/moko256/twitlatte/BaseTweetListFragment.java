@@ -101,60 +101,74 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
         }
 
         adapter=new StatusesAdapter(getContext(), list);
-        adapter.setOnLoadMoreClick(position -> subscription.add(
-                getResponseSingle(
-                        new Paging()
-                                .maxId(list.get(position - 1) - 1L)
-                                .sinceId(list.get(list.size() >= position + 2 ? position + 2 : position + 1))
-                                .count(GlobalApplication.statusLimit), list.size() >= position + 2 ? new long[]{list.get(position + 1)}: new long[0])
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(
-                                result -> {
-                                    if (result.size() > 0) {
-                                        View startView = getRecyclerView().getLayoutManager().findViewByPosition(position);
-                                        int offset = (startView == null) ? 0 : (startView.getTop() - getRecyclerView().getPaddingTop());
+        adapter.setOnLoadMoreClick(position -> {
+            long sinceId;
 
-                                        List<Long> ids = Observable
-                                                .from(result)
-                                                .map(Status::getId)
-                                                .toList().toSingle().toBlocking().value();
-                                        boolean noGap = ids.get(ids.size() - 1).equals(list.get(position + 1));
-                                        if (noGap) {
-                                            ids.remove(ids.size() - 1);
+            if (list.size() > position + 2){
+                if (list.get(position + 2) == -1) {
+                    sinceId = list.get(position + 1);
+                } else {
+                    sinceId = list.get(position + 2);
+                }
+            } else {
+                sinceId = list.get(position + 1);
+            }
+
+            subscription.add(
+                    getResponseSingle(
+                            new Paging()
+                                    .maxId(list.get(position - 1) - 1L)
+                                    .sinceId(sinceId)
+                                    .count(GlobalApplication.statusLimit), list.size() >= position + 2 ? new long[]{list.get(position + 1)} : new long[0])
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(
+                                    result -> {
+                                        if (result.size() > 0) {
+                                            View startView = getRecyclerView().getLayoutManager().findViewByPosition(position);
+                                            int offset = (startView == null) ? 0 : (startView.getTop() - getRecyclerView().getPaddingTop());
+
+                                            List<Long> ids = Observable
+                                                    .from(result)
+                                                    .map(Status::getId)
+                                                    .toList().toSingle().toBlocking().value();
+                                            boolean noGap = ids.get(ids.size() - 1).equals(list.get(position + 1));
+                                            if (noGap) {
+                                                ids.remove(ids.size() - 1);
+                                                list.remove(position);
+                                                statusIdsDatabase.deleteIds(ArrayUtils.convertToLongList(-1L));
+                                            }
+
+                                            list.addAll(position, ids);
+                                            statusIdsDatabase.insertIds(position, ids);
+
+                                            if (noGap) {
+                                                adapter.notifyItemRemoved(position);
+                                            } else {
+                                                adapter.notifyItemChanged(position);
+                                            }
+
+                                            RecyclerView.LayoutManager layoutManager = getRecyclerView().getLayoutManager();
+                                            if (layoutManager instanceof LinearLayoutManager) {
+                                                ((LinearLayoutManager) layoutManager).scrollToPositionWithOffset(position + ids.size(), offset);
+                                                adapter.notifyItemRangeInserted(position, ids.size());
+                                            } else {
+                                                ((StaggeredGridLayoutManager) layoutManager).scrollToPositionWithOffset(position + ids.size(), offset);
+                                            }
+
+                                        } else {
                                             list.remove(position);
                                             statusIdsDatabase.deleteIds(ArrayUtils.convertToLongList(-1L));
-                                        }
-
-                                        list.addAll(position, ids);
-                                        statusIdsDatabase.insertIds(position, ids);
-
-                                        if (noGap) {
                                             adapter.notifyItemRemoved(position);
-                                        } else {
-                                            adapter.notifyItemChanged(position);
                                         }
-
-                                        RecyclerView.LayoutManager layoutManager = getRecyclerView().getLayoutManager();
-                                        if (layoutManager instanceof LinearLayoutManager) {
-                                            ((LinearLayoutManager) layoutManager).scrollToPositionWithOffset(position + ids.size(), offset);
-                                            adapter.notifyItemRangeInserted(position, ids.size());
-                                        } else {
-                                            ((StaggeredGridLayoutManager) layoutManager).scrollToPositionWithOffset(position + ids.size(), offset);
-                                        }
-
-                                    } else {
-                                        list.remove(position);
-                                        statusIdsDatabase.deleteIds(ArrayUtils.convertToLongList(-1L));
-                                        adapter.notifyItemRemoved(position);
+                                    },
+                                    e -> {
+                                        e.printStackTrace();
+                                        getSnackBar(TwitterStringUtils.convertErrorToText(e)).show();
                                     }
-                                },
-                                e -> {
-                                    e.printStackTrace();
-                                    getSnackBar(TwitterStringUtils.convertErrorToText(e)).show();
-                                }
-                        )
-        ));
+                            )
+            );
+        });
         setAdapter(adapter);
         if (!isInitializedList()){
             adapter.notifyDataSetChanged();
@@ -245,9 +259,21 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
 
     @Override
     protected void onUpdateList() {
+        long sinceId;
+
+        if (list.size() >= 2){
+            if (list.get(1) == -1) {
+                sinceId = list.get(0);
+            } else {
+                sinceId = list.get(1);
+            }
+        } else {
+            sinceId = list.get(0);
+        }
+
         subscription.add(
                 getResponseSingle(
-                        new Paging(list.get(list.size() >= 2 ? 1 : 0)).count(GlobalApplication.statusLimit),
+                        new Paging(sinceId).count(GlobalApplication.statusLimit),
                         list.size() >= 2 ? new long[]{list.get(0)}: new long[0])
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
