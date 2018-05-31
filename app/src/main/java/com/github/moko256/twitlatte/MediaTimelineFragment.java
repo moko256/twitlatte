@@ -72,7 +72,7 @@ public class MediaTimelineFragment extends BaseTweetListFragment implements Tool
         if (GlobalApplication.clientType == Type.MASTODON){
             Accounts accounts = new Accounts(((MastodonTwitterImpl) GlobalApplication.twitter).client);
             try {
-                return MTResponseList.convert(accounts.getStatuses(userId, true, MTRangeConverter.convert(paging)).execute());
+                return MTResponseList.convert(accounts.getStatuses(userId, true, false, false, MTRangeConverter.convert(paging)).execute());
             } catch (Mastodon4jRequestException e) {
                 throw new MTException(e);
             }

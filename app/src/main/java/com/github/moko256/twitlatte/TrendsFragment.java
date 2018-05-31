@@ -28,6 +28,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.github.moko256.twitlatte.database.CachedTrendsSQLiteOpenHelper;
+import com.github.moko256.twitlatte.entity.Type;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
 
 import java.io.IOException;
@@ -64,12 +65,10 @@ public class TrendsFragment extends BaseListFragment {
         list=new ArrayList<>();
         subscription = new CompositeSubscription();
         helper = new CachedTrendsSQLiteOpenHelper(getContext(), GlobalApplication.accessToken);
-        if (savedInstanceState == null) {
-            List<Trend> trends = helper.getTrends();
-            if (trends.size() > 0){
-                list = trends;
-                setRefreshing(false);
-            }
+        List<Trend> trends = helper.getTrends();
+        if (trends.size() > 0){
+            list = trends;
+            setRefreshing(false);
         }
         super.onCreate(savedInstanceState);
     }
@@ -98,23 +97,6 @@ public class TrendsFragment extends BaseListFragment {
     }
 
     @Override
-    public void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        if (savedInstanceState != null){
-            Trend[] l = (Trend[]) savedInstanceState.getSerializable("list");
-            if(l!=null){
-                list.addAll(Arrays.asList(l));
-            }
-        }
-    }
-
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState){
-        super.onSaveInstanceState(outState);
-        outState.putSerializable("list", list.toArray(new Trend[list.size()]));
-    }
-
-    @Override
     public void onDestroyView() {
         super.onDestroyView();
         adapter=null;
@@ -133,9 +115,15 @@ public class TrendsFragment extends BaseListFragment {
     @Override
     protected void onInitializeList() {
         setRefreshing(true);
+        Single<Trends> single;
+        if (GlobalApplication.clientType == Type.TWITTER) {
+            single = getGeoLocationSingle()
+                    .flatMap(this::getResponseSingle);
+        } else {
+            single = getResponseSingle(null);
+        }
         subscription.add(
-                getGeoLocationSingle()
-                        .flatMap(this::getResponseSingle)
+                single
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
@@ -177,7 +165,10 @@ public class TrendsFragment extends BaseListFragment {
                 subscriber->{
                     try {
                         Trends trends = GlobalApplication.twitter
-                                .getPlaceTrends(GlobalApplication.twitter.getClosestTrends(geolocation).get(0).getWoeid());
+                                .getPlaceTrends(geolocation != null?
+                                        GlobalApplication.twitter.getClosestTrends(geolocation).get(0).getWoeid():
+                                        -1
+                                );
                         helper.setTrends(Arrays.asList(trends.getTrends()));
 
                         subscriber.onSuccess(trends);

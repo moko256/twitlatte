@@ -20,12 +20,15 @@ import com.google.gson.Gson;
 import com.sys1yagi.mastodon4j.MastodonClient;
 import com.sys1yagi.mastodon4j.api.Pageable;
 import com.sys1yagi.mastodon4j.api.Range;
+import com.sys1yagi.mastodon4j.api.entity.Tag;
 import com.sys1yagi.mastodon4j.api.exception.Mastodon4jRequestException;
 import com.sys1yagi.mastodon4j.api.method.Accounts;
 import com.sys1yagi.mastodon4j.api.method.Favourites;
 import com.sys1yagi.mastodon4j.api.method.Public;
 import com.sys1yagi.mastodon4j.api.method.Statuses;
 import com.sys1yagi.mastodon4j.api.method.Timelines;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.InputStream;
@@ -60,6 +63,7 @@ import twitter4j.ResponseList;
 import twitter4j.SavedSearch;
 import twitter4j.Status;
 import twitter4j.StatusUpdate;
+import twitter4j.Trend;
 import twitter4j.Trends;
 import twitter4j.Twitter;
 import twitter4j.TwitterAPIConfiguration;
@@ -1148,7 +1152,7 @@ public final class MastodonTwitterImpl implements Twitter {
     public ResponseList<Status> getUserTimeline(String s, Paging paging) throws TwitterException {
         Accounts accounts = new Accounts(client);
         try {
-            return MTResponseList.convert(accounts.getStatuses(accounts.getAccountSearch(s, 1).execute().get(0).getId(), false, MTRangeConverter.convert(paging)).execute());
+            return MTResponseList.convert(accounts.getStatuses(accounts.getAccountSearch(s, 1).execute().get(0).getId(), false,false, false, MTRangeConverter.convert(paging)).execute());
         } catch (Mastodon4jRequestException e) {
             throw new MTException(e);
         }
@@ -1158,7 +1162,7 @@ public final class MastodonTwitterImpl implements Twitter {
     public ResponseList<Status> getUserTimeline(long l, Paging paging) throws TwitterException {
         Accounts accounts = new Accounts(client);
         try {
-            return MTResponseList.convert(accounts.getStatuses(l, false, MTRangeConverter.convert(paging)).execute());
+            return MTResponseList.convert(accounts.getStatuses(l, false, false, false, MTRangeConverter.convert(paging)).execute());
         } catch (Mastodon4jRequestException e) {
             throw new MTException(e);
         }
@@ -1209,8 +1213,71 @@ public final class MastodonTwitterImpl implements Twitter {
     }
 
     @Override
-    public Trends getPlaceTrends(int i) {
-        return null;
+    public Trends getPlaceTrends(int place) throws TwitterException {
+        List<Tag> tags;
+        try {
+            tags = new com.sys1yagi.mastodon4j.api.method.Trends(client).getTrends().execute();
+        } catch (Mastodon4jRequestException e) {
+            throw new MTException(e);
+        }
+        Trend[] trends = new Trend[tags.size()];
+        for (int i = 0; i < trends.length; i++) {
+            Tag tag = tags.get(i);
+
+            trends[i] = new Trend() {
+                @Override
+                public String getName() {
+                    return tag.getName();
+                }
+
+                @Override
+                public String getURL() {
+                    return tag.getUrl();
+                }
+
+                @Override
+                public String getQuery() {
+                    return tag.getName();
+                }
+            };
+        }
+
+        return new Trends() {
+            @Override
+            public Trend[] getTrends() {
+                return trends;
+            }
+
+            @Override
+            public Location getLocation() {
+                return null;
+            }
+
+            @Override
+            public Date getAsOf() {
+                return null;
+            }
+
+            @Override
+            public Date getTrendAt() {
+                return null;
+            }
+
+            @Override
+            public int compareTo(@NotNull Trends o) {
+                return 0;
+            }
+
+            @Override
+            public RateLimitStatus getRateLimitStatus() {
+                return null;
+            }
+
+            @Override
+            public int getAccessLevel() {
+                return 0;
+            }
+        };
     }
 
     @Override

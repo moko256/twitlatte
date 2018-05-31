@@ -24,8 +24,6 @@ import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.github.moko256.twitlatte.entity.Type;
-
 /**
  * Created by moko256 on 2017/07/05.
  *
@@ -45,7 +43,7 @@ public class TrendsActivity extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeAsUpIndicator(R.drawable.ic_back_white_24dp);
 
-        if (savedInstanceState == null && GlobalApplication.clientType == Type.TWITTER) {
+        if (savedInstanceState == null) {
             getSupportFragmentManager()
                     .beginTransaction()
                     .add(R.id.activity_search_fragment_container, new TrendsFragment())
