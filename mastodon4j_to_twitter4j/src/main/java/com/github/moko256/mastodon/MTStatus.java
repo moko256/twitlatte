@@ -118,7 +118,12 @@ public class MTStatus implements twitter4j.Status{
 
     @Override
     public String getInReplyToScreenName() {
-        return (getInReplyToUserId() != -1)?"":null;
+        return (getInReplyToUserId() != -1)
+                ?(
+                        status.getMentions().size() > 0?
+                                status.getMentions().get(0).getUsername():
+                                ""
+        ): null;
     }
 
     @Override

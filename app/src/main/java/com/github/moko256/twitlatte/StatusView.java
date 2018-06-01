@@ -172,16 +172,14 @@ public class StatusView extends FrameLayout {
 
         boolean isReply = item.getInReplyToScreenName()!=null;
         if (isReply){
-            boolean isEmpty = item.getInReplyToScreenName().isEmpty();
-
             if (replyUserName.getVisibility()!= View.VISIBLE){
                 replyUserName.setVisibility(View.VISIBLE);
             }
 
             replyUserName.setText(getContext().getString(
                     (item.getInReplyToStatusId() != -1)?
-                            (isEmpty? R.string.reply: R.string.reply_to):
-                            (isEmpty? R.string.mention: R.string.mention_to),
+                            R.string.reply_to:
+                            R.string.mention_to,
                     TwitterStringUtils.plusAtMark(item.getInReplyToScreenName())
             ));
         }
