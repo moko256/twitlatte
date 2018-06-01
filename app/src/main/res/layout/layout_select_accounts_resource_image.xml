@@ -37,5 +37,5 @@
         android:layout_centerVertical="true"
         android:layout_marginLeft="72dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        tools:text="@string/add_account"/>
+        tools:text="@string/login_with_another_account"/>
 </RelativeLayout>

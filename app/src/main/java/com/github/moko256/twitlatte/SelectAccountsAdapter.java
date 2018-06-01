@@ -112,7 +112,7 @@ public class SelectAccountsAdapter extends RecyclerView.Adapter<SelectAccountsAd
             }
             case VIEW_TYPE_ADD: {
                 holder.image.setImageResource(R.drawable.ic_add_white_24dp);
-                holder.title.setText(R.string.add_account);
+                holder.title.setText(R.string.login_with_another_account);
                 holder.itemView.setOnClickListener(onAddButtonClickListener);
                 break;
             }

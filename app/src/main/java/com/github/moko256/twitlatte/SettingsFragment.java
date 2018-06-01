@@ -26,14 +26,12 @@ import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.preference.PreferenceManager;
 import android.support.v7.preference.PreferenceScreen;
-import android.widget.Toast;
 
 import com.github.moko256.twitlatte.entity.AccessToken;
 import com.github.moko256.twitlatte.intent.AppCustomTabsKt;
 import com.github.moko256.twitlatte.model.AccountsModel;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
 
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -71,7 +69,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 entryValues[i] = accessToken.getKeyString();
             }
 
-            entries[entries.length-1]=getString(R.string.add_account);
+            entries[entries.length-1]=getString(R.string.login_with_another_account);
             entryValues[entryValues.length-1]="-1";
 
             ListPreference nowAccountList=(ListPreference) findPreference("AccountKey");

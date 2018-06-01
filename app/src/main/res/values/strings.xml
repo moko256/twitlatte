@@ -56,7 +56,7 @@
     <string name="reply_to">Reply to %s</string>
     <string name="mention_to">Mention to %s</string>
     <string name="application">Application</string>
-    <string name="add_account">Add other account</string>
+    <string name="login_with_another_account">Login with another account</string>
     <string name="logout">Logout</string>
     <string name="new_post">New post</string>
     <string name="permission_denied">Permission denied</string>

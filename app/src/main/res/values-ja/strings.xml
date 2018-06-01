@@ -46,7 +46,7 @@
     <string name="reply_to">%sさんへの返信</string>
     <string name="mention_to">%sさんへの言及</string>
     <string name="application">アプリケーション</string>
-    <string name="add_account">他のアカウントを追加</string>
+    <string name="login_with_another_account">他のアカウントでログイン</string>
     <string name="logout">ログアウト</string>
     <string name="new_post">新しい投稿</string>
     <string name="permission_denied">権限が拒否されました</string>
