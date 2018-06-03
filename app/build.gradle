@@ -49,8 +49,10 @@ android {
             matchingFallbacks = ['release']
 
             copy {
-                from 'build/outputs/mapping/play/mapping.txt'
-                into 'playMapping.txt'
+                from('build/outputs/mapping/play/mapping.txt') {
+                    rename 'mapping.txt', 'playMapping.txt'
+                }
+                into '.'
             }
         }
         release {
