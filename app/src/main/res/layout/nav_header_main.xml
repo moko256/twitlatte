@@ -70,7 +70,7 @@
             android:id="@+id/toggle_account"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
             app:srcCompat="@drawable/ic_arrow_drop_down_white_24dp" />
 

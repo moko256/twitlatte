@@ -27,7 +27,7 @@
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
         app:tint="?android:attr/textColorSecondary"
         tools:srcCompat="@drawable/ic_add_white_24dp" />
     <TextView
@@ -35,7 +35,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="72dp"
+        android:layout_toEndOf="@id/layout_images_adapter_image"
+        android:layout_marginStart="32dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         tools:text="@string/login_with_another_account"/>
 </RelativeLayout>

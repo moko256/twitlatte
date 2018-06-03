@@ -36,7 +36,7 @@
             android:id="@+id/activity_tweet_send_user_icon"
             android:layout_width="wrap_content"
             android:layout_height="36dp"
-            android:layout_marginLeft="32dp"
+            android:layout_marginStart="32dp"
             tools:src="@mipmap/ic_launcher"/>
     </android.support.v7.widget.Toolbar>
     <ScrollView
@@ -64,7 +64,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-                android:gravity="right"
+                android:gravity="end"
                 android:layout_marginBottom="16dp"
                 tools:text="0 / 500"/>
 

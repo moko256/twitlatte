@@ -116,7 +116,7 @@ public class TweetImageTableView extends GridLayout {
 
             markImage[i] = new ImageView(context);
             FrameLayout.LayoutParams markImageParams = new FrameLayout.LayoutParams(dp48,dp48);
-            markImageParams.gravity = Gravity.BOTTOM | Gravity.LEFT;
+            markImageParams.gravity = Gravity.BOTTOM | Gravity.START;
             markImage[i].setLayoutParams(markImageParams);
             markImage[i].setImageDrawable(gifMark);
 

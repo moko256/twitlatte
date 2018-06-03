@@ -88,10 +88,10 @@
         android:id="@+id/tweet_show_tweet_reply_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
         android:layout_marginBottom="@dimen/activity_vertical_margin"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:text="@string/do_reply"
         style="@style/Widget.AppCompat.Button.Borderless.Colored"/>
 
@@ -99,11 +99,11 @@
         android:id="@+id/tweet_show_tweet_reply_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
         android:layout_marginBottom="@dimen/activity_vertical_margin"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_toLeftOf="@id/tweet_show_tweet_reply_button"
+        android:layout_alignParentStart="true"
+        android:layout_toStartOf="@id/tweet_show_tweet_reply_button"
         android:minLines="2"
         android:maxLines="3"/>
 
