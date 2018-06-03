@@ -4,8 +4,8 @@
 /gradle.properties
 
 /.idea/*
-!/.idea/copyright/*
-!/.idea/dictionaries/*
+!/.idea/copyright
+!/.idea/dictionaries
 !/.idea/compilers.xml
 !/.idea/encodings.xml
 !/.idea/gradle.xml
