@@ -39,13 +39,32 @@ android {
         resConfigs 'en', 'ja'
     }
     buildTypes {
-        release {
+        play {
+            debuggable false
+
             shrinkResources true
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+            matchingFallbacks = ['release']
+
+            copy {
+                from 'build/outputs/mapping/play/mapping.txt'
+                into 'playMapping.txt'
+            }
+        }
+        release {
+            debuggable false
+
+            shrinkResources true
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'),
+                    'proguard-rules.pro',
+                    'reuse-mapping-rules.pro'
         }
         debug {
             debuggable true
+
             minifyEnabled true
             useProguard false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'shrinker-rules.pro'

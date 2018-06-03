@@ -17,6 +17,7 @@
 .DS_Store
 /build
 /app/release
+/app/play
 /release
 /capture
 *.jks
