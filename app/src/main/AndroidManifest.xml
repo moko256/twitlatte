@@ -26,6 +26,7 @@
     <application
         android:name=".GlobalApplication"
         android:allowBackup="true"
+        android:fullBackupContent="@xml/back_up_rules"
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher"
         android:label="@string/app_name"
