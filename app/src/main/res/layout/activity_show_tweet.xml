@@ -84,7 +84,7 @@
 
     </android.support.v4.widget.SwipeRefreshLayout>
 
-    <android.support.v7.widget.AppCompatButton
+    <Button
         android:id="@+id/tweet_show_tweet_reply_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -95,7 +95,7 @@
         android:text="@string/do_reply"
         style="@style/Widget.AppCompat.Button.Borderless.Colored"/>
 
-    <android.support.v7.widget.AppCompatEditText
+    <EditText
         android:id="@+id/tweet_show_tweet_reply_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

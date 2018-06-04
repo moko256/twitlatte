@@ -22,13 +22,13 @@ import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.AppCompatButton;
-import android.support.v7.widget.AppCompatEditText;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -225,8 +225,8 @@ public class ShowTweetActivity extends AppCompatActivity {
         viaText.setText(TwitterStringUtils.convertUrlSpanToCustomTabs(Html.fromHtml("via:"+item.getSource()), this));
         viaText.setMovementMethod(new LinkMovementMethod());
 
-        AppCompatEditText replyText= findViewById(R.id.tweet_show_tweet_reply_text);
-        AppCompatButton replyButton= findViewById(R.id.tweet_show_tweet_reply_button);
+        EditText replyText= findViewById(R.id.tweet_show_tweet_reply_text);
+        Button replyButton= findViewById(R.id.tweet_show_tweet_reply_button);
         UserMentionEntity[] users = item.getUserMentionEntities();
         replyText.setText(TwitterStringUtils.convertToReplyTopString(
                 GlobalApplication.userCache.get(GlobalApplication.userId).getScreenName(),
