@@ -27,7 +27,7 @@
         translatable="false">Close navigation drawer</string>
 
     <string name="login">Log in</string>
-    <string name="instance_domain">Instance's domain</string>
+    <string name="instance_domain">Instance\'s domain</string>
     <string name="action_settings">Settings…</string>
     <string name="action_search">Search…</string>
     <string name="action_change_quality">Change quality</string>
