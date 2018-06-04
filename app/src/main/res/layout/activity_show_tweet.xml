@@ -104,6 +104,8 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
         android:layout_toStartOf="@id/tweet_show_tweet_reply_button"
+        android:inputType="text"
+        android:hint="@string/reply"
         android:minLines="2"
         android:maxLines="3"/>
 

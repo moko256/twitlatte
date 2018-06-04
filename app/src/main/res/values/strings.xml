@@ -44,7 +44,6 @@
     <string name="account">Account</string>
     <string name="dark_theme">Dark theme</string>
     <string name="media">Media</string>
-    <string name="images">Images</string>
     <string name="add_image">Add image…</string>
     <string name="open_image">Open image…</string>
     <string name="possibly_sensitive">Include sensitivity in the images</string>
@@ -65,7 +64,6 @@
     <string name="posts_counts_is">Posts: %d</string>
     <string name="following_counts_is">Following: %d</string>
     <string name="followers_counts_is">Followers: %d</string>
-    <string name="other">Others</string>
     <string name="share">Share…</string>
     <string name="open_in_browser">Open in the browser</string>
     <string name="add_to_list">Add to list</string>

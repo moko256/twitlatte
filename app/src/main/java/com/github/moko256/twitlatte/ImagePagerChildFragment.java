@@ -271,31 +271,32 @@ public class ImagePagerChildFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_change_selection) {
-            if (trackSelector.getCurrentMappedTrackInfo() != null) {
-                TrackSelectionView.getDialog(
-                        getActivity(),
-                        getString(R.string.action_change_quality),
-                        trackSelector,
-                        0
-                ).first.show();
-            } else {
-                Toast.makeText(
-                        getContext(),
-                        R.string.use_only_movie_loaded,
-                        Toast.LENGTH_SHORT
-                ).show();
-            }
-            return true;
-        } else if(item.getItemId() == R.id.action_download) {
-            if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
-                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE_PERMISSION_STORAGE);
-            } else {
-                contentDownload();
-            }
-            return true;
-        } else {
-            return super.onOptionsItemSelected(item);
+        switch (item.getItemId()) {
+            case R.id.action_change_selection:
+                if (trackSelector.getCurrentMappedTrackInfo() != null) {
+                    TrackSelectionView.getDialog(
+                            getActivity(),
+                            getString(R.string.action_change_quality),
+                            trackSelector,
+                            0
+                    ).first.show();
+                } else {
+                    Toast.makeText(
+                            getContext(),
+                            R.string.use_only_movie_loaded,
+                            Toast.LENGTH_SHORT
+                    ).show();
+                }
+                return true;
+            case R.id.action_download:
+                if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE_PERMISSION_STORAGE);
+                } else {
+                    contentDownload();
+                }
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 

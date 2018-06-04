@@ -105,14 +105,15 @@ class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        if (i == 1){
-            return new MoreLoadViewHolder(viewGroup);
-        } else if (i == 2) {
-            return new MutedTweetViewHolder(viewGroup);
-        } else if (i == 3){
-            return new ImagesOnlyTweetViewHolder(viewGroup);
-        } else {
-            return new StatusViewHolder();
+        switch (i) {
+            case 1:
+                return new MoreLoadViewHolder(viewGroup);
+            case 2:
+                return new MutedTweetViewHolder(viewGroup);
+            case 3:
+                return new ImagesOnlyTweetViewHolder(viewGroup);
+            default:
+                return new StatusViewHolder();
         }
     }
 
