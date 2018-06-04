@@ -17,12 +17,7 @@
 package com.github.moko256.twitlatte;
 
 import android.app.Application;
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.util.LruCache;
@@ -36,7 +31,6 @@ import com.github.moko256.twitlatte.config.AppConfiguration;
 import com.github.moko256.twitlatte.entity.AccessToken;
 import com.github.moko256.twitlatte.entity.Type;
 import com.github.moko256.twitlatte.model.AccountsModel;
-import com.github.moko256.twitlatte.notification.ExceptionNotification;
 
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -79,35 +73,6 @@ public class GlobalApplication extends Application {
 
     @Override
     public void onCreate() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(
-                    "crash_log",
-                    getString(R.string.crash_log),
-                    NotificationManager.IMPORTANCE_DEFAULT
-            );
-            channel.setDescription(getString(R.string.crash_log_channel_description));
-            channel.setLightColor(Color.RED);
-            channel.enableLights(true);
-            channel.setShowBadge(false);
-            channel.setLockscreenVisibility(Notification.VISIBILITY_SECRET);
-
-            NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-            if (manager != null) {
-                manager.createNotificationChannel(channel);
-            }
-        }
-
-        final Thread.UncaughtExceptionHandler defaultUnCaughtExceptionHandler=Thread.getDefaultUncaughtExceptionHandler();
-        Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
-            try {
-                new ExceptionNotification().create(e, getApplicationContext());
-            }catch (Throwable fe){
-                fe.printStackTrace();
-            } finally {
-                defaultUnCaughtExceptionHandler.uncaughtException(t,e);
-            }
-        });
-
         SharedPreferences defaultSharedPreferences=PreferenceManager.getDefaultSharedPreferences(this);
 
         configuration=new AppConfiguration();
