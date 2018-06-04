@@ -1,0 +1,7 @@
+このアプリは、時系列順で投稿を読むのに特化したSNSクライアントです
+TwitterとMastodonとPleromaにAPIを使ってアクセスします
+
+(これはサードパーティークライアントです)
+
+連絡先 (Twitter): @moko256
+ソースコード (GitHub): https://github.com/moko256/twitlatte

@@ -1,0 +1,2 @@
+Support trending in mastodon
+Fix some bug
