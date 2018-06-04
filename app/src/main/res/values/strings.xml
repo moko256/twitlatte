@@ -90,8 +90,6 @@
     <string name="contributors">Contributors</string>
     <string name="enable">Enable</string>
     <string name="disable">Disable</string>
-    <string name="crash_log">Crash Log</string>
-    <string name="crash_log_channel_description">Notify crash log when twitlatte crashed</string>
     <string name="regex_mute">Regex mute</string>
     <string name="edit_pattern">Edit Regex pattern</string>
     <string name="use_post_regex_mute">Use for the context and hide post</string>
