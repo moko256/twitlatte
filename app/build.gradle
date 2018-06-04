@@ -47,13 +47,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
 
             matchingFallbacks = ['release']
-
-            copy {
-                from('build/outputs/mapping/play/mapping.txt') {
-                    rename 'mapping.txt', 'playMapping.txt'
-                }
-                into '.'
-            }
         }
         release {
             debuggable false
@@ -127,6 +120,19 @@ dependencies {
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
+}
+
+gradle.taskGraph.whenReady { taskGraph ->
+    if (taskGraph.hasTask(assemblePlay)) {
+        assemblePlay.doLast {
+            copy {
+                from('build/outputs/mapping/play/mapping.txt') {
+                    rename 'mapping.txt', 'playMapping.txt'
+                }
+                into '.'
+            }
+        }
+    }
 }
 
 buildscript {
