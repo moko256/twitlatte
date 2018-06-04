@@ -75,6 +75,7 @@ public class PostActivity extends AppCompatActivity {
     private static final String INTENT_EXTRA_IMAGE_URI = "imageUri";
     private static final String OUT_STATE_EXTRA_IMAGE_URI_LIST = "image_uri_list";
     private static final int REQUEST_GET_IMAGE = 10;
+    private static final int REQUEST_CODE_PERMISSION_LOCATION = 400;
 
     PostTweetModel model;
 
@@ -225,7 +226,7 @@ public class PostActivity extends AppCompatActivity {
                             )
                     );
                 } else {
-                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 400);
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE_PERMISSION_LOCATION);
                 }
             } else {
                 locationText.setVisibility(View.GONE);
@@ -296,20 +297,25 @@ public class PostActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (grantResults[0] == PermissionChecker.PERMISSION_GRANTED){
-            subscription.add(
-                    getLocation().subscribe(
-                            it -> {
-                                model.setLocation(new GeoLocation(it.getLatitude(), it.getLongitude()));
-                                locationText.setVisibility(View.VISIBLE);
-                                locationText.setText(getString(R.string.lat_and_lon, it.getLatitude(), it.getLongitude()));
-                            },
-                            Throwable::printStackTrace
-                    )
-            );
+        if (requestCode == REQUEST_CODE_PERMISSION_LOCATION) {
+            if (grantResults.length > 0) {
+                if (grantResults[0] == PermissionChecker.PERMISSION_GRANTED) {
+                    subscription.add(
+                            getLocation().subscribe(
+                                    it -> {
+                                        model.setLocation(new GeoLocation(it.getLatitude(), it.getLongitude()));
+                                        locationText.setVisibility(View.VISIBLE);
+                                        locationText.setText(getString(R.string.lat_and_lon, it.getLatitude(), it.getLongitude()));
+                                    },
+                                    Throwable::printStackTrace
+                            )
+                    );
+                } else {
+                    addLocation.setChecked(false);
+                }
+            } // else it is prompting permission after activity recreated
         } else {
-            addLocation.setChecked(false);
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
 
@@ -343,7 +349,6 @@ public class PostActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_GET_IMAGE){
             if (data != null){
                 Uri resultUri = data.getData();
@@ -367,6 +372,8 @@ public class PostActivity extends AppCompatActivity {
                     isPossiblySensitive.setEnabled(true);
                 }
             }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
         }
     }
 

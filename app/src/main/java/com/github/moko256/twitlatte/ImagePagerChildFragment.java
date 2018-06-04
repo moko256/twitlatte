@@ -68,7 +68,8 @@ import static android.content.Context.DOWNLOAD_SERVICE;
 
 public class ImagePagerChildFragment extends Fragment {
 
-    private static final String FRAG_MEDIA_ENTITY="media_entity";
+    private static final String FRAG_MEDIA_ENTITY = "media_entity";
+    private static final int REQUEST_CODE_PERMISSION_STORAGE = 100;
 
     MediaEntity mediaEntity;
 
@@ -100,7 +101,7 @@ public class ImagePagerChildFragment extends Fragment {
         });
         view.setPositionChangeListener((Integer top, Integer left, Float dragRangeRate) -> {
             view.setBackgroundColor(Color.argb(Math.round(255 * (1.0F - dragRangeRate)), 0, 0, 0));
-            if ((getActivity().getWindow().getDecorView().getSystemUiVisibility() & View.SYSTEM_UI_FLAG_FULLSCREEN) != 0) {
+            if (!isShowingSystemUI()) {
                 showSystemUI();
             }
             return Unit.INSTANCE;
@@ -224,7 +225,7 @@ public class ImagePagerChildFragment extends Fragment {
                 imageView= view.findViewById(R.id.fragment_image_pager_image);
                 imageView.setVisibility(View.VISIBLE);
                 imageView.setOnClickListener(v -> {
-                    if ((getActivity().getWindow().getDecorView().getSystemUiVisibility() & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0){
+                    if (isShowingSystemUI()){
                         hideSystemUI();
                     } else {
                         showSystemUI();
@@ -250,11 +251,14 @@ public class ImagePagerChildFragment extends Fragment {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (grantResults[0]==PackageManager.PERMISSION_GRANTED){
-            contentDownload();
-        } else {
-            Toast.makeText(getActivity(), R.string.permission_denied,Toast.LENGTH_LONG).show();
+        if (requestCode == REQUEST_CODE_PERMISSION_STORAGE) {
+            if (grantResults.length > 0) {
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    contentDownload();
+                } else {
+                    Toast.makeText(getActivity(), R.string.permission_denied, Toast.LENGTH_LONG).show();
+                }
+            }
         }
     }
 
@@ -285,7 +289,7 @@ public class ImagePagerChildFragment extends Fragment {
             return true;
         } else if(item.getItemId() == R.id.action_download) {
             if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
-                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},100);
+                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE_PERMISSION_STORAGE);
             } else {
                 contentDownload();
             }
@@ -363,6 +367,10 @@ public class ImagePagerChildFragment extends Fragment {
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                         | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+    }
+
+    private boolean isShowingSystemUI() {
+        return (getActivity().getWindow().getDecorView().getSystemUiVisibility() & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0;
     }
 
     public static ImagePagerChildFragment getInstance(MediaEntity entity){
