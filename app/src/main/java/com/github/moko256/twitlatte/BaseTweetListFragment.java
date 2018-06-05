@@ -38,7 +38,6 @@ import com.github.moko256.twitlatte.database.CachedIdListSQLiteOpenHelper;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import rx.Observable;
@@ -72,11 +71,9 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
         list=new ArrayList<>();
         subscription = new CompositeSubscription();
         statusIdsDatabase = new CachedIdListSQLiteOpenHelper(getContext(), GlobalApplication.accessToken, getCachedIdsDatabaseName());
-        if (savedInstanceState == null){
-            List<Long> c = statusIdsDatabase.getIds();
-            if (c.size() > 0) {
-                list.addAll(c);
-            }
+        List<Long> c = statusIdsDatabase.getIds();
+        if (c.size() > 0) {
+            list.addAll(c);
         }
         super.onCreate(savedInstanceState);
     }
@@ -178,23 +175,6 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
         getRecyclerView().getLayoutManager().scrollToPosition(LAST_SAVED_LIST_POSITION);
 
         return view;
-    }
-
-    @Override
-    public void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        if (savedInstanceState != null){
-            Long[] l=(Long[]) savedInstanceState.getSerializable("list");
-            if(l!=null){
-                list.addAll(Arrays.asList(l));
-            }
-        }
-    }
-
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState){
-        super.onSaveInstanceState(outState);
-        outState.putSerializable("list", list.toArray(new Long[list.size()]));
     }
 
     @Override

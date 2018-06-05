@@ -47,7 +47,7 @@ import rx.schedulers.Schedulers;
  * @author moko256
  */
 public class OAuthActivity extends AppCompatActivity {
-    private OAuthModel model;
+    private static OAuthModel model;
     public boolean requirePin=false;
 
     private AlertDialog pinDialog;
