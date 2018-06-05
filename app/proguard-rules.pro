@@ -16,6 +16,8 @@
 #   public *;
 #}
 
+-keepattributes LineNumberTable
+
 -dontwarn twitter4j.**
 -keep,allowoptimization class twitter4j.* { *; }
 -keep,allowoptimization class twitter4j.conf.PropertyConfigurationFactory
