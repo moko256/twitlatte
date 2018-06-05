@@ -49,6 +49,7 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.moko256.twitlatte.model.base.PostTweetModel;
 import com.github.moko256.twitlatte.model.impl.PostTweetModelCreator;
@@ -222,7 +223,7 @@ public class PostActivity extends AppCompatActivity {
                                         locationText.setVisibility(View.VISIBLE);
                                         locationText.setText(getString(R.string.lat_and_lon, it.getLatitude(), it.getLongitude()));
                                     },
-                                    Throwable::printStackTrace
+                                    e -> Toast.makeText(this, TwitterStringUtils.convertErrorToText(e), Toast.LENGTH_SHORT).show()
                             )
                     );
                 } else {
@@ -307,7 +308,7 @@ public class PostActivity extends AppCompatActivity {
                                         locationText.setVisibility(View.VISIBLE);
                                         locationText.setText(getString(R.string.lat_and_lon, it.getLatitude(), it.getLongitude()));
                                     },
-                                    Throwable::printStackTrace
+                                    e -> Toast.makeText(this, TwitterStringUtils.convertErrorToText(e), Toast.LENGTH_SHORT).show()
                             )
                     );
                 } else {
@@ -431,7 +432,11 @@ public class PostActivity extends AppCompatActivity {
                 @Override
                 public void onLocationChanged(Location location) {
                     locationManager.removeUpdates(this);
-                    singleSubscriber.onSuccess(location);
+                    if (location == null) {
+                        singleSubscriber.onError(new NullPointerException("Unable to get the location"));
+                    } else {
+                        singleSubscriber.onSuccess(location);
+                    }
                 }
 
                 @Override
