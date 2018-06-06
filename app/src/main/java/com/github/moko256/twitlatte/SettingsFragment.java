@@ -189,6 +189,17 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                     return true;
                 });
             }
+        } else if (preferenceRoot.equals("contributors")) {
+            PreferenceScreen contributor = getPreferenceScreen();
+            for (int i = 0, length = contributor.getPreferenceCount(); i < length; i++) {
+                Preference name = contributor.getPreference(i);
+                String uri = "https://github.com/" + name.getKey();
+                name.setSummary(uri);
+                name.setOnPreferenceClickListener(preference -> {
+                    AppCustomTabsKt.launchChromeCustomTabs(getContext(), uri);
+                    return true;
+                });
+            }
         }
 
     }

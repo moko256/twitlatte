@@ -186,10 +186,13 @@
             android:title="@string/contributors">
             <Preference
                 android:key="moko256"
-                android:title="\@moko256"/>
+                android:title="moko256"/>
             <Preference
-                android:key="jiro_aqua"
-                android:title="\@jiro_aqua"/>
+                android:key="jiro-aqua"
+                android:title="jiro-aqua"/>
+            <Preference
+                android:key="Poussinou"
+                android:title="Poussinou"/>
         </PreferenceScreen>
         <Preference
             android:key="app_version"
