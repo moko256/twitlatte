@@ -3,9 +3,10 @@ twitlatte
 
 This application is the SNS client for Android\.
 
-|![Icon](app/src/main/ic_launcher-web.png)|Timeline|Navigation drawer|User screen|Post screen|Trends screen|
-|---|---|---|---|---|---|
-|![Header](readme_image/twitlatte-header.png)|![Timeline](readme_image/home.png)|![Navigation drawer](readme_image/navbar.png)|![User screen](readme_image/user.png)|![Post screen](readme_image/post.png)|![Trends screen](readme_image/trends.png)|
+<img src="app/src/main/ic_launcher-web.png"
+      alt="Icon of this app"
+      width="150"
+      height="150">
 
 * Supported Android api level is 19~27
 * Using REST API
@@ -79,7 +80,7 @@ and, built using these tools\:
 
 ## License
 
-~~~~
+~~~
 Copyright 2015-2018 The twitlatte authors
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -93,4 +94,4 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
-~~~~
+~~~
