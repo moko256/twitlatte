@@ -23,7 +23,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.location.Criteria;
-import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -59,7 +58,6 @@ import com.github.moko256.twitlatte.widget.ImageKeyboardEditText;
 
 import java.util.ArrayList;
 
-import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
@@ -219,16 +217,7 @@ public class PostActivity extends AppCompatActivity {
             addLocation.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 if (isChecked){
                     if (PermissionChecker.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PermissionChecker.PERMISSION_GRANTED){
-                        subscription.add(
-                                getLocation().subscribe(
-                                        it -> {
-                                            model.setLocation(new GeoLocation(it.getLatitude(), it.getLongitude()));
-                                            locationText.setVisibility(View.VISIBLE);
-                                            locationText.setText(getString(R.string.lat_and_lon, it.getLatitude(), it.getLongitude()));
-                                        },
-                                        e -> Toast.makeText(this, TwitterStringUtils.convertErrorToText(e), Toast.LENGTH_SHORT).show()
-                                )
-                        );
+                        updateLocation();
                     } else {
                         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE_PERMISSION_LOCATION);
                     }
@@ -308,16 +297,7 @@ public class PostActivity extends AppCompatActivity {
         if (requestCode == REQUEST_CODE_PERMISSION_LOCATION) {
             if (grantResults.length > 0) {
                 if (grantResults[0] == PermissionChecker.PERMISSION_GRANTED) {
-                    subscription.add(
-                            getLocation().subscribe(
-                                    it -> {
-                                        model.setLocation(new GeoLocation(it.getLatitude(), it.getLongitude()));
-                                        locationText.setVisibility(View.VISIBLE);
-                                        locationText.setText(getString(R.string.lat_and_lon, it.getLatitude(), it.getLongitude()));
-                                    },
-                                    e -> Toast.makeText(this, TwitterStringUtils.convertErrorToText(e), Toast.LENGTH_SHORT).show()
-                            )
-                    );
+                    updateLocation();
                 } else {
                     addLocation.setChecked(false);
                 }
@@ -428,12 +408,24 @@ public class PostActivity extends AppCompatActivity {
         }
     }
 
-    private Observable<Location> getLocation(){
+    private void updateLocation(){
         LocationManager locationManager = (LocationManager) getApplicationContext().getSystemService(LOCATION_SERVICE);
         Criteria criteria = new Criteria();
         criteria.setAccuracy(Criteria.ACCURACY_FINE);
         criteria.setCostAllowed(false);
-        return new LocationSingleBuilder(locationManager).start(criteria);
+
+        subscription.add(
+                new LocationSingleBuilder(locationManager)
+                        .start(criteria)
+                        .subscribe(
+                                it -> {
+                                    model.setLocation(new GeoLocation(it.getLatitude(), it.getLongitude()));
+                                    locationText.setVisibility(View.VISIBLE);
+                                    locationText.setText(getString(R.string.lat_and_lon, it.getLatitude(), it.getLongitude()));
+                                },
+                                e -> Toast.makeText(this, TwitterStringUtils.convertErrorToText(e), Toast.LENGTH_SHORT).show()
+                        )
+        );
     }
 
     public static Intent getIntent(Context context, String text){
