@@ -216,13 +216,16 @@ public class PostActivity extends AppCompatActivity {
             addLocation.setVisibility(View.VISIBLE);
             addLocation.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 if (isChecked){
+                    locationText.setVisibility(View.VISIBLE);
                     if (PermissionChecker.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PermissionChecker.PERMISSION_GRANTED){
                         updateLocation();
                     } else {
                         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE_PERMISSION_LOCATION);
                     }
                 } else {
+                    model.setLocation(null);
                     locationText.setVisibility(View.GONE);
+                    locationText.setText("");
                 }
             });
 
@@ -420,7 +423,6 @@ public class PostActivity extends AppCompatActivity {
                         .subscribe(
                                 it -> {
                                     model.setLocation(new GeoLocation(it.getLatitude(), it.getLongitude()));
-                                    locationText.setVisibility(View.VISIBLE);
                                     locationText.setText(getString(R.string.lat_and_lon, it.getLatitude(), it.getLongitude()));
                                 },
                                 e -> Toast.makeText(this, TwitterStringUtils.convertErrorToText(e), Toast.LENGTH_SHORT).show()
