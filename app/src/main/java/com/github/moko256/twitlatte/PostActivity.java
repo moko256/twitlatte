@@ -24,7 +24,6 @@ import android.graphics.Color;
 import android.graphics.Rect;
 import android.location.Criteria;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -51,14 +50,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.moko256.twitlatte.entity.Type;
 import com.github.moko256.twitlatte.model.base.PostTweetModel;
 import com.github.moko256.twitlatte.model.impl.PostTweetModelCreator;
+import com.github.moko256.twitlatte.rx.LocationSingleBuilder;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
 import com.github.moko256.twitlatte.widget.ImageKeyboardEditText;
 
 import java.util.ArrayList;
 
-import rx.Single;
+import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
@@ -213,26 +214,32 @@ public class PostActivity extends AppCompatActivity {
         );
 
         addLocation = findViewById(R.id.activity_tweet_add_location);
-        addLocation.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (isChecked){
-                if (PermissionChecker.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PermissionChecker.PERMISSION_GRANTED){
-                    subscription.add(
-                            getLocation().subscribe(
-                                    it -> {
-                                        model.setLocation(new GeoLocation(it.getLatitude(), it.getLongitude()));
-                                        locationText.setVisibility(View.VISIBLE);
-                                        locationText.setText(getString(R.string.lat_and_lon, it.getLatitude(), it.getLongitude()));
-                                    },
-                                    e -> Toast.makeText(this, TwitterStringUtils.convertErrorToText(e), Toast.LENGTH_SHORT).show()
-                            )
-                    );
+        if (GlobalApplication.clientType == Type.TWITTER) {
+            addLocation.setVisibility(View.VISIBLE);
+            addLocation.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                if (isChecked){
+                    if (PermissionChecker.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PermissionChecker.PERMISSION_GRANTED){
+                        subscription.add(
+                                getLocation().subscribe(
+                                        it -> {
+                                            model.setLocation(new GeoLocation(it.getLatitude(), it.getLongitude()));
+                                            locationText.setVisibility(View.VISIBLE);
+                                            locationText.setText(getString(R.string.lat_and_lon, it.getLatitude(), it.getLongitude()));
+                                        },
+                                        e -> Toast.makeText(this, TwitterStringUtils.convertErrorToText(e), Toast.LENGTH_SHORT).show()
+                                )
+                        );
+                    } else {
+                        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE_PERMISSION_LOCATION);
+                    }
                 } else {
-                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE_PERMISSION_LOCATION);
+                    locationText.setVisibility(View.GONE);
                 }
-            } else {
-                locationText.setVisibility(View.GONE);
-            }
-        });
+            });
+
+        } else {
+            addLocation.setVisibility(View.GONE);
+        }
 
         locationText = findViewById(R.id.activity_tweet_location_result);
         locationText.setVisibility(View.GONE);
@@ -421,43 +428,12 @@ public class PostActivity extends AppCompatActivity {
         }
     }
 
-    private Single<Location> getLocation(){
+    private Observable<Location> getLocation(){
         LocationManager locationManager = (LocationManager) getApplicationContext().getSystemService(LOCATION_SERVICE);
         Criteria criteria = new Criteria();
         criteria.setAccuracy(Criteria.ACCURACY_FINE);
         criteria.setCostAllowed(false);
-        final LocationListener[] locationListener = new LocationListener[1];
-        Single<Location> single = Single.create(singleSubscriber -> {
-            locationListener[0] = new LocationListener() {
-                @Override
-                public void onLocationChanged(Location location) {
-                    locationManager.removeUpdates(this);
-                    if (location == null) {
-                        singleSubscriber.onError(new NullPointerException("Unable to get the location"));
-                    } else {
-                        singleSubscriber.onSuccess(location);
-                    }
-                }
-
-                @Override
-                public void onStatusChanged(String provider, int status, Bundle extras) {}
-
-                @Override
-                public void onProviderEnabled(String provider) {}
-
-                @Override
-                public void onProviderDisabled(String provider) {}
-            };
-            try {
-                locationManager.requestSingleUpdate(
-                        locationManager.getBestProvider(criteria, true), locationListener[0], null
-                );
-            } catch (SecurityException e){
-                singleSubscriber.onError(e);
-            }
-        });
-        single.doOnUnsubscribe(() -> locationManager.removeUpdates(locationListener[0]));
-        return single;
+        return new LocationSingleBuilder(locationManager).start(criteria);
     }
 
     public static Intent getIntent(Context context, String text){
