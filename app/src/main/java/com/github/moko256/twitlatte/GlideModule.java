@@ -17,7 +17,11 @@
 package com.github.moko256.twitlatte;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.InsetDrawable;
 import android.support.annotation.NonNull;
+import android.support.v4.graphics.drawable.DrawableCompat;
+import android.support.v7.content.res.AppCompatResources;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.GlideBuilder;
@@ -25,6 +29,7 @@ import com.bumptech.glide.Registry;
 import com.bumptech.glide.integration.okhttp3.OkHttpUrlLoader;
 import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.module.AppGlideModule;
+import com.bumptech.glide.request.RequestOptions;
 
 import java.io.InputStream;
 
@@ -39,7 +44,15 @@ public class GlideModule extends AppGlideModule {
 
     @Override
     public void applyOptions(@NonNull Context context, @NonNull GlideBuilder builder) {
-
+        Drawable error = AppCompatResources.getDrawable(context, R.drawable.ic_cloud_off_black_24dp);
+        if (error != null) {
+            final int padding = Math.round(8 * context.getResources().getDisplayMetrics().density);
+            DrawableCompat.setTint(error, context.getResources().getColor(R.color.color_accent));
+            error = new InsetDrawable(error, padding);
+            builder.setDefaultRequestOptions(new RequestOptions()
+                    .error(error)
+            );
+        }
     }
 
     @Override
