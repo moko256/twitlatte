@@ -29,7 +29,7 @@ import rx.subjects.PublishSubject
  *
  * @author moko256
  */
-class LocationSingleBuilder(private val locationManager: LocationManager?): LocationListener {
+class LocationSubjectBuilder(private val locationManager: LocationManager?): LocationListener {
     val subject = PublishSubject.create<Location>()!!
 
     fun start(criteria: Criteria): Observable<Location>{

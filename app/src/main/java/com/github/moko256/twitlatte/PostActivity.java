@@ -52,11 +52,12 @@ import android.widget.Toast;
 import com.github.moko256.twitlatte.entity.Type;
 import com.github.moko256.twitlatte.model.base.PostTweetModel;
 import com.github.moko256.twitlatte.model.impl.PostTweetModelCreator;
-import com.github.moko256.twitlatte.rx.LocationSingleBuilder;
+import com.github.moko256.twitlatte.rx.LocationSubjectBuilder;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
 import com.github.moko256.twitlatte.widget.ImageKeyboardEditText;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -109,7 +110,7 @@ public class PostActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.activity_tweet_send_toolbar);
         setSupportActionBar(toolbar);
 
-        actionBar = getSupportActionBar();
+        actionBar = Objects.requireNonNull(getSupportActionBar());
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeAsUpIndicator(R.drawable.ic_clear_white_24dp);
 
@@ -418,7 +419,7 @@ public class PostActivity extends AppCompatActivity {
         criteria.setCostAllowed(false);
 
         subscription.add(
-                new LocationSingleBuilder(locationManager)
+                new LocationSubjectBuilder(locationManager)
                         .start(criteria)
                         .subscribe(
                                 it -> {
