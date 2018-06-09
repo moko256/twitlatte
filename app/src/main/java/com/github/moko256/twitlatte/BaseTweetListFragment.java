@@ -298,8 +298,16 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
 
     @Override
     protected void onLoadMoreList() {
+        int bottomPos = list.size() -1;
+
+        if (list.get(bottomPos) == -1L) {
+            statusIdsDatabase.deleteIds(ArrayUtils.convertToLongList(-1L));
+            list.remove(bottomPos);
+            adapter.notifyItemRemoved(bottomPos);
+        }
+
         subscription.add(
-                getResponseSingle(new Paging().maxId(list.get(list.size()-1)-1L).count(GlobalApplication.statusLimit))
+                getResponseSingle(new Paging().maxId(list.get(list.size() - 1) - 1L).count(GlobalApplication.statusLimit))
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
