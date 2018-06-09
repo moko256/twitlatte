@@ -57,6 +57,17 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
+    packagingOptions {
+        exclude '/autolink.yml'
+        exclude '/extract.yml'
+        exclude '/hit_highlighting.yml'
+        exclude '/tld_lib.yml'
+        exclude '/tlds.yml'
+        exclude '/v1.json'
+        exclude '/v2.json'
+        exclude '/validate.yml'
+    }
 }
 
 dependencies {
