@@ -16,7 +16,7 @@
 #   public *;
 #}
 
--keepattributes LineNumberTable
+-keepattributes SourceFile,LineNumberTable
 
 -dontwarn twitter4j.**
 -keep,allowoptimization class twitter4j.* { *; }
