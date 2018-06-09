@@ -118,10 +118,11 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
     }
 
     public void insertIds(int bottomPosition, List<Long> ids){
-        List<Long> n = getIds();
-        List<Long> d = n.subList(0, bottomPosition);
-
         synchronized (this) {
+            List<Long> n = getIds();
+            List<Long> d = n.subList(0, bottomPosition);
+
+
             SQLiteDatabase database = getWritableDatabase();
             database.beginTransaction();
             deleteOnlyIdsAtTransaction(d);
