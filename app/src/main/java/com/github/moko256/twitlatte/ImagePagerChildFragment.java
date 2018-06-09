@@ -27,6 +27,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Pair;
 import android.view.LayoutInflater;
@@ -54,6 +55,8 @@ import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.ui.TrackSelectionView;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.util.MimeTypes;
+
+import java.util.Objects;
 
 import kotlin.Unit;
 import twitter4j.MediaEntity;
@@ -87,7 +90,7 @@ public class ImagePagerChildFragment extends Fragment {
 
         if (getArguments() == null
                 || (mediaEntity = (MediaEntity) getArguments().getSerializable(FRAG_MEDIA_ENTITY)) == null) {
-            getActivity().finish();
+            Objects.requireNonNull(getActivity()).finish();
         }
     }
 
@@ -96,7 +99,9 @@ public class ImagePagerChildFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         FlingLayout view = (FlingLayout) inflater.inflate(R.layout.fragment_image_pager_child, container, false);
         view.setDismissListener(() -> {
-            getActivity().finish();
+            if (getActivity() != null) {
+                getActivity().finish();
+            }
             return Unit.INSTANCE;
         });
         view.setPositionChangeListener((Integer top, Integer left, Float dragRangeRate) -> {
@@ -136,9 +141,10 @@ public class ImagePagerChildFragment extends Fragment {
                         throwable -> Pair.create(0, TwitterStringUtils.convertErrorToText(throwable))
                 );
 
-                getActivity().getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(visibility -> {
+                setSystemUIVisibilityListener(visibility -> {
                     if ((visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0){
-                        ((AppCompatActivity) getActivity()).getSupportActionBar().show();
+                        showActionbar();
+
                         videoPlayView.showController();
                     }
                 });
@@ -146,7 +152,7 @@ public class ImagePagerChildFragment extends Fragment {
                 trackSelector = new DefaultTrackSelector(new DefaultBandwidthMeter());
 
                 player = ExoPlayerFactory.newSimpleInstance(
-                        new AudioAndVideoRenderer(getContext()),
+                        new AudioAndVideoRenderer(Objects.requireNonNull(getContext())),
                         trackSelector,
                         new DefaultLoadControl()
                 );
@@ -175,9 +181,10 @@ public class ImagePagerChildFragment extends Fragment {
                     }
                 });
 
-                getActivity().getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(visibility -> {
+                setSystemUIVisibilityListener(visibility -> {
                     if ((visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0){
-                        ((AppCompatActivity) getActivity()).getSupportActionBar().show();
+                        showActionbar();
+
                         videoPlayView.showController();
                     }
                 });
@@ -185,7 +192,7 @@ public class ImagePagerChildFragment extends Fragment {
                 trackSelector = new DefaultTrackSelector(new DefaultBandwidthMeter());
 
                 player = ExoPlayerFactory.newSimpleInstance(
-                        new AudioAndVideoRenderer(getContext()),
+                        new AudioAndVideoRenderer(Objects.requireNonNull(getContext())),
                         trackSelector,
                         new DefaultLoadControl()
                 );
@@ -207,9 +214,9 @@ public class ImagePagerChildFragment extends Fragment {
 
             case "photo":
             default:
-                getActivity().getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(visibility -> {
+                setSystemUIVisibilityListener(visibility -> {
                     if ((visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0){
-                        ((AppCompatActivity) getActivity()).getSupportActionBar().show();
+                        showActionbar();
                     }
                 });
                 imageView= view.findViewById(R.id.fragment_image_pager_image);
@@ -279,10 +286,12 @@ public class ImagePagerChildFragment extends Fragment {
                 }
                 return true;
             case R.id.action_download:
-                if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE_PERMISSION_STORAGE);
-                } else {
-                    contentDownload();
+                if (getActivity() != null) {
+                    if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                        ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE_PERMISSION_STORAGE);
+                    } else {
+                        contentDownload();
+                    }
                 }
                 return true;
             default:
@@ -310,17 +319,22 @@ public class ImagePagerChildFragment extends Fragment {
                 path = TwitterStringUtils.convertOriginalImageUrl(mediaEntity.getMediaURLHttps());
                 break;
         }
-        DownloadManager manager=(DownloadManager)getActivity().getSystemService(DOWNLOAD_SERVICE);
-        Uri uri = Uri.parse(path);
-        DownloadManager.Request request = new DownloadManager.Request(uri);
-        String lastPathSegment = uri.getLastPathSegment();
-        request.setDestinationInExternalPublicDir(
-                Environment.DIRECTORY_DOWNLOADS,
-                "/" + getString(R.string.app_name) + "/" + lastPathSegment
-        );
-        request.setTitle(lastPathSegment);
-        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-        manager.enqueue(request);
+
+        DownloadManager manager;
+
+        if (getActivity() != null &&
+                (manager = (DownloadManager)getActivity().getSystemService(DOWNLOAD_SERVICE)) != null){
+            Uri uri = Uri.parse(path);
+            DownloadManager.Request request = new DownloadManager.Request(uri);
+            String lastPathSegment = uri.getLastPathSegment();
+            request.setDestinationInExternalPublicDir(
+                    Environment.DIRECTORY_DOWNLOADS,
+                    "/" + getString(R.string.app_name) + "/" + lastPathSegment
+            );
+            request.setTitle(lastPathSegment);
+            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+            manager.enqueue(request);
+        }
     }
 
     private OkHttpDataSourceFactory createOkHttpDataSourceFactory(){
@@ -351,25 +365,43 @@ public class ImagePagerChildFragment extends Fragment {
         imageView = null;
     }
 
+    private void showActionbar() {
+        ActionBar actionBar;
+        if (getActivity() != null && (actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar()) != null) {
+            actionBar.show();
+        }
+    }
+
+    private void setSystemUIVisibilityListener(View.OnSystemUiVisibilityChangeListener l){
+        if (getActivity() != null) {
+            getActivity().getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(l);
+        }
+    }
+
     private void hideSystemUI() {
-        getActivity().getWindow().getDecorView().setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_FULLSCREEN
-                        | View.SYSTEM_UI_FLAG_IMMERSIVE);
+        if (getActivity() != null) {
+            getActivity().getWindow().getDecorView().setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_IMMERSIVE);
+        }
     }
 
     private void showSystemUI() {
-        getActivity().getWindow().getDecorView().setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+        if (getActivity() != null) {
+            getActivity().getWindow().getDecorView().setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+        }
     }
 
     private boolean isShowingSystemUI() {
-        return (getActivity().getWindow().getDecorView().getSystemUiVisibility() & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0;
+        return getActivity() != null &&
+                (getActivity().getWindow().getDecorView().getSystemUiVisibility() & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0;
     }
 
     public static ImagePagerChildFragment getInstance(MediaEntity entity){
