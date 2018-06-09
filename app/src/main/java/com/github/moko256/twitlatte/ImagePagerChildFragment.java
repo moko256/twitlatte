@@ -40,9 +40,9 @@ import android.widget.Toast;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.github.chrisbanes.photoview.PhotoView;
 import com.github.chuross.flinglayout.FlingLayout;
+import com.github.moko256.twitlatte.exoplayer.AudioAndVideoRenderer;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
 import com.google.android.exoplayer2.DefaultLoadControl;
-import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSourceFactory;
@@ -146,7 +146,7 @@ public class ImagePagerChildFragment extends Fragment {
                 trackSelector = new DefaultTrackSelector(new DefaultBandwidthMeter());
 
                 player = ExoPlayerFactory.newSimpleInstance(
-                        new DefaultRenderersFactory(getContext()),
+                        new AudioAndVideoRenderer(getContext()),
                         trackSelector,
                         new DefaultLoadControl()
                 );
@@ -154,14 +154,9 @@ public class ImagePagerChildFragment extends Fragment {
                     player.seekTo(savedInstanceState.getLong("video_time", 0));
                 }
                 videoPlayView.setPlayer(player);
-                OkHttpDataSourceFactory okHttpDataSourceFactory = new OkHttpDataSourceFactory(
-                        GlobalApplication.getOkHttpClient(),
-                        null,
-                        null
-                );
                 player.prepare((isHls?
-                                new HlsMediaSource.Factory(okHttpDataSourceFactory):
-                                new ExtractorMediaSource.Factory(okHttpDataSourceFactory)
+                                new HlsMediaSource.Factory(createOkHttpDataSourceFactory()):
+                                new ExtractorMediaSource.Factory(createOkHttpDataSourceFactory())
                         ).createMediaSource(Uri.parse(videoPath))
                 );
                 player.setPlayWhenReady(true);
@@ -190,7 +185,7 @@ public class ImagePagerChildFragment extends Fragment {
                 trackSelector = new DefaultTrackSelector(new DefaultBandwidthMeter());
 
                 player = ExoPlayerFactory.newSimpleInstance(
-                        new DefaultRenderersFactory(getContext()),
+                        new AudioAndVideoRenderer(getContext()),
                         trackSelector,
                         new DefaultLoadControl()
                 );
@@ -200,15 +195,10 @@ public class ImagePagerChildFragment extends Fragment {
                 videoPlayView.setPlayer(player);
                 player.prepare(
                         new LoopingMediaSource(
-                                new ExtractorMediaSource.Factory(
-                                        new OkHttpDataSourceFactory(
-                                                GlobalApplication.getOkHttpClient(),
-                                                null,
-                                                null
+                                new ExtractorMediaSource.Factory(createOkHttpDataSourceFactory())
+                                        .createMediaSource(
+                                                Uri.parse(mediaEntity.getVideoVariants()[0].getUrl())
                                         )
-                                ).createMediaSource(
-                                        Uri.parse(mediaEntity.getVideoVariants()[0].getUrl())
-                                )
                         )
                 );
                 player.setPlayWhenReady(true);
@@ -331,6 +321,14 @@ public class ImagePagerChildFragment extends Fragment {
         request.setTitle(lastPathSegment);
         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
         manager.enqueue(request);
+    }
+
+    private OkHttpDataSourceFactory createOkHttpDataSourceFactory(){
+        return new OkHttpDataSourceFactory(
+                GlobalApplication.getOkHttpClient(),
+                null,
+                null
+        );
     }
 
     @Override
