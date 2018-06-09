@@ -153,6 +153,10 @@ public class TwitterStringUtils {
 
         String tweet = item.getText();
 
+        if (tweet == null) {
+            return;
+        }
+
         if (GlobalApplication.clientType == Type.MASTODON){
             Spanned html = Html.fromHtml(tweet);
             int length = html.length();
