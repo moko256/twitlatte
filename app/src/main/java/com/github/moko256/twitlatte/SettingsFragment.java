@@ -180,7 +180,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             PreferenceScreen license = getPreferenceScreen();
             for (int i = 0, length = license.getPreferenceCount(); i < length; i++) {
                 license.getPreference(i).setOnPreferenceClickListener(preference -> {
-                    getContext().startActivity(
+                    startActivity(
                             new Intent(getContext(), LicensesActivity.class)
                                     .putExtra("title", preference.getTitle())
                                     .putExtra("library_name", preference.getKey().substring(12)) // "license_lib_".length
