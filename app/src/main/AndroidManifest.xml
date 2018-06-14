@@ -122,18 +122,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data android:scheme="twitlatte" />
-            </intent-filter>
-
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data android:scheme="https" />
-                <data android:host="moko256.github.io" />
-                <data android:pathPattern="/twitlatte.*" />
+                <data android:scheme="@string/app_name" />
             </intent-filter>
         </activity>
         <activity

@@ -65,15 +65,11 @@ public class OAuthActivity extends AppCompatActivity {
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         Uri uri = intent.getData();
-        if (!requirePin && uri != null
-                && (
-                        (uri.getScheme().equals("twitlatte")
-                                && uri.getHost().equals("OAuthActivity")
-                        ) || (uri.getScheme().equals("https")
-                                && uri.getHost().equals("moko256.github.io")
-                                && uri.getLastPathSegment().equals("twitlatte")
-                        )
-        )) {
+        if (!requirePin
+                && uri != null
+                && uri.getScheme().equals(getString(R.string.app_name))
+                && uri.getHost().equals("OAuthActivity")
+        ) {
 
             String string = uri.getQueryParameter("oauth_verifier");
             if (string != null) {
@@ -135,7 +131,7 @@ public class OAuthActivity extends AppCompatActivity {
                             "twitter.com",
                             BuildConfig.CONSUMER_KEY,
                             BuildConfig.CONSUMER_SECRET,
-                            "https://moko256.github.io/twitlatte/"
+                            getString(R.string.app_name) + "://OAuthActivity"
                     );
         }
         authSingle
@@ -177,7 +173,7 @@ public class OAuthActivity extends AppCompatActivity {
                                                 editText.getText().toString(),
                                                 "",
                                                 "",
-                                                "twitlatte://OAuthActivity"
+                                                getString(R.string.app_name) + "://OAuthActivity"
                                         );
                             }
                             authSingle
