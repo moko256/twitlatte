@@ -285,7 +285,7 @@ public class TwitterStringUtils {
                 spannableStringBuilder.setSpan(new ClickableSpan() {
                     @Override
                     public void onClick(View view) {
-                        context.startActivity(SearchResultActivity.getIntent(context, symbolEntity.getText()));
+                        context.startActivity(SearchResultActivity.getIntent(context, "$" + symbolEntity.getText()));
                     }
                 }, tweet.offsetByCodePoints(0,symbolEntity.getStart()), tweet.offsetByCodePoints(0,symbolEntity.getEnd()), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
             }
