@@ -212,14 +212,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                 clearAndPrepareFragment();
             }
         };
-        adapter.onAddButtonClickListener = v -> {
-            PreferenceManager.getDefaultSharedPreferences(this)
-                    .edit()
-                    .putString("AccountKey", "-1")
-                    .apply();
-            GlobalApplication.twitter = null;
-            startActivity(new Intent(this, OAuthActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
-        };
+        adapter.onAddButtonClickListener = v -> startActivity(new Intent(this, OAuthActivity.class));
         adapter.onRemoveButtonClickListener = v -> new AlertDialog.Builder(this)
                 .setMessage(R.string.confirm_logout)
                 .setCancelable(true)
@@ -246,7 +239,15 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                                 updateDrawerImage();
                                 clearAndPrepareFragment();
                             } else {
-                                adapter.onAddButtonClickListener.onClick(v);
+                                GlobalApplication.twitter = null;
+                                defaultSharedPreferences
+                                        .edit()
+                                        .putString("AccountKey", "-1")
+                                        .apply();
+                                startActivity(
+                                        new Intent(this, OAuthActivity.class)
+                                                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
+                                );
                             }
                         }
                 )

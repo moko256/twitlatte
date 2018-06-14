@@ -79,10 +79,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             nowAccountList.setOnPreferenceChangeListener(
                     (preference, newValue) -> {
                         if (newValue.equals("-1")){
-                            GlobalApplication.twitter = null;
-                            startActivity(
-                                    new Intent(getContext(),OAuthActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
-                            );
+                            startActivity(new Intent(getContext(),OAuthActivity.class));
+                            return false;
                         } else {
                             AccessToken accessToken = GlobalApplication.accountsModel.get((String) newValue);
 
@@ -90,8 +88,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                             startActivity(
                                     new Intent(getContext(),MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
                             );
+                            return true;
                         }
-                        return true;
                     }
             );
 
@@ -119,13 +117,14 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                                                 new Intent(getContext(), MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
                                         );
                                     } else {
+                                        GlobalApplication.twitter = null;
                                         defaultSharedPreferences
                                                 .edit()
                                                 .putString("AccountKey", "-1")
                                                 .apply();
-                                        GlobalApplication.twitter = null;
                                         startActivity(
                                                 new Intent(getContext(), OAuthActivity.class)
+                                                        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
                                         );
                                     }
                                 }
