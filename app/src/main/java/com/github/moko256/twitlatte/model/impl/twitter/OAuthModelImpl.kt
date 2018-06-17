@@ -54,7 +54,7 @@ class OAuthModelImpl : OAuthModel {
         return Single.create {
             try {
                 req = oauth.getOAuthRequestToken("oob")
-                it.onSuccess(req?.authenticationURL)
+                it.onSuccess(req?.authorizationURL)
             } catch (e: TwitterException) {
                 it.onError(e)
             }
