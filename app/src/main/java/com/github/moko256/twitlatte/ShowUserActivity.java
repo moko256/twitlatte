@@ -38,11 +38,13 @@ import com.github.moko256.twitlatte.intent.AppCustomTabsKt;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
 import com.github.moko256.twitlatte.widget.FragmentPagerAdapter;
 
-import rx.Completable;
-import rx.Single;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
-import rx.subscriptions.CompositeSubscription;
+import java.util.Objects;
+
+import io.reactivex.Completable;
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.schedulers.Schedulers;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.User;
@@ -54,7 +56,7 @@ import twitter4j.User;
  */
 public class ShowUserActivity extends AppCompatActivity implements BaseListFragment.GetSnackBar, BaseTweetListFragment.GetRecyclerViewPool, BaseUsersFragment.GetRecyclerViewPool {
 
-    CompositeSubscription subscription;
+    CompositeDisposable subscription;
 
     String userScreenName;
     long userId;
@@ -73,11 +75,11 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_user);
 
-        subscription = new CompositeSubscription();
+        subscription = new CompositeDisposable();
 
         setSupportActionBar(findViewById(R.id.toolbar_show_user));
 
-        actionBar=getSupportActionBar();
+        actionBar = Objects.requireNonNull(getSupportActionBar());
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeAsUpIndicator(R.drawable.ic_back_white_24dp);
 
@@ -96,7 +98,7 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-                Fragment fragment = ((FragmentPagerAdapter) viewPager.getAdapter()).getFragment(tab.getPosition());
+                Fragment fragment = Objects.requireNonNull((FragmentPagerAdapter) viewPager.getAdapter()).getFragment(tab.getPosition());
                 if (fragment instanceof MovableTopInterface){
                     ((MovableTopInterface) fragment).moveToTop();
                 }
@@ -143,7 +145,7 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
     protected void onDestroy() {
         super.onDestroy();
 
-        subscription.unsubscribe();
+        subscription.dispose();
         subscription = null;
 
         tabLayout=null;
@@ -255,24 +257,26 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
     }
 
     private void runAsWorkerThread(ThrowableFunc func, @StringRes int didAction){
-        Completable.create(
-                subscriber -> {
-                    try{
-                        func.call();
-                        subscriber.onCompleted();
-                    } catch (Throwable throwable) {
-                        subscriber.onError(throwable);
-                    }
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        () -> Toast.makeText(this, didAction, Toast.LENGTH_SHORT).show(),
-                        throwable -> {
-                            throwable.printStackTrace();
-                            Toast.makeText(this, R.string.error_occurred, Toast.LENGTH_SHORT).show();
-                        }
-                );
+        subscription.add(
+                Completable.create(
+                        subscriber -> {
+                            try{
+                                func.call();
+                                subscriber.onComplete();
+                            } catch (Throwable throwable) {
+                                subscriber.onError(throwable);
+                            }
+                        })
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                                () -> Toast.makeText(this, didAction, Toast.LENGTH_SHORT).show(),
+                                throwable -> {
+                                    throwable.printStackTrace();
+                                    Toast.makeText(this, R.string.error_occurred, Toast.LENGTH_SHORT).show();
+                                }
+                        )
+        );
 
     }
 

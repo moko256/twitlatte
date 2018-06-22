@@ -20,7 +20,7 @@ import android.net.Uri;
 
 import java.util.List;
 
-import rx.Single;
+import io.reactivex.Single;
 import twitter4j.GeoLocation;
 import twitter4j.Status;
 

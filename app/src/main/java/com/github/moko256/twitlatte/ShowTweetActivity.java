@@ -41,10 +41,10 @@ import com.github.moko256.twitlatte.text.TwitterStringUtils;
 
 import java.text.DateFormat;
 
-import rx.Single;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
-import rx.subscriptions.CompositeSubscription;
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.schedulers.Schedulers;
 import twitter4j.Status;
 import twitter4j.TwitterException;
 import twitter4j.UserMentionEntity;
@@ -60,7 +60,7 @@ import static android.view.View.VISIBLE;
  */
 public class ShowTweetActivity extends AppCompatActivity {
 
-    CompositeSubscription subscriptions;
+    CompositeDisposable subscriptions;
     long statusId;
 
     StatusView statusView;
@@ -70,7 +70,7 @@ public class ShowTweetActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_tweet);
 
-        subscriptions=new CompositeSubscription();
+        subscriptions=new CompositeDisposable();
 
         ActionBar actionBar=getSupportActionBar();
         if (actionBar!=null) {
@@ -135,7 +135,7 @@ public class ShowTweetActivity extends AppCompatActivity {
         if (statusView != null){
             statusView.setStatus(null);
         }
-        subscriptions.unsubscribe();
+        subscriptions.dispose();
         subscriptions=null;
     }
 

@@ -59,9 +59,9 @@ import com.github.moko256.twitlatte.widget.ImageKeyboardEditText;
 import java.util.ArrayList;
 import java.util.Objects;
 
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
-import rx.subscriptions.CompositeSubscription;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.schedulers.Schedulers;
 import twitter4j.GeoLocation;
 
 /**
@@ -95,7 +95,7 @@ public class PostActivity extends AppCompatActivity {
     CheckBox addLocation;
     TextView locationText;
 
-    CompositeSubscription subscription;
+    CompositeDisposable subscription;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -103,7 +103,7 @@ public class PostActivity extends AppCompatActivity {
         setContentView(R.layout.activity_post);
 
         model = PostTweetModelCreator.getInstance(GlobalApplication.twitter, getContentResolver());
-        subscription = new CompositeSubscription();
+        subscription = new CompositeDisposable();
 
         rootViewGroup= findViewById(R.id.activity_tweet_send_layout_root);
 
@@ -153,17 +153,19 @@ public class PostActivity extends AppCompatActivity {
         editText.setOnKeyListener((v, keyCode, event) -> {
             if (!isPosting && event.getAction() == KeyEvent.ACTION_DOWN && event.isCtrlPressed() && keyCode == KeyEvent.KEYCODE_ENTER){
                 isPosting = true;
-                model.postTweet()
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(
-                                it -> PostActivity.this.finish(),
-                                e->{
-                                    e.printStackTrace();
-                                    isPosting = false;
-                                    Snackbar.make(rootViewGroup, TwitterStringUtils.convertErrorToText(e), Snackbar.LENGTH_INDEFINITE).show();
-                                }
-                        );
+                subscription.add(
+                        model.postTweet()
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(
+                                        it -> PostActivity.this.finish(),
+                                        e->{
+                                            e.printStackTrace();
+                                            isPosting = false;
+                                            Snackbar.make(rootViewGroup, TwitterStringUtils.convertErrorToText(e), Snackbar.LENGTH_INDEFINITE).show();
+                                        }
+                                )
+                );
                 return true;
             }
             return false;
@@ -279,18 +281,20 @@ public class PostActivity extends AppCompatActivity {
         if(!isPosting && item.getItemId() == R.id.action_send){
             isPosting = true;
             item.setEnabled(false);
-            model.postTweet()
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(
-                            it -> this.finish(),
-                            e->{
-                                e.printStackTrace();
-                                item.setEnabled(true);
-                                isPosting = false;
-                                Snackbar.make(rootViewGroup, TwitterStringUtils.convertErrorToText(e), Snackbar.LENGTH_INDEFINITE).show();
-                            }
-                    );
+            subscription.add(
+                    model.postTweet()
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(
+                                    it -> this.finish(),
+                                    e->{
+                                        e.printStackTrace();
+                                        item.setEnabled(true);
+                                        isPosting = false;
+                                        Snackbar.make(rootViewGroup, TwitterStringUtils.convertErrorToText(e), Snackbar.LENGTH_INDEFINITE).show();
+                                    }
+                            )
+            );
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -381,7 +385,7 @@ public class PostActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
 
-        subscription.unsubscribe();
+        subscription.dispose();
         subscription = null;
         locationText = null;
         addLocation = null;

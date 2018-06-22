@@ -30,11 +30,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import rx.Observable;
-import rx.Single;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
-import rx.subscriptions.CompositeSubscription;
+import io.reactivex.Observable;
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.schedulers.Schedulers;
 import twitter4j.PagableResponseList;
 import twitter4j.TwitterException;
 import twitter4j.User;
@@ -50,12 +50,12 @@ public abstract class BaseUsersFragment extends BaseListFragment {
     List<Long> list;
     long next_cursor;
 
-    CompositeSubscription subscription;
+    CompositeDisposable subscription;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         list=new ArrayList<>();
-        subscription = new CompositeSubscription();
+        subscription = new CompositeDisposable();
         super.onCreate(savedInstanceState);
     }
 
@@ -108,7 +108,7 @@ public abstract class BaseUsersFragment extends BaseListFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        subscription.unsubscribe();
+        subscription.dispose();
         adapter=null;
     }
 
@@ -135,9 +135,9 @@ public abstract class BaseUsersFragment extends BaseListFragment {
 
                                     list.addAll(
                                             Observable
-                                                    .from(result)
+                                                    .fromIterable(result)
                                                     .map(User::getId)
-                                                    .toList().toSingle().toBlocking().value()
+                                                    .toList().blockingGet()
                                     );
                                     adapter.notifyDataSetChanged();
                                 },
@@ -167,9 +167,9 @@ public abstract class BaseUsersFragment extends BaseListFragment {
                                         int l = list.size();
                                         list.addAll(
                                                 Observable
-                                                        .from(result)
+                                                        .fromIterable(result)
                                                         .map(User::getId)
-                                                        .toList().toSingle().toBlocking().value()
+                                                        .toList().blockingGet()
                                         );
                                         adapter.notifyItemRangeInserted(l, size);
                                     }

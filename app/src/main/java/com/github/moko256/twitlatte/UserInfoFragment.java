@@ -38,11 +38,12 @@ import com.github.moko256.twitlatte.intent.AppCustomTabsKt;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
 
 import java.text.DateFormat;
+import java.util.Objects;
 
-import rx.Single;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
-import rx.subscriptions.CompositeSubscription;
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.schedulers.Schedulers;
 import twitter4j.TwitterException;
 import twitter4j.User;
 
@@ -54,7 +55,7 @@ import twitter4j.User;
 
 public class UserInfoFragment extends Fragment implements ToolbarTitleInterface {
 
-    CompositeSubscription subscription;
+    CompositeDisposable subscription;
 
     GlideRequests glideRequests;
 
@@ -86,8 +87,8 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        subscription = new CompositeSubscription();
-        userId = getArguments().getLong("userId");
+        subscription = new CompositeDisposable();
+        userId = Objects.requireNonNull(getArguments()).getLong("userId");
 
         User cachedUser = GlobalApplication.userCache.get(userId);
         if (cachedUser==null){
@@ -148,7 +149,7 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        subscription.unsubscribe();
+        subscription.dispose();
         subscription = null;
     }
 
@@ -183,7 +184,7 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
                 user.isVerified()
         );
         userIdText.setText(TwitterStringUtils.plusAtMark(user.getScreenName()));
-        getActivity().setTitle(user.getName());
+        requireActivity().setTitle(user.getName());
         userBioText.setText(TwitterStringUtils.getProfileLinkedSequence(getContext(), user));
 
         if (!TextUtils.isEmpty(user.getLocation())){
@@ -200,7 +201,7 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
             builder.setSpan(new ClickableSpan() {
                 @Override
                 public void onClick(View widget) {
-                    AppCustomTabsKt.launchChromeCustomTabs(getContext(), url);
+                    AppCustomTabsKt.launchChromeCustomTabs(requireContext(), url);
                 }
             }, start, start + url.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             userUrl.setText(builder);

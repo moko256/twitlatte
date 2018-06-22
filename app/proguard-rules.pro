@@ -29,7 +29,6 @@
 -dontwarn **$$Lambda$*
 -dontwarn okhttp3.**
 -dontwarn okio.**
--dontwarn rx.internal.util.unsafe.*
 
 
 # Proguard configuration for Jackson 2.x (fasterxml package instead of codehaus package)
@@ -43,27 +42,6 @@
 -keepnames class com.fasterxml.jackson.** { *; }
 -dontwarn com.fasterxml.jackson.databind.**
 
-
--keep,allowoptimization class rx.schedulers.Schedulers {
-    public static <methods>;
-}
--keep,allowoptimization class rx.schedulers.ImmediateScheduler {
-    public <methods>;
-}
--keep,allowoptimization class rx.schedulers.TestScheduler {
-    public <methods>;
-}
--keep,allowoptimization class rx.schedulers.Schedulers {
-    public static ** test();
-}
--keepclassmembers class rx.internal.util.unsafe.*ArrayQueue*Field* {
-    long producerIndex;
-    long consumerIndex;
-}
--keepclassmembers class rx.internal.util.unsafe.BaseLinkedQueueProducerNodeRef {
-    long producerNode;
-    long consumerNode;
-}
 
 ##---------------Begin: proguard configuration for Gson  ----------
 # Gson uses generic type information stored in a class file when working with fields. Proguard

@@ -35,10 +35,10 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.Single;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
-import rx.Single;
 import twitter4j.GeoLocation;
 import twitter4j.Status;
 

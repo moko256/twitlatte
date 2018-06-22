@@ -37,9 +37,10 @@ import com.github.moko256.twitlatte.entity.AccessToken;
 import com.github.moko256.twitlatte.model.base.OAuthModel;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
 
-import rx.Single;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by moko256 on 2016/04/29.
@@ -53,12 +54,21 @@ public class OAuthActivity extends AppCompatActivity {
     private AlertDialog pinDialog;
     public CheckBox useAuthCode;
 
+    private CompositeDisposable compositeDisposable;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_oauth);
 
         useAuthCode = findViewById(R.id.use_auth_code);
+        compositeDisposable = new CompositeDisposable();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        compositeDisposable.dispose();
     }
 
     @Override
@@ -88,13 +98,15 @@ public class OAuthActivity extends AppCompatActivity {
     }
 
     private void initToken(String verifier){
-        model.initToken(verifier)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        this::storeAccessToken,
-                        this::onError
-                );
+        compositeDisposable.add(
+                model.initToken(verifier)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                                this::storeAccessToken,
+                                this::onError
+                        )
+        );
     }
 
     private void storeAccessToken(AccessToken accessToken){
@@ -134,16 +146,18 @@ public class OAuthActivity extends AppCompatActivity {
                             getString(R.string.app_name) + "://OAuthActivity"
                     );
         }
-        authSingle
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        this::startBrowser,
-                        throwable -> {
-                            closePinDialog();
-                            onError(throwable);
-                        }
-                        );
+        compositeDisposable.add(
+                authSingle
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                                this::startBrowser,
+                                throwable -> {
+                                    closePinDialog();
+                                    onError(throwable);
+                                }
+                        )
+        );
     }
 
     public void onStartMastodonAuthClick(View view) {

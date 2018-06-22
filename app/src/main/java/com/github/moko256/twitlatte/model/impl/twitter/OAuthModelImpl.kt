@@ -20,7 +20,7 @@ import com.github.moko256.twitlatte.database.TokenSQLiteOpenHelper
 import com.github.moko256.twitlatte.entity.AccessToken
 import com.github.moko256.twitlatte.entity.Type
 import com.github.moko256.twitlatte.model.base.OAuthModel
-import rx.Single
+import io.reactivex.Single
 import twitter4j.TwitterException
 import twitter4j.auth.OAuthAuthorization
 import twitter4j.auth.RequestToken
@@ -41,7 +41,7 @@ class OAuthModelImpl : OAuthModel {
         return Single.create {
             try {
                 req = oauth.getOAuthRequestToken(callbackUrl)
-                it.onSuccess(req?.authenticationURL)
+                it.onSuccess(req?.authenticationURL!!)
             } catch (e: Throwable) {
                 it.onError(e)
             }
@@ -54,7 +54,7 @@ class OAuthModelImpl : OAuthModel {
         return Single.create {
             try {
                 req = oauth.getOAuthRequestToken("oob")
-                it.onSuccess(req?.authorizationURL)
+                it.onSuccess(req?.authorizationURL!!)
             } catch (e: TwitterException) {
                 it.onError(e)
             }

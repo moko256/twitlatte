@@ -56,11 +56,12 @@ import com.github.moko256.twitlatte.widget.FragmentPagerAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
-import rx.Single;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
-import rx.subscriptions.CompositeSubscription;
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.schedulers.Schedulers;
 import twitter4j.TwitterException;
 import twitter4j.User;
 
@@ -71,7 +72,7 @@ import twitter4j.User;
  */
 public class MainActivity extends AppCompatActivity implements BaseListFragment.GetSnackBar, BaseTweetListFragment.GetRecyclerViewPool, BaseUsersFragment.GetRecyclerViewPool {
 
-    CompositeSubscription subscription;
+    CompositeDisposable subscription;
 
     Toolbar toolbar;
 
@@ -100,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        subscription = new CompositeSubscription();
+        subscription = new CompositeDisposable();
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -304,7 +305,12 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-                Fragment fragment = ((FragmentPagerAdapter) ((UseTabsInterface) getMainFragment()).getTabsViewPager().getAdapter()).getFragment(tab.getPosition());
+                Fragment fragment = Objects.requireNonNull(
+                        (FragmentPagerAdapter)
+                                ((UseTabsInterface) getMainFragment())
+                                        .getTabsViewPager()
+                                        .getAdapter()
+                ).getFragment(tab.getPosition());
                 if (fragment instanceof MovableTopInterface){
                     ((MovableTopInterface) fragment).moveToTop();
                 }
@@ -325,7 +331,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        subscription.unsubscribe();
+        subscription.dispose();
         subscription = null;
     }
 

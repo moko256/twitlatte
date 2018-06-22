@@ -37,10 +37,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
-import rx.Single;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
-import rx.subscriptions.CompositeSubscription;
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.schedulers.Schedulers;
 import twitter4j.GeoLocation;
 import twitter4j.Trend;
 import twitter4j.Trends;
@@ -56,14 +56,14 @@ public class TrendsFragment extends BaseListFragment {
     TrendsAdapter adapter;
     List<Trend> list;
 
-    CompositeSubscription subscription;
+    CompositeDisposable subscription;
 
     CachedTrendsSQLiteOpenHelper helper;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         list=new ArrayList<>();
-        subscription = new CompositeSubscription();
+        subscription = new CompositeDisposable();
         helper = new CachedTrendsSQLiteOpenHelper(getContext(), GlobalApplication.accessToken);
         List<Trend> trends = helper.getTrends();
         if (trends.size() > 0){
@@ -105,7 +105,7 @@ public class TrendsFragment extends BaseListFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        subscription.unsubscribe();
+        subscription.dispose();
         subscription = null;
         helper.close();
         helper = null;

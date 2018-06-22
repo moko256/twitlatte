@@ -17,7 +17,7 @@
 package com.github.moko256.twitlatte.model.base
 
 import com.github.moko256.twitlatte.entity.AccessToken
-import rx.Single
+import io.reactivex.Single
 
 /**
  * Created by moko256 on 2017/10/29.

@@ -21,8 +21,8 @@ import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
-import rx.Observable
-import rx.subjects.PublishSubject
+import io.reactivex.Observable
+import io.reactivex.subjects.PublishSubject
 
 /**
  * Created by moko256 on 2018/06/07.
@@ -30,9 +30,9 @@ import rx.subjects.PublishSubject
  * @author moko256
  */
 class LocationSubjectBuilder(private val locationManager: LocationManager?): LocationListener {
-    val subject = PublishSubject.create<Location>()!!
+    val subject = PublishSubject.create<Location>()
 
-    fun start(criteria: Criteria): Observable<Location>{
+    fun start(criteria: Criteria): Observable<Location> {
         if (locationManager != null) {
             try {
                 locationManager.requestSingleUpdate(
@@ -42,7 +42,7 @@ class LocationSubjectBuilder(private val locationManager: LocationManager?): Loc
                 subject.onError(e)
             }
 
-            subject.doOnUnsubscribe {
+            subject.doOnDispose {
                 locationManager.removeUpdates(this)
             }
         } else {

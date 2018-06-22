@@ -27,7 +27,7 @@ import com.sys1yagi.mastodon4j.api.entity.auth.AppRegistration
 import com.sys1yagi.mastodon4j.api.exception.Mastodon4jRequestException
 import com.sys1yagi.mastodon4j.api.method.Accounts
 import com.sys1yagi.mastodon4j.api.method.Apps
-import rx.Single
+import io.reactivex.Single
 import twitter4j.conf.ConfigurationContext
 
 /**

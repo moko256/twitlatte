@@ -39,12 +39,13 @@ import com.github.moko256.twitlatte.text.TwitterStringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
-import rx.Observable;
-import rx.Single;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
-import rx.subscriptions.CompositeSubscription;
+import io.reactivex.Observable;
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.schedulers.Schedulers;
 import twitter4j.Paging;
 import twitter4j.ResponseList;
 import twitter4j.Status;
@@ -60,7 +61,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
     StatusesAdapter adapter;
     List<Long> list;
 
-    CompositeSubscription subscription;
+    CompositeDisposable subscription;
 
     CachedIdListSQLiteOpenHelper statusIdsDatabase;
 
@@ -69,7 +70,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         list=new ArrayList<>();
-        subscription = new CompositeSubscription();
+        subscription = new CompositeDisposable();
         statusIdsDatabase = new CachedIdListSQLiteOpenHelper(getContext(), GlobalApplication.accessToken, getCachedIdsDatabaseName());
         List<Long> c = statusIdsDatabase.getIds();
         if (c.size() > 0) {
@@ -126,9 +127,9 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                                             int offset = (startView == null) ? 0 : (startView.getTop() - getRecyclerView().getPaddingTop());
 
                                             List<Long> ids = Observable
-                                                    .from(result)
+                                                    .fromIterable(result)
                                                     .map(Status::getId)
-                                                    .toList().toSingle().toBlocking().value();
+                                                    .toList().blockingGet();
                                             boolean noGap = ids.get(ids.size() - 1).equals(list.get(position + 1));
                                             if (noGap) {
                                                 ids.remove(ids.size() - 1);
@@ -188,7 +189,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
             GlobalApplication.statusCache.delete(subList);
         }
         super.onDestroyView();
-        subscription.unsubscribe();
+        subscription.dispose();
         adapter=null;
     }
 
@@ -222,9 +223,9 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                         .subscribe(
                                 result-> {
                                     List<Long> ids = Observable
-                                            .from(result)
+                                            .fromIterable(result)
                                             .map(Status::getId)
-                                            .toList().toSingle().toBlocking().value();
+                                            .toList().blockingGet();
                                     list.addAll(ids);
                                     statusIdsDatabase.addIds(ids);
                                     adapter.notifyDataSetChanged();
@@ -262,9 +263,9 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                                 result -> {
                                     if (result.size() > 0) {
                                         List<Long> ids = Observable
-                                                .from(result)
+                                                .fromIterable(result)
                                                 .map(Status::getId)
-                                                .toList().toSingle().toBlocking().value();
+                                                .toList().blockingGet();
                                         if (ids.get(ids.size() - 1).equals(list.get(0))) {
                                             ids.remove(ids.size() - 1);
                                         } else {
@@ -280,7 +281,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                                             t.setGravity(
                                                     Gravity.TOP|Gravity.CENTER,
                                                     0,
-                                                    getContext().getTheme().resolveAttribute(R.attr.actionBarSize, value, true)?
+                                                    requireContext().getTheme().resolveAttribute(R.attr.actionBarSize, value, true)?
                                                             TypedValue.complexToDimensionPixelOffset(value.data, getResources().getDisplayMetrics()):
                                                             0
                                             );
@@ -315,9 +316,9 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                                     int size = result.size();
                                     if (size > 0) {
                                         List<Long> ids = Observable
-                                                .from(result)
+                                                .fromIterable(result)
                                                 .map(Status::getId)
-                                                .toList().toSingle().toBlocking().value();
+                                                .toList().blockingGet();
                                         list.addAll(ids);
                                         statusIdsDatabase.insertIds(list.size() - size, ids);
                                         adapter.notifyItemRangeInserted(list.size() - size, size);
@@ -338,7 +339,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
 
     @Override
     protected RecyclerView.LayoutManager initializeRecyclerViewLayoutManager() {
-        WindowManager wm = (WindowManager) getActivity().getSystemService(Context.WINDOW_SERVICE);
+        WindowManager wm = (WindowManager) Objects.requireNonNull(requireActivity().getSystemService(Context.WINDOW_SERVICE));
         Display display = wm.getDefaultDisplay();
 
         Point size = new Point();
