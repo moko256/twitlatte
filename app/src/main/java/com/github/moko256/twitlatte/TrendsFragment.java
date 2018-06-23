@@ -28,7 +28,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.github.moko256.twitlatte.database.CachedTrendsSQLiteOpenHelper;
-import com.github.moko256.twitlatte.entity.Type;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
 
 import java.io.IOException;
@@ -115,15 +114,9 @@ public class TrendsFragment extends BaseListFragment {
     @Override
     protected void onInitializeList() {
         setRefreshing(true);
-        Single<Trends> single;
-        if (GlobalApplication.clientType == Type.TWITTER) {
-            single = getGeoLocationSingle()
-                    .flatMap(this::getResponseSingle);
-        } else {
-            single = getResponseSingle(null);
-        }
         disposable.add(
-                single
+                getGeoLocationSingle()
+                        .flatMap(this::getResponseSingle)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
@@ -165,10 +158,7 @@ public class TrendsFragment extends BaseListFragment {
                 subscriber->{
                     try {
                         Trends trends = GlobalApplication.twitter
-                                .getPlaceTrends(geolocation != null?
-                                        GlobalApplication.twitter.getClosestTrends(geolocation).get(0).getWoeid():
-                                        -1
-                                );
+                                .getPlaceTrends(GlobalApplication.twitter.getClosestTrends(geolocation).get(0).getWoeid());
                         helper.setTrends(Arrays.asList(trends.getTrends()));
 
                         subscriber.onSuccess(trends);
