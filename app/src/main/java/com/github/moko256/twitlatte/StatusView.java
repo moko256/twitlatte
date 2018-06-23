@@ -302,7 +302,9 @@ public class StatusView extends FrameLayout {
                 Single
                         .create(subscriber -> {
                             try {
-                                subscriber.onSuccess(GlobalApplication.twitter.createFavorite(item.getId()));
+                                Status newStatus = GlobalApplication.twitter.createFavorite(item.getId());
+                                GlobalApplication.statusCache.add(newStatus, false);
+                                subscriber.onSuccess(newStatus);
                             } catch (TwitterException e) {
                                 subscriber.tryOnError(e);
                             }
@@ -311,9 +313,12 @@ public class StatusView extends FrameLayout {
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
                                 result -> {
-                                    Status status = (Status) result;
-                                    GlobalApplication.statusCache.add(status, false);
-                                    setStatus(GlobalApplication.statusCache.get(this.status.getId()));
+                                    Status newStatus = GlobalApplication.statusCache.get(status.getId());
+
+                                    if (newStatus != null && status.getId() == newStatus.getId()) {
+                                        setStatus(newStatus);
+                                    }
+
                                     Toast.makeText(
                                             getContext(),
                                             TwitterStringUtils.getDidActionStringRes(
@@ -332,7 +337,9 @@ public class StatusView extends FrameLayout {
                 Single
                         .create(subscriber -> {
                             try {
-                                subscriber.onSuccess(GlobalApplication.twitter.destroyFavorite(item.getId()));
+                                Status newStatus = GlobalApplication.twitter.destroyFavorite(item.getId());
+                                GlobalApplication.statusCache.add(newStatus, false);
+                                subscriber.onSuccess(newStatus);
                             } catch (TwitterException e) {
                                 subscriber.tryOnError(e);
                             }
@@ -341,9 +348,12 @@ public class StatusView extends FrameLayout {
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
                                 result -> {
-                                    Status status = (Status) result;
-                                    GlobalApplication.statusCache.add(status, false);
-                                    setStatus(GlobalApplication.statusCache.get(this.status.getId()));
+                                    Status newStatus = GlobalApplication.statusCache.get(status.getId());
+
+                                    if (newStatus != null && status.getId() == newStatus.getId()) {
+                                        setStatus(newStatus);
+                                    }
+
                                     Toast.makeText(
                                             getContext(),
                                             TwitterStringUtils.getDidActionStringRes(
@@ -367,7 +377,9 @@ public class StatusView extends FrameLayout {
                 Single
                         .create(subscriber -> {
                             try {
-                                subscriber.onSuccess(GlobalApplication.twitter.retweetStatus(item.getId()));
+                                Status newStatus = GlobalApplication.twitter.retweetStatus(item.getId());
+                                GlobalApplication.statusCache.add(newStatus, false);
+                                subscriber.onSuccess(newStatus);
                             } catch (TwitterException e) {
                                 subscriber.tryOnError(e);
                             }
@@ -376,9 +388,12 @@ public class StatusView extends FrameLayout {
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
                                 result -> {
-                                    Status status = (Status) result;
-                                    GlobalApplication.statusCache.add(status, false);
-                                    setStatus(GlobalApplication.statusCache.get(this.status.getId()));
+                                    Status newStatus = GlobalApplication.statusCache.get(status.getId());
+
+                                    if (newStatus != null && status.getId() == newStatus.getId()) {
+                                        setStatus(newStatus);
+                                    }
+
                                     Toast.makeText(
                                             getContext(),
                                             TwitterStringUtils.getDidActionStringRes(
@@ -397,7 +412,9 @@ public class StatusView extends FrameLayout {
                 Single
                         .create(subscriber -> {
                             try {
-                                subscriber.onSuccess(GlobalApplication.twitter.unRetweetStatus(item.getId()));
+                                Status newStatus = GlobalApplication.twitter.unRetweetStatus(item.getId());
+                                GlobalApplication.statusCache.add(newStatus, false);
+                                subscriber.onSuccess(newStatus);
                             } catch (TwitterException e) {
                                 subscriber.tryOnError(e);
                             }
@@ -406,9 +423,12 @@ public class StatusView extends FrameLayout {
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
                                 result -> {
-                                    Status status = (Status) result;
-                                    GlobalApplication.statusCache.add(status, false);
-                                    setStatus(GlobalApplication.statusCache.get(this.status.getId()));
+                                    Status newStatus = GlobalApplication.statusCache.get(status.getId());
+
+                                    if (newStatus != null && status.getId() == newStatus.getId()) {
+                                        setStatus(newStatus);
+                                    }
+
                                     Toast.makeText(
                                             getContext(),
                                             TwitterStringUtils.getDidActionStringRes(
