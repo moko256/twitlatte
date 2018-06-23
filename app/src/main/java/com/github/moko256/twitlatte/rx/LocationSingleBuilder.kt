@@ -21,43 +21,43 @@ import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
-import io.reactivex.Observable
-import io.reactivex.subjects.PublishSubject
+import io.reactivex.Single
+import io.reactivex.SingleEmitter
 
 /**
  * Created by moko256 on 2018/06/07.
  *
  * @author moko256
  */
-class LocationSubjectBuilder(private val locationManager: LocationManager?): LocationListener {
-    val subject = PublishSubject.create<Location>()
+class LocationSingleBuilder(
+        private val locationManager: LocationManager,
+        private val criteria: Criteria
+): LocationListener {
 
-    fun start(criteria: Criteria): Observable<Location> {
-        if (locationManager != null) {
-            try {
-                locationManager.requestSingleUpdate(
-                        locationManager.getBestProvider(criteria, true), this, null
-                )
-            } catch (e: SecurityException) {
-                subject.onError(e)
-            }
+    private lateinit var emitter: SingleEmitter<Location>
 
-            subject.doOnDispose {
-                locationManager.removeUpdates(this)
-            }
-        } else {
-            subject.onError(NullPointerException("Unable to get location: got service was null"))
+    val single = Single.create<Location> {
+        try {
+            locationManager.requestSingleUpdate(
+                    locationManager.getBestProvider(criteria, true), this, null
+            )
+        } catch (e: SecurityException) {
+            it.tryOnError(e)
+            return@create
         }
 
-        return subject
-    }
+        emitter = it
+    }.doOnDispose {
+        locationManager.removeUpdates(this)
+    }!!
 
     override fun onLocationChanged(location: Location?) {
-        if (locationManager != null && location != null) {
-            locationManager.removeUpdates(this)
-            subject.onNext(location)
+        locationManager.removeUpdates(this)
+
+        if (location != null) {
+            emitter.onSuccess(location)
         } else {
-            subject.onError(NullPointerException("Unable to get location: got location was null"))
+            emitter.tryOnError(NullPointerException("Unable to get location: got location was null"))
         }
     }
 

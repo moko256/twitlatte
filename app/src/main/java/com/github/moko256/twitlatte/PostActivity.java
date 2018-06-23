@@ -52,7 +52,7 @@ import android.widget.Toast;
 import com.github.moko256.twitlatte.entity.Type;
 import com.github.moko256.twitlatte.model.base.PostTweetModel;
 import com.github.moko256.twitlatte.model.impl.PostTweetModelCreator;
-import com.github.moko256.twitlatte.rx.LocationSubjectBuilder;
+import com.github.moko256.twitlatte.rx.LocationSingleBuilder;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
 import com.github.moko256.twitlatte.widget.ImageKeyboardEditText;
 
@@ -423,8 +423,8 @@ public class PostActivity extends AppCompatActivity {
         criteria.setCostAllowed(false);
 
         subscription.add(
-                new LocationSubjectBuilder(locationManager)
-                        .start(criteria)
+                new LocationSingleBuilder(Objects.requireNonNull(locationManager), criteria)
+                        .getSingle()
                         .subscribe(
                                 it -> {
                                     model.setLocation(new GeoLocation(it.getLatitude(), it.getLongitude()));
