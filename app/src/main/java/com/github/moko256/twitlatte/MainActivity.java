@@ -464,7 +464,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                                 }
                                 subscriber.onSuccess(me);
                             } catch (TwitterException e) {
-                                subscriber.onError(e);
+                                subscriber.tryOnError(e);
                             }
                         })
                         .subscribeOn(Schedulers.io())

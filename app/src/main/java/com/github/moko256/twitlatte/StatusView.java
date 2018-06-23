@@ -304,7 +304,7 @@ public class StatusView extends FrameLayout {
                             try {
                                 subscriber.onSuccess(GlobalApplication.twitter.createFavorite(item.getId()));
                             } catch (TwitterException e) {
-                                subscriber.onError(e);
+                                subscriber.tryOnError(e);
                             }
                         })
                         .subscribeOn(Schedulers.io())
@@ -334,7 +334,7 @@ public class StatusView extends FrameLayout {
                             try {
                                 subscriber.onSuccess(GlobalApplication.twitter.destroyFavorite(item.getId()));
                             } catch (TwitterException e) {
-                                subscriber.onError(e);
+                                subscriber.tryOnError(e);
                             }
                         })
                         .subscribeOn(Schedulers.io())
@@ -369,7 +369,7 @@ public class StatusView extends FrameLayout {
                             try {
                                 subscriber.onSuccess(GlobalApplication.twitter.retweetStatus(item.getId()));
                             } catch (TwitterException e) {
-                                subscriber.onError(e);
+                                subscriber.tryOnError(e);
                             }
                         })
                         .subscribeOn(Schedulers.io())
@@ -399,7 +399,7 @@ public class StatusView extends FrameLayout {
                             try {
                                 subscriber.onSuccess(GlobalApplication.twitter.unRetweetStatus(item.getId()));
                             } catch (TwitterException e) {
-                                subscriber.onError(e);
+                                subscriber.tryOnError(e);
                             }
                         })
                         .subscribeOn(Schedulers.io())

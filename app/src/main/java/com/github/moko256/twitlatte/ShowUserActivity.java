@@ -264,7 +264,7 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
                                 func.call();
                                 subscriber.onComplete();
                             } catch (Throwable throwable) {
-                                subscriber.onError(throwable);
+                                subscriber.tryOnError(throwable);
                             }
                         })
                         .subscribeOn(Schedulers.io())
@@ -316,7 +316,7 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
                                 }
                                 subscriber.onSuccess(user);
                             } catch (TwitterException e) {
-                                subscriber.onError(e);
+                                subscriber.tryOnError(e);
                             }
                         }
                 );

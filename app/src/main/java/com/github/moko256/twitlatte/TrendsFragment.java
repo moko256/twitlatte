@@ -173,7 +173,7 @@ public class TrendsFragment extends BaseListFragment {
 
                         subscriber.onSuccess(trends);
                     } catch (TwitterException e) {
-                        subscriber.onError(e);
+                        subscriber.tryOnError(e);
                     }
                 }
         );
@@ -189,10 +189,10 @@ public class TrendsFragment extends BaseListFragment {
                         if (address != null){
                             subscriber.onSuccess(new GeoLocation(address.getLatitude(), address.getLongitude()));
                         } else {
-                            subscriber.onError(new Exception("Cannot use trends"));
+                            subscriber.tryOnError(new Exception("Cannot use trends"));
                         }
                     } catch(IOException e){
-                        subscriber.onError(e);
+                        subscriber.tryOnError(e);
                     }
                 }
         );

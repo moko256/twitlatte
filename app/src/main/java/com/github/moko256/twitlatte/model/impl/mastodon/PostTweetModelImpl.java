@@ -174,7 +174,7 @@ public class PostTweetModelImpl implements PostTweetModel {
                         com.sys1yagi.mastodon4j.api.entity.Status.Visibility.Public
                 ).execute()));
             } catch (IOException | Mastodon4jRequestException e){
-                subscriber.onError(e);
+                subscriber.tryOnError(e);
             }
         });
     }

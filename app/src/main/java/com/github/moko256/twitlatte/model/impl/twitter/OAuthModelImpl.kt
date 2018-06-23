@@ -43,7 +43,7 @@ class OAuthModelImpl : OAuthModel {
                 req = oauth.getOAuthRequestToken(callbackUrl)
                 it.onSuccess(req?.authenticationURL!!)
             } catch (e: Throwable) {
-                it.onError(e)
+                it.tryOnError(e)
             }
         }
     }
@@ -56,7 +56,7 @@ class OAuthModelImpl : OAuthModel {
                 req = oauth.getOAuthRequestToken("oob")
                 it.onSuccess(req?.authorizationURL!!)
             } catch (e: TwitterException) {
-                it.onError(e)
+                it.tryOnError(e)
             }
         }
     }
@@ -74,7 +74,7 @@ class OAuthModelImpl : OAuthModel {
                         accessToken.tokenSecret
                 ))
             } catch (e: TwitterException) {
-                it.onError(e)
+                it.tryOnError(e)
             }
         }
     }

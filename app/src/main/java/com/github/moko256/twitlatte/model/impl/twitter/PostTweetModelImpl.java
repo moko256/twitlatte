@@ -166,7 +166,7 @@ public class PostTweetModelImpl implements PostTweetModel {
                 }
                 subscriber.onSuccess(twitter.updateStatus(statusUpdate));
             } catch (FileNotFoundException | TwitterException e){
-                subscriber.onError(e);
+                subscriber.tryOnError(e);
             }
         });
     }

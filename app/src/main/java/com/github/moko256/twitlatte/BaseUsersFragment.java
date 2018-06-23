@@ -196,7 +196,7 @@ public abstract class BaseUsersFragment extends BaseListFragment {
                         GlobalApplication.userCache.addAll(pageableResponseList);
                         subscriber.onSuccess(pageableResponseList);
                     } catch (TwitterException e) {
-                        subscriber.onError(e);
+                        subscriber.tryOnError(e);
                     }
                 }
         );

@@ -63,7 +63,7 @@ class OAuthModelImpl : OAuthModel {
                                 callbackUrl
                         ))
             } catch (e: Mastodon4jRequestException) {
-                it.onError(e)
+                it.tryOnError(e)
             }
         }
     }
@@ -89,7 +89,7 @@ class OAuthModelImpl : OAuthModel {
                                 scope = Scope(Scope.Name.ALL)
                 ))
             } catch (e: Mastodon4jRequestException) {
-                it.onError(e)
+                it.tryOnError(e)
             }
         }
     }
@@ -115,7 +115,7 @@ class OAuthModelImpl : OAuthModel {
                 )
                 it.onSuccess(storeToken)
             } catch (e: Mastodon4jRequestException) {
-                it.onError(e)
+                it.tryOnError(e)
             }
 
         }

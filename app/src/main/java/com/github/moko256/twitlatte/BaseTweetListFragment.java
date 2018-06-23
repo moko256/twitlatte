@@ -375,7 +375,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                         }
                         subscriber.onSuccess(statuses);
                     } catch (TwitterException e) {
-                        subscriber.onError(e);
+                        subscriber.tryOnError(e);
                     }
                 }
         );

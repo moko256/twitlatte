@@ -192,7 +192,7 @@ public class ShowTweetActivity extends AppCompatActivity {
                         GlobalApplication.statusCache.add(status, false);
                         subscriber.onSuccess(GlobalApplication.statusCache.get(statusId));
                     } catch (TwitterException e) {
-                        subscriber.onError(e);
+                        subscriber.tryOnError(e);
                     }
                 });
     }

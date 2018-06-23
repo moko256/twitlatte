@@ -224,7 +224,7 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
                         GlobalApplication.userCache.add(user);
                         subscriber.onSuccess(user);
                     } catch (TwitterException e) {
-                        subscriber.onError(e);
+                        subscriber.tryOnError(e);
                     }
                 });
     }
