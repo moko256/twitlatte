@@ -55,7 +55,7 @@ import twitter4j.User;
 
 public class UserInfoFragment extends Fragment implements ToolbarTitleInterface {
 
-    CompositeDisposable subscription;
+    CompositeDisposable disposable;
 
     GlideRequests glideRequests;
 
@@ -87,12 +87,12 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        subscription = new CompositeDisposable();
+        disposable = new CompositeDisposable();
         userId = Objects.requireNonNull(getArguments()).getLong("userId");
 
         User cachedUser = GlobalApplication.userCache.get(userId);
         if (cachedUser==null){
-            subscription.add(
+            disposable.add(
                     updateUser()
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
@@ -113,7 +113,7 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
 
         swipeRefreshLayout = view.findViewById(R.id.show_user_swipe_refresh);
         swipeRefreshLayout.setColorSchemeResources(R.color.color_primary);
-        swipeRefreshLayout.setOnRefreshListener(() -> subscription.add(updateUser()
+        swipeRefreshLayout.setOnRefreshListener(() -> disposable.add(updateUser()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -149,8 +149,8 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        subscription.dispose();
-        subscription = null;
+        disposable.dispose();
+        disposable = null;
     }
 
     @Override

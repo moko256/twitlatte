@@ -61,7 +61,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
     StatusesAdapter adapter;
     List<Long> list;
 
-    CompositeDisposable subscription;
+    CompositeDisposable disposable;
 
     CachedIdListSQLiteOpenHelper statusIdsDatabase;
 
@@ -70,7 +70,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         list=new ArrayList<>();
-        subscription = new CompositeDisposable();
+        disposable = new CompositeDisposable();
         statusIdsDatabase = new CachedIdListSQLiteOpenHelper(getContext(), GlobalApplication.accessToken, getCachedIdsDatabaseName());
         List<Long> c = statusIdsDatabase.getIds();
         if (c.size() > 0) {
@@ -112,7 +112,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                 sinceId = list.get(position + 1);
             }
 
-            subscription.add(
+            disposable.add(
                     getResponseSingle(
                             new Paging()
                                     .maxId(list.get(position - 1) - 1L)
@@ -189,7 +189,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
             GlobalApplication.statusCache.delete(subList);
         }
         super.onDestroyView();
-        subscription.dispose();
+        disposable.dispose();
         adapter=null;
     }
 
@@ -208,14 +208,14 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
         super.onDestroy();
         statusIdsDatabase.close();
         statusIdsDatabase = null;
-        subscription = null;
+        disposable = null;
         list=null;
     }
 
     @Override
     protected void onInitializeList() {
         setRefreshing(true);
-        subscription.add(
+        disposable.add(
                 getResponseSingle(new Paging(1,20))
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
@@ -252,7 +252,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
             sinceId = list.get(0);
         }
 
-        subscription.add(
+        disposable.add(
                 getResponseSingle(
                         new Paging(sinceId).count(GlobalApplication.statusLimit),
                         list.size() >= 2 ? new long[]{list.get(0)}: new long[0])
@@ -307,7 +307,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
             adapter.notifyItemRemoved(bottomPos);
         }
 
-        subscription.add(
+        disposable.add(
                 getResponseSingle(new Paging().maxId(list.get(list.size() - 1) - 1L).count(GlobalApplication.statusLimit))
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())

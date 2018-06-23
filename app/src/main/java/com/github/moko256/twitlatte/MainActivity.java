@@ -72,7 +72,7 @@ import twitter4j.User;
  */
 public class MainActivity extends AppCompatActivity implements BaseListFragment.GetSnackBar, BaseTweetListFragment.GetRecyclerViewPool, BaseUsersFragment.GetRecyclerViewPool {
 
-    CompositeDisposable subscription;
+    CompositeDisposable disposable;
 
     Toolbar toolbar;
 
@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        subscription = new CompositeDisposable();
+        disposable = new CompositeDisposable();
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -256,7 +256,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                 .show();
         accountListView.setAdapter(adapter);
 
-        subscription.add(
+        disposable.add(
                 Single.create(
                         singleSubscriber -> {
                             AccountsModel accountsModel = GlobalApplication.accountsModel;
@@ -331,8 +331,8 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        subscription.dispose();
-        subscription = null;
+        disposable.dispose();
+        disposable = null;
     }
 
     @Override
@@ -453,7 +453,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
     }
 
     private void updateDrawerImage(){
-        subscription.add(
+        disposable.add(
                 Single.create(
                         subscriber->{
                             try {

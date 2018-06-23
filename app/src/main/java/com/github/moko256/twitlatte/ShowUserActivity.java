@@ -56,7 +56,7 @@ import twitter4j.User;
  */
 public class ShowUserActivity extends AppCompatActivity implements BaseListFragment.GetSnackBar, BaseTweetListFragment.GetRecyclerViewPool, BaseUsersFragment.GetRecyclerViewPool {
 
-    CompositeDisposable subscription;
+    CompositeDisposable disposable;
 
     String userScreenName;
     long userId;
@@ -75,7 +75,7 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_user);
 
-        subscription = new CompositeDisposable();
+        disposable = new CompositeDisposable();
 
         setSupportActionBar(findViewById(R.id.toolbar_show_user));
 
@@ -125,7 +125,7 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
         if (user != null) {
             new ShowUserFragmentsPagerAdapter(getSupportFragmentManager(),this, user.getId()).initAdapter(viewPager);
         } else {
-            subscription.add(
+            disposable.add(
                     getUserSingle()
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
@@ -145,8 +145,8 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
     protected void onDestroy() {
         super.onDestroy();
 
-        subscription.dispose();
-        subscription = null;
+        disposable.dispose();
+        disposable = null;
 
         tabLayout=null;
         viewPager=null;
@@ -257,7 +257,7 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
     }
 
     private void runAsWorkerThread(ThrowableFunc func, @StringRes int didAction){
-        subscription.add(
+        disposable.add(
                 Completable.create(
                         subscriber -> {
                             try{

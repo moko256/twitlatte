@@ -50,12 +50,12 @@ public abstract class BaseUsersFragment extends BaseListFragment {
     List<Long> list;
     long next_cursor;
 
-    CompositeDisposable subscription;
+    CompositeDisposable disposable;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         list=new ArrayList<>();
-        subscription = new CompositeDisposable();
+        disposable = new CompositeDisposable();
         super.onCreate(savedInstanceState);
     }
 
@@ -108,21 +108,21 @@ public abstract class BaseUsersFragment extends BaseListFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        subscription.dispose();
+        disposable.dispose();
         adapter=null;
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        subscription = null;
+        disposable = null;
         list=null;
     }
 
     @Override
     protected void onInitializeList() {
         setRefreshing(true);
-        subscription.add(
+        disposable.add(
                 getResponseSingle(-1)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
@@ -156,7 +156,7 @@ public abstract class BaseUsersFragment extends BaseListFragment {
 
     @Override
     protected void onLoadMoreList() {
-        subscription.add(
+        disposable.add(
                 getResponseSingle(next_cursor)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())

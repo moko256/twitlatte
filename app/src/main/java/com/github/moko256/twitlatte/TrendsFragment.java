@@ -56,14 +56,14 @@ public class TrendsFragment extends BaseListFragment {
     TrendsAdapter adapter;
     List<Trend> list;
 
-    CompositeDisposable subscription;
+    CompositeDisposable disposable;
 
     CachedTrendsSQLiteOpenHelper helper;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         list=new ArrayList<>();
-        subscription = new CompositeDisposable();
+        disposable = new CompositeDisposable();
         helper = new CachedTrendsSQLiteOpenHelper(getContext(), GlobalApplication.accessToken);
         List<Trend> trends = helper.getTrends();
         if (trends.size() > 0){
@@ -105,8 +105,8 @@ public class TrendsFragment extends BaseListFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        subscription.dispose();
-        subscription = null;
+        disposable.dispose();
+        disposable = null;
         helper.close();
         helper = null;
         list=null;
@@ -122,7 +122,7 @@ public class TrendsFragment extends BaseListFragment {
         } else {
             single = getResponseSingle(null);
         }
-        subscription.add(
+        disposable.add(
                 single
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())

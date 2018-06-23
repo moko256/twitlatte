@@ -60,7 +60,7 @@ import static android.view.View.VISIBLE;
  */
 public class ShowTweetActivity extends AppCompatActivity {
 
-    CompositeDisposable subscriptions;
+    CompositeDisposable disposables;
     long statusId;
 
     StatusView statusView;
@@ -70,7 +70,7 @@ public class ShowTweetActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_tweet);
 
-        subscriptions=new CompositeDisposable();
+        disposables=new CompositeDisposable();
 
         ActionBar actionBar=getSupportActionBar();
         if (actionBar!=null) {
@@ -85,7 +85,7 @@ public class ShowTweetActivity extends AppCompatActivity {
         }
         Status status = GlobalApplication.statusCache.get(statusId);
         if (status == null){
-            subscriptions.add(
+            disposables.add(
                     updateStatus()
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
@@ -108,7 +108,7 @@ public class ShowTweetActivity extends AppCompatActivity {
 
         SwipeRefreshLayout swipeRefreshLayout = findViewById(R.id.tweet_show_swipe_refresh);
         swipeRefreshLayout.setColorSchemeResources(R.color.color_primary);
-        swipeRefreshLayout.setOnRefreshListener(() -> subscriptions.add(
+        swipeRefreshLayout.setOnRefreshListener(() -> disposables.add(
                 updateStatus()
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
@@ -135,8 +135,8 @@ public class ShowTweetActivity extends AppCompatActivity {
         if (statusView != null){
             statusView.setStatus(null);
         }
-        subscriptions.dispose();
-        subscriptions=null;
+        disposables.dispose();
+        disposables=null;
     }
 
 
@@ -238,7 +238,7 @@ public class ShowTweetActivity extends AppCompatActivity {
             PostTweetModel model = PostTweetModelCreator.getInstance(GlobalApplication.twitter, getContentResolver());
             model.setTweetText(replyText.getText().toString());
             model.setInReplyToStatusId(item.getId());
-            subscriptions.add(
+            disposables.add(
                     model.postTweet()
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())

@@ -95,7 +95,7 @@ public class PostActivity extends AppCompatActivity {
     CheckBox addLocation;
     TextView locationText;
 
-    CompositeDisposable subscription;
+    CompositeDisposable disposable;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -103,7 +103,7 @@ public class PostActivity extends AppCompatActivity {
         setContentView(R.layout.activity_post);
 
         model = PostTweetModelCreator.getInstance(GlobalApplication.twitter, getContentResolver());
-        subscription = new CompositeDisposable();
+        disposable = new CompositeDisposable();
 
         rootViewGroup= findViewById(R.id.activity_tweet_send_layout_root);
 
@@ -153,7 +153,7 @@ public class PostActivity extends AppCompatActivity {
         editText.setOnKeyListener((v, keyCode, event) -> {
             if (!isPosting && event.getAction() == KeyEvent.ACTION_DOWN && event.isCtrlPressed() && keyCode == KeyEvent.KEYCODE_ENTER){
                 isPosting = true;
-                subscription.add(
+                disposable.add(
                         model.postTweet()
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
@@ -281,7 +281,7 @@ public class PostActivity extends AppCompatActivity {
         if(!isPosting && item.getItemId() == R.id.action_send){
             isPosting = true;
             item.setEnabled(false);
-            subscription.add(
+            disposable.add(
                     model.postTweet()
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
@@ -385,8 +385,8 @@ public class PostActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
 
-        subscription.dispose();
-        subscription = null;
+        disposable.dispose();
+        disposable = null;
         locationText = null;
         addLocation = null;
         isPossiblySensitive = null;
@@ -422,7 +422,7 @@ public class PostActivity extends AppCompatActivity {
         criteria.setAccuracy(Criteria.ACCURACY_FINE);
         criteria.setCostAllowed(false);
 
-        subscription.add(
+        disposable.add(
                 new LocationSingleBuilder(Objects.requireNonNull(locationManager), criteria)
                         .getSingle()
                         .subscribe(
