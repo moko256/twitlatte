@@ -18,6 +18,7 @@ package com.github.moko256.twitlatte;
 
 import android.app.Application;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.util.LruCache;
@@ -31,9 +32,19 @@ import com.github.moko256.twitlatte.config.AppConfiguration;
 import com.github.moko256.twitlatte.entity.AccessToken;
 import com.github.moko256.twitlatte.entity.Type;
 import com.github.moko256.twitlatte.model.AccountsModel;
+import com.github.moko256.twitlatte.net.SSLSocketFactoryCompat;
 
+import java.lang.reflect.Field;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.X509TrustManager;
 
 import okhttp3.OkHttpClient;
 import twitter4j.AlternativeHttpClientImpl;
@@ -195,6 +206,13 @@ public class GlobalApplication extends Application {
                     .setOAuthAccessToken(accessToken.getToken())
                     .setOAuthAccessTokenSecret(accessToken.getTokenSecret())
                     .build();
+
+            replaceCompatibleOkHttpClient(
+                    getT4jHttpClient(
+                            conf.getHttpClientConfiguration()
+                    )
+            );
+
             t = twitterCache.get(conf);
 
             if (t == null) {
@@ -206,6 +224,13 @@ public class GlobalApplication extends Application {
                     .setOAuthAccessToken(accessToken.getToken())
                     .setRestBaseURL(accessToken.getUrl())
                     .build();
+
+            replaceCompatibleOkHttpClient(
+                    getT4jHttpClient(
+                            conf.getHttpClientConfiguration()
+                    )
+            );
+
             t = twitterCache.get(conf);
 
             if (t == null) {
@@ -221,6 +246,40 @@ public class GlobalApplication extends Application {
         return t;
     }
 
+    private static void replaceCompatibleOkHttpClient(AlternativeHttpClientImpl httpClient){
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
+            OkHttpClient oldClient = httpClient.getOkHttpClient();
+            if (!(oldClient.sslSocketFactory() instanceof SSLSocketFactoryCompat)){
+                try {
+                    X509TrustManager trustManager = systemDefaultTrustManager();
+
+                    Field field = httpClient.getClass().getDeclaredField("okHttpClient");
+                    field.setAccessible(true);
+                    field.set(
+                            httpClient,
+                            oldClient.newBuilder()
+                                    .sslSocketFactory(new SSLSocketFactoryCompat(trustManager), trustManager)
+                                    .build()
+                    );
+                } catch (NoSuchFieldException | IllegalAccessException | NoSuchAlgorithmException | KeyStoreException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private static X509TrustManager systemDefaultTrustManager() throws NoSuchAlgorithmException, KeyStoreException, IllegalStateException {
+        TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(
+                TrustManagerFactory.getDefaultAlgorithm());
+        trustManagerFactory.init((KeyStore) null);
+        TrustManager[] trustManagers = trustManagerFactory.getTrustManagers();
+        if (trustManagers.length != 1 || !(trustManagers[0] instanceof X509TrustManager)) {
+            throw new IllegalStateException("Unexpected default trust managers:"
+                    + Arrays.toString(trustManagers));
+        }
+        return (X509TrustManager) trustManagers[0];
+    }
+
     @NonNull
     public static OkHttpClient getOkHttpClient(){
         return getOkHttpClient(twitter.getConfiguration().getHttpClientConfiguration());
@@ -228,7 +287,14 @@ public class GlobalApplication extends Application {
 
     @NonNull
     public static OkHttpClient getOkHttpClient(HttpClientConfiguration configuration){
+        AlternativeHttpClientImpl httpClient = getT4jHttpClient(configuration);
+        replaceCompatibleOkHttpClient(httpClient);
+        return httpClient.getOkHttpClient();
+    }
+
+    @NonNull
+    private static AlternativeHttpClientImpl getT4jHttpClient(HttpClientConfiguration configuration){
         HttpClient httpClient = HttpClientFactory.getInstance(configuration);
-        return ((AlternativeHttpClientImpl) httpClient).getOkHttpClient();
+        return (AlternativeHttpClientImpl) httpClient;
     }
 }
