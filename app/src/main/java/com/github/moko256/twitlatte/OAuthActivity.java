@@ -217,12 +217,17 @@ public class OAuthActivity extends AppCompatActivity {
     }
 
     private void startBrowser(String url){
-        new CustomTabsIntent.Builder()
-                .setShowTitle(false)
-                .setToolbarColor(ContextCompat.getColor(this, R.color.color_primary))
-                .setSecondaryToolbarColor(ContextCompat.getColor(this, R.color.color_primary_dark))
-                .build()
-                .launchUrl(OAuthActivity.this, Uri.parse(url));
+        Uri uri = Uri.parse(url);
+        if (GlobalApplication.preferenceRepository.getBoolean(GlobalApplication.KEY_USE_CHROME_CUSTOM_TAB, true)) {
+            new CustomTabsIntent.Builder()
+                    .setShowTitle(false)
+                    .setToolbarColor(ContextCompat.getColor(this, R.color.color_primary))
+                    .setSecondaryToolbarColor(ContextCompat.getColor(this, R.color.color_primary_dark))
+                    .build()
+                    .launchUrl(OAuthActivity.this, uri);
+        } else {
+            startActivity(new Intent(Intent.ACTION_VIEW, uri));
+        }
     }
 
     private void onError(Throwable e){

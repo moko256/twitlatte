@@ -17,9 +17,11 @@
 package com.github.moko256.twitlatte.intent
 
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.support.customtabs.CustomTabsIntent
 import android.support.v4.content.ContextCompat
+import com.github.moko256.twitlatte.GlobalApplication
 import com.github.moko256.twitlatte.R
 
 /**
@@ -35,12 +37,18 @@ import com.github.moko256.twitlatte.R
  * @param uri uri string
  */
 fun launchChromeCustomTabs(context: Context, uri: String){
-    CustomTabsIntent.Builder()
-            .setToolbarColor(ContextCompat.getColor(context, R.color.color_primary))
-            .setSecondaryToolbarColor(ContextCompat.getColor(context, R.color.color_primary_dark))
-            .setStartAnimations(context, R.anim.custom_tabs_slide_in_right, R.anim.custom_tabs_slide_out_left)
-            .setExitAnimations(context, R.anim.custom_tabs_slide_in_left, R.anim.custom_tabs_slide_out_right)
-            .addDefaultShareMenuItem()
-            .build()
-            .launchUrl(context, Uri.parse(uri))
+    val url = Uri.parse(uri)
+
+    if (GlobalApplication.preferenceRepository.getBoolean(GlobalApplication.KEY_USE_CHROME_CUSTOM_TAB, true)) {
+        CustomTabsIntent.Builder()
+                .setToolbarColor(ContextCompat.getColor(context, R.color.color_primary))
+                .setSecondaryToolbarColor(ContextCompat.getColor(context, R.color.color_primary_dark))
+                .setStartAnimations(context, R.anim.custom_tabs_slide_in_right, R.anim.custom_tabs_slide_out_left)
+                .setExitAnimations(context, R.anim.custom_tabs_slide_in_left, R.anim.custom_tabs_slide_out_right)
+                .addDefaultShareMenuItem()
+                .build()
+                .launchUrl(context, url)
+    } else {
+        context.startActivity(Intent(Intent.ACTION_VIEW, url))
+    }
 }

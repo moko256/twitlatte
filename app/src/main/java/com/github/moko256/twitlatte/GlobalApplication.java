@@ -75,6 +75,7 @@ public class GlobalApplication extends Application {
 
     public final static String KEY_ACCOUNT_KEY = "AccountKey";
     public final static String KEY_NIGHT_MODE = "nightModeType";
+    public final static String KEY_USE_CHROME_CUSTOM_TAB = "useChromeCustomTab";
     public final static String KEY_IS_PATTERN_TWEET_MUTE = "patternTweetMuteEnabled";
     public final static String KEY_TWEET_MUTE_PATTERN = "tweetMutePattern";
     public final static String KEY_IS_PATTERN_TWEET_MUTE_SHOW_ONLY_IMAGE = "patternTweetMuteShowOnlyImageEnabled";
