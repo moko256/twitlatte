@@ -17,10 +17,8 @@
 package com.github.moko256.twitlatte;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -110,14 +108,9 @@ public class OAuthActivity extends AppCompatActivity {
     }
 
     private void storeAccessToken(AccessToken accessToken){
-        SharedPreferences defaultSharedPreferences= PreferenceManager.getDefaultSharedPreferences(this);
-
         GlobalApplication.accountsModel.add(accessToken);
 
-        defaultSharedPreferences
-                .edit()
-                .putString("AccountKey", accessToken.getKeyString())
-                .apply();
+        GlobalApplication.preferenceRepository.putString("AccountKey", accessToken.getKeyString());
 
         ((GlobalApplication) getApplication()).initTwitter(accessToken);
 

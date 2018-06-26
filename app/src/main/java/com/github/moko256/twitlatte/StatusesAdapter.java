@@ -26,7 +26,7 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.github.moko256.twitlatte.config.AppConfiguration;
+import com.github.moko256.twitlatte.repository.PreferenceRepository;
 import com.github.moko256.twitlatte.widget.TweetImageTableView;
 
 import java.util.List;
@@ -86,17 +86,17 @@ class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         if (item == null){
             return 1;
         }
-        AppConfiguration conf=GlobalApplication.configuration;
-        if((conf.isPatternTweetMuteEnabled && conf.tweetMutePattern.matcher(item.getText()).find()) ||
-                (conf.isPatternUserScreenNameMuteEnabled && conf.userScreenNameMutePattern.matcher(item.getUser().getScreenName()).find()) ||
-                (conf.isPatternUserNameMuteEnabled && conf.userNameMutePattern.matcher(item.getUser().getName()).find()) ||
-                (conf.isPatternTweetSourceMuteEnabled && conf.tweetSourceMutePattern.matcher(item.getSource()).find())
+        PreferenceRepository conf = GlobalApplication.preferenceRepository;
+        if((conf.getBoolean(GlobalApplication.KEY_IS_PATTERN_TWEET_MUTE, false) && conf.getPattern(GlobalApplication.KEY_TWEET_MUTE_PATTERN).matcher(item.getText()).find()) ||
+                (conf.getBoolean(GlobalApplication.KEY_IS_PATTERN_USER_SCREEN_NAME_MUTE, false) && conf.getPattern(GlobalApplication.KEY_USER_SCREEN_NAME_MUTE_PATTERN).matcher(item.getUser().getScreenName()).find()) ||
+                (conf.getBoolean(GlobalApplication.KEY_IS_PATTERN_USER_NAME_MUTE, false) && conf.getPattern(GlobalApplication.KEY_USER_NAME_MUTE_PATTERN).matcher(item.getUser().getName()).find()) ||
+                (conf.getBoolean(GlobalApplication.KEY_IS_PATTERN_TWEET_SOURCE_MUTE, false) && conf.getPattern(GlobalApplication.KEY_TWEET_SOURCE_MUTE_PATTERN).matcher(item.getSource()).find())
                 ){
             return 2;
         }
-        if (shouldShowMediaOnly || (conf.isPatternTweetMuteShowOnlyImageEnabled
+        if (shouldShowMediaOnly || (conf.getBoolean(GlobalApplication.KEY_IS_PATTERN_TWEET_MUTE_SHOW_ONLY_IMAGE, false)
                 && item.getMediaEntities().length > 0
-                && conf.tweetMuteShowOnlyImagePattern.matcher(item.getText()).find())) {
+                && conf.getPattern(GlobalApplication.KEY_TWEET_MUTE_SHOW_ONLY_IMAGE_PATTERN).matcher(item.getText()).find())) {
             return 3;
         }
         return super.getItemViewType(position);

@@ -199,7 +199,7 @@ public class StatusView extends FrameLayout {
             }
         }
 
-        String timelineImageLoadMode = GlobalApplication.configuration.timelineImageLoadMode;
+        String timelineImageLoadMode = GlobalApplication.preferenceRepository.getString(GlobalApplication.KEY_TIMELINE_IMAGE_LOAD_MODE, "normal");
         if (!timelineImageLoadMode.equals("none")){
             glideRequests
                     .load(

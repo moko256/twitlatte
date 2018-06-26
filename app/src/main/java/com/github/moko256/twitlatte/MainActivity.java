@@ -17,10 +17,8 @@
 package com.github.moko256.twitlatte;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
@@ -204,10 +202,9 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
             }
 
             if (accessToken.getUserId() != GlobalApplication.userId) {
-                PreferenceManager.getDefaultSharedPreferences(this)
-                        .edit()
-                        .putString("AccountKey", accessToken.getKeyString())
-                        .apply();
+                GlobalApplication.preferenceRepository.putString(
+                        "AccountKey", accessToken.getKeyString()
+                );
                 ((GlobalApplication) getApplication()).initTwitter(accessToken);
                 updateDrawerImage();
                 clearAndPrepareFragment();
@@ -219,12 +216,10 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                 .setCancelable(true)
                 .setPositiveButton(R.string.do_logout,
                         (dialog, i) -> {
-                            SharedPreferences defaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-
                             AccountsModel accountsModel = GlobalApplication.accountsModel;
 
                             AccessToken token = accountsModel.get(
-                                    defaultSharedPreferences.getString("AccountKey", "-1")
+                                    GlobalApplication.preferenceRepository.getString("AccountKey", "-1")
                             );
                             accountsModel.delete(token);
                             adapter.removeAccessTokensAndUpdate(token);
@@ -232,19 +227,17 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                             int point = accountsModel.size() - 1;
                             if (point != -1) {
                                 AccessToken accessToken = accountsModel.getAccessTokens().get(point);
-                                defaultSharedPreferences
-                                        .edit()
-                                        .putString("AccountKey", accessToken.getKeyString())
-                                        .apply();
+                                GlobalApplication.preferenceRepository.putString(
+                                        "AccountKey", accessToken.getKeyString()
+                                );
                                 ((GlobalApplication) getApplication()).initTwitter(accessToken);
                                 updateDrawerImage();
                                 clearAndPrepareFragment();
                             } else {
                                 GlobalApplication.twitter = null;
-                                defaultSharedPreferences
-                                        .edit()
-                                        .putString("AccountKey", "-1")
-                                        .apply();
+                                GlobalApplication.preferenceRepository.putString(
+                                        "AccountKey", "-1"
+                                );
                                 startActivity(
                                         new Intent(this, OAuthActivity.class)
                                                 .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)

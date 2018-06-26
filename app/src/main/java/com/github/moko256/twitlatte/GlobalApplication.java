@@ -17,30 +17,26 @@
 package com.github.moko256.twitlatte;
 
 import android.app.Application;
-import android.content.SharedPreferences;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.util.LruCache;
 import android.support.v7.app.AppCompatDelegate;
-import android.widget.Toast;
 
 import com.github.moko256.mastodon.MastodonTwitterImpl;
 import com.github.moko256.twitlatte.cacheMap.StatusCacheMap;
 import com.github.moko256.twitlatte.cacheMap.UserCacheMap;
-import com.github.moko256.twitlatte.config.AppConfiguration;
 import com.github.moko256.twitlatte.entity.AccessToken;
 import com.github.moko256.twitlatte.entity.Type;
 import com.github.moko256.twitlatte.model.AccountsModel;
 import com.github.moko256.twitlatte.net.SSLSocketFactoryCompat;
+import com.github.moko256.twitlatte.repository.PreferenceRepository;
 
 import java.lang.reflect.Field;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
@@ -75,7 +71,21 @@ public class GlobalApplication extends Application {
 
     static long userId;
 
-    public static AppConfiguration configuration;
+    public static PreferenceRepository preferenceRepository;
+
+    public final static String KEY_ACCOUNT_KEY = "AccountKey";
+    public final static String KEY_NIGHT_MODE = "nightModeType";
+    public final static String KEY_IS_PATTERN_TWEET_MUTE = "patternTweetMuteEnabled";
+    public final static String KEY_TWEET_MUTE_PATTERN = "tweetMutePattern";
+    public final static String KEY_IS_PATTERN_TWEET_MUTE_SHOW_ONLY_IMAGE = "patternTweetMuteShowOnlyImageEnabled";
+    public final static String KEY_TWEET_MUTE_SHOW_ONLY_IMAGE_PATTERN = "tweetMuteShowOnlyImagePattern";
+    public final static String KEY_IS_PATTERN_USER_SCREEN_NAME_MUTE = "patternUserScreenNameMuteEnabled";
+    public final static String KEY_USER_SCREEN_NAME_MUTE_PATTERN = "userScreenNameMutePattern";
+    public final static String KEY_IS_PATTERN_USER_NAME_MUTE = "patternUserNameMuteEnabled";
+    public final static String KEY_USER_NAME_MUTE_PATTERN = "userNameMutePattern";
+    public final static String KEY_IS_PATTERN_TWEET_SOURCE_MUTE = "patternTweetSourceMuteEnabled";
+    public final static String KEY_TWEET_SOURCE_MUTE_PATTERN = "tweetSourceMutePattern";
+    public final static String KEY_TIMELINE_IMAGE_LOAD_MODE = "timelineImageMode";
 
     public static UserCacheMap userCache = new UserCacheMap();
     public static StatusCacheMap statusCache = new StatusCacheMap();
@@ -84,73 +94,16 @@ public class GlobalApplication extends Application {
 
     @Override
     public void onCreate() {
-        SharedPreferences defaultSharedPreferences=PreferenceManager.getDefaultSharedPreferences(this);
-
-        configuration=new AppConfiguration();
-
-        configuration.isPatternTweetMuteEnabled = defaultSharedPreferences.getBoolean("patternTweetMuteEnabled",false);
-        if(configuration.isPatternTweetMuteEnabled){
-            try {
-                configuration.tweetMutePattern = Pattern.compile(defaultSharedPreferences.getString("tweetMutePattern",""));
-            } catch (PatternSyntaxException e){
-                e.printStackTrace();
-                configuration.isPatternTweetMuteEnabled = false;
-                Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        }
-
-        configuration.isPatternTweetMuteShowOnlyImageEnabled = defaultSharedPreferences.getBoolean("patternTweetMuteShowOnlyImageEnabled",false);
-        if(configuration.isPatternTweetMuteShowOnlyImageEnabled){
-            try {
-                configuration.tweetMuteShowOnlyImagePattern = Pattern.compile(defaultSharedPreferences.getString("tweetMuteShowOnlyImagePattern",""));
-            } catch (PatternSyntaxException e){
-                e.printStackTrace();
-                configuration.isPatternTweetMuteShowOnlyImageEnabled = false;
-                Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        }
-
-        configuration.isPatternUserScreenNameMuteEnabled = defaultSharedPreferences.getBoolean("patternUserScreenNameMuteEnabled",false);
-        if(configuration.isPatternUserScreenNameMuteEnabled){
-            try {
-                configuration.userScreenNameMutePattern = Pattern.compile(defaultSharedPreferences.getString("userScreenNameMutePattern",""));
-            } catch (PatternSyntaxException e){
-                e.printStackTrace();
-                configuration.isPatternUserScreenNameMuteEnabled = false;
-                Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        }
-
-        configuration.isPatternUserNameMuteEnabled = defaultSharedPreferences.getBoolean("patternUserNameMuteEnabled",false);
-        if(configuration.isPatternUserNameMuteEnabled){
-            try {
-                configuration.userNameMutePattern = Pattern.compile(defaultSharedPreferences.getString("userNameMutePattern",""));
-            } catch (PatternSyntaxException e){
-                e.printStackTrace();
-                configuration.isPatternUserNameMuteEnabled = false;
-                Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        }
-
-        configuration.isPatternTweetSourceMuteEnabled = defaultSharedPreferences.getBoolean("patternTweetSourceMuteEnabled",false);
-        if(configuration.isPatternTweetSourceMuteEnabled){
-            try {
-                configuration.tweetSourceMutePattern = Pattern.compile(defaultSharedPreferences.getString("tweetSourceMutePattern",""));
-            } catch (PatternSyntaxException e){
-                e.printStackTrace();
-                configuration.isPatternTweetSourceMuteEnabled = false;
-                Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        }
-
-        configuration.timelineImageLoadMode = defaultSharedPreferences.getString("timelineImageMode","normal");
+        preferenceRepository = new PreferenceRepository(
+                PreferenceManager.getDefaultSharedPreferences(this)
+        );
 
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
 
         @AppCompatDelegate.NightMode
         int mode=AppCompatDelegate.MODE_NIGHT_NO;
 
-        switch(defaultSharedPreferences.getString("nightModeType","mode_night_no_value")){
+        switch(preferenceRepository.getString(KEY_NIGHT_MODE,"mode_night_no_value")){
 
             case "mode_night_no":
                 mode=AppCompatDelegate.MODE_NIGHT_NO;
@@ -170,7 +123,7 @@ public class GlobalApplication extends Application {
 
         accountsModel = new AccountsModel(getApplicationContext());
 
-        String accountKey = defaultSharedPreferences.getString("AccountKey","-1");
+        String accountKey = preferenceRepository.getString(KEY_ACCOUNT_KEY,"-1");
 
         if (accountKey.equals("-1")) return;
 
