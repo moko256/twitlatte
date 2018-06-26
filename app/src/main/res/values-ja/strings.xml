@@ -77,8 +77,6 @@
     <string name="license_at_this_app">このアプリケーションのライセンス</string>
     <string name="open_source_license">オープンソースライセンス</string>
     <string name="contributors">コントリビューター</string>
-    <string name="enable">有効</string>
-    <string name="disable">無効</string>
     <string name="open_web_page_in_the_app">アプリ内でウェブページを開く</string>
     <string name="viewing_web_page_in_app">アプリ内でウェブページを表示します</string>
     <string name="viewing_web_page_in_external_browser">外部ブラウザでウェブページを表示します</string>
