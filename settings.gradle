@@ -22,5 +22,3 @@ project(':twitter4j-http2-support').projectDir = new File('twitter4j/twitter4j-h
 
 include ':japng-android:android_api', ':api'
 project(':api').projectDir = new File('japng-android/japng/api')
-
-include ':mastodon4j', ':mastodon4j:mastodon4j'

@@ -20,8 +20,7 @@ apply plugin: 'java'
 dependencies {
     //implementation fileTree(include: ['*.jar'], dir: 'libs')
 
-    compile project(':mastodon4j')
-    compile project(':mastodon4j:mastodon4j')
+    compile 'com.github.MulticolorWorld.mastodon4j:mastodon4j:1.7.0'
 
     compile project(':twitter4j-core')
     compile project(':twitter4j-http2-support')

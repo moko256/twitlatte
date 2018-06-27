@@ -4,6 +4,5 @@
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/japng-android" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/japng-android/japng" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/mastodon4j" vcs="Git" />
   </component>
 </project>
