@@ -56,7 +56,7 @@
     <string name="application">Application</string>
     <string name="login_with_another_account">Login with another account</string>
     <string name="logout">Logout</string>
-    <string name="new_post">New post</string>
+    <string name="new_posts">New posts</string>
     <string name="permission_denied">Permission denied</string>
     <string name="lat_and_lon">Latitude:%f Longitude: %f</string>
     <string name="location_is">Location: %s</string>

@@ -46,7 +46,7 @@
     <string name="application">アプリケーション</string>
     <string name="login_with_another_account">他のアカウントでログイン</string>
     <string name="logout">ログアウト</string>
-    <string name="new_post">新しい投稿</string>
+    <string name="new_posts">新しい投稿</string>
     <string name="permission_denied">権限が拒否されました</string>
     <string name="lat_and_lon">緯度:%f 経度:%f</string>
     <string name="location_is">所在地: %s</string>
