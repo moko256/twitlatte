@@ -1,0 +1,4 @@
+Enable TLS v1.2 on Android 4.4
+Enable to open web link on external browser
+Add highlight on the selected account on the drawer
+Fix some bug
