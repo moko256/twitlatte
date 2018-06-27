@@ -116,6 +116,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                                         );
                                     } else {
                                         GlobalApplication.twitter = null;
+                                        GlobalApplication.accessToken = null;
                                         GlobalApplication.preferenceRepository.putString(
                                                 "AccountKey", "-1"
                                         );

@@ -206,6 +206,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                         "AccountKey", accessToken.getKeyString()
                 );
                 ((GlobalApplication) getApplication()).initTwitter(accessToken);
+                adapter.updateSelectedPosition(accessToken);
                 updateDrawerImage();
                 clearAndPrepareFragment();
             }
@@ -231,10 +232,12 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                                         "AccountKey", accessToken.getKeyString()
                                 );
                                 ((GlobalApplication) getApplication()).initTwitter(accessToken);
+                                adapter.updateSelectedPosition(accessToken);
                                 updateDrawerImage();
                                 clearAndPrepareFragment();
                             } else {
                                 GlobalApplication.twitter = null;
+                                GlobalApplication.accessToken = null;
                                 GlobalApplication.preferenceRepository.putString(
                                         "AccountKey", "-1"
                                 );
@@ -280,6 +283,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                                 o -> {
                                     Pair<ArrayList<User>, ArrayList<AccessToken>> pairs = (Pair<ArrayList<User>, ArrayList<AccessToken>>) o;
                                     adapter.addAndUpdate(pairs.first, pairs.second);
+                                    adapter.setSelectedPosition(GlobalApplication.accessToken);
                                     adapter.notifyDataSetChanged();
                                 },
                                 Throwable::printStackTrace

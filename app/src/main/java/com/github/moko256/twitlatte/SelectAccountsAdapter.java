@@ -20,6 +20,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,8 +45,9 @@ import twitter4j.User;
 public class SelectAccountsAdapter extends RecyclerView.Adapter<SelectAccountsAdapter.ViewHolder> {
 
     private static final int VIEW_TYPE_IMAGE = 0;
-    private static final int VIEW_TYPE_ADD = 1;
-    private static final int VIEW_TYPE_REMOVE = 2;
+    private static final int VIEW_TYPE_IMAGE_SELECTED = 1;
+    private static final int VIEW_TYPE_ADD = 2;
+    private static final int VIEW_TYPE_REMOVE = 3;
 
     private final Context context;
 
@@ -56,19 +58,32 @@ public class SelectAccountsAdapter extends RecyclerView.Adapter<SelectAccountsAd
     public View.OnClickListener onAddButtonClickListener;
     public View.OnClickListener onRemoveButtonClickListener;
 
+    private int selectionPosition = -1;
+    private int selectionColor;
+
     public SelectAccountsAdapter(Context context){
         this.context = context;
+
+        TypedValue typedValue = new TypedValue();
+        context.getTheme().resolveAttribute(R.attr.colorControlHighlight, typedValue, true);
+        selectionColor = typedValue.resourceId;
     }
 
     @Override
     public int getItemViewType(int position) {
-        return (position < accessTokens.size())? VIEW_TYPE_IMAGE: ((position == accessTokens.size())? VIEW_TYPE_ADD: VIEW_TYPE_REMOVE);
+        return (position < accessTokens.size())?
+                (position == selectionPosition)?
+                        VIEW_TYPE_IMAGE_SELECTED:
+                        VIEW_TYPE_IMAGE:
+                (position == accessTokens.size())?
+                        VIEW_TYPE_ADD:
+                        VIEW_TYPE_REMOVE;
     }
 
     @NonNull
     @Override
     public SelectAccountsAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        int layout = viewType == VIEW_TYPE_IMAGE?
+        int layout = viewType == VIEW_TYPE_IMAGE || viewType == VIEW_TYPE_IMAGE_SELECTED?
                 R.layout.layout_select_accounts_image_child:
                 R.layout.layout_select_accounts_resource_image;
         return new ViewHolder(LayoutInflater.from(context).inflate(layout, parent, false));
@@ -78,6 +93,7 @@ public class SelectAccountsAdapter extends RecyclerView.Adapter<SelectAccountsAd
     public void onBindViewHolder(@NonNull SelectAccountsAdapter.ViewHolder holder, int position) {
         int type = getItemViewType(position);
         switch (type) {
+            case VIEW_TYPE_IMAGE_SELECTED:
             case VIEW_TYPE_IMAGE: {
                 User user = users.get(position);
                 AccessToken accessToken = accessTokens.get(position);
@@ -107,6 +123,12 @@ public class SelectAccountsAdapter extends RecyclerView.Adapter<SelectAccountsAd
                         }
                     });
 
+                }
+
+                if (type == VIEW_TYPE_IMAGE_SELECTED) {
+                    holder.itemView.setBackgroundResource(selectionColor);
+                } else {
+                    holder.itemView.setBackground(null);
                 }
                 break;
             }
@@ -139,6 +161,17 @@ public class SelectAccountsAdapter extends RecyclerView.Adapter<SelectAccountsAd
         users.addAll(userList);
         accessTokens.addAll(accessTokenList);
         notifyDataSetChanged();
+    }
+
+    public void setSelectedPosition(AccessToken key){
+        selectionPosition = accessTokens.indexOf(key);
+    }
+
+    public void updateSelectedPosition(AccessToken key){
+        int old = selectionPosition;
+        selectionPosition = accessTokens.indexOf(key);
+        notifyItemChanged(old);
+        notifyItemChanged(selectionPosition);
     }
 
     public void removeAccessTokensAndUpdate(AccessToken accessToken){
