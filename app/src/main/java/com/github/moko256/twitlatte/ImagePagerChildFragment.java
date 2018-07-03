@@ -156,9 +156,6 @@ public class ImagePagerChildFragment extends Fragment {
                         trackSelector,
                         new DefaultLoadControl()
                 );
-                if (savedInstanceState != null){
-                    player.seekTo(savedInstanceState.getLong("video_time", 0));
-                }
                 videoPlayView.setPlayer(player);
                 player.prepare((isHls?
                                 new HlsMediaSource.Factory(createOkHttpDataSourceFactory()):
@@ -196,9 +193,6 @@ public class ImagePagerChildFragment extends Fragment {
                         trackSelector,
                         new DefaultLoadControl()
                 );
-                if (savedInstanceState != null){
-                    player.seekTo(savedInstanceState.getLong("video_time", 0));
-                }
                 videoPlayView.setPlayer(player);
                 player.prepare(
                         new LoopingMediaSource(
@@ -343,14 +337,6 @@ public class ImagePagerChildFragment extends Fragment {
                 null,
                 null
         );
-    }
-
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        if (player != null){
-            outState.putLong("video_time", player.getCurrentPosition());
-        }
     }
 
     @Override
