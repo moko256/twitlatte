@@ -32,6 +32,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.github.moko256.twitlatte.entity.AccessToken;
+import com.github.moko256.twitlatte.entity.Type;
 import com.github.moko256.twitlatte.model.base.OAuthModel;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
 
@@ -46,11 +47,18 @@ import io.reactivex.schedulers.Schedulers;
  * @author moko256
  */
 public class OAuthActivity extends AppCompatActivity {
-    private static OAuthModel model;
-    public boolean requirePin=false;
+
+    private static final String STATE_CLIENT_TYPE = "state_client_type";
+
+    @Type.ClientTypeInt
+    private int authClientType = -1;
+
+    private OAuthModel model;
+
+    private boolean requirePin=false;
 
     private AlertDialog pinDialog;
-    public CheckBox useAuthCode;
+    private CheckBox useAuthCode;
 
     private CompositeDisposable compositeDisposable;
 
@@ -61,6 +69,37 @@ public class OAuthActivity extends AppCompatActivity {
 
         useAuthCode = findViewById(R.id.use_auth_code);
         compositeDisposable = new CompositeDisposable();
+
+        int type;
+
+        if (savedInstanceState != null && (type = savedInstanceState.getInt(STATE_CLIENT_TYPE, -1)) != -1) {
+            authClientType = type;
+            switch (authClientType) {
+                case Type.TWITTER:
+                    model = new com.github.moko256.twitlatte.model.impl.twitter.OAuthModelImpl();
+                    break;
+                case Type.MASTODON:
+                    model = new com.github.moko256.twitlatte.model.impl.mastodon.OAuthModelImpl();
+                    break;
+                default:
+                    authClientType = -1;
+                    break;
+            }
+            model.restoreInstanceState(savedInstanceState);
+            requirePin = useAuthCode.isChecked();
+            if (requirePin){
+                showPinDialog();
+            }
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(STATE_CLIENT_TYPE, authClientType);
+        if (model != null && model.isRestartable()) {
+            model.saveInstanceState(outState);
+        }
     }
 
     @Override
@@ -92,6 +131,8 @@ public class OAuthActivity extends AppCompatActivity {
             }
 
             Toast.makeText(this, R.string.error_occurred, Toast.LENGTH_SHORT).show();
+            model = null;
+            authClientType = -1;
         }
     }
 
@@ -116,9 +157,12 @@ public class OAuthActivity extends AppCompatActivity {
 
         startActivity(new Intent(this,MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
         finish();
+        model = null;
+        authClientType = -1;
     }
 
     public void onStartTwitterAuthClick(View view) {
+        authClientType = Type.TWITTER;
         requirePin = useAuthCode.isChecked();
         model = new com.github.moko256.twitlatte.model.impl.twitter.OAuthModelImpl();
         Single<String> authSingle;
@@ -154,6 +198,7 @@ public class OAuthActivity extends AppCompatActivity {
     }
 
     public void onStartMastodonAuthClick(View view) {
+        authClientType = Type.MASTODON;
         requirePin = useAuthCode.isChecked();
         model = new com.github.moko256.twitlatte.model.impl.mastodon.OAuthModelImpl();
         EditText editText=new EditText(this);

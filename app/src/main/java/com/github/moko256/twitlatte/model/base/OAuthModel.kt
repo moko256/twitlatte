@@ -16,6 +16,7 @@
 
 package com.github.moko256.twitlatte.model.base
 
+import android.os.Bundle
 import com.github.moko256.twitlatte.entity.AccessToken
 import io.reactivex.Single
 
@@ -25,8 +26,13 @@ import io.reactivex.Single
  * @author moko256
  */
 interface OAuthModel {
+    var isRestartable: Boolean
+
+    fun restoreInstanceState(savedInstanceState: Bundle)
     fun getCallbackAuthUrl(url: String, consumerKey: String, consumerSecret: String, callbackUrl: String): Single<String>
     fun getCodeAuthUrl(url: String, consumerKey: String, consumerSecret: String): Single<String>
 
     fun initToken(pin: String): Single<AccessToken>
+
+    fun saveInstanceState(outState: Bundle)
 }

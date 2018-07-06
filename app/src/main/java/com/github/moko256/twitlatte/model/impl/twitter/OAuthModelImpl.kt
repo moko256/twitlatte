@@ -16,6 +16,7 @@
 
 package com.github.moko256.twitlatte.model.impl.twitter
 
+import android.os.Bundle
 import com.github.moko256.twitlatte.database.TokenSQLiteOpenHelper
 import com.github.moko256.twitlatte.entity.AccessToken
 import com.github.moko256.twitlatte.entity.Type
@@ -31,30 +32,43 @@ import twitter4j.conf.ConfigurationContext
  *
  * @author moko256
  */
-class OAuthModelImpl : OAuthModel {
+class OAuthModelImpl(override var isRestartable: Boolean = false) : OAuthModel {
+    private val STATE_MODEL_CLIENT_KEY = "state_model_client_key"
+    private val STATE_MODEL_CLIENT_SECRET = "state_model_client_secret"
+
     private var req: RequestToken? = null
     private val oauth = OAuthAuthorization(ConfigurationContext.getInstance())
 
-    override fun getCallbackAuthUrl(url: String, consumerKey: String, consumerSecret: String, callbackUrl: String): Single<String> {
+    override fun restoreInstanceState(savedInstanceState: Bundle) {
+        req = RequestToken(
+                savedInstanceState.getString(STATE_MODEL_CLIENT_KEY),
+                savedInstanceState.getString(STATE_MODEL_CLIENT_SECRET)
+        )
+    }
+
+    override fun saveInstanceState(outState: Bundle) {
+        if (isRestartable) {
+            outState.apply {
+                putString(STATE_MODEL_CLIENT_KEY, req?.token)
+                putString(STATE_MODEL_CLIENT_SECRET, req?.tokenSecret)
+            }
+        }
+    }
+
+    override fun getCallbackAuthUrl(url: String, consumerKey: String, consumerSecret: String, callbackUrl: String): Single<String>
+            = getAuth(consumerKey, consumerSecret, callbackUrl)
+
+    override fun getCodeAuthUrl(url: String, consumerKey: String, consumerSecret: String): Single<String>
+            = getAuth(consumerKey, consumerSecret)
+
+    private fun getAuth(consumerKey: String, consumerSecret: String, callbackUrl: String? = "oob"): Single<String> {
         oauth.setOAuthConsumer(consumerKey, consumerSecret)
 
         return Single.create {
             try {
                 req = oauth.getOAuthRequestToken(callbackUrl)
-                it.onSuccess(req?.authenticationURL!!)
-            } catch (e: Throwable) {
-                it.tryOnError(e)
-            }
-        }
-    }
-
-    override fun getCodeAuthUrl(url: String, consumerKey: String, consumerSecret: String): Single<String> {
-        oauth.setOAuthConsumer(consumerKey, consumerSecret)
-
-        return Single.create {
-            try {
-                req = oauth.getOAuthRequestToken("oob")
                 it.onSuccess(req?.authorizationURL!!)
+                isRestartable = true
             } catch (e: TwitterException) {
                 it.tryOnError(e)
             }
@@ -73,6 +87,7 @@ class OAuthModelImpl : OAuthModel {
                         accessToken.token,
                         accessToken.tokenSecret
                 ))
+                isRestartable = false
             } catch (e: TwitterException) {
                 it.tryOnError(e)
             }

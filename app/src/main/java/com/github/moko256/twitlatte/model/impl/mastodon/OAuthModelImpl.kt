@@ -16,6 +16,7 @@
 
 package com.github.moko256.twitlatte.model.impl.mastodon
 
+import android.os.Bundle
 import com.github.moko256.twitlatte.GlobalApplication
 import com.github.moko256.twitlatte.entity.AccessToken
 import com.github.moko256.twitlatte.entity.Type
@@ -23,7 +24,6 @@ import com.github.moko256.twitlatte.model.base.OAuthModel
 import com.google.gson.Gson
 import com.sys1yagi.mastodon4j.MastodonClient
 import com.sys1yagi.mastodon4j.api.Scope
-import com.sys1yagi.mastodon4j.api.entity.auth.AppRegistration
 import com.sys1yagi.mastodon4j.api.exception.Mastodon4jRequestException
 import com.sys1yagi.mastodon4j.api.method.Accounts
 import com.sys1yagi.mastodon4j.api.method.Apps
@@ -35,40 +35,50 @@ import twitter4j.conf.ConfigurationContext
  *
  * @author moko256
  */
-class OAuthModelImpl : OAuthModel {
+class OAuthModelImpl(override var isRestartable: Boolean = false) : OAuthModel {
+    private val STATE_MODEL_URL = "state_model_url"
+    private val STATE_MODEL_CLIENT_ID = "state_client_id"
+    private val STATE_MODEL_SECRET = "state_model_secret"
+    private val STATE_MODEL_REDIRECT_URL = "state_model_redirect_url"
+
     private lateinit var clientBuilder: MastodonClient.Builder
     private lateinit var apps: Apps
-    private var appRegistration: AppRegistration? = null
 
-    override fun getCallbackAuthUrl(url: String, consumerKey: String, consumerSecret: String, callbackUrl: String): Single<String> {
+    private lateinit var clientId: String
+    private lateinit var clientSecret: String
+    private lateinit var redirectUrl: String
+
+    override fun restoreInstanceState(savedInstanceState: Bundle) {
+        clientId = savedInstanceState.getString(STATE_MODEL_CLIENT_ID)
+        clientSecret = savedInstanceState.getString(STATE_MODEL_SECRET)
+        redirectUrl = savedInstanceState.getString(STATE_MODEL_REDIRECT_URL)
+
         clientBuilder = MastodonClient.Builder(
-                url,
+                savedInstanceState.getString(STATE_MODEL_URL),
                 GlobalApplication.getOkHttpClient(ConfigurationContext.getInstance().httpClientConfiguration).newBuilder(),
                 Gson()
         )
         apps = Apps(clientBuilder.build())
-        return Single.create {
-            try {
-                appRegistration = apps.createApp(
-                        "twitlatte",
-                        callbackUrl,
-                        Scope(Scope.Name.ALL),
-                        "https://github.com/moko256/twitlatte"
-                ).execute()
+    }
 
-                it.onSuccess(
-                        apps.getOAuthUrl(
-                                appRegistration?.clientId!!,
-                                Scope(Scope.Name.ALL),
-                                callbackUrl
-                        ))
-            } catch (e: Mastodon4jRequestException) {
-                it.tryOnError(e)
+    override fun saveInstanceState(outState: Bundle) {
+        if (isRestartable) {
+            outState.apply {
+                putString(STATE_MODEL_URL, clientBuilder.build().getInstanceName())
+                putString(STATE_MODEL_CLIENT_ID, clientId)
+                putString(STATE_MODEL_SECRET, clientSecret)
+                putString(STATE_MODEL_REDIRECT_URL, redirectUrl)
             }
         }
     }
 
-    override fun getCodeAuthUrl(url: String, consumerKey: String, consumerSecret: String): Single<String> {
+    override fun getCallbackAuthUrl(url: String, consumerKey: String, consumerSecret: String, callbackUrl: String): Single<String>
+            = getAuth(url, callbackUrl)
+
+    override fun getCodeAuthUrl(url: String, consumerKey: String, consumerSecret: String): Single<String>
+            = getAuth(url, null)
+
+    private fun getAuth(url: String, callbackUrl: String? = null): Single<String> {
         clientBuilder = MastodonClient.Builder(
                 url,
                 GlobalApplication.getOkHttpClient(ConfigurationContext.getInstance().httpClientConfiguration).newBuilder(),
@@ -77,17 +87,38 @@ class OAuthModelImpl : OAuthModel {
         apps = Apps(clientBuilder.build())
         return Single.create {
             try {
-                appRegistration = apps.createApp(
-                        clientName = "twitlatte",
-                        scope = Scope(Scope.Name.ALL),
-                        website = "https://github.com/moko256/twitlatte"
-                ).execute()
+                val appRegistration = if (callbackUrl != null) {
+                    apps.createApp(
+                            "twitlatte",
+                            callbackUrl,
+                            Scope(Scope.Name.ALL),
+                            "https://github.com/moko256/twitlatte"
+                    )
+                } else {
+                    apps.createApp(
+                            clientName = "twitlatte",
+                            scope = Scope(Scope.Name.ALL),
+                            website = "https://github.com/moko256/twitlatte"
+                    )
+                }.execute()
 
-                it.onSuccess(
-                        apps.getOAuthUrl(
-                                clientId = appRegistration?.clientId!!,
-                                scope = Scope(Scope.Name.ALL)
-                ))
+                clientId = appRegistration.clientId
+                clientSecret = appRegistration.clientSecret
+                redirectUrl = appRegistration.redirectUri
+
+                it.onSuccess(if (callbackUrl != null) {
+                    apps.getOAuthUrl(
+                            clientId,
+                            Scope(Scope.Name.ALL),
+                            callbackUrl
+                    )
+                } else {
+                    apps.getOAuthUrl(
+                            clientId = clientId,
+                            scope = Scope(Scope.Name.ALL)
+                    )
+                })
+                isRestartable = true
             } catch (e: Mastodon4jRequestException) {
                 it.tryOnError(e)
             }
@@ -98,9 +129,9 @@ class OAuthModelImpl : OAuthModel {
         return Single.create {
             try {
                 val accessToken = apps.getAccessToken(
-                        appRegistration?.clientId!!,
-                        appRegistration?.clientSecret!!,
-                        appRegistration?.redirectUri!!,
+                        clientId,
+                        clientSecret,
+                        redirectUrl,
                         pin
                 ).execute()
                 val url = clientBuilder.build().getInstanceName()
@@ -114,6 +145,7 @@ class OAuthModelImpl : OAuthModel {
                         null
                 )
                 it.onSuccess(storeToken)
+                isRestartable = false
             } catch (e: Mastodon4jRequestException) {
                 it.tryOnError(e)
             }
