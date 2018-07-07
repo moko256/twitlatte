@@ -22,4 +22,9 @@ dependencies {
 
     api project(':twitter4j-core')
     api project(':twitter4j-http2-support')
+
+    api "com.squareup.okhttp3:okhttp:$okhttp_version"
+    api "com.google.code.gson:gson:$gson_version"
+    api "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
 }
