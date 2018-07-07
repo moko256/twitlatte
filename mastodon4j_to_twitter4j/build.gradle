@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-apply plugin: 'java'
+apply plugin: 'java-library'
 
 
 dependencies {
-    //implementation fileTree(include: ['*.jar'], dir: 'libs')
+    api 'com.github.MulticolorWorld.mastodon4j:mastodon4j:1.7.0'
 
-    compile 'com.github.MulticolorWorld.mastodon4j:mastodon4j:1.7.0'
-
-    compile project(':twitter4j-core')
-    compile project(':twitter4j-http2-support')
+    api project(':twitter4j-core')
+    api project(':twitter4j-http2-support')
 }
