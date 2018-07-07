@@ -18,9 +18,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/action_use_auth_code"
+        android:title="@string/use_auth_code"
+        android:checkable="true"
+        android:checked="false"
+        app:showAsAction="never"/>
+    <item
         android:id="@+id/action_settings"
-        android:icon="@drawable/ic_settings_black_24dp"
         android:title="@string/action_settings"
-        app:iconTint="@android:color/white"
-        app:showAsAction="always"/>
+        app:showAsAction="never"/>
 </menu>

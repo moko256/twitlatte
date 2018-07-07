@@ -36,7 +36,7 @@ class OAuthModelImpl(override var isRestartable: Boolean = false) : OAuthModel {
     private val STATE_MODEL_CLIENT_KEY = "state_model_client_key"
     private val STATE_MODEL_CLIENT_SECRET = "state_model_client_secret"
 
-    private var req: RequestToken? = null
+    private lateinit var req: RequestToken
     private val oauth = OAuthAuthorization(ConfigurationContext.getInstance())
 
     override fun restoreInstanceState(savedInstanceState: Bundle) {
@@ -49,25 +49,19 @@ class OAuthModelImpl(override var isRestartable: Boolean = false) : OAuthModel {
     override fun saveInstanceState(outState: Bundle) {
         if (isRestartable) {
             outState.apply {
-                putString(STATE_MODEL_CLIENT_KEY, req?.token)
-                putString(STATE_MODEL_CLIENT_SECRET, req?.tokenSecret)
+                putString(STATE_MODEL_CLIENT_KEY, req.token)
+                putString(STATE_MODEL_CLIENT_SECRET, req.tokenSecret)
             }
         }
     }
 
-    override fun getCallbackAuthUrl(url: String, consumerKey: String, consumerSecret: String, callbackUrl: String): Single<String>
-            = getAuth(consumerKey, consumerSecret, callbackUrl)
-
-    override fun getCodeAuthUrl(url: String, consumerKey: String, consumerSecret: String): Single<String>
-            = getAuth(consumerKey, consumerSecret)
-
-    private fun getAuth(consumerKey: String, consumerSecret: String, callbackUrl: String? = "oob"): Single<String> {
+    override fun getAuthUrl(url: String,consumerKey: String, consumerSecret: String, callbackUrl: String?): Single<String> {
         oauth.setOAuthConsumer(consumerKey, consumerSecret)
 
         return Single.create {
             try {
                 req = oauth.getOAuthRequestToken(callbackUrl)
-                it.onSuccess(req?.authorizationURL!!)
+                it.onSuccess(req.authorizationURL?:"oob")
                 isRestartable = true
             } catch (e: TwitterException) {
                 it.tryOnError(e)

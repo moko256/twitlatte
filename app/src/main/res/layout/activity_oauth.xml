@@ -22,8 +22,7 @@
     android:layout_marginLeft="@dimen/activity_horizontal_margin"
     android:layout_marginRight="@dimen/activity_horizontal_margin"
     android:layout_marginTop="@dimen/activity_vertical_margin"
-    android:layout_marginBottom="@dimen/activity_vertical_margin"
-    >
+    android:layout_marginBottom="@dimen/activity_vertical_margin">
 
     <TextView
         android:id="@+id/login_text"
@@ -34,26 +33,29 @@
         android:textColor="?android:attr/textColorPrimary"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Display1" />
 
-    <CheckBox
-        android:id="@+id/use_auth_code"
+    <TextView
+        android:id="@+id/description_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/login_text"
         android:layout_marginBottom="16dp"
-        android:text="@string/use_auth_code"/>
+        android:text="@string/login_description"
+        android:textColor="?android:attr/textColorPrimary"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Subhead" />
 
     <Button
         android:id="@+id/start_twitter_auth_button"
-        android:text="@string/twitter_auth"
+        android:text="@string/twitter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/use_auth_code"
+        android:layout_below="@id/description_text"
+        android:layout_marginBottom="8dp"
         android:onClick="onStartTwitterAuthClick"
         style="@style/Widget.AppCompat.Button.Borderless.Colored"/>
 
     <Button
         android:id="@+id/start_mastodon_auth_button"
-        android:text="@string/mastodon_auth"
+        android:text="@string/mastodon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/start_twitter_auth_button"

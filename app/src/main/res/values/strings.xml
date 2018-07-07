@@ -27,6 +27,7 @@
         translatable="false">Close navigation drawer</string>
 
     <string name="login">Log in</string>
+    <string name="login_description">Select the service you log in with:</string>
     <string name="instance_domain">Instance\'s domain</string>
     <string name="action_settings">Settings…</string>
     <string name="action_search">Search…</string>
@@ -134,9 +135,10 @@
     <string name="did_unblock">Unblocked</string>
     <string name="did_destroy_ff">Destroyed follow-follower</string>
 
-    <string name="twitter_auth">Twitter authorization</string>
-    <string name="mastodon_auth">Mastodon authorization</string>
-    <string name="use_auth_code">Enter the authorization code manually</string>
+    <string name="twitter" translatable="false">Twitter</string>
+    <string name="mastodon" translatable="false">Mastodon</string>
+
+    <string name="use_auth_code">Enter auth code</string>
 
     <string name="mode_image_level_normal">Standard</string>
     <string name="mode_image_level_lowest">Lowest</string>

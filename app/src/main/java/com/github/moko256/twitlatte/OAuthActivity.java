@@ -27,7 +27,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -36,7 +35,6 @@ import com.github.moko256.twitlatte.entity.Type;
 import com.github.moko256.twitlatte.model.base.OAuthModel;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
 
-import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
@@ -49,6 +47,7 @@ import io.reactivex.schedulers.Schedulers;
 public class OAuthActivity extends AppCompatActivity {
 
     private static final String STATE_CLIENT_TYPE = "state_client_type";
+    private static final String STATE_REQUIRE_PIN = "state_require_pin";
 
     @Type.ClientTypeInt
     private int authClientType = -1;
@@ -58,7 +57,6 @@ public class OAuthActivity extends AppCompatActivity {
     private boolean requirePin=false;
 
     private AlertDialog pinDialog;
-    private CheckBox useAuthCode;
 
     private CompositeDisposable compositeDisposable;
 
@@ -67,28 +65,19 @@ public class OAuthActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_oauth);
 
-        useAuthCode = findViewById(R.id.use_auth_code);
         compositeDisposable = new CompositeDisposable();
 
-        int type;
+        if (savedInstanceState != null) {
+            requirePin = savedInstanceState.getBoolean(STATE_REQUIRE_PIN, false);
 
-        if (savedInstanceState != null && (type = savedInstanceState.getInt(STATE_CLIENT_TYPE, -1)) != -1) {
-            authClientType = type;
-            switch (authClientType) {
-                case Type.TWITTER:
-                    model = new com.github.moko256.twitlatte.model.impl.twitter.OAuthModelImpl();
-                    break;
-                case Type.MASTODON:
-                    model = new com.github.moko256.twitlatte.model.impl.mastodon.OAuthModelImpl();
-                    break;
-                default:
-                    authClientType = -1;
-                    break;
-            }
-            model.restoreInstanceState(savedInstanceState);
-            requirePin = useAuthCode.isChecked();
-            if (requirePin){
-                showPinDialog();
+            int type;
+
+            if ((type = savedInstanceState.getInt(STATE_CLIENT_TYPE, -1)) != -1) {
+                initType(type);
+                model.restoreInstanceState(savedInstanceState);
+                if (requirePin){
+                    showPinDialog();
+                }
             }
         }
     }
@@ -96,8 +85,11 @@ public class OAuthActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt(STATE_CLIENT_TYPE, authClientType);
+        if (requirePin) {
+            outState.putBoolean(STATE_REQUIRE_PIN, true);
+        }
         if (model != null && model.isRestartable()) {
+            outState.putInt(STATE_CLIENT_TYPE, authClientType);
             model.saveInstanceState(outState);
         }
     }
@@ -131,9 +123,24 @@ public class OAuthActivity extends AppCompatActivity {
             }
 
             Toast.makeText(this, R.string.error_occurred, Toast.LENGTH_SHORT).show();
-            model = null;
-            authClientType = -1;
+            initType(-1);
         }
+    }
+
+    private void initType(@Type.ClientTypeInt int authClientType){
+        switch (authClientType) {
+            case Type.TWITTER:
+                model = new com.github.moko256.twitlatte.model.impl.twitter.OAuthModelImpl();
+                break;
+            case Type.MASTODON:
+                model = new com.github.moko256.twitlatte.model.impl.mastodon.OAuthModelImpl();
+                break;
+            default:
+                model = null;
+                authClientType = -1;
+                break;
+        }
+        this.authClientType = authClientType;
     }
 
     private void initToken(String verifier){
@@ -157,50 +164,22 @@ public class OAuthActivity extends AppCompatActivity {
 
         startActivity(new Intent(this,MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
         finish();
-        model = null;
-        authClientType = -1;
+        initType(-1);
     }
 
     public void onStartTwitterAuthClick(View view) {
-        authClientType = Type.TWITTER;
-        requirePin = useAuthCode.isChecked();
-        model = new com.github.moko256.twitlatte.model.impl.twitter.OAuthModelImpl();
-        Single<String> authSingle;
-        if (requirePin) {
-            showPinDialog();
-            authSingle = model
-                    .getCodeAuthUrl(
-                            "twitter.com",
-                            BuildConfig.CONSUMER_KEY,
-                            BuildConfig.CONSUMER_SECRET
-                    );
-        } else {
-            authSingle = model
-                    .getCallbackAuthUrl(
-                            "twitter.com",
-                            BuildConfig.CONSUMER_KEY,
-                            BuildConfig.CONSUMER_SECRET,
-                            getString(R.string.app_name) + "://OAuthActivity"
-                    );
-        }
-        compositeDisposable.add(
-                authSingle
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(
-                                this::startBrowser,
-                                throwable -> {
-                                    closePinDialog();
-                                    onError(throwable);
-                                }
-                        )
+        initType(Type.TWITTER);
+
+        startAuthAndOpenDialogIfNeeded(
+                "twitter.com",
+                BuildConfig.CONSUMER_KEY,
+                BuildConfig.CONSUMER_SECRET
         );
     }
 
     public void onStartMastodonAuthClick(View view) {
-        authClientType = Type.MASTODON;
-        requirePin = useAuthCode.isChecked();
-        model = new com.github.moko256.twitlatte.model.impl.mastodon.OAuthModelImpl();
+        initType(Type.MASTODON);
+
         EditText editText=new EditText(this);
         editText.setHint("e.g. mastodon.social");
         editText.setInputType(EditorInfo.TYPE_TEXT_VARIATION_URI);
@@ -209,39 +188,42 @@ public class OAuthActivity extends AppCompatActivity {
                 .setView(editText)
                 .setPositiveButton(
                         android.R.string.ok,
-                        (dialog, which) -> {
-                            Single<String> authSingle;
-                            if (requirePin) {
-                                showPinDialog();
-                                authSingle = model
-                                        .getCodeAuthUrl(
-                                                editText.getText().toString(),
-                                                "",
-                                                ""
-                                        );
-                            } else {
-                                authSingle = model
-                                        .getCallbackAuthUrl(
-                                                editText.getText().toString(),
-                                                "",
-                                                "",
-                                                getString(R.string.app_name) + "://OAuthActivity"
-                                        );
-                            }
-                            authSingle
-                                    .subscribeOn(Schedulers.io())
-                                    .observeOn(AndroidSchedulers.mainThread())
-                                    .subscribe(
-                                            this::startBrowser,
-                                            throwable -> {
-                                                closePinDialog();
-                                                onError(throwable);
-                                            }
-                                    );
-                        }
+                        (dialog, which) -> startAuthAndOpenDialogIfNeeded(
+                                editText.getText().toString(),
+                                "",
+                                ""
+                        )
                 )
                 .setNegativeButton(android.R.string.cancel, null)
                 .show();
+    }
+
+    private void startAuthAndOpenDialogIfNeeded(String url, String consumerKey, String consumerSecret) {
+        String callbackUrl;
+        if (requirePin) {
+            showPinDialog();
+            callbackUrl = null;
+        } else {
+            callbackUrl = getString(R.string.app_name) + "://OAuthActivity";
+        }
+
+        compositeDisposable.add(model
+                .getAuthUrl(
+                        url,
+                        consumerKey,
+                        consumerSecret,
+                        callbackUrl
+                )
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        this::startBrowser,
+                        throwable -> {
+                            closePinDialog();
+                            onError(throwable);
+                        }
+                )
+        );
     }
 
     private void showPinDialog(){
@@ -276,6 +258,8 @@ public class OAuthActivity extends AppCompatActivity {
     }
 
     private void onError(Throwable e){
+        initType(-1);
+
         e.printStackTrace();
         Toast.makeText(
                 this,
@@ -287,13 +271,23 @@ public class OAuthActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_oauth_toolbar,menu);
+        if (requirePin) {
+            menu.findItem(R.id.action_use_auth_code).setChecked(true);
+        }
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId()==R.id.action_settings){
-            startActivity(new Intent(this, SettingsActivity.class));
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                startActivity(new Intent(this, SettingsActivity.class));
+                break;
+
+            case R.id.action_use_auth_code:
+                requirePin = !item.isChecked();
+                item.setChecked(requirePin);
+                break;
         }
         return true;
     }

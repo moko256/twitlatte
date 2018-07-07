@@ -72,13 +72,7 @@ class OAuthModelImpl(override var isRestartable: Boolean = false) : OAuthModel {
         }
     }
 
-    override fun getCallbackAuthUrl(url: String, consumerKey: String, consumerSecret: String, callbackUrl: String): Single<String>
-            = getAuth(url, callbackUrl)
-
-    override fun getCodeAuthUrl(url: String, consumerKey: String, consumerSecret: String): Single<String>
-            = getAuth(url, null)
-
-    private fun getAuth(url: String, callbackUrl: String? = null): Single<String> {
+    override fun getAuthUrl(url: String, consumerKey: String, consumerSecret: String, callbackUrl: String?): Single<String> {
         clientBuilder = MastodonClient.Builder(
                 url,
                 GlobalApplication.getOkHttpClient(ConfigurationContext.getInstance().httpClientConfiguration).newBuilder(),
