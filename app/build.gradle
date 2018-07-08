@@ -36,7 +36,7 @@ android {
         buildConfigField 'int', 'CACHE_DATABASE_VERSION' , '1'
 
         vectorDrawables.useSupportLibrary = true
-        resConfigs 'en', 'ja'
+        resConfigs 'en', 'ja', 'ldltr'
     }
     buildTypes {
         release {
@@ -59,6 +59,9 @@ android {
     }
 
     packagingOptions {
+        exclude '/lib/**'
+        exclude '/javax/**'
+        exclude '/okhttp3/**'
         exclude '/autolink.yml'
         exclude '/extract.yml'
         exclude '/hit_highlighting.yml'
@@ -72,7 +75,6 @@ android {
 
 dependencies {
 
-    //compile fileTree(dir: 'libs', include: ['*.jar'])
     testImplementation 'junit:junit:4.12'
     androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
