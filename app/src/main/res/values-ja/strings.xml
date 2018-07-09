@@ -94,6 +94,7 @@
     <string name="use_tweet_source_mute">クライアント名へ使用して非表示にする</string>
     <string name="tweet_source_mute_regex_pattern">非表示にする投稿のクライアント名のパターン</string>
     <string name="muted_post">ミュートされた投稿</string>
+    <string name="post_privacy_is">公開範囲: </string>
 
     <string name="do_quote">引用する</string>
     <string name="do_logout">ログアウトする</string>
@@ -134,5 +135,10 @@
     <string name="mode_night_yes">使用する</string>
     <string name="mode_night_follow_system">システムの設定に従う</string>
     <string name="mode_night_auto">時間によって自動的に切り替える</string>
+
+    <string name="mode_visibility_public">公開</string>
+    <string name="mode_visibility_unlisted">未収載</string>
+    <string name="mode_visibility_private">フォロワー限定</string>
+    <string name="mode_visibility_direct">ダイレクト</string>
 
 </resources>

@@ -42,7 +42,7 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <LinearLayout
+        <RelativeLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -63,6 +63,7 @@
                 android:id="@+id/tweet_text_edit_counter"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/tweet_text_edit"
                 android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                 android:gravity="end"
                 android:layout_marginBottom="16dp"
@@ -73,6 +74,7 @@
                 android:id="@+id/activity_tweet_send_images_recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/tweet_text_edit_counter"
                 android:layout_marginBottom="16dp"/>
 
 
@@ -80,14 +82,35 @@
                 android:id="@+id/activity_tweet_is_possibly_sensitive"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/activity_tweet_send_images_recycler_view"
                 android:text="@string/possibly_sensitive"
                 android:layout_marginBottom="16dp"/>
+
+
+            <TextView
+                android:id="@+id/activity_tweet_visibility_description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/activity_tweet_is_possibly_sensitive"
+                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                android:layout_marginEnd="8dp"
+                android:text="@string/post_privacy_is"/>
+
+            <Spinner
+                android:id="@+id/activity_tweet_visibility_spinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/activity_tweet_is_possibly_sensitive"
+                android:layout_toEndOf="@id/activity_tweet_visibility_description"
+                android:layout_marginBottom="16dp"
+                android:entries="@array/choose_visibility_entries"/>
 
 
             <CheckBox
                 android:id="@+id/activity_tweet_add_location"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/activity_tweet_visibility_spinner"
                 android:text="@string/add_location"
                 android:layout_marginBottom="8dp"/>
 
@@ -95,9 +118,10 @@
                 android:id="@+id/activity_tweet_location_result"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/activity_tweet_add_location"
                 android:layout_marginBottom="16dp"
                 tools:text="Latitude: 30, Longitude: 100"/>
 
-        </LinearLayout>
+        </RelativeLayout>
     </ScrollView>
 </LinearLayout>

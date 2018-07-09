@@ -44,8 +44,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -77,6 +79,7 @@ public class PostActivity extends AppCompatActivity {
     private static final String OUT_STATE_EXTRA_IMAGE_URI_LIST = "image_uri_list";
     private static final int REQUEST_GET_IMAGE = 10;
     private static final int REQUEST_CODE_PERMISSION_LOCATION = 400;
+    private static final String[] POST_VISIBILITY = {"Public", "Unlisted", "Private", "Direct"};
 
     PostTweetModel model;
 
@@ -92,6 +95,7 @@ public class PostActivity extends AppCompatActivity {
     RecyclerView imagesRecyclerView;
     AddedImagesAdapter addedImagesAdapter;
     CheckBox isPossiblySensitive;
+    Spinner postVisibility;
     CheckBox addLocation;
     TextView locationText;
 
@@ -213,6 +217,25 @@ public class PostActivity extends AppCompatActivity {
         isPossiblySensitive.setOnCheckedChangeListener(
                 (buttonView, isChecked) -> model.setPossiblySensitive(isChecked)
         );
+
+        postVisibility = findViewById(R.id.activity_tweet_visibility_spinner);
+        if (GlobalApplication.clientType == Type.MASTODON) {
+            postVisibility.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    model.setVisibility(POST_VISIBILITY[position]);
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+
+                }
+            });
+            postVisibility.setSelection(0);
+        } else {
+            postVisibility.setVisibility(View.GONE);
+            findViewById(R.id.activity_tweet_visibility_description).setVisibility(View.GONE);
+        }
 
         addLocation = findViewById(R.id.activity_tweet_add_location);
         if (GlobalApplication.clientType == Type.TWITTER) {

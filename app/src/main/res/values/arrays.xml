@@ -39,4 +39,11 @@
         <item>@string/mode_night_follow_system_value</item>
         <item>@string/mode_night_yes_value</item>
     </string-array>
+
+    <string-array name="choose_visibility_entries">
+        <item>@string/mode_visibility_public</item>
+        <item>@string/mode_visibility_unlisted</item>
+        <item>@string/mode_visibility_private</item>
+        <item>@string/mode_visibility_direct</item>
+    </string-array>
 </resources>

@@ -53,5 +53,8 @@ public interface PostTweetModel {
     GeoLocation getLocation();
     void setLocation(GeoLocation location);
 
+    String getVisibility();
+    void setVisibility(String visibility);
+
     Single<Status> postTweet();
 }

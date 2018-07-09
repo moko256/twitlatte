@@ -57,6 +57,7 @@ public class PostTweetModelImpl implements PostTweetModel {
     private String tweetText = "";
     private ArrayList<Uri> uriList = new ArrayList<>();
     private GeoLocation location;
+    private String visibility = "Public";
 
     public PostTweetModelImpl(MastodonClient client, ContentResolver contentResolver){
         this.client = client;
@@ -136,6 +137,16 @@ public class PostTweetModelImpl implements PostTweetModel {
     }
 
     @Override
+    public String getVisibility() {
+        return visibility;
+    }
+
+    @Override
+    public void setVisibility(String visibility) {
+        this.visibility = visibility;
+    }
+
+    @Override
     public Single<Status> postTweet() {
         return Single.create(subscriber -> {
             try {
@@ -167,7 +178,7 @@ public class PostTweetModelImpl implements PostTweetModel {
                         ids,
                         possiblySensitive,
                         null,
-                        com.sys1yagi.mastodon4j.api.entity.Status.Visibility.Public
+                        com.sys1yagi.mastodon4j.api.entity.Status.Visibility.valueOf(visibility)
                 ).execute()));
             } catch (NullPointerException | Mastodon4jRequestException e){
                 subscriber.tryOnError(e);

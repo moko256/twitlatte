@@ -144,6 +144,16 @@ public class PostTweetModelImpl implements PostTweetModel {
     }
 
     @Override
+    public String getVisibility() {
+        return null;
+    }
+
+    @Override
+    public void setVisibility(String visibility) {
+
+    }
+
+    @Override
     public Single<Status> postTweet() {
         return Single.create(subscriber -> {
             try {

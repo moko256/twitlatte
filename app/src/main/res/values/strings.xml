@@ -105,6 +105,7 @@
     <string name="use_tweet_source_mute">Use for the client name and hide post</string>
     <string name="tweet_source_mute_regex_pattern">Client name pattern of the hidden post</string>
     <string name="muted_post">Muted post</string>
+    <string name="post_privacy_is">Post privacy: </string>
 
     <string name="do_quote">Quote</string>
     <string name="do_logout">Logout</string>
@@ -157,5 +158,10 @@
     <string name="mode_normal_value" translatable="false">normal</string>
     <string name="mode_lowest_value" translatable="false">lowest</string>
     <string name="mode_none_value" translatable="false">none</string>
+
+    <string name="mode_visibility_public">Public</string>
+    <string name="mode_visibility_unlisted">Unlisted</string>
+    <string name="mode_visibility_private">Followers only</string>
+    <string name="mode_visibility_direct">Direct</string>
 
 </resources>
