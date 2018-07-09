@@ -29,16 +29,15 @@ import com.sys1yagi.mastodon4j.api.exception.Mastodon4jRequestException;
 import com.sys1yagi.mastodon4j.api.method.Media;
 import com.sys1yagi.mastodon4j.api.method.Statuses;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import io.reactivex.Single;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
+import twitter4j.AlternativeHttpClientImpl;
 import twitter4j.GeoLocation;
 import twitter4j.Status;
 
@@ -56,7 +55,7 @@ public class PostTweetModelImpl implements PostTweetModel {
     private long inReplyToStatusId = -1;
     private boolean possiblySensitive = false;
     private String tweetText = "";
-    private List<Uri> uriList = new ArrayList<>();
+    private ArrayList<Uri> uriList = new ArrayList<>();
     private GeoLocation location;
 
     public PostTweetModelImpl(MastodonClient client, ContentResolver contentResolver){
@@ -140,26 +139,23 @@ public class PostTweetModelImpl implements PostTweetModel {
     public Single<Status> postTweet() {
         return Single.create(subscriber -> {
             try {
-                List<Long> ids = null;
+                ArrayList<Long> ids = null;
                 if (uriList.size() > 0) {
                     ids = new ArrayList<>(uriList.size());
                     for (Uri uri: uriList) {
                         InputStream image = contentResolver.openInputStream(uri);
-                        ByteArrayOutputStream bout = new ByteArrayOutputStream();
-                        byte [] buffer = new byte[1024];
-                        while(true) {
-                            int len = image.read(buffer);
-                            if(len < 0) {
-                                break;
-                            }
-                            bout.write(buffer, 0, len);
-                        }
+                        String name = uri.getLastPathSegment();
                         Attachment attachment = new Media(((MastodonTwitterImpl) GlobalApplication.twitter).client)
                                 .postMedia(
                                         MultipartBody.Part.createFormData(
-                                                "file",
-                                                uri.getLastPathSegment(),
-                                                RequestBody.create(MediaType.parse(contentResolver.getType(uri)), bout.toByteArray())
+                                                name,
+                                                name,
+                                                AlternativeHttpClientImpl.createInputStreamRequestBody(
+                                                        MediaType.parse(Objects.requireNonNull(
+                                                                contentResolver.getType(uri))
+                                                        ),
+                                                        image
+                                                )
                                         ))
                                 .execute();
                         ids.add(attachment.getId());
@@ -173,7 +169,7 @@ public class PostTweetModelImpl implements PostTweetModel {
                         null,
                         com.sys1yagi.mastodon4j.api.entity.Status.Visibility.Public
                 ).execute()));
-            } catch (IOException | Mastodon4jRequestException e){
+            } catch (NullPointerException | Mastodon4jRequestException e){
                 subscriber.tryOnError(e);
             }
         });
