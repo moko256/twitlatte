@@ -93,6 +93,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/activity_tweet_is_possibly_sensitive"
                 android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
                 android:text="@string/post_privacy_is"/>
 
@@ -101,8 +102,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/activity_tweet_is_possibly_sensitive"
-                android:layout_toEndOf="@id/activity_tweet_visibility_description"
+                android:layout_alignEnd="@id/activity_tweet_visibility_description"
                 android:layout_marginBottom="16dp"
+                android:layout_alignParentEnd="true"
                 android:entries="@array/choose_visibility_entries"/>
 
 
