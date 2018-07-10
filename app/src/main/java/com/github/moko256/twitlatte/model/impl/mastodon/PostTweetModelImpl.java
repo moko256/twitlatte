@@ -169,7 +169,7 @@ public class PostTweetModelImpl implements PostTweetModel {
                         Attachment attachment = new Media(((MastodonTwitterImpl) GlobalApplication.twitter).client)
                                 .postMedia(
                                         MultipartBody.Part.createFormData(
-                                                name,
+                                                "file",
                                                 name,
                                                 AlternativeHttpClientImpl.createInputStreamRequestBody(
                                                         MediaType.parse(Objects.requireNonNull(
