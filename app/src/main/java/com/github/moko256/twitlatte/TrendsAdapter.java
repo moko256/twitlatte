@@ -35,8 +35,8 @@ import twitter4j.Trend;
  */
 
 public class TrendsAdapter extends RecyclerView.Adapter<TrendsAdapter.ViewHolder> {
-    private List<Trend> data;
-    private Context context;
+    private final List<Trend> data;
+    private final Context context;
 
     TrendsAdapter(Context context, List<Trend> data) {
         this.context = context;
@@ -76,7 +76,7 @@ public class TrendsAdapter extends RecyclerView.Adapter<TrendsAdapter.ViewHolder
 
     static class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView text;
+        final TextView text;
 
         ViewHolder(final View itemView) {
             super(itemView);

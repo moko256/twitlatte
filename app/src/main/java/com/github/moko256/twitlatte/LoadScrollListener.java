@@ -30,7 +30,7 @@ public abstract class LoadScrollListener extends RecyclerView.OnScrollListener{
     private int previousTotal = 0;
     private boolean loading = true;
 
-    private RecyclerView.LayoutManager layoutManager;
+    private final RecyclerView.LayoutManager layoutManager;
 
     public LoadScrollListener(RecyclerView.LayoutManager layoutManager) {
         this.layoutManager = layoutManager;
@@ -61,6 +61,6 @@ public abstract class LoadScrollListener extends RecyclerView.OnScrollListener{
 
     }
 
-    public abstract void load();
+    protected abstract void load();
 
 }

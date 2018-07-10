@@ -15,16 +15,10 @@
   -->
 
 <resources>
-    <string
-        name="app_name"
-        translatable="false">twitlatte</string>
+    <string name="app_name" translatable="false">twitlatte</string>
 
-    <string
-        name="navigation_drawer_open"
-        translatable="false">Open navigation drawer</string>
-    <string
-        name="navigation_drawer_close"
-        translatable="false">Close navigation drawer</string>
+    <string name="navigation_drawer_open" translatable="false">Open navigation drawer</string>
+    <string name="navigation_drawer_close" translatable="false">Close navigation drawer</string>
 
     <string name="login">Log in</string>
     <string name="login_description">Select the service you log in with:</string>

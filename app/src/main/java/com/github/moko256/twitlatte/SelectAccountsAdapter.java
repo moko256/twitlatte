@@ -59,7 +59,7 @@ public class SelectAccountsAdapter extends RecyclerView.Adapter<SelectAccountsAd
     public View.OnClickListener onRemoveButtonClickListener;
 
     private int selectionPosition = -1;
-    private int selectionColor;
+    private final int selectionColor;
 
     public SelectAccountsAdapter(Context context){
         this.context = context;
@@ -182,8 +182,8 @@ public class SelectAccountsAdapter extends RecyclerView.Adapter<SelectAccountsAd
     }
 
     final static class ViewHolder extends RecyclerView.ViewHolder{
-        ImageView image;
-        TextView title;
+        final ImageView image;
+        final TextView title;
 
         ViewHolder(View itemView) {
             super(itemView);

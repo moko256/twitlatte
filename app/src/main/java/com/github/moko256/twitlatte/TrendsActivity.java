@@ -33,7 +33,7 @@ import com.github.moko256.twitlatte.entity.Type;
  */
 
 public class TrendsActivity extends AppCompatActivity {
-    ActionBar actionBar;
+    private ActionBar actionBar;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {

@@ -553,12 +553,12 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
 
     private static final class CachedUserMentionEntity implements UserMentionEntity {
 
-        private String text;
-        private String name;
-        private String screenName;
-        private String id;
-        private String start;
-        private String end;
+        private final String text;
+        private final String name;
+        private final String screenName;
+        private final String id;
+        private final String start;
+        private final String end;
 
         CachedUserMentionEntity(String text,
                                 String id,
@@ -631,11 +631,11 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
 
     private static final class CachedURLEntity implements URLEntity {
 
-        private String text;
-        private String expandedURL;
-        private String displaysURL;
-        private String start;
-        private String end;
+        private final String text;
+        private final String expandedURL;
+        private final String displaysURL;
+        private final String start;
+        private final String end;
 
         CachedURLEntity(String text,
                 String expandedURL,
@@ -701,9 +701,9 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
     }
 
     private static final class CachedHashtagEntity implements HashtagEntity {
-        private String text;
-        private String start;
-        private String end;
+        private final String text;
+        private final String start;
+        private final String end;
 
         CachedHashtagEntity(String text,
                 String start,
@@ -901,9 +901,9 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
         }
 
         private static final class Variant implements MediaEntity.Variant {
-            private String bitrate;
-            private String contentType;
-            private String url;
+            private final String bitrate;
+            private final String contentType;
+            private final String url;
 
             Variant(String bitrate,
                     String contentType,
@@ -966,9 +966,9 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
     }
 
     private static final class CachedSymbolEntity implements SymbolEntity {
-        private String text;
-        private String start;
-        private String end;
+        private final String text;
+        private final String start;
+        private final String end;
 
         CachedSymbolEntity(String text,
                             String start,

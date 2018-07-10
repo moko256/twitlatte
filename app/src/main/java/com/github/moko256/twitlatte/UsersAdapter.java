@@ -41,8 +41,8 @@ import twitter4j.User;
  */
 class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> {
 
-    private List<Long> data;
-    private Context context;
+    private final List<Long> data;
+    private final Context context;
 
     UsersAdapter(Context context, List<Long> data) {
         this.context = context;
@@ -112,11 +112,11 @@ class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> {
 
     static class ViewHolder extends RecyclerView.ViewHolder {
 
-        ImageView userUserImage;
-        TextView userUserName;
-        TextView userUserId;
+        final ImageView userUserImage;
+        final TextView userUserName;
+        final TextView userUserId;
 
-        GlideRequests request;
+        final GlideRequests request;
 
         ViewHolder(final View itemView) {
             super(itemView);

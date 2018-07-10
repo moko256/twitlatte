@@ -40,7 +40,7 @@ import java.util.List;
 
 public class AddedImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private Context context;
+    private final Context context;
 
     private ArrayList<Uri> images = new ArrayList<>();
     public int limit = 4;
@@ -157,11 +157,11 @@ public class AddedImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     private final static class ImageChildViewHolder extends RecyclerView.ViewHolder{
 
-        ImageView image;
-        TextView title;
-        ImageButton deleteButton;
+        final ImageView image;
+        final TextView title;
+        final ImageButton deleteButton;
 
-        GlideRequests requests;
+        final GlideRequests requests;
 
         ImageChildViewHolder(View itemView) {
             super(itemView);

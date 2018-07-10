@@ -23,7 +23,7 @@ import android.support.annotation.IdRes;
  *
  * @author moko256
  */
-public interface NavigationPositionInterface {
+interface NavigationPositionInterface {
     @IdRes
     int getNavigationPosition();
 }

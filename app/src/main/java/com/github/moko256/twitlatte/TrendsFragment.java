@@ -52,12 +52,12 @@ import twitter4j.TwitterException;
  */
 
 public class TrendsFragment extends BaseListFragment {
-    TrendsAdapter adapter;
-    List<Trend> list;
+    private TrendsAdapter adapter;
+    private List<Trend> list;
 
-    CompositeDisposable disposable;
+    private CompositeDisposable disposable;
 
-    CachedTrendsSQLiteOpenHelper helper;
+    private CachedTrendsSQLiteOpenHelper helper;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -153,7 +153,7 @@ public class TrendsFragment extends BaseListFragment {
         return new LinearLayoutManager(getContext());
     }
 
-    public Single<Trends> getResponseSingle(GeoLocation geolocation) {
+    private Single<Trends> getResponseSingle(GeoLocation geolocation) {
         return Single.create(
                 subscriber->{
                     try {
@@ -169,7 +169,7 @@ public class TrendsFragment extends BaseListFragment {
         );
     }
 
-    public Single<GeoLocation> getGeoLocationSingle(){
+    private Single<GeoLocation> getGeoLocationSingle(){
         return Single.create(
                 subscriber -> {
                     try {

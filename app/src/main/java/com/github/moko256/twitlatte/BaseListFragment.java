@@ -18,7 +18,6 @@ package com.github.moko256.twitlatte;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -62,13 +61,13 @@ public abstract class BaseListFragment extends Fragment implements MovableTopInt
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         super.onCreateView(inflater,container,savedInstanceState);
 
-        View view=inflater.inflate(getLayoutResourceId(), container ,false);
+        View view=inflater.inflate(R.layout.fragment_base_list, container ,false);
 
         recyclerView= view.findViewById(R.id.TLlistView);
         recyclerView.setLayoutManager(initializeRecyclerViewLayoutManager());
         recyclerView.addOnScrollListener(new LoadScrollListener(recyclerView.getLayoutManager()) {
             @Override
-            public void load() {
+            protected void load() {
                 if(isInitializedList()){
                     onLoadMoreList();
                 }
@@ -128,11 +127,6 @@ public abstract class BaseListFragment extends Fragment implements MovableTopInt
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setRecycleChildrenOnDetach(true);
         return layoutManager;
-    }
-
-    @LayoutRes
-    public int getLayoutResourceId(){
-        return R.layout.fragment_base_list;
     }
 
     public SwipeRefreshLayout getSwipeRefreshLayout() {

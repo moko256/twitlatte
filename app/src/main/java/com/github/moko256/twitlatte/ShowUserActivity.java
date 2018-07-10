@@ -56,19 +56,19 @@ import twitter4j.User;
  */
 public class ShowUserActivity extends AppCompatActivity implements BaseListFragment.GetSnackBar, BaseTweetListFragment.GetRecyclerViewPool, BaseUsersFragment.GetRecyclerViewPool {
 
-    CompositeDisposable disposable;
+    private CompositeDisposable disposable;
 
-    String userScreenName;
-    long userId;
+    private String userScreenName;
+    private long userId;
 
-    User user;
+    private User user;
 
-    ActionBar actionBar;
-    ViewPager viewPager;
-    TabLayout tabLayout;
+    private ActionBar actionBar;
+    private ViewPager viewPager;
+    private TabLayout tabLayout;
 
-    RecyclerView.RecycledViewPool tweetListViewPool;
-    RecyclerView.RecycledViewPool userListViewPool;
+    private RecyclerView.RecycledViewPool tweetListViewPool;
+    private RecyclerView.RecycledViewPool userListViewPool;
 
     @Override
     public void onCreate(Bundle savedInstanceState){

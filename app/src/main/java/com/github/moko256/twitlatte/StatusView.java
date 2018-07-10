@@ -55,29 +55,29 @@ import twitter4j.TwitterException;
  */
 
 public class StatusView extends FrameLayout {
-    Status status;
+    private Status status;
 
-    GlideRequests glideRequests;
+    private final GlideRequests glideRequests;
 
-    ImageView userImage;
-    TextView retweetUserName;
-    TextView retweetTimeStamp;
-    TextView replyUserName;
-    Space headerBottomMargin;
-    TextView userName;
-    TextView userId;
-    TextView tweetContext;
-    TextView timeStampText;
-    RelativeLayout quoteTweetLayout;
-    TextView quoteTweetUserName;
-    TextView quoteTweetUserId;
-    TextView quoteTweetContext;
-    TweetImageTableView imageTableView;
-    CheckBox likeButton;
-    CheckBox retweetButton;
-    ImageButton replyButton;
-    TextView likeCount;
-    TextView retweetCount;
+    private final ImageView userImage;
+    private final TextView retweetUserName;
+    private final TextView retweetTimeStamp;
+    private final TextView replyUserName;
+    private final Space headerBottomMargin;
+    private final TextView userName;
+    private final TextView userId;
+    private final TextView tweetContext;
+    private final TextView timeStampText;
+    private final RelativeLayout quoteTweetLayout;
+    private final TextView quoteTweetUserName;
+    private final TextView quoteTweetUserId;
+    private final TextView quoteTweetContext;
+    private final TweetImageTableView imageTableView;
+    private final CheckBox likeButton;
+    private final CheckBox retweetButton;
+    private final ImageButton replyButton;
+    private final TextView likeCount;
+    private final TextView retweetCount;
 
     public StatusView(Context context) {
         this(context, null);

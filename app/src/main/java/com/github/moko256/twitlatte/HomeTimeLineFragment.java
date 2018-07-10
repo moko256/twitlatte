@@ -29,7 +29,7 @@ import twitter4j.TwitterException;
 public class HomeTimeLineFragment extends BaseTweetListFragment implements ToolbarTitleInterface,NavigationPositionInterface {
 
     @Override
-    public ResponseList<Status> getResponseList(Paging paging) throws TwitterException {
+    protected ResponseList<Status> getResponseList(Paging paging) throws TwitterException {
         return GlobalApplication.twitter.getHomeTimeline(paging);
     }
 

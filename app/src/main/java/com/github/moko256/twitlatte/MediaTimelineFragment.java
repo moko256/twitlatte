@@ -42,7 +42,7 @@ import twitter4j.TwitterException;
  */
 public class MediaTimelineFragment extends BaseTweetListFragment implements ToolbarTitleInterface {
 
-    long userId = -1;
+    private long userId = -1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -68,7 +68,7 @@ public class MediaTimelineFragment extends BaseTweetListFragment implements Tool
     }
 
     @Override
-    public ResponseList<Status> getResponseList(Paging paging) throws TwitterException {
+    protected ResponseList<Status> getResponseList(Paging paging) throws TwitterException {
         if (GlobalApplication.clientType == Type.MASTODON){
             Accounts accounts = new Accounts(((MastodonTwitterImpl) GlobalApplication.twitter).client);
             try {

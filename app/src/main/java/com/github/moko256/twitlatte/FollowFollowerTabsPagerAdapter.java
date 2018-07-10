@@ -28,8 +28,8 @@ import com.github.moko256.twitlatte.widget.FragmentPagerAdapter;
  * @author moko256
  */
 class FollowFollowerTabsPagerAdapter extends FragmentPagerAdapter {
-    private Context context;
-    long userId;
+    final private Context context;
+    final private long userId;
 
     FollowFollowerTabsPagerAdapter(FragmentManager fm, Context context,long userId) {
         super(fm);

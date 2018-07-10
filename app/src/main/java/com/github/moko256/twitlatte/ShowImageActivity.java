@@ -26,6 +26,7 @@ import android.support.v7.app.AppCompatActivity;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import twitter4j.MediaEntity;
 
@@ -38,9 +39,9 @@ public class ShowImageActivity extends AppCompatActivity {
     private static final String FRAG_MEDIA_ENTITIES="MediaEntities";
     private static final String FRAG_POSITION="position";
 
-    List<MediaEntity> mediaEntities;
+    private List<MediaEntity> mediaEntities;
 
-    ViewPager pager;
+    private ViewPager pager;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -51,7 +52,7 @@ public class ShowImageActivity extends AppCompatActivity {
 
         int position=getIntent().getIntExtra(FRAG_POSITION,0);
 
-        ActionBar actionBar = getSupportActionBar();
+        ActionBar actionBar = Objects.requireNonNull(getSupportActionBar());
         actionBar.setTitle("");
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeAsUpIndicator(R.drawable.ic_clear_white_24dp);

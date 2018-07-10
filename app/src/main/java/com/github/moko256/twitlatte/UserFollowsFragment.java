@@ -29,7 +29,7 @@ import twitter4j.User;
  */
 public class UserFollowsFragment extends BaseUsersFragment implements ToolbarTitleInterface,NavigationPositionInterface {
 
-    long userId = -1;
+    private long userId = -1;
 
     @Override
     protected void onInitializeList() {
@@ -48,7 +48,7 @@ public class UserFollowsFragment extends BaseUsersFragment implements ToolbarTit
     }
 
     @Override
-    public PagableResponseList<User> getResponseList(long cursor) throws TwitterException {
+    protected PagableResponseList<User> getResponseList(long cursor) throws TwitterException {
         return GlobalApplication.twitter.getFriendsList(userId, cursor);
     }
 

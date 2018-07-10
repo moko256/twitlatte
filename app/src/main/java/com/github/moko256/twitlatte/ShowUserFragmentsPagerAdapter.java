@@ -42,10 +42,10 @@ public class ShowUserFragmentsPagerAdapter extends FragmentPagerAdapter {
     private static final int FRAGMENT_FOLLOWER = 5;
 
 
-    private List<Integer> list;
+    final private List<Integer> list;
 
-    private Context context;
-    private long userId;
+    final private Context context;
+    final private long userId;
 
     ShowUserFragmentsPagerAdapter(FragmentManager fm, Context context, long userId) {
         super(fm);

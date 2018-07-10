@@ -59,13 +59,13 @@ import twitter4j.TwitterException;
 public abstract class BaseTweetListFragment extends BaseListFragment {
 
     StatusesAdapter adapter;
-    List<Long> list;
+    private List<Long> list;
 
-    CompositeDisposable disposable;
+    private CompositeDisposable disposable;
 
-    CachedIdListSQLiteOpenHelper statusIdsDatabase;
+    private CachedIdListSQLiteOpenHelper statusIdsDatabase;
 
-    int LAST_SAVED_LIST_POSITION;
+    private int LAST_SAVED_LIST_POSITION;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -365,7 +365,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
 
     protected abstract String getCachedIdsDatabaseName();
 
-    public Single<ResponseList<Status>> getResponseSingle(Paging paging, long... excludeIds) {
+    private Single<ResponseList<Status>> getResponseSingle(Paging paging, long... excludeIds) {
         return Single.create(
                 subscriber->{
                     try {
@@ -381,7 +381,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
         );
     }
 
-    public abstract ResponseList<Status> getResponseList(Paging paging) throws TwitterException;
+    protected abstract ResponseList<Status> getResponseList(Paging paging) throws TwitterException;
 
     interface GetRecyclerViewPool {
         RecyclerView.RecycledViewPool getTweetListViewPool();

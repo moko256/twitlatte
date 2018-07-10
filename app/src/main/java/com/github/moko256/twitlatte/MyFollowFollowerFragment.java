@@ -30,7 +30,7 @@ import android.view.ViewGroup;
  * @author moko256
  */
 public class MyFollowFollowerFragment extends Fragment implements ToolbarTitleInterface,NavigationPositionInterface,UseTabsInterface {
-    ViewPager viewPager;
+    private ViewPager viewPager;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){

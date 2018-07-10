@@ -74,14 +74,14 @@ public class ImagePagerChildFragment extends Fragment {
     private static final String FRAG_MEDIA_ENTITY = "media_entity";
     private static final int REQUEST_CODE_PERMISSION_STORAGE = 100;
 
-    MediaEntity mediaEntity;
+    private MediaEntity mediaEntity;
 
-    PhotoView imageView;
+    private PhotoView imageView;
 
-    PlayerView videoPlayView;
-    SimpleExoPlayer player;
+    private PlayerView videoPlayView;
+    private SimpleExoPlayer player;
 
-    DefaultTrackSelector trackSelector;
+    private DefaultTrackSelector trackSelector;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {

@@ -67,7 +67,7 @@ public class SearchResultFragment extends BaseTweetListFragment {
     }
 
     @Override
-    public ResponseList<Status> getResponseList(Paging paging) throws TwitterException {
+    protected ResponseList<Status> getResponseList(Paging paging) throws TwitterException {
         SearchResultList result=new SearchResultList();
         if (!searchText.equals("")){
             Query query=new Query(searchText)

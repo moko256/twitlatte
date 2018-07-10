@@ -70,28 +70,25 @@ import twitter4j.User;
  */
 public class MainActivity extends AppCompatActivity implements BaseListFragment.GetSnackBar, BaseTweetListFragment.GetRecyclerViewPool, BaseUsersFragment.GetRecyclerViewPool {
 
-    CompositeDisposable disposable;
-
-    Toolbar toolbar;
+    private CompositeDisposable disposable;
 
     @Nullable
-    DrawerLayout drawer;
-    NavigationView navigationView;
+    private DrawerLayout drawer;
+    private NavigationView navigationView;
 
-    View headerView;
-    TextView userNameText;
-    TextView userIdText;
-    ImageView userImage;
-    ImageView userBackgroundImage;
-    ImageView userToggleImage;
-    RecyclerView accountListView;
+    private TextView userNameText;
+    private TextView userIdText;
+    private ImageView userImage;
+    private ImageView userBackgroundImage;
+    private ImageView userToggleImage;
+    private RecyclerView accountListView;
 
-    TabLayout tabLayout;
+    private TabLayout tabLayout;
 
-    boolean isDrawerAccountsSelection = false;
+    private boolean isDrawerAccountsSelection = false;
 
-    RecyclerView.RecycledViewPool tweetListViewPool;
-    RecyclerView.RecycledViewPool userListViewPool;
+    private RecyclerView.RecycledViewPool tweetListViewPool;
+    private RecyclerView.RecycledViewPool userListViewPool;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -101,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
 
         disposable = new CompositeDisposable();
 
-        toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         toolbar.getChildAt(0).setOnClickListener(v -> {
@@ -173,7 +170,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
 
         });
 
-        headerView = navigationView.inflateHeaderView(R.layout.nav_header_main);
+        View headerView = navigationView.inflateHeaderView(R.layout.nav_header_main);
 
         userNameText = headerView.findViewById(R.id.user_name);
         userIdText = headerView.findViewById(R.id.user_id);

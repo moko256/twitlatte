@@ -56,7 +56,7 @@ public class TweetImageTableView extends GridLayout {
 
     private boolean isOpen = true;
 
-    GlideRequests requests;
+    private GlideRequests requests;
 
     /* {row,column,rowSpan,colSpan} */
     private static final int params[][][]={

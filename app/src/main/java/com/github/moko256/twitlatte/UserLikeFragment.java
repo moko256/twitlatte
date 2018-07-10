@@ -30,7 +30,7 @@ import twitter4j.TwitterException;
  */
 public class UserLikeFragment extends BaseTweetListFragment implements ToolbarTitleInterface {
 
-    long userId = -1;
+    private long userId = -1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -49,7 +49,7 @@ public class UserLikeFragment extends BaseTweetListFragment implements ToolbarTi
     }
 
     @Override
-    public ResponseList<Status> getResponseList(Paging paging) throws TwitterException {
+    protected ResponseList<Status> getResponseList(Paging paging) throws TwitterException {
         return GlobalApplication.twitter.getFavorites(userId, paging);
     }
 

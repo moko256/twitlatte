@@ -40,8 +40,8 @@ import twitter4j.Status;
  */
 class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private List<Long> data;
-    private Context context;
+    private final List<Long> data;
+    private final Context context;
     private OnLoadMoreClickListener onLoadMoreClick;
     private boolean shouldShowMediaOnly = false;
 
@@ -155,7 +155,7 @@ class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     private class StatusViewHolder extends RecyclerView.ViewHolder {
-        StatusView statusView;
+        final StatusView statusView;
 
         StatusViewHolder() {
             super(new StatusView(context));
@@ -168,8 +168,8 @@ class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     private class MoreLoadViewHolder extends RecyclerView.ViewHolder {
-        TextView text;
-        ProgressBar progressBar;
+        final TextView text;
+        final ProgressBar progressBar;
 
         private boolean isLoading = false;
 
@@ -198,7 +198,7 @@ class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     private class ImagesOnlyTweetViewHolder extends RecyclerView.ViewHolder {
-        TweetImageTableView tweetImageTableView;
+        final TweetImageTableView tweetImageTableView;
 
         ImagesOnlyTweetViewHolder(ViewGroup viewGroup) {
             super(LayoutInflater.from(context).inflate(R.layout.layout_list_tweet_only_image, viewGroup, false));

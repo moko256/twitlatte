@@ -42,17 +42,17 @@ import twitter4j.TwitterException;
 
 public class PostTweetModelImpl implements PostTweetModel {
 
-    private Twitter twitter;
-    private ContentResolver contentResolver;
+    private final Twitter twitter;
+    private final ContentResolver contentResolver;
 
     private long inReplyToStatusId = -1;
     private boolean possiblySensitive;
     private String tweetText;
-    private List<Uri> uriList = new ArrayList<>();
+    private final List<Uri> uriList = new ArrayList<>();
     private GeoLocation location;
 
     private TwitterTextParseResults resultCache = null;
-    private int MAX_TWEET_LENGTH = TwitterTextParser.TWITTER_TEXT_WEIGHTED_CHAR_COUNT_CONFIG.getMaxWeightedTweetLength();
+    private final int MAX_TWEET_LENGTH = TwitterTextParser.TWITTER_TEXT_WEIGHTED_CHAR_COUNT_CONFIG.getMaxWeightedTweetLength();
 
     public PostTweetModelImpl(Twitter twitter, ContentResolver contentResolver){
         this.twitter = twitter;

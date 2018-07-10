@@ -31,7 +31,7 @@ import twitter4j.MediaEntity;
  */
 class ImagePagerAdapter extends FragmentPagerAdapter {
 
-    private List<MediaEntity> mediaEntities;
+    private final List<MediaEntity> mediaEntities;
 
     ImagePagerAdapter(FragmentManager fm, List<MediaEntity> mediaEntities) {
         super(fm);

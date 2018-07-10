@@ -45,7 +45,7 @@ import twitter4j.User;
 
 public class CachedUsersSQLiteOpenHelper extends SQLiteOpenHelper {
 
-    private boolean isTwitter;
+    private final boolean isTwitter;
 
     private static final String TABLE_NAME = "CachedUsers";
     private static final String[] TABLE_COLUMNS = new String[]{
@@ -124,43 +124,43 @@ public class CachedUsersSQLiteOpenHelper extends SQLiteOpenHelper {
             );
             if (c.moveToLast()) {
                 user = new User() {
-                    long id = c.getLong(0);
-                    String name = c.getString(1);
-                    String email = c.getString(2);
-                    String screenName = c.getString(3);
-                    String location = c.getString(4);
-                    String description = c.getString(5);
-                    boolean isContributorsEnabled = c.getInt(6) != 0;
-                    String profileImageURL = c.getString(7);
-                    String profileImageURLHttps = c.getString(8);
-                    boolean isDefaultProfileImage = c.getInt(9) != 0;
-                    String url = c.getString(10);
-                    boolean isProtected = c.getInt(11) != 0;
-                    int followersCount = c.getInt(12);
-                    String profileBackgroundColor = c.getString(13);
-                    String profileTextColor = c.getString(14);
-                    String profileLinkColor = c.getString(15);
-                    String profileSidebarFillColor = c.getString(16);
-                    String profileSidebarBorderColor = c.getString(17);
-                    boolean isProfileUseBackgroundImage = c.getInt(18) != 0;
-                    boolean isDefaultProfile = c.getInt(19) != 0;
-                    boolean isShowAllInlineMedia = c.getInt(20) != 0;
-                    int friendsCount = c.getInt(21);
-                    Date createdAt = new Date(c.getLong(22));
-                    int favoritesCount = c.getInt(23);
-                    int utcOffset = c.getInt(24);
-                    String timeZone = c.getString(25);
-                    String profileBackgroundImageURL = c.getString(26);
-                    String profileBackgroundImageURLHttps = c.getString(27);
-                    String profileBannerImageUrl = c.getString(28);
-                    boolean isProfileBackgroundTiled = c.getInt(29) != 0;
-                    String lang = c.getString(30);
-                    int statusesCount = c.getInt(31);
-                    boolean isGeoEnabled = c.getInt(32) != 0;
-                    boolean isVerified = c.getInt(33) != 0;
-                    boolean isTranslator = c.getInt(34) != 0;
-                    boolean isFollowRequestSent = c.getInt(35) != 0;
-                    URLEntity[] descriptionURLEntities = restoreURLEntities(
+                    final long id = c.getLong(0);
+                    final String name = c.getString(1);
+                    final String email = c.getString(2);
+                    final String screenName = c.getString(3);
+                    final String location = c.getString(4);
+                    final String description = c.getString(5);
+                    final boolean isContributorsEnabled = c.getInt(6) != 0;
+                    final String profileImageURL = c.getString(7);
+                    final String profileImageURLHttps = c.getString(8);
+                    final boolean isDefaultProfileImage = c.getInt(9) != 0;
+                    final String url = c.getString(10);
+                    final boolean isProtected = c.getInt(11) != 0;
+                    final int followersCount = c.getInt(12);
+                    final String profileBackgroundColor = c.getString(13);
+                    final String profileTextColor = c.getString(14);
+                    final String profileLinkColor = c.getString(15);
+                    final String profileSidebarFillColor = c.getString(16);
+                    final String profileSidebarBorderColor = c.getString(17);
+                    final boolean isProfileUseBackgroundImage = c.getInt(18) != 0;
+                    final boolean isDefaultProfile = c.getInt(19) != 0;
+                    final boolean isShowAllInlineMedia = c.getInt(20) != 0;
+                    final int friendsCount = c.getInt(21);
+                    final Date createdAt = new Date(c.getLong(22));
+                    final int favoritesCount = c.getInt(23);
+                    final int utcOffset = c.getInt(24);
+                    final String timeZone = c.getString(25);
+                    final String profileBackgroundImageURL = c.getString(26);
+                    final String profileBackgroundImageURLHttps = c.getString(27);
+                    final String profileBannerImageUrl = c.getString(28);
+                    final boolean isProfileBackgroundTiled = c.getInt(29) != 0;
+                    final String lang = c.getString(30);
+                    final int statusesCount = c.getInt(31);
+                    final boolean isGeoEnabled = c.getInt(32) != 0;
+                    final boolean isVerified = c.getInt(33) != 0;
+                    final boolean isTranslator = c.getInt(34) != 0;
+                    final boolean isFollowRequestSent = c.getInt(35) != 0;
+                    final URLEntity[] descriptionURLEntities = restoreURLEntities(
                             c.getString(36).split(","),
                             c.getString(37).split(","),
                             c.getString(38).split(","),
@@ -168,7 +168,7 @@ public class CachedUsersSQLiteOpenHelper extends SQLiteOpenHelper {
                             c.getString(40).split(","),
                             c.getString(41).split(",")
                     );
-                    String[] withheldInCountries = c.getString(42).split(",");
+                    final String[] withheldInCountries = c.getString(42).split(",");
 
                     @Override
                     public long getId() {

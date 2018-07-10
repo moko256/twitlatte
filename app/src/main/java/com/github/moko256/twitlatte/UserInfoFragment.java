@@ -55,26 +55,26 @@ import twitter4j.User;
 
 public class UserInfoFragment extends Fragment implements ToolbarTitleInterface {
 
-    CompositeDisposable disposable;
+    private CompositeDisposable disposable;
 
-    GlideRequests glideRequests;
+    private GlideRequests glideRequests;
 
-    SwipeRefreshLayout swipeRefreshLayout;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
-    ImageView header;
-    ImageView icon;
+    private ImageView header;
+    private ImageView icon;
 
-    TextView userNameText;
-    TextView userIdText;
-    TextView userBioText;
-    TextView userLocation;
-    TextView userUrl;
-    TextView userCreatedAt;
-    TextView userTweetsCount;
-    TextView userFollowCount;
-    TextView userFollowerCount;
+    private TextView userNameText;
+    private TextView userIdText;
+    private TextView userBioText;
+    private TextView userLocation;
+    private TextView userUrl;
+    private TextView userCreatedAt;
+    private TextView userTweetsCount;
+    private TextView userFollowCount;
+    private TextView userFollowerCount;
 
-    long userId = -1;
+    private long userId = -1;
 
     public static UserInfoFragment newInstance(long userId){
         UserInfoFragment result = new UserInfoFragment();

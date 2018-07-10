@@ -22,11 +22,11 @@
         android:id="@+id/action_change_selection"
         android:title="@string/action_change_quality"
         android:icon="@drawable/ic_settings_black_24dp"
-        app:showAsAction="always"
+        app:showAsAction="ifRoom"
         app:iconTint="@android:color/white"/>
     <item
         android:id="@+id/action_download"
         android:title="@string/save_image"
         android:icon="@drawable/ic_file_download_white_24dp"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
 </menu>

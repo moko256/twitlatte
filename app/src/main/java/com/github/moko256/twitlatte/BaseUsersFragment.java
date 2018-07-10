@@ -46,11 +46,11 @@ import twitter4j.User;
  */
 public abstract class BaseUsersFragment extends BaseListFragment {
 
-    UsersAdapter adapter;
-    List<Long> list;
-    long next_cursor;
+    private UsersAdapter adapter;
+    private List<Long> list;
+    private long next_cursor;
 
-    CompositeDisposable disposable;
+    private CompositeDisposable disposable;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -187,7 +187,7 @@ public abstract class BaseUsersFragment extends BaseListFragment {
         return !list.isEmpty();
     }
 
-    public Single<PagableResponseList<User>> getResponseSingle(long cursor) {
+    private Single<PagableResponseList<User>> getResponseSingle(long cursor) {
         return Single.create(
                 subscriber->{
                     try {
@@ -202,7 +202,7 @@ public abstract class BaseUsersFragment extends BaseListFragment {
         );
     }
 
-    public abstract PagableResponseList<User> getResponseList(long cursor) throws TwitterException;
+    protected abstract PagableResponseList<User> getResponseList(long cursor) throws TwitterException;
 
     interface GetRecyclerViewPool {
         RecyclerView.RecycledViewPool getUserListViewPool();

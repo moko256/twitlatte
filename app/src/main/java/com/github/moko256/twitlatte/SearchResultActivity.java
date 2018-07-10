@@ -24,6 +24,8 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 
+import java.util.Objects;
+
 /**
  * Created by moko256 on 2017/01/26.
  *
@@ -32,14 +34,14 @@ import android.support.v7.widget.RecyclerView;
 
 public class SearchResultActivity extends AppCompatActivity implements BaseListFragment.GetSnackBar, BaseTweetListFragment.GetRecyclerViewPool {
 
-    RecyclerView.RecycledViewPool tweetListViewPool;
+    private RecyclerView.RecycledViewPool tweetListViewPool;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
-        ActionBar actionBar=getSupportActionBar();
+        ActionBar actionBar= Objects.requireNonNull(getSupportActionBar());
         actionBar.setTitle(getIntent().getStringExtra("query"));
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeAsUpIndicator(R.drawable.ic_back_white_24dp);

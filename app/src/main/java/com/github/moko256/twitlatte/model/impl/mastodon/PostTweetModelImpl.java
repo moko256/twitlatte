@@ -47,14 +47,14 @@ import twitter4j.GeoLocation;
 
 public class PostTweetModelImpl implements PostTweetModel {
 
-    private MastodonClient client;
-    private ContentResolver contentResolver;
+    private final MastodonClient client;
+    private final ContentResolver contentResolver;
 
     private long inReplyToStatusId = -1;
     private boolean possiblySensitive = false;
     private String tweetText = "";
     private String contentWarning = "";
-    private ArrayList<Uri> uriList = new ArrayList<>();
+    private final ArrayList<Uri> uriList = new ArrayList<>();
     private GeoLocation location;
     private String visibility = "Public";
 

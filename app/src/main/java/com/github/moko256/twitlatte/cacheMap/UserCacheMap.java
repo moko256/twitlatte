@@ -36,7 +36,7 @@ import twitter4j.User;
 public class UserCacheMap {
 
     private CachedUsersSQLiteOpenHelper diskCache;
-    private LruCache<Long, User> cache=new LruCache<>(GlobalApplication.statusCacheListLimit / 4);
+    private final LruCache<Long, User> cache=new LruCache<>(GlobalApplication.statusCacheListLimit / 4);
 
     public void prepare(Context context, AccessToken accessToken){
         if (diskCache != null){

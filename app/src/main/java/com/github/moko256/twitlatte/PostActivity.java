@@ -83,27 +83,26 @@ public class PostActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_PERMISSION_LOCATION = 400;
     private static final String[] POST_VISIBILITY = {"Public", "Unlisted", "Private", "Direct"};
 
-    PostTweetModel model;
+    private PostTweetModel model;
 
-    boolean isPosting = false;
+    private boolean isPosting = false;
 
-    ViewGroup rootViewGroup;
+    private ViewGroup rootViewGroup;
+    private Toolbar toolbar;
+    private ActionBar actionBar;
+    private ImageView userIcon;
+    private TextView counterTextView;
+    private ImageKeyboardEditText editText;
+    private EditText contentWarningText;
+    private CheckBox contentWarningEnabled;
+    private RecyclerView imagesRecyclerView;
+    private AddedImagesAdapter addedImagesAdapter;
+    private CheckBox isPossiblySensitive;
+    private Spinner postVisibility;
+    private CheckBox addLocation;
+    private TextView locationText;
 
-    Toolbar toolbar;
-    ActionBar actionBar;
-    ImageView userIcon;
-    TextView counterTextView;
-    ImageKeyboardEditText editText;
-    EditText contentWarningText;
-    CheckBox contentWarningEnabled;
-    RecyclerView imagesRecyclerView;
-    AddedImagesAdapter addedImagesAdapter;
-    CheckBox isPossiblySensitive;
-    Spinner postVisibility;
-    CheckBox addLocation;
-    TextView locationText;
-
-    CompositeDisposable disposable;
+    private CompositeDisposable disposable;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

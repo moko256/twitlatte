@@ -60,10 +60,10 @@ import static android.view.View.VISIBLE;
  */
 public class ShowTweetActivity extends AppCompatActivity {
 
-    CompositeDisposable disposables;
-    long statusId;
+    private CompositeDisposable disposables;
+    private long statusId;
 
-    StatusView statusView;
+    private StatusView statusView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
