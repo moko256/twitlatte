@@ -67,8 +67,6 @@ android {
         exclude '/hit_highlighting.yml'
         exclude '/tld_lib.yml'
         exclude '/tlds.yml'
-        exclude '/v1.json'
-        exclude '/v2.json'
         exclude '/validate.yml'
     }
 }
