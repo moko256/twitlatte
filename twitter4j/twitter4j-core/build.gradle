@@ -9,22 +9,23 @@ apply plugin: 'maven'
 //sourceCompatibility = 6
 //targetCompatibility = 6
 tasks.withType(JavaCompile) {
-	options.encoding = 'UTF-8'
+    options.encoding = 'UTF-8'
 }
 
 sourceSets {
-	main {
-		java {
-			srcDirs += [
-					'src/internal-async',
-					'src/internal-http',
-					'src/internal-json',
-					'src/internal-logging',
-					'src/internal-util',
-					'src/jmx'
-			]
-		}
-	}
+    main {
+        java {
+            srcDirs += [
+                    'src/main/java',
+                    'src/internal-async',
+                    'src/internal-http',
+                    'src/internal-json',
+                    'src/internal-logging',
+                    'src/internal-util',
+                    'src/jmx'
+            ]
+        }
+    }
 }
 
 dependencies {
