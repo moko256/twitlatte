@@ -59,6 +59,7 @@
                 android:layout_marginBottom="8dp"
                 android:hint="@string/content_warning"
                 android:visibility="gone"
+                android:inputType="text"
                 tools:visibility="visible"/>
 
             <com.github.moko256.twitlatte.widget.ImageKeyboardEditText
