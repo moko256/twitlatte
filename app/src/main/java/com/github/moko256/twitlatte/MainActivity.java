@@ -200,7 +200,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
 
             if (accessToken.getUserId() != GlobalApplication.userId) {
                 GlobalApplication.preferenceRepository.putString(
-                        "AccountKey", accessToken.getKeyString()
+                        GlobalApplication.KEY_ACCOUNT_KEY, accessToken.getKeyString()
                 );
                 ((GlobalApplication) getApplication()).initTwitter(accessToken);
                 adapter.updateSelectedPosition(accessToken);
@@ -217,7 +217,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                             AccountsModel accountsModel = GlobalApplication.accountsModel;
 
                             AccessToken token = accountsModel.get(
-                                    GlobalApplication.preferenceRepository.getString("AccountKey", "-1")
+                                    GlobalApplication.preferenceRepository.getString(GlobalApplication.KEY_ACCOUNT_KEY, "-1")
                             );
                             accountsModel.delete(token);
                             adapter.removeAccessTokensAndUpdate(token);
@@ -226,7 +226,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                             if (point != -1) {
                                 AccessToken accessToken = accountsModel.getAccessTokens().get(point);
                                 GlobalApplication.preferenceRepository.putString(
-                                        "AccountKey", accessToken.getKeyString()
+                                        GlobalApplication.KEY_ACCOUNT_KEY, accessToken.getKeyString()
                                 );
                                 ((GlobalApplication) getApplication()).initTwitter(accessToken);
                                 adapter.updateSelectedPosition(accessToken);
@@ -236,7 +236,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                                 GlobalApplication.twitter = null;
                                 GlobalApplication.accessToken = null;
                                 GlobalApplication.preferenceRepository.putString(
-                                        "AccountKey", "-1"
+                                        GlobalApplication.KEY_ACCOUNT_KEY, "-1"
                                 );
                                 startActivity(
                                         new Intent(this, OAuthActivity.class)

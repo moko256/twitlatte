@@ -158,7 +158,7 @@ public class OAuthActivity extends AppCompatActivity {
     private void storeAccessToken(AccessToken accessToken){
         GlobalApplication.accountsModel.add(accessToken);
 
-        GlobalApplication.preferenceRepository.putString("AccountKey", accessToken.getKeyString());
+        GlobalApplication.preferenceRepository.putString(GlobalApplication.KEY_ACCOUNT_KEY, accessToken.getKeyString());
 
         ((GlobalApplication) getApplication()).initTwitter(accessToken);
 
