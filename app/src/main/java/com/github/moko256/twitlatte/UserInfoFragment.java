@@ -148,8 +148,8 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
         disposable.dispose();
+        super.onDestroy();
         disposable = null;
     }
 

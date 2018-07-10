@@ -143,9 +143,8 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
-
         disposable.dispose();
+        super.onDestroy();
         disposable = null;
 
         tabLayout=null;

@@ -96,8 +96,8 @@ public class OAuthActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         compositeDisposable.dispose();
+        super.onDestroy();
     }
 
     @Override

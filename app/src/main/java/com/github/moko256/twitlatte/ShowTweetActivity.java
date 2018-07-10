@@ -131,8 +131,8 @@ public class ShowTweetActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         disposables.dispose();
+        super.onDestroy();
         disposables=null;
         if (statusView != null){
             statusView.setStatus(null);

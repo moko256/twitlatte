@@ -327,8 +327,8 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         disposable.dispose();
+        super.onDestroy();
         disposable = null;
     }
 

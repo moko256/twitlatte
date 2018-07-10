@@ -180,6 +180,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
 
     @Override
     public void onDestroyView() {
+        disposable.dispose();
         RecyclerView.LayoutManager layoutManager = getRecyclerView().getLayoutManager();
         int position = getFirstVisibleItemPosition(layoutManager);
         if (list.size() - position > GlobalApplication.statusCacheListLimit){
@@ -189,7 +190,6 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
             GlobalApplication.statusCache.delete(subList);
         }
         super.onDestroyView();
-        disposable.dispose();
         adapter=null;
     }
 

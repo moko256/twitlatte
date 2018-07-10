@@ -103,8 +103,8 @@ public class TrendsFragment extends BaseListFragment {
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
         disposable.dispose();
+        super.onDestroy();
         disposable = null;
         helper.close();
         helper = null;

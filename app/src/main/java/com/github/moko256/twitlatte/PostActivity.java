@@ -455,9 +455,8 @@ public class PostActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
-
         disposable.dispose();
+        super.onDestroy();
         disposable = null;
         locationText = null;
         addLocation = null;
