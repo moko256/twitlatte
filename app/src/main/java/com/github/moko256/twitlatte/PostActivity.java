@@ -317,13 +317,23 @@ public class PostActivity extends AppCompatActivity {
     }
 
     @SuppressLint("SetTextI18n")
-    private void updateCounter(){
-        counterTextView.setText(String.valueOf(model.getTweetLength())+" / "+String.valueOf(model.getMaxTweetLength()));
-        counterTextView.setTextColor(model.isValidTweet()? Color.GRAY: Color.RED);
+    private void updateCounter() {
+        counterTextView.setText(String.valueOf(
+                model.getTweetLength())+" / "+String.valueOf(model.getMaxTweetLength()
+        ));
+        counterTextView.setTextColor(
+                model.isValidTweet()?
+                        Color.GRAY:
+                        Color.RED
+        );
     }
 
-    private void errorNotify(Throwable e){
-        Snackbar.make(rootViewGroup, TwitterStringUtils.convertErrorToText(e), Snackbar.LENGTH_INDEFINITE).show();
+    private void errorNotify(Throwable e) {
+        Snackbar.make(
+                rootViewGroup,
+                TwitterStringUtils.convertErrorToText(e),
+                Snackbar.LENGTH_INDEFINITE
+        ).show();
     }
 
     @Override
@@ -339,7 +349,7 @@ public class PostActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(!isPosting && item.getItemId() == R.id.action_send){
+        if (!isPosting && item.getItemId() == R.id.action_send) {
             isPosting = true;
             item.setEnabled(false);
             disposable.add(
@@ -357,8 +367,9 @@ public class PostActivity extends AppCompatActivity {
                             )
             );
             return true;
+        } else {
+            return super.onOptionsItemSelected(item);
         }
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
