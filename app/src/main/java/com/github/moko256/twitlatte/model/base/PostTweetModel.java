@@ -20,9 +20,8 @@ import android.net.Uri;
 
 import java.util.List;
 
-import io.reactivex.Single;
+import io.reactivex.Completable;
 import twitter4j.GeoLocation;
-import twitter4j.Status;
 
 /**
  * Created by moko256 on 2017/07/22.
@@ -41,6 +40,9 @@ public interface PostTweetModel {
     String getTweetText();
     void setTweetText(String tweetText);
 
+    String getContentWarning();
+    void setContentWarning(String contentWarning);
+
     int getTweetLength();
     int getMaxTweetLength();
 
@@ -56,5 +58,5 @@ public interface PostTweetModel {
     String getVisibility();
     void setVisibility(String visibility);
 
-    Single<Status> postTweet();
+    Completable postTweet();
 }

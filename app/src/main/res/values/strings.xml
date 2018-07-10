@@ -106,6 +106,8 @@
     <string name="tweet_source_mute_regex_pattern">Client name pattern of the hidden post</string>
     <string name="muted_post">Muted post</string>
     <string name="post_privacy_is">Post privacy: </string>
+    <string name="content_warning">Content warning</string>
+    <string name="do_add_content_warning">Add content warning</string>
 
     <string name="do_quote">Quote</string>
     <string name="do_logout">Logout</string>

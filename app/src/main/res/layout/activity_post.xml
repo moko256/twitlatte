@@ -51,13 +51,26 @@
             android:paddingTop="@dimen/activity_vertical_margin"
             android:paddingBottom="@dimen/activity_vertical_margin">
 
-            <com.github.moko256.twitlatte.widget.ImageKeyboardEditText
-                android:id="@+id/tweet_text_edit"
+            <EditText
+                android:id="@+id/tweet_text_warning"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                 android:layout_marginBottom="8dp"
-                tools:hint="@string/post" />
+                android:hint="@string/content_warning"
+                android:visibility="gone"
+                tools:visibility="visible"/>
+
+            <com.github.moko256.twitlatte.widget.ImageKeyboardEditText
+                android:id="@+id/tweet_text_edit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tweet_text_warning"
+                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                android:layout_marginBottom="8dp"
+                tools:hint="@string/post">
+                <requestFocus />
+            </com.github.moko256.twitlatte.widget.ImageKeyboardEditText>
 
             <TextView
                 android:id="@+id/tweet_text_edit_counter"
@@ -66,16 +79,26 @@
                 android:layout_below="@id/tweet_text_edit"
                 android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                 android:gravity="end"
-                android:layout_marginBottom="16dp"
                 tools:text="0 / 500"/>
+
+
+            <CheckBox
+                android:id="@+id/activity_tweet_add_content_warning"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tweet_text_edit_counter"
+                android:layout_marginTop="8dp"
+                android:text="@string/do_add_content_warning"/>
+
 
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/activity_tweet_send_images_recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/tweet_text_edit_counter"
-                android:layout_marginBottom="16dp"/>
+                android:layout_below="@id/activity_tweet_add_content_warning"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp"/>
 
 
             <CheckBox

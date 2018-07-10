@@ -19,7 +19,6 @@ package com.github.moko256.twitlatte.model.impl.mastodon;
 import android.content.ContentResolver;
 import android.net.Uri;
 
-import com.github.moko256.mastodon.MTStatus;
 import com.github.moko256.mastodon.MastodonTwitterImpl;
 import com.github.moko256.twitlatte.GlobalApplication;
 import com.github.moko256.twitlatte.model.base.PostTweetModel;
@@ -34,12 +33,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import io.reactivex.Single;
+import io.reactivex.Completable;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import twitter4j.AlternativeHttpClientImpl;
 import twitter4j.GeoLocation;
-import twitter4j.Status;
 
 /**
  * Created by moko256 on 2017/10/23.
@@ -55,6 +53,7 @@ public class PostTweetModelImpl implements PostTweetModel {
     private long inReplyToStatusId = -1;
     private boolean possiblySensitive = false;
     private String tweetText = "";
+    private String contentWarning = "";
     private ArrayList<Uri> uriList = new ArrayList<>();
     private GeoLocation location;
     private String visibility = "Public";
@@ -95,8 +94,19 @@ public class PostTweetModelImpl implements PostTweetModel {
     }
 
     @Override
+    public String getContentWarning() {
+        return contentWarning;
+    }
+
+    @Override
+    public void setContentWarning(String contentWarning) {
+        this.contentWarning = contentWarning;
+    }
+
+    @Override
     public int getTweetLength() {
-        return tweetText.codePointCount(0, tweetText.length());
+        String s = contentWarning + tweetText;
+        return s.codePointCount(0, s.length());
     }
 
     @Override
@@ -147,8 +157,8 @@ public class PostTweetModelImpl implements PostTweetModel {
     }
 
     @Override
-    public Single<Status> postTweet() {
-        return Single.create(subscriber -> {
+    public Completable postTweet() {
+        return Completable.create(subscriber -> {
             try {
                 ArrayList<Long> ids = null;
                 if (uriList.size() > 0) {
@@ -172,14 +182,15 @@ public class PostTweetModelImpl implements PostTweetModel {
                         ids.add(attachment.getId());
                     }
                 }
-                subscriber.onSuccess(new MTStatus(new Statuses(client).postStatus(
+                new Statuses(client).postStatus(
                         tweetText,
                         inReplyToStatusId == -1? null: inReplyToStatusId,
                         ids,
                         possiblySensitive,
-                        null,
+                        contentWarning.isEmpty()? null: contentWarning,
                         com.sys1yagi.mastodon4j.api.entity.Status.Visibility.valueOf(visibility)
-                ).execute()));
+                ).execute();
+                subscriber.onComplete();
             } catch (NullPointerException | Mastodon4jRequestException e){
                 subscriber.tryOnError(e);
             }

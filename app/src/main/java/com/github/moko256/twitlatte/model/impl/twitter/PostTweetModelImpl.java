@@ -28,9 +28,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.reactivex.Single;
+import io.reactivex.Completable;
 import twitter4j.GeoLocation;
-import twitter4j.Status;
 import twitter4j.StatusUpdate;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -89,6 +88,16 @@ public class PostTweetModelImpl implements PostTweetModel {
     public void setTweetText(String tweetText) {
         this.tweetText = tweetText;
         resultCache = null;
+    }
+
+    @Override
+    public String getContentWarning() {
+        return null;
+    }
+
+    @Override
+    public void setContentWarning(String contentWarning) {
+
     }
 
     @Override
@@ -154,8 +163,8 @@ public class PostTweetModelImpl implements PostTweetModel {
     }
 
     @Override
-    public Single<Status> postTweet() {
-        return Single.create(subscriber -> {
+    public Completable postTweet() {
+        return Completable.create(subscriber -> {
             try {
                 StatusUpdate statusUpdate = new StatusUpdate(tweetText);
                 if (uriList.size() > 0) {
@@ -174,7 +183,8 @@ public class PostTweetModelImpl implements PostTweetModel {
                 if (location != null){
                     statusUpdate.setLocation(location);
                 }
-                subscriber.onSuccess(twitter.updateStatus(statusUpdate));
+                twitter.updateStatus(statusUpdate);
+                subscriber.onComplete();
             } catch (FileNotFoundException | TwitterException e){
                 subscriber.tryOnError(e);
             }

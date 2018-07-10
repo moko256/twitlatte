@@ -17,6 +17,7 @@
 package com.github.moko256.twitlatte;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
@@ -46,6 +47,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -92,6 +94,8 @@ public class PostActivity extends AppCompatActivity {
     ImageView userIcon;
     TextView counterTextView;
     ImageKeyboardEditText editText;
+    EditText contentWarningText;
+    CheckBox contentWarningEnabled;
     RecyclerView imagesRecyclerView;
     AddedImagesAdapter addedImagesAdapter;
     CheckBox isPossiblySensitive;
@@ -136,9 +140,7 @@ public class PostActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 model.setTweetText(s.toString());
-
-                counterTextView.setText(String.valueOf(model.getTweetLength())+" / "+String.valueOf(model.getMaxTweetLength()));
-                counterTextView.setTextColor(model.isValidTweet()? Color.GRAY: Color.RED);
+                updateCounter();
             }
 
             @Override
@@ -162,11 +164,11 @@ public class PostActivity extends AppCompatActivity {
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(
-                                        it -> PostActivity.this.finish(),
+                                        PostActivity.this::finish,
                                         e->{
                                             e.printStackTrace();
                                             isPosting = false;
-                                            Snackbar.make(rootViewGroup, TwitterStringUtils.convertErrorToText(e), Snackbar.LENGTH_INDEFINITE).show();
+                                            errorNotify(e);
                                         }
                                 )
                 );
@@ -219,7 +221,32 @@ public class PostActivity extends AppCompatActivity {
         );
 
         postVisibility = findViewById(R.id.activity_tweet_visibility_spinner);
+        contentWarningText = findViewById(R.id.tweet_text_warning);
+        contentWarningEnabled = findViewById(R.id.activity_tweet_add_content_warning);
         if (GlobalApplication.clientType == Type.MASTODON) {
+            contentWarningText.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    model.setContentWarning(s.toString());
+                    updateCounter();
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {}
+            });
+            contentWarningEnabled.setOnCheckedChangeListener(
+                    (buttonView, isChecked) -> {
+                        if (isChecked) {
+                            contentWarningText.setVisibility(View.VISIBLE);
+                            contentWarningText.requestFocus();
+                        } else {
+                            contentWarningText.setVisibility(View.GONE);
+                        }
+                    }
+            );
             postVisibility.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -233,6 +260,7 @@ public class PostActivity extends AppCompatActivity {
             });
             postVisibility.setSelection(0);
         } else {
+            contentWarningEnabled.setVisibility(View.GONE);
             postVisibility.setVisibility(View.GONE);
             findViewById(R.id.activity_tweet_visibility_description).setVisibility(View.GONE);
         }
@@ -288,6 +316,16 @@ public class PostActivity extends AppCompatActivity {
         editText.setHint(model.isReply()? R.string.reply: R.string.post);
     }
 
+    @SuppressLint("SetTextI18n")
+    private void updateCounter(){
+        counterTextView.setText(String.valueOf(model.getTweetLength())+" / "+String.valueOf(model.getMaxTweetLength()));
+        counterTextView.setTextColor(model.isValidTweet()? Color.GRAY: Color.RED);
+    }
+
+    private void errorNotify(Throwable e){
+        Snackbar.make(rootViewGroup, TwitterStringUtils.convertErrorToText(e), Snackbar.LENGTH_INDEFINITE).show();
+    }
+
     @Override
     public void onBackPressed() {
         onSupportNavigateUp();
@@ -309,12 +347,12 @@ public class PostActivity extends AppCompatActivity {
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe(
-                                    it -> this.finish(),
+                                    this::finish,
                                     e->{
                                         e.printStackTrace();
                                         item.setEnabled(true);
                                         isPosting = false;
-                                        Snackbar.make(rootViewGroup, TwitterStringUtils.convertErrorToText(e), Snackbar.LENGTH_INDEFINITE).show();
+                                        errorNotify(e);
                                     }
                             )
             );

@@ -243,7 +243,7 @@ public class ShowTweetActivity extends AppCompatActivity {
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe(
-                                    it -> {
+                                    () -> {
                                         replyText.setText(TwitterStringUtils.convertToReplyTopString(
                                                 GlobalApplication.userCache.get(GlobalApplication.userId).getScreenName(),
                                                 item.getUser().getScreenName(), users
