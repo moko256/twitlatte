@@ -97,6 +97,7 @@
     <string name="post_privacy_is">公開範囲: </string>
     <string name="content_warning">内容への警告</string>
     <string name="do_add_content_warning">内容への警告を追加する</string>
+    <string name="no_app_can_open">開けるアプリがありません</string>
 
     <string name="do_quote">引用する</string>
     <string name="do_logout">ログアウトする</string>

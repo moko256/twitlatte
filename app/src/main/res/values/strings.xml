@@ -102,6 +102,7 @@
     <string name="post_privacy_is">Post privacy: </string>
     <string name="content_warning">Content warning</string>
     <string name="do_add_content_warning">Add content warning</string>
+    <string name="no_app_can_open">No app can open</string>
 
     <string name="do_quote">Quote</string>
     <string name="do_logout">Logout</string>
