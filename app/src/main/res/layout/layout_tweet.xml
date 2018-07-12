@@ -140,20 +140,28 @@
             android:id="@+id/tweet_quote_tweet"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="16dp"
             android:layout_below="@id/tweet_content">
             <ImageView
                 android:id="@+id/tweet_divider"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginBottom="8dp"
+                android:layout_marginBottom="16dp"
                 android:src="@color/divider_color"/>
+
+            <com.github.moko256.twitlatte.widget.TweetImageTableView
+                android:id="@+id/tweet_quote_images"
+                android:layout_marginEnd="8dp"
+                android:layout_below="@id/tweet_divider"
+                android:layout_width="108sp"
+                android:layout_height="108sp" />
 
             <TextView
                 android:id="@+id/tweet_quote_tweet_user_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tweet_divider"
+                android:layout_toEndOf="@id/tweet_quote_images"
                 android:layout_marginEnd="8dp"
                 android:layout_marginBottom="2dp"
                 android:ellipsize="end"
@@ -178,6 +186,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tweet_quote_tweet_user_name"
+                android:layout_toEndOf="@id/tweet_quote_images"
                 android:maxLines="5"
                 android:ellipsize="end"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"

@@ -69,6 +69,7 @@ public class StatusView extends FrameLayout {
     private final TextView tweetContext;
     private final TextView timeStampText;
     private final RelativeLayout quoteTweetLayout;
+    private final TweetImageTableView quoteTweetImages;
     private final TextView quoteTweetUserName;
     private final TextView quoteTweetUserId;
     private final TextView quoteTweetContext;
@@ -105,6 +106,7 @@ public class StatusView extends FrameLayout {
         tweetContext.setMovementMethod(LinkMovementMethod.getInstance());
         timeStampText = findViewById(R.id.tweet_time_stamp_text);
         quoteTweetLayout = findViewById(R.id.tweet_quote_tweet);
+        quoteTweetImages = findViewById(R.id.tweet_quote_images);
         quoteTweetUserName = findViewById(R.id.tweet_quote_tweet_user_name);
         quoteTweetUserId = findViewById(R.id.tweet_quote_tweet_user_id);
         quoteTweetContext = findViewById(R.id.tweet_quote_tweet_content);
@@ -279,6 +281,7 @@ public class StatusView extends FrameLayout {
                     quotedStatus.getUser().isProtected(),
                     quotedStatus.getUser().isVerified()
             );
+            quoteTweetImages.setMediaEntities(quotedStatus.getMediaEntities(), quotedStatus.isPossiblySensitive());
             quoteTweetUserId.setText(TwitterStringUtils.plusAtMark(quotedStatus.getUser().getScreenName()));
             quoteTweetContext.setText(quotedStatus.getText());
         }else{

@@ -149,10 +149,10 @@ public class TweetImageTableView extends GridLayout {
         int widthMode=MeasureSpec.getMode(widthSpec);
         int heightMode=MeasureSpec.getMode(heightSpec);
 
-        if (heightMode==MeasureSpec.EXACTLY){
+        if (widthMode != MeasureSpec.EXACTLY && heightMode == MeasureSpec.EXACTLY){
             widthMode=MeasureSpec.EXACTLY;
             widthSize=heightSize/9*16;
-        } else if (widthMode==MeasureSpec.EXACTLY){
+        } else if (widthMode == MeasureSpec.EXACTLY && heightMode != MeasureSpec.EXACTLY){
             heightMode=MeasureSpec.EXACTLY;
             heightSize=widthSize/16*9;
         }
