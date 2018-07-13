@@ -88,6 +88,9 @@ dependencies {
     implementation "com.android.support:preference-v14:$support_library_version"
     implementation "com.android.support:customtabs:$support_library_version"
 
+    implementation "android.arch.lifecycle:extensions:$lifecycle_version"
+    implementation "android.arch.lifecycle:viewmodel:$lifecycle_version"
+
     implementation "com.squareup.okhttp3:okhttp:$okhttp_version"
 
     implementation "com.google.android.exoplayer:exoplayer-core:$exoplayer_version"
@@ -116,6 +119,7 @@ dependencies {
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.2'
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation 'com.github.adelnizamutdinov:kotlin-either:2.0.1'
 
 }
 
