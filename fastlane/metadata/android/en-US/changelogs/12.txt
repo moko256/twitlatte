@@ -1,0 +1,2 @@
+Enable to add post's content-warning and privacy to Mastodon
+Fix some bug

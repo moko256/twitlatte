@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright 2018 The twicalico authors
+  ~ Copyright 2015-2018 The twitlatte authors
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -16,48 +16,50 @@
   -->
 
 <resources>
+    <string name="login">ログイン</string>
+    <string name="login_description">ログインするサービスを選んでください</string>
+    <string name="instance_domain">インスタントのドメイン</string>
     <string name="action_settings">設定</string>
     <string name="action_search">検索</string>
-    <string name="back">戻る</string>
+    <string name="action_change_quality">画質を変更</string>
+    <string name="use_only_movie_loaded">動画がロードされた後にしか使えません</string>
     <string name="trends">トレンド</string>
     <string name="timeline">タイムライン</string>
     <string name="mentions">メンション</string>
     <string name="post">投稿</string>
     <string name="create_post">投稿を作成</string>
     <string name="reply">返信</string>
-    <string name="like">お気に入り</string>
+    <string name="following">フォロー中</string>
     <string name="follower">フォロワー</string>
-    <string name="follow">フォロー</string>
+    <string name="like">お気に入り</string>
     <string name="account">アカウント</string>
-    <string name="follow_and_follower">フォロー・フォロワー</string>
-    <string name="theme">テーマ</string>
-    <string name="images">画像</string>
+    <string name="following_and_followers">フォロ中ー・フォロワー</string>
+    <string name="dark_theme">ダークテーマ</string>
+    <string name="media">メディア</string>
     <string name="add_image">画像を追加</string>
+    <string name="open_image">画像を開く</string>
     <string name="add_location">位置情報を追加</string>
     <string name="possibly_sensitive">画像に過激な表現を含む</string>
-    <string name="repeat_by">%sさんが拡散しました</string>
+    <string name="retweeted_by">%1$s(%2$s)がリツイートしました</string>
+    <string name="boosted_by">%1$s(%2$s)がブーストしました</string>
     <string name="reply_to">%sさんへの返信</string>
     <string name="mention_to">%sさんへの言及</string>
-    <string name="app_settings">アプリケーションの設定</string>
-    <string name="add_account">他のアカウントを追加</string>
+    <string name="application">アプリケーション</string>
+    <string name="login_with_another_account">他のアカウントでログイン</string>
     <string name="logout">ログアウト</string>
-    <string name="do_logout">ログアウトする</string>
-    <string name="confirm_logout">ログアウトしますか？</string>
-    <string name="new_post">新しい投稿</string>
+    <string name="new_posts">新しい投稿</string>
     <string name="permission_denied">権限が拒否されました</string>
     <string name="lat_and_lon">緯度:%f 経度:%f</string>
     <string name="location_is">所在地: %s</string>
     <string name="url_is">URL: %s</string>
-    <string name="post_counts_is">投稿数: %d</string>
-    <string name="follow_counts_is">フォロー数: %d</string>
-    <string name="follower_counts_is">フォロワー数: %d</string>
-    <string name="other">その他</string>
+    <string name="posts_counts_is">投稿: %d</string>
+    <string name="following_counts_is">フォロー中: %d</string>
+    <string name="followers_counts_is">フォロワー: %d</string>
     <string name="share">共有する</string>
     <string name="open_in_browser">ブラウザで開く</string>
     <string name="add_to_list">リストに追加</string>
     <string name="show_list">リストを見る</string>
     <string name="load_more">もっと見る</string>
-    <string name="confirm_message">実行しますか？</string>
     <string name="create_follow">フォロー</string>
     <string name="destroy_follow">フォロー解除</string>
     <string name="create_mute">ミュートする</string>
@@ -67,48 +69,79 @@
     <string name="destroy_follow_follower">FF解除</string>
     <string name="spam_report">スパムとして報告する</string>
     <string name="save_image">この画像を保存する</string>
-    <string name="see_more">もっと見る</string>
     <string name="error_occurred">エラーが発生しました</string>
-    <string name="retry">再試行</string>
-    <string name="succeeded">成功しました</string>
-    <string name="is_load_timeline_image">タイムラインの画像を読み込むか</string>
+    <string name="load_timeline_image_mode">タイムラインのサムネイルの画質</string>
     <string name="version_text">バージョン</string>
     <string name="about">概要</string>
     <string name="birthday_of_this_app_is">このアプリケーションの誕生日:\n%1$TF %1$TT %1$TZ</string>
     <string name="age_of_this_app_is">このアプリケーションは%d才です</string>
     <string name="license_at_this_app">このアプリケーションのライセンス</string>
     <string name="open_source_license">オープンソースライセンス</string>
-    <string name="enable">有効</string>
-    <string name="disable">無効</string>
-    <string name="debug">デバッグ</string>
-    <string name="cause_error">エラーを起こす</string>
-    <string name="crash_log">クラッシュログ</string>
-    <string name="crash_log_channel_description">twicalicoがクラッシュしたら通知する</string>
-    <string name="high_power_mute">最強のミュート</string>
+    <string name="contributors">コントリビューター</string>
+    <string name="open_web_page_in_the_app">アプリ内でウェブページを開く</string>
+    <string name="viewing_web_page_in_app">アプリ内でウェブページを表示します</string>
+    <string name="viewing_web_page_in_external_browser">外部ブラウザでウェブページを表示します</string>
+    <string name="regex_mute">正規表現でのミュート</string>
     <string name="edit_pattern">正規表現パターンの編集</string>
-    <string name="use_post_regex_mute">投稿への正規表現ミュートを使用する</string>
-    <string name="post_mute_regex_pattern">投稿ミュートの正規表現パターン</string>
-    <string name="use_post_regex_mute_show_only_image">投稿への正規表現ミュートを使用する (画像のみ表示)</string>
-    <string name="post_mute_regex_pattern_show_only_image">投稿ミュートの正規表現パターン (画像のみ表示)</string>
-    <string name="use_user_screen_name_regex_mute">スクリーンネームの正規表現ミュートを使用する</string>
-    <string name="user_screen_name_mute_regex_pattern">スクリーンネームミュートの正規表現パターン</string>
-    <string name="use_user_name_regex_mute">ユーザー名の正規表現ミュートを使用する</string>
-    <string name="user_name_mute_regex_pattern">ユーザー名ミュートの正規表現パターン</string>
-    <string name="use_tweet_source_mute">クライアントの正規表現ミュートを使用する</string>
-    <string name="tweet_source_mute_regex_pattern">投稿したクライアントのミュートの正規表現パターン</string>
+    <string name="use_post_regex_mute">本文へ使用して非表示にする</string>
+    <string name="post_mute_regex_pattern">非表示にする投稿の本文のパターン</string>
+    <string name="use_post_regex_mute_show_only_image">本文へ使用して画像のみ表示する</string>
+    <string name="post_mute_regex_pattern_show_only_image">画像のみ表示する投稿の本文のパターン</string>
+    <string name="use_user_screen_name_regex_mute">スクリーンネームへ使用して非表示にする</string>
+    <string name="user_screen_name_mute_regex_pattern">非表示にする投稿のスクリーンネームのパターン</string>
+    <string name="use_user_name_regex_mute">ユーザー名へ使用して非表示にする</string>
+    <string name="user_name_mute_regex_pattern">非表示にする投稿のユーザー名のパターン</string>
+    <string name="use_tweet_source_mute">クライアント名へ使用して非表示にする</string>
+    <string name="tweet_source_mute_regex_pattern">非表示にする投稿のクライアント名のパターン</string>
     <string name="muted_post">ミュートされた投稿</string>
+    <string name="post_privacy_is">公開範囲: </string>
+    <string name="content_warning">内容への警告</string>
+    <string name="do_add_content_warning">内容への警告を追加する</string>
+    <string name="no_app_can_open">開けるアプリがありません</string>
 
-    <string name="twitter_callback_auth">Twitter コールバック認証</string>
-    <string name="twitter_code_auth">Twitter コード認証</string>
-    <string name="mastodon_callback_auth">Mastodon コールバック認証</string>
-    <string name="mastodon_code_auth">Mastodon コード認証</string>
+    <string name="do_quote">引用する</string>
+    <string name="do_logout">ログアウトする</string>
+    <string name="do_discard">破棄</string>
+    <string name="do_reply">返信する</string>
 
-    <string name="mode_image_level_none">タイムラインの画像を読み込まない</string>
-    <string name="mode_image_level_normal">タイムラインの画像を読み込む</string>
+    <string name="confirm_logout">ログアウトしますか？</string>
+    <string name="confirm_discard_post">投稿を破棄しますか？</string>
+    <string name="confirm_message">実行しますか？</string>
+
+    <string name="did_post">投稿しました</string>
+
+    <string name="did_like">いいねしました</string>
+    <string name="did_unlike">いいね解除しました</string>
+    <string name="did_retweet">リツイートしました</string>
+    <string name="did_unretweet">リツイート解除しました</string>
+
+    <string name="did_favorite">お気に入りしました</string>
+    <string name="did_unfavorite">お気に入り解除しました</string>
+    <string name="did_boost">ブーストしました</string>
+    <string name="did_unboost">ブースト解除しました</string>
+
+    <string name="did_follow">フォローしました</string>
+    <string name="did_unfollow">フォロー解除しました</string>
+    <string name="did_mute">ミュートしました</string>
+    <string name="did_unmute">ミュート解除しました</string>
+    <string name="did_block">ブロックしました</string>
+    <string name="did_unblock">ブロック解除しました</string>
+    <string name="did_destroy_ff">FF解除しました</string>
+
+    <string name="use_auth_code">認可コードを入力する</string>
+
+    <string name="mode_image_level_normal">標準</string>
+    <string name="mode_image_level_lowest">最低画質</string>
+    <string name="mode_image_level_none">読み込まない</string>
 
     <string name="mode_night_no">使用しない</string>
     <string name="mode_night_yes">使用する</string>
-    <string name="mode_night_follow_system">システムの設定に従う(Android 7.0以降で有効)</string>
-    <string name="mode_night_auto">自動(端末の時刻を使用)</string>
+    <string name="mode_night_follow_system">システムの設定に従う</string>
+    <string name="mode_night_auto">時間によって自動的に切り替える</string>
+
+    <string name="mode_visibility_public">公開</string>
+    <string name="mode_visibility_unlisted">未収載</string>
+    <string name="mode_visibility_private">フォロワー限定</string>
+    <string name="mode_visibility_direct">ダイレクト</string>
 
 </resources>

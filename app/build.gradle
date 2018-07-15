@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 The twicalico authors
+ * Copyright 2015-2018 The twitlatte authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
@@ -22,20 +21,22 @@ android {
     buildToolsVersion "27.0.3"
 
     defaultConfig {
-        applicationId "com.github.moko256.twicalico"
+        applicationId 'com.github.moko256.twitlatte'
         minSdkVersion 19
         targetSdkVersion 27
-        versionCode 61
-        versionName "0.9.8"
+        versionCode 13
+        versionName '1.4.1'
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
-        buildConfigField "String", "CONSUMER_KEY", "\"${CONSUMER_KEY}\""
-        buildConfigField "String", "CONSUMER_SECRET", "\"${CONSUMER_SECRET}\""
+        Base64.Decoder e = Base64.decoder
 
-        buildConfigField "int" , "CACHE_DATABASE_VERSION" , "1"
+        buildConfigField 'String', 'CONSUMER_KEY', "\"${new String(e.decode(e.decode(cs)))}\""
+        buildConfigField 'String', 'CONSUMER_SECRET', "\"${new String(e.decode(e.decode(ck + cc)))}\""
+
+        buildConfigField 'int', 'CACHE_DATABASE_VERSION' , '1'
 
         vectorDrawables.useSupportLibrary = true
-        resConfigs "en","ja"
+        resConfigs 'en', 'ja', 'ldltr'
     }
     buildTypes {
         release {
@@ -44,18 +45,34 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         debug {
-            applicationIdSuffix ".debug"
+            debuggable true
+            minifyEnabled true
+            useProguard false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'shrinker-rules.pro'
+            applicationIdSuffix '.debug'
+            versionNameSuffix '-debug'
         }
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
+    packagingOptions {
+        exclude '/lib/**'
+        exclude '/javax/**'
+        exclude '/okhttp3/**'
+        exclude '/autolink.yml'
+        exclude '/extract.yml'
+        exclude '/hit_highlighting.yml'
+        exclude '/tld_lib.yml'
+        exclude '/tlds.yml'
+        exclude '/validate.yml'
+    }
 }
 
 dependencies {
 
-    //compile fileTree(dir: 'libs', include: ['*.jar'])
     testImplementation 'junit:junit:4.12'
     androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
@@ -71,6 +88,9 @@ dependencies {
     implementation "com.android.support:preference-v14:$support_library_version"
     implementation "com.android.support:customtabs:$support_library_version"
 
+    implementation "android.arch.lifecycle:extensions:$lifecycle_version"
+    implementation "android.arch.lifecycle:viewmodel:$lifecycle_version"
+
     implementation "com.squareup.okhttp3:okhttp:$okhttp_version"
 
     implementation "com.google.android.exoplayer:exoplayer-core:$exoplayer_version"
@@ -84,17 +104,27 @@ dependencies {
     annotationProcessor "com.github.bumptech.glide:compiler:$glide_version"
     implementation "com.github.bumptech.glide:okhttp3-integration:$glide_version"
 
-    implementation 'jp.wasabeef:glide-transformations:3.0.1'
+    implementation 'jp.wasabeef:glide-transformations:3.3.0'
 
-    implementation project(":mastodon4j_to_twitter4j")
+    implementation project(':mastodon4j_to_twitter4j')
 
-    implementation 'com.github.chrisbanes:PhotoView:2.1.3'
+    implementation 'com.github.chrisbanes:PhotoView:2.1.4'
+    implementation 'com.github.chuross:flinglayout:0.5.0'
+
+    implementation project(':japng-android:android_api')
 
     implementation 'com.twitter.twittertext:twitter-text:2.0.10'
 
-    implementation 'io.reactivex:rxjava:1.3.5'
-    implementation 'io.reactivex:rxandroid:1.2.1'
+    implementation 'io.reactivex.rxjava2:rxjava:2.1.16'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.0.2'
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation 'com.github.adelnizamutdinov:kotlin-either:2.0.1'
 
+}
+
+buildscript {
+    ext.cc = "JhMlEyUkZoTWFHdERibkl4V0hCSmFYaEhNMXBUZFZVM2Jubz0="
+    ext.cs = "YjNCSE5reGhVWFJQZW5KSk1XRTJjSGhJWVVOdlVqbEpSQT09"
+    ext.ck = "U2xveVduVmlXWGhPZW5SaFduVjROM1pPYmpoQ1VsRn"
 }

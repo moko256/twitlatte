@@ -1,0 +1,2 @@
+rootProject.name = 'twitter4j'
+include ':twitter4j-core', ':twitter4j-http2-support'

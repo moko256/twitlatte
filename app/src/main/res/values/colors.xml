@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright 2018 The twicalico authors
+  ~ Copyright 2015-2018 The twitlatte authors
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -15,17 +15,21 @@
   ~ limitations under the License.
   -->
 
-<resources>
-    <color name="color_primary">#795548</color>
-    <color name="color_primary_dark">#5D4037</color>
-    <color name="color_accent">#FF9100</color>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <color name="orange_a400">#FF9100</color>
 
-    <color name="preference_fallback_accent_color">@color/color_accent</color>
+    <color name="brown_500">#795548</color>
+    <color name="brown_700">#5D4037</color>
+    <color name="brown_800">#4E342E</color>
+
+    <color name="color_primary">@color/brown_500</color>
+    <color name="color_primary_dark">@color/brown_700</color>
+    <color name="color_accent">@color/orange_a400</color>
+
+    <color name="preference_fallback_accent_color" tools:override="true">@color/color_accent</color>
 
     <color name="image_toggle_enable">#8A000000</color>
     <color name="image_toggle_disable">#42000000</color>
-
-    <color name="lock_icon_color">?android:textColorPrimary</color>
 
     <color name="divider_color">#1F000000</color>
 </resources>

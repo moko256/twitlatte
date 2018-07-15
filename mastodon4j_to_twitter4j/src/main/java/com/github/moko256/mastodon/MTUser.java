@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 The twicalico authors
+ * Copyright 2015-2018 The twitlatte authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,6 @@ import com.sys1yagi.mastodon4j.api.entity.Account;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import twitter4j.RateLimitStatus;
@@ -203,12 +201,7 @@ public class MTUser implements User {
 
     @Override
     public Date getCreatedAt() {
-        try {
-            return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").parse(account.getCreatedAt().replace("Z", "-0000"));
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return new Date(0L);
-        }
+        return MastodonTwitterImpl.parseDate(account.getCreatedAt());
     }
 
     @Override

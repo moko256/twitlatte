@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright 2018 The twicalico authors
+  ~ Copyright 2015-2018 The twitlatte authors
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -18,49 +18,47 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <Button
-        android:id="@+id/start_twitter_callback_auth_button"
-        android:text="@string/twitter_callback_auth"
+    android:layout_height="match_parent"
+    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+    android:layout_marginRight="@dimen/activity_horizontal_margin"
+    android:layout_marginTop="@dimen/activity_vertical_margin"
+    android:layout_marginBottom="@dimen/activity_vertical_margin">
+
+    <TextView
+        android:id="@+id/login_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="onStartTwitterCallbackAuthClick"
-        style="@style/Widget.AppCompat.Button.Colored"/>
+        android:layout_marginBottom="32dp"
+        android:text="@string/login"
+        android:textColor="?android:attr/textColorPrimary"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Display1" />
 
-    <Button
-        android:id="@+id/start_twitter_code_auth_button"
-        android:text="@string/twitter_code_auth"
+    <TextView
+        android:id="@+id/description_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/start_twitter_callback_auth_button"
-        android:onClick="onStartTwitterCodeAuthClick"
-        style="@style/Widget.AppCompat.Button.Colored"/>
+        android:layout_below="@id/login_text"
+        android:layout_marginBottom="16dp"
+        android:text="@string/login_description"
+        android:textColor="?android:attr/textColorPrimary"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Subhead" />
 
     <Button
-        android:id="@+id/start_mastodon_callback_auth_button"
-        android:text="@string/mastodon_callback_auth"
+        android:id="@+id/start_twitter_auth_button"
+        android:text="@string/twitter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/start_twitter_code_auth_button"
-        android:onClick="onStartMastodonCallbackAuthClick"
-        style="@style/Widget.AppCompat.Button.Colored"/>
+        android:layout_below="@id/description_text"
+        android:layout_marginBottom="8dp"
+        android:onClick="onStartTwitterAuthClick"
+        style="@style/Widget.AppCompat.Button.Borderless.Colored"/>
 
     <Button
-        android:id="@+id/start_mastodon_code_auth_button"
-        android:text="@string/mastodon_code_auth"
+        android:id="@+id/start_mastodon_auth_button"
+        android:text="@string/mastodon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/start_mastodon_callback_auth_button"
-        android:onClick="onStartMastodonCodeAuthClick"
-        style="@style/Widget.AppCompat.Button.Colored"/>
-
-
-    <Button
-        android:id="@+id/settings"
-        android:text="@string/action_settings"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:onClick="onSettingClick"
+        android:layout_below="@id/start_twitter_auth_button"
+        android:onClick="onStartMastodonAuthClick"
         style="@style/Widget.AppCompat.Button.Borderless.Colored"/>
 </RelativeLayout>

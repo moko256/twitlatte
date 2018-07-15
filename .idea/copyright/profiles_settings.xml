@@ -1,7 +1,7 @@
 <component name="CopyrightManager">
-  <settings default="twicalico_apatch_2_0">
+  <settings default="twitlatte_apatch_2_0">
     <module2copyright>
-      <element module="All" copyright="twicalico_apatch_2_0" />
+      <element module="All" copyright="twitlatte_apatch_2_0" />
     </module2copyright>
   </settings>
 </component>

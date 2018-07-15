@@ -1,0 +1,37 @@
+apply plugin: 'java'
+apply plugin: 'maven'
+
+//group = 'org.twitter4j'
+//version = '4.0.6'
+
+//description = """twitter4j-core"""
+
+//sourceCompatibility = 6
+//targetCompatibility = 6
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs += [
+                    'src/main/java',
+                    'src/internal-async',
+                    'src/internal-http',
+                    'src/internal-json',
+                    'src/internal-logging',
+                    'src/internal-util',
+                    'src/jmx'
+            ]
+        }
+    }
+}
+
+dependencies {
+    //testCompile group: 'junit', name: 'junit', version:'4.12'
+    //testCompile group: 'com.googlecode', name: 'kryo', version:'1.04'
+    //compileOnly group: 'org.slf4j', name: 'slf4j-api', version:'1.7.12'
+    //compileOnly group: 'commons-logging', name: 'commons-logging-api', version:'1.1'
+    //compileOnly group: 'log4j', name: 'log4j', version:'1.2.17'
+}

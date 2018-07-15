@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 The twicalico authors
+ * Copyright 2015-2018 The twitlatte authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,3 +15,10 @@
  */
 
 include ':app', ':mastodon4j_to_twitter4j'
+
+include ':twitter4j', ':twitter4j-core', ':twitter4j-http2-support'
+project(':twitter4j-core').projectDir = new File('twitter4j/twitter4j-core')
+project(':twitter4j-http2-support').projectDir = new File('twitter4j/twitter4j-http2-support')
+
+include ':japng-android:android_api', ':api'
+project(':api').projectDir = new File('japng-android/japng/api')

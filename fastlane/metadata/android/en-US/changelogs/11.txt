@@ -1,0 +1,2 @@
+Enable to rotate screen while you watch the video
+Fix crashing during authorization

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright 2018 The twicalico authors
+  ~ Copyright 2015-2018 The twitlatte authors
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
-                    <com.github.moko256.twicalico.widget.UserHeaderImageView
+                    <com.github.moko256.twitlatte.widget.UserHeaderImageView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:id="@+id/show_user_bgimage"
@@ -57,6 +57,7 @@
                         android:layout_centerHorizontal="true"
                         android:layout_below="@id/show_user_bgimage"
                         android:layout_marginTop="-32dp"
+                        android:transitionName="icon_image"
                         tools:src="@android:color/white"/>
 
                     <TextView
@@ -78,22 +79,15 @@
                         tools:text="\@user_name"/>
 
 
-                    <ImageView
-                        android:id="@+id/show_user_lock"
-                        app:srcCompat="@drawable/ic_lock_text_color_24dp"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_below="@id/show_user_id"
-                        android:layout_centerHorizontal="true"/>
-
                     <Button
                         android:id="@+id/show_user_follow_button"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_below="@id/show_user_lock"
+                        android:layout_below="@id/show_user_id"
                         android:layout_margin="16dp"
                         android:text="@string/create_follow"
                         android:layout_centerHorizontal="true"
+                        android:visibility="gone"
                         style="@style/Widget.AppCompat.Button.Colored"/>
 
                     <TextView
@@ -151,21 +145,21 @@
                         android:id="@+id/show_user_follow_count"
                         android:layout_below="@id/show_user_created_at"
                         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                        tools:text="@string/follow_counts_is"/>
+                        tools:text="@string/following_counts_is"/>
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:id="@+id/show_user_follower_count"
                         android:layout_below="@id/show_user_follow_count"
                         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                        tools:text="@string/follower_counts_is"/>
+                        tools:text="@string/followers_counts_is"/>
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:id="@+id/show_user_tweets_count"
                         android:layout_below="@id/show_user_follower_count"
                         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                        tools:text="@string/post_counts_is"/>
+                        tools:text="@string/posts_counts_is"/>
                 </RelativeLayout>
             </android.support.v7.widget.CardView>
 

@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright 2018 The twicalico authors
+  ~ Copyright 2015-2018 The twitlatte authors
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -14,47 +14,25 @@
   ~ limitations under the License.
   -->
 
-<vector
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:aapt="http://schemas.android.com/aapt"
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
     android:height="108dp"
-    android:viewportHeight="108"
-    android:viewportWidth="108">
-    <!--
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
     <path
-        android:fillType="evenOdd"
-        android:pathData="M144,108l-68-68h-44v28l32,32"
-        android:strokeColor="#00000000"
-        android:strokeWidth="1">
-        <aapt:attr name="android:fillColor">
-            <gradient
-                android:endX="78.5885"
-                android:endY="90.9159"
-                android:startX="48.7653"
-                android:startY="61.0927"
-                android:type="linear">
-                <item
-                    android:color="#44000000"
-                    android:offset="0.0" />
-                <item
-                    android:color="#00000000"
-                    android:offset="1.0" />
-            </gradient>
-        </aapt:attr>
-    </path>
-    -->
+        android:fillColor="#f5f5f5"
+        android:strokeWidth="0"
+        android:strokeColor="#f5f5f5"
+        android:pathData="M 64.06 64.25 L 43.06 64.25 L 34.75 39.75 L 73.25 39.75 L 64.06 64.25 Z" />
     <path
-        android:fillColor="#BDBDBD"
-        android:fillType="nonZero"
-        android:pathData="M32 68h30v-6H32v6zm0-11h44v-6H32v6zm0-17v6h44V40H32z"
-        android:strokeColor="#00000000"
-        android:strokeWidth="1" />
+        android:fillColor="#f5f5f5"
+        android:strokeWidth="0"
+        android:strokeColor="#f5f5f5"
+        android:pathData="M 74.86 67.75 L 33.13 67.75 L 29.5 64.25 L 78.5 64.25 L 74.86 67.75 Z" />
     <path
-        android:fillColor="#FF9100"
-        android:fillType="nonZero"
-        android:strokeColor="#00000000"
-        android:strokeWidth="1"
-        android:pathData="M69,65a4,4 0 1,0 8,0a4,4 0 1,0 -8,0"
-        />
+        android:fillColor="#f5f5f5"
+        android:strokeWidth="0"
+        android:strokeColor="#f5f5f5"
+        android:pathData="M76.67,46.24a4.36,4.36,0,0,0-6.1,0h0L57.19,60.11l6.3,6.08L76.86,52.34h0A4.35,4.35,0,0,0,76.67,46.24ZM74.2,51.49,65,61.67,70.39,47.4a2.77,2.77,0,0,1,3.69 0.17 ,2.81,2.81,0,0,1,0.12,3.92Z" />
 </vector>

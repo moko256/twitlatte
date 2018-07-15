@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright 2018 The twicalico authors
+  ~ Copyright 2015-2018 The twitlatte authors
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -19,8 +19,14 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/action_change_selection"
+        android:title="@string/action_change_quality"
+        android:icon="@drawable/ic_settings_black_24dp"
+        app:showAsAction="ifRoom"
+        app:iconTint="@android:color/white"/>
+    <item
         android:id="@+id/action_download"
         android:title="@string/save_image"
         android:icon="@drawable/ic_file_download_white_24dp"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
 </menu>

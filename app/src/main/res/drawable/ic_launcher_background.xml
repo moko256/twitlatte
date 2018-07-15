@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright 2018 The twicalico authors
+  ~ Copyright 2015-2018 The twitlatte authors
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -15,16 +15,19 @@
   ~ limitations under the License.
   -->
 
-<vector
-    android:height="108dp"
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
-    android:viewportHeight="108"
+    android:height="108dp"
     android:viewportWidth="108"
-    xmlns:android="http://schemas.android.com/apk/res/android">
-    <path android:fillColor="#FFFFFF"
-        android:pathData="M0,0h108v108h-108z"/>
-    <path android:fillColor="#795548"
-        android:pathData="M0,0h108v32h-108z"/>
-    <path android:fillColor="#323232"
-        android:pathData="M108,108h-108v-32h108z"/>
+    android:viewportHeight="108">
+
+    <path
+        android:fillColor="#795548"
+        android:pathData="M 0 0 H 108 V 46 H 0 V 0 Z" />
+    <path
+        android:fillColor="#4e342e"
+        android:pathData="M 0 62 H 108 V 108 H 0 V 62 Z" />
+    <path
+        android:fillColor="#5d4037"
+        android:pathData="M 0 46 H 108 V 62 H 0 V 46 Z" />
 </vector>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright 2018 The twicalico authors
+  ~ Copyright 2015-2018 The twitlatte authors
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -27,9 +27,9 @@
         android:layout_height="match_parent"
         android:id="@+id/user_bg_image"
         android:fitsSystemWindows="false"
-        tools:src="@android:color/darker_gray" />
+        android:foreground="#33000000" />
 
-    <com.github.moko256.twicalico.widget.WideRatioRelativeLayout
+    <com.github.moko256.twitlatte.widget.WideRatioRelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fitsSystemWindows="true"
@@ -44,6 +44,7 @@
             android:id="@+id/user_image"
             android:layout_width="64dp"
             android:layout_height="64dp"
+            android:transitionName="icon_image"
             tools:src="@android:color/white" />
 
         <TextView
@@ -69,10 +70,10 @@
             android:id="@+id/toggle_account"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
             app:srcCompat="@drawable/ic_arrow_drop_down_white_24dp" />
 
-    </com.github.moko256.twicalico.widget.WideRatioRelativeLayout>
+    </com.github.moko256.twitlatte.widget.WideRatioRelativeLayout>
 
 </FrameLayout>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright 2018 The twicalico authors
+  ~ Copyright 2015-2018 The twitlatte authors
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
   ~ limitations under the License.
   -->
 
-<RelativeLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -23,19 +23,19 @@
     android:layout_height="56dp"
     android:foreground="?attr/selectableItemBackground">
     <android.support.v7.widget.AppCompatImageView
-        android:id="@+id/layout_images_adapter_resource_image_icon"
+        android:id="@+id/layout_images_adapter_image"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="16dp"
+        android:layout_gravity="center_vertical"
+        android:layout_marginStart="16dp"
         app:tint="?android:attr/textColorSecondary"
         tools:srcCompat="@drawable/ic_add_white_24dp" />
     <TextView
-        android:id="@+id/layout_images_adapter_resource_image_title"
+        android:id="@+id/layout_images_adapter_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="72dp"
+        android:layout_gravity="center_vertical"
+        android:layout_marginStart="72dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        tools:text="@string/add_account"/>
-</RelativeLayout>
+        tools:text="@string/login_with_another_account"/>
+</FrameLayout>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright 2018 The twicalico authors
+  ~ Copyright 2015-2018 The twitlatte authors
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -17,12 +17,14 @@
 
 <resources>
     <string-array name="choose_timeline_image_load_entries">
-        <item>@string/mode_image_level_none</item>
         <item>@string/mode_image_level_normal</item>
+        <item>@string/mode_image_level_lowest</item>
+        <item>@string/mode_image_level_none</item>
     </string-array>
     <string-array name="choose_timeline_image_load_entries_value">
-        <item>@string/mode_none_value</item>
         <item>@string/mode_normal_value</item>
+        <item>@string/mode_lowest_value</item>
+        <item>@string/mode_none_value</item>
     </string-array>
 
     <string-array name="choose_night_mode_entries">
@@ -36,5 +38,12 @@
         <item>@string/mode_night_auto_value</item>
         <item>@string/mode_night_follow_system_value</item>
         <item>@string/mode_night_yes_value</item>
+    </string-array>
+
+    <string-array name="choose_visibility_entries">
+        <item>@string/mode_visibility_public</item>
+        <item>@string/mode_visibility_unlisted</item>
+        <item>@string/mode_visibility_private</item>
+        <item>@string/mode_visibility_direct</item>
     </string-array>
 </resources>

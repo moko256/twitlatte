@@ -5,12 +5,17 @@
       <GradleProjectSettings>
         <option name="distributionType" value="DEFAULT_WRAPPED" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="gradleHome" value="$APPLICATION_HOME_DIR$/gradle/gradle-3.2" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/japng-android" />
+            <option value="$PROJECT_DIR$/japng-android/android_api" />
+            <option value="$PROJECT_DIR$/japng-android/japng/api" />
             <option value="$PROJECT_DIR$/mastodon4j_to_twitter4j" />
+            <option value="$PROJECT_DIR$/twitter4j" />
+            <option value="$PROJECT_DIR$/twitter4j/twitter4j-core" />
+            <option value="$PROJECT_DIR$/twitter4j/twitter4j-http2-support" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright 2018 The twicalico authors
+  ~ Copyright 2015-2018 The twitlatte authors
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@
         <item
             android:id="@+id/nav_follow_and_follower"
             android:icon="@drawable/ic_supervisor_account_black_24dp"
-            android:title="@string/follow_and_follower" />
+            android:title="@string/following_and_followers" />
 
         <item
             android:id="@+id/nav_like"

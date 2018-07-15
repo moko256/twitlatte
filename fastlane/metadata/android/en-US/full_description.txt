@@ -1,0 +1,7 @@
+This application is the SNS client specialized to read in chronorogical order.
+You can access Twitter, Mastodon and Pleroma with API.
+
+(This is the third-party client)
+
+Contact detail (Twitter): @moko256
+Source code (GitHub): https://github.com/moko256/twitlatte

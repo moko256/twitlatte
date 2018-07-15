@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 The twicalico authors
+ * Copyright 2015-2018 The twitlatte authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,13 +17,10 @@
 package com.github.moko256.mastodon;
 
 import com.sys1yagi.mastodon4j.api.entity.Attachment;
-import com.sys1yagi.mastodon4j.api.entity.Emoji;
 import com.sys1yagi.mastodon4j.api.entity.Status;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -55,12 +52,7 @@ public class MTStatus implements twitter4j.Status{
 
     @Override
     public Date getCreatedAt() {
-        try {
-            return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").parse(status.getCreatedAt().replace("Z", "-0000"));
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return new Date(0L);
-        }
+        return MastodonTwitterImpl.parseDate(status.getCreatedAt());
     }
 
     @Override
@@ -70,11 +62,15 @@ public class MTStatus implements twitter4j.Status{
 
     @Override
     public String getText() {
-        String s = status.getSpoilerText() + "\n\n" + status.getContent();
-        for (Emoji e : status.getEmojis()) {
-            s = s.replaceAll(":" + e.getShortcode() + ":", "<img src='" + e.getUrl() + "'></img>");
+        String spoilerText = status.getSpoilerText();
+        String content = status.getContent();
+        String br = "<br />";
+
+        if (spoilerText.equals("")) {
+            return content;
+        } else {
+            return spoilerText + br + content;
         }
-        return s;
     }
 
     @Override
@@ -122,7 +118,12 @@ public class MTStatus implements twitter4j.Status{
 
     @Override
     public String getInReplyToScreenName() {
-        return (getInReplyToUserId() != -1)?"":null;
+        return (getInReplyToUserId() != -1)
+                ?(
+                        status.getMentions().size() > 0?
+                                status.getMentions().get(0).getUsername():
+                                ""
+        ): null;
     }
 
     @Override

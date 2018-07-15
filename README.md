@@ -1,26 +1,50 @@
-twicalico
+twitlatte
 ====
 
-This application is the Twitter and Mastodon client for Android\.
+This application is the SNS client for Android\.
 
-|Timeline|Post screen|Trends screen|
-|---|---|---|
-|![Timeline](readme_image/home.png)|![Post screen](readme_image/post.png)|![Trends screen](readme_image/trends.png)|
+<img src="app/src/main/ic_launcher-web.png"
+      alt="Icon of this app"
+      width="150"
+      height="150">
 
-* Minimum api level is 17
-* Target api level is 27
-* Material Design
+* Supported Android api level is 19~27
+* Using REST API
+* Supported multiple account
+* Material design
+
+## Available SNS
+* Twitter
+* Mastodon
+* Pleroma
 
 ## Install
 
-[<img src="https://dply.me/vjtth8/button/large" alt="Try it on your device via DeployGate">](https://dply.me/vjtth8#install)
+[<img src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png"
+      alt="Get it on Google Play"
+      height="100">](https://play.google.com/store/apps/details?id=com.github.moko256.twitlatte)
+[<img src="https://f-droid.org/badge/get-it-on.png"
+      alt="Get it on F-Droid"
+      height="100">](https://f-droid.org/packages/com.github.moko256.twitlatte/)
 
-## Build
+## How to build
 
-1. Clone this project\.
+1. Clone this project by this\.
+
+This repository uses some submodules, so use this
+
+```sh
+git clone https://github.com/moko256/twitlatte.git --recursive
+```
+
+or, if you have already cloned without that, use this in it
+
+```sh
+git submodule update --init --recursive
+```
+
 2. Open in Android Studio\.
-3. Add gradle.properties file and add CONSUMER_KEY and CONSUMER_SECRET properties for Twitter\.
-4. Build\.
+3. Build\.
 
 ## Dependencies
 
@@ -35,6 +59,9 @@ This application is built using these libraries\:
 * Glide Transformations
 * google-gson
 * PhotoView
+* FlingLayout
+* japng
+* japng_android
 * OkHttp
 * mastodon4j
 * Twitter4J
@@ -53,8 +80,8 @@ and, built using these tools\:
 
 ## License
 
-~~~~
-Copyright 2018 The twicalico authors
+~~~
+Copyright 2015-2018 The twitlatte authors
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -67,4 +94,4 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
-~~~~
+~~~

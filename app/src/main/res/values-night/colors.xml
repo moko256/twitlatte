@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright 2018 The twicalico authors
+  ~ Copyright 2015-2018 The twitlatte authors
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@
   -->
 
 <resources>
-    <color name="color_primary">#5D4037</color>
-    <color name="color_primary_dark">#4E342E</color>
+    <color name="color_primary">@color/brown_700</color>
+    <color name="color_primary_dark">@color/brown_800</color>
 
     <color name="image_toggle_enable">#FFFFFF</color>
     <color name="image_toggle_disable">#4DFFFFFF</color>

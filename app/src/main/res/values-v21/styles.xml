@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright 2018 The twicalico authors
+  ~ Copyright 2015-2018 The twitlatte authors
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -20,20 +20,16 @@
         <item name="android:windowContentTransitions">true</item>
         <item name="android:navigationBarColor">@color/color_primary_dark</item>
     </style>
-    <style name="BaseTheme" parent="BaseAppThemeV21"/>
+    <style name="BaseTheme" parent="BaseAppThemeV21" />
 
-    <style name="SplashTheme" parent="BaseSplashTheme">
+    <style name="BaseSplashThemeV21" parent="BaseSplashTheme">
         <item name="android:windowExitTransition">@android:transition/explode</item>
     </style>
+    <style name="SplashTheme" parent="BaseSplashThemeV21" />
     
     <style name="MainActivityTheme" parent="AppTheme.NoActionBar">
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
-    </style>
-
-    <style name="ShowTweetImageActivityTheme" parent="BaseShowTweetImageActivityTheme">
-        <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:navigationBarColor">@android:color/transparent</item>
     </style>
 
 </resources>

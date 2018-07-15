@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright 2018 The twicalico authors
+  ~ Copyright 2015-2018 The twitlatte authors
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -36,13 +36,13 @@
             android:id="@+id/activity_tweet_send_user_icon"
             android:layout_width="wrap_content"
             android:layout_height="36dp"
-            android:layout_marginLeft="32dp"
+            android:layout_marginStart="32dp"
             tools:src="@mipmap/ic_launcher"/>
     </android.support.v7.widget.Toolbar>
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <LinearLayout
+        <RelativeLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -51,85 +51,103 @@
             android:paddingTop="@dimen/activity_vertical_margin"
             android:paddingBottom="@dimen/activity_vertical_margin">
 
-            <TextView
-                android:id="@+id/activity_tweet_send_edit_text_label"
-                android:layout_width="wrap_content"
+            <EditText
+                android:id="@+id/tweet_text_warning"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/post"
-                android:textColor="@color/color_accent"
-                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-                android:layout_marginBottom="8dp"/>
+                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                android:layout_marginBottom="8dp"
+                android:hint="@string/content_warning"
+                android:visibility="gone"
+                android:inputType="text"
+                tools:visibility="visible"/>
 
-            <com.github.moko256.twicalico.widget.ImageKeyboardEditText
+            <com.github.moko256.twitlatte.widget.ImageKeyboardEditText
                 android:id="@+id/tweet_text_edit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:labelFor="@id/activity_tweet_send_edit_text_label"
+                android:layout_below="@id/tweet_text_warning"
                 android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-                android:layout_marginBottom="16dp"/>
+                android:layout_marginBottom="8dp"
+                tools:hint="@string/post">
+                <requestFocus />
+            </com.github.moko256.twitlatte.widget.ImageKeyboardEditText>
 
             <TextView
                 android:id="@+id/tweet_text_edit_counter"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/tweet_text_edit"
                 android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-                android:layout_gravity="right"
-                android:layout_marginBottom="16dp"/>
+                android:gravity="end"
+                tools:text="0 / 500"/>
 
 
-            <TextView
-                android:id="@+id/activity_tweet_send_images_label"
-                android:layout_width="wrap_content"
+            <CheckBox
+                android:id="@+id/activity_tweet_add_content_warning"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/images"
-                android:textColor="@color/color_accent"
-                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-                android:layout_marginBottom="8dp"/>
+                android:layout_below="@id/tweet_text_edit_counter"
+                android:layout_marginTop="8dp"
+                android:text="@string/do_add_content_warning"/>
+
+
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/activity_tweet_send_images_recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"/>
+                android:layout_below="@id/activity_tweet_add_content_warning"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp"/>
 
 
-            <TextView
-                android:id="@+id/activity_tweet_possibly_sensitive_label"
-                android:layout_width="wrap_content"
+            <CheckBox
+                android:id="@+id/activity_tweet_is_possibly_sensitive"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/activity_tweet_send_images_recycler_view"
                 android:text="@string/possibly_sensitive"
-                android:textColor="@color/color_accent"
-                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-                android:layout_marginBottom="8dp"/>
-
-            <android.support.v7.widget.SwitchCompat
-                android:id="@+id/activity_tweet_possibly_sensitive_switch"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"/>
+
 
             <TextView
-                android:id="@+id/activity_tweet_location_label"
+                android:id="@+id/activity_tweet_visibility_description"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/add_location"
-                android:textColor="@color/color_accent"
-                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-                android:layout_marginBottom="8dp"/>
+                android:layout_below="@id/activity_tweet_is_possibly_sensitive"
+                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:text="@string/post_privacy_is"/>
 
-            <android.support.v7.widget.SwitchCompat
-                android:id="@+id/activity_tweet_location_switch"
+            <Spinner
+                android:id="@+id/activity_tweet_visibility_spinner"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"/>
+                android:layout_below="@id/activity_tweet_is_possibly_sensitive"
+                android:layout_alignEnd="@id/activity_tweet_visibility_description"
+                android:layout_marginBottom="16dp"
+                android:layout_alignParentEnd="true"
+                android:entries="@array/choose_visibility_entries"/>
+
+
+            <CheckBox
+                android:id="@+id/activity_tweet_add_location"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/activity_tweet_visibility_spinner"
+                android:text="@string/add_location"
+                android:layout_marginBottom="8dp"/>
 
             <TextView
                 android:id="@+id/activity_tweet_location_result"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"/>
+                android:layout_below="@id/activity_tweet_add_location"
+                android:layout_marginBottom="16dp"
+                tools:text="Latitude: 30, Longitude: 100"/>
 
-        </LinearLayout>
-
+        </RelativeLayout>
     </ScrollView>
 </LinearLayout>
