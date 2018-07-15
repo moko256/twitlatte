@@ -292,9 +292,14 @@ public class StatusCacheMap {
                 url = ((MTStatus) status).status.getUrl();
                 List<com.sys1yagi.mastodon4j.api.entity.Emoji> oldEmojis = ((MTStatus) status).status.getEmojis();
 
-                emojis = new ArrayList<>(oldEmojis.size());
-                for (com.sys1yagi.mastodon4j.api.entity.Emoji emoji : oldEmojis) {
-                    emojis.add(new Emoji(emoji.getShortcode(), emoji.getUrl()));
+                int size = oldEmojis.size();
+                if (size > 0) {
+                    emojis = new ArrayList<>(size);
+                    for (com.sys1yagi.mastodon4j.api.entity.Emoji emoji : oldEmojis) {
+                        emojis.add(new Emoji(emoji.getShortcode(), emoji.getUrl()));
+                    }
+                } else {
+                    emojis = null;
                 }
             } else {
                 url = "https://twitter.com/"

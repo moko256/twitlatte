@@ -27,150 +27,133 @@ import org.xml.sax.helpers.DefaultHandler
  *
  * @author moko256
  */
-class MTHtmlParser {
-    companion object {
-        private val parser = Parser()
-        private val handler = MastodonHtmlHandler()
+object MTHtmlParser {
 
-        init {
-            parser.contentHandler = handler
-        }
+    private val handler = MastodonHtmlHandler()
+    private val parser = Parser().apply {
+        contentHandler = handler
+    }
 
-        fun convertToEntities(text: String, listener: (link: String) -> Any): SpannableStringBuilder  = try {
-            parser.parse(InputSource(text.byteInputStream()))
+    fun convertToEntities(text: String, listener: (link: String) -> Any): CharSequence = try {
+        parser.parse(InputSource(text.reader()))
 
-            val builder = SpannableStringBuilder(handler.stringBuilder.toString())
-            handler.linkList.forEach {
-                builder.setSpan(
-                        listener(it.href),
-                        it.start,
-                        it.end,
-                        SpannableStringBuilder.SPAN_EXCLUSIVE_EXCLUSIVE
-                )
-            }
-
-            builder
-        } catch (e: Throwable) {
-            e.printStackTrace()
-            SpannableStringBuilder(text)
-        }
-
-        private class MastodonHtmlHandler: DefaultHandler() {
-            val stringBuilder = StringBuilder(500)
-            val linkList = ArrayList<Link>(6)
-
-            private var noBr = false
-            private companion object {
-                const val TYPE_URL = 1
-                const val TYPE_TAG = 2
-                const val TYPE_USER = 3
-            }
-
-            private var type = 0
-
-            private var isLink = false
-            private var isDisplayable = true
-            private var isNextDots = false
-
-            private lateinit var contentUrl : String
-            private lateinit var tag : String
-            private lateinit var userName : String
-
-            private var linkStart : Int = -1
-
-            override fun startDocument() {
-                stringBuilder.setLength(0)
-                type = 0
-                isLink = false
-                isDisplayable = true
-                isNextDots = false
-                noBr = false
-                linkList.clear()
-            }
-
-            override fun startElement(uri: String, localName: String, qName: String, attributes: Attributes) {
-                when (localName){
-                    "a" -> {
-                        when {
-                            attributes.getValue("class") == "mention hashtag" -> {
-                                type = TYPE_TAG
-                                val list = attributes.getValue("href")!!.split("/")
-                                tag = list[list.size - 1]
-                            }
-                            attributes.getValue("class") == "u-url mention" -> {
-                                type = TYPE_USER
-                                val list = attributes.getValue("href")!!.split("/")
-                                userName = list[list.size - 1] + "@" + list[list.size - 2]
-                            }
-                            else -> {
-                                type = TYPE_URL
-                                contentUrl = attributes.getValue("href")!!
-                                isLink = true
-                            }
-                        }
-                        linkStart = stringBuilder.length
-                    }
-                    "span" -> {
-                        isDisplayable = attributes.getValue("class") != "invisible"
-                    }
-                    "p" -> {
-                        if (noBr){
-                            stringBuilder.append("\n\n")
-                        } else {
-                            noBr = true
-                        }
-                    }
-                    "html", "body" -> {}
-                    "br" -> {
-                        stringBuilder.append("\n")
-                    }
-                    else -> {
-                        stringBuilder.append("\\<").append(localName).append("\\>")
-                    }
+        if (handler.linkList.isEmpty()) {
+            handler.stringBuilder
+        } else {
+            SpannableStringBuilder(handler.stringBuilder).also {builder ->
+                handler.linkList.forEach {
+                    builder.setSpan(
+                            listener(it.href),
+                            it.start,
+                            it.end,
+                            SpannableStringBuilder.SPAN_EXCLUSIVE_EXCLUSIVE
+                    )
                 }
             }
+        }
+    } catch (e: Throwable) {
+        e.printStackTrace()
+        text
+    }
+}
 
-            override fun characters(ch: CharArray, start: Int, length: Int) {
-                if (isLink) {
-                    if (isNextDots) {
-                        stringBuilder.append("…")
-                    } else if (isDisplayable) {
-                        stringBuilder.append(ch, start, length)
-                        isNextDots = true
+
+private const val TYPE_URL = 1
+private const val TYPE_TAG = 2
+private const val TYPE_USER = 3
+
+private class MastodonHtmlHandler: DefaultHandler() {
+    val stringBuilder = StringBuilder(500)
+    val linkList = ArrayList<Link>(6)
+
+    private var noBr = false
+
+    private var type = 0
+
+    private var isDisplayable = true
+    private var isNextDots = false
+
+    private lateinit var contentUrl : String
+    private lateinit var tag : String
+    private lateinit var userName : String
+
+    private var linkStart : Int = -1
+
+    override fun startDocument() {
+        stringBuilder.setLength(0)
+        noBr = false
+        linkList.clear()
+    }
+
+    override fun startElement(uri: String, localName: String, qName: String, attributes: Attributes) {
+        when (localName){
+            "a" -> {
+                when {
+                    attributes.getValue("class") == "mention hashtag" -> {
+                        type = TYPE_TAG
+                        val list = attributes.getValue("href")!!.split("/")
+                        tag = list[list.size - 1]
                     }
+                    attributes.getValue("class") == "u-url mention" -> {
+                        type = TYPE_USER
+                        val list = attributes.getValue("href")!!.split("/")
+                        userName = list[list.size - 1] + "@" + list[list.size - 2]
+                    }
+                    else -> {
+                        type = TYPE_URL
+                        contentUrl = attributes.getValue("href")!!
+                    }
+                }
+                linkStart = stringBuilder.length
+            }
+            "span" -> {
+                isDisplayable = attributes.getValue("class") != "invisible"
+            }
+            "p" -> {
+                if (noBr){
+                    stringBuilder.append("\n\n")
                 } else {
-                    stringBuilder.append(ch, start, length)
+                    noBr = true
                 }
             }
+            "br" -> {
+                stringBuilder.append("\n")
+            }
+        }
+    }
 
-            override fun endElement(uri: String, localName: String, qName: String) {
-                when (localName) {
-                    "a" -> {
-                        val link = when (type) {
-                            TYPE_URL -> {
-                                isLink = false
-                                isNextDots = false
+    override fun characters(ch: CharArray, start: Int, length: Int) {
+        if (type == TYPE_URL) {
+            if (isNextDots) {
+                stringBuilder.append("…")
+            } else if (isDisplayable) {
+                stringBuilder.append(ch, start, length)
+                isNextDots = true
+            }
+        } else {
+            stringBuilder.append(ch, start, length)
+        }
+    }
 
-                                contentUrl
-                            }
-                            TYPE_TAG -> "twitlatte://tag/$tag"
-                            TYPE_USER -> "twitlatte://user/$userName"
-                            else -> ""
-                        }
-                        this.linkList.add(Link(link, linkStart, stringBuilder.length))
-                    }
-                    "br", "p", "span", "html", "body" -> {}
-                    else -> {
-                        stringBuilder.append("\\<\\/ ").append(localName).append("\\>")
-                    }
+    override fun endElement(uri: String, localName: String, qName: String) {
+        if (localName == "a") {
+            val link = when (type) {
+                TYPE_TAG -> "twitlatte://tag/$tag"
+                TYPE_USER -> "twitlatte://user/$userName"
+                else -> {
+                    isNextDots = false
+
+                    contentUrl
                 }
             }
-
-            data class Link(
-                    val href: String,
-                    val start: Int,
-                    val end: Int
-            )
+            type = 0
+            this.linkList.add(Link(link, linkStart, stringBuilder.length))
         }
     }
 }
+
+data class Link(
+        val href: String,
+        val start: Int,
+        val end: Int
+)

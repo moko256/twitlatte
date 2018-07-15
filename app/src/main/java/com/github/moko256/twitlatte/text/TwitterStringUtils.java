@@ -160,7 +160,7 @@ public class TwitterStringUtils {
         }
 
         if (GlobalApplication.clientType == Type.MASTODON){
-            SpannableStringBuilder html = MTHtmlParser.Companion.convertToEntities(tweet, mastodonLinkParser(context));
+            CharSequence html = MTHtmlParser.INSTANCE.convertToEntities(tweet, mastodonLinkParser(context));
             int length = html.length();
             // If post has media only, context of post from Mastodon is "."
             if (length == 1
@@ -228,12 +228,14 @@ public class TwitterStringUtils {
                     @Override
                     protected void onPostExecute(Map<String, Drawable> map) {
                         if (TextUtils.equals(html, textView.getText())) {
+                            SpannableStringBuilder builder = SpannableStringBuilder.valueOf(html);
+
                             boolean found = matches || matcher.find();
                             while (found){
                                 String shortCode = matcher.group(1);
                                 Drawable drawable = map.get(shortCode);
                                 if (drawable != null) {
-                                    html.setSpan(
+                                    builder.setSpan(
                                             new ImageSpan(drawable),
                                             matcher.start(), matcher.end(),
                                             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
@@ -243,7 +245,7 @@ public class TwitterStringUtils {
                                         drawable.setCallback(new Drawable.Callback() {
                                             @Override
                                             public void invalidateDrawable(@NonNull Drawable who) {
-                                                if (TextUtils.equals(html, textView.getText())){
+                                                if (TextUtils.equals(builder, textView.getText())){
                                                     textView.invalidate();
                                                 } else {
                                                     ((Animatable) who).stop();
@@ -266,7 +268,7 @@ public class TwitterStringUtils {
                                 }
                                 found = matcher.find();
                             }
-                            textView.setText(html);
+                            textView.setText(builder);
                         }
                     }
                 }.execute();
@@ -350,7 +352,7 @@ public class TwitterStringUtils {
         String description = user.getDescription();
 
         if (GlobalApplication.clientType == Type.MASTODON){
-            return MTHtmlParser.Companion.convertToEntities(description, mastodonLinkParser(context));
+            return MTHtmlParser.INSTANCE.convertToEntities(description, mastodonLinkParser(context));
         } else {
             URLEntity[] urlEntities = user.getDescriptionURLEntities();
 
