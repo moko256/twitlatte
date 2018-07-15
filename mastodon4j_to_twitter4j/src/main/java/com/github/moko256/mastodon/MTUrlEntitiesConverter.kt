@@ -16,14 +16,9 @@
 
 package com.github.moko256.mastodon
 
-import org.ccil.cowan.tagsoup.Parser
 import org.xml.sax.Attributes
 import org.xml.sax.InputSource
 import org.xml.sax.helpers.DefaultHandler
-import twitter4j.HashtagEntity
-import twitter4j.TweetEntity
-import twitter4j.URLEntity
-import twitter4j.UserMentionEntity
 
 /**
  * Created by moko256 on 2018/02/09.
@@ -65,49 +60,40 @@ private class MastodonHandler: DefaultHandler() {
     var isDisplable = false
     lateinit var contentUrl : String
     lateinit var tag : String
-    lateinit var userName : String
     var start = 0
     var end = 0
 
     override fun startElement(uri: String?, localName: String?, qName: String?, attributes: Attributes?) {
         super.startElement(uri, localName, qName, attributes)
+        this.localName = localName?:""
         when (localName) {
             "br" -> {
                 stringBuilder.append("\n")
             }
-            else -> {
-                when (localName){
-                    "a" -> {
-                        dealing = StringBuilder()
-                        if (attributes?.getValue("rel") == "tag") {
-                            type = TYPE_TAG
-                        } else if (attributes?.getValue("class") == "u-url mention"){
-                            type = TYPE_USER
-                        } else {
-                            type = TYPE_URL
-                            contentUrl = attributes?.getValue("href")!!
-                        }
-                        start = stringBuilder.length
-                    }
-                    "span" -> {
-                        isDisplable = attributes?.getValue("class") != "invisible"
-                    }
-                    "p" -> {
-                        if (this.localName == "p"){
-                            stringBuilder.append("\n\n")
-                        }
-                    }
-                    "html" -> {
-
-                    }
-                    "body" -> {
-
-                    }
-                    else -> {
-                        stringBuilder.append("<").append(localName).append(">")
-                    }
+            "a" -> {
+                dealing = StringBuilder()
+                if (attributes?.getValue("rel") == "tag") {
+                    type = TYPE_TAG
+                } else {
+                    type = TYPE_URL
+                    contentUrl = attributes?.getValue("href") ?: ""
                 }
-                this.localName = localName?:""
+                start = stringBuilder.length
+            }
+            "span" -> {
+                isDisplable = attributes?.getValue("class") != "_invisible"
+            }
+            "p" -> {
+
+            }
+            "html" -> {
+
+            }
+            "body" -> {
+
+            }
+            else -> {
+                stringBuilder.append("<").append(localName).append(">")
             }
         }
     }
@@ -119,21 +105,17 @@ private class MastodonHandler: DefaultHandler() {
                 stringBuilder.append(ch, 0, length)
             }
             "a" -> {
-                stringBuilder.append(ch, 0, length)
+
             }
             "span" -> {
                 if (type == TYPE_URL){
                     if (isDisplable){
                         dealing.append(ch, 0, length)
-                    } else if (ch != null && !ch.contentEquals("https://".toCharArray()) && !ch.contentEquals("http://".toCharArray())){
+                    } else {
                         dealing.append("…")
                     }
                 } else if (type == TYPE_TAG){
                     tag = if (ch != null){ String(ch, 0, length) } else {""}
-                    dealing.append(tag)
-                } else{
-                    userName = String(ch!!.slice(0 .. length).toCharArray())
-                    dealing.append(userName)
                 }
             }
             "br" -> {
@@ -184,25 +166,6 @@ private class MastodonHandler: DefaultHandler() {
                         override fun getText(): String = _tag
 
                     })
-                } else {
-                    tweetEntities.add(object: UserMentionEntity{
-
-                        val _start = this@MastodonHandler.start
-                        val _end = this@MastodonHandler.end
-                        val _userName = this@MastodonHandler.userName
-
-                        override fun getStart(): Int = _start
-
-                        override fun getEnd(): Int = _end
-
-                        override fun getText(): String = _userName
-
-                        override fun getName(): String = ""
-
-                        override fun getId(): Long = -1L
-
-                        override fun getScreenName(): String = _userName
-                    })
                 }
             }
             "br" -> {
@@ -226,8 +189,5 @@ private class MastodonHandler: DefaultHandler() {
         }
     }
 
-    override fun ignorableWhitespace(ch: CharArray?, start: Int, length: Int) {
-        super.ignorableWhitespace(ch, start, length)
-        stringBuilder.append(ch!!, 0, length)
-    }
+
 }
