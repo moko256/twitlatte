@@ -64,12 +64,11 @@ public class MTStatus implements twitter4j.Status{
     public String getText() {
         String spoilerText = status.getSpoilerText();
         String content = status.getContent();
-        String br = "<br />";
 
         if (spoilerText.equals("")) {
             return content;
         } else {
-            return spoilerText + br + content;
+            return spoilerText + "<br /><br />" + content;
         }
     }
 
