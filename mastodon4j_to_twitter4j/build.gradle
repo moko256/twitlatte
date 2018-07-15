@@ -15,8 +15,6 @@
  */
 
 apply plugin: 'java-library'
-apply plugin: 'kotlin'
-
 
 dependencies {
     api 'com.github.MulticolorWorld.mastodon4j:mastodon4j:1.7.0'
@@ -24,11 +22,7 @@ dependencies {
     api project(':twitter4j-core')
     api project(':twitter4j-http2-support')
 
-    compile group: 'org.ccil.cowan.tagsoup', name: 'tagsoup', version: '1.2'
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-
     api "com.squareup.okhttp3:okhttp:$okhttp_version"
     api "com.google.code.gson:gson:$gson_version"
     api "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-
 }

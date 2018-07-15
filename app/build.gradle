@@ -121,6 +121,8 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'com.github.adelnizamutdinov:kotlin-either:2.0.1'
 
+    implementation 'org.ccil.cowan.tagsoup:tagsoup:1.2'
+
 }
 
 buildscript {
