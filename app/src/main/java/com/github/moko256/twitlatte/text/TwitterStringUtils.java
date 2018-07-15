@@ -34,7 +34,6 @@ import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.ClickableSpan;
 import android.text.style.ImageSpan;
-import android.text.style.URLSpan;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -160,7 +159,7 @@ public class TwitterStringUtils {
         }
 
         if (GlobalApplication.clientType == Type.MASTODON){
-            CharSequence html = MTHtmlParser.INSTANCE.convertToEntities(tweet, mastodonLinkParser(context));
+            CharSequence html = MTHtmlParser.INSTANCE.convertToEntities(tweet, linkParserListener(context));
             int length = html.length();
             // If post has media only, context of post from Mastodon is "."
             if (length == 1
@@ -352,7 +351,7 @@ public class TwitterStringUtils {
         String description = user.getDescription();
 
         if (GlobalApplication.clientType == Type.MASTODON){
-            return MTHtmlParser.INSTANCE.convertToEntities(description, mastodonLinkParser(context));
+            return MTHtmlParser.INSTANCE.convertToEntities(description, linkParserListener(context));
         } else {
             URLEntity[] urlEntities = user.getDescriptionURLEntities();
 
@@ -387,28 +386,7 @@ public class TwitterStringUtils {
         }
     }
 
-    public static SpannableStringBuilder convertUrlSpanToCustomTabs(Spanned spanned, Context context){
-        SpannableStringBuilder builder = SpannableStringBuilder.valueOf(spanned);
-        URLSpan[] spans = builder.getSpans(0, builder.length(), URLSpan.class);
-        for (URLSpan span : spans) {
-            int spanStart = builder.getSpanStart(span);
-            int spanEnd = builder.getSpanEnd(span);
-
-            ClickableSpan span1;
-            span1 = new ClickableSpan() {
-                @Override
-                public void onClick(View view) {
-                    AppCustomTabsKt.launchChromeCustomTabs(context, span.getURL());
-                }
-            };
-
-            builder.removeSpan(span);
-            builder.setSpan(span1, spanStart, spanEnd, builder.getSpanFlags(span));
-        }
-        return builder;
-    }
-
-    private static Function1<String, Object> mastodonLinkParser(Context context) {
+    public static Function1<String, Object> linkParserListener(Context context) {
          return link -> {
             final Uri uri = Uri.parse(link);
             if (uri.getScheme().equals("twitlatte")) {

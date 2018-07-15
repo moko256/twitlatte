@@ -22,7 +22,6 @@ import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -37,6 +36,7 @@ import com.github.moko256.twitlatte.cacheMap.StatusCacheMap;
 import com.github.moko256.twitlatte.intent.AppCustomTabsKt;
 import com.github.moko256.twitlatte.model.base.PostTweetModel;
 import com.github.moko256.twitlatte.model.impl.PostTweetModelCreator;
+import com.github.moko256.twitlatte.text.MTHtmlParser;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
 
 import java.text.DateFormat;
@@ -223,7 +223,7 @@ public class ShowTweetActivity extends AppCompatActivity {
                         .format(item.getCreatedAt())
         );
         TextView viaText= findViewById(R.id.tweet_show_via);
-        viaText.setText(TwitterStringUtils.convertUrlSpanToCustomTabs(Html.fromHtml("via:"+item.getSource()), this));
+        viaText.setText(MTHtmlParser.INSTANCE.convertToEntities("via:"+item.getSource(), TwitterStringUtils.linkParserListener(this)));
         viaText.setMovementMethod(new LinkMovementMethod());
 
         EditText replyText= findViewById(R.id.tweet_show_tweet_reply_text);
