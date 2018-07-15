@@ -173,7 +173,7 @@ public class TwitterStringUtils {
 
         String tweet = item.getText();
 
-        if (GlobalApplication.clientType == 2){//Type.MASTODON){
+        if (GlobalApplication.clientType == Type.MASTODON){
             Spanned previewText = convertUrlSpanToCustomTabs(Html.fromHtml(tweet), context);
             textView.setText(previewText);
 
@@ -289,7 +289,6 @@ public class TwitterStringUtils {
             if (entity.getStart() <= tweetLength && entity.getEnd() <= tweetLength) {
                 int dusp = displayUrlLength - urlLength;
                 spannableStringBuilder.replace(tweet.offsetByCodePoints(0, entity.getStart()) + sp, tweet.offsetByCodePoints(0, entity.getEnd()) + sp, displayUrl);
-
                 spannableStringBuilder.setSpan(new ClickableSpan() {
                     @Override
                     public void onClick(View view) {

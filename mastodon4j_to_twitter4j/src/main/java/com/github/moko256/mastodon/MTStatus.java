@@ -24,12 +24,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import kotlin.Pair;
 import twitter4j.GeoLocation;
 import twitter4j.HashtagEntity;
 import twitter4j.MediaEntity;
@@ -37,7 +35,6 @@ import twitter4j.Place;
 import twitter4j.RateLimitStatus;
 import twitter4j.Scopes;
 import twitter4j.SymbolEntity;
-import twitter4j.TweetEntity;
 import twitter4j.URLEntity;
 import twitter4j.User;
 import twitter4j.UserMentionEntity;
@@ -52,22 +49,8 @@ public class MTStatus implements twitter4j.Status{
 
     public Status status;
 
-    private String text;
-    private List<URLEntity> urls = new ArrayList<>();
-    private List<HashtagEntity> hashtags = new ArrayList<>();
-
     public MTStatus(Status status){
         this.status = status;
-        Pair<String, List<twitter4j.TweetEntity>> p = MTUrlEntitiesConverter.Companion.convertToEntities(status.getContent());
-        text = p.getFirst();
-
-        for (TweetEntity e : p.getSecond()){
-            if (e instanceof URLEntity){
-                urls.add((URLEntity) e);
-            } else if (e instanceof HashtagEntity){
-                hashtags.add((HashtagEntity) e);
-            }
-        }
     }
 
     @Override
@@ -87,10 +70,10 @@ public class MTStatus implements twitter4j.Status{
 
     @Override
     public String getText() {
-        String s = status.getSpoilerText() + "\n\n" + text;
-        /*for (Emoji e : status.getEmojis()) {
+        String s = status.getSpoilerText() + "\n\n" + status.getContent();
+        for (Emoji e : status.getEmojis()) {
             s = s.replaceAll(":" + e.getShortcode() + ":", "<img src='" + e.getUrl() + "'></img>");
-        }*/
+        }
         return s;
     }
 
@@ -244,12 +227,12 @@ public class MTStatus implements twitter4j.Status{
 
     @Override
     public URLEntity[] getURLEntities() {
-        return urls.toArray(new URLEntity[urls.size()]);
+        return new URLEntity[0];
     }
 
     @Override
     public HashtagEntity[] getHashtagEntities() {
-        return hashtags.toArray(new HashtagEntity[hashtags.size()]);
+        return new HashtagEntity[0];
     }
 
     @Override
