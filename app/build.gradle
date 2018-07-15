@@ -121,7 +121,9 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'com.github.adelnizamutdinov:kotlin-either:2.0.1'
 
-    implementation 'org.ccil.cowan.tagsoup:tagsoup:1.2.1'
+    // Android 4.4.2 uses 1.2. That's why
+    //noinspection GradleDependency
+    compileOnly 'org.ccil.cowan.tagsoup:tagsoup:1.2'
 
 }
 
