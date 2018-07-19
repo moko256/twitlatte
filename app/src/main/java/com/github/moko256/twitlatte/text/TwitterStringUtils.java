@@ -284,7 +284,7 @@ public class TwitterStringUtils {
                         public void onClick(View view) {
                             context.startActivity(SearchResultActivity.getIntent(context, "$" + symbolEntity.getText()));
                         }
-                    }, tweet.offsetByCodePoints(0, symbolEntity.getStart()), tweet.offsetByCodePoints(0, symbolEntity.getEnd()), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+                    }, tweet.offsetByCodePoints(0, symbolEntity.getStart()), tweet.offsetByCodePoints(0, symbolEntity.getEnd()), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 }
 
                 for (HashtagEntity hashtagEntity : item.getHashtagEntities()) {
@@ -294,7 +294,7 @@ public class TwitterStringUtils {
                             context.startActivity(SearchResultActivity.getIntent(context, "#" + hashtagEntity.getText())
                             );
                         }
-                    }, tweet.offsetByCodePoints(0, hashtagEntity.getStart()), tweet.offsetByCodePoints(0, hashtagEntity.getEnd()), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+                    }, tweet.offsetByCodePoints(0, hashtagEntity.getStart()), tweet.offsetByCodePoints(0, hashtagEntity.getEnd()), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 }
 
                 for (UserMentionEntity userMentionEntity : item.getUserMentionEntities()) {
@@ -305,7 +305,7 @@ public class TwitterStringUtils {
                                     ShowUserActivity.getIntent(context, userMentionEntity.getScreenName())
                             );
                         }
-                    }, tweet.offsetByCodePoints(0, userMentionEntity.getStart()), tweet.offsetByCodePoints(0, userMentionEntity.getEnd()), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+                    }, tweet.offsetByCodePoints(0, userMentionEntity.getStart()), tweet.offsetByCodePoints(0, userMentionEntity.getEnd()), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 }
 
                 boolean hasMedia = item.getMediaEntities().length > 0;
@@ -332,7 +332,7 @@ public class TwitterStringUtils {
                             public void onClick(View view) {
                                 AppCustomTabsKt.launchChromeCustomTabs(context, entity.getExpandedURL());
                             }
-                        }, tweet.offsetByCodePoints(0, entity.getStart()) + sp, tweet.offsetByCodePoints(0, entity.getEnd()) + sp + dusp, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+                        }, tweet.offsetByCodePoints(0, entity.getStart()) + sp, tweet.offsetByCodePoints(0, entity.getEnd()) + sp + dusp, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
                         sp += dusp;
                     }
@@ -376,7 +376,7 @@ public class TwitterStringUtils {
                         public void onClick(View view) {
                             AppCustomTabsKt.launchChromeCustomTabs(context, entity.getExpandedURL());
                         }
-                    }, description.offsetByCodePoints(0, entity.getStart()) + sp, description.offsetByCodePoints(0, entity.getEnd()) + sp + dusp, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+                    }, description.offsetByCodePoints(0, entity.getStart()) + sp, description.offsetByCodePoints(0, entity.getEnd()) + sp + dusp, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
                     sp += dusp;
                 }
