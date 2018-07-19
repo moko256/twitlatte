@@ -126,12 +126,14 @@ public class GlobalApplication extends Application {
 
         String accountKey = preferenceRepository.getString(KEY_ACCOUNT_KEY,"-1");
 
-        if (accountKey.equals("-1")) return;
+        if (!accountKey.equals("-1")) {
 
-        AccessToken accessToken = accountsModel.get(accountKey);
+            AccessToken accessToken = accountsModel.get(accountKey);
 
-        if (accessToken==null)return;
-        initTwitter(accessToken);
+            if (accessToken != null) {
+                initTwitter(accessToken);
+            }
+        }
 
         super.onCreate();
     }
