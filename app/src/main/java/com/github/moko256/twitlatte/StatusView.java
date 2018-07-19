@@ -281,7 +281,16 @@ public class StatusView extends FrameLayout {
                     quotedStatus.getUser().isProtected(),
                     quotedStatus.getUser().isVerified()
             );
-            quoteTweetImages.setMediaEntities(quotedStatus.getMediaEntities(), quotedStatus.isPossiblySensitive());
+            if (quotedStatus.getMediaEntities().length > 0) {
+                if (quoteTweetImages.getVisibility() != View.VISIBLE) {
+                    quoteTweetImages.setVisibility(View.VISIBLE);
+                }
+                quoteTweetImages.setMediaEntities(quotedStatus.getMediaEntities(), quotedStatus.isPossiblySensitive());
+            } else {
+                if (quoteTweetImages.getVisibility() != View.GONE) {
+                    quoteTweetImages.setVisibility(View.GONE);
+                }
+            }
             quoteTweetUserId.setText(TwitterStringUtils.plusAtMark(quotedStatus.getUser().getScreenName()));
             quoteTweetContext.setText(quotedStatus.getText());
         }else{
