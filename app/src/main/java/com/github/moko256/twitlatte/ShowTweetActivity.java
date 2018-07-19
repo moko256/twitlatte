@@ -47,7 +47,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import twitter4j.Status;
 import twitter4j.TwitterException;
-import twitter4j.UserMentionEntity;
+import twitter4j.User;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
@@ -64,6 +64,13 @@ public class ShowTweetActivity extends AppCompatActivity {
     private long statusId;
 
     private StatusView statusView;
+
+    private TextView tweetIsReply;
+    private FrameLayout statusViewFrame;
+    private TextView timestampText;
+    private TextView viaText;
+    private EditText replyText;
+    private Button replyButton;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -127,6 +134,13 @@ public class ShowTweetActivity extends AppCompatActivity {
                                     swipeRefreshLayout.setRefreshing(false);
                                 })
         ));
+
+        tweetIsReply = findViewById(R.id.tweet_show_is_reply_text);
+        statusViewFrame = findViewById(R.id.tweet_show_tweet);
+        timestampText = findViewById(R.id.tweet_show_timestamp);
+        viaText = findViewById(R.id.tweet_show_via);
+        replyText= findViewById(R.id.tweet_show_tweet_reply_text);
+        replyButton= findViewById(R.id.tweet_show_tweet_reply_button);
     }
 
     @Override
@@ -199,7 +213,6 @@ public class ShowTweetActivity extends AppCompatActivity {
     }
 
     private void updateView(Status item){
-        TextView tweetIsReply = findViewById(R.id.tweet_show_is_reply_text);
         long replyTweetId = item.getInReplyToStatusId();
         if (replyTweetId != -1){
             tweetIsReply.setVisibility(VISIBLE);
@@ -214,26 +227,19 @@ public class ShowTweetActivity extends AppCompatActivity {
         ViewGroup cview = (ViewGroup) statusView.getChildAt(0);
         ViewGroup sview = (ViewGroup) cview.getChildAt(0);
         cview.removeView(sview);
-        FrameLayout statusViewFrame = findViewById(R.id.tweet_show_tweet);
         statusViewFrame.removeAllViews();
         statusViewFrame.addView(sview);
 
-        ((TextView)findViewById(R.id.tweet_show_timestamp)).setText(
+        timestampText.setText(
                 DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.FULL)
                         .format(item.getCreatedAt())
         );
-        TextView viaText= findViewById(R.id.tweet_show_via);
+
         viaText.setText(MTHtmlParser.INSTANCE.convertToEntities("via:"+item.getSource(), TwitterStringUtils.linkParserListener(this)));
         viaText.setMovementMethod(new LinkMovementMethod());
 
-        EditText replyText= findViewById(R.id.tweet_show_tweet_reply_text);
-        Button replyButton= findViewById(R.id.tweet_show_tweet_reply_button);
-        UserMentionEntity[] users = item.getUserMentionEntities();
-        replyText.setText(TwitterStringUtils.convertToReplyTopString(
-                GlobalApplication.userCache.get(GlobalApplication.userId).getScreenName(),
-                item.getUser().getScreenName(),
-                users
-        ));
+        resetReplyText(item);
+
         replyButton.setOnClickListener(v -> {
             replyButton.setEnabled(false);
             PostTweetModel model = PostTweetModelCreator.getInstance(GlobalApplication.twitter, getContentResolver());
@@ -245,10 +251,7 @@ public class ShowTweetActivity extends AppCompatActivity {
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe(
                                     () -> {
-                                        replyText.setText(TwitterStringUtils.convertToReplyTopString(
-                                                GlobalApplication.userCache.get(GlobalApplication.userId).getScreenName(),
-                                                item.getUser().getScreenName(), users
-                                        ));
+                                        resetReplyText(item);
                                         replyButton.setEnabled(true);
                                         Toast.makeText(ShowTweetActivity.this,R.string.did_post,Toast.LENGTH_SHORT).show();
                                     },
@@ -260,6 +263,16 @@ public class ShowTweetActivity extends AppCompatActivity {
                             )
             );
         });
+    }
+
+    private void resetReplyText(Status status){
+        User user = GlobalApplication.userCache.get(GlobalApplication.userId);
+
+        replyText.setText(TwitterStringUtils.convertToReplyTopString(
+                user != null ? user.getScreenName() : GlobalApplication.accessToken.getScreenName(),
+                status.getUser().getScreenName(),
+                status.getUserMentionEntities()
+        ));
     }
 
 }
