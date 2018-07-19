@@ -754,9 +754,9 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
                         mediaUrls[i],
                         mediaUrlHttpSs[i],
                         types[i],
-                        hasMedia? variants_bitrates[i]: null,
-                        hasMedia? variants_contentTypes[i]: null,
-                        hasMedia? variants_urls[i]: null,
+                        hasMedia &&  i< variants_bitrates.length ? variants_bitrates[i] : null,
+                        hasMedia &&  i< variants_contentTypes.length ? variants_contentTypes[i] : null,
+                        hasMedia &&  i< variants_urls.length ? variants_urls[i] : null,
                         starts[i],
                         ends[i]
                 );
