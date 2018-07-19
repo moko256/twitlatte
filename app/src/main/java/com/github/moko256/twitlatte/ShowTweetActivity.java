@@ -77,70 +77,70 @@ public class ShowTweetActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_tweet);
 
-        disposables=new CompositeDisposable();
-
-        ActionBar actionBar=getSupportActionBar();
-        if (actionBar!=null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setHomeAsUpIndicator(R.drawable.ic_back_white_24dp);
-        }
-
         statusId = getIntent().getLongExtra("statusId", -1);
         if (statusId == -1) {
-            ShowTweetActivity.this.finish();
-            return;
-        }
-        Status status = GlobalApplication.statusCache.get(statusId);
-        if (status == null){
-            disposables.add(
+            finish();
+        } else {
+            disposables=new CompositeDisposable();
+
+            ActionBar actionBar=getSupportActionBar();
+            if (actionBar!=null) {
+                actionBar.setDisplayHomeAsUpEnabled(true);
+                actionBar.setHomeAsUpIndicator(R.drawable.ic_back_white_24dp);
+            }
+
+            tweetIsReply = findViewById(R.id.tweet_show_is_reply_text);
+            statusViewFrame = findViewById(R.id.tweet_show_tweet);
+            timestampText = findViewById(R.id.tweet_show_timestamp);
+            viaText = findViewById(R.id.tweet_show_via);
+            replyText= findViewById(R.id.tweet_show_tweet_reply_text);
+            replyButton= findViewById(R.id.tweet_show_tweet_reply_button);
+
+            SwipeRefreshLayout swipeRefreshLayout = findViewById(R.id.tweet_show_swipe_refresh);
+            swipeRefreshLayout.setColorSchemeResources(R.color.color_primary);
+            swipeRefreshLayout.setOnRefreshListener(() -> disposables.add(
                     updateStatus()
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe(
-                                    result->{
+                                    result -> {
                                         if (result == null) {
                                             finish();
-                                            return;
+                                        } else {
+                                            updateView(result);
+                                            swipeRefreshLayout.setRefreshing(false);
                                         }
-                                        updateView(result);
                                     },
                                     e->{
                                         e.printStackTrace();
-                                        finish();
+                                        Toast.makeText(this, R.string.error_occurred, Toast.LENGTH_SHORT).show();
+                                        swipeRefreshLayout.setRefreshing(false);
                                     })
-            );
-        } else {
-            updateView(status);
+            ));
+
+            Status status = GlobalApplication.statusCache.get(statusId);
+            if (status == null){
+                disposables.add(
+                        updateStatus()
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(
+                                        result->{
+                                            if (result == null) {
+                                                finish();
+                                                return;
+                                            }
+                                            updateView(result);
+                                        },
+                                        e->{
+                                            e.printStackTrace();
+                                            finish();
+                                        })
+                );
+            } else {
+                updateView(status);
+            }
         }
-
-        SwipeRefreshLayout swipeRefreshLayout = findViewById(R.id.tweet_show_swipe_refresh);
-        swipeRefreshLayout.setColorSchemeResources(R.color.color_primary);
-        swipeRefreshLayout.setOnRefreshListener(() -> disposables.add(
-                updateStatus()
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(
-                                result -> {
-                                    if (result == null) {
-                                        finish();
-                                        return;
-                                    }
-                                    updateView(result);
-                                    swipeRefreshLayout.setRefreshing(false);
-                                },
-                                e->{
-                                    e.printStackTrace();
-                                    Toast.makeText(this, R.string.error_occurred, Toast.LENGTH_SHORT).show();
-                                    swipeRefreshLayout.setRefreshing(false);
-                                })
-        ));
-
-        tweetIsReply = findViewById(R.id.tweet_show_is_reply_text);
-        statusViewFrame = findViewById(R.id.tweet_show_tweet);
-        timestampText = findViewById(R.id.tweet_show_timestamp);
-        viaText = findViewById(R.id.tweet_show_via);
-        replyText= findViewById(R.id.tweet_show_tweet_reply_text);
-        replyButton= findViewById(R.id.tweet_show_tweet_reply_button);
     }
 
     @Override
