@@ -72,11 +72,13 @@ class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> {
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .into(viewHolder.userUserImage);
 
-        TwitterStringUtils.plusAndSetMarks(
-                item.getName(),
-                viewHolder.userUserName,
-                item.isProtected(),
-                item.isVerified()
+        viewHolder.userUserName.setText(
+                TwitterStringUtils.plusUserMarks(
+                        item.getName(),
+                        viewHolder.userUserName,
+                        item.isProtected(),
+                        item.isVerified()
+                )
         );
         viewHolder.userUserId.setText(TwitterStringUtils.plusAtMark(item.getScreenName()));
         viewHolder.itemView.setOnClickListener(

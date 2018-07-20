@@ -21,6 +21,7 @@ import android.content.Context;
 import android.os.Build;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.text.Layout;
+import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.text.method.LinkMovementMethod;
 import android.util.AttributeSet;
@@ -37,12 +38,17 @@ import android.widget.Toast;
 
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.github.moko256.twitlatte.cacheMap.StatusCacheMap;
+import com.github.moko256.twitlatte.entity.Emoji;
 import com.github.moko256.twitlatte.entity.Type;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
+import com.github.moko256.twitlatte.view.EmojiToTextViewSetter;
 import com.github.moko256.twitlatte.widget.TweetImageTableView;
+
+import java.util.List;
 
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import twitter4j.MediaEntity;
 import twitter4j.Status;
@@ -57,7 +63,9 @@ import twitter4j.TwitterException;
 public class StatusView extends FrameLayout {
     private Status status;
 
+    private final CompositeDisposable disposable = new CompositeDisposable();
     private final GlideRequests glideRequests;
+    private EmojiToTextViewSetter emojiToTextViewSetter;
 
     private final ImageView userImage;
     private final TextView retweetUserName;
@@ -131,12 +139,16 @@ public class StatusView extends FrameLayout {
 
     public void setStatus(Status status) {
         if (status != null) {
+            disposable.clear();
             this.status = status;
             updateView();
         } else {
             if (!((Activity) getContext()).isDestroyed()) {
                 glideRequests.clear(userImage);
                 imageTableView.clearImages();
+                disposable.clear();
+            } else {
+                disposable.dispose();
             }
         }
     }
@@ -216,20 +228,30 @@ public class StatusView extends FrameLayout {
             userImage.setImageResource(R.drawable.border_frame_round);
         }
 
-        TwitterStringUtils.plusAndSetMarks(
+        userName.setText(TwitterStringUtils.plusUserMarks(
                 item.getUser().getName(),
                 userName,
                 item.getUser().isProtected(),
                 item.getUser().isVerified()
-        );
+        ));
         userId.setText(TwitterStringUtils.plusAtMark(item.getUser().getScreenName()));
 
         tweetContext.setOnClickListener(v -> callOnClick());
 
-        TwitterStringUtils.setLinkedSequenceTo(item, tweetContext);
-        if (!tweetContext.getText().toString().trim().isEmpty()) {
+        CharSequence linkedSequence = TwitterStringUtils.getLinkedSequence(getContext(), item);
+        tweetContext.setText(linkedSequence);
+
+        if (!TextUtils.isEmpty(linkedSequence)) {
             if (tweetContext.getVisibility() != VISIBLE){
                 tweetContext.setVisibility(VISIBLE);
+            }
+
+            List<Emoji> emojis = ((StatusCacheMap.CachedStatus) status).getEmojis();
+            if (emojis != null) {
+                if (emojiToTextViewSetter == null) {
+                    emojiToTextViewSetter = new EmojiToTextViewSetter(glideRequests, tweetContext);
+                }
+                disposable.addAll(emojiToTextViewSetter.set(linkedSequence, emojis));
             }
         } else {
             if (tweetContext.getVisibility() != GONE){
@@ -275,11 +297,13 @@ public class StatusView extends FrameLayout {
             quoteTweetLayout.setOnClickListener(v -> getContext().startActivity(
                     ShowTweetActivity.getIntent(getContext(), quotedStatus.getId())
             ));
-            TwitterStringUtils.plusAndSetMarks(
-                    quotedStatus.getUser().getName(),
-                    quoteTweetUserName,
-                    quotedStatus.getUser().isProtected(),
-                    quotedStatus.getUser().isVerified()
+            quoteTweetUserName.setText(
+                    TwitterStringUtils.plusUserMarks(
+                            quotedStatus.getUser().getName(),
+                            quoteTweetUserName,
+                            quotedStatus.getUser().isProtected(),
+                            quotedStatus.getUser().isVerified()
+                    )
             );
             if (quotedStatus.getMediaEntities().length > 0) {
                 if (quoteTweetImages.getVisibility() != View.VISIBLE) {

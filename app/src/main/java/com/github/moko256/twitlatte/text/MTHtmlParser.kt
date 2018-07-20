@@ -38,7 +38,7 @@ object MTHtmlParser {
         parser.parse(InputSource(text.reader()))
 
         if (handler.linkList.isEmpty()) {
-            handler.stringBuilder
+            handler.stringBuilder.toString()
         } else {
             SpannableStringBuilder(handler.stringBuilder).also {builder ->
                 handler.linkList.forEach {

@@ -466,11 +466,13 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                         .subscribe(
                                 result -> {
                                     User user = (User) result;
-                                    TwitterStringUtils.plusAndSetMarks(
-                                            user.getName(),
-                                            userNameText,
-                                            user.isProtected(),
-                                            user.isVerified()
+                                    userNameText.setText(
+                                            TwitterStringUtils.plusUserMarks(
+                                                    user.getName(),
+                                                    userNameText,
+                                                    user.isProtected(),
+                                                    user.isVerified()
+                                            )
                                     );
                                     userIdText.setText(TwitterStringUtils.plusAtMark(user.getScreenName()));
 

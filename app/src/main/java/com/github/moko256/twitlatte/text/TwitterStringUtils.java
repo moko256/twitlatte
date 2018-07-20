@@ -16,18 +16,13 @@
 
 package com.github.moko256.twitlatte.text;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
-import android.support.v4.util.ArrayMap;
 import android.support.v7.content.res.AppCompatResources;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -39,28 +34,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.moko256.mastodon.MTException;
-import com.github.moko256.twitlatte.GlideApp;
-import com.github.moko256.twitlatte.GlideRequests;
 import com.github.moko256.twitlatte.GlobalApplication;
 import com.github.moko256.twitlatte.R;
 import com.github.moko256.twitlatte.SearchResultActivity;
 import com.github.moko256.twitlatte.ShowUserActivity;
-import com.github.moko256.twitlatte.cacheMap.StatusCacheMap;
-import com.github.moko256.twitlatte.entity.Emoji;
 import com.github.moko256.twitlatte.entity.Type;
 import com.github.moko256.twitlatte.intent.AppCustomTabsKt;
 import com.sys1yagi.mastodon4j.api.exception.Mastodon4jRequestException;
 
-import net.ellerton.japng.android.api.PngAndroid;
-
-import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import kotlin.jvm.functions.Function1;
 import twitter4j.HashtagEntity;
@@ -78,12 +62,6 @@ import twitter4j.UserMentionEntity;
  */
 
 public class TwitterStringUtils {
-
-    private final static Pattern containsEmoji;
-
-    static {
-        containsEmoji = Pattern.compile(":([a-zA-Z0-9_]{2,}):");
-    }
 
     @NonNull
     public static String plusAtMark(String... strings){
@@ -147,15 +125,12 @@ public class TwitterStringUtils {
         }
     }
 
-    @SuppressLint("StaticFieldLeak")
-    public static void setLinkedSequenceTo(Status item, TextView textView){
-
-        Context context = textView.getContext();
+    public static CharSequence getLinkedSequence(Context context, Status item){
 
         String tweet = item.getText();
 
         if (tweet == null) {
-            return;
+            return "";
         }
 
         if (GlobalApplication.clientType == Type.MASTODON){
@@ -166,113 +141,10 @@ public class TwitterStringUtils {
                     && item.getMediaEntities().length > 0
                     && html.charAt(0) == ".".charAt(0)
                     ){
-                textView.setText("");
-                return;
+                return "";
+            } else {
+                return html;
             }
-            textView.setText(html);
-
-            List<Emoji> list = ((StatusCacheMap.CachedStatus) item).getEmojis();
-
-            if (list != null){
-                Matcher matcher = containsEmoji.matcher(html);
-                boolean matches = matcher.matches();
-
-                int imageSize;
-
-                if (matches) {
-                    imageSize = Math.round(textView.getLineHeight() * 2);
-                } else {
-                    imageSize = Math.round(textView.getLineHeight());
-                }
-
-                GlideRequests glideRequests = GlideApp.with(textView);
-
-                new AsyncTask<Void, Void, Map<String, Drawable>>(){
-                    @Override
-                    protected Map<String, Drawable> doInBackground(Void... params) {
-                        Map<String, Drawable> map = new ArrayMap<>();
-
-                        for (Emoji emoji : list){
-                            try {
-                                Drawable value;
-                                try {
-                                    FileInputStream inputStream = new FileInputStream(
-                                            glideRequests
-                                                    .asFile()
-                                                    .load(emoji.getUrl())
-                                                    .submit()
-                                                    .get()
-                                    );
-                                    value =  PngAndroid
-                                            .readDrawable(textView.getContext(), inputStream)
-                                            .mutate();
-                                    inputStream.close();
-                                } catch (Throwable e){
-                                    e.printStackTrace();
-                                    value = glideRequests
-                                            .load(emoji.getUrl())
-                                            .submit()
-                                            .get()
-                                            .mutate();
-                                }
-                                value.setBounds(0, 0, imageSize, imageSize);
-                                map.put(emoji.getShortCode(), value);
-                            } catch (InterruptedException | ExecutionException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        return map;
-                    }
-
-                    @Override
-                    protected void onPostExecute(Map<String, Drawable> map) {
-                        if (TextUtils.equals(html, textView.getText())) {
-                            SpannableStringBuilder builder = SpannableStringBuilder.valueOf(html);
-
-                            boolean found = matches || matcher.find();
-                            while (found){
-                                String shortCode = matcher.group(1);
-                                Drawable drawable = map.get(shortCode);
-                                if (drawable != null) {
-                                    builder.setSpan(
-                                            new ImageSpan(drawable),
-                                            matcher.start(), matcher.end(),
-                                            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-                                    );
-                                    if (drawable instanceof Animatable){
-                                        Handler handler = new Handler();
-                                        drawable.setCallback(new Drawable.Callback() {
-                                            @Override
-                                            public void invalidateDrawable(@NonNull Drawable who) {
-                                                if (TextUtils.equals(builder, textView.getText())){
-                                                    textView.invalidate();
-                                                } else {
-                                                    ((Animatable) who).stop();
-                                                }
-                                            }
-
-                                            @Override
-                                            public void scheduleDrawable(@NonNull Drawable who, @NonNull Runnable what, long when) {
-                                                who.invalidateSelf();
-                                                handler.postAtTime(what, when);
-                                            }
-
-                                            @Override
-                                            public void unscheduleDrawable(@NonNull Drawable who, @NonNull Runnable what) {
-                                                handler.removeCallbacks(what);
-                                            }
-                                        });
-                                        ((Animatable) drawable).start();
-                                    }
-                                }
-                                found = matcher.find();
-                            }
-                            textView.setText(builder);
-                        }
-                    }
-                }.execute();
-            }
-
         } else {
 
             SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(tweet);
@@ -342,7 +214,7 @@ public class TwitterStringUtils {
                 Toast.makeText(context, R.string.error_occurred, Toast.LENGTH_SHORT).show();
             }
 
-            textView.setText(spannableStringBuilder);
+            return spannableStringBuilder;
         }
     }
 
@@ -442,10 +314,9 @@ public class TwitterStringUtils {
                 baseUrl;
     }
 
-    public static void plusAndSetMarks(String name, TextView textView, boolean isLocked, boolean isAuthorized){
+    public static CharSequence plusUserMarks(String name, TextView textView, boolean isLocked, boolean isAuthorized){
         if (!isLocked && !isAuthorized){
-            textView.setText(name);
-            return;
+            return name;
         }
 
         SpannableStringBuilder result = new SpannableStringBuilder(name);
@@ -488,7 +359,7 @@ public class TwitterStringUtils {
             ), length, length + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
 
-        textView.setText(result);
+        return result;
     }
 
     @StringRes
