@@ -503,6 +503,11 @@ public class StatusCacheMap {
         }
 
         @Override
+        public URLEntity getQuotedStatusPermalink() {
+            return null;
+        }
+
+        @Override
         public int getDisplayTextRangeStart() {
             return -1;
         }

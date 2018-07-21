@@ -216,6 +216,11 @@ public class MTStatus implements twitter4j.Status{
     }
 
     @Override
+    public URLEntity getQuotedStatusPermalink() {
+        return null;
+    }
+
+    @Override
     public int compareTo(@NotNull twitter4j.Status status) {
         return 0;
     }

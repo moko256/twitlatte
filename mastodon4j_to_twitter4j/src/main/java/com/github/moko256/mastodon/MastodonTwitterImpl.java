@@ -40,11 +40,14 @@ import okhttp3.OkHttpClient;
 import twitter4j.AccountSettings;
 import twitter4j.Category;
 import twitter4j.DirectMessage;
+import twitter4j.DirectMessageEvent;
+import twitter4j.DirectMessageEventList;
 import twitter4j.Friendship;
 import twitter4j.GeoLocation;
 import twitter4j.GeoQuery;
 import twitter4j.IDs;
 import twitter4j.Location;
+import twitter4j.MessageData;
 import twitter4j.OEmbed;
 import twitter4j.OEmbedRequest;
 import twitter4j.PagableResponseList;
@@ -85,6 +88,7 @@ import twitter4j.auth.AccessToken;
 import twitter4j.auth.Authorization;
 import twitter4j.auth.OAuth2Token;
 import twitter4j.auth.RequestToken;
+import twitter4j.conf.ChunkedUploadConfiguration;
 import twitter4j.conf.Configuration;
 import twitter4j.util.function.Consumer;
 
@@ -259,12 +263,37 @@ public final class MastodonTwitterImpl implements Twitter {
     }
 
     @Override
+    public DirectMessageEventList getDirectMessageEvents(int count) {
+        return null;
+    }
+
+    @Override
+    public DirectMessageEventList getDirectMessageEvents(int count, String cursor) {
+        return null;
+    }
+
+    @Override
     public DirectMessage showDirectMessage(long l) {
         return null;
     }
 
     @Override
+    public DirectMessageEvent showDirectMessageEvent(long id) {
+        return null;
+    }
+
+    @Override
     public DirectMessage destroyDirectMessage(long l) {
+        return null;
+    }
+
+    @Override
+    public void destroyDirectMessageEvent(long id) {
+
+    }
+
+    @Override
+    public DirectMessageEvent createMessage(MessageData messageData) {
         return null;
     }
 
@@ -1310,6 +1339,11 @@ public final class MastodonTwitterImpl implements Twitter {
 
     @Override
     public UploadedMedia uploadMedia(String s, InputStream inputStream) {
+        return null;
+    }
+
+    @Override
+    public UploadedMedia uploadMediaChunked(ChunkedUploadConfiguration chunkedUploadConfiguration) {
         return null;
     }
 

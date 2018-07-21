@@ -124,6 +124,11 @@ public class CachedTrendsSQLiteOpenHelper extends SQLiteOpenHelper {
         }
 
         @Override
+        public int getTweetVolume() {
+            return -1;
+        }
+
+        @Override
         public int hashCode() {
             return name.hashCode();
         }
