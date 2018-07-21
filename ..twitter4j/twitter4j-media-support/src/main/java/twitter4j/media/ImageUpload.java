@@ -14,30 +14,25 @@
  * limitations under the License.
  */
 
-package twitter4j;
+package twitter4j.media;
+
+import twitter4j.TwitterException;
+
+import java.io.File;
+import java.io.InputStream;
 
 /**
+ * @author Rémy Rakic - remy.rakic at gmail.com
  * @author Takao Nakaguchi - takao.nakaguchi at gmail.com
- * @since Twitter4J 2.2.4
+ * @author withgod - noname at withgod.jp
+ * @since Twitter4J 2.1.8
  */
-public final class VersionAppEngine {
-    private static final String VERSION = "4.1.0-beta4";
-    private static final String TITLE = "Twitter4J App Engine Support";
+public interface ImageUpload {
+    String upload(File image, String message) throws TwitterException;
 
-    private VersionAppEngine() {
-        throw new AssertionError();
-    }
+    String upload(File image) throws TwitterException;
 
-    public static String getVersion() {
-        return VERSION;
-    }
+    String upload(String imageFileName, InputStream imageBody) throws TwitterException;
 
-    /**
-     * prints the version string
-     *
-     * @param args will be just ignored.
-     */
-    public static void main(String[] args) {
-        System.out.println(TITLE + " " + VERSION);
-    }
+    String upload(String imageFileName, InputStream imageBody, String message) throws TwitterException;
 }

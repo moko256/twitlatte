@@ -14,29 +14,17 @@
  * limitations under the License.
  */
 
-package twitter4j.examples;
+package twitter4j;
 
 /**
  * @author Yusuke Yamamoto - yusuke at mac.com
+ * @since Twitter4J 2.1.1
  */
-public final class ExamplesVersion {
-    private static final String VERSION = "4.1.0-beta4";
-    private static final String TITLE = "Twitter4J examples";
+final class StdOutLoggerFactory extends LoggerFactory {
+    private static final Logger SINGLETON = new StdOutLogger();
 
-    private ExamplesVersion() {
-        throw new AssertionError();
-    }
-
-    public static String getVersion() {
-        return VERSION;
-    }
-
-    /**
-     * prints the version string
-     *
-     * @param args will be just ignored.
-     */
-    public static void main(String[] args) {
-        System.out.println(TITLE + " " + VERSION);
+    @Override
+    public Logger getLogger(Class<?> clazz) {
+        return SINGLETON;
     }
 }

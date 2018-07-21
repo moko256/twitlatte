@@ -14,29 +14,38 @@
  * limitations under the License.
  */
 
-package twitter4j.examples;
+package twitter4j;
 
 /**
  * @author Yusuke Yamamoto - yusuke at mac.com
+ * @since Twitter4J 2.1.9
  */
-public final class ExamplesVersion {
-    private static final String VERSION = "4.1.0-beta4";
-    private static final String TITLE = "Twitter4J examples";
-
-    private ExamplesVersion() {
-        throw new AssertionError();
-    }
-
-    public static String getVersion() {
-        return VERSION;
-    }
+public interface AccountTotals extends TwitterResponse, java.io.Serializable {
+    /**
+     * Returns the number of total updates.
+     *
+     * @return the number of total updates
+     */
+    int getUpdates();
 
     /**
-     * prints the version string
+     * Returns the number of total followers.
      *
-     * @param args will be just ignored.
+     * @return the number of total followers
      */
-    public static void main(String[] args) {
-        System.out.println(TITLE + " " + VERSION);
-    }
+    int getFollowers();
+
+    /**
+     * Returns the number of total favorites.
+     *
+     * @return the number of total favorites
+     */
+    int getFavorites();
+
+    /**
+     * Returns the number of total friends.
+     *
+     * @return the number of total friends
+     */
+    int getFriends();
 }
