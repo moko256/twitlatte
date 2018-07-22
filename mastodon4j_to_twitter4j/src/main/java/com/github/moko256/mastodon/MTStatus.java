@@ -46,7 +46,7 @@ public class MTStatus implements twitter4j.Status{
 
     public Status status;
 
-    public MTStatus(Status status){
+    MTStatus(Status status){
         this.status = status;
     }
 
@@ -277,7 +277,7 @@ public class MTStatus implements twitter4j.Status{
         String type;
         Variant[] variants;
 
-        public MTMediaEntity(Attachment media) {
+        MTMediaEntity(Attachment media) {
             id = media.getId();
             type = (media.getType().equals("gifv") ? "animated_gif" : media.getType());
             if (type.equals("video") || type.equals("animated_gif")) {
