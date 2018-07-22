@@ -34,7 +34,7 @@ android {
         buildConfigField 'String', 'CONSUMER_KEY', "\"${new String(e.decode(e.decode(cs)))}\""
         buildConfigField 'String', 'CONSUMER_SECRET', "\"${new String(e.decode(e.decode(ck + cc)))}\""
 
-        buildConfigField 'int', 'CACHE_DATABASE_VERSION' , '1'
+        buildConfigField 'int', 'CACHE_DATABASE_VERSION' , '2'
 
         vectorDrawables.useSupportLibrary = true
         resConfigs 'en', 'ja', 'ldltr'

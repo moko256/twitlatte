@@ -37,7 +37,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.github.moko256.mastodon.MTUser;
 import com.github.moko256.twitlatte.cacheMap.StatusCacheMap;
+import com.github.moko256.twitlatte.database.CachedUsersSQLiteOpenHelper;
 import com.github.moko256.twitlatte.entity.Emoji;
 import com.github.moko256.twitlatte.entity.Type;
 import com.github.moko256.twitlatte.glide.GlideApp;
@@ -46,6 +48,7 @@ import com.github.moko256.twitlatte.text.TwitterStringUtils;
 import com.github.moko256.twitlatte.view.EmojiToTextViewSetter;
 import com.github.moko256.twitlatte.widget.TweetImageTableView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Single;
@@ -67,7 +70,8 @@ public class StatusView extends FrameLayout {
 
     private final CompositeDisposable disposable = new CompositeDisposable();
     private final GlideRequests glideRequests;
-    private EmojiToTextViewSetter emojiToTextViewSetter;
+    private EmojiToTextViewSetter contextEmojiSetter;
+    private EmojiToTextViewSetter userNameEmojiSetter;
 
     private final ImageView userImage;
     private final TextView retweetUserName;
@@ -230,12 +234,32 @@ public class StatusView extends FrameLayout {
             userImage.setImageResource(R.drawable.border_frame_round);
         }
 
-        userName.setText(TwitterStringUtils.plusUserMarks(
+        CharSequence userNameText = TwitterStringUtils.plusUserMarks(
                 item.getUser().getName(),
                 userName,
                 item.getUser().isProtected(),
                 item.getUser().isVerified()
-        ));
+        );
+        userName.setText(userNameText);
+        List<Emoji> userNameEmojis = null;
+        if (item.getUser() instanceof CachedUsersSQLiteOpenHelper.CachedUser) {
+            userNameEmojis = ((CachedUsersSQLiteOpenHelper.CachedUser) item.getUser()).getEmojis();
+        } else if (item.getUser() instanceof MTUser) {
+            List<com.sys1yagi.mastodon4j.api.entity.Emoji> emojis = ((MTUser) item.getUser()).account.getEmojis();
+            userNameEmojis = new ArrayList<>(emojis.size());
+            for (com.sys1yagi.mastodon4j.api.entity.Emoji emoji : emojis) {
+                userNameEmojis.add(new Emoji(
+                        emoji.getShortcode(),
+                        emoji.getUrl()
+                ));
+            }
+        }
+        if (userNameEmojis != null) {
+            if (userNameEmojiSetter == null) {
+                userNameEmojiSetter = new EmojiToTextViewSetter(glideRequests, userName);
+            }
+            disposable.addAll(userNameEmojiSetter.set(userNameText, userNameEmojis));
+        }
         userId.setText(TwitterStringUtils.plusAtMark(item.getUser().getScreenName()));
 
         tweetContext.setOnClickListener(v -> callOnClick());
@@ -248,12 +272,12 @@ public class StatusView extends FrameLayout {
                 tweetContext.setVisibility(VISIBLE);
             }
 
-            List<Emoji> emojis = ((StatusCacheMap.CachedStatus) status).getEmojis();
-            if (emojis != null) {
-                if (emojiToTextViewSetter == null) {
-                    emojiToTextViewSetter = new EmojiToTextViewSetter(glideRequests, tweetContext);
+            List<Emoji> statusEmojis = ((StatusCacheMap.CachedStatus) status).getEmojis();
+            if (statusEmojis != null) {
+                if (contextEmojiSetter == null) {
+                    contextEmojiSetter = new EmojiToTextViewSetter(glideRequests, tweetContext);
                 }
-                disposable.addAll(emojiToTextViewSetter.set(linkedSequence, emojis));
+                disposable.addAll(contextEmojiSetter.set(linkedSequence, statusEmojis));
             }
         } else {
             if (tweetContext.getVisibility() != GONE){

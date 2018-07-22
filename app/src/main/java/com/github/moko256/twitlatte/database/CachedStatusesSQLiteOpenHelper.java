@@ -104,6 +104,7 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
             "url",
             "Emoji_shortcodes",
             "Emoji_urls",
+            "contentWarning",
             "count"
     };
 
@@ -121,7 +122,11 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        if (oldVersion == 1) {
+            db.execSQL("alter table " + TABLE_NAME + " add column " + TABLE_COLUMNS[48]);
+        }
 
+        // else (oldVersion <= 2) ...
     }
 
     public Status getCachedStatus(long id){
@@ -198,7 +203,8 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
                         restoreEmojis(
                                 splitComma(c.getString(46)),
                                 splitComma(c.getString(47))
-                        )
+                        ),
+                        c.getString(48)
                 );
             }
 
@@ -465,7 +471,7 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
 
         contentValues.put(TABLE_COLUMNS[45], url);
 
-        if (emojis != null){
+        if (emojis != null) {
             int size = emojis.size();
             String[] shortcodes = new String[size];
             String[] urls = new String[size];
@@ -477,6 +483,10 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
             }
             contentValues.put(TABLE_COLUMNS[46], ArrayUtils.toCommaSplitString(shortcodes).toString());
             contentValues.put(TABLE_COLUMNS[47], ArrayUtils.toCommaSplitString(urls).toString());
+        }
+        String spoilerText = status.getSpoilerText();
+        if (spoilerText != null) {
+            contentValues.put(TABLE_COLUMNS[48], spoilerText);
         }
         return contentValues;
     }

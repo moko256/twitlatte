@@ -49,12 +49,15 @@ public class CachedTrendsSQLiteOpenHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("create table " + TABLE_NAME + "(name)");
+        db.execSQL("create table " + TABLE_NAME + "(name,volume)");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
+        if (oldVersion == 1) {
+            db.execSQL("alter table " + TABLE_NAME + " add column volume");
+            db.execSQL("insert into " + TABLE_NAME + "(volume) values(-1)");
+        }
     }
 
     public List<Trend> getTrends(){
@@ -62,11 +65,14 @@ public class CachedTrendsSQLiteOpenHelper extends SQLiteOpenHelper {
 
         synchronized (this) {
             SQLiteDatabase database = getReadableDatabase();
-            Cursor c = database.query(TABLE_NAME, new String[]{"name"}, null, null, null, null, null);
+            Cursor c = database.query(TABLE_NAME, new String[]{"name", "volume"}, null, null, null, null, null);
             trends = new ArrayList<>(c.getCount());
 
             while (c.moveToNext()) {
-                trends.add(new CachedTrend(c.getString(0)));
+                trends.add(new CachedTrend(
+                        c.getString(0),
+                        c.getInt(1)
+                ));
             }
 
             c.close();
@@ -86,6 +92,7 @@ public class CachedTrendsSQLiteOpenHelper extends SQLiteOpenHelper {
                 Trend item = trends.get(i);
                 ContentValues contentValues = new ContentValues();
                 contentValues.put("name", item.getName());
+                contentValues.put("volume", item.getTweetVolume());
 
                 database.insert(TABLE_NAME, "", contentValues);
             }
@@ -98,9 +105,11 @@ public class CachedTrendsSQLiteOpenHelper extends SQLiteOpenHelper {
 
     private static class CachedTrend implements Trend{
         private final String name;
+        private final int tweetVolume;
 
-        private CachedTrend(String name){
+        private CachedTrend(String name, int tweetVolume){
             this.name = name;
+            this.tweetVolume = tweetVolume;
         }
 
         @Override
@@ -125,7 +134,7 @@ public class CachedTrendsSQLiteOpenHelper extends SQLiteOpenHelper {
 
         @Override
         public int getTweetVolume() {
-            return -1;
+            return tweetVolume;
         }
 
         @Override

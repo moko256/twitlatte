@@ -34,12 +34,18 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.github.moko256.mastodon.MTUser;
+import com.github.moko256.twitlatte.database.CachedUsersSQLiteOpenHelper;
+import com.github.moko256.twitlatte.entity.Emoji;
 import com.github.moko256.twitlatte.glide.GlideApp;
 import com.github.moko256.twitlatte.glide.GlideRequests;
 import com.github.moko256.twitlatte.intent.AppCustomTabsKt;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
+import com.github.moko256.twitlatte.view.EmojiToTextViewSetter;
 
 import java.text.DateFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import io.reactivex.Single;
@@ -67,6 +73,7 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
     private ImageView icon;
 
     private TextView userNameText;
+    private EmojiToTextViewSetter userNameEmojiSetter;
     private TextView userIdText;
     private TextView userBioText;
     private TextView userLocation;
@@ -182,14 +189,33 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .into(icon);
 
-        userNameText.setText(
-                TwitterStringUtils.plusUserMarks(
-                        user.getName(),
-                        userNameText,
-                        user.isProtected(),
-                        user.isVerified()
-                )
+        CharSequence userName = TwitterStringUtils.plusUserMarks(
+                user.getName(),
+                userNameText,
+                user.isProtected(),
+                user.isVerified()
         );
+        userNameText.setText(userName);
+        List<Emoji> userNameEmojis = null;
+        if (user instanceof CachedUsersSQLiteOpenHelper.CachedUser) {
+            userNameEmojis = ((CachedUsersSQLiteOpenHelper.CachedUser) user).getEmojis();
+        } else if (user instanceof MTUser) {
+            List<com.sys1yagi.mastodon4j.api.entity.Emoji> emojis = ((MTUser) user).account.getEmojis();
+            userNameEmojis = new ArrayList<>(emojis.size());
+            for (com.sys1yagi.mastodon4j.api.entity.Emoji emoji : emojis) {
+                userNameEmojis.add(new Emoji(
+                        emoji.getShortcode(),
+                        emoji.getUrl()
+                ));
+            }
+        }
+        if (userNameEmojis != null) {
+            if (userNameEmojiSetter == null) {
+                userNameEmojiSetter = new EmojiToTextViewSetter(glideRequests, userNameText);
+            }
+            disposable.addAll(userNameEmojiSetter.set(userName, userNameEmojis));
+        }
+
         userIdText.setText(TwitterStringUtils.plusAtMark(user.getScreenName()));
         requireActivity().setTitle(user.getName());
         userBioText.setText(TwitterStringUtils.getProfileLinkedSequence(getContext(), user));

@@ -40,7 +40,7 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
 
     private static final String ID_LIST_TABLE_NAME = "IdList";
 
-    private static final String POSITION_TABLE_NAME = "ListViewPosition";
+    private static final String SEEING_ID_TABLE_NAME = "SeeingId";
 
     public CachedIdListSQLiteOpenHelper(Context context, AccessToken accessToken, String name){
         super(context, accessToken != null? new File(context.getCacheDir(), accessToken.getKeyString() + "/" + name + ".db").getAbsolutePath(): null, null, BuildConfig.CACHE_DATABASE_VERSION);
@@ -49,19 +49,32 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("create table " + ID_LIST_TABLE_NAME + "(id)");
-        db.execSQL("create table " + POSITION_TABLE_NAME + "(position)");
-        //db.execSQL("create table ListViewPositionOffset(offset);");
+        db.execSQL("create table " + SEEING_ID_TABLE_NAME + "(id)");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        /*
-        switch (oldVersion){
-            case 1:
-                db.execSQL("create table ListViewPositionOffset(offset);");
-                break;
+        if (oldVersion == 1) {
+            Cursor ids = db.query(ID_LIST_TABLE_NAME, new String[]{"id"}, null, null, null, null, null);
+            Cursor positions = db.query("ListViewPosition", new String[]{"position"}, null, null, null, null, null);
+            if (positions.moveToNext()) {
+                boolean hasId = ids.moveToPosition(positions.getInt(0));
+                positions.close();
+                db.execSQL("drop table ListViewPosition");
+                db.execSQL("create table " + SEEING_ID_TABLE_NAME + "(id)");
+                if (hasId) {
+                    int i = ids.getInt(0);
+                    int count = ids.getColumnCount();
+
+                    ContentValues contentValues = new ContentValues();
+                    contentValues.put("id", count - i -1);
+                    db.insert(SEEING_ID_TABLE_NAME, null, contentValues);
+                }
+                ids.close();
+            }
         }
-        */
+
+        // else (oldVersion <= 2) ...
     }
 
     public List<Long> getIds(){
@@ -159,16 +172,16 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
         }
     }
 
-    public int getListViewPosition(){
-        int r;
+    public long getSeeingId(){
+        long r;
 
         synchronized (this) {
             SQLiteDatabase database = getReadableDatabase();
-            Cursor c = database.query(POSITION_TABLE_NAME, new String[]{"position"}, null, null, null, null, null);
+            Cursor c = database.query(SEEING_ID_TABLE_NAME, new String[]{"id"}, null, null, null, null, null);
             if (c.moveToNext()) {
-                r = c.getInt(0);
+                r = c.getLong(0);
             } else {
-                r = 0;
+                r = 0L;
             }
             c.close();
             database.close();
@@ -177,51 +190,20 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
         return r;
     }
 
-    public void setListViewPosition(int i){
+    public void setSeeingId(long i){
         synchronized (this) {
             SQLiteDatabase database = getWritableDatabase();
 
             ContentValues contentValues = new ContentValues();
-            contentValues.put("position", i);
+            contentValues.put("id", i);
 
             database.beginTransaction();
-            database.delete(POSITION_TABLE_NAME, null, null);
-            database.insert(POSITION_TABLE_NAME, null, contentValues);
+            database.delete(SEEING_ID_TABLE_NAME, null, null);
+            database.insert(SEEING_ID_TABLE_NAME, null, contentValues);
             database.setTransactionSuccessful();
             database.endTransaction();
             database.close();
         }
     }
 
-    /*
-
-    public synchronized int getListViewPositionOffset(){
-        SQLiteDatabase database=getReadableDatabase();
-        Cursor c = database.query("ListViewPositionOffset", new String[]{"offset"}, null, null, null, null, null);
-        int r;
-        if (c.moveToNext()){
-            r = c.getInt(0);
-        } else {
-            r = 0;
-        }
-        c.close();
-        database.close();
-        return r;
-    }
-
-    public synchronized void setListViewPositionOffset(int i){
-        SQLiteDatabase database=getWritableDatabase();
-
-        ContentValues contentValues = new ContentValues();
-        contentValues.put("offset", i);
-
-        database.beginTransaction();
-        database.delete("ListViewPositionOffset", null, null);
-        database.insert("ListViewPositionOffset", null, contentValues);
-        database.setTransactionSuccessful();
-        database.endTransaction();
-        database.close();
-    }
-
-    */
 }

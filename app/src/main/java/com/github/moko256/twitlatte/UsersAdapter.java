@@ -28,12 +28,18 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.github.moko256.mastodon.MTUser;
+import com.github.moko256.twitlatte.database.CachedUsersSQLiteOpenHelper;
+import com.github.moko256.twitlatte.entity.Emoji;
 import com.github.moko256.twitlatte.glide.GlideApp;
 import com.github.moko256.twitlatte.glide.GlideRequests;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
+import com.github.moko256.twitlatte.view.EmojiToTextViewSetter;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.disposables.CompositeDisposable;
 import twitter4j.User;
 
 /**
@@ -74,14 +80,34 @@ class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> {
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .into(viewHolder.userUserImage);
 
-        viewHolder.userUserName.setText(
-                TwitterStringUtils.plusUserMarks(
-                        item.getName(),
-                        viewHolder.userUserName,
-                        item.isProtected(),
-                        item.isVerified()
-                )
+        CharSequence userNameText = TwitterStringUtils.plusUserMarks(
+                item.getName(),
+                viewHolder.userUserName,
+                item.isProtected(),
+                item.isVerified()
         );
+
+        viewHolder.userUserName.setText(userNameText);
+        List<Emoji> userNameEmojis = null;
+        if (item instanceof CachedUsersSQLiteOpenHelper.CachedUser) {
+            userNameEmojis = ((CachedUsersSQLiteOpenHelper.CachedUser) item).getEmojis();
+        } else if (item instanceof MTUser) {
+            List<com.sys1yagi.mastodon4j.api.entity.Emoji> emojis = ((MTUser) item).account.getEmojis();
+            userNameEmojis = new ArrayList<>(emojis.size());
+            for (com.sys1yagi.mastodon4j.api.entity.Emoji emoji : emojis) {
+                userNameEmojis.add(new Emoji(
+                        emoji.getShortcode(),
+                        emoji.getUrl()
+                ));
+            }
+        }
+        if (userNameEmojis != null) {
+            if (viewHolder.userNameEmojiSetter == null) {
+                viewHolder.userNameEmojiSetter = new EmojiToTextViewSetter(viewHolder.request, viewHolder.userUserName);
+            }
+            viewHolder.disposable.addAll(viewHolder.userNameEmojiSetter.set(userNameText, userNameEmojis));
+        }
+
         viewHolder.userUserId.setText(TwitterStringUtils.plusAtMark(item.getScreenName()));
         viewHolder.itemView.setOnClickListener(
                 v -> {
@@ -103,6 +129,7 @@ class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> {
     @Override
     public void onViewRecycled(@NonNull ViewHolder holder) {
         holder.request.clear(holder.userUserImage);
+        holder.disposable.clear();
     }
 
     @Override
@@ -121,6 +148,9 @@ class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> {
         final TextView userUserId;
 
         final GlideRequests request;
+        final CompositeDisposable disposable;
+
+        EmojiToTextViewSetter userNameEmojiSetter;
 
         ViewHolder(final View itemView) {
             super(itemView);
@@ -128,6 +158,7 @@ class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> {
             userUserId = itemView.findViewById(R.id.user_user_id);
             userUserName = itemView.findViewById(R.id.user_user_name);
             request = GlideApp.with(itemView);
+            disposable = new CompositeDisposable();
         }
     }
 }

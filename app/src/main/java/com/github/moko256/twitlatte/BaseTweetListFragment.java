@@ -62,7 +62,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
 
     private ListViewModel listViewModel;
 
-    private int LAST_SAVED_LIST_POSITION;
+    private long LAST_SAVED_LIST_ID;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -115,8 +115,8 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
             adapter.notifyDataSetChanged();
         }
 
-        LAST_SAVED_LIST_POSITION = listViewModel.getSeeingPosition();
-        getRecyclerView().getLayoutManager().scrollToPosition(LAST_SAVED_LIST_POSITION);
+        LAST_SAVED_LIST_ID = listViewModel.getSeeingId();
+        getRecyclerView().getLayoutManager().scrollToPosition(listViewModel.getList().indexOf(LAST_SAVED_LIST_ID));
 
         disposable = listViewModel.getListObserver()
                 .observeOn(AndroidSchedulers.mainThread())
@@ -201,9 +201,14 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
     public void onStop() {
         super.onStop();
         int position = getFirstVisibleItemPosition(getRecyclerView().getLayoutManager());
-        if (position != LAST_SAVED_LIST_POSITION){
-            listViewModel.saveSeeingPosition(position);
-            LAST_SAVED_LIST_POSITION = position;
+        if (position >= 0) {
+            long id = listViewModel.getList().get(
+                    position
+            );
+            if (id != LAST_SAVED_LIST_ID) {
+                listViewModel.saveSeeingPosition(id);
+                LAST_SAVED_LIST_ID = id;
+            }
         }
     }
 

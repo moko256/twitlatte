@@ -47,12 +47,15 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.github.moko256.mastodon.MTUser;
 import com.github.moko256.twitlatte.database.CachedUsersSQLiteOpenHelper;
 import com.github.moko256.twitlatte.entity.AccessToken;
+import com.github.moko256.twitlatte.entity.Emoji;
 import com.github.moko256.twitlatte.glide.GlideApp;
 import com.github.moko256.twitlatte.glide.GlideRequests;
 import com.github.moko256.twitlatte.model.AccountsModel;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
+import com.github.moko256.twitlatte.view.EmojiToTextViewSetter;
 import com.github.moko256.twitlatte.widget.FragmentPagerAdapter;
 
 import java.util.ArrayList;
@@ -80,6 +83,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
     private NavigationView navigationView;
 
     private TextView userNameText;
+    private EmojiToTextViewSetter userNameEmojiSetter;
     private TextView userIdText;
     private ImageView userImage;
     private ImageView userBackgroundImage;
@@ -469,19 +473,39 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                         .subscribe(
                                 result -> {
                                     User user = (User) result;
-                                    userNameText.setText(
-                                            TwitterStringUtils.plusUserMarks(
-                                                    user.getName(),
-                                                    userNameText,
-                                                    user.isProtected(),
-                                                    user.isVerified()
-                                            )
+
+                                    GlideRequests requests= GlideApp.with(this);
+
+                                    CharSequence userName = TwitterStringUtils.plusUserMarks(
+                                            user.getName(),
+                                            userNameText,
+                                            user.isProtected(),
+                                            user.isVerified()
                                     );
+
+                                    userNameText.setText(userName);
+                                    List<Emoji> userNameEmojis = null;
+                                    if (user instanceof CachedUsersSQLiteOpenHelper.CachedUser) {
+                                        userNameEmojis = ((CachedUsersSQLiteOpenHelper.CachedUser) user).getEmojis();
+                                    } else if (user instanceof MTUser) {
+                                        List<com.sys1yagi.mastodon4j.api.entity.Emoji> emojis = ((MTUser) user).account.getEmojis();
+                                        userNameEmojis = new ArrayList<>(emojis.size());
+                                        for (com.sys1yagi.mastodon4j.api.entity.Emoji emoji : emojis) {
+                                            userNameEmojis.add(new Emoji(
+                                                    emoji.getShortcode(),
+                                                    emoji.getUrl()
+                                            ));
+                                        }
+                                    }
+                                    if (userNameEmojis != null) {
+                                        if (userNameEmojiSetter == null) {
+                                            userNameEmojiSetter = new EmojiToTextViewSetter(requests, userNameText);
+                                        }
+                                        disposable.addAll(userNameEmojiSetter.set(userName, userNameEmojis));
+                                    }
                                     userIdText.setText(TwitterStringUtils.plusAtMark(user.getScreenName()));
 
                                     userImage.setOnClickListener(v -> startMyUserActivity());
-
-                                    GlideRequests requests= GlideApp.with(this);
 
                                     requests.load(user.get400x400ProfileImageURLHttps())
                                             .circleCrop()

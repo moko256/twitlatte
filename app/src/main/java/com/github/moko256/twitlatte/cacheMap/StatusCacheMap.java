@@ -215,6 +215,7 @@ public class StatusCacheMap {
 
         private final String url;
         private final List<Emoji> emojis;
+        private final String spoilerText;
 
         public CachedStatus(Status status){
             createdAt=new Date(status.getCreatedAt().getTime());
@@ -289,8 +290,9 @@ public class StatusCacheMap {
             }
 
             if (status instanceof MTStatus) {
-                url = ((MTStatus) status).status.getUrl();
-                List<com.sys1yagi.mastodon4j.api.entity.Emoji> oldEmojis = ((MTStatus) status).status.getEmojis();
+                MTStatus mtStatus = (MTStatus) status;
+                url = mtStatus.status.getUrl();
+                List<com.sys1yagi.mastodon4j.api.entity.Emoji> oldEmojis = mtStatus.status.getEmojis();
 
                 int size = oldEmojis.size();
                 if (size > 0) {
@@ -301,16 +303,19 @@ public class StatusCacheMap {
                 } else {
                     emojis = null;
                 }
+                String text = mtStatus.status.getSpoilerText();
+                this.spoilerText = text.isEmpty()? null: text;
             } else {
                 url = "https://twitter.com/"
                         + status.getUser().getScreenName()
                         + "/status/"
                         + String.valueOf(status.getId());
                 emojis = null;
+                spoilerText = null;
             }
         }
 
-        public CachedStatus(Date createdAt, long id, long userId, long retweetedStatusId, String text, String source, long inReplyToStatusId, long inReplyToUserId, boolean isFavorited, boolean isRetweeted, int favoriteCount, String inReplyToScreenName, int retweetCount, boolean isPossiblySensitive, String lang, UserMentionEntity[] userMentionEntities, URLEntity[] urlEntities, HashtagEntity[] hashtagEntities, MediaEntity[] mediaEntities, SymbolEntity[] symbolEntities, long quotedStatusId, String url, List<Emoji> emojis) {
+        public CachedStatus(Date createdAt, long id, long userId, long retweetedStatusId, String text, String source, long inReplyToStatusId, long inReplyToUserId, boolean isFavorited, boolean isRetweeted, int favoriteCount, String inReplyToScreenName, int retweetCount, boolean isPossiblySensitive, String lang, UserMentionEntity[] userMentionEntities, URLEntity[] urlEntities, HashtagEntity[] hashtagEntities, MediaEntity[] mediaEntities, SymbolEntity[] symbolEntities, long quotedStatusId, String url, List<Emoji> emojis, String spoilerText) {
             this.createdAt = createdAt;
             this.id = id;
             this.userId = userId;
@@ -336,6 +341,7 @@ public class StatusCacheMap {
                 this.quotedStatusId = quotedStatusId;
                 this.url = url;
                 this.emojis = emojis;
+                this.spoilerText = spoilerText;
             } else {
                 this.text=null;
                 this.source=null;
@@ -369,6 +375,7 @@ public class StatusCacheMap {
                 //this.displayTextRangeEnd = -1;
                 this.url = url;
                 this.emojis = null;
+                this.spoilerText = null;
             }
         }
 
@@ -558,6 +565,10 @@ public class StatusCacheMap {
 
         public List<Emoji> getEmojis() {
             return emojis;
+        }
+
+        public String getSpoilerText() {
+            return spoilerText;
         }
 
         @Override

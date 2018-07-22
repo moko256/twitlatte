@@ -34,7 +34,7 @@ import twitter4j.User;
  */
 
 public class MTUser implements User {
-    private Account account;
+    public Account account;
 
     MTUser(Account account){
         this.account = account;

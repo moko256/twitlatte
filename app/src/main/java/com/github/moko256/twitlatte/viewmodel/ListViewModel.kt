@@ -67,12 +67,12 @@ class ListViewModel: ViewModel() {
         }
     }
 
-    fun getSeeingPosition(): Int {
-        return statusIdsDatabase.listViewPosition
+    fun getSeeingId(): Long {
+        return statusIdsDatabase.seeingId
     }
 
-    fun saveSeeingPosition(position: Int) {
-        statusIdsDatabase.listViewPosition = position
+    fun saveSeeingPosition(id: Long) {
+        statusIdsDatabase.seeingId = id
     }
 
     fun refreshFirst(){

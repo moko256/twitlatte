@@ -554,6 +554,11 @@ public class CachedStatusesSQLiteOpenHelperTest {
         }
 
         @Override
+        public URLEntity getQuotedStatusPermalink() {
+            return null;
+        }
+
+        @Override
         public int compareTo(@NonNull Status o) {
             return 0;
         }
