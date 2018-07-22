@@ -27,6 +27,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -135,7 +136,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                 public void onDrawerStateChanged(int newState) {}
             });
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(getResources().getColor(R.color.color_primary_dark));
+            getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.color_primary_dark));
         }
 
         navigationView = findViewById(R.id.nav_view);
