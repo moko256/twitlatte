@@ -118,12 +118,15 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
         swipeRefreshLayout.setOnRefreshListener(() -> disposable.add(updateUser()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .doFinally(() -> swipeRefreshLayout.setRefreshing(false))
                 .subscribe(
-                        result -> {
-                            setShowUserInfo(result);
-                            swipeRefreshLayout.setRefreshing(false);
-                        },
-                        Throwable::printStackTrace
+                        this::setShowUserInfo,
+                        throwable -> {
+                            throwable.printStackTrace();
+                            ((BaseListFragment.GetSnackBar) requireActivity())
+                                    .getSnackBar(TwitterStringUtils.convertErrorToText(throwable))
+                                    .show();
+                        }
                 )));
 
         header= view.findViewById(R.id.show_user_bgimage);
