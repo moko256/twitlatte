@@ -19,20 +19,19 @@ package com.github.moko256.twitlatte.view
 import android.graphics.drawable.Animatable
 import android.graphics.drawable.Drawable
 import android.os.Handler
-import android.support.v4.util.ArrayMap
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.style.ImageSpan
 import android.widget.TextView
+import com.bumptech.glide.request.target.SimpleTarget
+import com.bumptech.glide.request.transition.Transition
 import com.github.moko256.twitlatte.GlideRequests
 import com.github.moko256.twitlatte.entity.Emoji
-import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.functions.Cancellable
 import io.reactivex.internal.disposables.CancellableDisposable
-import io.reactivex.schedulers.Schedulers
 import net.ellerton.japng.android.api.PngAndroid
+import java.io.File
 import java.util.regex.Pattern
 
 /**
@@ -44,10 +43,11 @@ import java.util.regex.Pattern
 private val containsEmoji = Pattern.compile(":([a-zA-Z0-9_]{2,}):")
 
 class EmojiToTextViewSetter(private val glideRequests: GlideRequests, private val textView: TextView) {
-    fun set(html: CharSequence, emojis: List<Emoji>): Array<Disposable> {
+
+    fun set(text: CharSequence, emojis: List<Emoji>): Array<Disposable> {
         val disposable = ArrayList<Disposable>(2)
 
-        val matcher = containsEmoji.matcher(html)
+        val matcher = containsEmoji.matcher(text)
         val matches = matcher.matches()
 
         val imageSize = if (matches) {
@@ -56,79 +56,108 @@ class EmojiToTextViewSetter(private val glideRequests: GlideRequests, private va
             Math.round(textView.lineHeight.toFloat())
         }
 
-        disposable.add(Single.create<Map<String, Drawable>> {
-            val map = ArrayMap<String, Drawable>()
+        val map: HashMap<String, ArrayList<Int>>
 
-            for (emoji in emojis) {
-                var value: Drawable
-                try {
-                    val inputStream = glideRequests
-                            .asFile()
-                            .load(emoji.url)
-                            .submit()
-                            .get()
-                            .inputStream()
+        if (matches) {
+            map = HashMap(1)
 
-                    value = PngAndroid
-                            .readDrawable(textView.context, inputStream)
-                            .mutate()
-                    inputStream.close()
-                } catch (e: Throwable) {
-                    e.printStackTrace()
-                    value = glideRequests
-                            .load(emoji.url)
-                            .submit()
-                            .get()
-                            .mutate()
+            map[matcher.group(1)] = ArrayList<Int>(1).also {
+                it.add(matcher.start())
+            }
+        } else {
+            map = HashMap(emojis.size * 2)
+
+            while (matcher.find()) {
+                val shortCode = matcher.group(1)
+                if (map[shortCode] == null) {
+                    map[shortCode] = ArrayList()
                 }
 
-                value.setBounds(0, 0, imageSize, imageSize)
-                map[emoji.shortCode] = value
+                map[shortCode]!!.add(matcher.start())
             }
-            it.onSuccess(map)
         }
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { it ->
-                    val builder = SpannableStringBuilder.valueOf(html)
 
-                    var found = matches || matcher.find()
-                    while (found) {
-                        val shortCode = matcher.group(1)
-                        val drawable = it[shortCode]
-                        if (drawable != null) {
-                            builder.setSpan(
-                                    ImageSpan(drawable),
-                                    matcher.start(), matcher.end(),
-                                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-                            )
-                            if (drawable is Animatable) {
-                                val handler = Handler()
-                                drawable.callback = object : Drawable.Callback {
+        val builder = SpannableStringBuilder.valueOf(text)
 
-                                    override fun invalidateDrawable(who: Drawable) {
-                                        textView.invalidate()
-                                    }
+        val targets = ArrayList<SimpleTarget<out Any>>(emojis.size)
 
-                                    override fun scheduleDrawable(who: Drawable, what: Runnable, `when`: Long) {
-                                        handler.postAtTime(what, `when`)
-                                    }
+        val handler = Handler()
 
-                                    override fun unscheduleDrawable(who: Drawable, what: Runnable) {
-                                        handler.removeCallbacks(what)
-                                    }
-                                }
-                                disposable.add(CancellableDisposable(Cancellable {
-                                    drawable.stop()
-                                }))
-                                drawable.start()
+        emojis.forEach {emoji ->
+            val addTextTarget = object: SimpleTarget<Drawable>(imageSize, imageSize) {
+                override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
+                    val drawable = resource.mutate()
+                    drawable.setBounds(0, 0, imageSize, imageSize)
+
+                    map[emoji.shortCode]?.forEach {
+                        builder.setSpan(
+                                ImageSpan(drawable),
+                                it,
+                                it + emoji.shortCode.length + 2,
+                                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                        )
+                    }
+
+                    if (drawable is Animatable) {
+                        drawable.callback = object : Drawable.Callback {
+
+                            override fun invalidateDrawable(who: Drawable) {
+                                textView.invalidate()
+                            }
+
+                            override fun scheduleDrawable(who: Drawable, what: Runnable, `when`: Long) {
+                                handler.postAtTime(what, `when`)
+                            }
+
+                            override fun unscheduleDrawable(who: Drawable, what: Runnable) {
+                                handler.removeCallbacks(what)
                             }
                         }
-                        found = matcher.find()
+                        disposable.add(CancellableDisposable(Cancellable {
+                            drawable.stop()
+                        }))
+                        drawable.start()
                     }
+
                     textView.text = builder
-                })
+                }
+            }
+
+            val pngConvertTarget = object : SimpleTarget<File>() {
+                override fun onResourceReady(resource: File, transition: Transition<in File>?) {
+                    val inputStream = resource.inputStream()
+                    try {
+                        addTextTarget.onResourceReady(
+                                PngAndroid.readDrawable(textView.context, inputStream),
+                                null
+                        )
+                    } catch (e: Throwable) {
+                        e.printStackTrace()
+                        targets.add(addTextTarget)
+                        glideRequests
+                                .load(emoji.url)
+                                .into(addTextTarget)
+                    }
+                    inputStream.close()
+                }
+
+            }
+            targets.add(pngConvertTarget)
+
+            glideRequests
+                    .asFile()
+                    .load(emoji.url)
+                    .into(pngConvertTarget)
+        }
+
+        disposable.add(CancellableDisposable(Cancellable {
+            targets.forEach {
+                glideRequests
+                        .clear(it)
+            }
+        }))
 
         return disposable.toTypedArray()
     }
+
 }
