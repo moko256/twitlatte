@@ -54,6 +54,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.moko256.twitlatte.entity.Type;
+import com.github.moko256.twitlatte.glide.GlideApp;
 import com.github.moko256.twitlatte.model.base.PostTweetModel;
 import com.github.moko256.twitlatte.model.impl.PostTweetModelCreator;
 import com.github.moko256.twitlatte.rx.LocationSingleBuilder;

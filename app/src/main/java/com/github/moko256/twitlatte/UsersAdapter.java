@@ -28,6 +28,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.github.moko256.twitlatte.glide.GlideApp;
+import com.github.moko256.twitlatte.glide.GlideRequests;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
 
 import java.util.List;

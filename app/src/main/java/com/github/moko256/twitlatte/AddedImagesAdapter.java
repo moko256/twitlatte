@@ -29,6 +29,9 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.github.moko256.twitlatte.glide.GlideApp;
+import com.github.moko256.twitlatte.glide.GlideRequests;
+
 import java.util.ArrayList;
 import java.util.List;
 

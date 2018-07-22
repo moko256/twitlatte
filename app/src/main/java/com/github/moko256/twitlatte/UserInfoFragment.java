@@ -34,6 +34,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.github.moko256.twitlatte.glide.GlideApp;
+import com.github.moko256.twitlatte.glide.GlideRequests;
 import com.github.moko256.twitlatte.intent.AppCustomTabsKt;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
 
@@ -109,7 +111,7 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view=inflater.inflate(R.layout.fragment_show_user_info,container,false);
 
-        glideRequests =GlideApp.with(this);
+        glideRequests = GlideApp.with(this);
 
         swipeRefreshLayout = view.findViewById(R.id.show_user_swipe_refresh);
         swipeRefreshLayout.setColorSchemeResources(R.color.color_primary);

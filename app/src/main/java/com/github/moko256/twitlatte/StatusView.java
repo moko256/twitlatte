@@ -40,6 +40,8 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.github.moko256.twitlatte.cacheMap.StatusCacheMap;
 import com.github.moko256.twitlatte.entity.Emoji;
 import com.github.moko256.twitlatte.entity.Type;
+import com.github.moko256.twitlatte.glide.GlideApp;
+import com.github.moko256.twitlatte.glide.GlideRequests;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
 import com.github.moko256.twitlatte.view.EmojiToTextViewSetter;
 import com.github.moko256.twitlatte.widget.TweetImageTableView;

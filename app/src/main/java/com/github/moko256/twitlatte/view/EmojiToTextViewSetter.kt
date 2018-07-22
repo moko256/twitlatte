@@ -25,8 +25,8 @@ import android.text.style.ImageSpan
 import android.widget.TextView
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
-import com.github.moko256.twitlatte.GlideRequests
 import com.github.moko256.twitlatte.entity.Emoji
+import com.github.moko256.twitlatte.glide.GlideRequests
 import io.reactivex.disposables.Disposable
 import io.reactivex.functions.Cancellable
 import io.reactivex.internal.disposables.CancellableDisposable

@@ -28,11 +28,11 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
-import com.github.moko256.twitlatte.GlideApp;
-import com.github.moko256.twitlatte.GlideRequests;
 import com.github.moko256.twitlatte.GlobalApplication;
 import com.github.moko256.twitlatte.R;
 import com.github.moko256.twitlatte.ShowImageActivity;
+import com.github.moko256.twitlatte.glide.GlideApp;
+import com.github.moko256.twitlatte.glide.GlideRequests;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
 
 import jp.wasabeef.glide.transformations.BlurTransformation;
