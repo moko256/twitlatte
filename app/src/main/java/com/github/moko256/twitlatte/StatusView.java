@@ -264,25 +264,31 @@ public class StatusView extends FrameLayout {
 
         tweetContext.setOnClickListener(v -> callOnClick());
 
+        String spoilerText = ((StatusCacheMap.CachedStatus) item).getSpoilerText();
         CharSequence linkedSequence = TwitterStringUtils.getLinkedSequence(getContext(), item);
-        tweetContext.setText(linkedSequence);
 
-        if (!TextUtils.isEmpty(linkedSequence)) {
-            if (tweetContext.getVisibility() != VISIBLE){
-                tweetContext.setVisibility(VISIBLE);
-            }
+        if (spoilerText == null) {
+            tweetContext.setText(linkedSequence);
 
-            List<Emoji> statusEmojis = ((StatusCacheMap.CachedStatus) status).getEmojis();
-            if (statusEmojis != null) {
-                if (contextEmojiSetter == null) {
-                    contextEmojiSetter = new EmojiToTextViewSetter(glideRequests, tweetContext);
+            if (!TextUtils.isEmpty(linkedSequence)) {
+                if (tweetContext.getVisibility() != VISIBLE){
+                    tweetContext.setVisibility(VISIBLE);
                 }
-                disposable.addAll(contextEmojiSetter.set(linkedSequence, statusEmojis));
+
+                List<Emoji> statusEmojis = ((StatusCacheMap.CachedStatus) status).getEmojis();
+                if (statusEmojis != null) {
+                    if (contextEmojiSetter == null) {
+                        contextEmojiSetter = new EmojiToTextViewSetter(glideRequests, tweetContext);
+                    }
+                    disposable.addAll(contextEmojiSetter.set(linkedSequence, statusEmojis));
+                }
+            } else {
+                if (tweetContext.getVisibility() != GONE){
+                    tweetContext.setVisibility(GONE);
+                }
             }
         } else {
-            if (tweetContext.getVisibility() != GONE){
-                tweetContext.setVisibility(GONE);
-            }
+            tweetContext.setText("CW:" + spoilerText + "\n\n" + linkedSequence);
         }
 
         timeStampText.setText(DateUtils.getRelativeTimeSpanString(

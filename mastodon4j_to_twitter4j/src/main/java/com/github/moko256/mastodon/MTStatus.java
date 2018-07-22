@@ -62,14 +62,7 @@ public class MTStatus implements twitter4j.Status{
 
     @Override
     public String getText() {
-        String spoilerText = status.getSpoilerText();
-        String content = status.getContent();
-
-        if (spoilerText.equals("")) {
-            return content;
-        } else {
-            return spoilerText + "<br /><br />" + content;
-        }
+        return status.getContent();
     }
 
     @Override
