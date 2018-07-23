@@ -127,11 +127,37 @@
             android:layout_marginLeft="-16dp"
             android:layout_marginRight="-16dp"/>
 
+        <android.support.v7.widget.AppCompatCheckBox
+            android:id="@+id/tweet_spoiler_opener"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_below="@id/tweet_image_container"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="4dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="20dp"
+            android:background="?attr/controlBackground"
+            android:button="@drawable/opener_button_stateful"
+            app:buttonTint="@color/image_button_color_stateful"
+            tools:ignore="PrivateResource"
+            android:theme="@style/ExpandAndCloseToggleBackgroundColor"/>
+
+        <TextView
+            android:id="@+id/tweet_spoiler"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tweet_image_container"
+            android:layout_toEndOf="@id/tweet_spoiler_opener"
+            android:layout_marginTop="16dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            tools:text="Content Warning"/>
+
         <TextView
             android:id="@+id/tweet_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/tweet_image_container"
+            android:layout_below="@id/tweet_spoiler"
             android:layout_marginTop="16dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             tools:text="Tweet context"/>

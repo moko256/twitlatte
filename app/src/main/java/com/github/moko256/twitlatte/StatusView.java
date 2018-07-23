@@ -80,6 +80,8 @@ public class StatusView extends FrameLayout {
     private final Space headerBottomMargin;
     private final TextView userName;
     private final TextView userId;
+    private final TextView tweetSpoilerText;
+    private final CheckBox contentOpenerToggle;
     private final TextView tweetContext;
     private final TextView timeStampText;
     private final RelativeLayout quoteTweetLayout;
@@ -116,7 +118,16 @@ public class StatusView extends FrameLayout {
         headerBottomMargin = findViewById(R.id.tweet_header_bottom_margin);
         userId = findViewById(R.id.tweet_user_id);
         userName = findViewById(R.id.tweet_user_name);
-        tweetContext= findViewById(R.id.tweet_content);
+        tweetSpoilerText = findViewById(R.id.tweet_spoiler);
+        contentOpenerToggle = findViewById(R.id.tweet_spoiler_opener);
+        tweetContext = findViewById(R.id.tweet_content);
+        contentOpenerToggle.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                tweetContext.setVisibility(VISIBLE);
+            } else {
+                tweetContext.setVisibility(GONE);
+            }
+        });
         tweetContext.setMovementMethod(LinkMovementMethod.getInstance());
         timeStampText = findViewById(R.id.tweet_time_stamp_text);
         quoteTweetLayout = findViewById(R.id.tweet_quote_tweet);
@@ -264,31 +275,51 @@ public class StatusView extends FrameLayout {
 
         tweetContext.setOnClickListener(v -> callOnClick());
 
-        String spoilerText = ((StatusCacheMap.CachedStatus) item).getSpoilerText();
         CharSequence linkedSequence = TwitterStringUtils.getLinkedSequence(getContext(), item);
 
-        if (spoilerText == null) {
-            tweetContext.setText(linkedSequence);
+        tweetContext.setText(linkedSequence);
 
-            if (!TextUtils.isEmpty(linkedSequence)) {
-                if (tweetContext.getVisibility() != VISIBLE){
-                    tweetContext.setVisibility(VISIBLE);
-                }
+        if (!TextUtils.isEmpty(linkedSequence)) {
+            if (tweetContext.getVisibility() != VISIBLE){
+                tweetContext.setVisibility(VISIBLE);
+            }
 
-                List<Emoji> statusEmojis = ((StatusCacheMap.CachedStatus) status).getEmojis();
-                if (statusEmojis != null) {
-                    if (contextEmojiSetter == null) {
-                        contextEmojiSetter = new EmojiToTextViewSetter(glideRequests, tweetContext);
-                    }
-                    disposable.addAll(contextEmojiSetter.set(linkedSequence, statusEmojis));
+            List<Emoji> statusEmojis = ((StatusCacheMap.CachedStatus) status).getEmojis();
+            if (statusEmojis != null) {
+                if (contextEmojiSetter == null) {
+                    contextEmojiSetter = new EmojiToTextViewSetter(glideRequests, tweetContext);
                 }
-            } else {
-                if (tweetContext.getVisibility() != GONE){
-                    tweetContext.setVisibility(GONE);
-                }
+                disposable.addAll(contextEmojiSetter.set(linkedSequence, statusEmojis));
             }
         } else {
-            tweetContext.setText("CW:" + spoilerText + "\n\n" + linkedSequence);
+            if (tweetContext.getVisibility() != GONE){
+                tweetContext.setVisibility(GONE);
+            }
+        }
+
+        String spoilerText = ((StatusCacheMap.CachedStatus) item).getSpoilerText();
+        tweetSpoilerText.setText(spoilerText);
+        if (spoilerText == null) {
+            if (tweetContext.getVisibility() != VISIBLE){
+                tweetContext.setVisibility(VISIBLE);
+            }
+            if (tweetSpoilerText.getVisibility() != GONE){
+                tweetSpoilerText.setVisibility(GONE);
+            }
+            if (contentOpenerToggle.getVisibility() != GONE){
+                contentOpenerToggle.setVisibility(GONE);
+            }
+        } else {
+            contentOpenerToggle.setChecked(false);
+            if (tweetContext.getVisibility() != GONE){
+                tweetContext.setVisibility(GONE);
+            }
+            if (tweetSpoilerText.getVisibility() != VISIBLE){
+                tweetSpoilerText.setVisibility(VISIBLE);
+            }
+            if (contentOpenerToggle.getVisibility() != VISIBLE){
+                contentOpenerToggle.setVisibility(VISIBLE);
+            }
         }
 
         timeStampText.setText(DateUtils.getRelativeTimeSpanString(

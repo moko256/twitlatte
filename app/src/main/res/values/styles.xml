@@ -63,4 +63,7 @@
         <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
     </style>
 
+    <style name="ExpandAndCloseToggleBackgroundColor">
+        <item name="colorControlActivated">?attr/colorControlNormal</item>
+    </style>
 </resources>
