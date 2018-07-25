@@ -51,6 +51,7 @@ import java.util.Objects;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import twitter4j.TwitterException;
 import twitter4j.User;
@@ -76,6 +77,7 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
     private EmojiToTextViewSetter userNameEmojiSetter;
     private TextView userIdText;
     private TextView userBioText;
+    private EmojiToTextViewSetter userBioEmojiSetter;
     private TextView userLocation;
     private TextView userUrl;
     private TextView userCreatedAt;
@@ -195,7 +197,12 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
                 user.isProtected(),
                 user.isVerified()
         );
+        CharSequence userBio = TwitterStringUtils.getProfileLinkedSequence(
+                getContext(),
+                user
+        );
         userNameText.setText(userName);
+        userBioText.setText(userBio);
         List<Emoji> userNameEmojis = null;
         if (user instanceof CachedUsersSQLiteOpenHelper.CachedUser) {
             userNameEmojis = ((CachedUsersSQLiteOpenHelper.CachedUser) user).getEmojis();
@@ -213,12 +220,22 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
             if (userNameEmojiSetter == null) {
                 userNameEmojiSetter = new EmojiToTextViewSetter(glideRequests, userNameText);
             }
-            disposable.addAll(userNameEmojiSetter.set(userName, userNameEmojis));
+            Disposable[] setOfName = userNameEmojiSetter.set(userName, userNameEmojis);
+            if (setOfName != null) {
+                disposable.addAll(setOfName);
+            } else {
+                if (userBioEmojiSetter == null) {
+                    userBioEmojiSetter = new EmojiToTextViewSetter(glideRequests, userBioText);
+                }
+                Disposable[] setOfBio = userBioEmojiSetter.set(userBio, userNameEmojis);
+                if (setOfBio != null) {
+                    disposable.addAll(setOfBio);
+                }
+            }
         }
 
         userIdText.setText(TwitterStringUtils.plusAtMark(user.getScreenName()));
         requireActivity().setTitle(user.getName());
-        userBioText.setText(TwitterStringUtils.getProfileLinkedSequence(getContext(), user));
 
         if (!TextUtils.isEmpty(user.getLocation())){
             userLocation.setText(getString(R.string.location_is, user.getLocation()));

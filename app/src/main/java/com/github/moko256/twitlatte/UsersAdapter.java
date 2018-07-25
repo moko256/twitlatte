@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 import twitter4j.User;
 
 /**
@@ -105,7 +106,10 @@ class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> {
             if (viewHolder.userNameEmojiSetter == null) {
                 viewHolder.userNameEmojiSetter = new EmojiToTextViewSetter(viewHolder.request, viewHolder.userUserName);
             }
-            viewHolder.disposable.addAll(viewHolder.userNameEmojiSetter.set(userNameText, userNameEmojis));
+            Disposable[] set = viewHolder.userNameEmojiSetter.set(userNameText, userNameEmojis);
+            if (set != null) {
+                viewHolder.disposable.addAll(set);
+            }
         }
 
         viewHolder.userUserId.setText(TwitterStringUtils.plusAtMark(item.getScreenName()));

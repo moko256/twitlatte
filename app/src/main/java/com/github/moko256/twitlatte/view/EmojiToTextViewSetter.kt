@@ -19,19 +19,22 @@ package com.github.moko256.twitlatte.view
 import android.graphics.drawable.Animatable
 import android.graphics.drawable.Drawable
 import android.os.Handler
+import android.support.v4.content.ContextCompat
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.style.ImageSpan
 import android.widget.TextView
-import com.bumptech.glide.request.target.SimpleTarget
-import com.bumptech.glide.request.transition.Transition
+import com.github.moko256.twitlatte.R
 import com.github.moko256.twitlatte.entity.Emoji
 import com.github.moko256.twitlatte.glide.GlideRequests
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.functions.Cancellable
 import io.reactivex.internal.disposables.CancellableDisposable
+import io.reactivex.schedulers.Schedulers
 import net.ellerton.japng.android.api.PngAndroid
-import java.io.File
+import java.io.InputStream
 import java.util.regex.Pattern
 
 /**
@@ -44,7 +47,7 @@ private val containsEmoji = Pattern.compile(":([a-zA-Z0-9_]{2,}):")
 
 class EmojiToTextViewSetter(private val glideRequests: GlideRequests, private val textView: TextView) {
 
-    fun set(text: CharSequence, emojis: List<Emoji>): Array<Disposable> {
+    fun set(text: CharSequence, emojis: List<Emoji>): Array<Disposable>? {
         val disposable = ArrayList<Disposable>(2)
 
         val matcher = containsEmoji.matcher(text)
@@ -65,99 +68,114 @@ class EmojiToTextViewSetter(private val glideRequests: GlideRequests, private va
                 it.add(matcher.start())
             }
         } else {
-            map = HashMap(emojis.size * 2)
+            var find = matcher.find()
+            if (find) {
+                map = HashMap(emojis.size * 2)
 
-            while (matcher.find()) {
-                val shortCode = matcher.group(1)
-                if (map[shortCode] == null) {
-                    map[shortCode] = ArrayList()
+                while (find) {
+                    val shortCode = matcher.group(1)
+                    if (map[shortCode] == null) {
+                        map[shortCode] = ArrayList()
+                    }
+
+                    map[shortCode]!!.add(matcher.start())
+
+                    find = matcher.find()
                 }
-
-                map[shortCode]!!.add(matcher.start())
+            } else {
+                map = HashMap(0)
             }
         }
 
-        val builder = SpannableStringBuilder.valueOf(text)
+        val containedEmoji = emojis.filter { map.containsKey(it.shortCode) }
 
-        val targets = ArrayList<SimpleTarget<out Any>>(emojis.size)
+        if (containedEmoji.isNotEmpty()) {
 
-        val handler = Handler()
+            val builder = SpannableStringBuilder.valueOf(text)
 
-        emojis.forEach {emoji ->
-            val addTextTarget = object: SimpleTarget<Drawable>(imageSize, imageSize) {
-                override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
-                    val drawable = resource.mutate()
-                    drawable.setBounds(0, 0, imageSize, imageSize)
+            val handler = Handler()
 
-                    map[emoji.shortCode]?.forEach {
-                        builder.setSpan(
-                                ImageSpan(drawable),
-                                it,
-                                it + emoji.shortCode.length + 2,
-                                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-                        )
-                    }
-
-                    if (drawable is Animatable) {
-                        drawable.callback = object : Drawable.Callback {
-
-                            override fun invalidateDrawable(who: Drawable) {
-                                textView.invalidate()
-                            }
-
-                            override fun scheduleDrawable(who: Drawable, what: Runnable, `when`: Long) {
-                                handler.postAtTime(what, `when`)
-                            }
-
-                            override fun unscheduleDrawable(who: Drawable, what: Runnable) {
-                                handler.removeCallbacks(what)
+            disposable.add(Observable
+                    .create<Pair<Emoji, Drawable>> {
+                        containedEmoji.forEach { emoji ->
+                            var inputStream: InputStream? = null
+                            try {
+                                inputStream = glideRequests
+                                        .asFile()
+                                        .load(emoji.url)
+                                        .submit()
+                                        .get()
+                                        .inputStream()
+                                it.onNext(emoji to PngAndroid.readDrawable(textView.context, inputStream))
+                                inputStream.close()
+                            } catch (e: Throwable) {
+                                inputStream?.close()
+                                try {
+                                    it.onNext(
+                                            emoji to
+                                                    glideRequests
+                                                            .load(emoji.url)
+                                                            .submit()
+                                                            .get()
+                                    )
+                                } catch (e: Throwable) {
+                                    e.printStackTrace()
+                                    it.onNext(
+                                            emoji to
+                                                    ContextCompat.getDrawable(
+                                                            textView.context,
+                                                            R.drawable.ic_cloud_off_black_24dp
+                                                    )!!
+                                    )
+                                }
                             }
                         }
-                        disposable.add(CancellableDisposable(Cancellable {
-                            drawable.stop()
-                        }))
-                        drawable.start()
+                        it.onComplete()
                     }
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe { pair ->
+                        val emoji = pair.first
+                        val drawable = pair.second.mutate()
+                        drawable.setBounds(0, 0, imageSize, imageSize)
 
-                    textView.text = builder
-                }
-            }
+                        map[emoji.shortCode]?.forEach {
+                            builder.setSpan(
+                                    ImageSpan(drawable),
+                                    it,
+                                    it + emoji.shortCode.length + 2,
+                                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                            )
+                        }
 
-            val pngConvertTarget = object : SimpleTarget<File>() {
-                override fun onResourceReady(resource: File, transition: Transition<in File>?) {
-                    val inputStream = resource.inputStream()
-                    try {
-                        addTextTarget.onResourceReady(
-                                PngAndroid.readDrawable(textView.context, inputStream),
-                                null
-                        )
-                    } catch (e: Throwable) {
-                        e.printStackTrace()
-                        targets.add(addTextTarget)
-                        glideRequests
-                                .load(emoji.url)
-                                .into(addTextTarget)
-                    }
-                    inputStream.close()
-                }
+                        if (drawable is Animatable) {
+                            drawable.callback = object : Drawable.Callback {
 
-            }
-            targets.add(pngConvertTarget)
+                                override fun invalidateDrawable(who: Drawable) {
+                                    textView.invalidate()
+                                }
 
-            glideRequests
-                    .asFile()
-                    .load(emoji.url)
-                    .into(pngConvertTarget)
+                                override fun scheduleDrawable(who: Drawable, what: Runnable, `when`: Long) {
+                                    handler.postAtTime(what, `when`)
+                                }
+
+                                override fun unscheduleDrawable(who: Drawable, what: Runnable) {
+                                    handler.removeCallbacks(what)
+                                }
+                            }
+                            disposable.add(CancellableDisposable(Cancellable {
+                                drawable.stop()
+                            }))
+                            drawable.start()
+                        }
+
+                        textView.text = builder
+                    })
+
+            return disposable.toTypedArray()
+        } else {
+            return null
         }
-
-        disposable.add(CancellableDisposable(Cancellable {
-            targets.forEach {
-                glideRequests
-                        .clear(it)
-            }
-        }))
-
-        return disposable.toTypedArray()
     }
 
 }

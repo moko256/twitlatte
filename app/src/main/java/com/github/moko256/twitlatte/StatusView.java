@@ -54,6 +54,7 @@ import java.util.List;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import twitter4j.MediaEntity;
 import twitter4j.Status;
@@ -269,7 +270,10 @@ public class StatusView extends FrameLayout {
             if (userNameEmojiSetter == null) {
                 userNameEmojiSetter = new EmojiToTextViewSetter(glideRequests, userName);
             }
-            disposable.addAll(userNameEmojiSetter.set(userNameText, userNameEmojis));
+            Disposable[] set = userNameEmojiSetter.set(userNameText, userNameEmojis);
+            if (set != null) {
+                disposable.addAll(set);
+            }
         }
         userId.setText(TwitterStringUtils.plusAtMark(item.getUser().getScreenName()));
 
@@ -284,12 +288,15 @@ public class StatusView extends FrameLayout {
                 tweetContext.setVisibility(VISIBLE);
             }
 
-            List<Emoji> statusEmojis = ((StatusCacheMap.CachedStatus) status).getEmojis();
+            List<Emoji> statusEmojis = ((StatusCacheMap.CachedStatus) item).getEmojis();
             if (statusEmojis != null) {
                 if (contextEmojiSetter == null) {
                     contextEmojiSetter = new EmojiToTextViewSetter(glideRequests, tweetContext);
                 }
-                disposable.addAll(contextEmojiSetter.set(linkedSequence, statusEmojis));
+                Disposable[] set = contextEmojiSetter.set(linkedSequence, statusEmojis);
+                if (set != null) {
+                    disposable.addAll(set);
+                }
             }
         } else {
             if (tweetContext.getVisibility() != GONE){

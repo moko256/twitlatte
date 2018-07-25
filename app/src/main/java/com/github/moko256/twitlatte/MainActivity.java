@@ -65,6 +65,7 @@ import java.util.Objects;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import twitter4j.TwitterException;
 import twitter4j.User;
@@ -501,7 +502,10 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                                         if (userNameEmojiSetter == null) {
                                             userNameEmojiSetter = new EmojiToTextViewSetter(requests, userNameText);
                                         }
-                                        disposable.addAll(userNameEmojiSetter.set(userName, userNameEmojis));
+                                        Disposable[] set = userNameEmojiSetter.set(userName, userNameEmojis);
+                                        if (set != null) {
+                                            disposable.addAll(set);
+                                        }
                                     }
                                     userIdText.setText(TwitterStringUtils.plusAtMark(user.getScreenName()));
 

@@ -238,7 +238,7 @@ public class CachedUsersSQLiteOpenHelper extends SQLiteOpenHelper {
                 String[] shortcodes = new String[listSize];
                 String[] urls = new String[listSize];
 
-                for (int i = 0; i < size; i++) {
+                for (int i = 0; i < listSize; i++) {
                     com.sys1yagi.mastodon4j.api.entity.Emoji emoji = emojis.get(i);
                     shortcodes[i] = emoji.getShortcode();
                     urls[i] = emoji.getUrl();
