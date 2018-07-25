@@ -44,6 +44,7 @@ class OAuthModelImpl(override var isRestartable: Boolean = false) : OAuthModel {
                 savedInstanceState.getString(STATE_MODEL_CLIENT_KEY),
                 savedInstanceState.getString(STATE_MODEL_CLIENT_SECRET)
         )
+        isRestartable = true
     }
 
     override fun saveInstanceState(outState: Bundle) {

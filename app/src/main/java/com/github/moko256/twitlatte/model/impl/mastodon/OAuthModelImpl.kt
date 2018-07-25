@@ -59,6 +59,7 @@ class OAuthModelImpl(override var isRestartable: Boolean = false) : OAuthModel {
                 Gson()
         )
         apps = Apps(clientBuilder.build())
+        isRestartable = true
     }
 
     override fun saveInstanceState(outState: Bundle) {
