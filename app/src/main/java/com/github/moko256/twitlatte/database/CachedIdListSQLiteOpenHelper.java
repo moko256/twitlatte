@@ -101,25 +101,14 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
         synchronized (this) {
             SQLiteDatabase database = getWritableDatabase();
             database.beginTransaction();
-            addIdsAtTransaction(ids);
+            addIdsInner(ids);
             database.setTransactionSuccessful();
             database.endTransaction();
             database.close();
         }
     }
 
-    private void addIdsAtTransaction(List<Long> ids){
-        SQLiteDatabase database=getWritableDatabase();
-
-        for (int i = ids.size() - 1; i >= 0; i--) {
-            ContentValues contentValues = new ContentValues();
-            contentValues.put("id", ids.get(i));
-
-            database.insert(ID_LIST_TABLE_NAME, "", contentValues);
-        }
-    }
-
-    private void addIdsOnlyAtTransaction(List<Long> ids){
+    private void addIdsInner(List<Long> ids){
         SQLiteDatabase database=getWritableDatabase();
 
         for (int i = ids.size() - 1; i >= 0; i--) {
@@ -135,12 +124,11 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
             List<Long> n = getIds();
             List<Long> d = n.subList(0, bottomPosition);
 
-
             SQLiteDatabase database = getWritableDatabase();
             database.beginTransaction();
-            deleteOnlyIdsAtTransaction(d);
-            addIdsAtTransaction(ids);
-            addIdsOnlyAtTransaction(d);
+            deleteIdsInner(d);
+            addIdsInner(ids);
+            addIdsInner(d);
             database.setTransactionSuccessful();
             database.endTransaction();
             database.close();
@@ -151,21 +139,14 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
         synchronized (this) {
             SQLiteDatabase database = getWritableDatabase();
             database.beginTransaction();
-            deleteIdsAtTransaction(ids);
+            deleteIdsInner(ids);
             database.setTransactionSuccessful();
             database.endTransaction();
             database.close();
         }
     }
 
-    private void deleteIdsAtTransaction(List<Long> ids){
-        SQLiteDatabase database = getWritableDatabase();
-        for (Long id : ids) {
-            database.delete(ID_LIST_TABLE_NAME, "id=" + String.valueOf(id), null);
-        }
-    }
-
-    private void deleteOnlyIdsAtTransaction(List<Long> ids){
+    private void deleteIdsInner(List<Long> ids){
         SQLiteDatabase database = getWritableDatabase();
         for (Long id : ids) {
             database.delete(ID_LIST_TABLE_NAME, "id=" + String.valueOf(id), null);
