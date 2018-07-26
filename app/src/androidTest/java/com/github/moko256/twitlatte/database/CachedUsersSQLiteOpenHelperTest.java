@@ -21,6 +21,7 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.github.moko256.twitlatte.array.ArrayUtils;
+import com.github.moko256.twitlatte.entity.AccessToken;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -42,7 +43,17 @@ import static org.junit.Assert.assertEquals;
 @RunWith(AndroidJUnit4.class)
 public class CachedUsersSQLiteOpenHelperTest {
 
-    private CachedUsersSQLiteOpenHelper helper = new CachedUsersSQLiteOpenHelper(InstrumentationRegistry.getTargetContext(), null);
+    private CachedUsersSQLiteOpenHelper helper = new CachedUsersSQLiteOpenHelper(
+            InstrumentationRegistry.getTargetContext(),
+            new AccessToken(
+                    -2,
+                    "example.com",
+                    0,
+                    "test",
+                    "",
+                    ""
+            )
+    );
 
     private static final long TEST_DUMMY_USER_ID_1 = 1L;
     private static final long TEST_DUMMY_USER_ID_2 = 2L;
@@ -52,11 +63,7 @@ public class CachedUsersSQLiteOpenHelperTest {
 
     @Test
     public void test() {
-        try {
-            helper.getWritableDatabase().execSQL("delete from CachedUsers;");
-        } catch (Exception e) {
-            //Do nothing
-        }
+        helper.getWritableDatabase().delete("CachedUsers", null, null);
 
         addCacheTest();
         updateCacheTest();

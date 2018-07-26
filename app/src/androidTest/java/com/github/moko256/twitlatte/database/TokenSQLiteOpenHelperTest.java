@@ -34,7 +34,10 @@ import static org.junit.Assert.assertEquals;
 @RunWith(AndroidJUnit4.class)
 public class TokenSQLiteOpenHelperTest {
 
-    private TokenSQLiteOpenHelper helper = new TokenSQLiteOpenHelper(InstrumentationRegistry.getTargetContext());
+    private TokenSQLiteOpenHelper helper = new TokenSQLiteOpenHelper(
+            InstrumentationRegistry.getTargetContext(),
+            "TestAccessTokenList.db"
+    );
 
     private static final long TEST_USER_1_USER_ID = 1L;
 
@@ -49,7 +52,7 @@ public class TokenSQLiteOpenHelperTest {
     @Test
     public void test() {
         try {
-            helper.getWritableDatabase().execSQL("delete from AccountTokenList");
+            helper.getWritableDatabase().delete("AccountTokenList", null, null);
         } catch (Exception e) {
             //Do nothing
         }

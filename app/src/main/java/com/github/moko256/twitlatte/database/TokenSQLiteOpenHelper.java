@@ -26,6 +26,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 import com.github.moko256.twitlatte.entity.AccessToken;
 import com.github.moko256.twitlatte.entity.AccessTokenKt;
 
+import org.jetbrains.annotations.TestOnly;
+
 import kotlin.Pair;
 
 /**
@@ -43,6 +45,11 @@ public class TokenSQLiteOpenHelper extends SQLiteOpenHelper {
 
     public TokenSQLiteOpenHelper(Context context){
         super(context,"AccountTokenList.db",null,1);
+    }
+
+    @TestOnly
+    TokenSQLiteOpenHelper(Context context, String fileName){
+        super(context, fileName, null, 1);
     }
 
     @Override

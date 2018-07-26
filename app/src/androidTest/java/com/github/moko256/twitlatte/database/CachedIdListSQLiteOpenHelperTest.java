@@ -20,12 +20,14 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.github.moko256.twitlatte.array.ArrayUtils;
+import com.github.moko256.twitlatte.entity.AccessToken;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.List;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -36,18 +38,25 @@ import static org.junit.Assert.assertEquals;
 @RunWith(AndroidJUnit4.class)
 public class CachedIdListSQLiteOpenHelperTest {
 
-    private CachedIdListSQLiteOpenHelper helper = new CachedIdListSQLiteOpenHelper(InstrumentationRegistry.getTargetContext(), null, "testIdsDatabase");
+    private CachedIdListSQLiteOpenHelper helper = new CachedIdListSQLiteOpenHelper(
+            InstrumentationRegistry.getTargetContext(),
+            new AccessToken(
+                    -2,
+                    "example.com",
+                    0,
+                    "test",
+                    "",
+                    ""
+            ),
+            "testIdsDatabase"
+    );
 
     private List<Long> addInput = ArrayUtils.convertToLongList(0L,1L,2L);
     private List<Long> insertInput = ArrayUtils.convertToLongList(100L, 101L);
 
     @Test
     public void test() {
-        try {
-            helper.getWritableDatabase().execSQL("delete from testIdsDatabase;");
-        } catch (Exception e) {
-            //Do nothing
-        }
+        helper.getWritableDatabase().delete("IdList", null, null);
 
         addIdTest();
         insertIdTest();
@@ -61,18 +70,16 @@ public class CachedIdListSQLiteOpenHelperTest {
         helper.addIds(addInput);
 
         List<Long> result1 = helper.getIds();
-        for (int i = 0; i < result1.size() ; i++) {
-            assertEquals(result1.get(i), addInput.get(i));
-        }
+
+        assertArrayEquals(addInput.toArray(), result1.toArray());
     }
 
     private void insertIdTest(){
         helper.insertIds(1, insertInput);
 
         List<Long> result2 = helper.getIds();
-        for (int i = 0; i < insertInput.size(); i++) {
-            assertEquals(insertInput.get(i), result2.get(i + 1));
-        }
+
+        assertArrayEquals(insertInput.toArray(), result2.subList(1, 3).toArray());
     }
 
     private void deleteIdTest(){

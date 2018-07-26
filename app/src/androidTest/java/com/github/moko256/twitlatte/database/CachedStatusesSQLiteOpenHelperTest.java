@@ -22,6 +22,7 @@ import android.support.test.runner.AndroidJUnit4;
 
 import com.github.moko256.twitlatte.array.ArrayUtils;
 import com.github.moko256.twitlatte.cacheMap.StatusCacheMap;
+import com.github.moko256.twitlatte.entity.AccessToken;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -50,7 +51,17 @@ import static org.junit.Assert.assertEquals;
 @RunWith(AndroidJUnit4.class)
 public class CachedStatusesSQLiteOpenHelperTest {
 
-    private CachedStatusesSQLiteOpenHelper helper = new CachedStatusesSQLiteOpenHelper(InstrumentationRegistry.getTargetContext(), null);
+    private CachedStatusesSQLiteOpenHelper helper = new CachedStatusesSQLiteOpenHelper(
+            InstrumentationRegistry.getTargetContext(),
+            new AccessToken(
+                    -2,
+                    "example.com",
+                    0,
+                    "test",
+                    "",
+                    ""
+            )
+    );
 
     private static final long TEST_DUMMY_STATUS_ID_1 = 1L;
     private static final long TEST_DUMMY_STATUS_ID_2 = 2L;
@@ -60,11 +71,7 @@ public class CachedStatusesSQLiteOpenHelperTest {
 
     @Test
     public void test() {
-        try {
-            helper.getWritableDatabase().execSQL("delete from CachedStatuses;");
-        } catch (Exception e) {
-            //Do nothing
-        }
+        helper.getWritableDatabase().delete("CachedStatuses", null, null);
 
         addCacheTest();
         updateCacheTest();

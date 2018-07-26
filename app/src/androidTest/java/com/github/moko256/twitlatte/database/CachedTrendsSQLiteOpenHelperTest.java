@@ -19,6 +19,8 @@ package com.github.moko256.twitlatte.database;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
+import com.github.moko256.twitlatte.entity.AccessToken;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -37,18 +39,24 @@ import static org.junit.Assert.assertEquals;
 @RunWith(AndroidJUnit4.class)
 public class CachedTrendsSQLiteOpenHelperTest {
 
-    private CachedTrendsSQLiteOpenHelper helper = new CachedTrendsSQLiteOpenHelper(InstrumentationRegistry.getTargetContext(), null);
+    private CachedTrendsSQLiteOpenHelper helper = new CachedTrendsSQLiteOpenHelper(
+            InstrumentationRegistry.getTargetContext(),
+            new AccessToken(
+                    -2,
+                    "example.com",
+                    0,
+                    "test",
+                    "",
+                    ""
+            )
+    );
 
     private String[] input0 = new String[]{"0", "1", "2"};
     private String[] input1 = new String[]{"3", "4"};
 
     @Test
     public void test() {
-        try {
-            helper.getWritableDatabase().execSQL("delete from Trends;");
-        } catch (Exception e) {
-            //Do nothing
-        }
+        helper.getWritableDatabase().delete("Trends", null, null);
 
         setTrendsTest();
         updateTrendsTest();
