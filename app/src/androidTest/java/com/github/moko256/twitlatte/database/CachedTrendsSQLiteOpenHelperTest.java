@@ -91,6 +91,11 @@ public class CachedTrendsSQLiteOpenHelperTest {
                 public String getQuery() {
                     return null;
                 }
+
+                @Override
+                public int getTweetVolume() {
+                    return -1;
+                }
             });
         }
         return r;
