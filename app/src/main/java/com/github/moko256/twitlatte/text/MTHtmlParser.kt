@@ -126,6 +126,7 @@ private class MastodonHtmlHandler: DefaultHandler() {
         if (type == TYPE_URL) {
             if (isNextDots) {
                 stringBuilder.append("…")
+                isNextDots = false
             } else if (isDisplayable) {
                 stringBuilder.append(ch, start, length)
                 isNextDots = true
