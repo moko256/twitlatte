@@ -307,9 +307,6 @@ public class StatusView extends FrameLayout {
         String spoilerText = ((StatusCacheMap.CachedStatus) item).getSpoilerText();
         tweetSpoilerText.setText(spoilerText);
         if (spoilerText == null) {
-            if (tweetContext.getVisibility() != VISIBLE){
-                tweetContext.setVisibility(VISIBLE);
-            }
             if (tweetSpoilerText.getVisibility() != GONE){
                 tweetSpoilerText.setVisibility(GONE);
             }
