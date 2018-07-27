@@ -82,6 +82,7 @@ private class MastodonHtmlHandler: DefaultHandler() {
     override fun startDocument() {
         stringBuilder.setLength(0)
         noBr = false
+        isDisplayable = true
         linkList.clear()
     }
 
