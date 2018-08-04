@@ -27,7 +27,7 @@
 
 -dontwarn java.lang.invoke.*
 -dontwarn **$$Lambda$*
--dontwarn okhttp3.**
+
 -dontwarn okio.**
 
 
