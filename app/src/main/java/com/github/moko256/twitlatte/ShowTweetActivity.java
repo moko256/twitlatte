@@ -224,6 +224,7 @@ public class ShowTweetActivity extends AppCompatActivity {
         statusView = new StatusView(this);
         statusView.setStatus(item);
         statusView.setOnClickListener(null);
+        statusView.readyToCopy();
         ViewGroup cview = (ViewGroup) statusView.getChildAt(0);
         ViewGroup sview = (ViewGroup) cview.getChildAt(0);
         cview.removeView(sview);
