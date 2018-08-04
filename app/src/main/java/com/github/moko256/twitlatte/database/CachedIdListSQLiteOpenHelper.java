@@ -57,11 +57,10 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
         if (oldVersion == 1) {
             Cursor ids = db.query(ID_LIST_TABLE_NAME, new String[]{"id"}, null, null, null, null, null);
             Cursor positions = db.query("ListViewPosition", new String[]{"position"}, null, null, null, null, null);
+            db.execSQL("create table " + SEEING_ID_TABLE_NAME + "(id)");
             if (positions.moveToNext()) {
                 boolean hasId = ids.moveToPosition(positions.getInt(0));
                 positions.close();
-                db.execSQL("drop table ListViewPosition");
-                db.execSQL("create table " + SEEING_ID_TABLE_NAME + "(id)");
                 if (hasId) {
                     int i = ids.getInt(0);
                     int count = ids.getColumnCount();
@@ -72,6 +71,7 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
                 }
                 ids.close();
             }
+            db.execSQL("drop table ListViewPosition");
         }
 
         // else (oldVersion <= 2) ...
