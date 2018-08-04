@@ -72,6 +72,7 @@ public class StatusView extends FrameLayout {
     private final CompositeDisposable disposable = new CompositeDisposable();
     private final GlideRequests glideRequests;
     private EmojiToTextViewSetter contextEmojiSetter;
+    private EmojiToTextViewSetter spoilerTextEmojiSetter;
     private EmojiToTextViewSetter userNameEmojiSetter;
 
     private final ImageView userImage;
@@ -323,6 +324,17 @@ public class StatusView extends FrameLayout {
             }
             if (contentOpenerToggle.getVisibility() != VISIBLE){
                 contentOpenerToggle.setVisibility(VISIBLE);
+            }
+
+            List<Emoji> statusEmojis = ((StatusCacheMap.CachedStatus) item).getEmojis();
+            if (statusEmojis != null) {
+                if (spoilerTextEmojiSetter == null) {
+                    spoilerTextEmojiSetter = new EmojiToTextViewSetter(glideRequests, tweetSpoilerText);
+                }
+                Disposable[] set = spoilerTextEmojiSetter.set(spoilerText, statusEmojis);
+                if (set != null) {
+                    disposable.addAll(set);
+                }
             }
         }
 
