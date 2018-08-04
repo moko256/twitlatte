@@ -54,9 +54,9 @@ class EmojiToTextViewSetter(private val glideRequests: GlideRequests, private va
         val matches = matcher.matches()
 
         val imageSize = if (matches) {
-            Math.round((textView.lineHeight * 2).toFloat())
+            textView.lineHeight.toFloat() * 2
         } else {
-            Math.round(textView.lineHeight.toFloat())
+            textView.lineHeight.toFloat()
         }
 
         val map: HashMap<String, ArrayList<Int>>
@@ -137,7 +137,23 @@ class EmojiToTextViewSetter(private val glideRequests: GlideRequests, private va
                     .subscribe { pair ->
                         val emoji = pair.first
                         val drawable = pair.second.mutate()
-                        drawable.setBounds(0, 0, imageSize, imageSize)
+                        var w = drawable.intrinsicWidth.toFloat()
+                        var h = drawable.intrinsicHeight.toFloat()
+                        if (w == h) {
+                            w = imageSize
+                            h = imageSize
+                        } else {
+                            if (w > h) {
+                                val d = imageSize / w
+                                w = imageSize
+                                h *= d
+                            } else {
+                                val d = imageSize / h
+                                w *= d
+                                h = imageSize
+                            }
+                        }
+                        drawable.setBounds(0, 0, Math.round(w), Math.round(h))
 
                         map[emoji.shortCode]?.forEach {
                             builder.setSpan(
