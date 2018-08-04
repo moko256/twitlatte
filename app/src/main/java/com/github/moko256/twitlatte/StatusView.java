@@ -151,11 +151,6 @@ public class StatusView extends FrameLayout {
         }
     }
 
-    public void readyToCopy() {
-        tweetContext.setTextIsSelectable(true);
-        tweetSpoilerText.setTextIsSelectable(true);
-    }
-
     public Status getStatus() {
         return status;
     }

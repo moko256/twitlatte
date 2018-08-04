@@ -67,7 +67,6 @@
                         android:layout_below="@id/show_user_image"
                         android:layout_centerHorizontal="true"
                         android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                        android:textIsSelectable="true"
                         tools:text="User name"/>
 
                     <TextView
@@ -100,7 +99,6 @@
                         android:layout_centerHorizontal="true"
                         android:gravity="center"
                         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                        android:textIsSelectable="true"
                         tools:text="User\'s description"/>
                 </RelativeLayout>
             </android.support.v7.widget.CardView>
