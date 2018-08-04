@@ -17,11 +17,13 @@
 package com.github.moko256.twitlatte;
 
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.text.Layout;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -151,6 +153,11 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
         userTweetsCount = view.findViewById(R.id.show_user_tweets_count);
         userFollowCount = view.findViewById(R.id.show_user_follow_count);
         userFollowerCount = view.findViewById(R.id.show_user_follower_count);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            userNameText.setBreakStrategy(Layout.BREAK_STRATEGY_SIMPLE);
+            userBioText.setBreakStrategy(Layout.BREAK_STRATEGY_SIMPLE);
+        }
 
         User cachedUser = GlobalApplication.userCache.get(userId);
         if (cachedUser!=null){
