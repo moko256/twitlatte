@@ -79,8 +79,8 @@ class ListViewModel: ViewModel() {
                 getSingle()
                         .subscribeOn(Schedulers.io())
                         .subscribe(
-                                {
-                                    val ids = ArrayList(it
+                                { result ->
+                                    val ids = ArrayList(result
                                             .map { it.id }
                                             .toList()
                                     )
@@ -112,9 +112,9 @@ class ListViewModel: ViewModel() {
                         excludeIds = *if (list.size >= 2) longArrayOf(list[0]) else LongArray(0))
                         .subscribeOn(Schedulers.io())
                         .subscribe(
-                                {
-                                    if (it.isNotEmpty()) {
-                                        val ids = ArrayList(it
+                                { result ->
+                                    if (result.isNotEmpty()) {
+                                        val ids = ArrayList(result
                                                 .map { it.id }
                                                 .toList()
                                         )
@@ -156,10 +156,10 @@ class ListViewModel: ViewModel() {
                 getSingle(maxId = list[list.size - 1] - 1L)
                         .subscribeOn(Schedulers.io())
                         .subscribe(
-                                {
-                                    val size = it.size
+                                { result ->
+                                    val size = result.size
                                     if (size > 0) {
-                                        val ids = ArrayList(it
+                                        val ids = ArrayList(result
                                                 .map { it.id }
                                                 .toList()
                                         )
@@ -197,9 +197,9 @@ class ListViewModel: ViewModel() {
                 getSingle(sinceId = sinceId, maxId = list[position -1] - 1L, excludeIds = *longArrayOf(if (list.size >= position + 2) list[position + 1] else 0))
                         .subscribeOn(Schedulers.io())
                         .subscribe(
-                                {
-                                    if (it.isNotEmpty()) {
-                                        val ids = ArrayList(it
+                                { result ->
+                                    if (result.isNotEmpty()) {
+                                        val ids = ArrayList(result
                                                 .map { it.id }
                                                 .toList()
                                         )
