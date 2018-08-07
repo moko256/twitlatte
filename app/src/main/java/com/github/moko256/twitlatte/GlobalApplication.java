@@ -122,7 +122,7 @@ public class GlobalApplication extends Application {
 
         AppCompatDelegate.setDefaultNightMode(mode);
 
-        accountsModel = new AccountsModel(getApplicationContext());
+        accountsModel = new AccountsModel(this);
 
         String accountKey = preferenceRepository.getString(KEY_ACCOUNT_KEY,"-1");
 

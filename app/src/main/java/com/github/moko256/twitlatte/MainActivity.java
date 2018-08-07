@@ -266,7 +266,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                             ArrayList<User> users = new ArrayList<>(accessTokens.size());
                             for (AccessToken accessToken : accessTokens){
                                 long id = accessToken.getUserId();
-                                CachedUsersSQLiteOpenHelper userHelper = new CachedUsersSQLiteOpenHelper(this, accessToken);
+                                CachedUsersSQLiteOpenHelper userHelper = new CachedUsersSQLiteOpenHelper(getApplicationContext(), accessToken);
                                 User user = userHelper.getCachedUser(id);
                                 if (user == null){
                                     try {

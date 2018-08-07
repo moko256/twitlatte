@@ -67,25 +67,27 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         listViewModel = ViewModelProviders.of(this).get(ListViewModel.class);
-        listViewModel.statusIdsDatabase = new CachedIdListSQLiteOpenHelper(
-                getContext(),
-                GlobalApplication.accessToken,
-                getCachedIdsDatabaseName()
-        );
-        listViewModel.serverRepository = (sinceId, maxId, limit) -> {
-            Paging paging = new Paging().count(limit);
-            if (sinceId != null) {
-                paging.setSinceId(sinceId);
-            }
-            if (maxId != null) {
-                paging.setMaxId(maxId);
-            }
-            if (sinceId == null && maxId == null) {
-                paging.setPage(1);
-            }
-            return getResponseList(paging);
-        };
-        listViewModel.start();
+        if (!listViewModel.getInitilized()) {
+            listViewModel.statusIdsDatabase = new CachedIdListSQLiteOpenHelper(
+                    requireContext().getApplicationContext(),
+                    GlobalApplication.accessToken,
+                    getCachedIdsDatabaseName()
+            );
+            listViewModel.serverRepository = (sinceId, maxId, limit) -> {
+                Paging paging = new Paging().count(limit);
+                if (sinceId != null) {
+                    paging.setSinceId(sinceId);
+                }
+                if (maxId != null) {
+                    paging.setMaxId(maxId);
+                }
+                if (sinceId == null && maxId == null) {
+                    paging.setPage(1);
+                }
+                return getResponseList(paging);
+            };
+            listViewModel.start();
+        }
         super.onCreate(savedInstanceState);
     }
 

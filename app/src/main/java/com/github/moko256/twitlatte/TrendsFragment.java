@@ -63,7 +63,10 @@ public class TrendsFragment extends BaseListFragment {
     public void onCreate(Bundle savedInstanceState) {
         list=new ArrayList<>();
         disposable = new CompositeDisposable();
-        helper = new CachedTrendsSQLiteOpenHelper(getContext(), GlobalApplication.accessToken);
+        helper = new CachedTrendsSQLiteOpenHelper(
+                requireContext().getApplicationContext(),
+                GlobalApplication.accessToken
+        );
         List<Trend> trends = helper.getTrends();
         if (trends.size() > 0){
             list = trends;

@@ -36,6 +36,8 @@ import twitter4j.TwitterException
  * @author moko256
  */
 class ListViewModel: ViewModel() {
+    var initilized: Boolean = false
+
     private val nothingEvent = UpdateEvent(EventType.NOTHING, 0, 0)
 
     val list = ArrayList<Long>()
@@ -51,6 +53,7 @@ class ListViewModel: ViewModel() {
         if (c.size > 0) {
             list.addAll(c)
         }
+        initilized = true
     }
 
     override fun onCleared() {
