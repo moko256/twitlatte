@@ -20,12 +20,12 @@ import android.support.annotation.NonNull;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
-import com.github.moko256.twitlatte.array.ArrayUtils;
 import com.github.moko256.twitlatte.entity.AccessToken;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.Arrays;
 import java.util.Date;
 
 import twitter4j.RateLimitStatus;
@@ -93,7 +93,7 @@ public class CachedUsersSQLiteOpenHelperTest {
     }
 
     private void addUsersTest(){
-        helper.addCachedUsers(ArrayUtils.convertToList(
+        helper.addCachedUsers(Arrays.asList(
                 new TestUser(TEST_DUMMY_USER_ID_1, TEST_DUMMY_USER_NAME_0),
                 new TestUser(TEST_DUMMY_USER_ID_2, TEST_DUMMY_USER_NAME_1))
         );

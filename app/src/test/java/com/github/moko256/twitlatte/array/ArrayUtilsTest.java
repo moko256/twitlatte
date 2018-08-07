@@ -18,9 +18,10 @@ package com.github.moko256.twitlatte.array;
 
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by moko256 on 2018/03/27.
@@ -32,18 +33,9 @@ public class ArrayUtilsTest {
     @Test
     public void convertToList() {
         String[] array = new String[]{"0", "1", "2", "aaa", "@@@", "$$$$$$$"};
-        List<String> list = ArrayUtils.convertToList(array);
+        List<String> list = Arrays.asList(array);
         for (int i = 0, length = array.length; i < length; i++){
             assertTrue(array[i].equals(list.get(i)));
-        }
-    }
-
-    @Test
-    public void convertToLongList() {
-        long[] array = new long[]{0L, 1L, 222L, 333333333L, 444444L, 555L};
-        List<Long> list = ArrayUtils.convertToLongList(array);
-        for (int i = 0, length = array.length; i < length; i++){
-            assertTrue(list.get(i).equals(array[i]));
         }
     }
 

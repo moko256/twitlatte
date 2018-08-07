@@ -18,7 +18,6 @@ package com.github.moko256.twitlatte.viewmodel
 
 import android.arch.lifecycle.ViewModel
 import com.github.moko256.twitlatte.GlobalApplication
-import com.github.moko256.twitlatte.array.ArrayUtils
 import com.github.moko256.twitlatte.database.CachedIdListSQLiteOpenHelper
 import com.github.moko256.twitlatte.repository.server.ListServerRepository
 import either.Either
@@ -148,7 +147,7 @@ class ListViewModel: ViewModel() {
         val bottomPos = list.size - 1
 
         if (list[bottomPos] == -1L) {
-            statusIdsDatabase.deleteIds(ArrayUtils.convertToLongList(-1L))
+            statusIdsDatabase.deleteIds(listOf(-1L))
             list.removeAt(bottomPos)
             listObserver.onNext(Left(UpdateEvent(EventType.REMOVE_ONLY_GAP, bottomPos, 1)))
         }
@@ -208,7 +207,7 @@ class ListViewModel: ViewModel() {
                                         if (noGap) {
                                             ids.removeAt(ids.size - 1)
                                             list.removeAt(position)
-                                            statusIdsDatabase.deleteIds(ArrayUtils.convertToLongList(-1L))
+                                            statusIdsDatabase.deleteIds(listOf(-1L))
                                         }
 
                                         list.addAll(position, ids)
@@ -218,7 +217,7 @@ class ListViewModel: ViewModel() {
 
                                     } else {
                                         list.removeAt(position)
-                                        statusIdsDatabase.deleteIds(ArrayUtils.convertToLongList(-1L))
+                                        statusIdsDatabase.deleteIds(listOf(-1L))
                                         listObserver.onNext(Left(UpdateEvent(EventType.REMOVE_ONLY_GAP, position, 0)))
                                     }
                                 },

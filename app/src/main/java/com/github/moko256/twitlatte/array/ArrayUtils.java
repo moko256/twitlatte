@@ -19,10 +19,6 @@ package com.github.moko256.twitlatte.array;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 /**
  * Created by moko256 on 2018/01/04.
  *
@@ -30,21 +26,6 @@ import java.util.List;
  */
 
 public class ArrayUtils {
-    @SafeVarargs
-    @NonNull
-    public static <T> List<T> convertToList(@NonNull T... array){
-        return Arrays.asList(array);
-    }
-
-    @NonNull
-    public static List<Long> convertToLongList(@NonNull long... array){
-        List<Long> list = new ArrayList<>(array.length);
-        for (long l : array) {
-            list.add(l);
-        }
-        return list;
-    }
-
     @NonNull
     public static CharSequence toCommaSplitString(@Nullable String[] array){
         if (array != null && array.length > 0) {

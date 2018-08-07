@@ -20,13 +20,13 @@ import android.support.annotation.NonNull;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
-import com.github.moko256.twitlatte.array.ArrayUtils;
 import com.github.moko256.twitlatte.cacheMap.StatusCacheMap;
 import com.github.moko256.twitlatte.entity.AccessToken;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.Arrays;
 import java.util.Date;
 
 import twitter4j.GeoLocation;
@@ -101,7 +101,7 @@ public class CachedStatusesSQLiteOpenHelperTest {
     }
 
     private void addStatusesTest(){
-        helper.addCachedStatuses(ArrayUtils.convertToList(
+        helper.addCachedStatuses(Arrays.asList(
                 new StatusCacheMap.CachedStatus(new TestStatus(TEST_DUMMY_STATUS_ID_1, TEST_DUMMY_STATUS_TEXT_0)),
                 new StatusCacheMap.CachedStatus(new TestStatus(TEST_DUMMY_STATUS_ID_2, TEST_DUMMY_STATUS_TEXT_1))),false
         );

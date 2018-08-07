@@ -19,12 +19,12 @@ package com.github.moko256.twitlatte.database;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
-import com.github.moko256.twitlatte.array.ArrayUtils;
 import com.github.moko256.twitlatte.entity.AccessToken;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertArrayEquals;
@@ -51,8 +51,8 @@ public class CachedIdListSQLiteOpenHelperTest {
             "testIdsDatabase"
     );
 
-    private List<Long> addInput = ArrayUtils.convertToLongList(0L,1L,2L);
-    private List<Long> insertInput = ArrayUtils.convertToLongList(100L, 101L);
+    private List<Long> addInput = Arrays.asList(0L,1L,2L);
+    private List<Long> insertInput = Arrays.asList(100L, 101L);
 
     @Test
     public void test() {
