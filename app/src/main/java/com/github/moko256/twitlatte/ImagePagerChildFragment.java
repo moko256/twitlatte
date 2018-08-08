@@ -114,6 +114,8 @@ public class ImagePagerChildFragment extends Fragment {
             return Unit.INSTANCE;
         });
 
+        DefaultBandwidthMeter bandwidthMeter;
+
         switch (mediaEntity.getType()){
             case "video":
                 String videoPath = null;
@@ -151,7 +153,8 @@ public class ImagePagerChildFragment extends Fragment {
                     }
                 });
 
-                trackSelector = new DefaultTrackSelector(new DefaultBandwidthMeter());
+                bandwidthMeter = new DefaultBandwidthMeter();
+                trackSelector = new DefaultTrackSelector(bandwidthMeter);
 
                 player = ExoPlayerFactory.newSimpleInstance(
                         new AudioAndVideoRenderer(Objects.requireNonNull(getContext())),
@@ -160,8 +163,8 @@ public class ImagePagerChildFragment extends Fragment {
                 );
                 videoPlayView.setPlayer(player);
                 player.prepare((isHls?
-                                new HlsMediaSource.Factory(createOkHttpDataSourceFactory()):
-                                new ExtractorMediaSource.Factory(createOkHttpDataSourceFactory())
+                                new HlsMediaSource.Factory(createOkHttpDataSourceFactory(bandwidthMeter)):
+                                new ExtractorMediaSource.Factory(createOkHttpDataSourceFactory(bandwidthMeter))
                         ).createMediaSource(Uri.parse(videoPath))
                 );
                 player.setPlayWhenReady(true);
@@ -188,7 +191,8 @@ public class ImagePagerChildFragment extends Fragment {
                     }
                 });
 
-                trackSelector = new DefaultTrackSelector(new DefaultBandwidthMeter());
+                bandwidthMeter = new DefaultBandwidthMeter();
+                trackSelector = new DefaultTrackSelector(bandwidthMeter);
 
                 player = ExoPlayerFactory.newSimpleInstance(
                         new AudioAndVideoRenderer(Objects.requireNonNull(getContext())),
@@ -198,7 +202,7 @@ public class ImagePagerChildFragment extends Fragment {
                 videoPlayView.setPlayer(player);
                 player.prepare(
                         new LoopingMediaSource(
-                                new ExtractorMediaSource.Factory(createOkHttpDataSourceFactory())
+                                new ExtractorMediaSource.Factory(createOkHttpDataSourceFactory(bandwidthMeter))
                                         .createMediaSource(
                                                 Uri.parse(mediaEntity.getVideoVariants()[0].getUrl())
                                         )
@@ -333,11 +337,11 @@ public class ImagePagerChildFragment extends Fragment {
         }
     }
 
-    private OkHttpDataSourceFactory createOkHttpDataSourceFactory(){
+    private OkHttpDataSourceFactory createOkHttpDataSourceFactory(DefaultBandwidthMeter listener){
         return new OkHttpDataSourceFactory(
                 GlobalApplication.getOkHttpClient(),
                 null,
-                null
+                listener
         );
     }
 
