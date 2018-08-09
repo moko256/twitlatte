@@ -65,7 +65,7 @@ public class TrendsAdapter extends RecyclerView.Adapter<TrendsAdapter.ViewHolder
             if (viewHolder.volume.getVisibility() != View.VISIBLE) {
                 viewHolder.volume.setVisibility(View.VISIBLE);
             }
-            viewHolder.volume.setText(String.valueOf(item.getTweetVolume()) + " tweets / last 24 hours");
+            viewHolder.volume.setText(context.getString(R.string.tweet_per_last_24_hours, item.getTweetVolume()));
         } else {
             if (viewHolder.volume.getVisibility() != View.GONE) {
                 viewHolder.volume.setVisibility(View.GONE);

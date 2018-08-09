@@ -98,6 +98,7 @@
     <string name="content_warning">内容への警告</string>
     <string name="do_add_content_warning">内容への警告を追加する</string>
     <string name="no_app_can_open">開けるアプリがありません</string>
+    <string name="tweet_per_last_24_hours">直近24時間以内で%dツイート</string>
 
     <string name="do_quote">引用する</string>
     <string name="do_logout">ログアウトする</string>
