@@ -137,15 +137,16 @@ public abstract class BaseUsersFragment extends BaseListFragment {
                                 result-> {
                                     int size = list.size();
                                     list.clear();
-                                    adapter.notifyItemRangeRemoved(0, size);
-
                                     list.addAll(
                                             Observable
                                                     .fromIterable(result)
                                                     .map(User::getId)
                                                     .toList().blockingGet()
                                     );
-                                    adapter.notifyDataSetChanged();
+                                    if (adapter != null) {
+                                        adapter.notifyItemRangeRemoved(0, size);
+                                        adapter.notifyItemRangeInserted(0, list.size());
+                                    }
                                 },
                                 e -> {
                                     e.printStackTrace();
@@ -177,7 +178,9 @@ public abstract class BaseUsersFragment extends BaseListFragment {
                                                         .map(User::getId)
                                                         .toList().blockingGet()
                                         );
-                                        adapter.notifyItemRangeInserted(l, size);
+                                        if (adapter != null) {
+                                            adapter.notifyItemRangeInserted(l, size);
+                                        }
                                     }
                                 },
                                 e -> {
