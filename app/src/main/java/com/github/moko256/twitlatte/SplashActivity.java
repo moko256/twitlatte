@@ -37,7 +37,12 @@ public class SplashActivity extends AppCompatActivity {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        startActivity(switchIntent());
+        try {
+            startActivity(switchIntent());
+        } catch (Throwable e) {
+            e.printStackTrace();
+            finish();
+        }
     }
 
     private Intent switchIntent(){
@@ -82,7 +87,7 @@ public class SplashActivity extends AppCompatActivity {
                                         data.getQueryParameter("message")
                                 );
                             case "status":
-                                return ShowTweetActivity.getIntent(this, Long.parseLong(data.getQueryParameter("id")));
+                                return ShowTweetActivity.getIntent(this, Long.valueOf(data.getQueryParameter("id")));
                             case "user":
                                 String userId = data.getQueryParameter("id");
                                 if (userId != null){
@@ -117,7 +122,7 @@ public class SplashActivity extends AppCompatActivity {
                             case 3:
                                 String s = pathSegments.get(1);
                                 if (s.equals("status") || s.equals("statuses")){
-                                    return ShowTweetActivity.getIntent(this, Long.parseLong(lastPathSegment));
+                                    return ShowTweetActivity.getIntent(this, Long.valueOf(lastPathSegment));
                                 }
                                 break;
                         }
