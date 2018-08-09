@@ -89,20 +89,21 @@ private class MastodonHtmlHandler: DefaultHandler() {
     override fun startElement(uri: String, localName: String, qName: String, attributes: Attributes) {
         when (localName){
             "a" -> {
+                val classValue: String? = attributes.getValue("class")
+                val linkHref = attributes.getValue("href")?:""
                 when {
-                    attributes.getValue("class") == "mention hashtag" -> {
+                    classValue?.contains("hashtag")?:false -> {
                         type = TYPE_TAG
-                        val list = attributes.getValue("href")!!.split("/")
-                        tag = list[list.size - 1]
+                        tag = linkHref.substringAfterLast("/")
                     }
-                    attributes.getValue("class") == "u-url mention" -> {
+                    classValue?.contains("mention")?:false -> {
                         type = TYPE_USER
-                        val list = attributes.getValue("href")!!.split("/")
+                        val list = linkHref.split("/")
                         userName = list[list.size - 1] + "@" + list[list.size - 2]
                     }
                     else -> {
                         type = TYPE_URL
-                        contentUrl = attributes.getValue("href")!!
+                        contentUrl = linkHref
                     }
                 }
                 linkStart = stringBuilder.length
