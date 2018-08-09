@@ -58,12 +58,14 @@ import com.github.moko256.twitlatte.glide.GlideApp;
 import com.github.moko256.twitlatte.model.base.PostTweetModel;
 import com.github.moko256.twitlatte.model.impl.PostTweetModelCreator;
 import com.github.moko256.twitlatte.rx.LocationSingleBuilder;
+import com.github.moko256.twitlatte.rx.VerifyCredencialOnSubscribe;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
 import com.github.moko256.twitlatte.widget.ImageKeyboardEditText;
 
 import java.util.ArrayList;
 import java.util.Objects;
 
+import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
@@ -123,12 +125,24 @@ public class PostActivity extends AppCompatActivity {
         actionBar.setHomeAsUpIndicator(R.drawable.ic_clear_white_24dp);
 
         userIcon = findViewById(R.id.activity_tweet_send_user_icon);
-        GlideApp.with(this)
-                .load(GlobalApplication.userCache.get(GlobalApplication.userId)
-                        .get400x400ProfileImageURLHttps()
-                )
-                .circleCrop()
-                .into(userIcon);
+
+        disposable.add(
+                Single.create(
+                        new VerifyCredencialOnSubscribe(
+                                GlobalApplication.twitter,
+                                GlobalApplication.userCache,
+                                GlobalApplication.userId
+                        ))
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                                user -> GlideApp.with(this)
+                                        .load(user.get400x400ProfileImageURLHttps())
+                                        .circleCrop()
+                                        .into(userIcon),
+                                Throwable::printStackTrace
+                        )
+        );
 
         counterTextView= findViewById(R.id.tweet_text_edit_counter);
 
@@ -460,10 +474,13 @@ public class PostActivity extends AppCompatActivity {
         disposable = null;
         locationText = null;
         addLocation = null;
+        postVisibility = null;
         isPossiblySensitive = null;
         addedImagesAdapter.clearImages();
         addedImagesAdapter = null;
         imagesRecyclerView = null;
+        contentWarningEnabled = null;
+        contentWarningText = null;
         editText = null;
         counterTextView = null;
         userIcon = null;

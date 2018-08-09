@@ -54,6 +54,7 @@ import com.github.moko256.twitlatte.entity.Emoji;
 import com.github.moko256.twitlatte.glide.GlideApp;
 import com.github.moko256.twitlatte.glide.GlideRequests;
 import com.github.moko256.twitlatte.model.AccountsModel;
+import com.github.moko256.twitlatte.rx.VerifyCredencialOnSubscribe;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
 import com.github.moko256.twitlatte.view.EmojiToTextViewSetter;
 import com.github.moko256.twitlatte.widget.FragmentPagerAdapter;
@@ -457,24 +458,15 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
     private void updateDrawerImage(){
         disposable.add(
                 Single.create(
-                        subscriber->{
-                            try {
-                                User me = GlobalApplication.userCache.get(GlobalApplication.userId);
-                                if (me == null){
-                                    me = GlobalApplication.twitter.verifyCredentials();
-                                    GlobalApplication.userCache.add(me);
-                                }
-                                subscriber.onSuccess(me);
-                            } catch (TwitterException e) {
-                                subscriber.tryOnError(e);
-                            }
-                        })
+                        new VerifyCredencialOnSubscribe(
+                                GlobalApplication.twitter,
+                                GlobalApplication.userCache,
+                                GlobalApplication.userId
+                        ))
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
-                                result -> {
-                                    User user = (User) result;
-
+                                user -> {
                                     GlideRequests requests= GlideApp.with(this);
 
                                     CharSequence userName = TwitterStringUtils.plusUserMarks(
