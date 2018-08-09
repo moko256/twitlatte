@@ -27,7 +27,6 @@ import android.view.ViewGroup;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import io.reactivex.Observable;
@@ -90,9 +89,11 @@ public abstract class BaseUsersFragment extends BaseListFragment {
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         if (savedInstanceState != null) {
-            Long[] l = (Long[]) savedInstanceState.getSerializable("list");
+            long[] l = savedInstanceState.getLongArray("list");
             if(l != null){
-                list.addAll(Arrays.asList(l));
+                for (long id : l) {
+                    list.add(id);
+                }
             }
             next_cursor=savedInstanceState.getLong("next_cursor",-1);
         }
@@ -101,7 +102,12 @@ public abstract class BaseUsersFragment extends BaseListFragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState){
         super.onSaveInstanceState(outState);
-        outState.putSerializable("list", list.toArray(new Long[list.size()]));
+        int size = list.size();
+        long[] array = new long[size];
+        for (int i = 0; i < size; i++) {
+            array[i] = list.get(i);
+        }
+        outState.putLongArray("list", array);
         outState.putLong("next_cursor", next_cursor);
     }
 
