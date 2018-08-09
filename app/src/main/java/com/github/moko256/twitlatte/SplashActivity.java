@@ -37,12 +37,7 @@ public class SplashActivity extends AppCompatActivity {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        try {
-            startActivity(switchIntent());
-        } catch (Throwable e) {
-            e.printStackTrace();
-            finish();
-        }
+        startActivity(switchIntent());
     }
 
     private Intent switchIntent(){
@@ -56,91 +51,99 @@ public class SplashActivity extends AppCompatActivity {
 
             Bundle extras = intent.getExtras();
             if (extras != null){
-                if (extras.getCharSequence(Intent.EXTRA_TEXT) != null) {
-                    CharSequence subject = extras.getCharSequence(Intent.EXTRA_SUBJECT);
-                    StringBuilder text = new StringBuilder();
-                    if (subject != null) {
-                        text.append(subject).append(" ");
+                try {
+                    if (extras.getCharSequence(Intent.EXTRA_TEXT) != null) {
+                        CharSequence subject = extras.getCharSequence(Intent.EXTRA_SUBJECT);
+                        StringBuilder text = new StringBuilder();
+                        if (subject != null) {
+                            text.append(subject).append(" ");
+                        }
+                        text.append(extras.getCharSequence(Intent.EXTRA_TEXT));
+                        return PostActivity.getIntent(
+                                this,
+                                -1,
+                                text.toString()
+                        );
+                    } else if (extras.get(Intent.EXTRA_STREAM) != null) {
+                        ArrayList<Uri> list = extras.getParcelableArrayList(Intent.EXTRA_STREAM);
+                        return PostActivity.getIntent(this, list);
                     }
-                    text.append(extras.getCharSequence(Intent.EXTRA_TEXT));
-                    return PostActivity.getIntent(
-                            this,
-                            -1,
-                            text.toString()
-                    );
-                } else if (extras.get(Intent.EXTRA_STREAM) != null) {
-                    ArrayList<Uri> list = extras.getParcelableArrayList(Intent.EXTRA_STREAM);
-                    return PostActivity.getIntent(this, list);
+                } catch (Throwable e) {
+                    e.printStackTrace();
                 }
             }
 
             Uri data = intent.getData();
             if (data != null){
-                switch (data.getScheme()){
-                    case "twitter":
-                        switch (data.getHost()) {
-                            case "post":
-                                String replyId = data.getQueryParameter("in_reply_to_status_id");
+                try {
+                    switch (data.getScheme()){
+                        case "twitter":
+                            switch (data.getHost()) {
+                                case "post":
+                                    String replyId = data.getQueryParameter("in_reply_to_status_id");
+                                    return PostActivity.getIntent(
+                                            this,
+                                            replyId != null ? Long.valueOf(replyId) : -1,
+                                            data.getQueryParameter("message")
+                                    );
+                                case "status":
+                                    return ShowTweetActivity.getIntent(this, Long.valueOf(data.getQueryParameter("id")));
+                                case "user":
+                                    String userId = data.getQueryParameter("id");
+                                    if (userId != null){
+                                        return ShowUserActivity.getIntent(this, Long.valueOf(userId));
+                                    } else {
+                                        return ShowUserActivity.getIntent(this, data.getQueryParameter("screen_name"));
+                                    }
+                                default:
+                                    return Intent.createChooser(new Intent(Intent.ACTION_VIEW, data), "");
+                            }
+                        case "https":
+                            List<String> pathSegments = data.getPathSegments();
+                            int size = pathSegments.size();
+
+                            String lastPathSegment = data.getLastPathSegment();
+                            switch (size){
+                                case 1:
+                                    switch (lastPathSegment){
+                                        case "share":
+                                            return generatePostIntent(data);
+                                        case "search":
+                                            return SearchResultActivity.getIntent(this, data.getQueryParameter("q"));
+                                        default:
+                                            return ShowUserActivity.getIntent(this, lastPathSegment);
+                                    }
+                                case 2:
+                                    if (pathSegments.get(0).equals("intent") && lastPathSegment.equals("tweet")){
+                                        return generatePostIntent(data);
+                                    }
+                                    break;
+
+                                case 3:
+                                    String s = pathSegments.get(1);
+                                    if (s.equals("status") || s.equals("statuses")){
+                                        return ShowTweetActivity.getIntent(this, Long.valueOf(lastPathSegment));
+                                    }
+                                    break;
+                            }
+
+                            if (data.getQueryParameter("status") != null){
+                                return PostActivity.getIntent(this, data.getQueryParameter("status"));
+                            }
+
+                            return Intent.createChooser(new Intent(Intent.ACTION_VIEW, data), "");
+                        case "web+mastodon":
+                            if (data.getHost().equals("share")) {
                                 return PostActivity.getIntent(
                                         this,
-                                        replyId != null ? Long.valueOf(replyId) : -1,
-                                        data.getQueryParameter("message")
+                                        -1,
+                                        data.getQueryParameter("text")
                                 );
-                            case "status":
-                                return ShowTweetActivity.getIntent(this, Long.valueOf(data.getQueryParameter("id")));
-                            case "user":
-                                String userId = data.getQueryParameter("id");
-                                if (userId != null){
-                                    return ShowUserActivity.getIntent(this, Long.valueOf(userId));
-                                } else {
-                                    return ShowUserActivity.getIntent(this, data.getQueryParameter("screen_name"));
-                                }
-                            default:
-                                return Intent.createChooser(new Intent(Intent.ACTION_VIEW, data), "");
-                        }
-                    case "https":
-                        List<String> pathSegments = data.getPathSegments();
-                        int size = pathSegments.size();
-
-                        String lastPathSegment = data.getLastPathSegment();
-                        switch (size){
-                            case 1:
-                                switch (lastPathSegment){
-                                    case "share":
-                                        return generatePostIntent(data);
-                                    case "search":
-                                        return SearchResultActivity.getIntent(this, data.getQueryParameter("q"));
-                                    default:
-                                        return ShowUserActivity.getIntent(this, lastPathSegment);
-                                }
-                            case 2:
-                                if (pathSegments.get(0).equals("intent") && lastPathSegment.equals("tweet")){
-                                    return generatePostIntent(data);
-                                }
-                                break;
-
-                            case 3:
-                                String s = pathSegments.get(1);
-                                if (s.equals("status") || s.equals("statuses")){
-                                    return ShowTweetActivity.getIntent(this, Long.valueOf(lastPathSegment));
-                                }
-                                break;
-                        }
-
-                        if (data.getQueryParameter("status") != null){
-                            return PostActivity.getIntent(this, data.getQueryParameter("status"));
-                        }
-
-                        return Intent.createChooser(new Intent(Intent.ACTION_VIEW, data), "");
-                    case "web+mastodon":
-                        if (data.getHost().equals("share")) {
-                            return PostActivity.getIntent(
-                                    this,
-                                    -1,
-                                    data.getQueryParameter("text")
-                            );
-                        }
-                        break;
+                            }
+                            break;
+                    }
+                } catch (Throwable e) {
+                    e.printStackTrace();
                 }
             }
         }
