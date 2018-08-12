@@ -65,6 +65,7 @@ public class LicensesActivity extends AppCompatActivity {
                         case "support_v14":
                         case "support_design":
                         case "support_custom_tabs":
+                        case "support_arch":
                             path = "licenses/android_support.txt";
                             break;
 

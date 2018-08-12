@@ -127,6 +127,9 @@
                 android:key="license_lib_support_custom_tabs"
                 android:title="Android Custom Tabs Support Library"/>
             <Preference
+                android:key="license_lib_support_arch"
+                android:title="Android Architecture Components"/>
+            <Preference
                 android:key="license_lib_exo_player"
                 android:title="ExoPlayer"/>
             <Preference
@@ -147,6 +150,12 @@
             <Preference
                 android:key="license_lib_japng_android"
                 android:title="japng_android"/>
+            <Preference
+                android:key="license_lib_kotlin"
+                android:title="Kotlin Programming Language"/>
+            <Preference
+                android:key="license_lib_kotlin_either"
+                android:title="kotlin-either"/>
             <Preference
                 android:key="license_lib_okhttp"
                 android:title="OkHttp"/>
