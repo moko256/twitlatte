@@ -157,12 +157,10 @@ public class TweetImageTableView extends GridLayout {
             heightSize=widthSize/16*9;
         }
 
-        int measuredWidthSpec=MeasureSpec.makeMeasureSpec(widthSize,widthMode);
-        int measuredHeightSpec=MeasureSpec.makeMeasureSpec(heightSize,heightMode);
-
-        setMeasuredDimension(measuredWidthSpec,measuredHeightSpec);
-
-        super.onMeasure(measuredWidthSpec, measuredHeightSpec);
+        super.onMeasure(
+                MeasureSpec.makeMeasureSpec(widthSize, widthMode),
+                MeasureSpec.makeMeasureSpec(heightSize, heightMode)
+        );
     }
 
     private void updateImageNumber(){

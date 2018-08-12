@@ -51,6 +51,5 @@ public class UserHeaderImageView extends AppCompatImageView{
                 mode
         );
         setMeasuredDimension(widthMeasureSpec, heightMeasureSpec);
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 }
