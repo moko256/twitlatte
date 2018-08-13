@@ -1,0 +1,5 @@
+Enable to show images of quoted tweet on timeline
+Enable to show tweet count per 24 hour on trends
+Enable to collapse/expand text of toot having content warning
+Enable to show custom emojis at user name
+Fixed some bug and improved many point
