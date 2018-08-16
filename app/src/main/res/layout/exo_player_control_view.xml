@@ -17,48 +17,38 @@
 
 <!-- copied from ExoPlayer/library/ui/src/main/res/exo_player_control_view.xml -->
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="48dp"
-    android:layoutDirection="ltr"
-    android:background="#33000000"
-    android:orientation="vertical">
+    android:background="#33000000">
 
-    <LinearLayout
+    <ImageButton android:id="@id/exo_play"
+        android:background="?android:attr/selectableItemBackground"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="center"
+        android:scaleType="fitCenter"
+        app:srcCompat="@drawable/ic_play_circle_filled_white_24dp"
+        android:contentDescription="@string/exo_controls_play_description"/>
+
+    <ImageButton android:id="@id/exo_pause"
+        android:background="?android:attr/selectableItemBackground"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="center"
+        android:scaleType="fitCenter"
+        app:srcCompat="@drawable/ic_pause_circle_filled_white_24dp"
+        android:contentDescription="@string/exo_controls_pause_description"/>
+
+    <com.github.moko256.twitlatte.widget.FitSystemWindowsLinearLayout
+        android:id="@+id/trend_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:layout_centerInParent="true"
-        android:paddingTop="4dp"
-        android:orientation="horizontal">
-
-        <ImageButton android:id="@id/exo_play"
-            android:background="?android:attr/selectableItemBackground"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:scaleType="fitCenter"
-            app:srcCompat="@drawable/ic_play_circle_filled_white_24dp"
-            android:contentDescription="@string/exo_controls_play_description"/>
-
-        <ImageButton android:id="@id/exo_pause"
-            android:background="?android:attr/selectableItemBackground"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:scaleType="fitCenter"
-            app:srcCompat="@drawable/ic_pause_circle_filled_white_24dp"
-            android:contentDescription="@string/exo_controls_pause_description"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:layout_alignParentBottom="true"
-        android:gravity="center_vertical"
+        android:layout_gravity="bottom"
+        android:paddingBottom="16dp"
+        android:fitsSystemWindows="true"
         android:orientation="horizontal">
 
         <TextView android:id="@id/exo_position"
@@ -90,6 +80,6 @@
             android:textColor="#FFBEBEBE"
             tools:text="10:00"/>
 
-    </LinearLayout>
+    </com.github.moko256.twitlatte.widget.FitSystemWindowsLinearLayout>
 
-</RelativeLayout>
+</FrameLayout>

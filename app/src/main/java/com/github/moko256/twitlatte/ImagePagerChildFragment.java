@@ -19,7 +19,6 @@ package com.github.moko256.twitlatte;
 import android.Manifest;
 import android.app.DownloadManager;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -36,6 +35,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -57,8 +57,6 @@ import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.ui.TrackSelectionView;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.util.MimeTypes;
-
-import java.util.Objects;
 
 import kotlin.Unit;
 import twitter4j.MediaEntity;
@@ -92,7 +90,7 @@ public class ImagePagerChildFragment extends Fragment {
 
         if (getArguments() == null
                 || (mediaEntity = (MediaEntity) getArguments().getSerializable(FRAG_MEDIA_ENTITY)) == null) {
-            Objects.requireNonNull(getActivity()).finish();
+            requireActivity().finish();
         }
     }
 
@@ -107,7 +105,6 @@ public class ImagePagerChildFragment extends Fragment {
             return Unit.INSTANCE;
         });
         view.setPositionChangeListener((Integer top, Integer left, Float dragRangeRate) -> {
-            view.setBackgroundColor(Color.argb(Math.round(255 * (1.0F - dragRangeRate)), 0, 0, 0));
             if (!isShowingSystemUI()) {
                 showSystemUI();
             }
@@ -157,7 +154,7 @@ public class ImagePagerChildFragment extends Fragment {
                 trackSelector = new DefaultTrackSelector(bandwidthMeter);
 
                 player = ExoPlayerFactory.newSimpleInstance(
-                        new AudioAndVideoRenderer(Objects.requireNonNull(getContext())),
+                        new AudioAndVideoRenderer(requireContext()),
                         trackSelector,
                         new DefaultLoadControl()
                 );
@@ -195,7 +192,7 @@ public class ImagePagerChildFragment extends Fragment {
                 trackSelector = new DefaultTrackSelector(bandwidthMeter);
 
                 player = ExoPlayerFactory.newSimpleInstance(
-                        new AudioAndVideoRenderer(Objects.requireNonNull(getContext())),
+                        new AudioAndVideoRenderer(requireContext()),
                         trackSelector,
                         new DefaultLoadControl()
                 );
@@ -253,7 +250,7 @@ public class ImagePagerChildFragment extends Fragment {
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     contentDownload();
                 } else {
-                    Toast.makeText(getActivity(), R.string.permission_denied, Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(), R.string.permission_denied, Toast.LENGTH_LONG).show();
                 }
             }
         }
@@ -372,6 +369,7 @@ public class ImagePagerChildFragment extends Fragment {
 
     private void hideSystemUI() {
         if (getActivity() != null) {
+            getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
             getActivity().getWindow().getDecorView().setSystemUiVisibility(
                     View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                             | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
@@ -388,6 +386,7 @@ public class ImagePagerChildFragment extends Fragment {
                     View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                             | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                             | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+            getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         }
     }
 
