@@ -17,9 +17,11 @@
 package com.github.moko256.twitlatte;
 
 import android.content.ActivityNotFoundException;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -67,7 +69,9 @@ public class OAuthActivity extends AppCompatActivity {
     private CompositeDisposable compositeDisposable;
 
     private boolean isUrlEnterDialogShown = false;
-    private String lastUrl = null;
+
+    @NonNull
+    private String lastUrl = "";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -77,7 +81,7 @@ public class OAuthActivity extends AppCompatActivity {
         compositeDisposable = new CompositeDisposable();
 
         if (savedInstanceState != null) {
-            lastUrl = savedInstanceState.getString(STATE_LAST_URL, null);
+            lastUrl = savedInstanceState.getString(STATE_LAST_URL, "");
 
             requirePin = savedInstanceState.getBoolean(STATE_REQUIRE_PIN, false);
 
@@ -111,16 +115,14 @@ public class OAuthActivity extends AppCompatActivity {
         if (isUrlEnterDialogShown) {
             outState.putBoolean(STATE_URL_ENTER_DIALOG_SHOWN, true);
         }
-        if (lastUrl != null && !lastUrl.isEmpty()) {
+        if (!lastUrl.isEmpty()) {
             outState.putString(STATE_LAST_URL, lastUrl);
         }
     }
 
     @Override
     protected void onDestroy() {
-        if (pinDialog != null) {
-            pinDialog.dismiss();
-        }
+        closePinDialog();
         compositeDisposable.dispose();
         super.onDestroy();
     }
@@ -210,22 +212,7 @@ public class OAuthActivity extends AppCompatActivity {
         EditText editText=new EditText(this);
         editText.setHint("e.g. mastodon.social");
         editText.setInputType(EditorInfo.TYPE_TEXT_VARIATION_URI);
-        if (lastUrl != null && !lastUrl.isEmpty()) {
-            editText.setText(lastUrl);
-            editText.setSelection(lastUrl.length());
-        }
-        editText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                lastUrl = s.toString();
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {}
-        });
         AlertDialog domainConfirm = new AlertDialog.Builder(this)
                 .setTitle(R.string.instance_domain)
                 .setView(editText)
@@ -242,10 +229,28 @@ public class OAuthActivity extends AppCompatActivity {
                 )
                 .setNegativeButton(android.R.string.cancel, null)
                 .show();
+
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                lastUrl = s.toString();
+                domainConfirm.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(s.length() > 0);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
+
+        editText.setText(lastUrl);
+        editText.setSelection(lastUrl.length());
+
         compositeDisposable.add(new CancellableDisposable(domainConfirm::dismiss));
     }
 
-    private void startAuthAndOpenDialogIfNeeded(String url, String consumerKey, String consumerSecret) {
+    private void startAuthAndOpenDialogIfNeeded(@NonNull String url, @NonNull String consumerKey, @NonNull String consumerSecret) {
         String callbackUrl;
         if (requirePin) {
             showPinDialog();
