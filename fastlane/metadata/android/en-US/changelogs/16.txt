@@ -1,0 +1,2 @@
+Fixed incorrect link position
+Fixed some bug
