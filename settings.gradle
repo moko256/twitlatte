@@ -16,9 +16,5 @@
 
 include ':app', ':mastodon4j_to_twitter4j'
 
-include ':twitter4j', ':twitter4j-core', ':twitter4j-http2-support'
-project(':twitter4j-core').projectDir = new File('twitter4j/twitter4j-core')
-project(':twitter4j-http2-support').projectDir = new File('twitter4j/twitter4j-http2-support')
-
 include ':japng-android:android_api', ':api'
 project(':api').projectDir = new File('japng-android/japng/api')
