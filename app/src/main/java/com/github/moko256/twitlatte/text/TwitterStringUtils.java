@@ -156,7 +156,7 @@ public class TwitterStringUtils {
                         public void onClick(View view) {
                             context.startActivity(SearchResultActivity.getIntent(context, "$" + symbolEntity.getText()));
                         }
-                    }, tweet.offsetByCodePoints(0, symbolEntity.getStart()), tweet.offsetByCodePoints(0, symbolEntity.getEnd()), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    }, symbolEntity.getStart(), symbolEntity.getEnd(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 }
 
                 for (HashtagEntity hashtagEntity : item.getHashtagEntities()) {
@@ -166,7 +166,7 @@ public class TwitterStringUtils {
                             context.startActivity(SearchResultActivity.getIntent(context, "#" + hashtagEntity.getText())
                             );
                         }
-                    }, tweet.offsetByCodePoints(0, hashtagEntity.getStart()), tweet.offsetByCodePoints(0, hashtagEntity.getEnd()), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    }, hashtagEntity.getStart(), hashtagEntity.getEnd(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 }
 
                 for (UserMentionEntity userMentionEntity : item.getUserMentionEntities()) {
@@ -177,7 +177,7 @@ public class TwitterStringUtils {
                                     ShowUserActivity.getIntent(context, userMentionEntity.getScreenName())
                             );
                         }
-                    }, tweet.offsetByCodePoints(0, userMentionEntity.getStart()), tweet.offsetByCodePoints(0, userMentionEntity.getEnd()), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    }, userMentionEntity.getStart(), userMentionEntity.getEnd(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 }
 
                 boolean hasMedia = item.getMediaEntities().length > 0;
@@ -187,24 +187,32 @@ public class TwitterStringUtils {
                     urlEntities.add(item.getMediaEntities()[0]);
                 }
 
-                int tweetLength = tweet.codePointCount(0, tweet.length());
+                int tweetLength = tweet.length();
                 int sp = 0;
 
                 for (URLEntity entity : urlEntities) {
                     String url = entity.getURL();
                     String displayUrl = entity.getDisplayURL();
 
-                    int urlLength = url.codePointCount(0, url.length());
-                    int displayUrlLength = displayUrl.codePointCount(0, displayUrl.length());
-                    if (entity.getStart() <= tweetLength && entity.getEnd() <= tweetLength) {
+                    int urlLength = url.length();
+                    int displayUrlLength = displayUrl.length();
+
+                    int start = entity.getStart();
+                    int end = entity.getEnd();
+
+                    if (start <= tweetLength && end <= tweetLength) {
                         int dusp = displayUrlLength - urlLength;
-                        spannableStringBuilder.replace(tweet.offsetByCodePoints(0, entity.getStart()) + sp, tweet.offsetByCodePoints(0, entity.getEnd()) + sp, displayUrl);
+
+                        start += sp;
+                        end += sp;
+
+                        spannableStringBuilder.replace(start , end, displayUrl);
                         spannableStringBuilder.setSpan(new ClickableSpan() {
                             @Override
                             public void onClick(View view) {
                                 AppCustomTabsKt.launchChromeCustomTabs(context, entity.getExpandedURL());
                             }
-                        }, tweet.offsetByCodePoints(0, entity.getStart()) + sp, tweet.offsetByCodePoints(0, entity.getEnd()) + sp + dusp, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        }, start, end + dusp, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
                         sp += dusp;
                     }
@@ -227,28 +235,40 @@ public class TwitterStringUtils {
         } else {
             URLEntity[] urlEntities = user.getDescriptionURLEntities();
 
-            if (urlEntities == null || urlEntities.length <= 0 || TextUtils.isEmpty(urlEntities[0].getURL()))
+            if (urlEntities == null
+                    || urlEntities.length <= 0
+                    || TextUtils.isEmpty(urlEntities[0].getURL())
+                    ) {
                 return description;
+            }
 
             SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(description);
-            int tweetLength = description.codePointCount(0, description.length());
+            int tweetLength = description.length();
             int sp = 0;
 
             for (URLEntity entity : urlEntities) {
                 String url = entity.getURL();
                 String expandedUrl = entity.getDisplayURL();
 
-                int urlLength = url.codePointCount(0, url.length());
-                int displayUrlLength = expandedUrl.codePointCount(0, expandedUrl.length());
-                if (entity.getStart() <= tweetLength && entity.getEnd() <= tweetLength) {
+                int urlLength = url.length();
+                int displayUrlLength = expandedUrl.length();
+
+                int start = entity.getStart();
+                int end = entity.getEnd();
+
+                if (start <= tweetLength && end <= tweetLength) {
                     int dusp = displayUrlLength - urlLength;
-                    spannableStringBuilder.replace(description.offsetByCodePoints(0, entity.getStart()) + sp, description.offsetByCodePoints(0, entity.getEnd()) + sp, expandedUrl);
+
+                    start += sp;
+                    end += sp;
+
+                    spannableStringBuilder.replace(start, end, expandedUrl);
                     spannableStringBuilder.setSpan(new ClickableSpan() {
                         @Override
                         public void onClick(View view) {
                             AppCustomTabsKt.launchChromeCustomTabs(context, entity.getExpandedURL());
                         }
-                    }, description.offsetByCodePoints(0, entity.getStart()) + sp, description.offsetByCodePoints(0, entity.getEnd()) + sp + dusp, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    }, start, end + dusp, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
                     sp += dusp;
                 }
