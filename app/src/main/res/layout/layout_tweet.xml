@@ -255,7 +255,7 @@
             android:gravity="start|center_vertical"
             android:textAppearance="@style/TextAppearance.AppCompat.Caption"
             android:textStyle="bold"
-            tools:text="500M"/>
+            tools:text="50M"/>
 
         <android.support.v7.widget.AppCompatCheckBox
             android:id="@+id/tweet_content_retweet_button"
@@ -270,16 +270,28 @@
             android:button="@drawable/repeat_button_stateful"
             app:buttonTint="@color/toggle_button_color_stateful"/>
 
+        <TextView
+            android:id="@+id/tweet_content_replies_count"
+            android:layout_width="30sp"
+            android:layout_height="24dp"
+            android:layout_marginTop="20dp"
+            android:layout_below="@id/tweet_quote_tweet"
+            android:layout_toStartOf="@id/tweet_content_retweet_button"
+            android:gravity="start|center_vertical"
+            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+            android:textStyle="bold"
+            tools:text="32K"/>
+
         <android.support.v7.widget.AppCompatImageButton
             android:id="@+id/tweet_content_reply_button"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_below="@id/tweet_quote_tweet"
-            android:layout_toStartOf="@id/tweet_content_retweet_button"
+            android:layout_toStartOf="@id/tweet_content_replies_count"
             android:layout_marginTop="20dp"
             android:layout_marginBottom="4dp"
             android:layout_marginStart="12dp"
-            android:layout_marginEnd="30sp"
+            android:layout_marginEnd="6dp"
             android:background="?attr/controlBackground"
             app:tint="@color/image_button_color_stateful"
             app:srcCompat="@drawable/ic_reply_white_24dp"

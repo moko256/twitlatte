@@ -97,6 +97,7 @@ public class StatusView extends FrameLayout {
     private final ImageButton replyButton;
     private final TextView likeCount;
     private final TextView retweetCount;
+    private final TextView repliesCount;
 
     public StatusView(Context context) {
         this(context, null);
@@ -145,6 +146,7 @@ public class StatusView extends FrameLayout {
 
         likeCount = findViewById(R.id.tweet_content_like_count);
         retweetCount = findViewById(R.id.tweet_content_retweet_count);
+        repliesCount = findViewById(R.id.tweet_content_replies_count);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             tweetContext.setBreakStrategy(Layout.BREAK_STRATEGY_SIMPLE);
@@ -583,5 +585,7 @@ public class StatusView extends FrameLayout {
 
         likeCount.setText((item.getFavoriteCount() != 0)? TwitterStringUtils.convertToSIUnitString(item.getFavoriteCount()): "");
         retweetCount.setText((item.getRetweetCount() != 0)? TwitterStringUtils.convertToSIUnitString(item.getRetweetCount()): "");
+        int repliesCountInt = ((StatusCacheMap.CachedStatus) item).getRepliesCount();
+        repliesCount.setText((repliesCountInt != 0)? TwitterStringUtils.convertToSIUnitString(repliesCountInt): "");
     }
 }

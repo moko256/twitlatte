@@ -216,6 +216,7 @@ public class StatusCacheMap {
         private final String url;
         private final List<Emoji> emojis;
         private final String spoilerText;
+        private final int repliesCount;
 
         public CachedStatus(Status status){
             createdAt=new Date(status.getCreatedAt().getTime());
@@ -305,6 +306,8 @@ public class StatusCacheMap {
                 }
                 String text = mtStatus.status.getSpoilerText();
                 this.spoilerText = text.isEmpty()? null: text;
+
+                this.repliesCount = mtStatus.status.getRepliesCount();
             } else {
                 url = "https://twitter.com/"
                         + status.getUser().getScreenName()
@@ -312,10 +315,11 @@ public class StatusCacheMap {
                         + String.valueOf(status.getId());
                 emojis = null;
                 spoilerText = null;
+                repliesCount = 0;
             }
         }
 
-        public CachedStatus(Date createdAt, long id, long userId, long retweetedStatusId, String text, String source, long inReplyToStatusId, long inReplyToUserId, boolean isFavorited, boolean isRetweeted, int favoriteCount, String inReplyToScreenName, int retweetCount, boolean isPossiblySensitive, String lang, UserMentionEntity[] userMentionEntities, URLEntity[] urlEntities, HashtagEntity[] hashtagEntities, MediaEntity[] mediaEntities, SymbolEntity[] symbolEntities, long quotedStatusId, String url, List<Emoji> emojis, String spoilerText) {
+        public CachedStatus(Date createdAt, long id, long userId, long retweetedStatusId, String text, String source, long inReplyToStatusId, long inReplyToUserId, boolean isFavorited, boolean isRetweeted, int favoriteCount, String inReplyToScreenName, int retweetCount, boolean isPossiblySensitive, String lang, UserMentionEntity[] userMentionEntities, URLEntity[] urlEntities, HashtagEntity[] hashtagEntities, MediaEntity[] mediaEntities, SymbolEntity[] symbolEntities, long quotedStatusId, String url, List<Emoji> emojis, String spoilerText, int repliesCount) {
             this.createdAt = createdAt;
             this.id = id;
             this.userId = userId;
@@ -342,6 +346,7 @@ public class StatusCacheMap {
                 this.url = url;
                 this.emojis = emojis;
                 this.spoilerText = spoilerText;
+                this.repliesCount = repliesCount;
             } else {
                 this.text=null;
                 this.source=null;
@@ -376,6 +381,7 @@ public class StatusCacheMap {
                 this.url = url;
                 this.emojis = null;
                 this.spoilerText = null;
+                this.repliesCount = -1;
             }
         }
 
@@ -569,6 +575,10 @@ public class StatusCacheMap {
 
         public String getSpoilerText() {
             return spoilerText;
+        }
+
+        public int getRepliesCount(){
+            return repliesCount;
         }
 
         @Override

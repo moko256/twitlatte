@@ -25,7 +25,6 @@ import android.database.sqlite.SQLiteStatement;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
-import com.github.moko256.twitlatte.BuildConfig;
 import com.github.moko256.twitlatte.array.ArrayUtils;
 import com.github.moko256.twitlatte.cacheMap.StatusCacheMap;
 import com.github.moko256.twitlatte.entity.AccessToken;
@@ -105,11 +104,12 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
             "Emoji_shortcodes",
             "Emoji_urls",
             "contentWarning",
+            "repliesCount",
             "count"
     };
 
     public CachedStatusesSQLiteOpenHelper(Context context, AccessToken accessToken){
-        super(context, accessToken != null? new File(context.getCacheDir(), accessToken.getKeyString() + "/CachedStatuses.db").getAbsolutePath(): null, null, BuildConfig.CACHE_DATABASE_VERSION);
+        super(context, accessToken != null? new File(context.getCacheDir(), accessToken.getKeyString() + "/CachedStatuses.db").getAbsolutePath(): null, null, /*BuildConfig.CACHE_DATABASE_VERSION*/ 3);
     }
 
     @Override
@@ -122,11 +122,14 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        if (oldVersion == 1) {
+        if (oldVersion < 2) {
             db.execSQL("alter table " + TABLE_NAME + " add column " + TABLE_COLUMNS[48]);
         }
 
-        // else (oldVersion <= 2) ...
+        if (oldVersion < 3) {
+            db.execSQL("alter table " + TABLE_NAME + " add column " + TABLE_COLUMNS[49]);
+        }
+
     }
 
     public Status getCachedStatus(long id){
@@ -204,7 +207,8 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
                                 splitComma(c.getString(46)),
                                 splitComma(c.getString(47))
                         ),
-                        c.getString(48)
+                        c.getString(48),
+                        c.getInt(49)
                 );
             }
 
@@ -488,6 +492,7 @@ public class CachedStatusesSQLiteOpenHelper extends SQLiteOpenHelper {
         if (spoilerText != null) {
             contentValues.put(TABLE_COLUMNS[48], spoilerText);
         }
+        contentValues.put(TABLE_COLUMNS[49], status.getRepliesCount());
         return contentValues;
     }
 
