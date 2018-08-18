@@ -56,6 +56,7 @@ public class OAuthActivity extends AppCompatActivity {
     private static final String STATE_REQUIRE_PIN = "state_require_pin";
     private static final String STATE_URL_ENTER_DIALOG_SHOWN = "state_url_enter_dialog_shown";
     private static final String STATE_LAST_URL = "state_last_url";
+    private static final String STATE_ENTERING_PIN = "state_entering_pin";
 
     @Type.ClientTypeInt
     private int authClientType = -1;
@@ -73,6 +74,9 @@ public class OAuthActivity extends AppCompatActivity {
     @NonNull
     private String lastUrl = "";
 
+    @NonNull
+    private String enteringPin = "";
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,6 +86,8 @@ public class OAuthActivity extends AppCompatActivity {
 
         if (savedInstanceState != null) {
             lastUrl = savedInstanceState.getString(STATE_LAST_URL, "");
+
+            enteringPin = savedInstanceState.getString(STATE_ENTERING_PIN, "");
 
             requirePin = savedInstanceState.getBoolean(STATE_REQUIRE_PIN, false);
 
@@ -114,6 +120,9 @@ public class OAuthActivity extends AppCompatActivity {
         }
         if (isUrlEnterDialogShown) {
             outState.putBoolean(STATE_URL_ENTER_DIALOG_SHOWN, true);
+        }
+        if (!enteringPin.isEmpty()) {
+            outState.putString(STATE_ENTERING_PIN, enteringPin);
         }
         if (!lastUrl.isEmpty()) {
             outState.putString(STATE_LAST_URL, lastUrl);
@@ -284,9 +293,23 @@ public class OAuthActivity extends AppCompatActivity {
         editText.setInputType(EditorInfo.TYPE_NUMBER_FLAG_DECIMAL);
         pinDialog = new AlertDialog.Builder(this)
                 .setView(editText)
-                .setPositiveButton(android.R.string.ok,(dialog, which) -> initToken(editText.getText().toString()))
+                .setPositiveButton(android.R.string.ok,(dialog, which) -> initToken(enteringPin))
                 .setCancelable(false)
                 .show();
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                enteringPin = s.toString();
+                pinDialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(s.length() > 0);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
+        editText.setText(enteringPin);
     }
 
     private void closePinDialog(){
