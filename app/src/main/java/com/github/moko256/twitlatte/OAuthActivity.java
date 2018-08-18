@@ -140,7 +140,8 @@ public class OAuthActivity extends AppCompatActivity {
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         Uri uri = intent.getData();
-        if (!requirePin
+        if (model != null
+                && !requirePin
                 && uri != null
                 && uri.getScheme().equals(getString(R.string.app_name))
                 && uri.getHost().equals("OAuthActivity")
