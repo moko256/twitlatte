@@ -212,7 +212,9 @@ public class ShowTweetActivity extends AppCompatActivity {
                 });
     }
 
-    private void updateView(Status item){
+    private void updateView(Status arg){
+        Status item = arg.isRetweet()? arg.getRetweetedStatus(): arg;
+
         long replyTweetId = item.getInReplyToStatusId();
         if (replyTweetId != -1){
             tweetIsReply.setVisibility(VISIBLE);
