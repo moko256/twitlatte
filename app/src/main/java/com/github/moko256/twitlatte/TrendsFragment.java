@@ -28,11 +28,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.github.moko256.twitlatte.database.CachedTrendsSQLiteOpenHelper;
+import com.github.moko256.twitlatte.entity.Trend;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -41,7 +41,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import twitter4j.GeoLocation;
-import twitter4j.Trend;
 import twitter4j.Trends;
 import twitter4j.TwitterException;
 
@@ -61,7 +60,6 @@ public class TrendsFragment extends BaseListFragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        list=new ArrayList<>();
         disposable = new CompositeDisposable();
         helper = new CachedTrendsSQLiteOpenHelper(
                 requireContext().getApplicationContext(),
@@ -71,6 +69,8 @@ public class TrendsFragment extends BaseListFragment {
         if (trends.size() > 0){
             list = trends;
             setRefreshing(false);
+        } else {
+            list = new ArrayList<>();
         }
         super.onCreate(savedInstanceState);
     }
@@ -125,7 +125,7 @@ public class TrendsFragment extends BaseListFragment {
                         .subscribe(
                                 result-> {
                                     list.clear();
-                                    list.addAll(Arrays.asList(result.getTrends()));
+                                    list.addAll(result);
                                     adapter.notifyDataSetChanged();
                                     setRefreshing(false);
                                 },
@@ -156,15 +156,22 @@ public class TrendsFragment extends BaseListFragment {
         return new LinearLayoutManager(getContext());
     }
 
-    private Single<Trends> getResponseSingle(GeoLocation geolocation) {
+    private Single<List<Trend>> getResponseSingle(GeoLocation geolocation) {
         return Single.create(
                 subscriber->{
                     try {
                         Trends trends = GlobalApplication.twitter
                                 .getPlaceTrends(GlobalApplication.twitter.getClosestTrends(geolocation).get(0).getWoeid());
-                        helper.setTrends(Arrays.asList(trends.getTrends()));
+                        twitter4j.Trend[] result = trends.getTrends();
+                        ArrayList<Trend> arrayList = new ArrayList<>(result.length);
 
-                        subscriber.onSuccess(trends);
+                        for (twitter4j.Trend trend : result) {
+                            arrayList.add(new Trend(trend.getName(), trend.getTweetVolume()));
+                        }
+
+                        helper.setTrends(arrayList);
+
+                        subscriber.onSuccess(arrayList);
                     } catch (TwitterException e) {
                         subscriber.tryOnError(e);
                     }

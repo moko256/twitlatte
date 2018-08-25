@@ -24,9 +24,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.List;
+import com.github.moko256.twitlatte.entity.Trend;
 
-import twitter4j.Trend;
+import java.util.List;
 
 /**
  * Created by moko256 on 2017/07/05.
@@ -47,7 +47,7 @@ public class TrendsAdapter extends RecyclerView.Adapter<TrendsAdapter.ViewHolder
 
     @Override
     public long getItemId(int position) {
-        return data.get(position).getName().hashCode();
+        return data.get(position).hashCode();
     }
 
     @NonNull
@@ -61,11 +61,11 @@ public class TrendsAdapter extends RecyclerView.Adapter<TrendsAdapter.ViewHolder
         Trend item=data.get(i);
 
         viewHolder.text.setText(item.getName());
-        if (item.getTweetVolume() != -1) {
+        if (item.getVolume() != -1) {
             if (viewHolder.volume.getVisibility() != View.VISIBLE) {
                 viewHolder.volume.setVisibility(View.VISIBLE);
             }
-            viewHolder.volume.setText(context.getString(R.string.tweet_per_last_24_hours, item.getTweetVolume()));
+            viewHolder.volume.setText(context.getString(R.string.tweet_per_last_24_hours, item.getVolume()));
         } else {
             if (viewHolder.volume.getVisibility() != View.GONE) {
                 viewHolder.volume.setVisibility(View.GONE);
