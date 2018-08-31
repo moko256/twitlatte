@@ -26,4 +26,5 @@ dependencies {
     api "com.squareup.okhttp3:okhttp:$okhttp_version"
     api "com.google.code.gson:gson:$gson_version"
     api "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    api 'com.squareup.okio:okio:2.0.0'
 }
