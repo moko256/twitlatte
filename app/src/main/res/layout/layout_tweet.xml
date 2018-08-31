@@ -265,7 +265,7 @@
             android:layout_toStartOf="@id/tweet_content_retweet_count"
             android:layout_marginTop="20dp"
             android:layout_marginBottom="4dp"
-            android:layout_marginStart="18dp"
+            android:layout_marginStart="12dp"
             android:layout_marginEnd="6dp"
             android:button="@drawable/repeat_button_stateful"
             app:buttonTint="@color/toggle_button_color_stateful"/>
