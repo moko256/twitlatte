@@ -26,7 +26,6 @@ import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
-import android.text.style.ClickableSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,6 +40,7 @@ import com.github.moko256.twitlatte.glide.GlideApp;
 import com.github.moko256.twitlatte.glide.GlideRequests;
 import com.github.moko256.twitlatte.intent.AppCustomTabsKt;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
+import com.github.moko256.twitlatte.text.style.ClickableNoLineSpan;
 import com.github.moko256.twitlatte.view.EmojiToTextViewSetter;
 
 import java.text.DateFormat;
@@ -248,7 +248,7 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
             String text = getString(R.string.url_is, url);
             SpannableStringBuilder builder = new SpannableStringBuilder(text);
             int start = text.indexOf(url);
-            builder.setSpan(new ClickableSpan() {
+            builder.setSpan(new ClickableNoLineSpan() {
                 @Override
                 public void onClick(View widget) {
                     AppCustomTabsKt.launchChromeCustomTabs(requireContext(), url);

@@ -27,7 +27,6 @@ import android.support.v7.content.res.AppCompatResources;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
-import android.text.style.ClickableSpan;
 import android.text.style.ImageSpan;
 import android.view.View;
 import android.widget.TextView;
@@ -40,6 +39,7 @@ import com.github.moko256.twitlatte.SearchResultActivity;
 import com.github.moko256.twitlatte.ShowUserActivity;
 import com.github.moko256.twitlatte.entity.Type;
 import com.github.moko256.twitlatte.intent.AppCustomTabsKt;
+import com.github.moko256.twitlatte.text.style.ClickableNoLineSpan;
 import com.sys1yagi.mastodon4j.api.exception.Mastodon4jRequestException;
 
 import java.util.ArrayList;
@@ -151,7 +151,7 @@ public class TwitterStringUtils {
 
             try {
                 for (SymbolEntity symbolEntity : item.getSymbolEntities()) {
-                    spannableStringBuilder.setSpan(new ClickableSpan() {
+                    spannableStringBuilder.setSpan(new ClickableNoLineSpan() {
                         @Override
                         public void onClick(View view) {
                             context.startActivity(SearchResultActivity.getIntent(context, "$" + symbolEntity.getText()));
@@ -160,7 +160,7 @@ public class TwitterStringUtils {
                 }
 
                 for (HashtagEntity hashtagEntity : item.getHashtagEntities()) {
-                    spannableStringBuilder.setSpan(new ClickableSpan() {
+                    spannableStringBuilder.setSpan(new ClickableNoLineSpan() {
                         @Override
                         public void onClick(View view) {
                             context.startActivity(SearchResultActivity.getIntent(context, "#" + hashtagEntity.getText())
@@ -170,7 +170,7 @@ public class TwitterStringUtils {
                 }
 
                 for (UserMentionEntity userMentionEntity : item.getUserMentionEntities()) {
-                    spannableStringBuilder.setSpan(new ClickableSpan() {
+                    spannableStringBuilder.setSpan(new ClickableNoLineSpan() {
                         @Override
                         public void onClick(View view) {
                             context.startActivity(
@@ -207,7 +207,7 @@ public class TwitterStringUtils {
                         end += sp;
 
                         spannableStringBuilder.replace(start , end, displayUrl);
-                        spannableStringBuilder.setSpan(new ClickableSpan() {
+                        spannableStringBuilder.setSpan(new ClickableNoLineSpan() {
                             @Override
                             public void onClick(View view) {
                                 AppCustomTabsKt.launchChromeCustomTabs(context, entity.getExpandedURL());
@@ -263,7 +263,7 @@ public class TwitterStringUtils {
                     end += sp;
 
                     spannableStringBuilder.replace(start, end, expandedUrl);
-                    spannableStringBuilder.setSpan(new ClickableSpan() {
+                    spannableStringBuilder.setSpan(new ClickableNoLineSpan() {
                         @Override
                         public void onClick(View view) {
                             AppCustomTabsKt.launchChromeCustomTabs(context, entity.getExpandedURL());
@@ -283,7 +283,7 @@ public class TwitterStringUtils {
             final Uri uri = Uri.parse(link);
             if (uri.getScheme().equals("twitlatte")) {
                 if (uri.getHost().equals("user")) {
-                    return new ClickableSpan() {
+                    return new ClickableNoLineSpan() {
                         @Override
                         public void onClick(View view) {
                             context.startActivity(
@@ -292,7 +292,7 @@ public class TwitterStringUtils {
                         }
                     };
                 } else {
-                    return new ClickableSpan() {
+                    return new ClickableNoLineSpan() {
                         @Override
                         public void onClick(View view) {
                             context.startActivity(SearchResultActivity.getIntent(context, uri.getLastPathSegment()));
@@ -300,7 +300,7 @@ public class TwitterStringUtils {
                     };
                 }
             } else {
-                return new ClickableSpan() {
+                return new ClickableNoLineSpan() {
                     @Override
                     public void onClick(View view) {
                         AppCustomTabsKt.launchChromeCustomTabs(context, link);
