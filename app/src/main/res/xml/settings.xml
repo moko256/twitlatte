@@ -177,7 +177,8 @@
         </PreferenceScreen>
         <Preference
             android:key="source_code_link"
-            android:title="GitHub" />
+            android:title="@string/do_see_source_code"
+            android:summary="@string/do_description_see_source_code" />
         <PreferenceScreen
             android:key="contributors"
             android:title="@string/contributors">
