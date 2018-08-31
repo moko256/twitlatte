@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package com.github.moko256.twitlatte.text
+package com.github.moko256.twitlatte.text.link
 
 import android.text.SpannableStringBuilder
+import com.github.moko256.twitlatte.text.link.entity.Link
 import org.ccil.cowan.tagsoup.Parser
 import org.xml.sax.Attributes
 import org.xml.sax.InputSource
@@ -34,13 +35,14 @@ object MTHtmlParser {
         contentHandler = handler
     }
 
+    @Deprecated(message = "No longer support")
     fun convertToEntities(text: String, listener: (link: String) -> Any): CharSequence = try {
         parser.parse(InputSource(text.reader()))
 
         if (handler.linkList.isEmpty()) {
             handler.stringBuilder.toString()
         } else {
-            SpannableStringBuilder(handler.stringBuilder).also {builder ->
+            SpannableStringBuilder(handler.stringBuilder).also { builder ->
                 handler.linkList.forEach {
                     builder.setSpan(
                             listener(it.href),
@@ -55,6 +57,15 @@ object MTHtmlParser {
         e.printStackTrace()
         text
     }
+
+    fun convertToContentAndLinks(text: String): Pair<CharSequence, List<Link>> = try {
+        parser.parse(InputSource(text.reader()))
+
+        handler.stringBuilder.toString() to handler.linkList
+    } catch (e: Throwable) {
+        e.printStackTrace()
+        text to emptyList()
+    }
 }
 
 
@@ -63,7 +74,7 @@ private const val TYPE_TAG = 2
 private const val TYPE_USER = 3
 
 private class MastodonHtmlHandler: DefaultHandler() {
-    val stringBuilder = StringBuilder(500)
+    lateinit var stringBuilder: StringBuilder
     val linkList = ArrayList<Link>(6)
 
     private var noBr = false
@@ -80,7 +91,7 @@ private class MastodonHtmlHandler: DefaultHandler() {
     private var linkStart : Int = -1
 
     override fun startDocument() {
-        stringBuilder.setLength(0)
+        stringBuilder = StringBuilder(500)
         noBr = false
         isDisplayable = true
         linkList.clear()
@@ -154,9 +165,3 @@ private class MastodonHtmlHandler: DefaultHandler() {
         }
     }
 }
-
-data class Link(
-        val href: String,
-        val start: Int,
-        val end: Int
-)

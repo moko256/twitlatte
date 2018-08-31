@@ -39,6 +39,7 @@ import com.github.moko256.twitlatte.SearchResultActivity;
 import com.github.moko256.twitlatte.ShowUserActivity;
 import com.github.moko256.twitlatte.entity.Type;
 import com.github.moko256.twitlatte.intent.AppCustomTabsKt;
+import com.github.moko256.twitlatte.text.link.MTHtmlParser;
 import com.github.moko256.twitlatte.text.style.ClickableNoLineSpan;
 import com.sys1yagi.mastodon4j.api.exception.Mastodon4jRequestException;
 

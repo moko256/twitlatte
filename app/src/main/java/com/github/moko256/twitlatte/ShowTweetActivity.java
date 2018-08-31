@@ -36,8 +36,8 @@ import com.github.moko256.twitlatte.cacheMap.StatusCacheMap;
 import com.github.moko256.twitlatte.intent.AppCustomTabsKt;
 import com.github.moko256.twitlatte.model.base.PostTweetModel;
 import com.github.moko256.twitlatte.model.impl.PostTweetModelCreator;
-import com.github.moko256.twitlatte.text.MTHtmlParser;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
+import com.github.moko256.twitlatte.text.link.MTHtmlParser;
 
 import java.text.DateFormat;
 
