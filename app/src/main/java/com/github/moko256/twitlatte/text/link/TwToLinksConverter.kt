@@ -25,74 +25,71 @@ import twitter4j.URLEntity
  *
  * @author moko256
  */
-object TwToLinksConverter {
+fun Status.convertToContentAndLinks(): Pair<CharSequence, List<Link>> {
+    val links = ArrayList<Link>(6)
+    val stringBuilder = StringBuilder(300)
 
-    fun convertToContentAndLinks(status: Status): Pair<CharSequence, List<Link>> {
-        val links = ArrayList<Link>(6)
-        val stringBuilder = StringBuilder(300)
-
-        stringBuilder.setLength(0)
-        for (symbolEntity in status.symbolEntities) {
-            links.add(Link(
-                    "twitlatte://symbol" + symbolEntity.text,
-                    symbolEntity.start,
-                    symbolEntity.end
-            ))
-        }
-
-        for (hashtagEntity in status.hashtagEntities) {
-            links.add(Link(
-                    "twitlatte://hashtag" + hashtagEntity.text,
-                    hashtagEntity.start,
-                    hashtagEntity.end
-            ))
-        }
-
-        for (userMentionEntity in status.userMentionEntities) {
-            links.add(Link(
-                    "twitlatte://user" + userMentionEntity.text,
-                    userMentionEntity.start,
-                    userMentionEntity.end
-            ))
-        }
-
-        val hasMedia = status.mediaEntities.isNotEmpty()
-        val urlEntities = ArrayList<URLEntity>(status.urlEntities.size + if (hasMedia) 1 else 0)
-        urlEntities.addAll(status.urlEntities.asList())
-        if (hasMedia) {
-            urlEntities.add(status.mediaEntities[0])
-        }
-
-        val tweetLength = status.text.length
-        var sp = 0
-
-        for (entity in urlEntities) {
-            val url = entity.url
-            val displayUrl = entity.displayURL
-
-            val urlLength = url.length
-            val displayUrlLength = displayUrl.length
-
-            var start = entity.start
-            var end = entity.end
-
-            if (start <= tweetLength && end <= tweetLength) {
-                val dusp = displayUrlLength - urlLength
-
-                start += sp
-                end += sp
-
-                stringBuilder.replace(start, end, displayUrl)
-                links.add(Link(
-                        entity.expandedURL,
-                        start,
-                        end + dusp
-                ))
-
-                sp += dusp
-            }
-        }
-
-        return stringBuilder to links
+    stringBuilder.setLength(0)
+    for (symbolEntity in symbolEntities) {
+        links.add(Link(
+                "twitlatte://symbol" + symbolEntity.text,
+                symbolEntity.start,
+                symbolEntity.end
+        ))
     }
+
+    for (hashtagEntity in hashtagEntities) {
+        links.add(Link(
+                "twitlatte://hashtag" + hashtagEntity.text,
+                hashtagEntity.start,
+                hashtagEntity.end
+        ))
+    }
+
+    for (userMentionEntity in userMentionEntities) {
+        links.add(Link(
+                "twitlatte://user" + userMentionEntity.text,
+                userMentionEntity.start,
+                userMentionEntity.end
+        ))
+    }
+
+    val hasMedia = mediaEntities.isNotEmpty()
+    val mediaAndUrlEntities = ArrayList<URLEntity>(urlEntities.size + if (hasMedia) 1 else 0)
+    mediaAndUrlEntities.addAll(urlEntities.asList())
+    if (hasMedia) {
+        mediaAndUrlEntities.add(mediaEntities[0])
+    }
+
+    val tweetLength = text.length
+    var sp = 0
+
+    for (entity in mediaAndUrlEntities) {
+        val url = entity.url
+        val displayUrl = entity.displayURL
+
+        val urlLength = url.length
+        val displayUrlLength = displayUrl.length
+
+        var start = entity.start
+        var end = entity.end
+
+        if (start <= tweetLength && end <= tweetLength) {
+            val dusp = displayUrlLength - urlLength
+
+            start += sp
+            end += sp
+
+            stringBuilder.replace(start, end, displayUrl)
+            links.add(Link(
+                    entity.expandedURL,
+                    start,
+                    end + dusp
+            ))
+
+            sp += dusp
+        }
+    }
+
+    return stringBuilder to links
 }
