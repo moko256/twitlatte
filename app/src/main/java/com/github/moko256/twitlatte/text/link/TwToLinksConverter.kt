@@ -17,15 +17,21 @@
 package com.github.moko256.twitlatte.text.link
 
 import com.github.moko256.twitlatte.text.link.entity.Link
-import twitter4j.Status
-import twitter4j.URLEntity
+import twitter4j.*
 
 /**
  * Created by moko256 on 2018/08/31.
  *
  * @author moko256
  */
-fun Status.convertToContentAndLinks(): Pair<CharSequence, List<Link>> {
+fun convertToContentAndLinks(
+        text: String,
+        symbolEntities: Array<SymbolEntity>,
+        hashtagEntities: Array<HashtagEntity>,
+        userMentionEntities: Array<UserMentionEntity>,
+        mediaEntities: Array<MediaEntity>,
+        urlEntities: Array<URLEntity>
+): Pair<CharSequence, List<Link>> {
     val links = ArrayList<Link>(6)
     val stringBuilder = StringBuilder(300)
 
