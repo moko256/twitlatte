@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.moko256.twicalico.entity
-
-import java.util.*
+package com.github.moko256.twitlatte.entity
 
 /**
  * Created by moko256 on 2017/12/22.

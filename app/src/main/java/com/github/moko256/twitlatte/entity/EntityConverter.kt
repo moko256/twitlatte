@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.moko256.twicalico.entity
+package com.github.moko256.twitlatte.entity
 
 import twitter4j.URLEntity
 import twitter4j.UserMentionEntity
@@ -27,7 +27,7 @@ import twitter4j.Status as Twitter4jStatus
  */
 class EntityConverter {
 
-    fun convert(status: Twitter4jStatus): Status{
+    fun convert(status: Twitter4jStatus): Status {
         return Status(
                 id = status.id,
                 userId = status.user.id,
