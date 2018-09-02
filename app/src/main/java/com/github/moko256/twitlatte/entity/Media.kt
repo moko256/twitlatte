@@ -28,7 +28,7 @@ data class Media (
     enum class ImageType {
         PICTURE,
         GIF,
-        GIF_VIDEO,
-        VIDEO,
+        VIDEO_ONE,
+        VIDEO_MULTI,
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 The twicalico authors
+ * Copyright 2015-2018 The twitlatte authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,13 @@
 package com.github.moko256.twitlatte.entity
 
 /**
- * Created by moko256 on 2017/12/22.
+ * Created by moko256 on 2018/09/02.
  *
  * @author moko256
  */
-data class Source (
-        val name: CharSequence,
-        val website: CharSequence?
-)
+enum class Visibility(val value: String) {
+    Public("public"),
+    Unlisted("unlisted"),
+    Private("private"),
+    Direct("direct")
+}
