@@ -31,11 +31,10 @@ fun convertToContentAndLinks(
         userMentionEntities: Array<UserMentionEntity>,
         mediaEntities: Array<MediaEntity>,
         urlEntities: Array<URLEntity>
-): Pair<CharSequence, List<Link>> {
+): Pair<String, Array<Link>> {
     val links = ArrayList<Link>(6)
     val stringBuilder = StringBuilder(300)
 
-    stringBuilder.setLength(0)
     for (symbolEntity in symbolEntities) {
         links.add(Link(
                 "twitlatte://symbol" + symbolEntity.text,
@@ -97,5 +96,5 @@ fun convertToContentAndLinks(
         }
     }
 
-    return stringBuilder to links
+    return stringBuilder.toString() to links.toTypedArray()
 }

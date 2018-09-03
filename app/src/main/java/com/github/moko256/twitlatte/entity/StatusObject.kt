@@ -17,31 +17,24 @@
 package com.github.moko256.twitlatte.entity
 
 import com.github.moko256.twitlatte.text.link.entity.Link
+import java.util.*
 
 /**
  * Created by moko256 on 2017/12/22.
  *
  * @author moko256
  */
-sealed class StatusObject(private val innerId: Long) {
-    override fun equals(other: Any?): Boolean {
-        return other !== null && (this === other || other is Status && other.id == this.innerId)
-    }
-
-    override fun hashCode(): Int {
-        return innerId.toInt()
-    }
-}
+sealed class StatusObject
 
 data class Status(
-        val createdAt: Long,
+        val createdAt: Date,
         val id: Long,
 
         val userId: Long,
 
-        val text: CharSequence,
-        val sourceName: CharSequence?,
-        val sourceWebsite: CharSequence?,
+        val text: String,
+        val sourceName: String?,
+        val sourceWebsite: String?,
 
         val inReplyToStatusId: Long,
         val inReplyToUserId: Long,
@@ -57,22 +50,44 @@ data class Status(
         val isSensitive: Boolean,
         val lang: String?,
 
-        val urls: List<Link>?,
-        val medias: List<Media>?,
+        val mentions: Array<String>?,
+        val urls: Array<Link>?,
+        val medias: Array<Media>?,
 
         val quotedStatusId: Long,
 
         val url: String,
         val spoilerText: String?,
-        val emojis: List<Emoji>?,
+        val emojis: Array<Emoji>?,
         val visibility: String?
-): StatusObject(id)
+): StatusObject() {
+    override fun equals(other: Any?): Boolean {
+        return other !== null && (this === other || other is Status && other.id == this.id)
+    }
 
-data class Retweet(
-        val createdAt: Long,
+    override fun hashCode(): Int {
+        return id.toInt()
+    }
+}
+
+data class Repeat(
+        val createdAt: Date,
         val id: Long,
 
         val userId: Long,
 
-        val repeatStatusId: Long
-): StatusObject(id)
+        val repeatedStatusId: Long
+): StatusObject() {
+    override fun equals(other: Any?): Boolean {
+        return other !== null && (this === other || other is Status && other.id == this.id)
+    }
+
+    override fun hashCode(): Int {
+        return id.toInt()
+    }
+}
+
+fun StatusObject.getId() = when(this) {
+    is Status -> this.id
+    is Repeat -> this.id
+}

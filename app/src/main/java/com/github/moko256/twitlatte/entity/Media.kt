@@ -16,6 +16,8 @@
 
 package com.github.moko256.twitlatte.entity
 
+import java.io.Serializable
+
 /**
  * Created by moko256 on 2017/12/22.
  *
@@ -23,12 +25,12 @@ package com.github.moko256.twitlatte.entity
  */
 data class Media (
         val url: String,
-        val imageType: ImageType
-) {
-    enum class ImageType {
-        PICTURE,
-        GIF,
-        VIDEO_ONE,
-        VIDEO_MULTI,
+        val imageType: String
+): Serializable {
+    enum class ImageType(val value: String) {
+        PICTURE("picture"),
+        GIF("gif"),
+        VIDEO_ONE("video_one"),
+        VIDEO_MULTI("video_multi"),
     }
 }

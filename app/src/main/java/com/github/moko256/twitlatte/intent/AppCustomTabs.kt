@@ -39,8 +39,10 @@ import com.github.moko256.twitlatte.R
  * @param uri uri string
  */
 fun launchChromeCustomTabs(context: Context, uri: String){
-    val url = Uri.parse(uri)
+    launchChromeCustomTabs(context, Uri.parse(uri))
+}
 
+fun launchChromeCustomTabs(context: Context, url: Uri){
     try {
         if (GlobalApplication.preferenceRepository.getBoolean(GlobalApplication.KEY_USE_CHROME_CUSTOM_TAB, true)) {
             CustomTabsIntent.Builder()

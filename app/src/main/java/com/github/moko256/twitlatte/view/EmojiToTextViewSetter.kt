@@ -47,7 +47,7 @@ private val containsEmoji = Pattern.compile(":([a-zA-Z0-9_]{2,}):")
 
 class EmojiToTextViewSetter(private val glideRequests: GlideRequests, private val textView: TextView) {
 
-    fun set(text: CharSequence, emojis: List<Emoji>): Array<Disposable>? {
+    fun set(text: CharSequence, emojis: Array<Emoji>): Array<Disposable>? {
         val disposable = ArrayList<Disposable>(2)
 
         val matcher = containsEmoji.matcher(text)

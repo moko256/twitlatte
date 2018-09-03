@@ -220,14 +220,14 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
             if (userNameEmojiSetter == null) {
                 userNameEmojiSetter = new EmojiToTextViewSetter(glideRequests, userNameText);
             }
-            Disposable[] setOfName = userNameEmojiSetter.set(userName, userNameEmojis);
+            Disposable[] setOfName = userNameEmojiSetter.set(userName, userNameEmojis.toArray(new Emoji[userNameEmojis.size()]));
             if (setOfName != null) {
                 disposable.addAll(setOfName);
             } else {
                 if (userBioEmojiSetter == null) {
                     userBioEmojiSetter = new EmojiToTextViewSetter(glideRequests, userBioText);
                 }
-                Disposable[] setOfBio = userBioEmojiSetter.set(userBio, userNameEmojis);
+                Disposable[] setOfBio = userBioEmojiSetter.set(userBio, userNameEmojis.toArray(new Emoji[userNameEmojis.size()]));
                 if (setOfBio != null) {
                     disposable.addAll(setOfBio);
                 }

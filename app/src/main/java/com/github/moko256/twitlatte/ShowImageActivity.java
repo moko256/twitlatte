@@ -23,12 +23,12 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 
+import com.github.moko256.twitlatte.entity.Media;
+
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-
-import twitter4j.MediaEntity;
 
 /**
  * Created by moko256 on 2016/06/26.
@@ -39,7 +39,7 @@ public class ShowImageActivity extends AppCompatActivity {
     private static final String FRAG_MEDIA_ENTITIES="MediaEntities";
     private static final String FRAG_POSITION="position";
 
-    private List<MediaEntity> mediaEntities;
+    private List<Media> mediaEntities;
 
     private ViewPager pager;
 
@@ -48,7 +48,7 @@ public class ShowImageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_image);
 
-        mediaEntities = (List<MediaEntity>) getIntent().getSerializableExtra(FRAG_MEDIA_ENTITIES);
+        mediaEntities = (List<Media>) getIntent().getSerializableExtra(FRAG_MEDIA_ENTITIES);
 
         int position=getIntent().getIntExtra(FRAG_POSITION,0);
 
@@ -75,7 +75,7 @@ public class ShowImageActivity extends AppCompatActivity {
         return true;
     }
 
-    public static Intent getIntent(Context context, MediaEntity[] entities , int position){
+    public static Intent getIntent(Context context, Media[] entities , int position){
         return new Intent(context,ShowImageActivity.class)
                 .putExtra(FRAG_MEDIA_ENTITIES, (Serializable) Arrays.asList(entities))
                 .putExtra(FRAG_POSITION,position);

@@ -32,7 +32,7 @@ object ISO8601DateConverter {
         timeZone = TimeZone.getTimeZone("GMT")
     }
 
-    fun parseDate(date: String): Date {
+    fun toDate(date: String): Date {
         try {
             synchronized(dateParser) {
                 return dateParser.parse(date)
@@ -40,6 +40,18 @@ object ISO8601DateConverter {
         } catch (e: ParseException) {
             e.printStackTrace()
             return Date(0)
+        }
+
+    }
+
+    fun toDateString(date: Date): String {
+        try {
+            synchronized(dateParser) {
+                return dateParser.format(date)
+            }
+        } catch (e: ParseException) {
+            e.printStackTrace()
+            return "2018-01-01T00:00:00.000Z"
         }
 
     }

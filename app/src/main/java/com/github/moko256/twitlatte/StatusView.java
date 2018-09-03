@@ -16,57 +16,13 @@
 
 package com.github.moko256.twitlatte;
 
-import android.app.Activity;
-import android.content.Context;
-import android.os.Build;
-import android.support.v4.app.ActivityOptionsCompat;
-import android.text.Layout;
-import android.text.TextUtils;
-import android.text.format.DateUtils;
-import android.text.method.LinkMovementMethod;
-import android.util.AttributeSet;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.CheckBox;
-import android.widget.FrameLayout;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
-import android.widget.Space;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
-import com.github.moko256.mastodon.MTUser;
-import com.github.moko256.twitlatte.cacheMap.StatusCacheMap;
-import com.github.moko256.twitlatte.database.CachedUsersSQLiteOpenHelper;
-import com.github.moko256.twitlatte.entity.Emoji;
-import com.github.moko256.twitlatte.entity.Type;
-import com.github.moko256.twitlatte.glide.GlideApp;
-import com.github.moko256.twitlatte.glide.GlideRequests;
-import com.github.moko256.twitlatte.text.TwitterStringUtils;
-import com.github.moko256.twitlatte.view.EmojiToTextViewSetter;
-import com.github.moko256.twitlatte.widget.TweetImageTableView;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import io.reactivex.Single;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
-import twitter4j.MediaEntity;
-import twitter4j.Status;
-import twitter4j.TwitterException;
-
 /**
  * Created by moko256 on 2017/02/17.
  * 
  * @author moko256
  */
 
-public class StatusView extends FrameLayout {
+/*public class StatusView extends FrameLayout {
     private Status status;
 
     private final CompositeDisposable disposable = new CompositeDisposable();
@@ -589,3 +545,4 @@ public class StatusView extends FrameLayout {
         repliesCount.setText((repliesCountInt != 0)? TwitterStringUtils.convertToSIUnitString(repliesCountInt): "");
     }
 }
+*/

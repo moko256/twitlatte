@@ -45,7 +45,7 @@ object MTHtmlParser {
             SpannableStringBuilder(handler.stringBuilder).also { builder ->
                 handler.linkList.forEach {
                     builder.setSpan(
-                            listener(it.href),
+                            listener(it.url),
                             it.start,
                             it.end,
                             SpannableStringBuilder.SPAN_EXCLUSIVE_EXCLUSIVE
@@ -58,13 +58,13 @@ object MTHtmlParser {
         text
     }
 
-    fun convertToContentAndLinks(text: String): Pair<CharSequence, List<Link>> = try {
+    fun convertToContentAndLinks(text: String): Pair<String, Array<Link>> = try {
         parser.parse(InputSource(text.reader()))
 
-        handler.stringBuilder.toString() to handler.linkList
+        handler.stringBuilder.toString() to handler.linkList.toTypedArray()
     } catch (e: Throwable) {
         e.printStackTrace()
-        text to emptyList()
+        text to emptyArray()
     }
 }
 
@@ -101,7 +101,7 @@ private class MastodonHtmlHandler: DefaultHandler() {
         when (localName){
             "a" -> {
                 val classValue: String? = attributes.getValue("class")
-                val linkHref = attributes.getValue("href")?:""
+                val linkHref = attributes.getValue("url")?:""
                 when {
                     classValue?.contains("hashtag")?:false -> {
                         type = TYPE_TAG

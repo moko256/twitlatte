@@ -494,7 +494,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                                         if (userNameEmojiSetter == null) {
                                             userNameEmojiSetter = new EmojiToTextViewSetter(requests, userNameText);
                                         }
-                                        Disposable[] set = userNameEmojiSetter.set(userName, userNameEmojis);
+                                        Disposable[] set = userNameEmojiSetter.set(userName, userNameEmojis.toArray(new Emoji[userNameEmojis.size()]));
                                         if (set != null) {
                                             disposable.addAll(set);
                                         }

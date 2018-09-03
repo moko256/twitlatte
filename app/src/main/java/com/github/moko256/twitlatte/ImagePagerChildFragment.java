@@ -41,6 +41,7 @@ import android.widget.Toast;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.github.chrisbanes.photoview.PhotoView;
 import com.github.chuross.flinglayout.FlingLayout;
+import com.github.moko256.twitlatte.entity.Media;
 import com.github.moko256.twitlatte.exoplayer.AudioAndVideoRenderer;
 import com.github.moko256.twitlatte.glide.GlideApp;
 import com.github.moko256.twitlatte.glide.GlideRequests;
@@ -56,10 +57,8 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.ui.TrackSelectionView;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
-import com.google.android.exoplayer2.util.MimeTypes;
 
 import kotlin.Unit;
-import twitter4j.MediaEntity;
 
 import static android.content.Context.DOWNLOAD_SERVICE;
 
@@ -74,7 +73,7 @@ public class ImagePagerChildFragment extends Fragment {
     private static final String FRAG_MEDIA_ENTITY = "media_entity";
     private static final int REQUEST_CODE_PERMISSION_STORAGE = 100;
 
-    private MediaEntity mediaEntity;
+    private Media mediaEntity;
 
     private PhotoView imageView;
 
@@ -89,7 +88,7 @@ public class ImagePagerChildFragment extends Fragment {
         setHasOptionsMenu(true);
 
         if (getArguments() == null
-                || (mediaEntity = (MediaEntity) getArguments().getSerializable(FRAG_MEDIA_ENTITY)) == null) {
+                || (mediaEntity = (Media) getArguments().getSerializable(FRAG_MEDIA_ENTITY)) == null) {
             requireActivity().finish();
         }
     }
@@ -113,21 +112,8 @@ public class ImagePagerChildFragment extends Fragment {
 
         DefaultBandwidthMeter bandwidthMeter;
 
-        switch (mediaEntity.getType()){
-            case "video":
-                String videoPath = null;
-                boolean isHls = false;
-                for(MediaEntity.Variant variant : mediaEntity.getVideoVariants()){
-                    if(variant.getContentType().equals(MimeTypes.APPLICATION_M3U8)){
-                        videoPath=variant.getUrl();
-                        isHls = true;
-                    }
-                }
-
-                if (videoPath == null){
-                    videoPath = mediaEntity.getVideoVariants()[0].getUrl();
-                }
-
+        switch (mediaEntity.getImageType()){
+            case "video_multi":
                 videoPlayView = view.findViewById(R.id.fragment_image_pager_video);
                 videoPlayView.setControllerShowTimeoutMs(1000);
                 videoPlayView.setVisibility(View.VISIBLE);
@@ -159,16 +145,57 @@ public class ImagePagerChildFragment extends Fragment {
                         new DefaultLoadControl()
                 );
                 videoPlayView.setPlayer(player);
-                player.prepare((isHls?
-                                new HlsMediaSource.Factory(createOkHttpDataSourceFactory(bandwidthMeter)):
-                                new ExtractorMediaSource.Factory(createOkHttpDataSourceFactory(bandwidthMeter))
-                        ).createMediaSource(Uri.parse(videoPath))
+                player.prepare(
+                        new HlsMediaSource
+                                .Factory(createOkHttpDataSourceFactory(bandwidthMeter))
+                                .createMediaSource(Uri.parse(mediaEntity.getUrl()))
                 );
                 player.setPlayWhenReady(true);
 
                 break;
 
-            case "animated_gif":
+            case "video_one":
+                videoPlayView = view.findViewById(R.id.fragment_image_pager_video);
+                videoPlayView.setControllerShowTimeoutMs(1000);
+                videoPlayView.setVisibility(View.VISIBLE);
+                videoPlayView.setControllerVisibilityListener(visibility -> {
+                    if (visibility != View.VISIBLE){
+                        hideSystemUI();
+                    } else {
+                        showSystemUI();
+                    }
+                });
+                videoPlayView.setErrorMessageProvider(
+                        throwable -> Pair.create(0, TwitterStringUtils.convertErrorToText(throwable))
+                );
+
+                setSystemUIVisibilityListener(visibility -> {
+                    if ((visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0){
+                        showActionbar();
+
+                        videoPlayView.showController();
+                    }
+                });
+
+                bandwidthMeter = new DefaultBandwidthMeter();
+                trackSelector = new DefaultTrackSelector(bandwidthMeter);
+
+                player = ExoPlayerFactory.newSimpleInstance(
+                        new AudioAndVideoRenderer(requireContext()),
+                        trackSelector,
+                        new DefaultLoadControl()
+                );
+                videoPlayView.setPlayer(player);
+                player.prepare(
+                        new ExtractorMediaSource
+                                .Factory(createOkHttpDataSourceFactory(bandwidthMeter))
+                                .createMediaSource(Uri.parse(mediaEntity.getUrl()))
+                );
+                player.setPlayWhenReady(true);
+
+                break;
+
+            case "gif":
                 videoPlayView = view.findViewById(R.id.fragment_image_pager_video);
                 videoPlayView.setVisibility(View.VISIBLE);
                 videoPlayView.setControllerShowTimeoutMs(1000);
@@ -201,7 +228,7 @@ public class ImagePagerChildFragment extends Fragment {
                         new LoopingMediaSource(
                                 new ExtractorMediaSource.Factory(createOkHttpDataSourceFactory(bandwidthMeter))
                                         .createMediaSource(
-                                                Uri.parse(mediaEntity.getVideoVariants()[0].getUrl())
+                                                Uri.parse(mediaEntity.getUrl())
                                         )
                         )
                 );
@@ -227,7 +254,7 @@ public class ImagePagerChildFragment extends Fragment {
                 });
                 imageView.setOnScaleChangeListener((float scaleFactor, float focusX, float focusY) -> view.setDragEnabled(scaleFactor <= 1F));
                 GlideRequests requests = GlideApp.with(this);
-                String url = mediaEntity.getMediaURLHttps();
+                String url = mediaEntity.getUrl();
                 requests
                         .load(TwitterStringUtils.convertLargeImageUrl(url))
                         .fitCenter()
@@ -297,25 +324,7 @@ public class ImagePagerChildFragment extends Fragment {
     }
 
     private void contentDownload(){
-        String path="";
-        switch (mediaEntity.getType()){
-            case "video":
-                for(MediaEntity.Variant variant : mediaEntity.getVideoVariants()){
-                    if(variant.getContentType().equals("video/mp4")){
-                        path = variant.getUrl();
-                    }
-                }
-                break;
-
-            case "animated_gif":
-                path = mediaEntity.getVideoVariants()[0].getUrl();
-                break;
-
-            case "photo":
-            default:
-                path = TwitterStringUtils.convertOriginalImageUrl(mediaEntity.getMediaURLHttps());
-                break;
-        }
+        String path = mediaEntity.getUrl();
 
         DownloadManager manager;
 
@@ -395,7 +404,7 @@ public class ImagePagerChildFragment extends Fragment {
                 (getActivity().getWindow().getDecorView().getSystemUiVisibility() & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0;
     }
 
-    public static ImagePagerChildFragment getInstance(MediaEntity entity){
+    public static ImagePagerChildFragment getInstance(Media entity){
         ImagePagerChildFragment fragment=new ImagePagerChildFragment();
         Bundle bundle=new Bundle();
         bundle.putSerializable(FRAG_MEDIA_ENTITY,entity);

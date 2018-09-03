@@ -29,12 +29,14 @@ import twitter4j.Status as Twitter4jStatus
  */
 fun twitter4j.Status.convertToCommonStatus(): StatusObject {
     val parsedSource = MTHtmlParser.convertToContentAndLinks(source)
-    val urls = if (symbolEntities.isNotEmpty()
-            && hashtagEntities.isNotEmpty()
-            && userMentionEntities.isNotEmpty()
-            && mediaEntities.isNotEmpty()
-            && urlEntities.isNotEmpty()
+    val urls = if (symbolEntities.isEmpty()
+            && hashtagEntities.isEmpty()
+            && userMentionEntities.isEmpty()
+            && mediaEntities.isEmpty()
+            && urlEntities.isEmpty()
             ) {
+        null
+    } else {
         convertToContentAndLinks(
                 text = text,
                 symbolEntities = symbolEntities,
@@ -43,6 +45,14 @@ fun twitter4j.Status.convertToCommonStatus(): StatusObject {
                 mediaEntities = mediaEntities,
                 urlEntities = urlEntities
         )
+
+    }
+
+    val mentions
+            = if (userMentionEntities.isNotEmpty()) {
+        userMentionEntities.map {
+            it.screenName
+        }.toTypedArray()
     } else {
         null
     }
@@ -53,8 +63,8 @@ fun twitter4j.Status.convertToCommonStatus(): StatusObject {
                 userId = user.id,
                 text = urls?.first?:text,
                 sourceName = parsedSource.first,
-                sourceWebsite = parsedSource.second.first().href,
-                createdAt = createdAt.time,
+                sourceWebsite = parsedSource.second.first().url,
+                createdAt = createdAt,
                 inReplyToStatusId = inReplyToStatusId,
                 inReplyToUserId = inReplyToUserId,
                 inReplyToScreenName = inReplyToScreenName,
@@ -68,41 +78,42 @@ fun twitter4j.Status.convertToCommonStatus(): StatusObject {
                 medias = if (mediaEntities.isNotEmpty()) {
                     mediaEntities.map {
                         var resultUrl: String? = null
-                        var type: Media.ImageType? = null
+                        var type: String? = null
 
                         when(it.type) {
                             "video" -> {
                                 for (variant in it.videoVariants) {
                                     if (variant.contentType == MimeTypes.APPLICATION_M3U8) {
                                         resultUrl = variant.url
-                                        type = Media.ImageType.VIDEO_MULTI
+                                        type = Media.ImageType.VIDEO_MULTI.value
                                     }
                                 }
 
                                 if (resultUrl == null) {
                                     resultUrl = it.videoVariants[0].url
-                                    type = Media.ImageType.VIDEO_ONE
+                                    type = Media.ImageType.VIDEO_ONE.value
                                 }
                             }
                             "animated_gif" -> {
                                 resultUrl = it.videoVariants[0].url
-                                type = Media.ImageType.GIF
+                                type = Media.ImageType.GIF.value
                             }
                             else -> {
                                 resultUrl = it.mediaURLHttps
-                                type = Media.ImageType.PICTURE
+                                type = Media.ImageType.PICTURE.value
                             }
                         }
 
                         Media(
                                 url = resultUrl?:it.mediaURLHttps,
-                                imageType = type?:Media.ImageType.PICTURE
+                                imageType = type?:Media.ImageType.PICTURE.value
                         )
-                    }
+                    }.toTypedArray()
                 } else {
                     null
                 },
                 urls = urls?.second,
+                mentions = mentions,
                 emojis = null,
                 url = "https://twitter.com/" + user.screenName + "/status/" + id.toString(),
                 spoilerText = null,
@@ -110,11 +121,11 @@ fun twitter4j.Status.convertToCommonStatus(): StatusObject {
                 visibility = null
         )
     } else {
-        Retweet(
+        Repeat(
                 id = id,
                 userId = user.id,
-                repeatStatusId = retweetedStatus.id,
-                createdAt = createdAt.time
+                repeatedStatusId = retweetedStatus.id,
+                createdAt = createdAt
         )
     }
 }
@@ -129,7 +140,7 @@ fun com.sys1yagi.mastodon4j.api.entity.Status.convertToCommonStatus(): StatusObj
                 text = urls.first,
                 sourceName = application?.name,
                 sourceWebsite = application?.website,
-                createdAt = ISO8601DateConverter.parseDate(createdAt).time,
+                createdAt = ISO8601DateConverter.toDate(createdAt),
                 inReplyToStatusId = inReplyToId?:-1,
                 inReplyToUserId = inReplyToAccountId?:-1,
                 inReplyToScreenName = "",
@@ -157,17 +168,20 @@ fun com.sys1yagi.mastodon4j.api.entity.Status.convertToCommonStatus(): StatusObj
 
                         Media(
                                 url = resultUrl,
-                                imageType = type
+                                imageType = type.value
                         )
-                    }
+                    }.toTypedArray()
                 } else {
                     null
                 },
                 urls = urls.second,
+                mentions = mentions.map {
+                    it.acct
+                }.toTypedArray(),
                 emojis = if (emojis.isNotEmpty()) {
                     emojis.map {
                         Emoji(url = it.url, shortCode = it.shortcode)
-                    }
+                    }.toTypedArray()
                 } else {
                     null
                 },
@@ -181,11 +195,11 @@ fun com.sys1yagi.mastodon4j.api.entity.Status.convertToCommonStatus(): StatusObj
                 visibility = visibility
         )
     } else {
-        Retweet(
+        Repeat(
                 id = id,
                 userId = account?.id?:-1,
-                repeatStatusId = reblog!!.id,
-                createdAt = ISO8601DateConverter.parseDate(createdAt).time
+                repeatedStatusId = reblog!!.id,
+                createdAt = ISO8601DateConverter.toDate(createdAt)
         )
     }
 }

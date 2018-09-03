@@ -28,16 +28,15 @@ import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.github.moko256.twitlatte.cacheMap.StatusCacheMap;
+import com.github.moko256.twitlatte.entity.Status;
+import com.github.moko256.twitlatte.glide.GlideApp;
 import com.github.moko256.twitlatte.intent.AppCustomTabsKt;
 import com.github.moko256.twitlatte.model.base.PostTweetModel;
 import com.github.moko256.twitlatte.model.impl.PostTweetModelCreator;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
-import com.github.moko256.twitlatte.text.link.MTHtmlParser;
 
 import java.text.DateFormat;
 
@@ -45,7 +44,6 @@ import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
-import twitter4j.Status;
 import twitter4j.TwitterException;
 import twitter4j.User;
 
@@ -63,10 +61,10 @@ public class ShowTweetActivity extends AppCompatActivity {
     private CompositeDisposable disposables;
     private long statusId;
 
-    private StatusView statusView;
+    private StatusViewBinder statusViewBinder;
 
     private TextView tweetIsReply;
-    private FrameLayout statusViewFrame;
+    private ViewGroup statusViewFrame;
     private TextView timestampText;
     private TextView viaText;
     private EditText replyText;
@@ -76,6 +74,8 @@ public class ShowTweetActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_tweet);
+
+        statusViewFrame = findViewById(R.id.tweet_show_tweet);
 
         statusId = getIntent().getLongExtra("statusId", -1);
         if (statusId == -1) {
@@ -118,28 +118,23 @@ public class ShowTweetActivity extends AppCompatActivity {
                                     })
             ));
 
-            Status status = GlobalApplication.statusCache.get(statusId);
-            if (status == null){
-                disposables.add(
-                        updateStatus()
-                                .subscribeOn(Schedulers.io())
-                                .observeOn(AndroidSchedulers.mainThread())
-                                .subscribe(
-                                        result->{
-                                            if (result == null) {
-                                                finish();
-                                                return;
-                                            }
-                                            updateView(result);
-                                        },
-                                        e->{
-                                            e.printStackTrace();
+            disposables.add(
+                    updateStatus()
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(
+                                    result->{
+                                        if (result == null) {
                                             finish();
-                                        })
-                );
-            } else {
-                updateView(status);
-            }
+                                            return;
+                                        }
+                                        updateView(result);
+                                    },
+                                    e->{
+                                        e.printStackTrace();
+                                        finish();
+                                    })
+            );
         }
     }
 
@@ -148,10 +143,10 @@ public class ShowTweetActivity extends AppCompatActivity {
         disposables.dispose();
         super.onDestroy();
         disposables=null;
-        if (statusView != null){
-            statusView.setStatus(null);
+        if (statusViewBinder != null){
+            statusViewBinder.clear();
         }
-        statusView=null;
+        statusViewBinder=null;
     }
 
 
@@ -162,7 +157,7 @@ public class ShowTweetActivity extends AppCompatActivity {
     }
 
     private String getShareUrl() {
-        return ((StatusCacheMap.CachedStatus) GlobalApplication.statusCache.get(statusId)).getRemoteUrl();
+        return ((com.github.moko256.twitlatte.entity.Status) GlobalApplication.statusCache.get(statusId)).getUrl();
     }
 
         @Override
@@ -199,23 +194,36 @@ public class ShowTweetActivity extends AppCompatActivity {
         return new Intent(context, ShowTweetActivity.class).putExtra("statusId", statusId);
     }
 
-    private Single<Status> updateStatus(){
+    private Single<Result> updateStatus(){
         return Single.create(
                 subscriber -> {
                     try {
-                        Status status = GlobalApplication.twitter.showStatus(statusId);
-                        GlobalApplication.statusCache.add(status, false);
-                        subscriber.onSuccess(GlobalApplication.statusCache.get(statusId));
+                        Status status = (Status) GlobalApplication.statusCache.get(statusId);
+
+                        if (status == null) {
+                            twitter4j.Status result = GlobalApplication.twitter.showStatus(statusId);
+                            GlobalApplication.statusCache.add(result, false);
+                            status = (Status) GlobalApplication.statusCache.get(statusId);
+                        }
+
+                        User user = GlobalApplication.userCache.get(status.getUserId());
+
+                        Status quotedStatus = status.getQuotedStatusId() != -1
+                                ?(Status) GlobalApplication.statusCache.get(status.getQuotedStatusId())
+                                :null;
+                        User quotedStatusUser = quotedStatus != null
+                                ?GlobalApplication.userCache.get(quotedStatus.getUserId())
+                                :null;
+
+                        subscriber.onSuccess(new Result(user, status, quotedStatusUser, quotedStatus));
                     } catch (TwitterException e) {
                         subscriber.tryOnError(e);
                     }
                 });
     }
 
-    private void updateView(Status arg){
-        Status item = arg.isRetweet()? arg.getRetweetedStatus(): arg;
-
-        long replyTweetId = item.getInReplyToStatusId();
+    private void updateView(Result item){
+        long replyTweetId = item.status.getInReplyToStatusId();
         if (replyTweetId != -1){
             tweetIsReply.setVisibility(VISIBLE);
             tweetIsReply.setOnClickListener(v -> startActivity(getIntent(this, replyTweetId)));
@@ -223,37 +231,31 @@ public class ShowTweetActivity extends AppCompatActivity {
             tweetIsReply.setVisibility(GONE);
         }
 
-        statusView = new StatusView(this);
-        statusView.setStatus(item);
-        statusView.setOnClickListener(null);
-        ViewGroup cview = (ViewGroup) statusView.getChildAt(0);
-        ViewGroup sview = (ViewGroup) cview.getChildAt(0);
-        cview.removeView(sview);
-        statusViewFrame.removeAllViews();
-        statusViewFrame.addView(sview);
+        statusViewBinder = new StatusViewBinder(GlideApp.with(this), statusViewFrame);
+        statusViewBinder.setStatus(item.user, item.status, item.quotedStatusUser, item.quotedStatus);
 
         timestampText.setText(
                 DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.FULL)
-                        .format(item.getCreatedAt())
+                        .format(item.status.getCreatedAt())
         );
 
-        viaText.setText(MTHtmlParser.INSTANCE.convertToEntities("via:"+item.getSource(), TwitterStringUtils.linkParserListener(this)));
+        viaText.setText(TwitterStringUtils.appendLinkAtViaText(this, item.status.getSourceName(), item.status.getSourceWebsite()));
         viaText.setMovementMethod(new LinkMovementMethod());
 
-        resetReplyText(item);
+        resetReplyText(item.user, item.status);
 
         replyButton.setOnClickListener(v -> {
             replyButton.setEnabled(false);
             PostTweetModel model = PostTweetModelCreator.getInstance(GlobalApplication.twitter, getContentResolver());
             model.setTweetText(replyText.getText().toString());
-            model.setInReplyToStatusId(item.getId());
+            model.setInReplyToStatusId(item.status.getId());
             disposables.add(
                     model.postTweet()
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe(
                                     () -> {
-                                        resetReplyText(item);
+                                        resetReplyText(item.user, item.status);
                                         replyButton.setEnabled(true);
                                         Toast.makeText(ShowTweetActivity.this,R.string.did_post,Toast.LENGTH_SHORT).show();
                                     },
@@ -267,14 +269,27 @@ public class ShowTweetActivity extends AppCompatActivity {
         });
     }
 
-    private void resetReplyText(Status status){
+    private void resetReplyText(User postedUser, Status status){
         User user = GlobalApplication.userCache.get(GlobalApplication.userId);
 
         replyText.setText(TwitterStringUtils.convertToReplyTopString(
                 user != null ? user.getScreenName() : GlobalApplication.accessToken.getScreenName(),
-                status.getUser().getScreenName(),
-                status.getUserMentionEntities()
+                postedUser.getScreenName(),
+                status.getMentions()
         ));
     }
 
+    private class Result {
+        public final User user;
+        public final Status status;
+        public final User quotedStatusUser;
+        public final Status quotedStatus;
+
+        Result(User user, Status status, User quotedStatusUser, Status quotedStatus) {
+            this.user = user;
+            this.status = status;
+            this.quotedStatusUser = quotedStatusUser;
+            this.quotedStatus = quotedStatus;
+        }
+    }
 }

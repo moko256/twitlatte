@@ -30,7 +30,6 @@ import android.text.TextUtils;
 import android.text.style.ImageSpan;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.github.moko256.mastodon.MTException;
 import com.github.moko256.twitlatte.GlobalApplication;
@@ -40,21 +39,14 @@ import com.github.moko256.twitlatte.ShowUserActivity;
 import com.github.moko256.twitlatte.entity.Type;
 import com.github.moko256.twitlatte.intent.AppCustomTabsKt;
 import com.github.moko256.twitlatte.text.link.MTHtmlParser;
+import com.github.moko256.twitlatte.text.link.entity.Link;
 import com.github.moko256.twitlatte.text.style.ClickableNoLineSpan;
 import com.sys1yagi.mastodon4j.api.exception.Mastodon4jRequestException;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import kotlin.jvm.functions.Function1;
-import twitter4j.HashtagEntity;
-import twitter4j.Status;
-import twitter4j.SymbolEntity;
 import twitter4j.TwitterException;
 import twitter4j.URLEntity;
 import twitter4j.User;
-import twitter4j.UserMentionEntity;
 
 /**
  * Created by moko256 on 2016/08/06.
@@ -99,15 +91,14 @@ public class TwitterStringUtils {
     @NonNull
     public static CharSequence convertToReplyTopString(@NonNull String userScreenName,
                                                        @NonNull String replyToScreenName,
-                                                       @NonNull UserMentionEntity[] users){
+                                                       @NonNull String[] users){
         StringBuilder userIdsStr = new StringBuilder();
 
         if (!userScreenName.equals(replyToScreenName)) {
             userIdsStr.append("@").append(replyToScreenName).append(" ");
         }
 
-        for (UserMentionEntity user : users) {
-            String screenName = user.getScreenName();
+        for (String screenName : users) {
             if (!(screenName.equals(userScreenName) || screenName.equals(replyToScreenName))) {
                 userIdsStr.append("@").append(screenName).append(" ");
             }
@@ -126,105 +117,66 @@ public class TwitterStringUtils {
         }
     }
 
-    public static CharSequence getLinkedSequence(Context context, Status item){
+    public static CharSequence getLinkedSequence(Context context, String text, Link[] links){
+        SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(text);
 
-        String tweet = item.getText();
+        for (Link link : links) {
+            Object span;
 
-        if (tweet == null) {
-            return "";
-        }
-
-        if (GlobalApplication.clientType == Type.MASTODON){
-            CharSequence html = MTHtmlParser.INSTANCE.convertToEntities(tweet, linkParserListener(context));
-            int length = html.length();
-            // If post has media only, context of post from Mastodon is "."
-            if (length == 1
-                    && item.getMediaEntities().length > 0
-                    && html.charAt(0) == ".".charAt(0)
-                    ){
-                return "";
-            } else {
-                return html;
-            }
-        } else {
-
-            SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(tweet);
-
-            try {
-                for (SymbolEntity symbolEntity : item.getSymbolEntities()) {
-                    spannableStringBuilder.setSpan(new ClickableNoLineSpan() {
-                        @Override
-                        public void onClick(View view) {
-                            context.startActivity(SearchResultActivity.getIntent(context, "$" + symbolEntity.getText()));
-                        }
-                    }, symbolEntity.getStart(), symbolEntity.getEnd(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                }
-
-                for (HashtagEntity hashtagEntity : item.getHashtagEntities()) {
-                    spannableStringBuilder.setSpan(new ClickableNoLineSpan() {
-                        @Override
-                        public void onClick(View view) {
-                            context.startActivity(SearchResultActivity.getIntent(context, "#" + hashtagEntity.getText())
-                            );
-                        }
-                    }, hashtagEntity.getStart(), hashtagEntity.getEnd(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                }
-
-                for (UserMentionEntity userMentionEntity : item.getUserMentionEntities()) {
-                    spannableStringBuilder.setSpan(new ClickableNoLineSpan() {
-                        @Override
-                        public void onClick(View view) {
-                            context.startActivity(
-                                    ShowUserActivity.getIntent(context, userMentionEntity.getScreenName())
-                            );
-                        }
-                    }, userMentionEntity.getStart(), userMentionEntity.getEnd(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                }
-
-                boolean hasMedia = item.getMediaEntities().length > 0;
-                List<URLEntity> urlEntities = new ArrayList<>(item.getURLEntities().length + (hasMedia ? 1 : 0));
-                urlEntities.addAll(Arrays.asList(item.getURLEntities()));
-                if (hasMedia) {
-                    urlEntities.add(item.getMediaEntities()[0]);
-                }
-
-                int tweetLength = tweet.length();
-                int sp = 0;
-
-                for (URLEntity entity : urlEntities) {
-                    String url = entity.getURL();
-                    String displayUrl = entity.getDisplayURL();
-
-                    int urlLength = url.length();
-                    int displayUrlLength = displayUrl.length();
-
-                    int start = entity.getStart();
-                    int end = entity.getEnd();
-
-                    if (start <= tweetLength && end <= tweetLength) {
-                        int dusp = displayUrlLength - urlLength;
-
-                        start += sp;
-                        end += sp;
-
-                        spannableStringBuilder.replace(start , end, displayUrl);
-                        spannableStringBuilder.setSpan(new ClickableNoLineSpan() {
+            final Uri uri = Uri.parse(link.getUrl());
+            if (uri.getScheme().equals("twitlatte")) {
+                switch (uri.getHost()) {
+                    case "symbol":
+                        span = new ClickableNoLineSpan() {
                             @Override
                             public void onClick(View view) {
-                                AppCustomTabsKt.launchChromeCustomTabs(context, entity.getExpandedURL());
+                                context.startActivity(
+                                        SearchResultActivity.getIntent(context, "$" + uri.getLastPathSegment())
+                                );
+
                             }
-                        }, start, end + dusp, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-                        sp += dusp;
-                    }
+                        };
+                        break;
+                    case "hashtag":
+                        span = new ClickableNoLineSpan() {
+                            @Override
+                            public void onClick(View view) {
+                                context.startActivity(
+                                        SearchResultActivity.getIntent(context, "#" + uri.getLastPathSegment())
+                                );
+                            }
+                        };
+                        break;
+                    case "user":
+                        span = new ClickableNoLineSpan() {
+                            @Override
+                            public void onClick(View view) {
+                                context.startActivity(
+                                        ShowUserActivity.getIntent(context, uri.getLastPathSegment())
+                                );
+                            }
+                        };
+                        break;
+                    default:
+                        span = new ClickableNoLineSpan() {
+                            @Override
+                            public void onClick(View view) {
+                                context.startActivity(SearchResultActivity.getIntent(context, uri.getLastPathSegment()));
+                            }
+                        };
+                        break;
                 }
-            } catch (IndexOutOfBoundsException e) {
-                e.printStackTrace();
-                Toast.makeText(context, R.string.error_occurred, Toast.LENGTH_SHORT).show();
+            } else {
+                span = new ClickableNoLineSpan() {
+                    @Override
+                    public void onClick(View view) {
+                        AppCustomTabsKt.launchChromeCustomTabs(context, uri);
+                    }
+                };
             }
-
-            return spannableStringBuilder;
+            spannableStringBuilder.setSpan(span, link.getStart(), link.getEnd(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
+        return spannableStringBuilder;
     }
 
     public static CharSequence getProfileLinkedSequence(Context context, User user){
@@ -309,6 +261,18 @@ public class TwitterStringUtils {
                 };
             }
         };
+    }
+
+    public static CharSequence appendLinkAtViaText(Context context, String name, String url) {
+        SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder("via:" + name);
+        spannableStringBuilder.setSpan(
+                new ClickableNoLineSpan() {
+                    @Override
+                    public void onClick(View view) {
+                        AppCustomTabsKt.launchChromeCustomTabs(context, url);
+                    }
+                }, 4, name.length() - 5, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        return spannableStringBuilder;
     }
 
     public static String convertThumbImageUrl(String baseUrl){

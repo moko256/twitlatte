@@ -22,7 +22,7 @@ package com.github.moko256.twitlatte.text.link.entity
  * @author moko256
  */
 data class Link(
-        val href: String,
+        val url: String,
         val start: Int,
         val end: Int
 )

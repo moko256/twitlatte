@@ -20,9 +20,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import java.util.List;
+import com.github.moko256.twitlatte.entity.Media;
 
-import twitter4j.MediaEntity;
+import java.util.List;
 
 /**
  * Created by moko256 on 2016/10/29.
@@ -31,9 +31,9 @@ import twitter4j.MediaEntity;
  */
 class ImagePagerAdapter extends FragmentPagerAdapter {
 
-    private final List<MediaEntity> mediaEntities;
+    private final List<Media> mediaEntities;
 
-    ImagePagerAdapter(FragmentManager fm, List<MediaEntity> mediaEntities) {
+    ImagePagerAdapter(FragmentManager fm, List<Media> mediaEntities) {
         super(fm);
         this.mediaEntities = mediaEntities;
     }
