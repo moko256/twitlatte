@@ -39,7 +39,7 @@ import kotlin.Pair;
 public class TokenSQLiteOpenHelper extends SQLiteOpenHelper {
 
     private static final String TABLE_NAME = "AccountTokenList";
-    private static final String[] TABLE_COLUMNS = new String[]{ "value", "url", "userId", "userName", "token", "tokenSecret"};
+    private static final String[] TABLE_COLUMNS = new String[]{ "type", "url", "userId", "userName", "token", "tokenSecret"};
 
     public static final String TWITTER_URL = "twitter.com";
 
