@@ -118,6 +118,10 @@ public class TwitterStringUtils {
     }
 
     public static CharSequence getLinkedSequence(Context context, String text, Link[] links){
+        if (links == null) {
+            return text;
+        }
+
         SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(text);
 
         for (Link link : links) {

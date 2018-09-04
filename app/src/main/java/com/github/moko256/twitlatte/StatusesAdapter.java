@@ -155,7 +155,7 @@ class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         } else if (viewHolder instanceof RepeatedStatusViewHolder){
             StatusObject object = GlobalApplication.statusCache.get(data.get(i));
             User repeatedUser = GlobalApplication.userCache.get(((Repeat) object).getUserId());
-            Status status = ((Status) GlobalApplication.statusCache.get(StatusObjectKt.getId(object)));
+            Status status = ((Status) GlobalApplication.statusCache.get(((Repeat) object).getRepeatedStatusId()));
             User user = GlobalApplication.userCache.get(status.getUserId());
             Status quotedStatus = status.getQuotedStatusId() != -1?
                     (Status) GlobalApplication.statusCache.get(status.getQuotedStatusId())

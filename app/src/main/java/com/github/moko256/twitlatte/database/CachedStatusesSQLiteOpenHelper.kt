@@ -35,6 +35,39 @@ import kotlin.collections.ArrayList
  *
  * @author moko256
  */
+private const val TABLE_NAME = "CachedStatuses"
+private val TABLE_COLUMNS = arrayOf(
+        "createdAt",
+        "id",
+        "userId",
+        "repeatedStatusId",
+        "text",
+        "sourceName",
+        "sourceWebsite",
+        "inReplyToStatusId",
+        "inReplyToUserId",
+        "isFavorited",
+        "isRepeated",
+        "favoriteCount",
+        "repeatCount",
+        "repliesCount",
+        "inReplyToScreenName",
+        "isSensitive",
+        "lang",
+        "mentions",
+        "urls_urls",
+        "urls_start",
+        "urls_ends",
+        "medias_urls",
+        "medias_types",
+        "quotedStatusId",
+        "url",
+        "emojis_shortcodes",
+        "emojis_urls",
+        "contentWarning",
+        "visibility",
+        "count"
+)
 
 class CachedStatusesSQLiteOpenHelper(
         context: Context,
@@ -68,24 +101,37 @@ class CachedStatusesSQLiteOpenHelper(
 
         if (oldVersion < 4) {
             val oldStatuses = OldCachedStatusesSQLiteOpenHelper.getCachedStatus(db)
-            db.delete(TABLE_NAME, null, null)
-            db.execSQL("alter table $TABLE_NAME add column (repeatedStatusId, sourceName, sourceWebsite, isRepeated, repeatCount, isSensitive, mentions, medias_urls, medias_types, emojis_shortcodes, emojis_urls, visibility)")
-            db.execSQL("alter table $TABLE_NAME drop column (retweetedStatusId, isRetweeted, retweetCount, isPossiblySensitive, UserMentionEntity_texts, UserMentionEntity_ids, UserMentionEntity_texts, UserMentionEntity_ids, UserMentionEntity_names, UserMentionEntity_screenNames, UserMentionEntity_starts, UserMentionEntity_ends, URLEntity_texts, URLEntity_expandedURLs, URLEntity_displayURLs, URLEntity_starts, URLEntity_ends, HashtagEntity_texts, HashtagEntity_starts, HashtagEntity_ends, MediaEntity_texts, MediaEntity_expandedURLs, MediaEntity_displayURLs, MediaEntity_ids, MediaEntity_MediaURLs, MediaEntity_MediaURLHttpSs, MediaEntity_types, MediaEntity_Variants_bitrates, MediaEntity_Variants_contentTypes, MediaEntity_Variants_uris, MediaEntity_starts, MediaEntity_ends, SymbolEntity_texts, SymbolEntity_starts, SymbolEntity_ends, Emoji_shortcodes, Emoji_urls)")
+
+            db.execSQL("drop table $TABLE_NAME")
+            onCreate(db)
 
             val contentValues = ArrayList<ContentValues>(oldStatuses.size)
             for (statusPair in oldStatuses) {
                 val status = statusPair.first
                 contentValues.add(createStatusContentValues(if (accessToken?.type == Type.MASTODON) {
-                    val parsedSource = MTHtmlParser.convertToContentAndLinks(status.source)
-                    val urls = MTHtmlParser.convertToContentAndLinks(status.text)
 
                     if (status.retweetedStatusId == -1L) {
+                        val urls = MTHtmlParser.convertToContentAndLinks(status.text)
+
+
+                        val (sourceName, sourceWebsite) = if (
+                                status.source.length > 8
+                                && status.source.substring(0 .. 8) == "<a href="
+                        ) {
+                            val parsedSource = MTHtmlParser.convertToContentAndLinks(status.source)
+
+                            parsedSource.first to parsedSource.second.first().url
+                        } else {
+                            status.source to null
+                        }
+                        //val sourceName = parsedSource.first
+                        //val sourceWebsite = parsedSource.second.first().url
                         Status(
                                 id = status.id,
                                 userId = status.user.id,
                                 text = urls.first,
-                                sourceName = parsedSource.first,
-                                sourceWebsite = parsedSource.second.first().url,
+                                sourceName = sourceName,
+                                sourceWebsite = sourceWebsite,
                                 createdAt = status.createdAt,
                                 inReplyToStatusId = status.inReplyToStatusId,
                                 inReplyToUserId = status.inReplyToUserId,
@@ -126,8 +172,8 @@ class CachedStatusesSQLiteOpenHelper(
                                     null
                                 },
                                 urls = urls.second,
-                                emojis = status.emojis.toTypedArray(),
-                                url = "https://twitter.com/" + status.user.screenName + "/status/" + status.id.toString(),
+                                emojis = status.emojis?.toTypedArray(),
+                                url = status.remoteUrl,
                                 mentions = status.userMentionEntities.map {
                                     it.screenName
                                 }.toTypedArray(),
@@ -439,21 +485,6 @@ class CachedStatusesSQLiteOpenHelper(
         }
     }
 
-    private fun parse(string: String?): Array<Array<String>?>? {
-        if (TextUtils.isEmpty(string)) {
-            return null
-        }
-        val resultA = string!!.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-        if (resultA.size == 1 && resultA[0] == "") {
-            return null
-        }
-        val result = arrayOfNulls<Array<String>>(resultA.size)
-        for (i in resultA.indices) {
-            result[i] = resultA[i].split("\\|".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-        }
-        return result
-    }
-
     private fun restoreEmojis(
             shortCodes: Array<String>?,
             urls: Array<String>?
@@ -500,42 +531,5 @@ class CachedStatusesSQLiteOpenHelper(
         }
     } else {
         null
-    }
-
-    companion object {
-
-        private val TABLE_NAME = "CachedStatuses"
-        private val TABLE_COLUMNS = arrayOf(
-                "createdAt",
-                "id",
-                "userId",
-                "repeatedStatusId",
-                "text",
-                "sourceName",
-                "sourceWebsite",
-                "inReplyToStatusId",
-                "inReplyToUserId",
-                "isFavorited",
-                "isRepeated",
-                "favoriteCount",
-                "repeatCount",
-                "repliesCount",
-                "inReplyToScreenName",
-                "isSensitive",
-                "lang",
-                "mentions",
-                "urls_urls",
-                "urls_start",
-                "urls_ends",
-                "medias_urls",
-                "medias_types",
-                "quotedStatusId",
-                "url",
-                "emojis_shortcodes",
-                "emojis_urls",
-                "contentWarning",
-                "visibility",
-                "count"
-        )
     }
 }

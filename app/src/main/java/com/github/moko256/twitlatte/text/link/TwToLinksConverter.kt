@@ -33,7 +33,7 @@ fun convertToContentAndLinks(
         urlEntities: Array<URLEntity>
 ): Pair<String, Array<Link>> {
     val links = ArrayList<Link>(6)
-    val stringBuilder = StringBuilder(300)
+    val stringBuilder = StringBuilder(text)
 
     for (symbolEntity in symbolEntities) {
         links.add(Link(
@@ -66,7 +66,6 @@ fun convertToContentAndLinks(
         mediaAndUrlEntities.add(mediaEntities[0])
     }
 
-    val tweetLength = text.length
     var sp = 0
 
     for (entity in mediaAndUrlEntities) {
@@ -76,14 +75,11 @@ fun convertToContentAndLinks(
         val urlLength = url.length
         val displayUrlLength = displayUrl.length
 
-        var start = entity.start
-        var end = entity.end
+        val start = entity.start + sp
+        val end = entity.end + sp
 
-        if (start <= tweetLength && end <= tweetLength) {
+        if (start <= stringBuilder.length && end <= stringBuilder.length) {
             val dusp = displayUrlLength - urlLength
-
-            start += sp
-            end += sp
 
             stringBuilder.replace(start, end, displayUrl)
             links.add(Link(

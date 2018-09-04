@@ -28,36 +28,36 @@ import twitter4j.Status as Twitter4jStatus
  * @author moko256
  */
 fun twitter4j.Status.convertToCommonStatus(): StatusObject {
-    val parsedSource = MTHtmlParser.convertToContentAndLinks(source)
-    val urls = if (symbolEntities.isEmpty()
-            && hashtagEntities.isEmpty()
-            && userMentionEntities.isEmpty()
-            && mediaEntities.isEmpty()
-            && urlEntities.isEmpty()
-            ) {
-        null
-    } else {
-        convertToContentAndLinks(
-                text = text,
-                symbolEntities = symbolEntities,
-                hashtagEntities = hashtagEntities,
-                userMentionEntities = userMentionEntities,
-                mediaEntities = mediaEntities,
-                urlEntities = urlEntities
-        )
+    return if (!isRetweet) {
+        val parsedSource = MTHtmlParser.convertToContentAndLinks(source)
+        val urls = if (symbolEntities.isEmpty()
+                && hashtagEntities.isEmpty()
+                && userMentionEntities.isEmpty()
+                && mediaEntities.isEmpty()
+                && urlEntities.isEmpty()
+        ) {
+            null
+        } else {
+            convertToContentAndLinks(
+                    text = text,
+                    symbolEntities = symbolEntities,
+                    hashtagEntities = hashtagEntities,
+                    userMentionEntities = userMentionEntities,
+                    mediaEntities = mediaEntities,
+                    urlEntities = urlEntities
+            )
 
-    }
+        }
 
-    val mentions
-            = if (userMentionEntities.isNotEmpty()) {
-        userMentionEntities.map {
-            it.screenName
-        }.toTypedArray()
-    } else {
-        null
-    }
+        val mentions
+                = if (userMentionEntities.isNotEmpty()) {
+            userMentionEntities.map {
+                it.screenName
+            }.toTypedArray()
+        } else {
+            null
+        }
 
-    return if (retweetedStatus == null) {
         Status(
                 id = id,
                 userId = user.id,
