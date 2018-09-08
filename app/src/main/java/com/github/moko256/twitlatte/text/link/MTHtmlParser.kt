@@ -101,7 +101,7 @@ private class MastodonHtmlHandler: DefaultHandler() {
         when (localName){
             "a" -> {
                 val classValue: String? = attributes.getValue("class")
-                val linkHref = attributes.getValue("url")?:""
+                val linkHref = attributes.getValue("href")?:""
                 when {
                     classValue?.contains("hashtag")?:false -> {
                         type = TYPE_TAG
