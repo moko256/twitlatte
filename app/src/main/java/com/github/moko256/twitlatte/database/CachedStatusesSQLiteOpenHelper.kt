@@ -288,7 +288,7 @@ class CachedStatusesSQLiteOpenHelper(
             for (id in ids) {
                 val c = database.query(
                         TABLE_NAME,
-                        arrayOf(TABLE_COLUMNS[1], TABLE_COLUMNS[3], TABLE_COLUMNS[44]),
+                        arrayOf(TABLE_COLUMNS[1], TABLE_COLUMNS[3], TABLE_COLUMNS[25]),
                         "id=" + id.toString(), null, null, null, null
                 )
                 while (c.moveToNext()) {
