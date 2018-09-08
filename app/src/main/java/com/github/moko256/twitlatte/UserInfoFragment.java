@@ -34,9 +34,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
-import com.github.moko256.mastodon.MTUser;
-import com.github.moko256.twitlatte.database.CachedUsersSQLiteOpenHelper;
 import com.github.moko256.twitlatte.entity.Emoji;
+import com.github.moko256.twitlatte.entity.User;
 import com.github.moko256.twitlatte.glide.GlideApp;
 import com.github.moko256.twitlatte.glide.GlideRequests;
 import com.github.moko256.twitlatte.intent.AppCustomTabsKt;
@@ -45,7 +44,6 @@ import com.github.moko256.twitlatte.text.style.ClickableNoLineSpan;
 import com.github.moko256.twitlatte.view.EmojiToTextViewSetter;
 
 import java.text.DateFormat;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -55,7 +53,6 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import twitter4j.TwitterException;
-import twitter4j.User;
 
 /**
  * Created by moko256 on 2017/01/15.
@@ -206,19 +203,7 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
         );
         userNameText.setText(userName);
         userBioText.setText(userBio);
-        List<Emoji> userNameEmojis = null;
-        if (user instanceof CachedUsersSQLiteOpenHelper.CachedUser) {
-            userNameEmojis = ((CachedUsersSQLiteOpenHelper.CachedUser) user).getEmojis();
-        } else if (user instanceof MTUser) {
-            List<com.sys1yagi.mastodon4j.api.entity.Emoji> emojis = ((MTUser) user).account.getEmojis();
-            userNameEmojis = new ArrayList<>(emojis.size());
-            for (com.sys1yagi.mastodon4j.api.entity.Emoji emoji : emojis) {
-                userNameEmojis.add(new Emoji(
-                        emoji.getShortcode(),
-                        emoji.getUrl()
-                ));
-            }
-        }
+        List<Emoji> userNameEmojis = user.getEmojis();
         if (userNameEmojis != null) {
             if (userNameEmojiSetter == null) {
                 userNameEmojiSetter = new EmojiToTextViewSetter(glideRequests, userNameText);
@@ -246,7 +231,7 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
             userLocation.setVisibility(View.GONE);
         }
 
-        final String url = user.getURL();
+        final String url = user.getUrl();
         if (!TextUtils.isEmpty(url)){
             String text = getString(R.string.url_is, url);
             SpannableStringBuilder builder = new SpannableStringBuilder(text);
@@ -273,9 +258,9 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
         return Single.create(
                 subscriber -> {
                     try {
-                        User user = GlobalApplication.twitter.showUser(userId);
+                        twitter4j.User user = GlobalApplication.twitter.showUser(userId);
                         GlobalApplication.userCache.add(user);
-                        subscriber.onSuccess(user);
+                        subscriber.onSuccess(GlobalApplication.userCache.get(userId));
                     } catch (TwitterException e) {
                         subscriber.tryOnError(e);
                     }

@@ -17,11 +17,11 @@
 package com.github.moko256.twitlatte.rx
 
 import com.github.moko256.twitlatte.cacheMap.UserCacheMap
+import com.github.moko256.twitlatte.entity.User
 import io.reactivex.SingleEmitter
 import io.reactivex.SingleOnSubscribe
 import twitter4j.Twitter
 import twitter4j.TwitterException
-import twitter4j.User
 
 /**
  * Created by moko256 on 2018/08/09.
@@ -37,8 +37,8 @@ class VerifyCredencialOnSubscribe(
         try {
             var me = cache.get(userId)
             if (me == null) {
-                me = client.verifyCredentials()
-                cache.add(me)
+                cache.add(client.verifyCredentials())
+                me = cache.get(userId)
             }
             emitter.onSuccess(me)
         } catch (e: TwitterException) {

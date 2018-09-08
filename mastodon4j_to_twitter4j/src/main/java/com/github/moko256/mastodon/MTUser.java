@@ -34,7 +34,8 @@ import twitter4j.User;
  */
 
 public class MTUser implements User {
-    public Account account;
+
+    public final Account account;
 
     MTUser(Account account){
         this.account = account;
@@ -47,300 +48,296 @@ public class MTUser implements User {
 
     @Override
     public String getName() {
-        String name = account.getDisplayName();
-        if (name.equals("")){
-            name = account.getUserName();
-        }
-        return name;
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public String getEmail() {
-        return null;
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public String getScreenName() {
-        return account.getAcct();
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public String getLocation() {
-        return null;
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public String getDescription() {
-        return account.getNote();
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public boolean isContributorsEnabled() {
-        return false;
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public String getProfileImageURL() {
-        return account.getAvatar();
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public String get400x400ProfileImageURL() {
-        return account.getAvatar();
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public String getBiggerProfileImageURL() {
-        return account.getAvatar();
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public String getMiniProfileImageURL() {
-        return account.getAvatar();
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public String getOriginalProfileImageURL() {
-        return account.getAvatar();
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public String getProfileImageURLHttps() {
-        return account.getAvatar();
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public String get400x400ProfileImageURLHttps() {
-        return account.getAvatar();
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public String getBiggerProfileImageURLHttps() {
-        return account.getAvatar();
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public String getMiniProfileImageURLHttps() {
-        return account.getAvatar();
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public String getOriginalProfileImageURLHttps() {
-        return account.getAvatar();
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public boolean isDefaultProfileImage() {
-        return true;
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public String getURL() {
-        return null;
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public boolean isProtected() {
-        return account.isLocked();
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public int getFollowersCount() {
-        return account.getFollowersCount();
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public Status getStatus() {
-        return null;
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public String getProfileBackgroundColor() {
-        return null;
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public String getProfileTextColor() {
-        return null;
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public String getProfileLinkColor() {
-        return null;
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public String getProfileSidebarFillColor() {
-        return null;
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public String getProfileSidebarBorderColor() {
-        return null;
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public boolean isProfileUseBackgroundImage() {
-        return true;
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public boolean isDefaultProfile() {
-        return true;
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public boolean isShowAllInlineMedia() {
-        return false;
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public int getFriendsCount() {
-        return account.getFollowingCount();
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public Date getCreatedAt() {
-        return MastodonTwitterImpl.parseDate(account.getCreatedAt());
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public int getFavouritesCount() {
-        return -1;
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public int getUtcOffset() {
-        return 0;
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public String getTimeZone() {
-        return null;
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public String getProfileBackgroundImageURL() {
-        return null;
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public String getProfileBackgroundImageUrlHttps() {
-        return null;
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public String getProfileBannerURL() {
-        return account.getHeader();
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public String getProfileBannerRetinaURL() {
-        return account.getHeader();
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public String getProfileBannerIPadURL() {
-        return account.getHeader();
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public String getProfileBannerIPadRetinaURL() {
-        return account.getHeader();
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public String getProfileBannerMobileURL() {
-        return account.getHeader();
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public String getProfileBannerMobileRetinaURL() {
-        return account.getHeader();
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public String getProfileBanner300x100URL() {
-        return account.getHeader();
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public String getProfileBanner600x200URL() {
-        return account.getHeader();
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public String getProfileBanner1500x500URL() {
-        return account.getHeader();
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public boolean isProfileBackgroundTiled() {
-        return false;
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public String getLang() {
-        return null;
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public int getStatusesCount() {
-        return account.getStatusesCount();
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public boolean isGeoEnabled() {
-        return false;
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public boolean isVerified() {
-        return false;
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public boolean isTranslator() {
-        return false;
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public int getListedCount() {
-        return 0;
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public boolean isFollowRequestSent() {
-        return false;
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public URLEntity[] getDescriptionURLEntities() {
-        return new URLEntity[0];
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public URLEntity getURLEntity() {
-        return null;
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public String[] getWithheldInCountries() {
-        return new String[0];
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public int compareTo(@NotNull User user) {
-        return 0;
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public RateLimitStatus getRateLimitStatus() {
-        return null;
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public int getAccessLevel() {
-        return 0;
+        throw new RuntimeException("Deprecated");
     }
 }

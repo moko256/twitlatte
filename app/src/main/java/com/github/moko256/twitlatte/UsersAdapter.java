@@ -28,20 +28,17 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
-import com.github.moko256.mastodon.MTUser;
-import com.github.moko256.twitlatte.database.CachedUsersSQLiteOpenHelper;
 import com.github.moko256.twitlatte.entity.Emoji;
+import com.github.moko256.twitlatte.entity.User;
 import com.github.moko256.twitlatte.glide.GlideApp;
 import com.github.moko256.twitlatte.glide.GlideRequests;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
 import com.github.moko256.twitlatte.view.EmojiToTextViewSetter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
-import twitter4j.User;
 
 /**
  * Created by moko256 on 2016/03/29.
@@ -89,19 +86,7 @@ class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> {
         );
 
         viewHolder.userUserName.setText(userNameText);
-        List<Emoji> userNameEmojis = null;
-        if (item instanceof CachedUsersSQLiteOpenHelper.CachedUser) {
-            userNameEmojis = ((CachedUsersSQLiteOpenHelper.CachedUser) item).getEmojis();
-        } else if (item instanceof MTUser) {
-            List<com.sys1yagi.mastodon4j.api.entity.Emoji> emojis = ((MTUser) item).account.getEmojis();
-            userNameEmojis = new ArrayList<>(emojis.size());
-            for (com.sys1yagi.mastodon4j.api.entity.Emoji emoji : emojis) {
-                userNameEmojis.add(new Emoji(
-                        emoji.getShortcode(),
-                        emoji.getUrl()
-                ));
-            }
-        }
+        List<Emoji> userNameEmojis = item.getEmojis();
         if (userNameEmojis != null) {
             if (viewHolder.userNameEmojiSetter == null) {
                 viewHolder.userNameEmojiSetter = new EmojiToTextViewSetter(viewHolder.request, viewHolder.userUserName);

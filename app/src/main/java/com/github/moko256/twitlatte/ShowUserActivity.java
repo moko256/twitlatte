@@ -35,6 +35,7 @@ import android.widget.Toast;
 
 import com.github.moko256.mastodon.MastodonTwitterImpl;
 import com.github.moko256.twitlatte.entity.Type;
+import com.github.moko256.twitlatte.entity.User;
 import com.github.moko256.twitlatte.intent.AppCustomTabsKt;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
 import com.github.moko256.twitlatte.widget.FragmentPagerAdapter;
@@ -48,7 +49,6 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
-import twitter4j.User;
 
 /**
  * Created by moko256 on 2016/03/11.
@@ -310,14 +310,14 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
                 .create(
                         subscriber-> {
                             try {
-                                User user = null;
+                                twitter4j.User user = null;
                                 if (userId != -1) {
                                     user = GlobalApplication.twitter.showUser(userId);
                                 } else if (userScreenName != null) {
                                     user = GlobalApplication.twitter.showUser(userScreenName);
                                     GlobalApplication.userCache.add(user);
                                 }
-                                subscriber.onSuccess(user);
+                                subscriber.onSuccess(GlobalApplication.userCache.get(userId));
                             } catch (TwitterException e) {
                                 subscriber.tryOnError(e);
                             }

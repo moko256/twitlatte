@@ -29,13 +29,12 @@ import android.widget.TextView;
 
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.github.moko256.twitlatte.entity.AccessToken;
+import com.github.moko256.twitlatte.entity.User;
 import com.github.moko256.twitlatte.glide.GlideApp;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import twitter4j.User;
 
 /**
  * Created by moko256 on 2017/10/26.

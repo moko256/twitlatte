@@ -46,10 +46,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
-import com.github.moko256.mastodon.MTUser;
 import com.github.moko256.twitlatte.database.CachedUsersSQLiteOpenHelper;
 import com.github.moko256.twitlatte.entity.AccessToken;
 import com.github.moko256.twitlatte.entity.Emoji;
+import com.github.moko256.twitlatte.entity.User;
+import com.github.moko256.twitlatte.entity.UserConverterKt;
 import com.github.moko256.twitlatte.glide.GlideApp;
 import com.github.moko256.twitlatte.glide.GlideRequests;
 import com.github.moko256.twitlatte.model.AccountsModel;
@@ -68,7 +69,6 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import twitter4j.TwitterException;
-import twitter4j.User;
 
 /**
  * Created by moko256 on 2015/11/08.
@@ -270,7 +270,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                                 User user = userHelper.getCachedUser(id);
                                 if (user == null){
                                     try {
-                                        user = ((GlobalApplication) getApplication()).createTwitterInstance(accessToken).verifyCredentials();
+                                        user = UserConverterKt.convertToCommonUser(((GlobalApplication) getApplication()).createTwitterInstance(accessToken).verifyCredentials());
                                         userHelper.addCachedUser(user);
                                     } catch (TwitterException e) {
                                         e.printStackTrace();
@@ -476,19 +476,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                                     );
 
                                     userNameText.setText(userName);
-                                    List<Emoji> userNameEmojis = null;
-                                    if (user instanceof CachedUsersSQLiteOpenHelper.CachedUser) {
-                                        userNameEmojis = ((CachedUsersSQLiteOpenHelper.CachedUser) user).getEmojis();
-                                    } else if (user instanceof MTUser) {
-                                        List<com.sys1yagi.mastodon4j.api.entity.Emoji> emojis = ((MTUser) user).account.getEmojis();
-                                        userNameEmojis = new ArrayList<>(emojis.size());
-                                        for (com.sys1yagi.mastodon4j.api.entity.Emoji emoji : emojis) {
-                                            userNameEmojis.add(new Emoji(
-                                                    emoji.getShortcode(),
-                                                    emoji.getUrl()
-                                            ));
-                                        }
-                                    }
+                                    List<Emoji> userNameEmojis = user.getEmojis();
                                     if (userNameEmojis != null) {
                                         if (userNameEmojiSetter == null) {
                                             userNameEmojiSetter = new EmojiToTextViewSetter(requests, userNameText);

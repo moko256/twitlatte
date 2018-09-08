@@ -34,6 +34,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.moko256.twitlatte.entity.Status;
+import com.github.moko256.twitlatte.entity.User;
 import com.github.moko256.twitlatte.glide.GlideApp;
 import com.github.moko256.twitlatte.intent.AppCustomTabsKt;
 import com.github.moko256.twitlatte.model.base.PostTweetModel;
@@ -47,7 +48,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import twitter4j.TwitterException;
-import twitter4j.User;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;

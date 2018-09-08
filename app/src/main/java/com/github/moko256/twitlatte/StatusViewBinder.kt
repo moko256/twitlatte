@@ -25,18 +25,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import com.github.moko256.mastodon.MTUser
-import com.github.moko256.twitlatte.database.CachedUsersSQLiteOpenHelper
 import com.github.moko256.twitlatte.entity.Emoji
 import com.github.moko256.twitlatte.entity.Status
+import com.github.moko256.twitlatte.entity.User
 import com.github.moko256.twitlatte.entity.Visibility
 import com.github.moko256.twitlatte.glide.GlideRequests
 import com.github.moko256.twitlatte.text.TwitterStringUtils
 import com.github.moko256.twitlatte.view.EmojiToTextViewSetter
 import com.github.moko256.twitlatte.widget.TweetImageTableView
 import io.reactivex.disposables.CompositeDisposable
-import twitter4j.User
-import java.util.*
 
 /**
  * Created by moko256 on 2018/09/03.
@@ -138,7 +135,7 @@ class StatusViewBinder(private val glideRequests: GlideRequests, private val vie
                             if (timelineImageLoadMode == "normal")
                                 user?.get400x400ProfileImageURLHttps()
                             else
-                                user?.miniProfileImageURLHttps
+                                user?.getMiniProfileImageURLHttps()
                     )
                     .circleCrop()
                     .transition(DrawableTransitionOptions.withCrossFade())
@@ -154,19 +151,7 @@ class StatusViewBinder(private val glideRequests: GlideRequests, private val vie
                 user?.isVerified == true
         )
         userName.text = userNameText
-        var userNameEmojis: List<Emoji>? = null
-        if (user is CachedUsersSQLiteOpenHelper.CachedUser) {
-            userNameEmojis = user.emojis
-        } else if (user is MTUser) {
-            val emojis = user.account.emojis
-            userNameEmojis = ArrayList(emojis.size)
-            for (emoji in emojis) {
-                userNameEmojis.add(Emoji(
-                        emoji.shortcode,
-                        emoji.url
-                ))
-            }
-        }
+        val userNameEmojis: List<Emoji>? = user?.emojis
         if (userNameEmojis != null) {
             if (userNameEmojiSetter == null) {
                 userNameEmojiSetter = EmojiToTextViewSetter(glideRequests, userName)

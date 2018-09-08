@@ -22,10 +22,11 @@ import android.support.v4.util.LruCache;
 import com.github.moko256.twitlatte.GlobalApplication;
 import com.github.moko256.twitlatte.database.CachedUsersSQLiteOpenHelper;
 import com.github.moko256.twitlatte.entity.AccessToken;
+import com.github.moko256.twitlatte.entity.User;
+import com.github.moko256.twitlatte.entity.UserConverterKt;
 
+import java.util.ArrayList;
 import java.util.Collection;
-
-import twitter4j.User;
 
 /**
  * Created by moko256 on 2016/12/22.
@@ -52,21 +53,24 @@ public class UserCacheMap {
         return cache.size();
     }
 
-    public void add(User user) {
+    public void add(twitter4j.User user) {
         if (user != null) {
-            cache.put(user.getId(), user);
-            diskCache.addCachedUser(user);
+            cache.put(user.getId(), UserConverterKt.convertToCommonUser(user));
+            diskCache.addCachedUser(UserConverterKt.convertToCommonUser(user));
         }
     }
 
-    public void addAll(Collection<? extends User> c) {
+    public void addAll(Collection<twitter4j.User> c) {
         if (c.size() > 0) {
-            for (User user : c) {
+            ArrayList<User> list = new ArrayList<>(c.size());
+            for (twitter4j.User user : c) {
                 if (user != null) {
-                    cache.put(user.getId(), user);
+                    User value = UserConverterKt.convertToCommonUser(user);
+                    cache.put(user.getId(), value);
+                    list.add(value);
                 }
             }
-            diskCache.addCachedUsers(c);
+            diskCache.addCachedUsers(list);
         }
     }
 

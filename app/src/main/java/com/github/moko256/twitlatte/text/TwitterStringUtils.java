@@ -38,6 +38,7 @@ import com.github.moko256.twitlatte.R;
 import com.github.moko256.twitlatte.SearchResultActivity;
 import com.github.moko256.twitlatte.ShowUserActivity;
 import com.github.moko256.twitlatte.entity.Type;
+import com.github.moko256.twitlatte.entity.User;
 import com.github.moko256.twitlatte.intent.AppCustomTabsKt;
 import com.github.moko256.twitlatte.text.link.MTHtmlParser;
 import com.github.moko256.twitlatte.text.link.entity.Link;
@@ -47,7 +48,6 @@ import com.sys1yagi.mastodon4j.api.exception.Mastodon4jRequestException;
 import kotlin.jvm.functions.Function1;
 import twitter4j.TwitterException;
 import twitter4j.URLEntity;
-import twitter4j.User;
 
 /**
  * Created by moko256 on 2016/08/06.

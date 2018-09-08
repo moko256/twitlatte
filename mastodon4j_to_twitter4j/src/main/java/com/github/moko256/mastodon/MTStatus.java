@@ -41,7 +41,7 @@ import twitter4j.UserMentionEntity;
 
 public class MTStatus implements twitter4j.Status{
 
-    public Status status;
+    public final Status status;
 
     MTStatus(Status status){
         this.status = status;

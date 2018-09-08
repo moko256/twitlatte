@@ -33,6 +33,7 @@ import com.github.moko256.twitlatte.entity.Repeat;
 import com.github.moko256.twitlatte.entity.Status;
 import com.github.moko256.twitlatte.entity.StatusObject;
 import com.github.moko256.twitlatte.entity.StatusObjectKt;
+import com.github.moko256.twitlatte.entity.User;
 import com.github.moko256.twitlatte.glide.GlideApp;
 import com.github.moko256.twitlatte.glide.GlideRequests;
 import com.github.moko256.twitlatte.repository.PreferenceRepository;
@@ -40,8 +41,6 @@ import com.github.moko256.twitlatte.text.TwitterStringUtils;
 import com.github.moko256.twitlatte.widget.TweetImageTableView;
 
 import java.util.List;
-
-import twitter4j.User;
 
 /**
  * Created by moko256 on 2016/02/11.
