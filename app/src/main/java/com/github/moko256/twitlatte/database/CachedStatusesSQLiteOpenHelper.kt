@@ -107,10 +107,9 @@ class CachedStatusesSQLiteOpenHelper(
             db.execSQL("drop table $TABLE_NAME")
             onCreate(db)
 
-            val contentValues = ArrayList<ContentValues>(oldStatuses.size)
             for (statusPair in oldStatuses) {
                 val status = statusPair.first
-                contentValues.add(createStatusContentValues(if (accessToken?.type == Type.MASTODON) {
+                val contentValue = createStatusContentValues(if (accessToken?.type == Type.MASTODON) {
 
                     if (status.retweetedStatusId == -1L) {
                         val urls = MTHtmlParser.convertToContentAndLinks(status.text)
@@ -201,13 +200,12 @@ class CachedStatusesSQLiteOpenHelper(
                     status.convertToCommonStatus()
                 }).apply {
                     put("count", statusPair.second)
-                })
+                }
+
+                db.insert(TABLE_NAME, null, contentValue)
             }
 
-            for (values in contentValues) {
-                db.insert(TABLE_NAME, null, values)
-            }
-
+            oldStatuses.close()
         }
     }
 
