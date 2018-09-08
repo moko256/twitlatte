@@ -13,8 +13,6 @@
             <option value="$PROJECT_DIR$/japng-android/android_api" />
             <option value="$PROJECT_DIR$/japng-android/japng/api" />
             <option value="$PROJECT_DIR$/mastodon4j_to_twitter4j" />
-            <option value="$PROJECT_DIR$/mastodon4j_to_twitter4j/mastodon4j" />
-            <option value="$PROJECT_DIR$/mastodon4j_to_twitter4j/mastodon4j/mastodon4j" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

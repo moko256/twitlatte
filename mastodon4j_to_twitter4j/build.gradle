@@ -17,8 +17,7 @@
 apply plugin: 'java-library'
 
 dependencies {
-    api project('mastodon4j')
-    api project('mastodon4j:mastodon4j')
+    api 'com.github.sys1yagi.mastodon4j:mastodon4j:1.7.0'
 
     api 'org.twitter4j:twitter4j-core:4.0.7'
     api 'org.twitter4j:twitter4j-http2-support:4.0.7'
