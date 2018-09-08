@@ -18,9 +18,9 @@ package com.github.moko256.twitlatte.entity
 
 import com.github.moko256.twitlatte.text.link.MTHtmlParser
 import com.github.moko256.twitlatte.text.link.convertToContentAndLinks
+import com.github.moko256.twitlatte.text.link.entity.Link
 import com.google.android.exoplayer2.util.MimeTypes
 import com.sys1yagi.mastodon4j.api.entity.Attachment
-import twitter4j.Status as Twitter4jStatus
 
 /**
  * Created by moko256 on 2017/12/22.
@@ -29,7 +29,11 @@ import twitter4j.Status as Twitter4jStatus
  */
 fun twitter4j.Status.convertToCommonStatus(): StatusObject {
     return if (!isRetweet) {
-        val parsedSource = MTHtmlParser.convertToContentAndLinks(source)
+        val parsedSource: Pair<String, Array<Link>>? = if (source == null) {
+            null
+        } else {
+            MTHtmlParser.convertToContentAndLinks(source)
+        }
         val urls = if (symbolEntities.isEmpty()
                 && hashtagEntities.isEmpty()
                 && userMentionEntities.isEmpty()
@@ -61,9 +65,9 @@ fun twitter4j.Status.convertToCommonStatus(): StatusObject {
         Status(
                 id = id,
                 userId = user.id,
-                text = urls?.first?:text,
-                sourceName = parsedSource.first,
-                sourceWebsite = parsedSource.second.first().url,
+                text = urls?.first?:text?:"",
+                sourceName = parsedSource?.first,
+                sourceWebsite = parsedSource?.second?.first()?.url,
                 createdAt = createdAt,
                 inReplyToStatusId = inReplyToStatusId,
                 inReplyToUserId = inReplyToUserId,
