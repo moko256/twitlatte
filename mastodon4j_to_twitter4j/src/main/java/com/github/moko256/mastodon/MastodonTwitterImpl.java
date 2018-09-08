@@ -106,6 +106,7 @@ public final class MastodonTwitterImpl implements Twitter {
         gson = new Gson();
     }
 
+    @Deprecated
     public static Date parseDate(String date){
         try {
             synchronized (dateParser) {
