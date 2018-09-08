@@ -52,26 +52,26 @@ class StatusViewBinder(private val glideRequests: GlideRequests, private val vie
     private var spoilerTextEmojiSetter: EmojiToTextViewSetter? = null
     private var userNameEmojiSetter: EmojiToTextViewSetter? = null
 
-    public val userImage: ImageView = viewGroup.findViewById(R.id.tweet_icon)
-    public val replyUserName: TextView = viewGroup.findViewById(R.id.tweet_reply_user_name)
-    public val userName: TextView = viewGroup.findViewById(R.id.tweet_user_name)
-    public val userId: TextView = viewGroup.findViewById(R.id.tweet_user_id)
-    public val tweetSpoilerText: TextView = viewGroup.findViewById(R.id.tweet_spoiler)
-    public val contentOpenerToggle: CheckBox = viewGroup.findViewById(R.id.tweet_spoiler_opener)
-    public val tweetContext: TextView = viewGroup.findViewById(R.id.tweet_content)
-    public val timeStampText: TextView
-    public val quoteTweetLayout: RelativeLayout
-    public val quoteTweetImages: TweetImageTableView
-    public val quoteTweetUserName: TextView
-    public val quoteTweetUserId: TextView
-    public val quoteTweetContext: TextView
-    public val imageTableView: TweetImageTableView
-    public val likeButton: CheckBox
-    public val retweetButton: CheckBox
-    public val replyButton: ImageButton
-    public val likeCount: TextView
-    public val retweetCount: TextView
-    public val repliesCount: TextView
+    val userImage: ImageView = viewGroup.findViewById(R.id.tweet_icon)
+    val replyUserName: TextView = viewGroup.findViewById(R.id.tweet_reply_user_name)
+    val userName: TextView = viewGroup.findViewById(R.id.tweet_user_name)
+    val userId: TextView = viewGroup.findViewById(R.id.tweet_user_id)
+    val tweetSpoilerText: TextView = viewGroup.findViewById(R.id.tweet_spoiler)
+    val contentOpenerToggle: CheckBox = viewGroup.findViewById(R.id.tweet_spoiler_opener)
+    val tweetContext: TextView = viewGroup.findViewById(R.id.tweet_content)
+    val timeStampText: TextView = viewGroup.findViewById(R.id.tweet_time_stamp_text)
+    val quoteTweetLayout: RelativeLayout = viewGroup.findViewById(R.id.tweet_quote_tweet)
+    val quoteTweetImages: TweetImageTableView = viewGroup.findViewById(R.id.tweet_quote_images)
+    val quoteTweetUserName: TextView = viewGroup.findViewById(R.id.tweet_quote_tweet_user_name)
+    val quoteTweetUserId: TextView = viewGroup.findViewById(R.id.tweet_quote_tweet_user_id)
+    val quoteTweetContext: TextView = viewGroup.findViewById(R.id.tweet_quote_tweet_content)
+    val imageTableView: TweetImageTableView = viewGroup.findViewById(R.id.tweet_image_container)
+    val likeButton: CheckBox = viewGroup.findViewById(R.id.tweet_content_like_button)
+    val retweetButton: CheckBox = viewGroup.findViewById(R.id.tweet_content_retweet_button)
+    val replyButton: ImageButton = viewGroup.findViewById(R.id.tweet_content_reply_button)
+    val likeCount: TextView = viewGroup.findViewById(R.id.tweet_content_like_count)
+    val retweetCount: TextView = viewGroup.findViewById(R.id.tweet_content_retweet_count)
+    val repliesCount: TextView = viewGroup.findViewById(R.id.tweet_content_replies_count)
 
     init {
         contentOpenerToggle.setOnCheckedChangeListener { _, isChecked ->
@@ -81,22 +81,8 @@ class StatusViewBinder(private val glideRequests: GlideRequests, private val vie
                 tweetContext.visibility = View.GONE
             }
         }
+
         tweetContext.movementMethod = LinkMovementMethod.getInstance()
-        timeStampText = viewGroup.findViewById(R.id.tweet_time_stamp_text)
-        quoteTweetLayout = viewGroup.findViewById(R.id.tweet_quote_tweet)
-        quoteTweetImages = viewGroup.findViewById(R.id.tweet_quote_images)
-        quoteTweetUserName = viewGroup.findViewById(R.id.tweet_quote_tweet_user_name)
-        quoteTweetUserId = viewGroup.findViewById(R.id.tweet_quote_tweet_user_id)
-        quoteTweetContext = viewGroup.findViewById(R.id.tweet_quote_tweet_content)
-        imageTableView = viewGroup.findViewById(R.id.tweet_image_container)
-
-        likeButton = viewGroup.findViewById(R.id.tweet_content_like_button)
-        retweetButton = viewGroup.findViewById(R.id.tweet_content_retweet_button)
-        replyButton = viewGroup.findViewById(R.id.tweet_content_reply_button)
-
-        likeCount = viewGroup.findViewById(R.id.tweet_content_like_count)
-        retweetCount = viewGroup.findViewById(R.id.tweet_content_retweet_count)
-        repliesCount = viewGroup.findViewById(R.id.tweet_content_replies_count)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             tweetContext.breakStrategy = Layout.BREAK_STRATEGY_SIMPLE
@@ -113,7 +99,7 @@ class StatusViewBinder(private val glideRequests: GlideRequests, private val vie
         hasStatus = true
     }
 
-    fun updateView(user: User?, status: Status, quotedStatusUser: User?, quotedStatus: Status?) {
+    private fun updateView(user: User?, status: Status, quotedStatusUser: User?, quotedStatus: Status?) {
 
         val isReply = status.inReplyToScreenName != null
         if (isReply) {
@@ -157,7 +143,7 @@ class StatusViewBinder(private val glideRequests: GlideRequests, private val vie
                 user?.isVerified == true
         )
         userName.text = userNameText
-        var userNameEmojis: MutableList<Emoji>? = null
+        var userNameEmojis: List<Emoji>? = null
         if (user is CachedUsersSQLiteOpenHelper.CachedUser) {
             userNameEmojis = user.emojis
         } else if (user is MTUser) {

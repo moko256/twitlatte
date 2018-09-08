@@ -64,7 +64,6 @@ public class ShowTweetActivity extends AppCompatActivity {
     private StatusViewBinder statusViewBinder;
 
     private TextView tweetIsReply;
-    private ViewGroup statusViewFrame;
     private TextView timestampText;
     private TextView viaText;
     private EditText replyText;
@@ -74,8 +73,6 @@ public class ShowTweetActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_tweet);
-
-        statusViewFrame = findViewById(R.id.tweet_show_tweet);
 
         statusId = getIntent().getLongExtra("statusId", -1);
         if (statusId == -1) {
@@ -90,7 +87,8 @@ public class ShowTweetActivity extends AppCompatActivity {
             }
 
             tweetIsReply = findViewById(R.id.tweet_show_is_reply_text);
-            statusViewFrame = findViewById(R.id.tweet_show_tweet);
+            ViewGroup statusViewFrame = findViewById(R.id.tweet_show_tweet);
+            statusViewBinder = new StatusViewBinder(GlideApp.with(this), statusViewFrame);
             timestampText = findViewById(R.id.tweet_show_timestamp);
             viaText = findViewById(R.id.tweet_show_via);
             replyText= findViewById(R.id.tweet_show_tweet_reply_text);
@@ -118,23 +116,38 @@ public class ShowTweetActivity extends AppCompatActivity {
                                     })
             ));
 
-            disposables.add(
-                    updateStatus()
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(
-                                    result->{
-                                        if (result == null) {
+            Status status = (Status) GlobalApplication.statusCache.get(statusId);
+
+            if (status != null) {
+                User user = GlobalApplication.userCache.get(status.getUserId());
+
+                Status quotedStatus = status.getQuotedStatusId() != -1
+                        ?(Status) GlobalApplication.statusCache.get(status.getQuotedStatusId())
+                        :null;
+                User quotedStatusUser = quotedStatus != null
+                        ?GlobalApplication.userCache.get(quotedStatus.getUserId())
+                        :null;
+
+                updateView(new Result(user, status, quotedStatusUser, quotedStatus));
+            } else {
+                disposables.add(
+                        updateStatus()
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(
+                                        result->{
+                                            if (result == null) {
+                                                finish();
+                                                return;
+                                            }
+                                            updateView(result);
+                                        },
+                                        e->{
+                                            e.printStackTrace();
                                             finish();
-                                            return;
-                                        }
-                                        updateView(result);
-                                    },
-                                    e->{
-                                        e.printStackTrace();
-                                        finish();
-                                    })
-            );
+                                        })
+                );
+            }
         }
     }
 
@@ -198,13 +211,9 @@ public class ShowTweetActivity extends AppCompatActivity {
         return Single.create(
                 subscriber -> {
                     try {
+                        twitter4j.Status result = GlobalApplication.twitter.showStatus(statusId);
+                        GlobalApplication.statusCache.add(result, false);
                         Status status = (Status) GlobalApplication.statusCache.get(statusId);
-
-                        if (status == null) {
-                            twitter4j.Status result = GlobalApplication.twitter.showStatus(statusId);
-                            GlobalApplication.statusCache.add(result, false);
-                            status = (Status) GlobalApplication.statusCache.get(statusId);
-                        }
 
                         User user = GlobalApplication.userCache.get(status.getUserId());
 
@@ -231,7 +240,6 @@ public class ShowTweetActivity extends AppCompatActivity {
             tweetIsReply.setVisibility(GONE);
         }
 
-        statusViewBinder = new StatusViewBinder(GlideApp.with(this), statusViewFrame);
         statusViewBinder.setStatus(item.user, item.status, item.quotedStatusUser, item.quotedStatus);
 
         timestampText.setText(
@@ -280,10 +288,10 @@ public class ShowTweetActivity extends AppCompatActivity {
     }
 
     private class Result {
-        public final User user;
-        public final Status status;
-        public final User quotedStatusUser;
-        public final Status quotedStatus;
+        final User user;
+        final Status status;
+        final User quotedStatusUser;
+        final Status quotedStatus;
 
         Result(User user, Status status, User quotedStatusUser, Status quotedStatus) {
             this.user = user;
