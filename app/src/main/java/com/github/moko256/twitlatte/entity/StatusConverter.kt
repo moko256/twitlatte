@@ -77,35 +77,44 @@ fun twitter4j.Status.convertToCommonStatus(): StatusObject {
                 lang = lang,
                 medias = if (mediaEntities.isNotEmpty()) {
                     mediaEntities.map {
-                        var resultUrl: String? = null
+                        var downloadVideoUrl: String? = null
+                        var originalUrl: String? = null
                         var type: String? = null
 
                         when(it.type) {
                             "video" -> {
                                 for (variant in it.videoVariants) {
                                     if (variant.contentType == MimeTypes.APPLICATION_M3U8) {
-                                        resultUrl = variant.url
+                                        originalUrl = variant.url
                                         type = Media.ImageType.VIDEO_MULTI.value
+                                    } else if(variant.contentType == MimeTypes.VIDEO_MP4) {
+                                        downloadVideoUrl = variant.url
                                     }
                                 }
 
-                                if (resultUrl == null) {
-                                    resultUrl = it.videoVariants[0].url
+                                if (downloadVideoUrl == null) {
+                                    originalUrl = it.videoVariants[0].url
                                     type = Media.ImageType.VIDEO_ONE.value
                                 }
                             }
                             "animated_gif" -> {
-                                resultUrl = it.videoVariants[0].url
+                                originalUrl = it.videoVariants[0].url
                                 type = Media.ImageType.GIF.value
                             }
                             else -> {
-                                resultUrl = it.mediaURLHttps
+                                originalUrl = it.mediaURLHttps
                                 type = Media.ImageType.PICTURE.value
                             }
                         }
 
                         Media(
-                                url = resultUrl?:it.mediaURLHttps,
+                                thumbnailUrl = if (originalUrl != null) {
+                                    it.mediaURLHttps
+                                } else {
+                                    null
+                                },
+                                downloadVideoUrl = downloadVideoUrl,
+                                originalUrl = originalUrl?:it.mediaURLHttps,
                                 imageType = type?:Media.ImageType.PICTURE.value
                         )
                     }.toTypedArray()
@@ -154,20 +163,27 @@ fun com.sys1yagi.mastodon4j.api.entity.Status.convertToCommonStatus(): StatusObj
                 medias = if (mediaAttachments.isNotEmpty()) {
                     mediaAttachments.map {
                         val resultUrl = it.url
-                        val type = when(it.type) {
+                        val thubnailUrl: String?
+                        val type: Media.ImageType
+
+                        when(it.type) {
                             Attachment.Type.Video.value -> {
-                                Media.ImageType.VIDEO_ONE
+                                thubnailUrl = it.previewUrl
+                                type = Media.ImageType.VIDEO_ONE
                             }
                             Attachment.Type.Gifv.value -> {
-                                Media.ImageType.GIF
+                                thubnailUrl = it.previewUrl
+                                type = Media.ImageType.GIF
                             }
                             else -> {
-                                Media.ImageType.PICTURE
+                                thubnailUrl = null
+                                type = Media.ImageType.PICTURE
                             }
                         }
 
                         Media(
-                                url = resultUrl,
+                                thumbnailUrl = thubnailUrl,
+                                originalUrl = resultUrl,
                                 imageType = type.value
                         )
                     }.toTypedArray()

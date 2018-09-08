@@ -148,7 +148,7 @@ public class ImagePagerChildFragment extends Fragment {
                 player.prepare(
                         new HlsMediaSource
                                 .Factory(createOkHttpDataSourceFactory(bandwidthMeter))
-                                .createMediaSource(Uri.parse(mediaEntity.getUrl()))
+                                .createMediaSource(Uri.parse(mediaEntity.getOriginalUrl()))
                 );
                 player.setPlayWhenReady(true);
 
@@ -189,7 +189,7 @@ public class ImagePagerChildFragment extends Fragment {
                 player.prepare(
                         new ExtractorMediaSource
                                 .Factory(createOkHttpDataSourceFactory(bandwidthMeter))
-                                .createMediaSource(Uri.parse(mediaEntity.getUrl()))
+                                .createMediaSource(Uri.parse(mediaEntity.getOriginalUrl()))
                 );
                 player.setPlayWhenReady(true);
 
@@ -228,7 +228,7 @@ public class ImagePagerChildFragment extends Fragment {
                         new LoopingMediaSource(
                                 new ExtractorMediaSource.Factory(createOkHttpDataSourceFactory(bandwidthMeter))
                                         .createMediaSource(
-                                                Uri.parse(mediaEntity.getUrl())
+                                                Uri.parse(mediaEntity.getOriginalUrl())
                                         )
                         )
                 );
@@ -254,7 +254,7 @@ public class ImagePagerChildFragment extends Fragment {
                 });
                 imageView.setOnScaleChangeListener((float scaleFactor, float focusX, float focusY) -> view.setDragEnabled(scaleFactor <= 1F));
                 GlideRequests requests = GlideApp.with(this);
-                String url = mediaEntity.getUrl();
+                String url = mediaEntity.getOriginalUrl();
                 requests
                         .load(TwitterStringUtils.convertLargeImageUrl(url))
                         .fitCenter()
@@ -324,7 +324,8 @@ public class ImagePagerChildFragment extends Fragment {
     }
 
     private void contentDownload(){
-        String path = mediaEntity.getUrl();
+        String downloadVideoUrl = mediaEntity.getDownloadVideoUrl();
+        String path = downloadVideoUrl == null? mediaEntity.getOriginalUrl(): downloadVideoUrl;
 
         DownloadManager manager;
 

@@ -203,7 +203,10 @@ public class TweetImageTableView extends GridLayout {
         }
         for (int ii = 0; ii < imageNum; ii++) {
 
-            String url = medias[ii].getUrl();
+            String thumbnailUrl = medias[ii].getThumbnailUrl();
+            String originalUrl = medias[ii].getOriginalUrl();
+
+            String url = thumbnailUrl == null? originalUrl: thumbnailUrl;
             ImageView imageView = imageViews[ii];
 
             if (isOpen) {

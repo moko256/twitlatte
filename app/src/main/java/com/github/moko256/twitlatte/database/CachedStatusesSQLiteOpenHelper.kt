@@ -58,7 +58,9 @@ private val TABLE_COLUMNS = arrayOf(
         "urls_urls",
         "urls_start",
         "urls_ends",
-        "medias_urls",
+        "medias_thumbnail_urls",
+        "medias_original_urls",
+        "medias_download_video_urls",
         "medias_types",
         "quotedStatusId",
         "url",
@@ -145,26 +147,32 @@ class CachedStatusesSQLiteOpenHelper(
                                 lang = status.lang,
                                 medias = if (status.mediaEntities.isNotEmpty()) {
                                     status.mediaEntities.map {
+                                        val thumbnailUrl: String?
                                         val resultUrl: String
                                         val type: String
 
                                         when(it.type) {
                                             "video" -> {
+                                                thumbnailUrl = it.mediaURLHttps
                                                 resultUrl = it.videoVariants[0].url
                                                 type = Media.ImageType.VIDEO_ONE.value
                                             }
                                             "animated_gif" -> {
+                                                thumbnailUrl = null
                                                 resultUrl = it.videoVariants[0].url
                                                 type = Media.ImageType.GIF.value
                                             }
                                             else -> {
+                                                thumbnailUrl = null
                                                 resultUrl = it.mediaURLHttps
                                                 type = Media.ImageType.PICTURE.value
                                             }
                                         }
 
                                         Media(
-                                                url = resultUrl,
+                                                thumbnailUrl = thumbnailUrl,
+                                                originalUrl = resultUrl,
+                                                downloadVideoUrl = null,
                                                 imageType = type
                                         )
                                     }.toTypedArray()
@@ -244,16 +252,18 @@ class CachedStatusesSQLiteOpenHelper(
                             ),
                             medias = restoreMedias(
                                     splitComma(c.getString(21)),
-                                    splitComma(c.getString(22))
+                                    splitComma(c.getString(22)),
+                                    splitComma(c.getString(23)),
+                                    splitComma(c.getString(24))
                             ),
-                            quotedStatusId = c.getLong(23),
-                            url = c.getString(24),
+                            quotedStatusId = c.getLong(25),
+                            url = c.getString(26),
                             emojis = restoreEmojis(
-                                    splitComma(c.getString(25)),
-                                    splitComma(c.getString(26))
+                                    splitComma(c.getString(27)),
+                                    splitComma(c.getString(28))
                             ),
-                            spoilerText = c.getString(27),
-                            visibility = c.getString(28)
+                            spoilerText = c.getString(29),
+                            visibility = c.getString(30)
                     )
                 } else {
                     status = Repeat(
@@ -399,20 +409,26 @@ class CachedStatusesSQLiteOpenHelper(
 
                 if (status.medias != null) {
                     val size = status.medias.size
-                    val urls = arrayOfNulls<String>(size)
+                    val thumbnailUrls = arrayOfNulls<String>(size)
+                    val originalUrls = arrayOfNulls<String>(size)
+                    val downloadVideoUrls = arrayOfNulls<String>(size)
                     val types = arrayOfNulls<String>(size)
 
                     status.medias.forEachIndexed { i, entity ->
-                        urls[i] = entity.url
+                        thumbnailUrls[i] = entity.thumbnailUrl
+                        originalUrls[i] = entity.originalUrl
+                        downloadVideoUrls[i] = entity.downloadVideoUrl
                         types[i] = entity.imageType
                     }
-                    contentValues.put(TABLE_COLUMNS[21], ArrayUtils.toCommaSplitString(urls).toString())
-                    contentValues.put(TABLE_COLUMNS[22], ArrayUtils.toCommaSplitString(types).toString())
+                    contentValues.put(TABLE_COLUMNS[21], ArrayUtils.toCommaSplitString(thumbnailUrls).toString())
+                    contentValues.put(TABLE_COLUMNS[22], ArrayUtils.toCommaSplitString(originalUrls).toString())
+                    contentValues.put(TABLE_COLUMNS[23], ArrayUtils.toCommaSplitString(downloadVideoUrls).toString())
+                    contentValues.put(TABLE_COLUMNS[24], ArrayUtils.toCommaSplitString(types).toString())
                 }
 
-                contentValues.put(TABLE_COLUMNS[23], status.quotedStatusId)
+                contentValues.put(TABLE_COLUMNS[25], status.quotedStatusId)
 
-                contentValues.put(TABLE_COLUMNS[24], status.url)
+                contentValues.put(TABLE_COLUMNS[26], status.url)
 
                 if (status.emojis != null) {
                     val size = status.emojis.size
@@ -423,11 +439,11 @@ class CachedStatusesSQLiteOpenHelper(
                         shortCodes[i] = emoji.shortCode
                         urls[i] = emoji.url
                     }
-                    contentValues.put(TABLE_COLUMNS[25], ArrayUtils.toCommaSplitString(shortCodes).toString())
-                    contentValues.put(TABLE_COLUMNS[26], ArrayUtils.toCommaSplitString(urls).toString())
+                    contentValues.put(TABLE_COLUMNS[27], ArrayUtils.toCommaSplitString(shortCodes).toString())
+                    contentValues.put(TABLE_COLUMNS[28], ArrayUtils.toCommaSplitString(urls).toString())
                 }
-                contentValues.put(TABLE_COLUMNS[27], status.spoilerText)
-                contentValues.put(TABLE_COLUMNS[28], status.visibility)
+                contentValues.put(TABLE_COLUMNS[29], status.spoilerText)
+                contentValues.put(TABLE_COLUMNS[30], status.visibility)
             }
 
             is Repeat -> {
@@ -520,12 +536,19 @@ class CachedStatusesSQLiteOpenHelper(
     }
 
     private fun restoreMedias(
-            urls: Array<String>?,
+            thumbnailUrls: Array<String>?,
+            originalUrls: Array<String>?,
+            downloadVideoUrls: Array<String>?,
             imageTypes: Array<String>?
-    ): Array<Media>? = if (urls != null && imageTypes != null && imageTypes.size == urls.size) {
-        Array(urls.size) {
+    ): Array<Media>? = if (imageTypes != null
+            && thumbnailUrls != null && thumbnailUrls.size == imageTypes.size
+            && originalUrls != null && originalUrls.size == imageTypes.size
+            && downloadVideoUrls != null && downloadVideoUrls.size == imageTypes.size) {
+        Array(imageTypes.size) {
             Media(
-                    url = urls[it],
+                    thumbnailUrl = thumbnailUrls[it],
+                    originalUrl = originalUrls[it],
+                    downloadVideoUrl = downloadVideoUrls[it],
                     imageType = imageTypes[it]
             )
         }

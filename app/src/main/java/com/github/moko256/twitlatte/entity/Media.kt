@@ -24,7 +24,9 @@ import java.io.Serializable
  * @author moko256
  */
 data class Media (
-        val url: String,
+        val thumbnailUrl: String? = null,
+        val originalUrl: String,
+        val downloadVideoUrl: String? = null,
         val imageType: String
 ): Serializable {
     enum class ImageType(val value: String) {
