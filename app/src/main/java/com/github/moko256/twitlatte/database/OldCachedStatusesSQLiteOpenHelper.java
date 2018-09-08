@@ -1432,7 +1432,7 @@ public class OldCachedStatusesSQLiteOpenHelper {
 
         Result(Cursor c) {
             this.c = c;
-            this.hasNext = c.getCount() > 0;
+            this.hasNext = c.moveToNext();
         }
 
         @Override
@@ -1451,22 +1451,13 @@ public class OldCachedStatusesSQLiteOpenHelper {
         }
 
         @Override
-        public void forEach(Consumer<? super Pair<CachedStatus, Integer>> action) {}
-
-        @Override
-        public Spliterator<Pair<CachedStatus, Integer>> spliterator() {
-            return null;
-        }
-
-        @Override
         public boolean hasNext() {
             return hasNext;
         }
 
         @Override
         public Pair<CachedStatus, Integer> next() {
-            hasNext = c.moveToNext();
-            return new Pair<>(
+            Pair<CachedStatus, Integer> pair = new Pair<>(
                     new CachedStatus(
                             new Date(c.getLong(0)),
                             c.getLong(1),
@@ -1535,12 +1526,28 @@ public class OldCachedStatusesSQLiteOpenHelper {
                     ),
                     c.getInt(50)
             );
+            hasNext = c.moveToNext();
+            return pair;
         }
 
         @Override
-        public void remove() {}
+        public void forEach(Consumer<? super Pair<CachedStatus, Integer>> action) {
+            throw new RuntimeException("Not implemented");
+        }
 
         @Override
-        public void forEachRemaining(Consumer<? super Pair<CachedStatus, Integer>> action) {}
+        public Spliterator<Pair<CachedStatus, Integer>> spliterator() {
+            throw new RuntimeException("Not implemented");
+        }
+
+        @Override
+        public void remove() {
+            throw new RuntimeException("Not implemented");
+        }
+
+        @Override
+        public void forEachRemaining(Consumer<? super Pair<CachedStatus, Integer>> action) {
+            throw new RuntimeException("Not implemented");
+        }
     }
 }
