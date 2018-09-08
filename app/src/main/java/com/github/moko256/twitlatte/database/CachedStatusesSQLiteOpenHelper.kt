@@ -117,7 +117,7 @@ class CachedStatusesSQLiteOpenHelper(
 
                         val (sourceName, sourceWebsite) = if (
                                 status.source.length > 8
-                                && status.source.substring(0 .. 8) == "<a href="
+                                && status.source.substring(0 .. 7) == "<a href="
                         ) {
                             val parsedSource = MTHtmlParser.convertToContentAndLinks(status.source)
 
