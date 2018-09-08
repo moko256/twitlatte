@@ -107,13 +107,24 @@ class StatusViewBinder(private val glideRequests: GlideRequests, private val vie
                 replyUserName.visibility = View.VISIBLE
             }
 
-            replyUserName.text = viewGroup.context.getString(
-                    if (status.inReplyToStatusId != -1L)
-                        R.string.reply_to
-                    else
-                        R.string.mention_to,
-                    TwitterStringUtils.plusAtMark(status.inReplyToScreenName)
-            )
+            replyUserName.text= if (status.inReplyToScreenName?.isEmpty() == true) {
+                viewGroup.context.getString(
+                        if (status.inReplyToStatusId != -1L) {
+                            R.string.reply
+                        } else {
+                            R.string.mention
+                        }
+                )
+            } else {
+                viewGroup.context.getString(
+                        if (status.inReplyToStatusId != -1L) {
+                            R.string.reply_to
+                        } else {
+                            R.string.mention_to
+                        },
+                        TwitterStringUtils.plusAtMark(status.inReplyToScreenName)
+                )
+            }
         } else {
             if (replyUserName.visibility != View.GONE) {
                 replyUserName.visibility = View.GONE

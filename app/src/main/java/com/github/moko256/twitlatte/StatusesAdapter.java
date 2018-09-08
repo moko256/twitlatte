@@ -16,10 +16,13 @@
 
 package com.github.moko256.twitlatte;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +36,7 @@ import com.github.moko256.twitlatte.entity.StatusObjectKt;
 import com.github.moko256.twitlatte.glide.GlideApp;
 import com.github.moko256.twitlatte.glide.GlideRequests;
 import com.github.moko256.twitlatte.repository.PreferenceRepository;
+import com.github.moko256.twitlatte.text.TwitterStringUtils;
 import com.github.moko256.twitlatte.widget.TweetImageTableView;
 
 import java.util.List;
@@ -50,6 +54,9 @@ class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final Context context;
     private OnLoadMoreClickListener onLoadMoreClick;
     private boolean shouldShowMediaOnly = false;
+
+    public OnFavoriteClickListener onFavoriteClick;
+    public OnRepeatClickListener onRepeatClick;
 
     StatusesAdapter(Context context, List<Long> data) {
         this.context = context;
@@ -143,16 +150,7 @@ class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, final int i) {
-        if (viewHolder instanceof StatusViewHolder) {
-            Status status = (Status) GlobalApplication.statusCache.get(data.get(i));
-            User user = GlobalApplication.userCache.get(status.getUserId());
-            Status quotedStatus = status.getQuotedStatusId() != -1?
-                    (Status) GlobalApplication.statusCache.get(status.getQuotedStatusId())
-                    :null;
-            User quotedStatusUser = quotedStatus != null? GlobalApplication.userCache.get(quotedStatus.getUserId()): null;
-
-            ((StatusViewHolder) viewHolder).setStatus(user, status, quotedStatusUser, quotedStatus);
-        } else if (viewHolder instanceof RepeatedStatusViewHolder){
+        if (viewHolder instanceof RepeatedStatusViewHolder){
             StatusObject object = GlobalApplication.statusCache.get(data.get(i));
             User repeatedUser = GlobalApplication.userCache.get(((Repeat) object).getUserId());
             Status status = ((Status) GlobalApplication.statusCache.get(((Repeat) object).getRepeatedStatusId()));
@@ -162,7 +160,17 @@ class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     :null;
             User quotedStatusUser = quotedStatus != null? GlobalApplication.userCache.get(quotedStatus.getUserId()): null;
 
-            ((RepeatedStatusViewHolder) viewHolder).setStatus(repeatedUser, user, status, quotedStatusUser, quotedStatus);
+            ((RepeatedStatusViewHolder) viewHolder).setStatus(user, status, quotedStatusUser, quotedStatus);
+            ((RepeatedStatusViewHolder) viewHolder).setRepeatUser(repeatedUser, status);
+        } else if (viewHolder instanceof StatusViewHolder) {
+            Status status = (Status) GlobalApplication.statusCache.get(data.get(i));
+            User user = GlobalApplication.userCache.get(status.getUserId());
+            Status quotedStatus = status.getQuotedStatusId() != -1?
+                    (Status) GlobalApplication.statusCache.get(status.getQuotedStatusId())
+                    :null;
+            User quotedStatusUser = quotedStatus != null? GlobalApplication.userCache.get(quotedStatus.getUserId()): null;
+
+            ((StatusViewHolder) viewHolder).setStatus(user, status, quotedStatusUser, quotedStatus);
         } else if (viewHolder instanceof ImagesOnlyTweetViewHolder){
             Status status = (Status) GlobalApplication.statusCache.get(data.get(i));
 
@@ -184,8 +192,6 @@ class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public void onViewRecycled(@NonNull RecyclerView.ViewHolder holder) {
         if (holder instanceof StatusViewHolder){
             ((StatusViewHolder) holder).clear();
-        } else if (holder instanceof RepeatedStatusViewHolder){
-            ((RepeatedStatusViewHolder) holder).clear();
         } else if (holder instanceof ImagesOnlyTweetViewHolder){
             ((ImagesOnlyTweetViewHolder) holder).setStatus(null);
         }
@@ -209,6 +215,67 @@ class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
 
         void setStatus(User user, Status status, User quotedStatusUser, Status quotedStatus) {
+            View.OnClickListener onContentClick = v -> {
+                ActivityOptionsCompat animation = ActivityOptionsCompat
+                        .makeSceneTransitionAnimation(
+                                ((Activity) context),
+                                statusViewBinder.getUserImage(),
+                                "icon_image"
+                        );
+                context.startActivity(
+                        ShowTweetActivity.getIntent(context, status.getId()),
+                        animation.toBundle()
+                );
+            };
+
+            itemView.setOnClickListener(onContentClick);
+            statusViewBinder.getTweetContext().setOnClickListener(onContentClick);
+
+            statusViewBinder.getUserImage().setOnClickListener(v -> {
+                ActivityOptionsCompat animation = ActivityOptionsCompat
+                        .makeSceneTransitionAnimation(
+                                (Activity) context,
+                                v,
+                                "icon_image"
+                        );
+                context.startActivity(
+                        ShowUserActivity.getIntent(context, user.getId()),
+                        animation.toBundle()
+                );
+            });
+
+            statusViewBinder.getQuoteTweetLayout().setOnClickListener(v -> context.startActivity(
+                    ShowTweetActivity.getIntent(context, quotedStatus.getId())
+            ));
+
+            statusViewBinder.getLikeButton().setOnCheckedChangeListener((compoundButton, b) -> {
+                if (b && (!status.isFavorited())) {
+                    onFavoriteClick.onClick(getLayoutPosition(), status.getId(), false);
+                } else if ((!b) && status.isFavorited()) {
+                    onFavoriteClick.onClick(getLayoutPosition(), status.getId(), true);
+                }
+            });
+
+            statusViewBinder.getRetweetButton().setOnCheckedChangeListener((compoundButton, b) -> {
+                if (b && (!status.isRepeated())) {
+                    onRepeatClick.onClick(getLayoutPosition(), status.getId(), false);
+                } else if ((!b) && status.isRepeated()) {
+                    onRepeatClick.onClick(getLayoutPosition(), status.getId(), true);
+                }
+            });
+
+            statusViewBinder.getReplyButton().setOnClickListener(
+                    v -> context.startActivity(PostActivity.getIntent(
+                            context,
+                            status.getId(),
+                            TwitterStringUtils.convertToReplyTopString(
+                                    GlobalApplication.userCache.get(GlobalApplication.userId).getScreenName(),
+                                    user.getScreenName(),
+                                    status.getMentions()
+                            ).toString()
+                    ))
+            );
+
             statusViewBinder.setStatus(user, status, quotedStatusUser, quotedStatus);
         }
 
@@ -217,16 +284,35 @@ class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
     }
 
-    private class RepeatedStatusViewHolder extends RecyclerView.ViewHolder {
-        final StatusViewBinder statusViewBinder;
+    private class RepeatedStatusViewHolder extends StatusViewHolder {
+        private final TextView retweetUserName;
+        private final TextView retweetTimeStamp;
 
         RepeatedStatusViewHolder(GlideRequests glideRequests, ViewGroup itemView) {
-            super(itemView);
-            statusViewBinder = new StatusViewBinder(glideRequests, itemView);
+            super(glideRequests, itemView);
+
+            retweetUserName = itemView.findViewById(R.id.tweet_retweet_user_name);
+            retweetTimeStamp = itemView.findViewById(R.id.tweet_retweet_time_stamp_text);
         }
 
-        void setStatus(User repeatedUser, User user, Status status, User quotedStatusUser, Status quotedStatus) {
-            statusViewBinder.setStatus(user, status, quotedStatusUser, quotedStatus);
+        void setRepeatUser(User repeatedUser, Status status) {
+            if(retweetUserName.getVisibility() != View.VISIBLE){
+                retweetUserName.setVisibility(View.VISIBLE);
+            }
+            retweetUserName.setText(context.getString(
+                    TwitterStringUtils.getRepeatedByStringRes(GlobalApplication.clientType),
+                    repeatedUser.getName(),
+                    TwitterStringUtils.plusAtMark(repeatedUser.getScreenName())
+            ));
+
+            if(retweetTimeStamp.getVisibility() != View.VISIBLE){
+                retweetTimeStamp.setVisibility(View.VISIBLE);
+            }
+            retweetTimeStamp.setText(DateUtils.getRelativeTimeSpanString(
+                    status.getCreatedAt().getTime(),
+                    System.currentTimeMillis(),
+                    0
+            ));
         }
 
         void clear() {
@@ -287,5 +373,13 @@ class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     interface OnLoadMoreClickListener {
         void onClick(int position);
+    }
+
+    interface OnFavoriteClickListener {
+        void onClick(int position, long id, boolean hasFavorited);
+    }
+
+    interface OnRepeatClickListener {
+        void onClick(int position, long id, boolean hasRepeated);
     }
 }

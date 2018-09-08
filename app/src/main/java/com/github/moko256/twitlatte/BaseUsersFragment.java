@@ -24,8 +24,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.github.moko256.twitlatte.text.TwitterStringUtils;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -149,7 +147,7 @@ public abstract class BaseUsersFragment extends BaseListFragment {
                                 },
                                 e -> {
                                     e.printStackTrace();
-                                    getSnackBar(TwitterStringUtils.convertErrorToText(e)).show();
+                                    notifyErrorBySnackBar(e).show();
                                 }
                         )
         );
@@ -184,7 +182,7 @@ public abstract class BaseUsersFragment extends BaseListFragment {
                                 },
                                 e -> {
                                     e.printStackTrace();
-                                    getSnackBar(TwitterStringUtils.convertErrorToText(e)).show();
+                                    notifyErrorBySnackBar(e).show();
                                 }
                         )
         );

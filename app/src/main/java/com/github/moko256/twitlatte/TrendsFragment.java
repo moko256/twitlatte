@@ -29,7 +29,6 @@ import android.view.ViewGroup;
 
 import com.github.moko256.twitlatte.database.CachedTrendsSQLiteOpenHelper;
 import com.github.moko256.twitlatte.entity.Trend;
-import com.github.moko256.twitlatte.text.TwitterStringUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -131,7 +130,7 @@ public class TrendsFragment extends BaseListFragment {
                                 },
                                 e -> {
                                     e.printStackTrace();
-                                    getSnackBar(TwitterStringUtils.convertErrorToText(e)).show();
+                                    notifyErrorBySnackBar(e).show();
                                     setRefreshing(false);
                                 }
                         )

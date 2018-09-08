@@ -16,6 +16,7 @@
 
 package com.github.moko256.twitlatte;
 
+import android.annotation.SuppressLint;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.graphics.Point;
@@ -41,8 +42,10 @@ import com.github.moko256.twitlatte.viewmodel.ListViewModel;
 import java.util.Objects;
 
 import either.EitherKt;
+import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import kotlin.Unit;
 import twitter4j.Paging;
 import twitter4j.ResponseList;
@@ -91,6 +94,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
         super.onCreate(savedInstanceState);
     }
 
+    @SuppressLint("CheckResult")
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view=super.onCreateView(inflater, container, savedInstanceState);
@@ -112,6 +116,137 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
 
         adapter=new StatusesAdapter(getContext(), listViewModel.getList());
         adapter.setOnLoadMoreClick(position -> listViewModel.loadOnGap(position));
+        adapter.onFavoriteClick = (position, id, hasFavorited) -> {
+            if (hasFavorited) {
+                Single
+                        .create(subscriber -> {
+                            try {
+                                Status newStatus = GlobalApplication.twitter.destroyFavorite(id);
+                                GlobalApplication.statusCache.add(newStatus, false);
+                                subscriber.onSuccess(newStatus);
+                            } catch (TwitterException e) {
+                                subscriber.tryOnError(e);
+                            }
+                        })
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                                result -> {
+                                    if (adapter != null) {
+                                        adapter.notifyItemChanged(position);
+                                    }
+
+                                    notifyBySnackBar(
+                                            TwitterStringUtils.getDidActionStringRes(
+                                                    GlobalApplication.clientType,
+                                                    TwitterStringUtils.Action.UNLIKE
+                                            )
+                                    ).show();
+                                },
+                                throwable -> {
+                                    throwable.printStackTrace();
+                                    notifyErrorBySnackBar(throwable).show();
+                                }
+                        );
+            } else {
+                Single
+                        .create(subscriber -> {
+                            try {
+                                Status newStatus = GlobalApplication.twitter.createFavorite(id);
+                                GlobalApplication.statusCache.add(newStatus, false);
+                                subscriber.onSuccess(newStatus);
+                            } catch (TwitterException e) {
+                                subscriber.tryOnError(e);
+                            }
+                        })
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                                result -> {
+                                    if (adapter != null) {
+                                        adapter.notifyItemChanged(position);
+                                    }
+
+                                    notifyBySnackBar(
+                                            TwitterStringUtils.getDidActionStringRes(
+                                                    GlobalApplication.clientType,
+                                                    TwitterStringUtils.Action.LIKE
+                                            )
+                                    ).show();
+                                },
+                                throwable -> {
+                                    throwable.printStackTrace();
+                                    notifyErrorBySnackBar(throwable).show();
+                                }
+                        );
+            }
+        };
+        adapter.onRepeatClick = (position, id, hasFavorited) -> {
+            if (hasFavorited) {
+                Single
+                        .create(subscriber -> {
+                            try {
+                                Status newStatus = GlobalApplication.twitter.unRetweetStatus(id);
+                                GlobalApplication.statusCache.add(newStatus, false);
+                                subscriber.onSuccess(newStatus);
+                            } catch (TwitterException e) {
+                                subscriber.tryOnError(e);
+                            }
+                        })
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                                result -> {
+                                    if (adapter != null) {
+                                        adapter.notifyItemChanged(position);
+                                    }
+
+                                    notifyBySnackBar(
+                                            TwitterStringUtils.getDidActionStringRes(
+                                                    GlobalApplication.clientType,
+                                                    TwitterStringUtils.Action.UNREPEAT
+                                            )
+                                    ).show();
+                                },
+                                throwable -> {
+                                    throwable.printStackTrace();
+                                    notifyErrorBySnackBar(throwable).show();
+                                }
+                        );
+            } else {
+                Single
+                        .create(subscriber -> {
+                            try {
+                                Status newStatus = GlobalApplication.twitter.retweetStatus(id);
+                                GlobalApplication.statusCache.add(newStatus, false);
+                                subscriber.onSuccess(newStatus);
+                            } catch (TwitterException e) {
+                                subscriber.tryOnError(e);
+                            }
+                        })
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                                result -> {
+                                    if (adapter != null) {
+                                        adapter.notifyItemChanged(position);
+                                    }
+
+                                    notifyBySnackBar(
+                                            TwitterStringUtils.getDidActionStringRes(
+                                                    GlobalApplication.clientType,
+                                                    TwitterStringUtils.Action.REPEAT
+                                            )
+                                    ).show();
+                                },
+                                throwable -> {
+                                    throwable.printStackTrace();
+                                    notifyErrorBySnackBar(throwable).show();
+                                }
+                        );
+            }
+        };
+
         setAdapter(adapter);
         if (!isInitializedList()){
             adapter.notifyDataSetChanged();
@@ -177,7 +312,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                                 return Unit.INSTANCE;
                             },
                             right -> {
-                                getSnackBar(TwitterStringUtils.convertErrorToText(right)).show();
+                                notifyErrorBySnackBar(right).show();
                                 return Unit.INSTANCE;
                             }
                     );

@@ -20,6 +20,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.SpannableStringBuilder;
@@ -132,9 +133,11 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
                         this::setShowUserInfo,
                         throwable -> {
                             throwable.printStackTrace();
-                            ((BaseListFragment.GetSnackBar) requireActivity())
-                                    .getSnackBar(TwitterStringUtils.convertErrorToText(throwable))
-                                    .show();
+                            Snackbar.make(
+                                    ((BaseListFragment.GetViewForSnackBar) requireActivity()).getViewForSnackBar(),
+                                    TwitterStringUtils.convertErrorToText(throwable),
+                                    Snackbar.LENGTH_LONG
+                            );
                         }
                 )));
 

@@ -29,6 +29,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.github.moko256.twitlatte.text.TwitterStringUtils;
+
+import java.util.Objects;
+
 /**
  * Created by moko256 on 2016/10/09.
  *
@@ -152,13 +156,26 @@ public abstract class BaseListFragment extends Fragment implements MovableTopInt
         }
     }
 
-    protected Snackbar getSnackBar(String string){
-        Activity parent=getActivity();
-        if(parent instanceof GetSnackBar){
-            return ((GetSnackBar) parent).getSnackBar(string);
-        } else {
-            return Snackbar.make(getView(), string, Snackbar.LENGTH_LONG);
-        }
+    protected Snackbar notifyBySnackBar(int stringId){
+        Activity parent = requireActivity();
+        return Snackbar.make(
+                parent instanceof GetViewForSnackBar
+                        ? ((GetViewForSnackBar) parent).getViewForSnackBar()
+                        : Objects.requireNonNull(getView()),
+                stringId,
+                Snackbar.LENGTH_SHORT
+        );
+    }
+
+    protected Snackbar notifyErrorBySnackBar(Throwable e){
+        Activity parent = requireActivity();
+        return Snackbar.make(
+                parent instanceof GetViewForSnackBar
+                        ? ((GetViewForSnackBar) parent).getViewForSnackBar()
+                        : Objects.requireNonNull(getView()),
+                TwitterStringUtils.convertErrorToText(e),
+                Snackbar.LENGTH_LONG
+        );
     }
 
     protected int getFirstVisibleItemPosition(RecyclerView.LayoutManager layoutManager){
@@ -171,8 +188,8 @@ public abstract class BaseListFragment extends Fragment implements MovableTopInt
         return position;
     }
 
-    public interface GetSnackBar {
-        Snackbar getSnackBar(String string);
+    public interface GetViewForSnackBar {
+        View getViewForSnackBar();
     }
 
 }

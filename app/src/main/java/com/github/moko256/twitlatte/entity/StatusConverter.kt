@@ -152,7 +152,11 @@ fun com.sys1yagi.mastodon4j.api.entity.Status.convertToCommonStatus(): StatusObj
                 createdAt = ISO8601DateConverter.toDate(createdAt),
                 inReplyToStatusId = inReplyToId?:-1,
                 inReplyToUserId = inReplyToAccountId?:-1,
-                inReplyToScreenName = "",
+                inReplyToScreenName = if (inReplyToAccountId != null) {
+                    ""
+                } else {
+                    null
+                },
                 isFavorited = isFavourited,
                 isRepeated = isReblogged,
                 favoriteCount = favouritesCount,

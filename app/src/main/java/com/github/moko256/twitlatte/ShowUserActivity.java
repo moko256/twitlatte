@@ -30,6 +30,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import com.github.moko256.mastodon.MastodonTwitterImpl;
@@ -54,7 +55,7 @@ import twitter4j.User;
  *
  * @author moko256
  */
-public class ShowUserActivity extends AppCompatActivity implements BaseListFragment.GetSnackBar, BaseTweetListFragment.GetRecyclerViewPool, BaseUsersFragment.GetRecyclerViewPool {
+public class ShowUserActivity extends AppCompatActivity implements BaseListFragment.GetViewForSnackBar, BaseTweetListFragment.GetRecyclerViewPool, BaseUsersFragment.GetRecyclerViewPool {
 
     private CompositeDisposable disposable;
 
@@ -134,8 +135,11 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
                                         user = it;
                                         new ShowUserFragmentsPagerAdapter(getSupportFragmentManager(),this,it.getId()).initAdapter(viewPager);
                                     },
-                                    e -> getSnackBar(TwitterStringUtils.convertErrorToText(e))
-                                            .show()
+                                    e -> Snackbar.make(
+                                            getViewForSnackBar(),
+                                            TwitterStringUtils.convertErrorToText(e),
+                                            Snackbar.LENGTH_LONG
+                                    ).show()
                             )
             );
         }
@@ -322,9 +326,8 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
     }
 
     @Override
-    public Snackbar getSnackBar(String string) {
-        return Snackbar.make(findViewById(R.id.activity_show_user_coordinator_layout), string, Snackbar.LENGTH_LONG);
-
+    public View getViewForSnackBar() {
+        return findViewById(R.id.activity_show_user_coordinator_layout);
     }
 
     @Override

@@ -22,7 +22,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
@@ -76,7 +75,7 @@ import twitter4j.User;
  *
  * @author moko256
  */
-public class MainActivity extends AppCompatActivity implements BaseListFragment.GetSnackBar, BaseTweetListFragment.GetRecyclerViewPool, BaseUsersFragment.GetRecyclerViewPool {
+public class MainActivity extends AppCompatActivity implements BaseListFragment.GetViewForSnackBar, BaseTweetListFragment.GetRecyclerViewPool, BaseUsersFragment.GetRecyclerViewPool {
 
     private CompositeDisposable disposable;
 
@@ -428,8 +427,8 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
     }
 
     @Override
-    public Snackbar getSnackBar(String string) {
-        return Snackbar.make(findViewById(R.id.activity_main_coordinator_layout), string, Snackbar.LENGTH_LONG);
+    public View getViewForSnackBar() {
+        return findViewById(R.id.activity_main_coordinator_layout);
     }
 
     private void attachFragment(Fragment fragment){
