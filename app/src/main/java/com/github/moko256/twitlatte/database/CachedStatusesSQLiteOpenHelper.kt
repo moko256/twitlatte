@@ -158,7 +158,7 @@ class CachedStatusesSQLiteOpenHelper(
                                                 type = Media.ImageType.VIDEO_ONE.value
                                             }
                                             "animated_gif" -> {
-                                                thumbnailUrl = null
+                                                thumbnailUrl = it.mediaURLHttps
                                                 resultUrl = it.videoVariants[0].url
                                                 type = Media.ImageType.GIF.value
                                             }
@@ -251,9 +251,9 @@ class CachedStatusesSQLiteOpenHelper(
                                     splitComma(c.getString(20))
                             ),
                             medias = restoreMedias(
-                                    splitComma(c.getString(21)),
+                                    splitCommaNullable(c.getString(21)),
                                     splitComma(c.getString(22)),
-                                    splitComma(c.getString(23)),
+                                    splitCommaNullable(c.getString(23)),
                                     splitComma(c.getString(24))
                             ),
                             quotedStatusId = c.getLong(25),
@@ -501,6 +501,24 @@ class CachedStatusesSQLiteOpenHelper(
         }
     }
 
+    private fun splitCommaNullable(string: String?): Array<String?>? {
+        return if (!TextUtils.isEmpty(string)) {
+            string!!.split(",".toRegex())
+                    .dropLastWhile { it.isEmpty() }
+                    .map {
+                        if (it == "null") {
+                            null
+                        } else {
+                            it
+                        }
+                    }
+                    .toTypedArray()
+        } else {
+            null
+        }
+    }
+
+
     private fun restoreEmojis(
             shortCodes: Array<String>?,
             urls: Array<String>?
@@ -536,9 +554,9 @@ class CachedStatusesSQLiteOpenHelper(
     }
 
     private fun restoreMedias(
-            thumbnailUrls: Array<String>?,
+            thumbnailUrls: Array<String?>?,
             originalUrls: Array<String>?,
-            downloadVideoUrls: Array<String>?,
+            downloadVideoUrls: Array<String?>?,
             imageTypes: Array<String>?
     ): Array<Media>? = if (imageTypes != null
             && thumbnailUrls != null && thumbnailUrls.size == imageTypes.size

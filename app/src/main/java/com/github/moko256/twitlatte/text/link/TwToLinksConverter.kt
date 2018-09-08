@@ -35,61 +35,54 @@ fun convertToContentAndLinks(
     val links = ArrayList<Link>(6)
     val stringBuilder = StringBuilder(text)
 
-    for (symbolEntity in symbolEntities) {
-        links.add(Link(
-                "twitlatte://symbol" + symbolEntity.text,
-                symbolEntity.start,
-                symbolEntity.end
-        ))
-    }
+    val entities = ArrayList<Pair<String, TweetEntity>>(
+            symbolEntities.size
+                    + hashtagEntities.size
+                    + userMentionEntities.size
+                    + urlEntities.size
+                    + mediaEntities.size
+    )
+    entities.addAll(symbolEntities.map { "symbol" to it })
+    entities.addAll(hashtagEntities.map { "hashtag" to it })
+    entities.addAll(userMentionEntities.map { "user" to it })
+    entities.addAll(urlEntities.map { "url" to it })
+    entities.addAll(mediaEntities.map { "url" to it })
 
-    for (hashtagEntity in hashtagEntities) {
-        links.add(Link(
-                "twitlatte://hashtag" + hashtagEntity.text,
-                hashtagEntity.start,
-                hashtagEntity.end
-        ))
-    }
-
-    for (userMentionEntity in userMentionEntities) {
-        links.add(Link(
-                "twitlatte://user" + userMentionEntity.text,
-                userMentionEntity.start,
-                userMentionEntity.end
-        ))
-    }
-
-    val hasMedia = mediaEntities.isNotEmpty()
-    val mediaAndUrlEntities = ArrayList<URLEntity>(urlEntities.size + if (hasMedia) 1 else 0)
-    mediaAndUrlEntities.addAll(urlEntities.asList())
-    if (hasMedia) {
-        mediaAndUrlEntities.add(mediaEntities[0])
-    }
+    entities.sortBy { it.second.start }
 
     var sp = 0
 
-    for (entity in mediaAndUrlEntities) {
-        val url = entity.url
-        val displayUrl = entity.displayURL
+    entities.forEach {
+        val start = it.second.start + sp
+        val end = it.second.end + sp
 
-        val urlLength = url.length
-        val displayUrlLength = displayUrl.length
+        if (it.first == "url") {
+            if (start <= stringBuilder.length && end <= stringBuilder.length) {
+                val url = (it.second as URLEntity).url
+                val displayUrl = (it.second as URLEntity).displayURL
 
-        val start = entity.start + sp
-        val end = entity.end + sp
+                val urlLength = url.length
+                val displayUrlLength = displayUrl.length
 
-        if (start <= stringBuilder.length && end <= stringBuilder.length) {
-            val dusp = displayUrlLength - urlLength
+                val dusp = displayUrlLength - urlLength
 
-            stringBuilder.replace(start, end, displayUrl)
+                stringBuilder.replace(start, end, displayUrl)
+                links.add(Link(
+                        (it.second as URLEntity).expandedURL,
+                        start,
+                        end + dusp
+                ))
+
+                sp += dusp
+            }
+        } else {
             links.add(Link(
-                    entity.expandedURL,
+                    "twitlatte://${it.first}/" + it.second.text,
                     start,
-                    end + dusp
+                    end
             ))
-
-            sp += dusp
         }
+
     }
 
     return stringBuilder.toString() to links.toTypedArray()

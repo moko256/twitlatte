@@ -102,7 +102,7 @@ fun twitter4j.Status.convertToCommonStatus(): StatusObject {
                                 type = Media.ImageType.GIF.value
                             }
                             else -> {
-                                originalUrl = it.mediaURLHttps
+                                originalUrl = null
                                 type = Media.ImageType.PICTURE.value
                             }
                         }
@@ -163,26 +163,26 @@ fun com.sys1yagi.mastodon4j.api.entity.Status.convertToCommonStatus(): StatusObj
                 medias = if (mediaAttachments.isNotEmpty()) {
                     mediaAttachments.map {
                         val resultUrl = it.url
-                        val thubnailUrl: String?
+                        val thumbnailUrl: String?
                         val type: Media.ImageType
 
                         when(it.type) {
                             Attachment.Type.Video.value -> {
-                                thubnailUrl = it.previewUrl
+                                thumbnailUrl = it.previewUrl
                                 type = Media.ImageType.VIDEO_ONE
                             }
                             Attachment.Type.Gifv.value -> {
-                                thubnailUrl = it.previewUrl
+                                thumbnailUrl = it.previewUrl
                                 type = Media.ImageType.GIF
                             }
                             else -> {
-                                thubnailUrl = null
+                                thumbnailUrl = null
                                 type = Media.ImageType.PICTURE
                             }
                         }
 
                         Media(
-                                thumbnailUrl = thubnailUrl,
+                                thumbnailUrl = thumbnailUrl,
                                 originalUrl = resultUrl,
                                 imageType = type.value
                         )

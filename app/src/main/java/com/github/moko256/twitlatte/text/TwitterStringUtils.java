@@ -20,6 +20,7 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
@@ -91,16 +92,18 @@ public class TwitterStringUtils {
     @NonNull
     public static CharSequence convertToReplyTopString(@NonNull String userScreenName,
                                                        @NonNull String replyToScreenName,
-                                                       @NonNull String[] users){
+                                                       @Nullable String[] users){
         StringBuilder userIdsStr = new StringBuilder();
 
         if (!userScreenName.equals(replyToScreenName)) {
             userIdsStr.append("@").append(replyToScreenName).append(" ");
         }
 
-        for (String screenName : users) {
-            if (!(screenName.equals(userScreenName) || screenName.equals(replyToScreenName))) {
-                userIdsStr.append("@").append(screenName).append(" ");
+        if (users != null) {
+            for (String screenName : users) {
+                if (!(screenName.equals(userScreenName) || screenName.equals(replyToScreenName))) {
+                    userIdsStr.append("@").append(screenName).append(" ");
+                }
             }
         }
         return userIdsStr;
@@ -268,15 +271,19 @@ public class TwitterStringUtils {
     }
 
     public static CharSequence appendLinkAtViaText(Context context, String name, String url) {
-        SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder("via:" + name);
-        spannableStringBuilder.setSpan(
-                new ClickableNoLineSpan() {
-                    @Override
-                    public void onClick(View view) {
-                        AppCustomTabsKt.launchChromeCustomTabs(context, url);
-                    }
-                }, 4, name.length() - 5, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        return spannableStringBuilder;
+        if (url == null) {
+            return name;
+        } else {
+            SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder("via:" + name);
+            spannableStringBuilder.setSpan(
+                    new ClickableNoLineSpan() {
+                        @Override
+                        public void onClick(View view) {
+                            AppCustomTabsKt.launchChromeCustomTabs(context, url);
+                        }
+                    }, 4, name.length() + 4, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            return spannableStringBuilder;
+        }
     }
 
     public static String convertThumbImageUrl(String baseUrl){
