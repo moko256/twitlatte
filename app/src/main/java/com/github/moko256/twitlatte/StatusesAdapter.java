@@ -150,9 +150,9 @@ class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, final int i) {
         if (viewHolder instanceof RepeatedStatusViewHolder){
-            StatusObject object = GlobalApplication.statusCache.get(data.get(i));
-            User repeatedUser = GlobalApplication.userCache.get(((Repeat) object).getUserId());
-            Status status = ((Status) GlobalApplication.statusCache.get(((Repeat) object).getRepeatedStatusId()));
+            Repeat repeat = (Repeat) GlobalApplication.statusCache.get(data.get(i));
+            User repeatedUser = GlobalApplication.userCache.get(repeat.getUserId());
+            Status status = ((Status) GlobalApplication.statusCache.get(repeat.getRepeatedStatusId()));
             User user = GlobalApplication.userCache.get(status.getUserId());
             Status quotedStatus = status.getQuotedStatusId() != -1?
                     (Status) GlobalApplication.statusCache.get(status.getQuotedStatusId())
@@ -160,7 +160,7 @@ class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             User quotedStatusUser = quotedStatus != null? GlobalApplication.userCache.get(quotedStatus.getUserId()): null;
 
             ((RepeatedStatusViewHolder) viewHolder).setStatus(user, status, quotedStatusUser, quotedStatus);
-            ((RepeatedStatusViewHolder) viewHolder).setRepeatUser(repeatedUser, status);
+            ((RepeatedStatusViewHolder) viewHolder).setRepeatUser(repeatedUser, repeat);
         } else if (viewHolder instanceof StatusViewHolder) {
             Status status = (Status) GlobalApplication.statusCache.get(data.get(i));
             User user = GlobalApplication.userCache.get(status.getUserId());
@@ -294,7 +294,7 @@ class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             retweetTimeStamp = itemView.findViewById(R.id.tweet_retweet_time_stamp_text);
         }
 
-        void setRepeatUser(User repeatedUser, Status status) {
+        void setRepeatUser(User repeatedUser, Repeat status) {
             if(retweetUserName.getVisibility() != View.VISIBLE){
                 retweetUserName.setVisibility(View.VISIBLE);
             }
