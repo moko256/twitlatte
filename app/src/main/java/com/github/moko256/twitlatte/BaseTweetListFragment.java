@@ -115,7 +115,7 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
         }
 
         adapter=new StatusesAdapter(getContext(), listViewModel.getList());
-        adapter.setOnLoadMoreClick(position -> listViewModel.loadOnGap(position));
+        adapter.onLoadMoreClick = position -> listViewModel.loadOnGap(position);
         adapter.onFavoriteClick = (position, id, hasFavorited) -> {
             if (hasFavorited) {
                 Single

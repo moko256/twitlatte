@@ -55,7 +55,7 @@ public class MediaTimelineFragment extends BaseTweetListFragment implements Tool
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
-        adapter.setShouldShowMediaOnly(true);
+        adapter.shouldShowMediaOnly = true;
         return view;
     }
 

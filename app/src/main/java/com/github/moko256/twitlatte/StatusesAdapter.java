@@ -51,33 +51,19 @@ class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private final List<Long> data;
     private final Context context;
-    private OnLoadMoreClickListener onLoadMoreClick;
-    private boolean shouldShowMediaOnly = false;
+
+    public OnLoadMoreClickListener onLoadMoreClick;
 
     public OnFavoriteClickListener onFavoriteClick;
     public OnRepeatClickListener onRepeatClick;
+
+    public boolean shouldShowMediaOnly = false;
 
     StatusesAdapter(Context context, List<Long> data) {
         this.context = context;
         this.data = data;
 
         setHasStableIds(true);
-    }
-
-    public void setOnLoadMoreClick(OnLoadMoreClickListener onLoadMoreClick) {
-        this.onLoadMoreClick = onLoadMoreClick;
-    }
-
-    public OnLoadMoreClickListener getOnLoadMoreClick() {
-        return onLoadMoreClick;
-    }
-
-    public boolean shouldShowMediaOnly() {
-        return shouldShowMediaOnly;
-    }
-
-    public void setShouldShowMediaOnly(boolean shouldShowMediaOnly) {
-        this.shouldShowMediaOnly = shouldShowMediaOnly;
     }
 
     @Override
