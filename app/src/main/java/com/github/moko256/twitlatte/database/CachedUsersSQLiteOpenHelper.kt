@@ -227,8 +227,7 @@ class CachedUsersSQLiteOpenHelper(context: Context, accessToken: AccessToken?) :
         val displaysURLs = arrayOfNulls<String>(size)
         val starts = arrayOfNulls<String>(size)
         val ends = arrayOfNulls<String>(size)
-        for (i in 0 until size) {
-            val entity = user.descriptionURLEntities[i]
+        user.descriptionURLEntities.forEachIndexed { i, entity ->
             texts[i] = entity.text
             URLs[i] = entity.url
             expandedURLs[i] = entity.expandedURL
@@ -245,15 +244,14 @@ class CachedUsersSQLiteOpenHelper(context: Context, accessToken: AccessToken?) :
 
         if (user.emojis != null) {
             val listSize = user.emojis.size
-            val shortcodes = arrayOfNulls<String>(listSize)
+            val shortCodes = arrayOfNulls<String>(listSize)
             val urls = arrayOfNulls<String>(listSize)
 
-            for (i in 0 until listSize) {
-                val emoji = user.emojis[i]
-                shortcodes[i] = emoji.shortCode
+            user.emojis.forEachIndexed { i, emoji ->
+                shortCodes[i] = emoji.shortCode
                 urls[i] = emoji.url
             }
-            contentValues.put(TABLE_COLUMNS[37], ArrayUtils.toCommaSplitString(shortcodes).toString())
+            contentValues.put(TABLE_COLUMNS[37], ArrayUtils.toCommaSplitString(shortCodes).toString())
             contentValues.put(TABLE_COLUMNS[38], ArrayUtils.toCommaSplitString(urls).toString())
         }
 
