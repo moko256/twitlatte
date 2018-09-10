@@ -264,12 +264,36 @@ class StatusViewBinder(private val glideRequests: GlideRequests, private val vie
         likeButton.isChecked = status.isFavorited
 
         retweetButton.isChecked = status.isRepeated
-        retweetButton.isEnabled = if (status.visibility != null) {
-            status.visibility == Visibility.Public.value
-                    || status.visibility == Visibility.Unlisted.value
+
+        val isRepeatEnabled: Boolean
+        val repeatIconResourceId: Int
+
+        if (status.visibility != null) {
+            when {
+                status.visibility == Visibility.Private.value -> {
+                    isRepeatEnabled = false
+                    repeatIconResourceId = R.drawable.lock_button_stateful
+                }
+                status.visibility == Visibility.Direct.value -> {
+                    isRepeatEnabled = false
+                    repeatIconResourceId = R.drawable.dm_button_stateful
+                }
+                else -> {
+                    isRepeatEnabled = true
+                    repeatIconResourceId = R.drawable.repeat_button_stateful
+                }
+            }
         } else {
-            user?.isProtected == false
+            if (user != null && (!user.isProtected || user.id == GlobalApplication.accessToken.userId)) {
+                isRepeatEnabled = true
+                repeatIconResourceId = R.drawable.repeat_button_stateful
+            } else {
+                isRepeatEnabled = false
+                repeatIconResourceId = R.drawable.lock_button_stateful
+            }
         }
+        retweetButton.isEnabled = isRepeatEnabled
+        retweetButton.setButtonDrawable(repeatIconResourceId)
 
         likeCount.text = if (status.favoriteCount != 0) TwitterStringUtils.convertToSIUnitString(status.favoriteCount) else ""
         retweetCount.text = if (status.repeatCount != 0) TwitterStringUtils.convertToSIUnitString(status.repeatCount) else ""
