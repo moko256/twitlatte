@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.moko256.twitlatte.database;
+package com.github.moko256.twitlatte.database.migrator;
 
 import android.annotation.SuppressLint;
 import android.database.Cursor;

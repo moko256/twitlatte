@@ -44,7 +44,6 @@ import com.github.moko256.twitlatte.text.style.ClickableNoLineSpan;
 import com.github.moko256.twitlatte.view.EmojiToTextViewSetter;
 
 import java.text.DateFormat;
-import java.util.List;
 import java.util.Objects;
 
 import io.reactivex.Single;
@@ -197,25 +196,26 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
                 user.isProtected(),
                 user.isVerified()
         );
-        CharSequence userBio = TwitterStringUtils.getProfileLinkedSequence(
+        CharSequence userBio = TwitterStringUtils.getLinkedSequence(
                 getContext(),
-                user
+                user.getDescription(),
+                user.getDescriptionLinks()
         );
         userNameText.setText(userName);
         userBioText.setText(userBio);
-        List<Emoji> userNameEmojis = user.getEmojis();
+        Emoji[] userNameEmojis = user.getEmojis();
         if (userNameEmojis != null) {
             if (userNameEmojiSetter == null) {
                 userNameEmojiSetter = new EmojiToTextViewSetter(glideRequests, userNameText);
             }
-            Disposable[] setOfName = userNameEmojiSetter.set(userName, userNameEmojis.toArray(new Emoji[userNameEmojis.size()]));
+            Disposable[] setOfName = userNameEmojiSetter.set(userName, userNameEmojis);
             if (setOfName != null) {
                 disposable.addAll(setOfName);
             } else {
                 if (userBioEmojiSetter == null) {
                     userBioEmojiSetter = new EmojiToTextViewSetter(glideRequests, userBioText);
                 }
-                Disposable[] setOfBio = userBioEmojiSetter.set(userBio, userNameEmojis.toArray(new Emoji[userNameEmojis.size()]));
+                Disposable[] setOfBio = userBioEmojiSetter.set(userBio, userNameEmojis);
                 if (setOfBio != null) {
                     disposable.addAll(setOfBio);
                 }

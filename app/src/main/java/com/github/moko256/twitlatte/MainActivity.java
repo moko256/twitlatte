@@ -476,12 +476,12 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                                     );
 
                                     userNameText.setText(userName);
-                                    List<Emoji> userNameEmojis = user.getEmojis();
+                                    Emoji[] userNameEmojis = user.getEmojis();
                                     if (userNameEmojis != null) {
                                         if (userNameEmojiSetter == null) {
                                             userNameEmojiSetter = new EmojiToTextViewSetter(requests, userNameText);
                                         }
-                                        Disposable[] set = userNameEmojiSetter.set(userName, userNameEmojis.toArray(new Emoji[userNameEmojis.size()]));
+                                        Disposable[] set = userNameEmojiSetter.set(userName, userNameEmojis);
                                         if (set != null) {
                                             disposable.addAll(set);
                                         }

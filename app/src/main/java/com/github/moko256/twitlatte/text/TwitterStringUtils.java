@@ -38,16 +38,12 @@ import com.github.moko256.twitlatte.R;
 import com.github.moko256.twitlatte.SearchResultActivity;
 import com.github.moko256.twitlatte.ShowUserActivity;
 import com.github.moko256.twitlatte.entity.Type;
-import com.github.moko256.twitlatte.entity.User;
 import com.github.moko256.twitlatte.intent.AppCustomTabsKt;
-import com.github.moko256.twitlatte.text.link.MTHtmlParser;
 import com.github.moko256.twitlatte.text.link.entity.Link;
 import com.github.moko256.twitlatte.text.style.ClickableNoLineSpan;
 import com.sys1yagi.mastodon4j.api.exception.Mastodon4jRequestException;
 
-import kotlin.jvm.functions.Function1;
 import twitter4j.TwitterException;
-import twitter4j.URLEntity;
 
 /**
  * Created by moko256 on 2016/08/06.
@@ -184,90 +180,6 @@ public class TwitterStringUtils {
             spannableStringBuilder.setSpan(span, link.getStart(), link.getEnd(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
         return spannableStringBuilder;
-    }
-
-    public static CharSequence getProfileLinkedSequence(Context context, User user){
-
-        String description = user.getDescription();
-
-        if (GlobalApplication.clientType == Type.MASTODON){
-            return MTHtmlParser.INSTANCE.convertToEntities(description, linkParserListener(context));
-        } else {
-            URLEntity[] urlEntities = user.getDescriptionURLEntities();
-
-            if (urlEntities == null
-                    || urlEntities.length <= 0
-                    || TextUtils.isEmpty(urlEntities[0].getURL())
-                    ) {
-                return description;
-            }
-
-            SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(description);
-            int tweetLength = description.length();
-            int sp = 0;
-
-            for (URLEntity entity : urlEntities) {
-                String url = entity.getURL();
-                String expandedUrl = entity.getDisplayURL();
-
-                int urlLength = url.length();
-                int displayUrlLength = expandedUrl.length();
-
-                int start = entity.getStart();
-                int end = entity.getEnd();
-
-                if (start <= tweetLength && end <= tweetLength) {
-                    int dusp = displayUrlLength - urlLength;
-
-                    start += sp;
-                    end += sp;
-
-                    spannableStringBuilder.replace(start, end, expandedUrl);
-                    spannableStringBuilder.setSpan(new ClickableNoLineSpan() {
-                        @Override
-                        public void onClick(View view) {
-                            AppCustomTabsKt.launchChromeCustomTabs(context, entity.getExpandedURL());
-                        }
-                    }, start, end + dusp, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-                    sp += dusp;
-                }
-            }
-
-            return spannableStringBuilder;
-        }
-    }
-
-    public static Function1<String, Object> linkParserListener(Context context) {
-         return link -> {
-            final Uri uri = Uri.parse(link);
-            if (uri.getScheme().equals("twitlatte")) {
-                if (uri.getHost().equals("user")) {
-                    return new ClickableNoLineSpan() {
-                        @Override
-                        public void onClick(View view) {
-                            context.startActivity(
-                                    ShowUserActivity.getIntent(context, uri.getLastPathSegment())
-                            );
-                        }
-                    };
-                } else {
-                    return new ClickableNoLineSpan() {
-                        @Override
-                        public void onClick(View view) {
-                            context.startActivity(SearchResultActivity.getIntent(context, uri.getLastPathSegment()));
-                        }
-                    };
-                }
-            } else {
-                return new ClickableNoLineSpan() {
-                    @Override
-                    public void onClick(View view) {
-                        AppCustomTabsKt.launchChromeCustomTabs(context, link);
-                    }
-                };
-            }
-        };
     }
 
     public static CharSequence appendLinkAtViaText(Context context, String name, String url) {

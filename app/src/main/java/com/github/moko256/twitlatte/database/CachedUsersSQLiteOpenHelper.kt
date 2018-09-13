@@ -20,13 +20,14 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import com.github.moko256.twitlatte.BuildConfig
 import com.github.moko256.twitlatte.array.ArrayUtils
+import com.github.moko256.twitlatte.database.migrator.OldCachedUserSQLiteOpenHelper
 import com.github.moko256.twitlatte.entity.AccessToken
 import com.github.moko256.twitlatte.entity.Emoji
 import com.github.moko256.twitlatte.entity.Type
 import com.github.moko256.twitlatte.entity.User
-import twitter4j.URLEntity
+import com.github.moko256.twitlatte.text.link.entity.Link
+import com.github.moko256.twitlatte.text.splitWithComma
 import java.io.File
 import java.util.*
 
@@ -68,19 +69,16 @@ private val TABLE_COLUMNS = arrayOf(
         "isVerified",
         "isTranslator",
         "isFollowRequestSent",
-        "URLEntity_texts",
-        "URLEntity_URLs",
-        "URLEntity_expandedURLs",
-        "URLEntity_displayURLs",
-        "URLEntity_starts",
-        "URLEntity_ends",
+        "urls_urls",
+        "urls_starts",
+        "urls_ends",
         "Emoji_shortcodes",
         "Emoji_urls"
 )
 
-class CachedUsersSQLiteOpenHelper(context: Context, accessToken: AccessToken?) : SQLiteOpenHelper(context, if (accessToken != null) File(context.cacheDir, accessToken.getKeyString() + "/" + "CachedUsers.db").absolutePath else null, null, BuildConfig.CACHE_DATABASE_VERSION) {
+class CachedUsersSQLiteOpenHelper(context: Context, accessToken: AccessToken?) : SQLiteOpenHelper(context, if (accessToken != null) File(context.cacheDir, accessToken.getKeyString() + "/" + "CachedUsers.db").absolutePath else null, null, 3) {
 
-    val isTwitter = accessToken?.type == Type.TWITTER
+    private val isTwitter = accessToken?.type == Type.TWITTER
 
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL(
@@ -90,9 +88,18 @@ class CachedUsersSQLiteOpenHelper(context: Context, accessToken: AccessToken?) :
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        if (oldVersion == 1) {
-            db.execSQL("alter table " + TABLE_NAME + " add column " + TABLE_COLUMNS[43])
-            db.execSQL("alter table " + TABLE_NAME + " add column " + TABLE_COLUMNS[44])
+        if (oldVersion < 2) {
+            db.execSQL("alter table $TABLE_NAME add column Emoji_shortcodes")
+            db.execSQL("alter table $TABLE_NAME add column Emoji_urls")
+        }
+
+        if (oldVersion < 3) {
+            db.execSQL("alter table $TABLE_NAME add column urls_urls")
+            db.execSQL("alter table $TABLE_NAME add column urls_starts")
+            db.execSQL("alter table $TABLE_NAME add column urls_ends")
+            OldCachedUserSQLiteOpenHelper.migrateV2toV3(
+                    isTwitter, TABLE_NAME, db
+            )
         }
     }
 
@@ -125,9 +132,9 @@ class CachedUsersSQLiteOpenHelper(context: Context, accessToken: AccessToken?) :
                         profileSidebarBorderColor = c.getString(15),
                         isProfileUseBackgroundImage = c.getInt(16) != 0,
                         isDefaultProfile = c.getInt(17) != 0,
-                        friendsCount = c.getInt(18),
-                        createdAt = Date(c.getLong(19)),
-                        favoritesCount = c.getInt(20),
+                        favoritesCount = c.getInt(18),
+                        friendsCount = c.getInt(19),
+                        createdAt = Date(c.getLong(20)),
                         utcOffset = c.getInt(21),
                         timeZone = c.getString(22),
                         profileBackgroundImageURLHttps = c.getString(23),
@@ -138,17 +145,14 @@ class CachedUsersSQLiteOpenHelper(context: Context, accessToken: AccessToken?) :
                         isVerified = c.getInt(28) != 0,
                         isTranslator = c.getInt(29) != 0,
                         isFollowRequestSent = c.getInt(30) != 0,
-                        descriptionURLEntities = restoreURLEntities(
-                                c.getString(31).split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray(),
-                                c.getString(32).split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray(),
-                                c.getString(33).split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray(),
-                                c.getString(34).split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray(),
-                                c.getString(35).split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray(),
-                                c.getString(36).split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+                        descriptionLinks = restoreLinks(
+                                c.getString(31).splitWithComma(),
+                                c.getString(32).splitWithComma(),
+                                c.getString(33).splitWithComma()
                         ),
                         emojis = restoreEmojis(
-                                c.getString(37),
-                                c.getString(38)
+                                c.getString(34).splitWithComma(),
+                                c.getString(35).splitWithComma()
                         ),
                         isTwitter = isTwitter
                 )
@@ -164,7 +168,7 @@ class CachedUsersSQLiteOpenHelper(context: Context, accessToken: AccessToken?) :
         synchronized(this) {
             val database = writableDatabase
             database.beginTransaction()
-            addCachedUserAtTransaction(user)
+            addCachedUserAtTransaction(database, user)
             database.setTransactionSuccessful()
             database.endTransaction()
             database.close()
@@ -176,7 +180,7 @@ class CachedUsersSQLiteOpenHelper(context: Context, accessToken: AccessToken?) :
             val database = writableDatabase
             database.beginTransaction()
             for (user in users) {
-                addCachedUserAtTransaction(user)
+                addCachedUserAtTransaction(database, user)
             }
             database.setTransactionSuccessful()
             database.endTransaction()
@@ -184,9 +188,7 @@ class CachedUsersSQLiteOpenHelper(context: Context, accessToken: AccessToken?) :
         }
     }
 
-    private fun addCachedUserAtTransaction(user: User) {
-        val database = writableDatabase
-
+    private fun addCachedUserAtTransaction(database: SQLiteDatabase, user: User) {
         val contentValues = ContentValues()
         contentValues.put(TABLE_COLUMNS[0], user.id)
         contentValues.put(TABLE_COLUMNS[1], user.name)
@@ -220,27 +222,21 @@ class CachedUsersSQLiteOpenHelper(context: Context, accessToken: AccessToken?) :
         contentValues.put(TABLE_COLUMNS[29], user.isTranslator)
         contentValues.put(TABLE_COLUMNS[30], user.isFollowRequestSent)
 
-        val size = user.descriptionURLEntities.size
-        val texts = arrayOfNulls<String>(size)
-        val URLs = arrayOfNulls<String>(size)
-        val expandedURLs = arrayOfNulls<String>(size)
-        val displaysURLs = arrayOfNulls<String>(size)
-        val starts = arrayOfNulls<String>(size)
-        val ends = arrayOfNulls<String>(size)
-        user.descriptionURLEntities.forEachIndexed { i, entity ->
-            texts[i] = entity.text
-            URLs[i] = entity.url
-            expandedURLs[i] = entity.expandedURL
-            displaysURLs[i] = entity.displayURL
-            starts[i] = entity.start.toString()
-            ends[i] = entity.end.toString()
+        if (user.descriptionLinks != null) {
+            val size = user.descriptionLinks.size
+            val urls = arrayOfNulls<String>(size)
+            val starts = arrayOfNulls<String>(size)
+            val ends = arrayOfNulls<String>(size)
+
+            user.descriptionLinks.forEachIndexed { i, entity ->
+                urls[i] = entity.url
+                starts[i] = entity.start.toString()
+                ends[i] = entity.end.toString()
+            }
+            contentValues.put(TABLE_COLUMNS[31], ArrayUtils.toCommaSplitString(urls).toString())
+            contentValues.put(TABLE_COLUMNS[32], ArrayUtils.toCommaSplitString(starts).toString())
+            contentValues.put(TABLE_COLUMNS[33], ArrayUtils.toCommaSplitString(ends).toString())
         }
-        contentValues.put(TABLE_COLUMNS[31], ArrayUtils.toCommaSplitString(texts).toString())
-        contentValues.put(TABLE_COLUMNS[32], ArrayUtils.toCommaSplitString(URLs).toString())
-        contentValues.put(TABLE_COLUMNS[33], ArrayUtils.toCommaSplitString(expandedURLs).toString())
-        contentValues.put(TABLE_COLUMNS[34], ArrayUtils.toCommaSplitString(displaysURLs).toString())
-        contentValues.put(TABLE_COLUMNS[35], ArrayUtils.toCommaSplitString(starts).toString())
-        contentValues.put(TABLE_COLUMNS[36], ArrayUtils.toCommaSplitString(ends).toString())
 
         if (user.emojis != null) {
             val listSize = user.emojis.size
@@ -251,8 +247,8 @@ class CachedUsersSQLiteOpenHelper(context: Context, accessToken: AccessToken?) :
                 shortCodes[i] = emoji.shortCode
                 urls[i] = emoji.url
             }
-            contentValues.put(TABLE_COLUMNS[37], ArrayUtils.toCommaSplitString(shortCodes).toString())
-            contentValues.put(TABLE_COLUMNS[38], ArrayUtils.toCommaSplitString(urls).toString())
+            contentValues.put(TABLE_COLUMNS[34], ArrayUtils.toCommaSplitString(shortCodes).toString())
+            contentValues.put(TABLE_COLUMNS[35], ArrayUtils.toCommaSplitString(urls).toString())
         }
 
         database.replace(TABLE_NAME, null, contentValues)
@@ -267,53 +263,32 @@ class CachedUsersSQLiteOpenHelper(context: Context, accessToken: AccessToken?) :
         }
     }
 
+    private fun restoreLinks(
+            urls: List<String>?,
+            starts: List<String>?,
+            ends: List<String>?
+    ): Array<Link>? = if (urls != null
+            && starts != null
+            && starts.size == urls.size
+            && ends != null
+            && ends.size == urls.size) {
+        Array(urls.size) {
+            Link(
+                    url = urls[it],
+                    start = starts[it].toInt(),
+                    end = ends[it].toInt()
+            )
+        }
+    } else {
+        null
+    }
 
-    private fun restoreURLEntities(texts: Array<String?>,
-                                   URLs: Array<String?>,
-                                   expandedURLs: Array<String?>,
-                                   displaysURLs: Array<String?>,
-                                   starts: Array<String?>,
-                                   ends: Array<String?>): Array<URLEntity> =
-            Array(texts.size){ i ->
-                object : URLEntity {
-                    override fun getText(): String {
-                        return texts[i]!!
-                    }
-
-                    override fun getURL(): String {
-                        return URLs[i]!!
-                    }
-
-                    override fun getExpandedURL(): String {
-                        return expandedURLs[i]!!
-                    }
-
-                    override fun getDisplayURL(): String {
-                        return displaysURLs[i]!!
-                    }
-
-                    override fun getStart(): Int {
-                        return Integer.parseInt(starts[i]!!.trim { it <= ' ' })
-                    }
-
-                    override fun getEnd(): Int {
-                        return Integer.parseInt(ends[i]!!.trim { it <= ' ' })
-                    }
+    private fun restoreEmojis(shortCodes: List<String>?,
+                              urls: List<String>?): Array<Emoji>? =
+            if (shortCodes != null && urls != null) {
+                Array(shortCodes.size) {
+                    Emoji(shortCodes[it], urls[it])
                 }
-            }
-
-    private fun restoreEmojis(shortCodesString: String?,
-                              urlsString: String?): List<Emoji>? =
-            if (shortCodesString != null && urlsString != null) {
-                val shortCodes = shortCodesString.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-                val urls = urlsString.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-
-                val emojis = ArrayList<Emoji>(shortCodes.size)
-                for (i in shortCodes.indices) {
-                    emojis.add(Emoji(shortCodes[i], urls[i]))
-                }
-
-                emojis
             } else {
                 null
             }

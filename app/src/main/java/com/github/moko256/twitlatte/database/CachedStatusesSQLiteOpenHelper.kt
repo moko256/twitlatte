@@ -21,11 +21,12 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.database.sqlite.SQLiteStatement
-import android.text.TextUtils
 import com.github.moko256.twitlatte.array.ArrayUtils
+import com.github.moko256.twitlatte.database.migrator.OldCachedStatusesSQLiteOpenHelper
 import com.github.moko256.twitlatte.entity.*
 import com.github.moko256.twitlatte.text.link.MTHtmlParser
 import com.github.moko256.twitlatte.text.link.entity.Link
+import com.github.moko256.twitlatte.text.splitWithComma
 import java.io.File
 import java.util.*
 import kotlin.collections.ArrayList
@@ -56,7 +57,7 @@ private val TABLE_COLUMNS = arrayOf(
         "lang",
         "mentions",
         "urls_urls",
-        "urls_start",
+        "urls_starts",
         "urls_ends",
         "medias_thumbnail_urls",
         "medias_original_urls",
@@ -242,23 +243,23 @@ class CachedStatusesSQLiteOpenHelper(
                             inReplyToScreenName = c.getString(14),
                             isSensitive = c.getInt(15) != 0,
                             lang = c.getString(16),
-                            mentions = splitComma(c.getString(17)),
+                            mentions = c.getString(17).splitWithComma()?.toTypedArray(),
                             urls = restoreLinks(
-                                    splitComma(c.getString(18)),
-                                    splitComma(c.getString(19)),
-                                    splitComma(c.getString(20))
+                                    c.getString(18).splitWithComma(),
+                                    c.getString(19).splitWithComma(),
+                                    c.getString(20).splitWithComma()
                             ),
                             medias = restoreMedias(
-                                    splitCommaNullable(c.getString(21)),
-                                    splitComma(c.getString(22)),
-                                    splitCommaNullable(c.getString(23)),
-                                    splitComma(c.getString(24))
+                                    c.getString(21).splitCommaNullable(),
+                                    c.getString(22).splitWithComma(),
+                                    c.getString(23).splitCommaNullable(),
+                                    c.getString(24).splitWithComma()
                             ),
                             quotedStatusId = c.getLong(25),
                             url = c.getString(26),
                             emojis = restoreEmojis(
-                                    splitComma(c.getString(27)),
-                                    splitComma(c.getString(28))
+                                    c.getString(27).splitWithComma(),
+                                    c.getString(28).splitWithComma()
                             ),
                             spoilerText = c.getString(29),
                             visibility = c.getString(30)
@@ -491,35 +492,9 @@ class CachedStatusesSQLiteOpenHelper(
         return database.compileStatement("UPDATE $TABLE_NAME SET count=count-1 WHERE id=?")
     }
 
-    private fun splitComma(string: String?): Array<String>? {
-        return if (!TextUtils.isEmpty(string)) {
-            string!!.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-        } else {
-            null
-        }
-    }
-
-    private fun splitCommaNullable(string: String?): Array<String?>? {
-        return if (!TextUtils.isEmpty(string)) {
-            string!!.split(",".toRegex())
-                    .dropLastWhile { it.isEmpty() }
-                    .map {
-                        if (it == "null") {
-                            null
-                        } else {
-                            it
-                        }
-                    }
-                    .toTypedArray()
-        } else {
-            null
-        }
-    }
-
-
     private fun restoreEmojis(
-            shortCodes: Array<String>?,
-            urls: Array<String>?
+            shortCodes: List<String>?,
+            urls: List<String>?
     ): Array<Emoji>? = if (shortCodes != null && urls != null && urls.size == shortCodes.size) {
         Array(shortCodes.size) {
             Emoji(
@@ -532,9 +507,9 @@ class CachedStatusesSQLiteOpenHelper(
     }
 
     private fun restoreLinks(
-            urls: Array<String>?,
-            starts: Array<String>?,
-            ends: Array<String>?
+            urls: List<String>?,
+            starts: List<String>?,
+            ends: List<String>?
     ): Array<Link>? = if (urls != null
                 && starts != null
                 && starts.size == urls.size
@@ -552,10 +527,10 @@ class CachedStatusesSQLiteOpenHelper(
     }
 
     private fun restoreMedias(
-            thumbnailUrls: Array<String?>?,
-            originalUrls: Array<String>?,
-            downloadVideoUrls: Array<String?>?,
-            imageTypes: Array<String>?
+            thumbnailUrls: List<String?>?,
+            originalUrls: List<String>?,
+            downloadVideoUrls: List<String?>?,
+            imageTypes: List<String>?
     ): Array<Media>? = if (imageTypes != null
             && thumbnailUrls != null && thumbnailUrls.size == imageTypes.size
             && originalUrls != null && originalUrls.size == imageTypes.size
@@ -568,6 +543,22 @@ class CachedStatusesSQLiteOpenHelper(
                     imageType = imageTypes[it]
             )
         }
+    } else {
+        null
+    }
+}
+
+private fun String?.splitCommaNullable(): List<String?>? {
+    return if (this != null && isNotEmpty()) {
+        this.split(",")
+                .dropLastWhile { it.isEmpty() }
+                .map {
+                    if (it == "null") {
+                        null
+                    } else {
+                        it
+                    }
+                }
     } else {
         null
     }

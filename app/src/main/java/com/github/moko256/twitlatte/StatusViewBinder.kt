@@ -25,7 +25,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import com.github.moko256.twitlatte.entity.Emoji
 import com.github.moko256.twitlatte.entity.Status
 import com.github.moko256.twitlatte.entity.User
 import com.github.moko256.twitlatte.entity.Visibility
@@ -151,12 +150,12 @@ class StatusViewBinder(private val glideRequests: GlideRequests, private val vie
                 user?.isVerified == true
         )
         userName.text = userNameText
-        val userNameEmojis: List<Emoji>? = user?.emojis
+        val userNameEmojis = user?.emojis
         if (userNameEmojis != null) {
             if (userNameEmojiSetter == null) {
                 userNameEmojiSetter = EmojiToTextViewSetter(glideRequests, userName)
             }
-            val set = userNameEmojiSetter!!.set(userNameText, userNameEmojis.toTypedArray())
+            val set = userNameEmojiSetter!!.set(userNameText, userNameEmojis)
             if (set != null) {
                 disposable.addAll(*set)
             }

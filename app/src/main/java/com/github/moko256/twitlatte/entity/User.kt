@@ -16,8 +16,7 @@
 
 package com.github.moko256.twitlatte.entity
 
-import twitter4j.URLEntity
-import twitter4j.User
+import com.github.moko256.twitlatte.text.link.entity.Link
 import java.util.*
 
 /**
@@ -57,8 +56,8 @@ data class User(
         val isVerified: Boolean,
         val isTranslator: Boolean,
         val isFollowRequestSent: Boolean,
-        val descriptionURLEntities: Array<URLEntity>,
-        val emojis: List<Emoji>?,
+        val descriptionLinks: Array<Link>?,
+        val emojis: Array<Emoji>?,
         val isTwitter: Boolean
 ) {
     private fun toResizedURL(originalURL: String?, sizeSuffix: String): String? {

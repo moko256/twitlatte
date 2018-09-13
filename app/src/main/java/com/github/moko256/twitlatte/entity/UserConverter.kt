@@ -17,6 +17,8 @@
 package com.github.moko256.twitlatte.entity
 
 import com.github.moko256.mastodon.MTUser
+import com.github.moko256.twitlatte.text.link.MTHtmlParser
+import com.github.moko256.twitlatte.text.link.convertToContentAndLinks
 import com.sys1yagi.mastodon4j.api.entity.Account
 
 /**
@@ -30,84 +32,107 @@ fun twitter4j.User.convertToCommonUser(): User = if (this is MTUser) {
     convertToCommonUserInternal()
 }
 
-private fun twitter4j.User.convertToCommonUserInternal(): User = User(
-        id = id,
-        name = name,
-        screenName = screenName,
-        location = location,
-        description = description,
-        isContributorsEnabled = isContributorsEnabled,
-        profileImageURLHttps = profileImageURLHttps,
-        isDefaultProfileImage = isDefaultProfileImage,
-        url = url,
-        isProtected = isProtected,
-        followersCount = followersCount,
-        profileBackgroundColor = profileBackgroundColor,
-        profileTextColor = profileTextColor,
-        profileLinkColor = profileLinkColor,
-        profileSidebarFillColor = profileSidebarFillColor,
-        profileSidebarBorderColor = profileSidebarBorderColor,
-        isProfileUseBackgroundImage = isProfileUseBackgroundImage,
-        isDefaultProfile = isDefaultProfile,
-        friendsCount = friendsCount,
-        createdAt = createdAt,
-        favoritesCount = favouritesCount,
-        utcOffset = utcOffset,
-        timeZone = timeZone,
-        profileBackgroundImageURLHttps = profileBackgroundImageUrlHttps,
-        profileBannerImageUrl = if (profileBannerURL != null) profileBannerURL!!.replace("/web$".toRegex(), "") else null,
-        isProfileBackgroundTiled = isProfileBackgroundTiled,
-        lang = lang,
-        statusesCount = statusesCount,
-        isVerified = isVerified,
-        isTranslator = isTranslator,
-        isFollowRequestSent = isFollowRequestSent,
-        descriptionURLEntities = descriptionURLEntities,
-        emojis = null,
-        isTwitter = true
-)
+private fun twitter4j.User.convertToCommonUserInternal(): User {
+    val urls = if (descriptionURLEntities.isNotEmpty()) {
+        convertToContentAndLinks(
+                description,
+                emptyArray(),
+                emptyArray(),
+                emptyArray(),
+                emptyArray(),
+                descriptionURLEntities
+        )
+    } else {
+        null
+    }
 
-fun Account.convertToCommonUser(): User = User(
-        id = id,
-        name = if (displayName.isEmpty()) {
-            userName
-        } else {
-            displayName
-        },
-        screenName = acct,
-        location = null,
-        description = note,
-        isContributorsEnabled = false,
-        profileImageURLHttps = avatar,
-        isDefaultProfileImage = true,
-        url = null,
-        isProtected = isLocked,
-        followersCount = followersCount,
-        profileBackgroundColor = null,
-        profileTextColor = null,
-        profileLinkColor = null,
-        profileSidebarFillColor = null,
-        profileSidebarBorderColor = null,
-        isProfileUseBackgroundImage = true,
-        isDefaultProfile = true,
-        friendsCount = followingCount,
-        createdAt = ISO8601DateConverter.toDate(createdAt),
-        favoritesCount = -1,
-        utcOffset = 0,
-        timeZone = null,
-        profileBackgroundImageURLHttps = null,
-        profileBannerImageUrl = header,
-        isProfileBackgroundTiled = false,
-        lang = null,
-        statusesCount = statusesCount,
-        isVerified = false,
-        isTranslator = false,
-        isFollowRequestSent = false,
-        descriptionURLEntities = emptyArray(),
-        emojis = if (emojis.isEmpty()) {
-            null
-        } else {
-            emojis.map { Emoji(it.shortcode, it.url) }
-        },
-        isTwitter = false
-)
+    return User(
+            id = id,
+            name = name,
+            screenName = screenName,
+            location = location,
+            description = urls?.first?:description,
+            isContributorsEnabled = isContributorsEnabled,
+            profileImageURLHttps = profileImageURLHttps,
+            isDefaultProfileImage = isDefaultProfileImage,
+            url = url,
+            isProtected = isProtected,
+            followersCount = followersCount,
+            profileBackgroundColor = profileBackgroundColor,
+            profileTextColor = profileTextColor,
+            profileLinkColor = profileLinkColor,
+            profileSidebarFillColor = profileSidebarFillColor,
+            profileSidebarBorderColor = profileSidebarBorderColor,
+            isProfileUseBackgroundImage = isProfileUseBackgroundImage,
+            isDefaultProfile = isDefaultProfile,
+            friendsCount = friendsCount,
+            createdAt = createdAt,
+            favoritesCount = favouritesCount,
+            utcOffset = utcOffset,
+            timeZone = timeZone,
+            profileBackgroundImageURLHttps = profileBackgroundImageUrlHttps,
+            profileBannerImageUrl = if (profileBannerURL != null) profileBannerURL!!.replace("/web$".toRegex(), "") else null,
+            isProfileBackgroundTiled = isProfileBackgroundTiled,
+            lang = lang,
+            statusesCount = statusesCount,
+            isVerified = isVerified,
+            isTranslator = isTranslator,
+            isFollowRequestSent = isFollowRequestSent,
+            descriptionLinks = urls?.second,
+            emojis = null,
+            isTwitter = true
+    )
+}
+
+fun Account.convertToCommonUser(): User {
+    val urls = MTHtmlParser.convertToContentAndLinks(note)
+
+    return User(
+            id = id,
+            name = if (displayName.isEmpty()) {
+                userName
+            } else {
+                displayName
+            },
+            screenName = acct,
+            location = null,
+            description = urls.first,
+            isContributorsEnabled = false,
+            profileImageURLHttps = avatar,
+            isDefaultProfileImage = true,
+            url = null,
+            isProtected = isLocked,
+            followersCount = followersCount,
+            profileBackgroundColor = null,
+            profileTextColor = null,
+            profileLinkColor = null,
+            profileSidebarFillColor = null,
+            profileSidebarBorderColor = null,
+            isProfileUseBackgroundImage = true,
+            isDefaultProfile = true,
+            friendsCount = followingCount,
+            createdAt = ISO8601DateConverter.toDate(createdAt),
+            favoritesCount = -1,
+            utcOffset = 0,
+            timeZone = null,
+            profileBackgroundImageURLHttps = null,
+            profileBannerImageUrl = header,
+            isProfileBackgroundTiled = false,
+            lang = null,
+            statusesCount = statusesCount,
+            isVerified = false,
+            isTranslator = false,
+            isFollowRequestSent = false,
+            descriptionLinks = if (urls.second.isEmpty()) {
+                null
+            } else {
+                urls.second
+            },
+            emojis = if (emojis.isEmpty()) {
+                null
+            } else {
+                emojis.map { Emoji(it.shortcode, it.url) }.toTypedArray()
+            },
+            isTwitter = false
+    )
+}

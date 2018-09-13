@@ -86,12 +86,12 @@ class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> {
         );
 
         viewHolder.userUserName.setText(userNameText);
-        List<Emoji> userNameEmojis = item.getEmojis();
+        Emoji[] userNameEmojis = item.getEmojis();
         if (userNameEmojis != null) {
             if (viewHolder.userNameEmojiSetter == null) {
                 viewHolder.userNameEmojiSetter = new EmojiToTextViewSetter(viewHolder.request, viewHolder.userUserName);
             }
-            Disposable[] set = viewHolder.userNameEmojiSetter.set(userNameText, userNameEmojis.toArray(new Emoji[userNameEmojis.size()]));
+            Disposable[] set = viewHolder.userNameEmojiSetter.set(userNameText, userNameEmojis);
             if (set != null) {
                 viewHolder.disposable.addAll(set);
             }

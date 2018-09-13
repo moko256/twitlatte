@@ -40,13 +40,16 @@ fun convertToContentAndLinks(
                     + hashtagEntities.size
                     + userMentionEntities.size
                     + urlEntities.size
-                    + mediaEntities.size
+                    + if (mediaEntities.isNotEmpty()) { 1 } else { 0 }
     )
     entities.addAll(symbolEntities.map { "symbol" to it })
     entities.addAll(hashtagEntities.map { "hashtag" to it })
     entities.addAll(userMentionEntities.map { "user" to it })
     entities.addAll(urlEntities.map { "url" to it })
-    entities.addAll(mediaEntities.map { "url" to it })
+    val media = mediaEntities.firstOrNull()
+    if (media != null) {
+        entities.add("url" to media)
+    }
 
     entities.sortBy { it.second.start }
 
