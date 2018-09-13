@@ -16,7 +16,6 @@
 
 package com.github.moko256.twitlatte.text.link
 
-import android.text.SpannableStringBuilder
 import com.github.moko256.twitlatte.text.link.entity.Link
 import org.ccil.cowan.tagsoup.Parser
 import org.xml.sax.Attributes
@@ -33,29 +32,6 @@ object MTHtmlParser {
     private val handler = MastodonHtmlHandler()
     private val parser = Parser().apply {
         contentHandler = handler
-    }
-
-    @Deprecated(message = "No longer support")
-    fun convertToEntities(text: String, listener: (link: String) -> Any): CharSequence = try {
-        parser.parse(InputSource(text.reader()))
-
-        if (handler.linkList.isEmpty()) {
-            handler.stringBuilder.toString()
-        } else {
-            SpannableStringBuilder(handler.stringBuilder).also { builder ->
-                handler.linkList.forEach {
-                    builder.setSpan(
-                            listener(it.url),
-                            it.start,
-                            it.end,
-                            SpannableStringBuilder.SPAN_EXCLUSIVE_EXCLUSIVE
-                    )
-                }
-            }
-        }
-    } catch (e: Throwable) {
-        e.printStackTrace()
-        text
     }
 
     fun convertToContentAndLinks(text: String): Pair<String, Array<Link>> = try {
