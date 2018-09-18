@@ -160,7 +160,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             Preference sourceCodeLink=findPreference("source_code_link");
             sourceCodeLink.setOnPreferenceClickListener(preference -> {
                 AppCustomTabsKt.launchChromeCustomTabs(requireContext(), "https://github.com/moko256/twitlatte");
-                return false;
+                return true;
             });
 
             Preference version=findPreference("app_version");
@@ -172,7 +172,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                     eggCount = 3;
                 }
 
-                return false;
+                return true;
             });
         } else if (preferenceRoot.equals("regexMute")) {
             PreferenceScreen regexMute = getPreferenceScreen();
@@ -186,7 +186,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                             e.printStackTrace();
                             Toast.makeText(requireContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
-                        return false;
+                        return true;
                     });
                 }
             }
