@@ -31,10 +31,9 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Spliterator;
-import java.util.function.Consumer;
 
 import kotlin.Pair;
+import kotlin.sequences.Sequence;
 import twitter4j.GeoLocation;
 import twitter4j.HashtagEntity;
 import twitter4j.MediaEntity;
@@ -1425,7 +1424,7 @@ public class OldCachedStatusesSQLiteOpenHelper {
         }
     }
 
-    public static class Result implements Iterable<Pair<CachedStatus, Integer>>, Iterator<Pair<CachedStatus, Integer>>, Closeable {
+    public static class Result implements Sequence<Pair<CachedStatus, Integer>>, Closeable {
 
         private final Cursor c;
         private boolean hasNext;
@@ -1447,107 +1446,87 @@ public class OldCachedStatusesSQLiteOpenHelper {
         @NonNull
         @Override
         public Iterator<Pair<CachedStatus, Integer>> iterator() {
-            return this;
-        }
+            return new Iterator<Pair<CachedStatus, Integer>>() {
+                @Override
+                public boolean hasNext() {
+                    return hasNext;
+                }
 
-        @Override
-        public boolean hasNext() {
-            return hasNext;
-        }
+                @Override
+                public Pair<CachedStatus, Integer> next() {
+                    Pair<CachedStatus, Integer> pair = new Pair<>(
+                            new CachedStatus(
+                                    new Date(c.getLong(0)),
+                                    c.getLong(1),
+                                    c.getLong(2),
+                                    c.getLong(3),
+                                    c.getString(4),
+                                    c.getString(5),
+                                    c.getLong(6),
+                                    c.getLong(7),
+                                    c.getInt(8) != 0,
+                                    c.getInt(9) != 0,
+                                    c.getInt(10),
+                                    c.getString(11),
+                                    c.getInt(12),
+                                    c.getInt(13) != 0,
+                                    c.getString(14),
+                                    restoreUserMentionEntities(
+                                            splitComma(c.getString(15)),
+                                            splitComma(c.getString(16)),
+                                            splitComma(c.getString(17)),
+                                            splitComma(c.getString(18)),
+                                            splitComma(c.getString(19)),
+                                            splitComma(c.getString(20))
+                                    ),
+                                    restoreURLEntities(
+                                            splitComma(c.getString(21)),
+                                            splitComma(c.getString(22)),
+                                            splitComma(c.getString(23)),
+                                            splitComma(c.getString(24)),
+                                            splitComma(c.getString(25))
+                                    ),
+                                    restoreHashtagEntities(
+                                            splitComma(c.getString(26)),
+                                            splitComma(c.getString(27)),
+                                            splitComma(c.getString(28))
+                                    ),
+                                    restoreMediaEntities(
+                                            splitComma(c.getString(29)),
+                                            splitComma(c.getString(30)),
+                                            splitComma(c.getString(31)),
+                                            splitComma(c.getString(32)),
+                                            splitComma(c.getString(33)),
+                                            splitComma(c.getString(34)),
+                                            splitComma(c.getString(35)),
 
-        @Override
-        public Pair<CachedStatus, Integer> next() {
-            Pair<CachedStatus, Integer> pair = new Pair<>(
-                    new CachedStatus(
-                            new Date(c.getLong(0)),
-                            c.getLong(1),
-                            c.getLong(2),
-                            c.getLong(3),
-                            c.getString(4),
-                            c.getString(5),
-                            c.getLong(6),
-                            c.getLong(7),
-                            c.getInt(8) != 0,
-                            c.getInt(9) != 0,
-                            c.getInt(10),
-                            c.getString(11),
-                            c.getInt(12),
-                            c.getInt(13) != 0,
-                            c.getString(14),
-                            restoreUserMentionEntities(
-                                    splitComma(c.getString(15)),
-                                    splitComma(c.getString(16)),
-                                    splitComma(c.getString(17)),
-                                    splitComma(c.getString(18)),
-                                    splitComma(c.getString(19)),
-                                    splitComma(c.getString(20))
+                                            parse(c.getString(36)),
+                                            parse(c.getString(37)),
+                                            parse(c.getString(38)),
+
+                                            splitComma(c.getString(39)),
+                                            splitComma(c.getString(40))
+                                    ),
+                                    restoreSymbolEntities(
+                                            splitComma(c.getString(41)),
+                                            splitComma(c.getString(42)),
+                                            splitComma(c.getString(43))
+                                    ),
+                                    c.getLong(44),
+                                    c.getString(45),
+                                    restoreEmojis(
+                                            splitComma(c.getString(46)),
+                                            splitComma(c.getString(47))
+                                    ),
+                                    c.getString(48),
+                                    c.getInt(49)
                             ),
-                            restoreURLEntities(
-                                    splitComma(c.getString(21)),
-                                    splitComma(c.getString(22)),
-                                    splitComma(c.getString(23)),
-                                    splitComma(c.getString(24)),
-                                    splitComma(c.getString(25))
-                            ),
-                            restoreHashtagEntities(
-                                    splitComma(c.getString(26)),
-                                    splitComma(c.getString(27)),
-                                    splitComma(c.getString(28))
-                            ),
-                            restoreMediaEntities(
-                                    splitComma(c.getString(29)),
-                                    splitComma(c.getString(30)),
-                                    splitComma(c.getString(31)),
-                                    splitComma(c.getString(32)),
-                                    splitComma(c.getString(33)),
-                                    splitComma(c.getString(34)),
-                                    splitComma(c.getString(35)),
-
-                                    parse(c.getString(36)),
-                                    parse(c.getString(37)),
-                                    parse(c.getString(38)),
-
-                                    splitComma(c.getString(39)),
-                                    splitComma(c.getString(40))
-                            ),
-                            restoreSymbolEntities(
-                                    splitComma(c.getString(41)),
-                                    splitComma(c.getString(42)),
-                                    splitComma(c.getString(43))
-                            ),
-                            c.getLong(44),
-                            c.getString(45),
-                            restoreEmojis(
-                                    splitComma(c.getString(46)),
-                                    splitComma(c.getString(47))
-                            ),
-                            c.getString(48),
-                            c.getInt(49)
-                    ),
-                    c.getInt(50)
-            );
-            hasNext = c.moveToNext();
-            return pair;
-        }
-
-        @Override
-        public void forEach(Consumer<? super Pair<CachedStatus, Integer>> action) {
-            throw new RuntimeException("Not implemented");
-        }
-
-        @Override
-        public Spliterator<Pair<CachedStatus, Integer>> spliterator() {
-            throw new RuntimeException("Not implemented");
-        }
-
-        @Override
-        public void remove() {
-            throw new RuntimeException("Not implemented");
-        }
-
-        @Override
-        public void forEachRemaining(Consumer<? super Pair<CachedStatus, Integer>> action) {
-            throw new RuntimeException("Not implemented");
+                            c.getInt(50)
+                    );
+                    hasNext = c.moveToNext();
+                    return pair;
+                }
+            };
         }
     }
 }

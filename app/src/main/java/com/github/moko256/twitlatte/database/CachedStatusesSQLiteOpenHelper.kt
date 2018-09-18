@@ -108,7 +108,7 @@ class CachedStatusesSQLiteOpenHelper(
             db.execSQL("drop table $TABLE_NAME")
             onCreate(db)
 
-            for (statusPair in oldStatuses) {
+            oldStatuses.forEach { statusPair ->
                 val status = statusPair.first
                 val contentValue = createStatusContentValues(if (accessToken?.type == Type.MASTODON) {
 
