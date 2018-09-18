@@ -144,7 +144,7 @@ public class ShowTweetActivity extends AppCompatActivity {
         return ((com.github.moko256.twitlatte.entity.Status) GlobalApplication.statusCache.get(statusId)).getUrl();
     }
 
-        @Override
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.action_quote:
