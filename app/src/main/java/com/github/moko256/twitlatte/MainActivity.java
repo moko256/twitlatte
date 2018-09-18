@@ -54,7 +54,7 @@ import com.github.moko256.twitlatte.entity.UserConverterKt;
 import com.github.moko256.twitlatte.glide.GlideApp;
 import com.github.moko256.twitlatte.glide.GlideRequests;
 import com.github.moko256.twitlatte.model.AccountsModel;
-import com.github.moko256.twitlatte.rx.VerifyCredencialOnSubscribe;
+import com.github.moko256.twitlatte.rx.VerifyCredentialOnSubscribe;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
 import com.github.moko256.twitlatte.view.EmojiToTextViewSetter;
 import com.github.moko256.twitlatte.widget.FragmentPagerAdapter;
@@ -457,7 +457,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
     private void updateDrawerImage(){
         disposable.add(
                 Single.create(
-                        new VerifyCredencialOnSubscribe(
+                        new VerifyCredentialOnSubscribe(
                                 GlobalApplication.twitter,
                                 GlobalApplication.userCache,
                                 GlobalApplication.userId

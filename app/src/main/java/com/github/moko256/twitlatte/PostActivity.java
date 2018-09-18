@@ -58,7 +58,7 @@ import com.github.moko256.twitlatte.glide.GlideApp;
 import com.github.moko256.twitlatte.model.base.PostTweetModel;
 import com.github.moko256.twitlatte.model.impl.PostTweetModelCreator;
 import com.github.moko256.twitlatte.rx.LocationSingleBuilder;
-import com.github.moko256.twitlatte.rx.VerifyCredencialOnSubscribe;
+import com.github.moko256.twitlatte.rx.VerifyCredentialOnSubscribe;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
 import com.github.moko256.twitlatte.widget.ImageKeyboardEditText;
 
@@ -128,7 +128,7 @@ public class PostActivity extends AppCompatActivity {
 
         disposable.add(
                 Single.create(
-                        new VerifyCredencialOnSubscribe(
+                        new VerifyCredentialOnSubscribe(
                                 GlobalApplication.twitter,
                                 GlobalApplication.userCache,
                                 GlobalApplication.userId

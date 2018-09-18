@@ -28,10 +28,10 @@ import twitter4j.TwitterException
  *
  * @author moko256
  */
-class VerifyCredencialOnSubscribe(
-        val client: Twitter,
-        val cache: UserCacheMap,
-        val userId: Long
+class VerifyCredentialOnSubscribe(
+        private val client: Twitter,
+        private val cache: UserCacheMap,
+        private val userId: Long
 ): SingleOnSubscribe<User> {
     override fun subscribe(emitter: SingleEmitter<User>) {
         try {
