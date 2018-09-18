@@ -157,7 +157,14 @@ class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             ((StatusViewHolder) viewHolder).setStatus(user, status, quotedStatusUser, quotedStatus);
         } else if (viewHolder instanceof ImagesOnlyTweetViewHolder){
-            Status status = (Status) GlobalApplication.statusCache.get(data.get(i));
+            StatusObject statusObject = GlobalApplication.statusCache.get(data.get(i));
+            Status status;
+            if (statusObject instanceof Repeat) {
+                long id = ((Repeat) statusObject).getRepeatedStatusId();
+                status = (Status) GlobalApplication.statusCache.get(id);
+            } else {
+                status = (Status) statusObject;
+            }
 
             ((ImagesOnlyTweetViewHolder) viewHolder).setStatus(status);
         } else if (viewHolder instanceof MoreLoadViewHolder) {
