@@ -305,7 +305,7 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
     }
 
 
-    public Single<User> getUserSingle(){
+    private Single<User> getUserSingle(){
         return Single
                 .create(
                         subscriber-> {
@@ -315,6 +315,8 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
                                     user = GlobalApplication.twitter.showUser(userId);
                                 } else if (userScreenName != null) {
                                     user = GlobalApplication.twitter.showUser(userScreenName);
+                                }
+                                if (user != null) {
                                     GlobalApplication.userCache.add(user);
                                 }
                                 subscriber.onSuccess(GlobalApplication.userCache.get(userId));
