@@ -33,7 +33,6 @@ public class SettingsActivity extends AppCompatActivity implements PreferenceFra
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_settings);
 
         ActionBar actionBar=getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -58,7 +57,7 @@ public class SettingsActivity extends AppCompatActivity implements PreferenceFra
 
             getSupportFragmentManager()
                     .beginTransaction()
-                    .add(R.id.activity_settings_container,fragment)
+                    .add(android.R.id.content, fragment)
                     .commit();
         }
     }

@@ -39,7 +39,6 @@ public class SearchResultActivity extends AppCompatActivity implements BaseListF
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_search);
 
         ActionBar actionBar= Objects.requireNonNull(getSupportActionBar());
         actionBar.setTitle(getIntent().getStringExtra("query"));
@@ -51,7 +50,7 @@ public class SearchResultActivity extends AppCompatActivity implements BaseListF
         if (savedInstanceState == null) {
             getSupportFragmentManager()
                     .beginTransaction()
-                    .add(R.id.activity_search_fragment_container,new SearchResultFragment())
+                    .add(android.R.id.content, new SearchResultFragment())
                     .commit();
         }
     }
@@ -68,7 +67,7 @@ public class SearchResultActivity extends AppCompatActivity implements BaseListF
 
     @Override
     public View getViewForSnackBar() {
-        return findViewById(R.id.activity_search_fragment_container);
+        return findViewById(android.R.id.content);
     }
 
     @Override

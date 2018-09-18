@@ -38,7 +38,6 @@ public class TrendsActivity extends AppCompatActivity {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_search);
 
         actionBar=getSupportActionBar();
         actionBar.setTitle(getIntent().getStringExtra("query"));
@@ -48,7 +47,7 @@ public class TrendsActivity extends AppCompatActivity {
         if (savedInstanceState == null && GlobalApplication.clientType == Type.TWITTER) {
             getSupportFragmentManager()
                     .beginTransaction()
-                    .add(R.id.activity_search_fragment_container, new TrendsFragment())
+                    .add(android.R.id.content, new TrendsFragment())
                     .commit();
         }
     }
