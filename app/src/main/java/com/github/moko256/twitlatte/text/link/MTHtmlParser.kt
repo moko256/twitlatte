@@ -86,7 +86,7 @@ private class MastodonHtmlHandler: DefaultHandler() {
                     classValue?.contains("mention")?:false -> {
                         type = TYPE_USER
                         val list = linkHref.split("/")
-                        userName = list[list.size - 1] + "@" + list[list.size - 2]
+                        userName = list[list.size - 1].replaceFirst("@", "") + "@" + list[list.size - 2]
                     }
                     else -> {
                         type = TYPE_URL

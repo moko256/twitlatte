@@ -315,6 +315,7 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
                                     user = GlobalApplication.twitter.showUser(userId);
                                 } else if (userScreenName != null) {
                                     user = GlobalApplication.twitter.showUser(userScreenName);
+                                    userId = user.getId();
                                 }
                                 if (user != null) {
                                     GlobalApplication.userCache.add(user);
