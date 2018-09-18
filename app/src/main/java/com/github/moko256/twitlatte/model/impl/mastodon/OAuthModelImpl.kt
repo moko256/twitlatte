@@ -35,12 +35,12 @@ import twitter4j.conf.ConfigurationContext
  *
  * @author moko256
  */
-class OAuthModelImpl(override var isRestartable: Boolean = false) : OAuthModel {
-    private val STATE_MODEL_URL = "state_model_url"
-    private val STATE_MODEL_CLIENT_ID = "state_client_id"
-    private val STATE_MODEL_SECRET = "state_model_secret"
-    private val STATE_MODEL_REDIRECT_URL = "state_model_redirect_url"
+private const val STATE_MODEL_URL = "state_model_url"
+private const val STATE_MODEL_CLIENT_ID = "state_client_id"
+private const val STATE_MODEL_SECRET = "state_model_secret"
+private const val STATE_MODEL_REDIRECT_URL = "state_model_redirect_url"
 
+class OAuthModelImpl(override var isRestartable: Boolean = false) : OAuthModel {
     private lateinit var clientBuilder: MastodonClient.Builder
     private lateinit var apps: Apps
 

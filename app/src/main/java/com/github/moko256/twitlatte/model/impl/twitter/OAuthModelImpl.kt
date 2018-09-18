@@ -32,10 +32,10 @@ import twitter4j.conf.ConfigurationContext
  *
  * @author moko256
  */
-class OAuthModelImpl(override var isRestartable: Boolean = false) : OAuthModel {
-    private val STATE_MODEL_CLIENT_KEY = "state_model_client_key"
-    private val STATE_MODEL_CLIENT_SECRET = "state_model_client_secret"
+private const val STATE_MODEL_CLIENT_KEY = "state_model_client_key"
+private const val STATE_MODEL_CLIENT_SECRET = "state_model_client_secret"
 
+class OAuthModelImpl(override var isRestartable: Boolean = false) : OAuthModel {
     private lateinit var req: RequestToken
     private val oauth = OAuthAuthorization(ConfigurationContext.getInstance())
 
@@ -61,8 +61,10 @@ class OAuthModelImpl(override var isRestartable: Boolean = false) : OAuthModel {
 
         return Single.create {
             try {
-                req = oauth.getOAuthRequestToken(callbackUrl)
-                it.onSuccess(req.authorizationURL?:"oob")
+                req = oauth.getOAuthRequestToken(
+                        callbackUrl ?: "oob"
+                )
+                it.onSuccess(req.authorizationURL)
                 isRestartable = true
             } catch (e: TwitterException) {
                 it.tryOnError(e)
