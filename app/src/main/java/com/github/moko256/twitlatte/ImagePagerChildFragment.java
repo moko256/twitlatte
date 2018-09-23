@@ -325,7 +325,9 @@ public class ImagePagerChildFragment extends Fragment {
 
     private void contentDownload(){
         String downloadVideoUrl = mediaEntity.getDownloadVideoUrl();
-        String path = downloadVideoUrl == null? mediaEntity.getOriginalUrl(): downloadVideoUrl;
+        String path = downloadVideoUrl == null?
+                TwitterStringUtils.convertOriginalImageUrl(mediaEntity.getOriginalUrl()):
+                downloadVideoUrl;
 
         DownloadManager manager;
 
