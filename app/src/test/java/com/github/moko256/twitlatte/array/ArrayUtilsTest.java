@@ -42,17 +42,4 @@ public class ArrayUtilsTest {
         assertEquals("0,1,2,aaa,@@@,$$$$$$$,", result);
     }
 
-    @Test
-    public void toCommaAndPipeSplitString() {
-        assertEquals(
-                "", ArrayUtils.toCommaAndPipeSplitString(null).toString()
-        );
-
-        assertEquals(
-                "", ArrayUtils.toCommaAndPipeSplitString(new String[][]{new String[]{}}).toString()
-        );
-
-        String[][] array = new String[][]{new String[]{"0", "1", "2"}, new String[]{"aaa", "@@@", "$$$$$$$", ""}};
-        String result = ArrayUtils.toCommaAndPipeSplitString(array).toString();
-        assertEquals("0|1|2,aaa|@@@|$$$$$$$|", result);
-    }}
+}
