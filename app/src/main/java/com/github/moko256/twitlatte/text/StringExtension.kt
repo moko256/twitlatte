@@ -23,7 +23,7 @@ package com.github.moko256.twitlatte.text
  */
 fun String?.splitWithComma(): List<String>? {
     return if (this != null && isNotEmpty()) {
-        split(",").dropLastWhile { it.isEmpty() }
+        split(",")
     } else {
         null
     }

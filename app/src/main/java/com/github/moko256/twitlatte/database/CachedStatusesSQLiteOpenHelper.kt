@@ -21,7 +21,7 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.database.sqlite.SQLiteStatement
-import com.github.moko256.twitlatte.array.ArrayUtils
+import com.github.moko256.twitlatte.array.toCommaSplitString
 import com.github.moko256.twitlatte.database.migrator.OldCachedStatusesSQLiteOpenHelper
 import com.github.moko256.twitlatte.entity.*
 import com.github.moko256.twitlatte.text.link.MTHtmlParser
@@ -89,7 +89,7 @@ class CachedStatusesSQLiteOpenHelper(
 
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL(
-                "create table " + TABLE_NAME + "(" + ArrayUtils.toCommaSplitString(TABLE_COLUMNS) + ", primary key(id))"
+                "create table " + TABLE_NAME + "(" + TABLE_COLUMNS.toCommaSplitString() + ", primary key(id))"
         )
         db.execSQL("create unique index IdIndex on $TABLE_NAME(id)")
 
@@ -255,9 +255,9 @@ class CachedStatusesSQLiteOpenHelper(
                                     c.getString(20).splitWithComma()
                             ),
                             medias = restoreMedias(
-                                    c.getString(21).splitCommaNullable(),
+                                    c.getString(21).splitWithCommaAndReplaceEmptyWithNull(),
                                     c.getString(22).splitWithComma(),
-                                    c.getString(23).splitCommaNullable(),
+                                    c.getString(23).splitWithCommaAndReplaceEmptyWithNull(),
                                     c.getString(24).splitWithComma()
                             ),
                             quotedStatusId = c.getLong(25),
@@ -396,7 +396,7 @@ class CachedStatusesSQLiteOpenHelper(
                 contentValues.put(TABLE_COLUMNS[16], status.lang)
 
                 if (status.mentions != null) {
-                    contentValues.put(TABLE_COLUMNS[17], ArrayUtils.toCommaSplitString(status.mentions).toString())
+                    contentValues.put(TABLE_COLUMNS[17], status.mentions.toCommaSplitString().toString())
                 }
 
                 if (status.urls != null) {
@@ -410,9 +410,9 @@ class CachedStatusesSQLiteOpenHelper(
                         starts[i] = entity.start.toString()
                         ends[i] = entity.end.toString()
                     }
-                    contentValues.put(TABLE_COLUMNS[18], ArrayUtils.toCommaSplitString(urls).toString())
-                    contentValues.put(TABLE_COLUMNS[19], ArrayUtils.toCommaSplitString(starts).toString())
-                    contentValues.put(TABLE_COLUMNS[20], ArrayUtils.toCommaSplitString(ends).toString())
+                    contentValues.put(TABLE_COLUMNS[18], urls.toCommaSplitString().toString())
+                    contentValues.put(TABLE_COLUMNS[19], starts.toCommaSplitString().toString())
+                    contentValues.put(TABLE_COLUMNS[20], ends.toCommaSplitString().toString())
                 }
 
                 if (status.medias != null) {
@@ -428,10 +428,10 @@ class CachedStatusesSQLiteOpenHelper(
                         downloadVideoUrls[i] = entity.downloadVideoUrl
                         types[i] = entity.imageType
                     }
-                    contentValues.put(TABLE_COLUMNS[21], ArrayUtils.toCommaSplitString(thumbnailUrls).toString())
-                    contentValues.put(TABLE_COLUMNS[22], ArrayUtils.toCommaSplitString(originalUrls).toString())
-                    contentValues.put(TABLE_COLUMNS[23], ArrayUtils.toCommaSplitString(downloadVideoUrls).toString())
-                    contentValues.put(TABLE_COLUMNS[24], ArrayUtils.toCommaSplitString(types).toString())
+                    contentValues.put(TABLE_COLUMNS[21], thumbnailUrls.toCommaSplitString().toString())
+                    contentValues.put(TABLE_COLUMNS[22], originalUrls.toCommaSplitString().toString())
+                    contentValues.put(TABLE_COLUMNS[23], downloadVideoUrls.toCommaSplitString().toString())
+                    contentValues.put(TABLE_COLUMNS[24], types.toCommaSplitString().toString())
                 }
 
                 contentValues.put(TABLE_COLUMNS[25], status.quotedStatusId)
@@ -447,8 +447,8 @@ class CachedStatusesSQLiteOpenHelper(
                         shortCodes[i] = emoji.shortCode
                         urls[i] = emoji.url
                     }
-                    contentValues.put(TABLE_COLUMNS[27], ArrayUtils.toCommaSplitString(shortCodes).toString())
-                    contentValues.put(TABLE_COLUMNS[28], ArrayUtils.toCommaSplitString(urls).toString())
+                    contentValues.put(TABLE_COLUMNS[27], shortCodes.toCommaSplitString().toString())
+                    contentValues.put(TABLE_COLUMNS[28], urls.toCommaSplitString().toString())
                 }
                 contentValues.put(TABLE_COLUMNS[29], status.spoilerText)
                 contentValues.put(TABLE_COLUMNS[30], status.visibility)
@@ -541,10 +541,9 @@ class CachedStatusesSQLiteOpenHelper(
     }
 }
 
-private fun String?.splitCommaNullable(): List<String?>? {
+private fun String?.splitWithCommaAndReplaceEmptyWithNull(): List<String?>? {
     return if (this != null && isNotEmpty()) {
         this.split(",")
-                .dropLastWhile { it.isEmpty() }
                 .map {
                     if (it == "null") {
                         null

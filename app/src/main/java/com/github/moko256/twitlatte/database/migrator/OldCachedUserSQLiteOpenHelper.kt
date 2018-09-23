@@ -3,7 +3,7 @@ package com.github.moko256.twitlatte.database.migrator
 import android.content.ContentValues
 import android.database.DatabaseUtils
 import android.database.sqlite.SQLiteDatabase
-import com.github.moko256.twitlatte.array.ArrayUtils
+import com.github.moko256.twitlatte.array.toCommaSplitString
 import com.github.moko256.twitlatte.text.link.MTHtmlParser
 import com.github.moko256.twitlatte.text.link.convertToContentAndLinks
 import com.github.moko256.twitlatte.text.splitWithComma
@@ -90,9 +90,9 @@ object OldCachedUserSQLiteOpenHelper {
             DatabaseUtils.cursorRowToContentValues(c, values)
             values.put("id", id)
             values.put("description", fixedText)
-            values.put("urls_urls", ArrayUtils.toCommaSplitString(links.map { it.url }.toTypedArray()).toString())
-            values.put("urls_starts", ArrayUtils.toCommaSplitString(links.map { it.start.toString() }.toTypedArray()).toString())
-            values.put("urls_ends", ArrayUtils.toCommaSplitString(links.map { it.end.toString() }.toTypedArray()).toString())
+            values.put("urls_urls", links.map { it.url }.toTypedArray().toCommaSplitString().toString())
+            values.put("urls_starts", links.map { it.start.toString() }.toTypedArray().toCommaSplitString().toString())
+            values.put("urls_ends", links.map { it.end.toString() }.toTypedArray().toCommaSplitString().toString())
             db.replace(table_name, null, values)
         }
         c.close()
