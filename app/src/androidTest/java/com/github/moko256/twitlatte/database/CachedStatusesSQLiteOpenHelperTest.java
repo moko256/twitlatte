@@ -28,6 +28,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 
 import twitter4j.GeoLocation;
@@ -96,7 +97,7 @@ public class CachedStatusesSQLiteOpenHelperTest {
     }
 
     private void removeCacheTest(){
-        helper.deleteCachedStatus(TEST_DUMMY_STATUS_ID_1);
+        helper.deleteCachedStatuses(Collections.singletonList(TEST_DUMMY_STATUS_ID_1));
 
         assertEquals(helper.getCachedStatus(TEST_DUMMY_STATUS_ID_1), null);
     }

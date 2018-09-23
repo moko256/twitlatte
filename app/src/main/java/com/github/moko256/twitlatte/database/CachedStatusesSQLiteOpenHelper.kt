@@ -68,9 +68,10 @@ private val TABLE_COLUMNS = arrayOf(
         "emojis_shortcodes",
         "emojis_urls",
         "contentWarning",
-        "visibility",
-        "count"
+        "visibility"
 )
+
+private const val COUNTS_TABLE_NAME = "Counts"
 
 class CachedStatusesSQLiteOpenHelper(
         context: Context,
@@ -90,7 +91,12 @@ class CachedStatusesSQLiteOpenHelper(
         db.execSQL(
                 "create table " + TABLE_NAME + "(" + ArrayUtils.toCommaSplitString(TABLE_COLUMNS) + ", primary key(id))"
         )
-        db.execSQL("create unique index idindex on $TABLE_NAME(id)")
+        db.execSQL("create unique index IdIndex on $TABLE_NAME(id)")
+
+        db.execSQL(
+                "create table $COUNTS_TABLE_NAME(id integer primary key,count integer default 0)"
+        )
+        db.execSQL("create unique index CountsIdIndex on $TABLE_NAME(id)")
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
@@ -108,8 +114,7 @@ class CachedStatusesSQLiteOpenHelper(
             db.execSQL("drop table $TABLE_NAME")
             onCreate(db)
 
-            oldStatuses.forEach { statusPair ->
-                val status = statusPair.first
+            oldStatuses.forEach { status ->
                 val contentValue = createStatusContentValues(if (accessToken?.type == Type.MASTODON) {
 
                     if (status.retweetedStatusId == -1L) {
@@ -199,11 +204,11 @@ class CachedStatusesSQLiteOpenHelper(
                     }
                 } else {
                     status.convertToCommonStatus()
-                }).apply {
-                    put("count", statusPair.second)
-                }
+                })
 
                 db.insert(TABLE_NAME, null, contentValue)
+
+                db.execSQL("insert into $COUNTS_TABLE_NAME(id) values(${status.id})")
             }
 
             oldStatuses.close()
@@ -324,6 +329,8 @@ class CachedStatusesSQLiteOpenHelper(
             database.beginTransaction()
             database.replace(TABLE_NAME, null, values)
             if (incrementCount) {
+                database.execSQL("insert or ignore into $COUNTS_TABLE_NAME(id) values(${status.getId()})")
+
                 val statement = incrementCountStatement(database)
                 statement.bindLong(1, status.getId())
                 statement.execute()
@@ -349,6 +356,8 @@ class CachedStatusesSQLiteOpenHelper(
 
                 val id = values.getAsLong(TABLE_COLUMNS[1])
                 if (incrementCount && (excludeIncrementIds.isEmpty() || !excludeIncrementIds.contains(id))) {
+                    database.execSQL("insert or ignore into $COUNTS_TABLE_NAME(id) values($id)")
+
                     statement!!.bindLong(1, id!!)
                     statement.execute()
                 }
@@ -360,7 +369,7 @@ class CachedStatusesSQLiteOpenHelper(
     }
 
     private fun incrementCountStatement(database: SQLiteDatabase): SQLiteStatement {
-        return database.compileStatement("UPDATE $TABLE_NAME SET count=count+1 WHERE id=?")
+        return database.compileStatement("UPDATE $COUNTS_TABLE_NAME SET count=count+1 WHERE id=?")
     }
 
     private fun createStatusContentValues(status: StatusObject): ContentValues {
@@ -456,22 +465,6 @@ class CachedStatusesSQLiteOpenHelper(
         return contentValues
     }
 
-    fun deleteCachedStatus(id: Long) {
-        synchronized(this) {
-            val database = writableDatabase
-            database.beginTransaction()
-
-            val statement = decrementCountStatement(database)
-            statement.bindLong(1, id)
-            statement.execute()
-
-            database.delete(TABLE_NAME, "count=0", null)
-            database.setTransactionSuccessful()
-            database.endTransaction()
-            database.close()
-        }
-    }
-
     fun deleteCachedStatuses(ids: Collection<Long>) {
         synchronized(this) {
             val database = writableDatabase
@@ -481,7 +474,7 @@ class CachedStatusesSQLiteOpenHelper(
                 sqLiteStatement.bindLong(1, id)
                 sqLiteStatement.execute()
             }
-            database.delete(TABLE_NAME, "count=0", null)
+            database.delete(COUNTS_TABLE_NAME, "count=0", null)
             database.setTransactionSuccessful()
             database.endTransaction()
             database.close()
@@ -489,7 +482,7 @@ class CachedStatusesSQLiteOpenHelper(
     }
 
     private fun decrementCountStatement(database: SQLiteDatabase): SQLiteStatement {
-        return database.compileStatement("UPDATE $TABLE_NAME SET count=count-1 WHERE id=?")
+        return database.compileStatement("UPDATE $COUNTS_TABLE_NAME SET count=count-1 WHERE id=?")
     }
 
     private fun restoreEmojis(
