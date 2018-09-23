@@ -86,7 +86,7 @@ object OldCachedUserSQLiteOpenHelper {
             } else {
                 MTHtmlParser.convertToContentAndLinks(text)
             }
-            val values = ContentValues()
+            val values = ContentValues(TABLE_COLUMNS.size)
             DatabaseUtils.cursorRowToContentValues(c, values)
             values.put("id", id)
             values.put("description", fixedText)

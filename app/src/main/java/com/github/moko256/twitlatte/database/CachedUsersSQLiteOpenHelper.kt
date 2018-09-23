@@ -189,7 +189,7 @@ class CachedUsersSQLiteOpenHelper(context: Context, accessToken: AccessToken?) :
     }
 
     private fun addCachedUserAtTransaction(database: SQLiteDatabase, user: User) {
-        val contentValues = ContentValues()
+        val contentValues = ContentValues(TABLE_COLUMNS.size)
         contentValues.put(TABLE_COLUMNS[0], user.id)
         contentValues.put(TABLE_COLUMNS[1], user.name)
         contentValues.put(TABLE_COLUMNS[2], user.screenName)

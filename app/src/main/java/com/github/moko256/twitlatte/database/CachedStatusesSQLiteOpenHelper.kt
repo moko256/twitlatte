@@ -364,7 +364,7 @@ class CachedStatusesSQLiteOpenHelper(
     }
 
     private fun createStatusContentValues(status: StatusObject): ContentValues {
-        val contentValues = ContentValues()
+        val contentValues = ContentValues(TABLE_COLUMNS.size)
 
         when(status) {
             is Status -> {

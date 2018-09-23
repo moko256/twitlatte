@@ -87,7 +87,7 @@ public class CachedTrendsSQLiteOpenHelper extends SQLiteOpenHelper {
 
             for (int i = 0; i < trends.size(); i++) {
                 Trend item = trends.get(i);
-                ContentValues contentValues = new ContentValues();
+                ContentValues contentValues = new ContentValues(2);
                 contentValues.put("name", item.getName());
                 contentValues.put("volume", item.getVolume());
 

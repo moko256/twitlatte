@@ -65,7 +65,7 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
                     int i = ids.getInt(0);
                     int count = ids.getColumnCount();
 
-                    ContentValues contentValues = new ContentValues();
+                    ContentValues contentValues = new ContentValues(1);
                     contentValues.put("id", count - i -1);
                     db.insert(SEEING_ID_TABLE_NAME, null, contentValues);
                 }
@@ -112,7 +112,7 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
         SQLiteDatabase database=getWritableDatabase();
 
         for (int i = ids.size() - 1; i >= 0; i--) {
-            ContentValues contentValues = new ContentValues();
+            ContentValues contentValues = new ContentValues(1);
             contentValues.put("id", ids.get(i));
 
             database.insert(ID_LIST_TABLE_NAME, "", contentValues);
@@ -175,7 +175,7 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
         synchronized (this) {
             SQLiteDatabase database = getWritableDatabase();
 
-            ContentValues contentValues = new ContentValues();
+            ContentValues contentValues = new ContentValues(1);
             contentValues.put("id", i);
 
             database.beginTransaction();
