@@ -306,10 +306,6 @@ class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     0
             ));
         }
-
-        void clear() {
-            statusViewBinder.clear();
-        }
     }
 
     private class MoreLoadViewHolder extends RecyclerView.ViewHolder {
