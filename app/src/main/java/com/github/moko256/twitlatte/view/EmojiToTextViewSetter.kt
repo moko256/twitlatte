@@ -137,23 +137,21 @@ class EmojiToTextViewSetter(private val glideRequests: GlideRequests, private va
                     .subscribe { pair ->
                         val emoji = pair.first
                         val drawable = pair.second.mutate()
-                        var w = drawable.intrinsicWidth.toFloat()
-                        var h = drawable.intrinsicHeight.toFloat()
-                        if (w == h) {
-                            w = imageSize
-                            h = imageSize
-                        } else {
-                            if (w > h) {
-                                val d = imageSize / w
-                                w = imageSize
-                                h *= d
-                            } else {
-                                val d = imageSize / h
-                                w *= d
-                                h = imageSize
-                            }
-                        }
-                        drawable.setBounds(0, 0, Math.round(w), Math.round(h))
+
+                        val w = drawable.intrinsicWidth.toFloat()
+                        val h = drawable.intrinsicHeight.toFloat()
+                        val aspect = w / h
+                        drawable.setBounds(
+                                0, 0,
+                                Math.round(
+                                        if (aspect == 1f) {
+                                            imageSize
+                                        } else {
+                                            imageSize * aspect
+                                        }
+                                ),
+                                Math.round(imageSize)
+                        )
 
                         map[emoji.shortCode]?.forEach {
                             builder.setSpan(
