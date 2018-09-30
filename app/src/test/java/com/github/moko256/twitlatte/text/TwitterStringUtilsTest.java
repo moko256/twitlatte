@@ -29,16 +29,16 @@ import static org.junit.Assert.assertEquals;
 public class TwitterStringUtilsTest {
     @Test
     public void convertToSIUnitStringTest() {
-        assertEquals(TwitterStringUtils.convertToSIUnitString(0), "0");
-        assertEquals(TwitterStringUtils.convertToSIUnitString(100), "100");
-        assertEquals(TwitterStringUtils.convertToSIUnitString(10000), "10K");
-        assertEquals(TwitterStringUtils.convertToSIUnitString(10000000), "10M");
-        assertEquals(TwitterStringUtils.convertToSIUnitString(1000000000), "1G");
+        assertEquals(TwitterStringUtils.convertToSIUnitString(0).toString(), "0");
+        assertEquals(TwitterStringUtils.convertToSIUnitString(100).toString(), "100");
+        assertEquals(TwitterStringUtils.convertToSIUnitString(10000).toString(), "10K");
+        assertEquals(TwitterStringUtils.convertToSIUnitString(10000000).toString(), "10M");
+        assertEquals(TwitterStringUtils.convertToSIUnitString(1000000000).toString(), "1G");
 
-        assertEquals(TwitterStringUtils.convertToSIUnitString(-0), "0");
-        assertEquals(TwitterStringUtils.convertToSIUnitString(-100), "-100");
-        assertEquals(TwitterStringUtils.convertToSIUnitString(-10000), "-10K");
-        assertEquals(TwitterStringUtils.convertToSIUnitString(-10000000), "-10M");
-        assertEquals(TwitterStringUtils.convertToSIUnitString(-1000000000), "-1G");
+        assertEquals(TwitterStringUtils.convertToSIUnitString(-0).toString(), "0");
+        assertEquals(TwitterStringUtils.convertToSIUnitString(-100).toString(), "-100");
+        assertEquals(TwitterStringUtils.convertToSIUnitString(-10000).toString(), "-10K");
+        assertEquals(TwitterStringUtils.convertToSIUnitString(-10000000).toString(), "-10M");
+        assertEquals(TwitterStringUtils.convertToSIUnitString(-1000000000).toString(), "-1G");
     }
 }

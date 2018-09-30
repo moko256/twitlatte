@@ -54,35 +54,32 @@ import twitter4j.TwitterException;
 public class TwitterStringUtils {
 
     @NonNull
-    public static String plusAtMark(String... strings){
+    public static StringBuilder plusAtMark(String... strings){
         StringBuilder stringBuilder = new StringBuilder();
         for (String string: strings) {
             stringBuilder.append("@").append(string);
         }
-        return stringBuilder.toString();
+        return stringBuilder;
     }
 
-    public static String convertToSIUnitString(int num){
+    public static CharSequence convertToSIUnitString(int num){
         if (num == 0) return "0";
-        boolean isNegative = (num < 0);
-        String sign;
-        if (isNegative) {
+        StringBuilder builder = new StringBuilder(5);
+        if (num < 0) {
             num *= -1;
-            sign = "-";
-        } else {
-            sign = "";
+            builder.append("-");
         }
 
         float k = num / 1000;
-        if (k < 1) return sign + String.valueOf(num);
+        if (k < 1) return builder.append(String.valueOf(num));
 
         float m = k / 1000;
-        if (m < 1) return sign + String.valueOf(Math.round(k)) + "K";
+        if (m < 1) return builder.append(String.valueOf(Math.round(k))).append("K");
 
         float g = m / 1000;
-        if (g < 1) return sign + String.valueOf(Math.round(m)) + "M";
+        if (g < 1) return builder.append(String.valueOf(Math.round(m))).append("M");
 
-        return sign + String.valueOf(Math.round(g)) + "G";
+        return builder.append(String.valueOf(Math.round(g))).append("G");
     }
 
     @NonNull
