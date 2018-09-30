@@ -150,7 +150,6 @@ public class ImagePagerChildFragment extends Fragment {
                                 .Factory(createOkHttpDataSourceFactory(bandwidthMeter))
                                 .createMediaSource(Uri.parse(mediaEntity.getOriginalUrl()))
                 );
-                player.setPlayWhenReady(true);
 
                 break;
 
@@ -191,7 +190,6 @@ public class ImagePagerChildFragment extends Fragment {
                                 .Factory(createOkHttpDataSourceFactory(bandwidthMeter))
                                 .createMediaSource(Uri.parse(mediaEntity.getOriginalUrl()))
                 );
-                player.setPlayWhenReady(true);
 
                 break;
 
@@ -232,7 +230,6 @@ public class ImagePagerChildFragment extends Fragment {
                                         )
                         )
                 );
-                player.setPlayWhenReady(true);
 
                 break;
 
@@ -268,6 +265,22 @@ public class ImagePagerChildFragment extends Fragment {
                 break;
         }
         return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (player != null) {
+            player.setPlayWhenReady(true);
+        }
+    }
+
+    @Override
+    public void onStop() {
+        if (player != null) {
+            player.setPlayWhenReady(false);
+        }
+        super.onStop();
     }
 
     @Override
