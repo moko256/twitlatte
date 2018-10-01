@@ -16,10 +16,6 @@
 
 package com.github.moko256.twitlatte.database;
 
-import android.support.annotation.NonNull;
-import android.support.test.InstrumentationRegistry;
-import android.support.test.runner.AndroidJUnit4;
-
 import com.github.moko256.twitlatte.entity.AccessToken;
 import com.github.moko256.twitlatte.entity.StatusConverterKt;
 import com.github.moko256.twitlatte.entity.StatusObject;
@@ -31,6 +27,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 
+import androidx.annotation.NonNull;
+import androidx.test.InstrumentationRegistry;
+import androidx.test.runner.AndroidJUnit4;
 import twitter4j.GeoLocation;
 import twitter4j.HashtagEntity;
 import twitter4j.MediaEntity;

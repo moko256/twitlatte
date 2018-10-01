@@ -16,9 +16,6 @@
 
 package com.github.moko256.twitlatte.database;
 
-import android.support.test.InstrumentationRegistry;
-import android.support.test.runner.AndroidJUnit4;
-
 import com.github.moko256.twitlatte.entity.AccessToken;
 
 import org.junit.Test;
@@ -26,6 +23,9 @@ import org.junit.runner.RunWith;
 
 import java.util.Arrays;
 import java.util.List;
+
+import androidx.test.InstrumentationRegistry;
+import androidx.test.runner.AndroidJUnit4;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;

@@ -16,10 +16,6 @@
 
 package com.github.moko256.twitlatte.database;
 
-import android.support.annotation.NonNull;
-import android.support.test.InstrumentationRegistry;
-import android.support.test.runner.AndroidJUnit4;
-
 import com.github.moko256.twitlatte.entity.AccessToken;
 
 import org.junit.Test;
@@ -28,6 +24,9 @@ import org.junit.runner.RunWith;
 import java.util.Arrays;
 import java.util.Date;
 
+import androidx.annotation.NonNull;
+import androidx.test.InstrumentationRegistry;
+import androidx.test.runner.AndroidJUnit4;
 import twitter4j.RateLimitStatus;
 import twitter4j.Status;
 import twitter4j.URLEntity;

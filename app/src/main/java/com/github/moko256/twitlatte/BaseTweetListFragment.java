@@ -17,15 +17,10 @@
 package com.github.moko256.twitlatte;
 
 import android.annotation.SuppressLint;
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.TypedValue;
 import android.view.Display;
 import android.view.Gravity;
@@ -41,6 +36,11 @@ import com.github.moko256.twitlatte.viewmodel.ListViewModel;
 
 import java.util.Objects;
 
+import androidx.annotation.NonNull;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import either.EitherKt;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;

@@ -17,7 +17,6 @@
 package com.github.moko256.twitlatte.cacheMap;
 
 import android.content.Context;
-import android.support.v4.util.LruCache;
 
 import com.github.moko256.twitlatte.GlobalApplication;
 import com.github.moko256.twitlatte.database.CachedUsersSQLiteOpenHelper;
@@ -27,6 +26,8 @@ import com.github.moko256.twitlatte.entity.UserConverterKt;
 
 import java.util.ArrayList;
 import java.util.Collection;
+
+import androidx.collection.LruCache;
 
 /**
  * Created by moko256 on 2016/12/22.

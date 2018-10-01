@@ -16,7 +16,7 @@
 
 package com.github.moko256.twitlatte.viewmodel
 
-import android.arch.lifecycle.ViewModel
+import androidx.lifecycle.ViewModel
 import com.github.moko256.twitlatte.GlobalApplication
 import com.github.moko256.twitlatte.database.CachedIdListSQLiteOpenHelper
 import com.github.moko256.twitlatte.repository.server.ListServerRepository

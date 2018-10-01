@@ -16,7 +16,7 @@
 
 package com.github.moko256.twitlatte;
 
-import android.support.v4.view.ViewPager;
+import androidx.viewpager.widget.ViewPager;
 
 /**
  * Created by moko256 on 2016/06/23.

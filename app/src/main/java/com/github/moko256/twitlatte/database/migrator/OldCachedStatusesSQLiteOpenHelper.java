@@ -19,8 +19,6 @@ package com.github.moko256.twitlatte.database.migrator;
 import android.annotation.SuppressLint;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import com.github.moko256.twitlatte.entity.Emoji;
@@ -32,6 +30,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import kotlin.sequences.Sequence;
 import twitter4j.GeoLocation;
 import twitter4j.HashtagEntity;

@@ -88,7 +88,7 @@
         android:layout_marginLeft="-16dp"
         android:layout_marginRight="-16dp"/>
 
-    <android.support.v7.widget.AppCompatCheckBox
+    <androidx.appcompat.widget.AppCompatCheckBox
         android:id="@+id/tweet_spoiler_opener"
         android:layout_width="24dp"
         android:layout_height="24dp"
@@ -193,7 +193,7 @@
         android:textStyle="bold"
         tools:text="20G"/>
 
-    <android.support.v7.widget.AppCompatCheckBox
+    <androidx.appcompat.widget.AppCompatCheckBox
         android:id="@+id/tweet_content_like_button"
         android:layout_width="24dp"
         android:layout_height="24dp"
@@ -218,7 +218,7 @@
         android:textStyle="bold"
         tools:text="50M"/>
 
-    <android.support.v7.widget.AppCompatCheckBox
+    <androidx.appcompat.widget.AppCompatCheckBox
         android:id="@+id/tweet_content_retweet_button"
         android:layout_width="24dp"
         android:layout_height="24dp"
@@ -243,7 +243,7 @@
         android:textStyle="bold"
         tools:text="32K"/>
 
-    <android.support.v7.widget.AppCompatImageButton
+    <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/tweet_content_reply_button"
         android:layout_width="24dp"
         android:layout_height="24dp"

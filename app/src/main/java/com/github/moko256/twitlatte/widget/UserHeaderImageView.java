@@ -17,11 +17,12 @@
 package com.github.moko256.twitlatte.widget;
 
 import android.content.Context;
-import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
 
 import com.github.moko256.twitlatte.GlobalApplication;
 import com.github.moko256.twitlatte.entity.Type;
+
+import androidx.appcompat.widget.AppCompatImageView;
 
 /**
  * Created by moko256 on 2017/07/15.

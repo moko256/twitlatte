@@ -17,10 +17,10 @@
 package com.github.moko256.twitlatte.widget
 
 import android.content.Context
-import android.support.v4.view.ViewCompat
-import android.support.v7.widget.LinearLayoutCompat
 import android.util.AttributeSet
 import android.view.ViewGroup
+import androidx.appcompat.widget.LinearLayoutCompat
+import androidx.core.view.ViewCompat
 
 
 /**

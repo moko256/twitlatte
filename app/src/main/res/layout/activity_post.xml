@@ -24,7 +24,7 @@
     android:id="@+id/activity_tweet_send_layout_root"
     android:orientation="vertical"
     tools:context=".PostActivity">
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/activity_tweet_send_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
@@ -38,7 +38,7 @@
             android:layout_height="36dp"
             android:layout_marginStart="32dp"
             tools:src="@mipmap/ic_launcher"/>
-    </android.support.v7.widget.Toolbar>
+    </androidx.appcompat.widget.Toolbar>
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -93,7 +93,7 @@
 
 
 
-            <android.support.v7.widget.RecyclerView
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/activity_tweet_send_images_recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

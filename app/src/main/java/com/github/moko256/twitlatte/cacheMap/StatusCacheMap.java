@@ -17,8 +17,6 @@
 package com.github.moko256.twitlatte.cacheMap;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
-import android.support.v4.util.LruCache;
 
 import com.github.moko256.mastodon.MTStatus;
 import com.github.moko256.twitlatte.GlobalApplication;
@@ -34,6 +32,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
+import androidx.annotation.Nullable;
+import androidx.collection.LruCache;
 import twitter4j.Status;
 import twitter4j.User;
 

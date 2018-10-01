@@ -16,10 +16,6 @@
 
 package com.github.moko256.twitlatte.widget
 
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentPagerAdapter
-import android.support.v4.view.ViewPager
 import android.view.ViewGroup
 
 /**
@@ -28,17 +24,17 @@ import android.view.ViewGroup
  * @author moko256
  */
 
-abstract class FragmentPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
+abstract class FragmentPagerAdapter(fm: androidx.fragment.app.FragmentManager) : androidx.fragment.app.FragmentPagerAdapter(fm) {
 
     private lateinit var viewGroup: ViewGroup
 
-    open fun initAdapter(viewPager: ViewPager) {
+    open fun initAdapter(viewPager: androidx.viewpager.widget.ViewPager) {
         viewGroup = viewPager
         viewPager.adapter = this
     }
 
-    fun getFragment(position: Int): Fragment {
-        val item = instantiateItem(viewGroup, position) as Fragment
+    fun getFragment(position: Int): androidx.fragment.app.Fragment {
+        val item = instantiateItem(viewGroup, position) as androidx.fragment.app.Fragment
         finishUpdate(viewGroup)
         return item
     }

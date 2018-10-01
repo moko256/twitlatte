@@ -17,10 +17,10 @@
 package com.github.moko256.twitlatte;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
 
+import androidx.annotation.NonNull;
 import twitter4j.Paging;
 import twitter4j.Query;
 import twitter4j.RateLimitStatus;

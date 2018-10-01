@@ -23,9 +23,6 @@ import android.app.NotificationManager;
 import android.graphics.Color;
 import android.os.Build;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
-import android.support.v4.util.LruCache;
-import android.support.v7.app.AppCompatDelegate;
 
 import com.github.moko256.mastodon.MastodonTwitterImpl;
 import com.github.moko256.twitlatte.cacheMap.StatusCacheMap;
@@ -47,6 +44,9 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.collection.LruCache;
 import okhttp3.OkHttpClient;
 import twitter4j.AlternativeHttpClientImpl;
 import twitter4j.HttpClient;

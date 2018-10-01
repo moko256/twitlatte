@@ -19,11 +19,11 @@ package com.github.moko256.twitlatte.view
 import android.graphics.drawable.Animatable
 import android.graphics.drawable.Drawable
 import android.os.Handler
-import android.support.v4.content.ContextCompat
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.style.ImageSpan
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import com.github.moko256.twitlatte.R
 import com.github.moko256.twitlatte.entity.Emoji
 import com.github.moko256.twitlatte.glide.GlideRequests

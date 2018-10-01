@@ -17,7 +17,6 @@
 package com.github.moko256.twitlatte;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +29,7 @@ import com.github.moko256.twitlatte.entity.Type;
 import com.sys1yagi.mastodon4j.api.exception.Mastodon4jRequestException;
 import com.sys1yagi.mastodon4j.api.method.Accounts;
 
+import androidx.annotation.NonNull;
 import twitter4j.Paging;
 import twitter4j.ResponseList;
 import twitter4j.Status;
