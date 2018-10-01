@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 The twicalico authors
+ * Copyright 2015-2018 The twitlatte authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -149,14 +149,14 @@ fun com.sys1yagi.mastodon4j.api.entity.Status.convertToCommonStatus(): StatusObj
     return if (reblog == null) {
         Status(
                 id = id,
-                userId = account?.id?:-1,
+                userId = account.id,
                 text = urls.first,
                 sourceName = application?.name,
                 sourceWebsite = application?.website,
                 createdAt = ISO8601DateConverter.toDate(createdAt),
-                inReplyToStatusId = inReplyToId?:-1,
-                inReplyToUserId = inReplyToAccountId?:-1,
-                inReplyToScreenName = if (inReplyToAccountId != null) {
+                inReplyToStatusId = inReplyToId.convertIfZero(),
+                inReplyToUserId = inReplyToAccountId.convertIfZero(),
+                inReplyToScreenName = if (inReplyToAccountId != 0L) {
                     ""
                 } else {
                     null
@@ -221,9 +221,15 @@ fun com.sys1yagi.mastodon4j.api.entity.Status.convertToCommonStatus(): StatusObj
     } else {
         Repeat(
                 id = id,
-                userId = account?.id?:-1,
+                userId = account.id,
                 repeatedStatusId = reblog!!.id,
                 createdAt = ISO8601DateConverter.toDate(createdAt)
         )
     }
+}
+
+private fun Long.convertIfZero() = if (this == 0L){
+    -1
+} else {
+    this
 }
