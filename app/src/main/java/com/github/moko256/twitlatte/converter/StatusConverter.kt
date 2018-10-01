@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package com.github.moko256.twitlatte.entity
+package com.github.moko256.twitlatte.converter
 
+import com.github.moko256.twitlatte.entity.*
 import com.github.moko256.twitlatte.text.link.MTHtmlParser
 import com.github.moko256.twitlatte.text.link.convertToContentAndLinks
 import com.github.moko256.twitlatte.text.link.entity.Link
@@ -65,7 +66,7 @@ fun twitter4j.Status.convertToCommonStatus(): StatusObject {
         Status(
                 id = id,
                 userId = user.id,
-                text = urls?.first?:text?:"",
+                text = urls?.first ?: text ?: "",
                 sourceName = parsedSource?.first,
                 sourceWebsite = parsedSource?.second?.first()?.url,
                 createdAt = createdAt,
@@ -85,13 +86,13 @@ fun twitter4j.Status.convertToCommonStatus(): StatusObject {
                         var originalUrl: String? = null
                         var type: String? = null
 
-                        when(it.type) {
+                        when (it.type) {
                             "video" -> {
                                 for (variant in it.videoVariants) {
                                     if (variant.contentType == MimeTypes.APPLICATION_M3U8) {
                                         originalUrl = variant.url
                                         type = Media.ImageType.VIDEO_MULTI.value
-                                    } else if(variant.contentType == MimeTypes.VIDEO_MP4) {
+                                    } else if (variant.contentType == MimeTypes.VIDEO_MP4) {
                                         downloadVideoUrl = variant.url
                                     }
                                 }
@@ -118,8 +119,9 @@ fun twitter4j.Status.convertToCommonStatus(): StatusObject {
                                     null
                                 },
                                 downloadVideoUrl = downloadVideoUrl,
-                                originalUrl = originalUrl?:it.mediaURLHttps,
-                                imageType = type?:Media.ImageType.PICTURE.value
+                                originalUrl = originalUrl ?: it.mediaURLHttps,
+                                imageType = type
+                                        ?: Media.ImageType.PICTURE.value
                         )
                     }.toTypedArray()
                 } else {
@@ -174,7 +176,7 @@ fun com.sys1yagi.mastodon4j.api.entity.Status.convertToCommonStatus(): StatusObj
                         val thumbnailUrl: String?
                         val type: Media.ImageType
 
-                        when(it.type) {
+                        when (it.type) {
                             Attachment.Type.Video.value -> {
                                 thumbnailUrl = it.previewUrl
                                 type = Media.ImageType.VIDEO_ONE

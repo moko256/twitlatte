@@ -20,9 +20,9 @@ import android.content.Context;
 
 import com.github.moko256.mastodon.MTStatus;
 import com.github.moko256.twitlatte.GlobalApplication;
+import com.github.moko256.twitlatte.converter.StatusConverterKt;
 import com.github.moko256.twitlatte.database.CachedStatusesSQLiteOpenHelper;
 import com.github.moko256.twitlatte.entity.AccessToken;
-import com.github.moko256.twitlatte.entity.StatusConverterKt;
 import com.github.moko256.twitlatte.entity.StatusObject;
 import com.github.moko256.twitlatte.entity.StatusObjectKt;
 

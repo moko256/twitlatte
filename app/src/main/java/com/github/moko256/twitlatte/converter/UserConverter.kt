@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-package com.github.moko256.twitlatte.entity
+package com.github.moko256.twitlatte.converter
 
 import com.github.moko256.mastodon.MTUser
+import com.github.moko256.twitlatte.entity.Emoji
+import com.github.moko256.twitlatte.entity.User
 import com.github.moko256.twitlatte.text.link.MTHtmlParser
 import com.github.moko256.twitlatte.text.link.convertToContentAndLinks
 import com.sys1yagi.mastodon4j.api.entity.Account
@@ -51,7 +53,7 @@ private fun twitter4j.User.convertToCommonUserInternal(): User {
             name = name,
             screenName = screenName,
             location = location,
-            description = urls?.first?:description,
+            description = urls?.first ?: description,
             isContributorsEnabled = isContributorsEnabled,
             profileImageURLHttps = profileImageURLHttps,
             isDefaultProfileImage = isDefaultProfileImage,

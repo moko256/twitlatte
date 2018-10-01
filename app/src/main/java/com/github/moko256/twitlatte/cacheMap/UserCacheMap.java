@@ -19,10 +19,10 @@ package com.github.moko256.twitlatte.cacheMap;
 import android.content.Context;
 
 import com.github.moko256.twitlatte.GlobalApplication;
+import com.github.moko256.twitlatte.converter.UserConverterKt;
 import com.github.moko256.twitlatte.database.CachedUsersSQLiteOpenHelper;
 import com.github.moko256.twitlatte.entity.AccessToken;
 import com.github.moko256.twitlatte.entity.User;
-import com.github.moko256.twitlatte.entity.UserConverterKt;
 
 import java.util.ArrayList;
 import java.util.Collection;

@@ -16,8 +16,8 @@
 
 package com.github.moko256.twitlatte.database;
 
+import com.github.moko256.twitlatte.converter.StatusConverterKt;
 import com.github.moko256.twitlatte.entity.AccessToken;
-import com.github.moko256.twitlatte.entity.StatusConverterKt;
 import com.github.moko256.twitlatte.entity.StatusObject;
 
 import org.junit.Test;

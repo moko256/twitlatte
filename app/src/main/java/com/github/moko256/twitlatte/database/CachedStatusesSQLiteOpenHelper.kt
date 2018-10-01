@@ -22,6 +22,7 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.database.sqlite.SQLiteStatement
 import com.github.moko256.twitlatte.array.toCommaSplitString
+import com.github.moko256.twitlatte.converter.convertToCommonStatus
 import com.github.moko256.twitlatte.database.migrator.OldCachedStatusesSQLiteOpenHelper
 import com.github.moko256.twitlatte.entity.*
 import com.github.moko256.twitlatte.text.link.MTHtmlParser
