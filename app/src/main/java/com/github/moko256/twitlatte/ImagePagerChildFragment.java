@@ -18,6 +18,7 @@ package com.github.moko256.twitlatte;
 
 import android.Manifest;
 import android.app.DownloadManager;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -50,7 +51,6 @@ import com.google.android.exoplayer2.source.hls.HlsMediaSource;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.ui.TrackSelectionView;
-import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -110,8 +110,7 @@ public class ImagePagerChildFragment extends Fragment {
             return Unit.INSTANCE;
         });
 
-        DefaultBandwidthMeter bandwidthMeter;
-
+        Context context = requireContext();
         switch (mediaEntity.getImageType()){
             case "video_multi":
                 videoPlayView = view.findViewById(R.id.fragment_image_pager_video);
@@ -136,18 +135,18 @@ public class ImagePagerChildFragment extends Fragment {
                     }
                 });
 
-                bandwidthMeter = new DefaultBandwidthMeter();
-                trackSelector = new DefaultTrackSelector(bandwidthMeter);
+                trackSelector = new DefaultTrackSelector();
 
                 player = ExoPlayerFactory.newSimpleInstance(
-                        new AudioAndVideoRenderer(requireContext()),
+                        context,
+                        new AudioAndVideoRenderer(context),
                         trackSelector,
                         new DefaultLoadControl()
                 );
                 videoPlayView.setPlayer(player);
                 player.prepare(
                         new HlsMediaSource
-                                .Factory(createOkHttpDataSourceFactory(bandwidthMeter))
+                                .Factory(createOkHttpDataSourceFactory())
                                 .createMediaSource(Uri.parse(mediaEntity.getOriginalUrl()))
                 );
 
@@ -176,18 +175,18 @@ public class ImagePagerChildFragment extends Fragment {
                     }
                 });
 
-                bandwidthMeter = new DefaultBandwidthMeter();
-                trackSelector = new DefaultTrackSelector(bandwidthMeter);
+                trackSelector = new DefaultTrackSelector();
 
                 player = ExoPlayerFactory.newSimpleInstance(
-                        new AudioAndVideoRenderer(requireContext()),
+                        context,
+                        new AudioAndVideoRenderer(context),
                         trackSelector,
                         new DefaultLoadControl()
                 );
                 videoPlayView.setPlayer(player);
                 player.prepare(
                         new ExtractorMediaSource
-                                .Factory(createOkHttpDataSourceFactory(bandwidthMeter))
+                                .Factory(createOkHttpDataSourceFactory())
                                 .createMediaSource(Uri.parse(mediaEntity.getOriginalUrl()))
                 );
 
@@ -213,18 +212,18 @@ public class ImagePagerChildFragment extends Fragment {
                     }
                 });
 
-                bandwidthMeter = new DefaultBandwidthMeter();
-                trackSelector = new DefaultTrackSelector(bandwidthMeter);
+                trackSelector = new DefaultTrackSelector();
 
                 player = ExoPlayerFactory.newSimpleInstance(
-                        new AudioAndVideoRenderer(requireContext()),
+                        context,
+                        new AudioAndVideoRenderer(context),
                         trackSelector,
                         new DefaultLoadControl()
                 );
                 videoPlayView.setPlayer(player);
                 player.prepare(
                         new LoopingMediaSource(
-                                new ExtractorMediaSource.Factory(createOkHttpDataSourceFactory(bandwidthMeter))
+                                new ExtractorMediaSource.Factory(createOkHttpDataSourceFactory())
                                         .createMediaSource(
                                                 Uri.parse(mediaEntity.getOriginalUrl())
                                         )
@@ -359,11 +358,10 @@ public class ImagePagerChildFragment extends Fragment {
         }
     }
 
-    private OkHttpDataSourceFactory createOkHttpDataSourceFactory(DefaultBandwidthMeter listener){
+    private OkHttpDataSourceFactory createOkHttpDataSourceFactory(){
         return new OkHttpDataSourceFactory(
                 GlobalApplication.getOkHttpClient(),
-                null,
-                listener
+                null
         );
     }
 

@@ -177,7 +177,7 @@ public class PostTweetModelImpl implements PostTweetModel {
                                                         ),
                                                         image
                                                 )
-                                        ))
+                                        ), null, null)
                                 .execute();
                         ids.add(attachment.getId());
                     }
@@ -188,7 +188,8 @@ public class PostTweetModelImpl implements PostTweetModel {
                         ids,
                         possiblySensitive,
                         contentWarning.isEmpty()? null: contentWarning,
-                        com.sys1yagi.mastodon4j.api.entity.Status.Visibility.valueOf(visibility)
+                        com.sys1yagi.mastodon4j.api.entity.Status.Visibility.valueOf(visibility),
+                        null
                 ).execute();
                 subscriber.onComplete();
             } catch (NullPointerException | Mastodon4jRequestException e){

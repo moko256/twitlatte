@@ -23,7 +23,6 @@ import com.sys1yagi.mastodon4j.api.Range;
 import com.sys1yagi.mastodon4j.api.exception.Mastodon4jRequestException;
 import com.sys1yagi.mastodon4j.api.method.Accounts;
 import com.sys1yagi.mastodon4j.api.method.Favourites;
-import com.sys1yagi.mastodon4j.api.method.Public;
 import com.sys1yagi.mastodon4j.api.method.Statuses;
 import com.sys1yagi.mastodon4j.api.method.Timelines;
 
@@ -415,7 +414,7 @@ public final class MastodonTwitterImpl implements Twitter {
     @Override
     public User createFriendship(long l) throws TwitterException {
         try {
-            new Accounts(client).postFollow(l).execute();
+            new Accounts(client).postFollow(l, null).execute();
             return null;
         } catch (Mastodon4jRequestException e) {
             throw new MTException(e);
@@ -1027,8 +1026,8 @@ public final class MastodonTwitterImpl implements Twitter {
     public QueryResult search(Query query) {
         Pageable<com.sys1yagi.mastodon4j.api.entity.Status> pageable = null;
         try {
-            pageable = new Public(client)
-                    .getFederatedTag(query.getQuery(), MTRangeConverter.convert(query))
+            pageable = new com.sys1yagi.mastodon4j.api.method.Timelines(client)
+                    .getHashtagTimeline(query.getQuery(), false, false, MTRangeConverter.convert(query))
                     .execute();
         } catch (Mastodon4jRequestException e) {
             e.printStackTrace();
@@ -1146,7 +1145,7 @@ public final class MastodonTwitterImpl implements Twitter {
     public ResponseList<Status> getUserTimeline(String s, Paging paging) throws TwitterException {
         Accounts accounts = new Accounts(client);
         try {
-            return MTResponseList.convert(accounts.getStatuses(accounts.getAccountSearch(s, 1).execute().get(0).getId(), false,false, false, MTRangeConverter.convert(paging)).execute());
+            return MTResponseList.convert(accounts.getStatuses(accounts.getAccountSearch(s, 1, null).execute().get(0).getId(), false,false, false, MTRangeConverter.convert(paging)).execute());
         } catch (Mastodon4jRequestException e) {
             throw new MTException(e);
         }
@@ -1190,7 +1189,7 @@ public final class MastodonTwitterImpl implements Twitter {
     @Override
     public ResponseList<Status> getHomeTimeline(Paging paging) throws TwitterException {
         try {
-            return MTResponseList.convert(new Timelines(client).getHome(MTRangeConverter.convert(paging)).execute());
+            return MTResponseList.convert(new Timelines(client).getHomeTimeline(MTRangeConverter.convert(paging)).execute());
         } catch (Mastodon4jRequestException e) {
             throw new MTException(e);
         }
@@ -1248,7 +1247,7 @@ public final class MastodonTwitterImpl implements Twitter {
     @Override
     public Status destroyStatus(long l) throws TwitterException {
         try {
-            new Statuses(client).deleteStatus(l);
+            new Statuses(client).deleteStatus(l).execute();
         } catch (Mastodon4jRequestException e) {
             throw new MTException(e);
         }
@@ -1433,7 +1432,7 @@ public final class MastodonTwitterImpl implements Twitter {
     @Override
     public User createMute(long l) {
         try {
-            new Accounts(client).postMute(l).execute();
+            new Accounts(client).postMute(l, null).execute();
         } catch (Mastodon4jRequestException e) {
             e.printStackTrace();
         }
@@ -1490,7 +1489,7 @@ public final class MastodonTwitterImpl implements Twitter {
     @Override
     public User showUser(String s) throws TwitterException {
         try {
-            return new MTUser(new Accounts(client).getAccountSearch(s, 1).execute().get(0));
+            return new MTUser(new Accounts(client).getAccountSearch(s, 1, null).execute().get(0));
         } catch (Mastodon4jRequestException e) {
             throw new MTException(e);
         }

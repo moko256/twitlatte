@@ -36,7 +36,7 @@
             android:layout_gravity="center"
             android:id="@+id/fragment_image_pager_video"
             app:controller_layout_id="@layout/exo_player_control_view"
-            app:show_buffering="true">
+            app:show_buffering="always">
             <ProgressBar
                 android:id="@id/exo_buffering"
                 android:layout_width="wrap_content"
