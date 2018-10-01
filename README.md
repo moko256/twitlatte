@@ -8,12 +8,13 @@ This application is the SNS client for Android\.
       width="150"
       height="150">
 
-* Supported Android api level is 19~27
+* Supported Android version is Android 4\.4~9\.0
 * Using REST API
 * Supported multiple account
 * Material design
 
 ## Available SNS
+
 * Twitter
 * Mastodon
 * Pleroma
@@ -29,17 +30,22 @@ This application is the SNS client for Android\.
 
 ## How to build
 
-1. Clone this project by this\.
+It require Java8 and Android Studio 3\.2 to build this project\.
 
-This repository uses some submodules, so use this
+1. Clone this project\.
 
 ```sh
+# Clone this project and some submodules.
 git clone https://github.com/moko256/twitlatte.git --recursive
 ```
 
-or, if you have already cloned without that, use this in it
+or,
 
 ```sh
+# Clone this project.
+git clone https://github.com/moko256/twitlatte.git
+
+# Clone or update some submodules.
 git submodule update --init --recursive
 ```
 
@@ -78,7 +84,7 @@ and, built using these tools\:
 * Gradle
 * Proguard
 
-## License
+## License of this project
 
 ~~~
 Copyright 2015-2018 The twitlatte authors
