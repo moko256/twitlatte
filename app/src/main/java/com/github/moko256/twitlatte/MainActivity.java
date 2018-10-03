@@ -515,7 +515,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
         Fragment top=new HomeTimeLineFragment();
 
         FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         fragmentManager
                 .beginTransaction()
                 .replace(R.id.mainLayout, top)
