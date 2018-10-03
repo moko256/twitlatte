@@ -28,6 +28,7 @@ import com.google.android.material.snackbar.Snackbar;
 import java.util.Objects;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -41,8 +42,8 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
  */
 public abstract class BaseListFragment extends Fragment implements MovableTopInterface {
 
-    private RecyclerView recyclerView;
-    private SwipeRefreshLayout swipeRefreshLayout;
+    protected RecyclerView recyclerView;
+    protected SwipeRefreshLayout swipeRefreshLayout;
 
     private boolean isShowed = false;
     private boolean isProgressCircleLoading = false;
@@ -51,24 +52,23 @@ public abstract class BaseListFragment extends Fragment implements MovableTopInt
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
 
-        if (savedInstanceState!=null){
-            onRestoreInstanceState(savedInstanceState);
-        }
-
         isShowed = true;
-
-        if (getUserVisibleHint() && !isInitializedList()){
-            onInitializeList();
-        }
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
-        super.onCreateView(inflater,container,savedInstanceState);
-
         View view=inflater.inflate(R.layout.fragment_base_list, container ,false);
 
         recyclerView= view.findViewById(R.id.TLlistView);
+        swipeRefreshLayout= view.findViewById(R.id.srl);
+
+        return view;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
         recyclerView.setLayoutManager(initializeRecyclerViewLayoutManager());
         recyclerView.addOnScrollListener(new LoadScrollListener(recyclerView.getLayoutManager()) {
             @Override
@@ -79,7 +79,6 @@ public abstract class BaseListFragment extends Fragment implements MovableTopInt
             }
         });
 
-        swipeRefreshLayout= view.findViewById(R.id.srl);
         swipeRefreshLayout.setColorSchemeResources(R.color.color_primary);
         swipeRefreshLayout.setRefreshing(isProgressCircleLoading);
         swipeRefreshLayout.setOnRefreshListener(()->{
@@ -90,7 +89,9 @@ public abstract class BaseListFragment extends Fragment implements MovableTopInt
             }
         });
 
-        return view;
+        if (getUserVisibleHint() && !isInitializedList()){
+            onInitializeList();
+        }
     }
 
     @Override
@@ -118,10 +119,6 @@ public abstract class BaseListFragment extends Fragment implements MovableTopInt
         recyclerView=null;
     }
 
-    public void onRestoreInstanceState(Bundle savedInstanceState){
-
-    }
-
     protected abstract void onInitializeList();
     protected abstract void onUpdateList();
     protected abstract void onLoadMoreList();
@@ -132,22 +129,6 @@ public abstract class BaseListFragment extends Fragment implements MovableTopInt
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setRecycleChildrenOnDetach(true);
         return layoutManager;
-    }
-
-    public SwipeRefreshLayout getSwipeRefreshLayout() {
-        return swipeRefreshLayout;
-    }
-
-    protected RecyclerView.Adapter getAdapter() {
-        return recyclerView.getAdapter();
-    }
-
-    public RecyclerView getRecyclerView() {
-        return recyclerView;
-    }
-
-    protected void setAdapter(RecyclerView.Adapter adapter) {
-        recyclerView.setAdapter(adapter);
     }
 
     protected void setRefreshing(boolean b){

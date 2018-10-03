@@ -34,10 +34,11 @@ public class UserLikeFragment extends BaseTweetListFragment implements ToolbarTi
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
         if (userId == -1){
             userId = getArguments().getLong("userId", -1);
         }
-        super.onCreate(savedInstanceState);
     }
 
     public static UserLikeFragment newInstance(long userId){

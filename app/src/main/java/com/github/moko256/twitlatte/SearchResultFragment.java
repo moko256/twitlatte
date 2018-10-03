@@ -41,17 +41,14 @@ public class SearchResultFragment extends BaseTweetListFragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
         if (savedInstanceState == null) {
             searchText=getActivity().getIntent().getStringExtra(BUNDLE_KEY_SEARCH_QUERY);
+        } else {
+            searchText = savedInstanceState.getString(BUNDLE_KEY_SEARCH_QUERY,"");
         }
-        super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-    }
-
-    @Override
-    public void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        searchText=savedInstanceState.getString(BUNDLE_KEY_SEARCH_QUERY,"");
     }
 
     @Override

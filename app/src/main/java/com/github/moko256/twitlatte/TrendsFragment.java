@@ -20,9 +20,7 @@ import android.graphics.Rect;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 
 import com.github.moko256.twitlatte.database.CachedTrendsSQLiteOpenHelper;
 import com.github.moko256.twitlatte.entity.Trend;
@@ -32,7 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import io.reactivex.Single;
@@ -59,6 +57,8 @@ public class TrendsFragment extends BaseListFragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
         disposable = new CompositeDisposable();
         helper = new CachedTrendsSQLiteOpenHelper(
                 requireContext().getApplicationContext(),
@@ -71,14 +71,13 @@ public class TrendsFragment extends BaseListFragment {
         } else {
             list = new ArrayList<>();
         }
-        super.onCreate(savedInstanceState);
     }
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view=super.onCreateView(inflater, container, savedInstanceState);
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
-        getRecyclerView().addItemDecoration(new RecyclerView.ItemDecoration() {
+        recyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
             @Override
             public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
                 super.getItemOffsets(outRect, view, parent, state);
@@ -89,12 +88,11 @@ public class TrendsFragment extends BaseListFragment {
         });
 
         adapter=new TrendsAdapter(getContext(), list);
-        setAdapter(adapter);
+        recyclerView.setAdapter(adapter);
         if (!isInitializedList()){
             adapter.notifyDataSetChanged();
         }
 
-        return view;
     }
 
     @Override

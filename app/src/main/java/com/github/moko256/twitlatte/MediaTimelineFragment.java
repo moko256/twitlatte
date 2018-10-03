@@ -17,9 +17,6 @@
 package com.github.moko256.twitlatte;
 
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.github.moko256.mastodon.MTException;
 import com.github.moko256.mastodon.MTRangeConverter;
@@ -29,7 +26,7 @@ import com.github.moko256.twitlatte.entity.Type;
 import com.sys1yagi.mastodon4j.api.exception.Mastodon4jRequestException;
 import com.sys1yagi.mastodon4j.api.method.Accounts;
 
-import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import twitter4j.Paging;
 import twitter4j.ResponseList;
 import twitter4j.Status;
@@ -46,17 +43,18 @@ public class MediaTimelineFragment extends BaseTweetListFragment implements Tool
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
         if (userId == -1){
             userId = getArguments().getLong("userId", -1);
         }
-        super.onCreate(savedInstanceState);
     }
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = super.onCreateView(inflater, container, savedInstanceState);
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
         adapter.shouldShowMediaOnly = true;
-        return view;
     }
 
     public static MediaTimelineFragment newInstance(long userId){
