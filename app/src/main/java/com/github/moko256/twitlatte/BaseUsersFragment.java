@@ -105,8 +105,9 @@ public abstract class BaseUsersFragment extends BaseListFragment {
 
     @Override
     public void onDestroyView() {
-        super.onDestroyView();
+        recyclerView.swapAdapter(null, true);
         adapter=null;
+        super.onDestroyView();
     }
 
     @Override

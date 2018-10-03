@@ -97,8 +97,9 @@ public class TrendsFragment extends BaseListFragment {
 
     @Override
     public void onDestroyView() {
-        super.onDestroyView();
+        recyclerView.swapAdapter(null, true);
         adapter=null;
+        super.onDestroyView();
     }
 
     @Override

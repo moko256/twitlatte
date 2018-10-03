@@ -16,7 +16,6 @@
 
 package com.github.moko256.twitlatte;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,11 +24,10 @@ import android.view.ViewGroup;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
 import com.google.android.material.snackbar.Snackbar;
 
-import java.util.Objects;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
@@ -47,6 +45,8 @@ public abstract class BaseListFragment extends Fragment implements MovableTopInt
 
     private boolean isShowed = false;
     private boolean isProgressCircleLoading = false;
+
+    private View viewForSnackBar;
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -68,6 +68,11 @@ public abstract class BaseListFragment extends Fragment implements MovableTopInt
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        FragmentActivity activity = getActivity();
+        if (activity instanceof GetViewForSnackBar) {
+            viewForSnackBar = ((GetViewForSnackBar) activity).getViewForSnackBar();
+        }
 
         recyclerView.setLayoutManager(initializeRecyclerViewLayoutManager());
         recyclerView.addOnScrollListener(new LoadScrollListener(recyclerView.getLayoutManager()) {
@@ -139,22 +144,16 @@ public abstract class BaseListFragment extends Fragment implements MovableTopInt
     }
 
     protected Snackbar notifyBySnackBar(int stringId){
-        Activity parent = requireActivity();
         return Snackbar.make(
-                parent instanceof GetViewForSnackBar
-                        ? ((GetViewForSnackBar) parent).getViewForSnackBar()
-                        : Objects.requireNonNull(getView()),
+                viewForSnackBar,
                 stringId,
                 Snackbar.LENGTH_SHORT
         );
     }
 
     protected Snackbar notifyErrorBySnackBar(Throwable e){
-        Activity parent = requireActivity();
         return Snackbar.make(
-                parent instanceof GetViewForSnackBar
-                        ? ((GetViewForSnackBar) parent).getViewForSnackBar()
-                        : Objects.requireNonNull(getView()),
+                viewForSnackBar,
                 TwitterStringUtils.convertErrorToText(e),
                 Snackbar.LENGTH_LONG
         );

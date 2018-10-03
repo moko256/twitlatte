@@ -325,8 +325,9 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
         RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
         int position = getFirstVisibleItemPosition(layoutManager);
         listViewModel.removeOldCache(position);
-        super.onDestroyView();
+        recyclerView.swapAdapter(null, true);
         adapter=null;
+        super.onDestroyView();
     }
 
     @Override
