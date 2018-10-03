@@ -143,6 +143,9 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                                 throwable -> {
                                     throwable.printStackTrace();
                                     notifyErrorBySnackBar(throwable).show();
+                                    if (adapter != null) {
+                                        adapter.notifyItemChanged(position);
+                                    }
                                 }
                         );
             } else {
@@ -174,6 +177,9 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                                 throwable -> {
                                     throwable.printStackTrace();
                                     notifyErrorBySnackBar(throwable).show();
+                                    if (adapter != null) {
+                                        adapter.notifyItemChanged(position);
+                                    }
                                 }
                         );
             }
@@ -208,6 +214,9 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                                 throwable -> {
                                     throwable.printStackTrace();
                                     notifyErrorBySnackBar(throwable).show();
+                                    if (adapter != null) {
+                                        adapter.notifyItemChanged(position);
+                                    }
                                 }
                         );
             } else {
@@ -239,6 +248,9 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
                                 throwable -> {
                                     throwable.printStackTrace();
                                     notifyErrorBySnackBar(throwable).show();
+                                    if (adapter != null) {
+                                        adapter.notifyItemChanged(position);
+                                    }
                                 }
                         );
             }
