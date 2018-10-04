@@ -19,7 +19,6 @@ package com.github.moko256.twitlatte.database;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -145,16 +144,6 @@ public class TokenSQLiteOpenHelper extends SQLiteOpenHelper {
             database.delete(TABLE_NAME, "url = '" + accessToken.getUrl() + "' AND " + "userId = " + String.valueOf(accessToken.getUserId()), null);
             database.close();
         }
-    }
-
-    public long getSize(){
-        long count;
-        synchronized (this) {
-            SQLiteDatabase database = getReadableDatabase();
-            count = DatabaseUtils.queryNumEntries(database, TABLE_NAME);
-            database.close();
-        }
-        return count;
     }
 
 }
