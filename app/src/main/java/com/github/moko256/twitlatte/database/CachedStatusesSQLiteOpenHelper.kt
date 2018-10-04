@@ -90,7 +90,7 @@ class CachedStatusesSQLiteOpenHelper(
 
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL(
-                "create table " + TABLE_NAME + "(" + TABLE_COLUMNS.toCommaSplitString() + ", primary key(id))"
+                "create table $TABLE_NAME(${TABLE_COLUMNS.toCommaSplitString()}, primary key(id))"
         )
         db.execSQL("create unique index IdIndex on $TABLE_NAME(id)")
 
@@ -110,10 +110,17 @@ class CachedStatusesSQLiteOpenHelper(
         }
 
         if (oldVersion < 4) {
+            db.execSQL("alter table CachedStatuses rename to CachedStatusesOld")
             val oldStatuses = OldCachedStatusesSQLiteOpenHelper.getCachedStatus(db)
 
-            db.execSQL("drop table $TABLE_NAME")
-            onCreate(db)
+            db.execSQL(
+                    "create table $TABLE_NAME(${TABLE_COLUMNS.toCommaSplitString()}, primary key(id))"
+            )
+
+            db.execSQL(
+                    "create table $COUNTS_TABLE_NAME(id integer primary key,count integer default 0)"
+            )
+            db.execSQL("create unique index CountsIdIndex on $TABLE_NAME(id)")
 
             oldStatuses.forEach { status ->
                 val contentValue = createStatusContentValues(if (accessToken?.type == Type.MASTODON) {
@@ -213,6 +220,8 @@ class CachedStatusesSQLiteOpenHelper(
             }
 
             oldStatuses.close()
+
+            db.execSQL("drop table CachedStatusesOld")
         }
     }
 

@@ -53,7 +53,7 @@ import twitter4j.UserMentionEntity;
 
 public class OldCachedStatusesSQLiteOpenHelper {
 
-    private static final String TABLE_NAME = "CachedStatuses";
+    private static final String TABLE_NAME = "CachedStatusesOld";
     private static final String[] TABLE_COLUMNS = new String[]{
             "createdAt",
             "id",
