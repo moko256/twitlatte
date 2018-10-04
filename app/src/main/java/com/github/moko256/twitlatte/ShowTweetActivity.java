@@ -439,8 +439,12 @@ public class ShowTweetActivity extends AppCompatActivity {
                         .format(item.status.getCreatedAt())
         );
 
-        viaText.setText(TwitterStringUtils.appendLinkAtViaText(this, item.status.getSourceName(), item.status.getSourceWebsite()));
-        viaText.setMovementMethod(new LinkMovementMethod());
+        if (item.status.getSourceName() != null) {
+            viaText.setText(TwitterStringUtils.appendLinkAtViaText(this, item.status.getSourceName(), item.status.getSourceWebsite()));
+            viaText.setMovementMethod(new LinkMovementMethod());
+        } else {
+            viaText.setVisibility(GONE);
+        }
 
         resetReplyText(item.user, item.status);
 
