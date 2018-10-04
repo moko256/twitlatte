@@ -86,6 +86,7 @@ public class ImagePagerChildFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        showSystemUI();
 
         if (getArguments() == null
                 || (mediaEntity = (Media) getArguments().getSerializable(FRAG_MEDIA_ENTITY)) == null) {
