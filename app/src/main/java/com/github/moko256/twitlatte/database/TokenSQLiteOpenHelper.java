@@ -38,17 +38,18 @@ import kotlin.Pair;
 public class TokenSQLiteOpenHelper extends SQLiteOpenHelper {
 
     private static final String TABLE_NAME = "AccountTokenList";
+    private static final int DATABASE_VERSION = 1;
     private static final String[] TABLE_COLUMNS = new String[]{ "type", "url", "userId", "userName", "token", "tokenSecret"};
 
     public static final String TWITTER_URL = "twitter.com";
 
     public TokenSQLiteOpenHelper(Context context){
-        super(context,"AccountTokenList.db",null,1);
+        super(context,"AccountTokenList.db",null,DATABASE_VERSION);
     }
 
     @TestOnly
     TokenSQLiteOpenHelper(Context context, String fileName){
-        super(context, fileName, null, 1);
+        super(context, fileName, null, DATABASE_VERSION);
     }
 
     @Override
