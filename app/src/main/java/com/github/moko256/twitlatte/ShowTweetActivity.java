@@ -29,6 +29,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.moko256.twitlatte.entity.Post;
+import com.github.moko256.twitlatte.entity.Repeat;
 import com.github.moko256.twitlatte.entity.Status;
 import com.github.moko256.twitlatte.entity.User;
 import com.github.moko256.twitlatte.glide.GlideApp;
@@ -62,6 +64,7 @@ public class ShowTweetActivity extends AppCompatActivity {
 
     private CompositeDisposable disposables;
     private long statusId;
+    private String shareUrl = "";
 
     private StatusViewBinder statusViewBinder;
 
@@ -140,17 +143,13 @@ public class ShowTweetActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
-    private String getShareUrl() {
-        return ((com.github.moko256.twitlatte.entity.Status) GlobalApplication.statusCache.get(statusId)).getUrl();
-    }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.action_quote:
                 startActivity(PostActivity.getIntent(
                         this,
-                        getShareUrl() + " "
+                        shareUrl + " "
                 ));
                 break;
             case R.id.action_share:
@@ -158,11 +157,11 @@ public class ShowTweetActivity extends AppCompatActivity {
                         new Intent()
                                 .setAction(Intent.ACTION_SEND)
                                 .setType("text/plain")
-                                .putExtra(Intent.EXTRA_TEXT, getShareUrl()),
+                                .putExtra(Intent.EXTRA_TEXT, shareUrl),
                         getString(R.string.share)));
                 break;
             case R.id.action_open_in_browser:
-                AppCustomTabsKt.launchChromeCustomTabs(this, getShareUrl());
+                AppCustomTabsKt.launchChromeCustomTabs(this, shareUrl);
                 break;
             }
         return super.onOptionsItemSelected(item);
@@ -179,19 +178,10 @@ public class ShowTweetActivity extends AppCompatActivity {
     }
 
     private void prepareStatus() {
-        Status status = (Status) GlobalApplication.statusCache.get(statusId);
+        Post<Repeat, Status, User> status = GlobalApplication.postCache.getPost(statusId);
 
         if (status != null) {
-            User user = GlobalApplication.userCache.get(status.getUserId());
-
-            Status quotedStatus = status.getQuotedStatusId() != -1
-                    ?(Status) GlobalApplication.statusCache.get(status.getQuotedStatusId())
-                    :null;
-            User quotedStatusUser = quotedStatus != null
-                    ?GlobalApplication.userCache.get(quotedStatus.getUserId())
-                    :null;
-
-            updateView(new Result(user, status, quotedStatusUser, quotedStatus));
+            updateView(status);
         } else {
             disposables.add(
                     updateStatus()
@@ -213,24 +203,13 @@ public class ShowTweetActivity extends AppCompatActivity {
         }
     }
 
-    private Single<Result> updateStatus(){
+    private Single<Post<Repeat, Status, User>> updateStatus(){
         return Single.create(
                 subscriber -> {
                     try {
                         twitter4j.Status result = GlobalApplication.twitter.showStatus(statusId);
                         GlobalApplication.statusCache.add(result, false);
-                        Status status = (Status) GlobalApplication.statusCache.get(statusId);
-
-                        User user = GlobalApplication.userCache.get(status.getUserId());
-
-                        Status quotedStatus = status.getQuotedStatusId() != -1
-                                ?(Status) GlobalApplication.statusCache.get(status.getQuotedStatusId())
-                                :null;
-                        User quotedStatusUser = quotedStatus != null
-                                ?GlobalApplication.userCache.get(quotedStatus.getUserId())
-                                :null;
-
-                        subscriber.onSuccess(new Result(user, status, quotedStatusUser, quotedStatus));
+                        subscriber.onSuccess(GlobalApplication.postCache.getPost(statusId));
                     } catch (TwitterException e) {
                         subscriber.tryOnError(e);
                     }
@@ -238,8 +217,9 @@ public class ShowTweetActivity extends AppCompatActivity {
     }
 
     @SuppressLint("CheckResult")
-    private void updateView(Result item){
-        long replyTweetId = item.status.getInReplyToStatusId();
+    private void updateView(Post<Repeat, Status, User> item){
+        shareUrl = item.getStatus().getUrl();
+        long replyTweetId = item.getStatus().getInReplyToStatusId();
         if (replyTweetId != -1){
             tweetIsReply.setVisibility(VISIBLE);
             tweetIsReply.setOnClickListener(v -> startActivity(getIntent(this, replyTweetId)));
@@ -255,21 +235,21 @@ public class ShowTweetActivity extends AppCompatActivity {
                             "icon_image"
                     );
             startActivity(
-                    ShowUserActivity.getIntent(this, item.user.getId()),
+                    ShowUserActivity.getIntent(this, item.getUser().getId()),
                     animation.toBundle()
             );
         });
 
         statusViewBinder.getQuoteTweetLayout().setOnClickListener(v -> startActivity(
-                ShowTweetActivity.getIntent(this, item.quotedStatus.getId())
+                ShowTweetActivity.getIntent(this, item.getQuotedRepeatingStatus().getId())
         ));
 
         statusViewBinder.getLikeButton().setOnCheckedChangeListener((compoundButton, b) -> {
-            if (b && (!item.status.isFavorited())) {
+            if (b && (!item.getStatus().isFavorited())) {
                 Single
                         .create(subscriber -> {
                             try {
-                                twitter4j.Status newStatus = GlobalApplication.twitter.createFavorite(item.status.getId());
+                                twitter4j.Status newStatus = GlobalApplication.twitter.createFavorite(item.getStatus().getId());
                                 GlobalApplication.statusCache.add(newStatus, false);
                                 subscriber.onSuccess(newStatus);
                             } catch (TwitterException e) {
@@ -302,11 +282,11 @@ public class ShowTweetActivity extends AppCompatActivity {
                                     ).show();
                                 }
                         );
-            } else if ((!b) && item.status.isFavorited()) {
+            } else if ((!b) && item.getStatus().isFavorited()) {
                 Single
                         .create(subscriber -> {
                             try {
-                                twitter4j.Status newStatus = GlobalApplication.twitter.destroyFavorite(item.status.getId());
+                                twitter4j.Status newStatus = GlobalApplication.twitter.destroyFavorite(item.getStatus().getId());
                                 GlobalApplication.statusCache.add(newStatus, false);
                                 subscriber.onSuccess(newStatus);
                             } catch (TwitterException e) {
@@ -343,11 +323,11 @@ public class ShowTweetActivity extends AppCompatActivity {
         });
 
         statusViewBinder.getRetweetButton().setOnCheckedChangeListener((compoundButton, b) -> {
-            if (b && (!item.status.isRepeated())) {
+            if (b && (!item.getStatus().isRepeated())) {
                 Single
                         .create(subscriber -> {
                             try {
-                                twitter4j.Status newStatus = GlobalApplication.twitter.retweetStatus(item.status.getId());
+                                twitter4j.Status newStatus = GlobalApplication.twitter.retweetStatus(item.getStatus().getId());
                                 GlobalApplication.statusCache.add(newStatus, false);
                                 subscriber.onSuccess(newStatus);
                             } catch (TwitterException e) {
@@ -380,11 +360,11 @@ public class ShowTweetActivity extends AppCompatActivity {
                                     ).show();
                                 }
                         );
-            } else if ((!b) && item.status.isRepeated()) {
+            } else if ((!b) && item.getStatus().isRepeated()) {
                 Single
                         .create(subscriber -> {
                             try {
-                                twitter4j.Status newStatus = GlobalApplication.twitter.unRetweetStatus(item.status.getId());
+                                twitter4j.Status newStatus = GlobalApplication.twitter.unRetweetStatus(item.getStatus().getId());
                                 GlobalApplication.statusCache.add(newStatus, false);
                                 subscriber.onSuccess(newStatus);
                             } catch (TwitterException e) {
@@ -423,43 +403,48 @@ public class ShowTweetActivity extends AppCompatActivity {
         statusViewBinder.getReplyButton().setOnClickListener(
                 v -> startActivity(PostActivity.getIntent(
                         this,
-                        item.status.getId(),
+                        item.getStatus().getId(),
                         TwitterStringUtils.convertToReplyTopString(
                                 GlobalApplication.userCache.get(GlobalApplication.userId).getScreenName(),
-                                item.user.getScreenName(),
-                                item.status.getMentions()
+                                item.getUser().getScreenName(),
+                                item.getStatus().getMentions()
                         ).toString()
                 ))
         );
 
-        statusViewBinder.setStatus(item.user, item.status, item.quotedStatusUser, item.quotedStatus);
+        statusViewBinder.setStatus(
+                item.getUser(),
+                item.getStatus(),
+                item.getQuotedRepeatingUser(),
+                item.getQuotedRepeatingStatus()
+        );
 
         timestampText.setText(
                 DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.FULL)
-                        .format(item.status.getCreatedAt())
+                        .format(item.getStatus().getCreatedAt())
         );
 
-        if (item.status.getSourceName() != null) {
-            viaText.setText(TwitterStringUtils.appendLinkAtViaText(this, item.status.getSourceName(), item.status.getSourceWebsite()));
+        if (item.getStatus().getSourceName() != null) {
+            viaText.setText(TwitterStringUtils.appendLinkAtViaText(this, item.getStatus().getSourceName(), item.getStatus().getSourceWebsite()));
             viaText.setMovementMethod(new LinkMovementMethod());
         } else {
             viaText.setVisibility(GONE);
         }
 
-        resetReplyText(item.user, item.status);
+        resetReplyText(item.getUser(), item.getStatus());
 
         replyButton.setOnClickListener(v -> {
             replyButton.setEnabled(false);
             PostTweetModel model = PostTweetModelCreator.getInstance(GlobalApplication.twitter, getContentResolver());
             model.setTweetText(replyText.getText().toString());
-            model.setInReplyToStatusId(item.status.getId());
+            model.setInReplyToStatusId(item.getStatus().getId());
             disposables.add(
                     model.postTweet()
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe(
                                     () -> {
-                                        resetReplyText(item.user, item.status);
+                                        resetReplyText(item.getUser(), item.getStatus());
                                         replyButton.setEnabled(true);
                                         Toast.makeText(ShowTweetActivity.this,R.string.did_post,Toast.LENGTH_SHORT).show();
                                     },
@@ -481,19 +466,5 @@ public class ShowTweetActivity extends AppCompatActivity {
                 postedUser.getScreenName(),
                 status.getMentions()
         ));
-    }
-
-    private class Result {
-        final User user;
-        final Status status;
-        final User quotedStatusUser;
-        final Status quotedStatus;
-
-        Result(User user, Status status, User quotedStatusUser, Status quotedStatus) {
-            this.user = user;
-            this.status = status;
-            this.quotedStatusUser = quotedStatusUser;
-            this.quotedStatus = quotedStatus;
-        }
     }
 }

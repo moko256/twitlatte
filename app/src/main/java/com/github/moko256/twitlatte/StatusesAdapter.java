@@ -25,10 +25,9 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.github.moko256.twitlatte.entity.Post;
 import com.github.moko256.twitlatte.entity.Repeat;
 import com.github.moko256.twitlatte.entity.Status;
-import com.github.moko256.twitlatte.entity.StatusObject;
-import com.github.moko256.twitlatte.entity.StatusObjectKt;
 import com.github.moko256.twitlatte.entity.User;
 import com.github.moko256.twitlatte.glide.GlideApp;
 import com.github.moko256.twitlatte.glide.GlideRequests;
@@ -77,16 +76,14 @@ class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         if (data.get(position) == -1L ){
             return R.layout.layout_list_load_more_text;
         }
-        StatusObject status = GlobalApplication.statusCache.get(data.get(position));
-        if (status == null){
-            return R.layout.layout_list_load_more_text;
-        }
-        Status item = ((Status) (status instanceof Repeat ? GlobalApplication.statusCache.get(((Repeat) status).getRepeatedStatusId()) : status));
-        if (item == null){
+        Post<Repeat, Status, User> post = GlobalApplication.postCache.getPost(data.get(position));
+
+        if (post == null){
             return R.layout.layout_list_load_more_text;
         }
 
-        User user = GlobalApplication.userCache.get(StatusObjectKt.getId(status));
+        Status item = post.getStatus();
+        User user = post.getUser();
 
         PreferenceRepository conf = GlobalApplication.preferenceRepository;
         if((conf.getBoolean(GlobalApplication.KEY_IS_PATTERN_TWEET_MUTE, false) && conf.getPattern(GlobalApplication.KEY_TWEET_MUTE_PATTERN).matcher(item.getText()).find()) ||
@@ -101,7 +98,7 @@ class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 && conf.getPattern(GlobalApplication.KEY_TWEET_MUTE_SHOW_ONLY_IMAGE_PATTERN).matcher(item.getText()).find())) {
             return R.layout.layout_list_tweet_only_image;
         }
-        if (status instanceof Repeat) {
+        if (post.getRepeat() != null) {
             return R.layout.layout_retweeted_post_card;
         } else {
             return R.layout.layout_post_card;
@@ -136,38 +133,25 @@ class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, final int i) {
-        if (viewHolder instanceof RepeatedStatusViewHolder){
-            Repeat repeat = (Repeat) GlobalApplication.statusCache.get(data.get(i));
-            User repeatedUser = GlobalApplication.userCache.get(repeat.getUserId());
-            Status status = ((Status) GlobalApplication.statusCache.get(repeat.getRepeatedStatusId()));
-            User user = GlobalApplication.userCache.get(status.getUserId());
-            Status quotedStatus = status.getQuotedStatusId() != -1?
-                    (Status) GlobalApplication.statusCache.get(status.getQuotedStatusId())
-                    :null;
-            User quotedStatusUser = quotedStatus != null? GlobalApplication.userCache.get(quotedStatus.getUserId()): null;
-
-            ((RepeatedStatusViewHolder) viewHolder).setStatus(user, status, quotedStatusUser, quotedStatus);
-            ((RepeatedStatusViewHolder) viewHolder).setRepeatUser(repeatedUser, repeat);
-        } else if (viewHolder instanceof StatusViewHolder) {
-            Status status = (Status) GlobalApplication.statusCache.get(data.get(i));
-            User user = GlobalApplication.userCache.get(status.getUserId());
-            Status quotedStatus = status.getQuotedStatusId() != -1?
-                    (Status) GlobalApplication.statusCache.get(status.getQuotedStatusId())
-                    :null;
-            User quotedStatusUser = quotedStatus != null? GlobalApplication.userCache.get(quotedStatus.getUserId()): null;
-
-            ((StatusViewHolder) viewHolder).setStatus(user, status, quotedStatusUser, quotedStatus);
-        } else if (viewHolder instanceof ImagesOnlyTweetViewHolder){
-            StatusObject statusObject = GlobalApplication.statusCache.get(data.get(i));
-            Status status;
-            if (statusObject instanceof Repeat) {
-                long id = ((Repeat) statusObject).getRepeatedStatusId();
-                status = (Status) GlobalApplication.statusCache.get(id);
-            } else {
-                status = (Status) statusObject;
+        Post<Repeat, Status, User> post = GlobalApplication.postCache.getPost(data.get(i));
+        if (post == null) {
+            return;
+        }
+        if (viewHolder instanceof StatusViewHolder) {
+            ((StatusViewHolder) viewHolder).setStatus(
+                    post.getUser(),
+                    post.getStatus(),
+                    post.getQuotedRepeatingUser(),
+                    post.getQuotedRepeatingStatus()
+            );
+            if (viewHolder instanceof RepeatedStatusViewHolder){
+                ((RepeatedStatusViewHolder) viewHolder).setRepeatUser(
+                        post.getRepeatedUser(),
+                        post.getRepeat()
+                );
             }
-
-            ((ImagesOnlyTweetViewHolder) viewHolder).setStatus(status);
+        } else if (viewHolder instanceof ImagesOnlyTweetViewHolder){
+            ((ImagesOnlyTweetViewHolder) viewHolder).setStatus(post.getStatus());
         } else if (viewHolder instanceof MoreLoadViewHolder) {
             ((MoreLoadViewHolder) viewHolder).setIsLoading(false);
             viewHolder.itemView.setOnClickListener(v -> {

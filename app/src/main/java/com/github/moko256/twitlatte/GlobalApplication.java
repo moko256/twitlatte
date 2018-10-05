@@ -25,6 +25,7 @@ import android.os.Build;
 import android.preference.PreferenceManager;
 
 import com.github.moko256.mastodon.MastodonTwitterImpl;
+import com.github.moko256.twitlatte.cacheMap.PostCache;
 import com.github.moko256.twitlatte.cacheMap.StatusCacheMap;
 import com.github.moko256.twitlatte.cacheMap.UserCacheMap;
 import com.github.moko256.twitlatte.entity.AccessToken;
@@ -95,6 +96,7 @@ public class GlobalApplication extends Application {
 
     public final static UserCacheMap userCache = new UserCacheMap();
     public final static StatusCacheMap statusCache = new StatusCacheMap();
+    public final static PostCache postCache = new PostCache(statusCache, userCache);
 
     public static AccountsModel accountsModel;
 
