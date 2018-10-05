@@ -69,7 +69,7 @@ public class TrendsFragment extends BaseListFragment {
             list = trends;
             setRefreshing(false);
         } else {
-            list = new ArrayList<>();
+            list = new ArrayList<>(20);
         }
     }
 

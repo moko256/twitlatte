@@ -46,8 +46,8 @@ public class AddedImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     private final Context context;
 
-    private ArrayList<Uri> images = new ArrayList<>();
     public int limit = 4;
+    private ArrayList<Uri> images = new ArrayList<>(4);
 
     public View.OnClickListener onAddButtonClickListener;
     public ImageAction onDeleteButtonListener;

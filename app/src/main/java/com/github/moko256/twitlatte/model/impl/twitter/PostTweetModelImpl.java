@@ -48,7 +48,7 @@ public class PostTweetModelImpl implements PostTweetModel {
     private long inReplyToStatusId = -1;
     private boolean possiblySensitive;
     private String tweetText;
-    private final List<Uri> uriList = new ArrayList<>();
+    private final List<Uri> uriList = new ArrayList<>(4);
     private GeoLocation location;
 
     private TwitterTextParseResults resultCache = null;

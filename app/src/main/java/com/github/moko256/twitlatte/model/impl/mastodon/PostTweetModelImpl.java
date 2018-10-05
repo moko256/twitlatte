@@ -54,7 +54,7 @@ public class PostTweetModelImpl implements PostTweetModel {
     private boolean possiblySensitive = false;
     private String tweetText = "";
     private String contentWarning = "";
-    private final ArrayList<Uri> uriList = new ArrayList<>();
+    private final ArrayList<Uri> uriList = new ArrayList<>(4);
     private GeoLocation location;
     private String visibility = "Public";
 
