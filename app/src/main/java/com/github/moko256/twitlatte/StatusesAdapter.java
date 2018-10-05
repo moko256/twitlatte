@@ -133,34 +133,36 @@ class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, final int i) {
-        Post<Repeat, Status, User> post = GlobalApplication.postCache.getPost(data.get(i));
-        if (post == null) {
-            return;
-        }
-        if (viewHolder instanceof StatusViewHolder) {
-            ((StatusViewHolder) viewHolder).setStatus(
-                    post.getUser(),
-                    post.getStatus(),
-                    post.getQuotedRepeatingUser(),
-                    post.getQuotedRepeatingStatus()
-            );
-            if (viewHolder instanceof RepeatedStatusViewHolder){
-                ((RepeatedStatusViewHolder) viewHolder).setRepeatUser(
-                        post.getRepeatedUser(),
-                        post.getRepeat()
-                );
+        if (viewHolder instanceof MoreLoadViewHolder) {
+            ViewGroup.LayoutParams layoutParams = viewHolder.itemView.getLayoutParams();
+            if (layoutParams instanceof StaggeredGridLayoutManager.LayoutParams) {
+                ((StaggeredGridLayoutManager.LayoutParams) layoutParams).setFullSpan(true);
             }
-        } else if (viewHolder instanceof ImagesOnlyTweetViewHolder){
-            ((ImagesOnlyTweetViewHolder) viewHolder).setStatus(post.getStatus());
-        } else if (viewHolder instanceof MoreLoadViewHolder) {
+
             ((MoreLoadViewHolder) viewHolder).setIsLoading(false);
             viewHolder.itemView.setOnClickListener(v -> {
                 ((MoreLoadViewHolder) viewHolder).setIsLoading(true);
                 onLoadMoreClick.onClick(i);
             });
-            ViewGroup.LayoutParams layoutParams = viewHolder.itemView.getLayoutParams();
-            if (layoutParams instanceof StaggeredGridLayoutManager.LayoutParams) {
-                ((StaggeredGridLayoutManager.LayoutParams) layoutParams).setFullSpan(true);
+        } else {
+            Post<Repeat, Status, User> post = GlobalApplication.postCache.getPost(data.get(i));
+            if (post != null) {
+                if (viewHolder instanceof StatusViewHolder) {
+                    ((StatusViewHolder) viewHolder).setStatus(
+                            post.getUser(),
+                            post.getStatus(),
+                            post.getQuotedRepeatingUser(),
+                            post.getQuotedRepeatingStatus()
+                    );
+                    if (viewHolder instanceof RepeatedStatusViewHolder){
+                        ((RepeatedStatusViewHolder) viewHolder).setRepeatUser(
+                                post.getRepeatedUser(),
+                                post.getRepeat()
+                        );
+                    }
+                } else if (viewHolder instanceof ImagesOnlyTweetViewHolder){
+                    ((ImagesOnlyTweetViewHolder) viewHolder).setStatus(post.getStatus());
+                }
             }
         }
     }
