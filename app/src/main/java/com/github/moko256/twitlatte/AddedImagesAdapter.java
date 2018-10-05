@@ -55,6 +55,7 @@ public class AddedImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     public AddedImagesAdapter(Context context){
         this.context = context;
+        setHasStableIds(true);
     }
 
     @Override
