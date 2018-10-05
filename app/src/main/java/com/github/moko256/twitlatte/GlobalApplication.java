@@ -50,8 +50,6 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.collection.LruCache;
 import okhttp3.OkHttpClient;
 import twitter4j.AlternativeHttpClientImpl;
-import twitter4j.HttpClient;
-import twitter4j.HttpClientConfiguration;
 import twitter4j.HttpClientFactory;
 import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
@@ -199,11 +197,7 @@ public class GlobalApplication extends Application {
                     .setOAuthAccessTokenSecret(accessToken.getTokenSecret())
                     .build();
 
-            replaceCompatibleOkHttpClient(
-                    getT4jHttpClient(
-                            conf.getHttpClientConfiguration()
-                    )
-            );
+            replaceCompatibleOkHttpClient(conf);
 
             t = twitterCache.get(conf);
 
@@ -217,11 +211,7 @@ public class GlobalApplication extends Application {
                     .setRestBaseURL(accessToken.getUrl())
                     .build();
 
-            replaceCompatibleOkHttpClient(
-                    getT4jHttpClient(
-                            conf.getHttpClientConfiguration()
-                    )
-            );
+            replaceCompatibleOkHttpClient(conf);
 
             t = twitterCache.get(conf);
 
@@ -229,7 +219,7 @@ public class GlobalApplication extends Application {
                 t = new MastodonTwitterImpl(
                         conf,
                         accessToken.getUserId(),
-                        getOkHttpClient(conf.getHttpClientConfiguration()).newBuilder()
+                        getOkHttpClient(conf).newBuilder()
                 );
                 twitterCache.put(conf, t);
             }
@@ -238,8 +228,9 @@ public class GlobalApplication extends Application {
         return t;
     }
 
-    private static void replaceCompatibleOkHttpClient(AlternativeHttpClientImpl httpClient){
+    private static void replaceCompatibleOkHttpClient(Configuration conf){
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
+            AlternativeHttpClientImpl httpClient = getT4jHttpClient(conf);
             OkHttpClient oldClient = httpClient.getOkHttpClient();
             if (!(oldClient.sslSocketFactory() instanceof SSLSocketFactoryCompat)){
                 try {
@@ -274,19 +265,19 @@ public class GlobalApplication extends Application {
 
     @NonNull
     public static OkHttpClient getOkHttpClient(){
-        return getOkHttpClient(twitter.getConfiguration().getHttpClientConfiguration());
+        return getOkHttpClient(twitter.getConfiguration());
     }
 
     @NonNull
-    public static OkHttpClient getOkHttpClient(HttpClientConfiguration configuration){
-        AlternativeHttpClientImpl httpClient = getT4jHttpClient(configuration);
-        replaceCompatibleOkHttpClient(httpClient);
-        return httpClient.getOkHttpClient();
+    public static OkHttpClient getOkHttpClient(Configuration configuration){
+        replaceCompatibleOkHttpClient(configuration);
+        return getT4jHttpClient(configuration).getOkHttpClient();
     }
 
     @NonNull
-    private static AlternativeHttpClientImpl getT4jHttpClient(HttpClientConfiguration configuration){
-        HttpClient httpClient = HttpClientFactory.getInstance(configuration);
-        return (AlternativeHttpClientImpl) httpClient;
+    private static AlternativeHttpClientImpl getT4jHttpClient(Configuration configuration){
+        return (AlternativeHttpClientImpl) HttpClientFactory.getInstance(
+                configuration.getHttpClientConfiguration()
+        );
     }
 }
