@@ -62,8 +62,6 @@ public class LicensesActivity extends AppCompatActivity {
                     switch (libName){
                         case "support_v4":
                         case "support_v7":
-                        case "support_v13":
-                        case "support_v14":
                         case "support_design":
                         case "support_custom_tabs":
                         case "support_arch":

@@ -61,7 +61,6 @@ This application is built using these libraries\:
 
 * Android Compatibility Library v4
 * Android Compatibility Library v7
-* Android Compatibility Library v14
 * Android Design Support Library
 * Android Custom Tabs Support Library
 * Glide

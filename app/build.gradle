@@ -88,8 +88,6 @@ dependencies {
     implementation "androidx.recyclerview:recyclerview:$jetpack_version"
     implementation "androidx.gridlayout:gridlayout:$jetpack_version"
     implementation "androidx.preference:preference:$jetpack_version"
-    implementation "androidx.legacy:legacy-support-v13:$jetpack_version"
-    implementation "androidx.legacy:legacy-preference-v14:$jetpack_version"
     implementation "androidx.browser:browser:$jetpack_version"
 
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
