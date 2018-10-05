@@ -45,6 +45,9 @@ or,
 # Clone this project.
 git clone https://github.com/moko256/twitlatte.git
 
+# Move to project's directory
+cd twitlatte
+
 # Clone or update some submodules.
 git submodule update --init --recursive
 ```
