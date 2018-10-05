@@ -22,7 +22,7 @@ import com.github.moko256.mastodon.MTException;
 import com.github.moko256.mastodon.MTRangeConverter;
 import com.github.moko256.mastodon.MTResponseList;
 import com.github.moko256.mastodon.MastodonTwitterImpl;
-import com.github.moko256.twitlatte.entity.Type;
+import com.github.moko256.twitlatte.entity.ClientType;
 import com.sys1yagi.mastodon4j.api.exception.Mastodon4jRequestException;
 import com.sys1yagi.mastodon4j.api.method.Accounts;
 
@@ -67,7 +67,7 @@ public class MediaTimelineFragment extends BaseTweetListFragment implements Tool
 
     @Override
     protected ResponseList<Status> getResponseList(Paging paging) throws TwitterException {
-        if (GlobalApplication.clientType == Type.MASTODON){
+        if (GlobalApplication.clientType == ClientType.MASTODON){
             Accounts accounts = new Accounts(((MastodonTwitterImpl) GlobalApplication.twitter).client);
             try {
                 return MTResponseList.convert(accounts.getStatuses(userId, true, false, false, MTRangeConverter.convert(paging)).execute());

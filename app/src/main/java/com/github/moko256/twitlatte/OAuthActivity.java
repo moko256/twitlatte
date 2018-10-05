@@ -31,7 +31,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.github.moko256.twitlatte.entity.AccessToken;
-import com.github.moko256.twitlatte.entity.Type;
+import com.github.moko256.twitlatte.entity.ClientType;
 import com.github.moko256.twitlatte.model.base.OAuthModel;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
 
@@ -58,7 +58,7 @@ public class OAuthActivity extends AppCompatActivity {
     private static final String STATE_LAST_URL = "state_last_url";
     private static final String STATE_ENTERING_PIN = "state_entering_pin";
 
-    @Type.ClientTypeInt
+    @ClientType.ClientTypeInt
     private int authClientType = -1;
 
     private OAuthModel model;
@@ -164,12 +164,12 @@ public class OAuthActivity extends AppCompatActivity {
         }
     }
 
-    private void initType(@Type.ClientTypeInt int authClientType){
+    private void initType(@ClientType.ClientTypeInt int authClientType){
         switch (authClientType) {
-            case Type.TWITTER:
+            case ClientType.TWITTER:
                 model = new com.github.moko256.twitlatte.model.impl.twitter.OAuthModelImpl();
                 break;
-            case Type.MASTODON:
+            case ClientType.MASTODON:
                 model = new com.github.moko256.twitlatte.model.impl.mastodon.OAuthModelImpl();
                 break;
             default:
@@ -205,7 +205,7 @@ public class OAuthActivity extends AppCompatActivity {
     }
 
     public void onStartTwitterAuthClick(View view) {
-        initType(Type.TWITTER);
+        initType(ClientType.TWITTER);
 
         startAuthAndOpenDialogIfNeeded(
                 "twitter.com",
@@ -215,7 +215,7 @@ public class OAuthActivity extends AppCompatActivity {
     }
 
     public void onStartMastodonAuthClick(View view) {
-        initType(Type.MASTODON);
+        initType(ClientType.MASTODON);
 
         isUrlEnterDialogShown = true;
 

@@ -23,8 +23,8 @@ import android.database.sqlite.SQLiteOpenHelper
 import com.github.moko256.twitlatte.array.toCommaSplitString
 import com.github.moko256.twitlatte.database.migrator.OldCachedUserSQLiteOpenHelper
 import com.github.moko256.twitlatte.entity.AccessToken
+import com.github.moko256.twitlatte.entity.ClientType
 import com.github.moko256.twitlatte.entity.Emoji
-import com.github.moko256.twitlatte.entity.Type
 import com.github.moko256.twitlatte.entity.User
 import com.github.moko256.twitlatte.text.link.entity.Link
 import com.github.moko256.twitlatte.text.splitWithComma
@@ -78,7 +78,7 @@ private val TABLE_COLUMNS = arrayOf(
 
 class CachedUsersSQLiteOpenHelper(context: Context, accessToken: AccessToken?) : SQLiteOpenHelper(context, if (accessToken != null) File(context.cacheDir, accessToken.getKeyString() + "/" + "CachedUsers.db").absolutePath else null, null, 3) {
 
-    private val isTwitter = accessToken?.type == Type.TWITTER
+    private val isTwitter = accessToken?.type == ClientType.TWITTER
 
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL(

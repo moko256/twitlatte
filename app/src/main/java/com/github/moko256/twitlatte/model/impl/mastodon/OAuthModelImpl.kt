@@ -19,7 +19,7 @@ package com.github.moko256.twitlatte.model.impl.mastodon
 import android.os.Bundle
 import com.github.moko256.twitlatte.GlobalApplication
 import com.github.moko256.twitlatte.entity.AccessToken
-import com.github.moko256.twitlatte.entity.Type
+import com.github.moko256.twitlatte.entity.ClientType
 import com.github.moko256.twitlatte.model.base.OAuthModel
 import com.google.gson.Gson
 import com.sys1yagi.mastodon4j.MastodonClient
@@ -132,7 +132,7 @@ class OAuthModelImpl(override var isRestartable: Boolean = false) : OAuthModel {
                 val url = clientBuilder.build().getInstanceName()
                 val account = Accounts(clientBuilder.accessToken(accessToken.accessToken).build()).getVerifyCredentials().execute()
                 val storeToken = AccessToken(
-                        Type.MASTODON,
+                        ClientType.MASTODON,
                         url,
                         account.id,
                         account.acct,

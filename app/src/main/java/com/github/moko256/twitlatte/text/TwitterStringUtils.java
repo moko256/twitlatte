@@ -31,7 +31,7 @@ import com.github.moko256.twitlatte.GlobalApplication;
 import com.github.moko256.twitlatte.R;
 import com.github.moko256.twitlatte.SearchResultActivity;
 import com.github.moko256.twitlatte.ShowUserActivity;
-import com.github.moko256.twitlatte.entity.Type;
+import com.github.moko256.twitlatte.entity.ClientType;
 import com.github.moko256.twitlatte.intent.AppCustomTabsKt;
 import com.github.moko256.twitlatte.text.link.entity.Link;
 import com.github.moko256.twitlatte.text.style.ClickableNoLineSpan;
@@ -196,25 +196,25 @@ public class TwitterStringUtils {
     }
 
     public static String convertThumbImageUrl(String baseUrl){
-        return (GlobalApplication.clientType == Type.TWITTER)?
+        return (GlobalApplication.clientType == ClientType.TWITTER)?
                 baseUrl + ":thumb":
                 baseUrl.replace("original", "small");
     }
 
     public static String convertSmallImageUrl(String baseUrl){
-        return (GlobalApplication.clientType == Type.TWITTER)?
+        return (GlobalApplication.clientType == ClientType.TWITTER)?
                 baseUrl + ":small":
                 baseUrl.replace("original", "small");
     }
 
     public static String convertOriginalImageUrl(String baseUrl){
-        return (GlobalApplication.clientType == Type.TWITTER)?
+        return (GlobalApplication.clientType == ClientType.TWITTER)?
                 baseUrl + ":orig":
                 baseUrl;
     }
 
     public static String convertLargeImageUrl(String baseUrl){
-        return (GlobalApplication.clientType == Type.TWITTER)?
+        return (GlobalApplication.clientType == ClientType.TWITTER)?
                 baseUrl + ":large":
                 baseUrl;
     }
@@ -268,9 +268,9 @@ public class TwitterStringUtils {
     }
 
     @StringRes
-    public static int getDidActionStringRes(@Type.ClientTypeInt int type, Action action){
+    public static int getDidActionStringRes(@ClientType.ClientTypeInt int type, Action action){
         switch (type){
-            case Type.TWITTER:
+            case ClientType.TWITTER:
                 switch (action){
                     case LIKE:
                         return R.string.did_like;
@@ -284,7 +284,7 @@ public class TwitterStringUtils {
                         return 0;
                 }
 
-            case Type.MASTODON:
+            case ClientType.MASTODON:
                 switch (action){
                     case LIKE:
                         return R.string.did_favorite;
@@ -304,12 +304,12 @@ public class TwitterStringUtils {
     }
 
     @StringRes
-    public static int getRepeatedByStringRes(@Type.ClientTypeInt int type){
+    public static int getRepeatedByStringRes(@ClientType.ClientTypeInt int type){
         switch (type){
-            case Type.TWITTER:
+            case ClientType.TWITTER:
                 return R.string.retweeted_by;
 
-            case Type.MASTODON:
+            case ClientType.MASTODON:
                 return R.string.boosted_by;
 
             default:

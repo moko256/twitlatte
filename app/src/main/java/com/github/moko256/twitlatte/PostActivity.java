@@ -43,7 +43,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.github.moko256.twitlatte.entity.Type;
+import com.github.moko256.twitlatte.entity.ClientType;
 import com.github.moko256.twitlatte.glide.GlideApp;
 import com.github.moko256.twitlatte.model.base.PostTweetModel;
 import com.github.moko256.twitlatte.model.impl.PostTweetModelCreator;
@@ -237,7 +237,7 @@ public class PostActivity extends AppCompatActivity {
         postVisibility = findViewById(R.id.activity_tweet_visibility_spinner);
         contentWarningText = findViewById(R.id.tweet_text_warning);
         contentWarningEnabled = findViewById(R.id.activity_tweet_add_content_warning);
-        if (GlobalApplication.clientType == Type.MASTODON) {
+        if (GlobalApplication.clientType == ClientType.MASTODON) {
             contentWarningText.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -280,7 +280,7 @@ public class PostActivity extends AppCompatActivity {
         }
 
         addLocation = findViewById(R.id.activity_tweet_add_location);
-        if (GlobalApplication.clientType == Type.TWITTER) {
+        if (GlobalApplication.clientType == ClientType.TWITTER) {
             addLocation.setVisibility(View.VISIBLE);
             addLocation.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 if (isChecked){

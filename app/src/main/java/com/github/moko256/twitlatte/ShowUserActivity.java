@@ -25,7 +25,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.github.moko256.mastodon.MastodonTwitterImpl;
-import com.github.moko256.twitlatte.entity.Type;
+import com.github.moko256.twitlatte.entity.ClientType;
 import com.github.moko256.twitlatte.entity.User;
 import com.github.moko256.twitlatte.intent.AppCustomTabsKt;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
@@ -172,7 +172,7 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
 
     private String getShareUrl(){
         String url;
-        if (GlobalApplication.clientType == Type.MASTODON){
+        if (GlobalApplication.clientType == ClientType.MASTODON){
             String baseUrl;
             String userName;
             if (user.getScreenName().matches(".*@.*")){

@@ -19,7 +19,7 @@ package com.github.moko256.twitlatte.model.impl.twitter
 import android.os.Bundle
 import com.github.moko256.twitlatte.database.TokenSQLiteOpenHelper
 import com.github.moko256.twitlatte.entity.AccessToken
-import com.github.moko256.twitlatte.entity.Type
+import com.github.moko256.twitlatte.entity.ClientType
 import com.github.moko256.twitlatte.model.base.OAuthModel
 import io.reactivex.Single
 import twitter4j.TwitterException
@@ -77,7 +77,7 @@ class OAuthModelImpl(override var isRestartable: Boolean = false) : OAuthModel {
             try {
                 val accessToken = oauth.getOAuthAccessToken(req, pin)
                 it.onSuccess(AccessToken(
-                        Type.TWITTER,
+                        ClientType.TWITTER,
                         TokenSQLiteOpenHelper.TWITTER_URL,
                         accessToken.userId,
                         accessToken.screenName,

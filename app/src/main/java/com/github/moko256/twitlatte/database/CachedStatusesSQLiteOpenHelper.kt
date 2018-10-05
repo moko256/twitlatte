@@ -123,7 +123,7 @@ class CachedStatusesSQLiteOpenHelper(
             db.execSQL("create unique index CountsIdIndex on $TABLE_NAME(id)")
 
             oldStatuses.forEach { status ->
-                val contentValue = createStatusContentValues(if (accessToken?.type == Type.MASTODON) {
+                val contentValue = createStatusContentValues(if (accessToken?.type == ClientType.MASTODON) {
 
                     if (status.retweetedStatusId == -1L) {
                         val urls = MTHtmlParser.convertToContentAndLinks(status.text)

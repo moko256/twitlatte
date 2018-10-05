@@ -20,7 +20,7 @@ import android.content.ContentResolver;
 
 import com.github.moko256.mastodon.MastodonTwitterImpl;
 import com.github.moko256.twitlatte.GlobalApplication;
-import com.github.moko256.twitlatte.entity.Type;
+import com.github.moko256.twitlatte.entity.ClientType;
 import com.github.moko256.twitlatte.model.base.PostTweetModel;
 
 import twitter4j.Twitter;
@@ -33,7 +33,7 @@ import twitter4j.Twitter;
 
 public class PostTweetModelCreator {
     public static PostTweetModel getInstance(Twitter twitter, ContentResolver resolver) {
-        if (GlobalApplication.clientType == Type.MASTODON){
+        if (GlobalApplication.clientType == ClientType.MASTODON){
             return new com.github.moko256.twitlatte.model.impl.mastodon.PostTweetModelImpl(((MastodonTwitterImpl) twitter).client, resolver);
         } else {
             return new com.github.moko256.twitlatte.model.impl.twitter.PostTweetModelImpl(twitter, resolver);

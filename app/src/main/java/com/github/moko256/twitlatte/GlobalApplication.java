@@ -29,7 +29,7 @@ import com.github.moko256.twitlatte.cacheMap.PostCache;
 import com.github.moko256.twitlatte.cacheMap.StatusCacheMap;
 import com.github.moko256.twitlatte.cacheMap.UserCacheMap;
 import com.github.moko256.twitlatte.entity.AccessToken;
-import com.github.moko256.twitlatte.entity.Type;
+import com.github.moko256.twitlatte.entity.ClientType;
 import com.github.moko256.twitlatte.model.AccountsModel;
 import com.github.moko256.twitlatte.net.SSLSocketFactoryCompat;
 import com.github.moko256.twitlatte.notification.ExceptionNotification;
@@ -70,7 +70,7 @@ public class GlobalApplication extends Application {
     public static Twitter twitter;
     public static AccessToken accessToken;
 
-    @Type.ClientTypeInt
+    @ClientType.ClientTypeInt
     public static int clientType = -1;
 
     static long userId;
@@ -179,7 +179,7 @@ public class GlobalApplication extends Application {
         GlobalApplication.accessToken = accessToken;
         userCache.prepare(this, accessToken);
         statusCache.prepare(this, accessToken);
-        statusLimit = clientType == Type.TWITTER? 200: 40;
+        statusLimit = clientType == ClientType.TWITTER? 200: 40;
     }
 
     @NonNull
@@ -188,7 +188,7 @@ public class GlobalApplication extends Application {
 
         Configuration conf;
 
-        if (accessToken.getType() == Type.TWITTER){
+        if (accessToken.getType() == ClientType.TWITTER){
             conf = new ConfigurationBuilder()
                     .setTweetModeExtended(true)
                     .setOAuthConsumerKey(BuildConfig.CONSUMER_KEY)

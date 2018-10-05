@@ -20,7 +20,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.github.moko256.twitlatte.entity.Type;
+import com.github.moko256.twitlatte.entity.ClientType;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
@@ -45,7 +45,7 @@ public class TrendsActivity extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeAsUpIndicator(R.drawable.ic_back_white_24dp);
 
-        if (savedInstanceState == null && GlobalApplication.clientType == Type.TWITTER) {
+        if (savedInstanceState == null && GlobalApplication.clientType == ClientType.TWITTER) {
             getSupportFragmentManager()
                     .beginTransaction()
                     .add(android.R.id.content, new TrendsFragment())

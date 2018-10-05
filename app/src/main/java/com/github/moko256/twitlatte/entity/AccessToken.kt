@@ -25,7 +25,7 @@ import androidx.annotation.IntDef
  */
 
 data class AccessToken(
-        @Type.ClientTypeInt val type: Int,
+        @ClientType.ClientTypeInt val type: Int,
         val url: String,
         val userId: Long,
         val screenName: String,
@@ -50,10 +50,10 @@ fun splitAccessTokenKey(accessTokenKey: String): Pair<String, Long> {
     return splitString[0] to splitString[1].toLong()
 }
 
-class Type{
+class ClientType{
 
     @Retention(AnnotationRetention.SOURCE)
-    @IntDef(Type.TWITTER, Type.MASTODON)
+    @IntDef(ClientType.TWITTER, ClientType.MASTODON)
     annotation class ClientTypeInt
 
     companion object{
