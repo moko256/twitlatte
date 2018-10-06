@@ -34,11 +34,11 @@ public class UserTimelineFragment extends BaseTweetListFragment implements Toolb
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
         if (userId == -1){
             userId = getArguments().getLong("userId", -1);
         }
+
+        super.onCreate(savedInstanceState);
     }
 
     public static UserTimelineFragment newInstance(long userId){

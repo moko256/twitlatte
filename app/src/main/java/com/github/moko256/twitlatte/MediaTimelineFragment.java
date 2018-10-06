@@ -43,11 +43,11 @@ public class MediaTimelineFragment extends BaseTweetListFragment implements Tool
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
         if (userId == -1){
             userId = getArguments().getLong("userId", -1);
         }
+
+        super.onCreate(savedInstanceState);
     }
 
     @Override
