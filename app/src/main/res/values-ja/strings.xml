@@ -70,6 +70,7 @@
     <string name="destroy_follow_follower">FF解除</string>
     <string name="spam_report">スパムとして報告する</string>
     <string name="save_image">この画像を保存する</string>
+    <string name="save_video">この動画を保存する</string>
     <string name="error_occurred">エラーが発生しました</string>
     <string name="load_timeline_image_mode">タイムラインのサムネイルの画質</string>
     <string name="version_text">バージョン</string>

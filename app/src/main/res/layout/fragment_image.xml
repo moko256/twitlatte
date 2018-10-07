@@ -15,18 +15,12 @@
   ~ limitations under the License.
   -->
 
-<menu
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item
-        android:id="@+id/action_change_selection"
-        android:title="@string/action_change_quality"
-        android:icon="@drawable/ic_settings_black_24dp"
-        app:showAsAction="ifRoom"
-        app:iconTint="@android:color/white"/>
-    <item
-        android:id="@+id/action_download"
-        android:title="@string/save_image"
-        android:icon="@drawable/ic_file_download_white_24dp"
-        app:showAsAction="ifRoom" />
-</menu>
+<com.github.chuross.flinglayout.FlingLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <com.github.chrisbanes.photoview.PhotoView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:id="@+id/fragment_image_pager_image" />
+</com.github.chuross.flinglayout.FlingLayout>

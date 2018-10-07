@@ -28,7 +28,7 @@ import android.widget.ImageView;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.github.moko256.twitlatte.GlobalApplication;
 import com.github.moko256.twitlatte.R;
-import com.github.moko256.twitlatte.ShowImageActivity;
+import com.github.moko256.twitlatte.ShowMediasActivity;
 import com.github.moko256.twitlatte.entity.Media;
 import com.github.moko256.twitlatte.glide.GlideApp;
 import com.github.moko256.twitlatte.glide.GlideRequests;
@@ -130,7 +130,7 @@ public class TweetImageTableView extends GridLayout {
             int finalI = i;
             containers[i].setOnClickListener(v -> {
                 if (isOpen){
-                    getContext().startActivity(ShowImageActivity.getIntent(getContext(), medias, finalI));
+                    getContext().startActivity(ShowMediasActivity.getIntent(getContext(), medias, finalI));
                 } else {
                     isOpen = true;
                     updateView();

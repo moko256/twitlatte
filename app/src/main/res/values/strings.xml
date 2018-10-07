@@ -74,6 +74,7 @@
     <string name="destroy_follow_follower">Cancel f4f</string>
     <string name="spam_report">Report this account as a spam</string>
     <string name="save_image">Save this image</string>
+    <string name="save_video">Save this video</string>
     <string name="error_occurred">Error occurred</string>
     <string name="load_timeline_image_mode">Quality of thumbnail on the timeline</string>
     <string name="version_text">Version</string>

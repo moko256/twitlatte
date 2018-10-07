@@ -119,7 +119,7 @@
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity
-            android:name=".ShowImageActivity"
+            android:name=".ShowMediasActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
             android:theme="@style/ShowTweetImageActivityTheme"/>
         <activity

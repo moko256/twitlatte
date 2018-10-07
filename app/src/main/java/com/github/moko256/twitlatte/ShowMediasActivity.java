@@ -36,7 +36,7 @@ import androidx.viewpager.widget.ViewPager;
  *
  * @author moko256
  */
-public class ShowImageActivity extends AppCompatActivity {
+public class ShowMediasActivity extends AppCompatActivity {
     private static final String FRAG_MEDIA_ENTITIES="MediaEntities";
     private static final String FRAG_POSITION="position";
 
@@ -59,7 +59,7 @@ public class ShowImageActivity extends AppCompatActivity {
         actionBar.setHomeAsUpIndicator(R.drawable.ic_clear_white_24dp);
 
         pager= findViewById(R.id.activity_show_image_view_pager);
-        pager.setAdapter(new ImagePagerAdapter(getSupportFragmentManager(),mediaEntities));
+        pager.setAdapter(new MediasAdapter(getSupportFragmentManager(),mediaEntities));
         pager.setCurrentItem(position);
     }
 
@@ -77,7 +77,7 @@ public class ShowImageActivity extends AppCompatActivity {
     }
 
     public static Intent getIntent(Context context, Media[] entities , int position){
-        return new Intent(context,ShowImageActivity.class)
+        return new Intent(context,ShowMediasActivity.class)
                 .putExtra(FRAG_MEDIA_ENTITIES, (Serializable) Arrays.asList(entities))
                 .putExtra(FRAG_POSITION,position);
     }
