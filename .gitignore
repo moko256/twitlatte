@@ -6,13 +6,6 @@
 /.idea/*
 !/.idea/copyright
 !/.idea/dictionaries
-!/.idea/compilers.xml
-!/.idea/encodings.xml
-!/.idea/gradle.xml
-!/.idea/kotlinc.xml
-!/.idea/misc.xml
-!/.idea/runConfigurations.xml
-!/.idea/vcs.xml
 
 .DS_Store
 /build
