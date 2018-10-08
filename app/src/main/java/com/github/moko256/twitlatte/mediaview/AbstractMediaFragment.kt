@@ -29,6 +29,8 @@ import android.view.View.*
 import android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN
 import android.widget.Toast
 import android.widget.Toast.LENGTH_LONG
+import androidx.annotation.LayoutRes
+import androidx.annotation.MenuRes
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.github.chuross.flinglayout.FlingLayout
@@ -160,7 +162,10 @@ abstract class AbstractMediaFragment: Fragment() {
     }
 
 
+    @LayoutRes
     protected abstract fun returnLayoutId(): Int
+
+    @MenuRes
     protected abstract fun returnMenuId(): Int
 
 }
