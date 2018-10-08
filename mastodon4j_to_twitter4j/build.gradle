@@ -21,9 +21,4 @@ dependencies {
 
     api 'org.twitter4j:twitter4j-core:4.0.7'
     api 'org.twitter4j:twitter4j-http2-support:4.0.7'
-
-    api "com.squareup.okhttp3:okhttp:$okhttp_version"
-    api "com.google.code.gson:gson:$gson_version"
-    api "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    api 'com.squareup.okio:okio:2.1.0'
 }

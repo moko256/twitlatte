@@ -9,7 +9,6 @@
 
 -keep class androidx.appcompat.app.AppCompatViewInflater
 
--keep class okio.Okio { *; }
 
 # Proguard configuration for Jackson 2.x (fasterxml package instead of codehaus package)
 -keep class com.fasterxml.jackson.databind.ObjectMapper {
@@ -24,3 +23,6 @@
 -keep class * implements com.google.gson.TypeAdapterFactory
 -keep class * implements com.google.gson.JsonSerializer
 -keep class * implements com.google.gson.JsonDeserializer
+
+
+-keepnames class okhttp3.internal.publicsuffix.PublicSuffixDatabase

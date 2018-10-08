@@ -2,16 +2,20 @@
 
 -keepattributes SourceFile,LineNumberTable
 
+
+##---------------Begin: proguard configuration for twitter4j  ----------
+
 -dontwarn twitter4j.**
 -keep,allowoptimization class twitter4j.* { *; }
 -keep,allowoptimization class twitter4j.conf.PropertyConfigurationFactory
+
+##---------------End: proguard configuration for twitter4j  ----------
+
 
 -keep,allowoptimization class androidx.appcompat.app.AppCompatViewInflater
 
 -dontwarn java.lang.invoke.*
 -dontwarn **$$Lambda$*
-
--dontwarn okio.**
 
 
 # Proguard configuration for Jackson 2.x (fasterxml package instead of codehaus package)
@@ -45,3 +49,28 @@
 -keep,allowoptimization class * implements com.google.gson.JsonDeserializer
 
 ##---------------End: proguard configuration for Gson  ----------
+
+
+##---------------Begin: proguard configuration for OkHttp  ----------
+
+# JSR 305 annotations are for embedding nullability information.
+-dontwarn javax.annotation.**
+
+# A resource is loaded with a relative path so the package of this class must be preserved.
+-keepnames class okhttp3.internal.publicsuffix.PublicSuffixDatabase
+
+# Animal Sniffer compileOnly dependency to ensure APIs are compatible with older versions of Java.
+-dontwarn org.codehaus.mojo.animal_sniffer.*
+
+# OkHttp platform used only on JVM and when Conscrypt dependency is available.
+-dontwarn okhttp3.internal.platform.ConscryptPlatform
+
+##---------------End: proguard configuration for OkHttp  ----------
+
+
+##---------------Begin: proguard configuration for Okio  ----------
+
+# Animal Sniffer compileOnly dependency to ensure APIs are compatible with older versions of Java.
+-dontwarn org.codehaus.mojo.animal_sniffer.*
+
+##---------------End: proguard configuration for Okio  ----------
