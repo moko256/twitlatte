@@ -25,45 +25,45 @@
     android:focusableInTouchMode="true"
     tools:context=".ShowTweetActivity">
 
-    <android.support.v4.widget.SwipeRefreshLayout
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/tweet_show_swipe_refresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/tweet_show_tweet_reply_text">
 
-        <android.support.v4.widget.NestedScrollView
+        <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scrollbars="vertical">
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingLeft="@dimen/activity_horizontal_margin"
-                android:paddingRight="@dimen/activity_horizontal_margin"
-                android:paddingTop="@dimen/activity_vertical_margin"
-                android:paddingBottom="@dimen/activity_vertical_margin">
+                android:layout_height="wrap_content">
                 <TextView
                     android:id="@+id/tweet_show_is_reply_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/reply"
-                    android:layout_marginBottom="16dp"
+                    android:layout_marginTop="@dimen/activity_vertical_margin"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:layout_marginRight="@dimen/activity_horizontal_margin"
                     android:visibility="gone"
                     tools:visibility="visible"/>
 
-                <FrameLayout
+                <include
                     android:id="@+id/tweet_show_tweet"
                     android:layout_below="@id/tweet_show_is_reply_text"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    layout="@layout/layout_tweet"/>
 
                 <TextView
                     android:id="@+id/tweet_show_via"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/tweet_show_tweet"
-                    android:layout_marginTop="0dp"
-                    android:layout_marginBottom="2dp"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:layout_marginRight="@dimen/activity_horizontal_margin"
                     android:textColor="?android:textColorSecondary"
                     android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                     tools:text="via:Twitter"/>
@@ -73,16 +73,17 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/tweet_show_via"
-                    android:layout_marginTop="0dp"
-                    android:layout_marginBottom="2dp"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:layout_marginRight="@dimen/activity_horizontal_margin"
+                    android:layout_marginBottom="@dimen/activity_vertical_margin"
                     android:textColor="?android:textColorSecondary"
                     android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                     tools:text="date tweet was created at"/>
 
             </RelativeLayout>
-        </android.support.v4.widget.NestedScrollView>
+        </androidx.core.widget.NestedScrollView>
 
-    </android.support.v4.widget.SwipeRefreshLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <Button
         android:id="@+id/tweet_show_tweet_reply_button"

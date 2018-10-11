@@ -16,13 +16,16 @@
 
 package com.github.moko256.twitlatte.database;
 
-import android.support.test.InstrumentationRegistry;
-import android.support.test.runner.AndroidJUnit4;
+import android.database.DatabaseUtils;
+import android.database.sqlite.SQLiteDatabase;
 
 import com.github.moko256.twitlatte.entity.AccessToken;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import androidx.test.InstrumentationRegistry;
+import androidx.test.runner.AndroidJUnit4;
 
 import static org.junit.Assert.assertEquals;
 
@@ -73,7 +76,7 @@ public class TokenSQLiteOpenHelperTest {
 
         helper.addAccessToken(accessToken);
 
-        final long addAccessTokenResult = helper.getSize();
+        final long addAccessTokenResult = getSize();
 
         assertEquals(addAccessTokenResult, 1);
 
@@ -98,7 +101,7 @@ public class TokenSQLiteOpenHelperTest {
                 accessToken
         );
 
-        final long updateAccessTokenResult = helper.getSize();
+        final long updateAccessTokenResult = getSize();
 
         assertEquals(updateAccessTokenResult, 1);
 
@@ -119,12 +122,22 @@ public class TokenSQLiteOpenHelperTest {
                 )
         );
 
-        final long deleteAccessTokenResult = helper.getSize();
+        final long deleteAccessTokenResult = getSize();
 
         assertEquals(deleteAccessTokenResult, 0);
     }
 
     private AccessToken generateAccessToken(final long userId, final String screenName, final String token, final String tokenSecret){
         return new AccessToken(1, "example.com", userId, screenName, token, tokenSecret);
+    }
+
+    private long getSize(){
+        long count;
+        synchronized (this) {
+            SQLiteDatabase database = helper.getReadableDatabase();
+            count = DatabaseUtils.queryNumEntries(database, "AccountTokenList");
+            database.close();
+        }
+        return count;
     }
 }

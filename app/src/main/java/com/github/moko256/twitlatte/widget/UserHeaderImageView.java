@@ -17,8 +17,12 @@
 package com.github.moko256.twitlatte.widget;
 
 import android.content.Context;
-import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
+
+import com.github.moko256.twitlatte.GlobalApplication;
+import com.github.moko256.twitlatte.entity.ClientType;
+
+import androidx.appcompat.widget.AppCompatImageView;
 
 /**
  * Created by moko256 on 2017/07/15.
@@ -47,7 +51,7 @@ public class UserHeaderImageView extends AppCompatImageView{
             mode = MeasureSpec.EXACTLY;
         }
         heightMeasureSpec = MeasureSpec.makeMeasureSpec(
-                MeasureSpec.getSize(widthMeasureSpec) / 3,
+                MeasureSpec.getSize(widthMeasureSpec) / (GlobalApplication.clientType == ClientType.TWITTER? 3 : 2),
                 mode
         );
         setMeasuredDimension(widthMeasureSpec, heightMeasureSpec);

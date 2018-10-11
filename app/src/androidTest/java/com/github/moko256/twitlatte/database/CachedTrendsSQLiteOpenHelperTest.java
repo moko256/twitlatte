@@ -16,10 +16,8 @@
 
 package com.github.moko256.twitlatte.database;
 
-import android.support.test.InstrumentationRegistry;
-import android.support.test.runner.AndroidJUnit4;
-
 import com.github.moko256.twitlatte.entity.AccessToken;
+import com.github.moko256.twitlatte.entity.Trend;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,7 +25,8 @@ import org.junit.runner.RunWith;
 import java.util.ArrayList;
 import java.util.List;
 
-import twitter4j.Trend;
+import androidx.test.InstrumentationRegistry;
+import androidx.test.runner.AndroidJUnit4;
 
 import static org.junit.Assert.assertEquals;
 
@@ -84,27 +83,9 @@ public class CachedTrendsSQLiteOpenHelperTest {
     private List<Trend> createTestTrends(String[] names){
         List<Trend> r = new ArrayList<>(names.length);
         for (String name : names) {
-            r.add(new Trend() {
-                @Override
-                public String getName() {
-                    return name;
-                }
-
-                @Override
-                public String getURL() {
-                    return name;
-                }
-
-                @Override
-                public String getQuery() {
-                    return null;
-                }
-
-                @Override
-                public int getTweetVolume() {
-                    return -1;
-                }
-            });
+            r.add(new Trend(
+                    name, -1
+            ));
         }
         return r;
     }

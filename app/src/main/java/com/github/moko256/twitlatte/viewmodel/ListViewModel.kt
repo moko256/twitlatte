@@ -16,7 +16,7 @@
 
 package com.github.moko256.twitlatte.viewmodel
 
-import android.arch.lifecycle.ViewModel
+import androidx.lifecycle.ViewModel
 import com.github.moko256.twitlatte.GlobalApplication
 import com.github.moko256.twitlatte.database.CachedIdListSQLiteOpenHelper
 import com.github.moko256.twitlatte.repository.server.ListServerRepository
@@ -83,10 +83,10 @@ class ListViewModel: ViewModel() {
                         .subscribeOn(Schedulers.io())
                         .subscribe(
                                 { result ->
-                                    val ids = ArrayList(result
+                                    val ids = result
+                                            .asSequence()
                                             .map { it.id }
                                             .toList()
-                                    )
                                     list.addAll(ids)
                                     statusIdsDatabase.addIds(ids)
                                     listObserver.onNext(Left(UpdateEvent(EventType.ADD_FIRST, 0, ids.size)))
@@ -117,10 +117,10 @@ class ListViewModel: ViewModel() {
                         .subscribe(
                                 { result ->
                                     if (result.isNotEmpty()) {
-                                        val ids = ArrayList(result
+                                        val ids = result
+                                                .asSequence()
                                                 .map { it.id }
-                                                .toList()
-                                        )
+                                                .toMutableList()
                                         if (ids[ids.size - 1] == list[0]) {
                                             ids.removeAt(ids.size - 1)
                                         } else {
@@ -162,10 +162,10 @@ class ListViewModel: ViewModel() {
                                 { result ->
                                     val size = result.size
                                     if (size > 0) {
-                                        val ids = ArrayList(result
+                                        val ids = result
+                                                .asSequence()
                                                 .map { it.id }
                                                 .toList()
-                                        )
                                         list.addAll(ids)
                                         statusIdsDatabase.insertIds(list.size - size, ids)
                                         listObserver.onNext(Left(UpdateEvent(
@@ -202,10 +202,10 @@ class ListViewModel: ViewModel() {
                         .subscribe(
                                 { result ->
                                     if (result.isNotEmpty()) {
-                                        val ids = ArrayList(result
+                                        val ids = result
+                                                .asSequence()
                                                 .map { it.id }
-                                                .toList()
-                                        )
+                                                .toMutableList()
                                         val noGap = ids[ids.size - 1] == list[position + 1]
                                         if (noGap) {
                                             ids.removeAt(ids.size - 1)

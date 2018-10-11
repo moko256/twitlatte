@@ -19,23 +19,6 @@ package com.github.moko256.twitlatte;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -47,36 +30,52 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
-import com.github.moko256.mastodon.MTUser;
+import com.github.moko256.twitlatte.converter.UserConverterKt;
 import com.github.moko256.twitlatte.database.CachedUsersSQLiteOpenHelper;
 import com.github.moko256.twitlatte.entity.AccessToken;
 import com.github.moko256.twitlatte.entity.Emoji;
+import com.github.moko256.twitlatte.entity.User;
 import com.github.moko256.twitlatte.glide.GlideApp;
 import com.github.moko256.twitlatte.glide.GlideRequests;
 import com.github.moko256.twitlatte.model.AccountsModel;
-import com.github.moko256.twitlatte.rx.VerifyCredencialOnSubscribe;
+import com.github.moko256.twitlatte.rx.VerifyCredentialOnSubscribe;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
 import com.github.moko256.twitlatte.view.EmojiToTextViewSetter;
 import com.github.moko256.twitlatte.widget.FragmentPagerAdapter;
+import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityOptionsCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import twitter4j.TwitterException;
-import twitter4j.User;
 
 /**
  * Created by moko256 on 2015/11/08.
  *
  * @author moko256
  */
-public class MainActivity extends AppCompatActivity implements BaseListFragment.GetSnackBar, BaseTweetListFragment.GetRecyclerViewPool, BaseUsersFragment.GetRecyclerViewPool {
+public class MainActivity extends AppCompatActivity implements BaseListFragment.GetViewForSnackBar, BaseTweetListFragment.GetRecyclerViewPool, BaseUsersFragment.GetRecyclerViewPool {
 
     private CompositeDisposable disposable;
 
@@ -271,7 +270,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                                 User user = userHelper.getCachedUser(id);
                                 if (user == null){
                                     try {
-                                        user = ((GlobalApplication) getApplication()).createTwitterInstance(accessToken).verifyCredentials();
+                                        user = UserConverterKt.convertToCommonUser(((GlobalApplication) getApplication()).createTwitterInstance(accessToken).verifyCredentials());
                                         userHelper.addCachedUser(user);
                                     } catch (TwitterException e) {
                                         e.printStackTrace();
@@ -428,8 +427,8 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
     }
 
     @Override
-    public Snackbar getSnackBar(String string) {
-        return Snackbar.make(findViewById(R.id.activity_main_coordinator_layout), string, Snackbar.LENGTH_LONG);
+    public View getViewForSnackBar() {
+        return findViewById(R.id.activity_main_coordinator_layout);
     }
 
     private void attachFragment(Fragment fragment){
@@ -458,7 +457,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
     private void updateDrawerImage(){
         disposable.add(
                 Single.create(
-                        new VerifyCredencialOnSubscribe(
+                        new VerifyCredentialOnSubscribe(
                                 GlobalApplication.twitter,
                                 GlobalApplication.userCache,
                                 GlobalApplication.userId
@@ -477,19 +476,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                                     );
 
                                     userNameText.setText(userName);
-                                    List<Emoji> userNameEmojis = null;
-                                    if (user instanceof CachedUsersSQLiteOpenHelper.CachedUser) {
-                                        userNameEmojis = ((CachedUsersSQLiteOpenHelper.CachedUser) user).getEmojis();
-                                    } else if (user instanceof MTUser) {
-                                        List<com.sys1yagi.mastodon4j.api.entity.Emoji> emojis = ((MTUser) user).account.getEmojis();
-                                        userNameEmojis = new ArrayList<>(emojis.size());
-                                        for (com.sys1yagi.mastodon4j.api.entity.Emoji emoji : emojis) {
-                                            userNameEmojis.add(new Emoji(
-                                                    emoji.getShortcode(),
-                                                    emoji.getUrl()
-                                            ));
-                                        }
-                                    }
+                                    Emoji[] userNameEmojis = user.getEmojis();
                                     if (userNameEmojis != null) {
                                         if (userNameEmojiSetter == null) {
                                             userNameEmojiSetter = new EmojiToTextViewSetter(requests, userNameText);
@@ -528,7 +515,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
         Fragment top=new HomeTimeLineFragment();
 
         FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         fragmentManager
                 .beginTransaction()
                 .replace(R.id.mainLayout, top)

@@ -16,8 +16,7 @@
 
 package com.github.moko256.twitlatte.entity
 
-import android.support.annotation.IntDef
-import kotlin.annotation.Retention
+import androidx.annotation.IntDef
 
 /**
  * Created by moko256 on 2018/01/13.
@@ -26,7 +25,7 @@ import kotlin.annotation.Retention
  */
 
 data class AccessToken(
-        @Type.ClientTypeInt val type: Int,
+        @ClientType.ClientTypeInt val type: Int,
         val url: String,
         val userId: Long,
         val screenName: String,
@@ -51,10 +50,10 @@ fun splitAccessTokenKey(accessTokenKey: String): Pair<String, Long> {
     return splitString[0] to splitString[1].toLong()
 }
 
-class Type{
+class ClientType{
 
     @Retention(AnnotationRetention.SOURCE)
-    @IntDef(Type.TWITTER, Type.MASTODON)
+    @IntDef(ClientType.TWITTER, ClientType.MASTODON)
     annotation class ClientTypeInt
 
     companion object{

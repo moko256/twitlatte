@@ -17,14 +17,15 @@
 package com.github.moko256.twitlatte;
 
 import android.content.Context;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 
-import com.github.moko256.twitlatte.entity.Type;
+import com.github.moko256.twitlatte.entity.ClientType;
 import com.github.moko256.twitlatte.widget.FragmentPagerAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 /**
  * Created by moko256 on 2017/01/15.
@@ -53,10 +54,10 @@ public class ShowUserFragmentsPagerAdapter extends FragmentPagerAdapter {
         list = new ArrayList<>(5);
         list.add(FRAGMENT_INFO);
         list.add(FRAGMENT_TIMELINE);
-        if (GlobalApplication.clientType == Type.MASTODON){
+        if (GlobalApplication.clientType == ClientType.MASTODON){
             list.add(FRAGMENT_MEDIA);
         }
-        if (!(GlobalApplication.clientType == Type.MASTODON && userId != GlobalApplication.userId)){
+        if (!(GlobalApplication.clientType == ClientType.MASTODON && userId != GlobalApplication.userId)){
             list.add(FRAGMENT_LIKE);
         }
         list.add(FRAGMENT_FOLLOW);

@@ -17,14 +17,15 @@
 package com.github.moko256.twitlatte;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.github.moko256.twitlatte.entity.Type;
+import com.github.moko256.twitlatte.entity.ClientType;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 
 /**
  * Created by moko256 on 2017/07/05.
@@ -38,17 +39,16 @@ public class TrendsActivity extends AppCompatActivity {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_search);
 
         actionBar=getSupportActionBar();
         actionBar.setTitle(getIntent().getStringExtra("query"));
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeAsUpIndicator(R.drawable.ic_back_white_24dp);
 
-        if (savedInstanceState == null && GlobalApplication.clientType == Type.TWITTER) {
+        if (savedInstanceState == null && GlobalApplication.clientType == ClientType.TWITTER) {
             getSupportFragmentManager()
                     .beginTransaction()
-                    .add(R.id.activity_search_fragment_container, new TrendsFragment())
+                    .add(android.R.id.content, new TrendsFragment())
                     .commit();
         }
     }

@@ -19,7 +19,6 @@ package com.github.moko256.twitlatte.database;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -39,17 +38,18 @@ import kotlin.Pair;
 public class TokenSQLiteOpenHelper extends SQLiteOpenHelper {
 
     private static final String TABLE_NAME = "AccountTokenList";
+    private static final int DATABASE_VERSION = 1;
     private static final String[] TABLE_COLUMNS = new String[]{ "type", "url", "userId", "userName", "token", "tokenSecret"};
 
     public static final String TWITTER_URL = "twitter.com";
 
     public TokenSQLiteOpenHelper(Context context){
-        super(context,"AccountTokenList.db",null,1);
+        super(context,"AccountTokenList.db",null,DATABASE_VERSION);
     }
 
     @TestOnly
     TokenSQLiteOpenHelper(Context context, String fileName){
-        super(context, fileName, null, 1);
+        super(context, fileName, null, DATABASE_VERSION);
     }
 
     @Override
@@ -125,7 +125,7 @@ public class TokenSQLiteOpenHelper extends SQLiteOpenHelper {
         synchronized (this) {
             SQLiteDatabase database = getWritableDatabase();
 
-            ContentValues contentValues = new ContentValues();
+            ContentValues contentValues = new ContentValues(TABLE_COLUMNS.length);
             contentValues.put("type", accessToken.getType());
             contentValues.put("url", accessToken.getUrl());
             contentValues.put("userName", accessToken.getScreenName());
@@ -145,16 +145,6 @@ public class TokenSQLiteOpenHelper extends SQLiteOpenHelper {
             database.delete(TABLE_NAME, "url = '" + accessToken.getUrl() + "' AND " + "userId = " + String.valueOf(accessToken.getUserId()), null);
             database.close();
         }
-    }
-
-    public long getSize(){
-        long count;
-        synchronized (this) {
-            SQLiteDatabase database = getReadableDatabase();
-            count = DatabaseUtils.queryNumEntries(database, TABLE_NAME);
-            database.close();
-        }
-        return count;
     }
 
 }

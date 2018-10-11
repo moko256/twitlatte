@@ -18,15 +18,10 @@ package com.github.moko256.twitlatte;
 
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
-import android.text.style.ClickableSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,27 +29,29 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
-import com.github.moko256.mastodon.MTUser;
-import com.github.moko256.twitlatte.database.CachedUsersSQLiteOpenHelper;
 import com.github.moko256.twitlatte.entity.Emoji;
+import com.github.moko256.twitlatte.entity.User;
 import com.github.moko256.twitlatte.glide.GlideApp;
 import com.github.moko256.twitlatte.glide.GlideRequests;
 import com.github.moko256.twitlatte.intent.AppCustomTabsKt;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
+import com.github.moko256.twitlatte.text.style.ClickableNoLineSpan;
 import com.github.moko256.twitlatte.view.EmojiToTextViewSetter;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.text.DateFormat;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import twitter4j.TwitterException;
-import twitter4j.User;
 
 /**
  * Created by moko256 on 2017/01/15.
@@ -132,9 +129,11 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
                         this::setShowUserInfo,
                         throwable -> {
                             throwable.printStackTrace();
-                            ((BaseListFragment.GetSnackBar) requireActivity())
-                                    .getSnackBar(TwitterStringUtils.convertErrorToText(throwable))
-                                    .show();
+                            Snackbar.make(
+                                    ((BaseListFragment.GetViewForSnackBar) requireActivity()).getViewForSnackBar(),
+                                    TwitterStringUtils.convertErrorToText(throwable),
+                                    Snackbar.LENGTH_LONG
+                            );
                         }
                 )));
 
@@ -197,25 +196,14 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
                 user.isProtected(),
                 user.isVerified()
         );
-        CharSequence userBio = TwitterStringUtils.getProfileLinkedSequence(
+        CharSequence userBio = TwitterStringUtils.getLinkedSequence(
                 getContext(),
-                user
+                user.getDescription(),
+                user.getDescriptionLinks()
         );
         userNameText.setText(userName);
         userBioText.setText(userBio);
-        List<Emoji> userNameEmojis = null;
-        if (user instanceof CachedUsersSQLiteOpenHelper.CachedUser) {
-            userNameEmojis = ((CachedUsersSQLiteOpenHelper.CachedUser) user).getEmojis();
-        } else if (user instanceof MTUser) {
-            List<com.sys1yagi.mastodon4j.api.entity.Emoji> emojis = ((MTUser) user).account.getEmojis();
-            userNameEmojis = new ArrayList<>(emojis.size());
-            for (com.sys1yagi.mastodon4j.api.entity.Emoji emoji : emojis) {
-                userNameEmojis.add(new Emoji(
-                        emoji.getShortcode(),
-                        emoji.getUrl()
-                ));
-            }
-        }
+        Emoji[] userNameEmojis = user.getEmojis();
         if (userNameEmojis != null) {
             if (userNameEmojiSetter == null) {
                 userNameEmojiSetter = new EmojiToTextViewSetter(glideRequests, userNameText);
@@ -243,12 +231,12 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
             userLocation.setVisibility(View.GONE);
         }
 
-        final String url = user.getURL();
+        final String url = user.getUrl();
         if (!TextUtils.isEmpty(url)){
             String text = getString(R.string.url_is, url);
             SpannableStringBuilder builder = new SpannableStringBuilder(text);
             int start = text.indexOf(url);
-            builder.setSpan(new ClickableSpan() {
+            builder.setSpan(new ClickableNoLineSpan() {
                 @Override
                 public void onClick(View widget) {
                     AppCustomTabsKt.launchChromeCustomTabs(requireContext(), url);
@@ -270,9 +258,9 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
         return Single.create(
                 subscriber -> {
                     try {
-                        User user = GlobalApplication.twitter.showUser(userId);
+                        twitter4j.User user = GlobalApplication.twitter.showUser(userId);
                         GlobalApplication.userCache.add(user);
-                        subscriber.onSuccess(user);
+                        subscriber.onSuccess(GlobalApplication.userCache.get(userId));
                     } catch (TwitterException e) {
                         subscriber.tryOnError(e);
                     }

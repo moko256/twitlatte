@@ -16,7 +16,7 @@
 
 package com.github.moko256.twitlatte;
 
-import android.support.annotation.StringRes;
+import androidx.annotation.StringRes;
 
 /**
  * Created by moko256 on 2016/06/23.

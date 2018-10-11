@@ -17,19 +17,22 @@
 package com.github.moko256.twitlatte;
 
 import android.app.Application;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.graphics.Color;
 import android.os.Build;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
-import android.support.v4.util.LruCache;
-import android.support.v7.app.AppCompatDelegate;
 
 import com.github.moko256.mastodon.MastodonTwitterImpl;
+import com.github.moko256.twitlatte.cacheMap.PostCache;
 import com.github.moko256.twitlatte.cacheMap.StatusCacheMap;
 import com.github.moko256.twitlatte.cacheMap.UserCacheMap;
 import com.github.moko256.twitlatte.entity.AccessToken;
-import com.github.moko256.twitlatte.entity.Type;
+import com.github.moko256.twitlatte.entity.ClientType;
 import com.github.moko256.twitlatte.model.AccountsModel;
 import com.github.moko256.twitlatte.net.SSLSocketFactoryCompat;
+import com.github.moko256.twitlatte.notification.ExceptionNotification;
 import com.github.moko256.twitlatte.repository.PreferenceRepository;
 
 import java.lang.reflect.Field;
@@ -42,10 +45,11 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.collection.LruCache;
 import okhttp3.OkHttpClient;
 import twitter4j.AlternativeHttpClientImpl;
-import twitter4j.HttpClient;
-import twitter4j.HttpClientConfiguration;
 import twitter4j.HttpClientFactory;
 import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
@@ -66,7 +70,7 @@ public class GlobalApplication extends Application {
     public static Twitter twitter;
     public static AccessToken accessToken;
 
-    @Type.ClientTypeInt
+    @ClientType.ClientTypeInt
     public static int clientType = -1;
 
     static long userId;
@@ -90,6 +94,7 @@ public class GlobalApplication extends Application {
 
     public final static UserCacheMap userCache = new UserCacheMap();
     public final static StatusCacheMap statusCache = new StatusCacheMap();
+    public final static PostCache postCache = new PostCache(statusCache, userCache);
 
     public static AccountsModel accountsModel;
 
@@ -98,6 +103,35 @@ public class GlobalApplication extends Application {
         preferenceRepository = new PreferenceRepository(
                 PreferenceManager.getDefaultSharedPreferences(this)
         );
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(
+                    "crash_log",
+                    getString(R.string.crash_log),
+                    NotificationManager.IMPORTANCE_DEFAULT
+            );
+            channel.setDescription(getString(R.string.crash_log_channel_description));
+            channel.setLightColor(Color.RED);
+            channel.enableLights(true);
+            channel.setShowBadge(false);
+            channel.setLockscreenVisibility(Notification.VISIBILITY_SECRET);
+
+            NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            if (manager != null) {
+                manager.createNotificationChannel(channel);
+            }
+        }
+
+        final Thread.UncaughtExceptionHandler defaultUnCaughtExceptionHandler=Thread.getDefaultUncaughtExceptionHandler();
+        Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
+            try {
+                new ExceptionNotification().create(e, getApplicationContext());
+            }catch (Throwable fe){
+                fe.printStackTrace();
+            } finally {
+                defaultUnCaughtExceptionHandler.uncaughtException(t,e);
+            }
+        });
 
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
 
@@ -145,7 +179,7 @@ public class GlobalApplication extends Application {
         GlobalApplication.accessToken = accessToken;
         userCache.prepare(this, accessToken);
         statusCache.prepare(this, accessToken);
-        statusLimit = clientType == Type.TWITTER? 200: 40;
+        statusLimit = clientType == ClientType.TWITTER? 200: 40;
     }
 
     @NonNull
@@ -154,7 +188,7 @@ public class GlobalApplication extends Application {
 
         Configuration conf;
 
-        if (accessToken.getType() == Type.TWITTER){
+        if (accessToken.getType() == ClientType.TWITTER){
             conf = new ConfigurationBuilder()
                     .setTweetModeExtended(true)
                     .setOAuthConsumerKey(BuildConfig.CONSUMER_KEY)
@@ -163,11 +197,7 @@ public class GlobalApplication extends Application {
                     .setOAuthAccessTokenSecret(accessToken.getTokenSecret())
                     .build();
 
-            replaceCompatibleOkHttpClient(
-                    getT4jHttpClient(
-                            conf.getHttpClientConfiguration()
-                    )
-            );
+            replaceCompatibleOkHttpClient(conf);
 
             t = twitterCache.get(conf);
 
@@ -181,11 +211,7 @@ public class GlobalApplication extends Application {
                     .setRestBaseURL(accessToken.getUrl())
                     .build();
 
-            replaceCompatibleOkHttpClient(
-                    getT4jHttpClient(
-                            conf.getHttpClientConfiguration()
-                    )
-            );
+            replaceCompatibleOkHttpClient(conf);
 
             t = twitterCache.get(conf);
 
@@ -193,7 +219,7 @@ public class GlobalApplication extends Application {
                 t = new MastodonTwitterImpl(
                         conf,
                         accessToken.getUserId(),
-                        getOkHttpClient(conf.getHttpClientConfiguration()).newBuilder()
+                        getOkHttpClient(conf).newBuilder()
                 );
                 twitterCache.put(conf, t);
             }
@@ -202,8 +228,9 @@ public class GlobalApplication extends Application {
         return t;
     }
 
-    private static void replaceCompatibleOkHttpClient(AlternativeHttpClientImpl httpClient){
+    private static void replaceCompatibleOkHttpClient(Configuration conf){
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
+            AlternativeHttpClientImpl httpClient = getT4jHttpClient(conf);
             OkHttpClient oldClient = httpClient.getOkHttpClient();
             if (!(oldClient.sslSocketFactory() instanceof SSLSocketFactoryCompat)){
                 try {
@@ -238,19 +265,19 @@ public class GlobalApplication extends Application {
 
     @NonNull
     public static OkHttpClient getOkHttpClient(){
-        return getOkHttpClient(twitter.getConfiguration().getHttpClientConfiguration());
+        return getOkHttpClient(twitter.getConfiguration());
     }
 
     @NonNull
-    public static OkHttpClient getOkHttpClient(HttpClientConfiguration configuration){
-        AlternativeHttpClientImpl httpClient = getT4jHttpClient(configuration);
-        replaceCompatibleOkHttpClient(httpClient);
-        return httpClient.getOkHttpClient();
+    public static OkHttpClient getOkHttpClient(Configuration configuration){
+        replaceCompatibleOkHttpClient(configuration);
+        return getT4jHttpClient(configuration).getOkHttpClient();
     }
 
     @NonNull
-    private static AlternativeHttpClientImpl getT4jHttpClient(HttpClientConfiguration configuration){
-        HttpClient httpClient = HttpClientFactory.getInstance(configuration);
-        return (AlternativeHttpClientImpl) httpClient;
+    private static AlternativeHttpClientImpl getT4jHttpClient(Configuration configuration){
+        return (AlternativeHttpClientImpl) HttpClientFactory.getInstance(
+                configuration.getHttpClientConfiguration()
+        );
     }
 }

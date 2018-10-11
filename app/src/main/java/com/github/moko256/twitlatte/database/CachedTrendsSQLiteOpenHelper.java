@@ -24,14 +24,11 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import com.github.moko256.twitlatte.BuildConfig;
 import com.github.moko256.twitlatte.entity.AccessToken;
+import com.github.moko256.twitlatte.entity.Trend;
 
 import java.io.File;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
-
-import twitter4j.Trend;
 
 /**
  * Created by moko256 on 2017/07/05.
@@ -56,7 +53,7 @@ public class CachedTrendsSQLiteOpenHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         if (oldVersion == 1) {
             db.execSQL("alter table " + TABLE_NAME + " add column volume");
-            db.execSQL("insert into " + TABLE_NAME + "(volume) values(-1)");
+            db.execSQL("update " + TABLE_NAME + " set volume=-1");
         }
     }
 
@@ -69,7 +66,7 @@ public class CachedTrendsSQLiteOpenHelper extends SQLiteOpenHelper {
             trends = new ArrayList<>(c.getCount());
 
             while (c.moveToNext()) {
-                trends.add(new CachedTrend(
+                trends.add(new Trend(
                         c.getString(0),
                         c.getInt(1)
                 ));
@@ -90,61 +87,16 @@ public class CachedTrendsSQLiteOpenHelper extends SQLiteOpenHelper {
 
             for (int i = 0; i < trends.size(); i++) {
                 Trend item = trends.get(i);
-                ContentValues contentValues = new ContentValues();
+                ContentValues contentValues = new ContentValues(2);
                 contentValues.put("name", item.getName());
-                contentValues.put("volume", item.getTweetVolume());
+                contentValues.put("volume", item.getVolume());
 
-                database.insert(TABLE_NAME, "", contentValues);
+                database.insert(TABLE_NAME, null, contentValues);
             }
 
             database.setTransactionSuccessful();
             database.endTransaction();
             database.close();
-        }
-    }
-
-    private static class CachedTrend implements Trend{
-        private final String name;
-        private final int tweetVolume;
-
-        private CachedTrend(String name, int tweetVolume){
-            this.name = name;
-            this.tweetVolume = tweetVolume;
-        }
-
-        @Override
-        public String getName() {
-            return name;
-        }
-
-        @Override
-        public String getURL() {
-            return "http://twitter.com/search?q=" + getQuery();
-        }
-
-        @Override
-        public String getQuery() {
-            try {
-                return URLEncoder.encode(name, "UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-                return null;
-            }
-        }
-
-        @Override
-        public int getTweetVolume() {
-            return tweetVolume;
-        }
-
-        @Override
-        public int hashCode() {
-            return name.hashCode();
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            return obj!=null&&obj instanceof Trend&&((Trend) obj).getName().equals(name);
         }
     }
 }

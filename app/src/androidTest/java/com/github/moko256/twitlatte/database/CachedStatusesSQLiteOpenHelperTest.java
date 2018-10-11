@@ -16,19 +16,20 @@
 
 package com.github.moko256.twitlatte.database;
 
-import android.support.annotation.NonNull;
-import android.support.test.InstrumentationRegistry;
-import android.support.test.runner.AndroidJUnit4;
-
-import com.github.moko256.twitlatte.cacheMap.StatusCacheMap;
+import com.github.moko256.twitlatte.converter.StatusConverterKt;
 import com.github.moko256.twitlatte.entity.AccessToken;
+import com.github.moko256.twitlatte.entity.StatusObject;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 
+import androidx.annotation.NonNull;
+import androidx.test.InstrumentationRegistry;
+import androidx.test.runner.AndroidJUnit4;
 import twitter4j.GeoLocation;
 import twitter4j.HashtagEntity;
 import twitter4j.MediaEntity;
@@ -81,36 +82,36 @@ public class CachedStatusesSQLiteOpenHelperTest {
     }
 
     private void addCacheTest(){
-        helper.addCachedStatus(new StatusCacheMap.CachedStatus(new TestStatus(TEST_DUMMY_STATUS_ID_1, TEST_DUMMY_STATUS_TEXT_0)), false);
-        Status addedStatusResult = helper.getCachedStatus(TEST_DUMMY_STATUS_ID_1);
+        helper.addCachedStatus(StatusConverterKt.convertToCommonStatus(new TestStatus(TEST_DUMMY_STATUS_ID_1, TEST_DUMMY_STATUS_TEXT_0)), false);
+        StatusObject addedStatusResult = helper.getCachedStatus(TEST_DUMMY_STATUS_ID_1);
 
-        assertEquals(addedStatusResult.getText(), TEST_DUMMY_STATUS_TEXT_0);
+        assertEquals(((com.github.moko256.twitlatte.entity.Status) addedStatusResult).getText(), TEST_DUMMY_STATUS_TEXT_0);
     }
 
     private void updateCacheTest(){
-        helper.addCachedStatus(new StatusCacheMap.CachedStatus(new TestStatus(TEST_DUMMY_STATUS_ID_1, TEST_DUMMY_STATUS_TEXT_1)), false);
-        Status updatedStatusResult = helper.getCachedStatus(TEST_DUMMY_STATUS_ID_1);
+        helper.addCachedStatus(StatusConverterKt.convertToCommonStatus(new TestStatus(TEST_DUMMY_STATUS_ID_1, TEST_DUMMY_STATUS_TEXT_1)), false);
+        StatusObject updatedStatusResult = helper.getCachedStatus(TEST_DUMMY_STATUS_ID_1);
 
-        assertEquals(updatedStatusResult.getText(), TEST_DUMMY_STATUS_TEXT_1);
+        assertEquals(((com.github.moko256.twitlatte.entity.Status) updatedStatusResult).getText(), TEST_DUMMY_STATUS_TEXT_1);
     }
 
     private void removeCacheTest(){
-        helper.deleteCachedStatus(TEST_DUMMY_STATUS_ID_1);
+        helper.deleteCachedStatuses(Collections.singletonList(TEST_DUMMY_STATUS_ID_1));
 
         assertEquals(helper.getCachedStatus(TEST_DUMMY_STATUS_ID_1), null);
     }
 
     private void addStatusesTest(){
         helper.addCachedStatuses(Arrays.asList(
-                new StatusCacheMap.CachedStatus(new TestStatus(TEST_DUMMY_STATUS_ID_1, TEST_DUMMY_STATUS_TEXT_0)),
-                new StatusCacheMap.CachedStatus(new TestStatus(TEST_DUMMY_STATUS_ID_2, TEST_DUMMY_STATUS_TEXT_1))),false
+                StatusConverterKt.convertToCommonStatus(new TestStatus(TEST_DUMMY_STATUS_ID_1, TEST_DUMMY_STATUS_TEXT_0)),
+                StatusConverterKt.convertToCommonStatus(new TestStatus(TEST_DUMMY_STATUS_ID_2, TEST_DUMMY_STATUS_TEXT_1))), false
         );
 
-        assertEquals(helper.getCachedStatus(TEST_DUMMY_STATUS_ID_1).getText(), TEST_DUMMY_STATUS_TEXT_0);
-        assertEquals(helper.getCachedStatus(TEST_DUMMY_STATUS_ID_2).getText(), TEST_DUMMY_STATUS_TEXT_1);
+        assertEquals(((com.github.moko256.twitlatte.entity.Status) helper.getCachedStatus(TEST_DUMMY_STATUS_ID_1)).getText(), TEST_DUMMY_STATUS_TEXT_0);
+        assertEquals(((com.github.moko256.twitlatte.entity.Status) helper.getCachedStatus(TEST_DUMMY_STATUS_ID_2)).getText(), TEST_DUMMY_STATUS_TEXT_1);
     }
 
-    private static class TestStatus implements Status{
+    private static class TestStatus implements Status {
 
         private final long id;
         private final String text;

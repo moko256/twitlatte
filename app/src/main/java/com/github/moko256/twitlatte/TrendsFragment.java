@@ -20,28 +20,24 @@ import android.graphics.Rect;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 
 import com.github.moko256.twitlatte.database.CachedTrendsSQLiteOpenHelper;
-import com.github.moko256.twitlatte.text.TwitterStringUtils;
+import com.github.moko256.twitlatte.entity.Trend;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import twitter4j.GeoLocation;
-import twitter4j.Trend;
 import twitter4j.Trends;
 import twitter4j.TwitterException;
 
@@ -61,7 +57,8 @@ public class TrendsFragment extends BaseListFragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        list=new ArrayList<>();
+        super.onCreate(savedInstanceState);
+
         disposable = new CompositeDisposable();
         helper = new CachedTrendsSQLiteOpenHelper(
                 requireContext().getApplicationContext(),
@@ -71,15 +68,16 @@ public class TrendsFragment extends BaseListFragment {
         if (trends.size() > 0){
             list = trends;
             setRefreshing(false);
+        } else {
+            list = new ArrayList<>(20);
         }
-        super.onCreate(savedInstanceState);
     }
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view=super.onCreateView(inflater, container, savedInstanceState);
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
-        getRecyclerView().addItemDecoration(new RecyclerView.ItemDecoration() {
+        recyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
             @Override
             public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
                 super.getItemOffsets(outRect, view, parent, state);
@@ -90,18 +88,18 @@ public class TrendsFragment extends BaseListFragment {
         });
 
         adapter=new TrendsAdapter(getContext(), list);
-        setAdapter(adapter);
+        recyclerView.setAdapter(adapter);
         if (!isInitializedList()){
             adapter.notifyDataSetChanged();
         }
 
-        return view;
     }
 
     @Override
     public void onDestroyView() {
-        super.onDestroyView();
+        recyclerView.swapAdapter(null, true);
         adapter=null;
+        super.onDestroyView();
     }
 
     @Override
@@ -125,13 +123,13 @@ public class TrendsFragment extends BaseListFragment {
                         .subscribe(
                                 result-> {
                                     list.clear();
-                                    list.addAll(Arrays.asList(result.getTrends()));
+                                    list.addAll(result);
                                     adapter.notifyDataSetChanged();
                                     setRefreshing(false);
                                 },
                                 e -> {
                                     e.printStackTrace();
-                                    getSnackBar(TwitterStringUtils.convertErrorToText(e)).show();
+                                    notifyErrorBySnackBar(e).show();
                                     setRefreshing(false);
                                 }
                         )
@@ -156,15 +154,22 @@ public class TrendsFragment extends BaseListFragment {
         return new LinearLayoutManager(getContext());
     }
 
-    private Single<Trends> getResponseSingle(GeoLocation geolocation) {
+    private Single<List<Trend>> getResponseSingle(GeoLocation geolocation) {
         return Single.create(
                 subscriber->{
                     try {
                         Trends trends = GlobalApplication.twitter
                                 .getPlaceTrends(GlobalApplication.twitter.getClosestTrends(geolocation).get(0).getWoeid());
-                        helper.setTrends(Arrays.asList(trends.getTrends()));
+                        twitter4j.Trend[] result = trends.getTrends();
+                        ArrayList<Trend> arrayList = new ArrayList<>(result.length);
 
-                        subscriber.onSuccess(trends);
+                        for (twitter4j.Trend trend : result) {
+                            arrayList.add(new Trend(trend.getName(), trend.getTweetVolume()));
+                        }
+
+                        helper.setTrends(arrayList);
+
+                        subscriber.onSuccess(arrayList);
                     } catch (TwitterException e) {
                         subscriber.tryOnError(e);
                     }

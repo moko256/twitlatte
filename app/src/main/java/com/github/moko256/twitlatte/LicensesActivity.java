@@ -17,14 +17,15 @@
 package com.github.moko256.twitlatte;
 
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 
 /**
  * Created by moko256 on 2016/11/14.
@@ -61,10 +62,9 @@ public class LicensesActivity extends AppCompatActivity {
                     switch (libName){
                         case "support_v4":
                         case "support_v7":
-                        case "support_v13":
-                        case "support_v14":
                         case "support_design":
                         case "support_custom_tabs":
+                        case "support_arch":
                             path = "licenses/android_support.txt";
                             break;
 

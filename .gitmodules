@@ -4,6 +4,6 @@
 [submodule "mastodon4j"]
 	path = mastodon4j
 	url = https://github.com/moko256/mastodon4j
-[submodule "twitter4j"]
-	path = twitter4j
-	url = https://github.com/takke/twitter4j.git
+[submodule "mastodon4j_to_twitter4j/mastodon4j"]
+	path = mastodon4j_to_twitter4j/mastodon4j
+	url = https://github.com/moko256/mastodon4j.git

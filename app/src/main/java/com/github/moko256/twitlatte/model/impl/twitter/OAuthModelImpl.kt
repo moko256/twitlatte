@@ -19,7 +19,7 @@ package com.github.moko256.twitlatte.model.impl.twitter
 import android.os.Bundle
 import com.github.moko256.twitlatte.database.TokenSQLiteOpenHelper
 import com.github.moko256.twitlatte.entity.AccessToken
-import com.github.moko256.twitlatte.entity.Type
+import com.github.moko256.twitlatte.entity.ClientType
 import com.github.moko256.twitlatte.model.base.OAuthModel
 import io.reactivex.Single
 import twitter4j.TwitterException
@@ -32,10 +32,10 @@ import twitter4j.conf.ConfigurationContext
  *
  * @author moko256
  */
-class OAuthModelImpl(override var isRestartable: Boolean = false) : OAuthModel {
-    private val STATE_MODEL_CLIENT_KEY = "state_model_client_key"
-    private val STATE_MODEL_CLIENT_SECRET = "state_model_client_secret"
+private const val STATE_MODEL_CLIENT_KEY = "state_model_client_key"
+private const val STATE_MODEL_CLIENT_SECRET = "state_model_client_secret"
 
+class OAuthModelImpl(override var isRestartable: Boolean = false) : OAuthModel {
     private lateinit var req: RequestToken
     private val oauth = OAuthAuthorization(ConfigurationContext.getInstance())
 
@@ -61,8 +61,10 @@ class OAuthModelImpl(override var isRestartable: Boolean = false) : OAuthModel {
 
         return Single.create {
             try {
-                req = oauth.getOAuthRequestToken(callbackUrl)
-                it.onSuccess(req.authorizationURL?:"oob")
+                req = oauth.getOAuthRequestToken(
+                        callbackUrl ?: "oob"
+                )
+                it.onSuccess(req.authorizationURL)
                 isRestartable = true
             } catch (e: TwitterException) {
                 it.tryOnError(e)
@@ -75,7 +77,7 @@ class OAuthModelImpl(override var isRestartable: Boolean = false) : OAuthModel {
             try {
                 val accessToken = oauth.getOAuthAccessToken(req, pin)
                 it.onSuccess(AccessToken(
-                        Type.TWITTER,
+                        ClientType.TWITTER,
                         TokenSQLiteOpenHelper.TWITTER_URL,
                         accessToken.userId,
                         accessToken.screenName,

@@ -23,31 +23,24 @@ import com.sys1yagi.mastodon4j.api.Range;
 import com.sys1yagi.mastodon4j.api.exception.Mastodon4jRequestException;
 import com.sys1yagi.mastodon4j.api.method.Accounts;
 import com.sys1yagi.mastodon4j.api.method.Favourites;
-import com.sys1yagi.mastodon4j.api.method.Public;
 import com.sys1yagi.mastodon4j.api.method.Statuses;
 import com.sys1yagi.mastodon4j.api.method.Timelines;
 
 import java.io.File;
 import java.io.InputStream;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
 
 import okhttp3.OkHttpClient;
 import twitter4j.AccountSettings;
 import twitter4j.Category;
 import twitter4j.DirectMessage;
-import twitter4j.DirectMessageEvent;
-import twitter4j.DirectMessageEventList;
+import twitter4j.DirectMessageList;
 import twitter4j.Friendship;
 import twitter4j.GeoLocation;
 import twitter4j.GeoQuery;
 import twitter4j.IDs;
 import twitter4j.Location;
-import twitter4j.MessageData;
 import twitter4j.OEmbed;
 import twitter4j.OEmbedRequest;
 import twitter4j.PagableResponseList;
@@ -88,7 +81,6 @@ import twitter4j.auth.AccessToken;
 import twitter4j.auth.Authorization;
 import twitter4j.auth.OAuth2Token;
 import twitter4j.auth.RequestToken;
-import twitter4j.conf.ChunkedUploadConfiguration;
 import twitter4j.conf.Configuration;
 import twitter4j.util.function.Consumer;
 
@@ -100,24 +92,10 @@ import twitter4j.util.function.Consumer;
 
 public final class MastodonTwitterImpl implements Twitter {
 
-    private static final SimpleDateFormat dateParser;
     private static final Gson gson;
 
     static {
-        dateParser = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-        dateParser.setTimeZone(TimeZone.getTimeZone("GMT"));
         gson = new Gson();
-    }
-
-    public static Date parseDate(String date){
-        try {
-            synchronized (dateParser) {
-                return dateParser.parse(date);
-            }
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return new Date(0);
-        }
     }
 
     public final MastodonClient client;
@@ -263,12 +241,12 @@ public final class MastodonTwitterImpl implements Twitter {
     }
 
     @Override
-    public DirectMessageEventList getDirectMessageEvents(int count) {
+    public DirectMessageList getDirectMessages(int count) {
         return null;
     }
 
     @Override
-    public DirectMessageEventList getDirectMessageEvents(int count, String cursor) {
+    public DirectMessageList getDirectMessages(int count, String cursor) {
         return null;
     }
 
@@ -278,27 +256,17 @@ public final class MastodonTwitterImpl implements Twitter {
     }
 
     @Override
-    public DirectMessageEvent showDirectMessageEvent(long id) {
-        return null;
-    }
-
-    @Override
     public DirectMessage destroyDirectMessage(long l) {
         return null;
     }
 
     @Override
-    public void destroyDirectMessageEvent(long id) {
-
-    }
-
-    @Override
-    public DirectMessageEvent createMessage(MessageData messageData) {
+    public DirectMessage sendDirectMessage(long l, String s) {
         return null;
     }
 
     @Override
-    public DirectMessage sendDirectMessage(long l, String s) {
+    public DirectMessage sendDirectMessage(long userId, String text, long mediaId) {
         return null;
     }
 
@@ -446,7 +414,7 @@ public final class MastodonTwitterImpl implements Twitter {
     @Override
     public User createFriendship(long l) throws TwitterException {
         try {
-            new Accounts(client).postFollow(l).execute();
+            new Accounts(client).postFollow(l, null).execute();
             return null;
         } catch (Mastodon4jRequestException e) {
             throw new MTException(e);
@@ -1058,8 +1026,8 @@ public final class MastodonTwitterImpl implements Twitter {
     public QueryResult search(Query query) {
         Pageable<com.sys1yagi.mastodon4j.api.entity.Status> pageable = null;
         try {
-            pageable = new Public(client)
-                    .getFederatedTag(query.getQuery(), MTRangeConverter.convert(query))
+            pageable = new com.sys1yagi.mastodon4j.api.method.Timelines(client)
+                    .getHashtagTimeline(query.getQuery(), false, false, MTRangeConverter.convert(query))
                     .execute();
         } catch (Mastodon4jRequestException e) {
             e.printStackTrace();
@@ -1177,7 +1145,7 @@ public final class MastodonTwitterImpl implements Twitter {
     public ResponseList<Status> getUserTimeline(String s, Paging paging) throws TwitterException {
         Accounts accounts = new Accounts(client);
         try {
-            return MTResponseList.convert(accounts.getStatuses(accounts.getAccountSearch(s, 1).execute().get(0).getId(), false,false, false, MTRangeConverter.convert(paging)).execute());
+            return MTResponseList.convert(accounts.getStatuses(accounts.getAccountSearch(s, 1, null).execute().get(0).getId(), false,false, false, MTRangeConverter.convert(paging)).execute());
         } catch (Mastodon4jRequestException e) {
             throw new MTException(e);
         }
@@ -1221,7 +1189,7 @@ public final class MastodonTwitterImpl implements Twitter {
     @Override
     public ResponseList<Status> getHomeTimeline(Paging paging) throws TwitterException {
         try {
-            return MTResponseList.convert(new Timelines(client).getHome(MTRangeConverter.convert(paging)).execute());
+            return MTResponseList.convert(new Timelines(client).getHomeTimeline(MTRangeConverter.convert(paging)).execute());
         } catch (Mastodon4jRequestException e) {
             throw new MTException(e);
         }
@@ -1279,7 +1247,7 @@ public final class MastodonTwitterImpl implements Twitter {
     @Override
     public Status destroyStatus(long l) throws TwitterException {
         try {
-            new Statuses(client).deleteStatus(l);
+            new Statuses(client).deleteStatus(l).execute();
         } catch (Mastodon4jRequestException e) {
             throw new MTException(e);
         }
@@ -1343,7 +1311,7 @@ public final class MastodonTwitterImpl implements Twitter {
     }
 
     @Override
-    public UploadedMedia uploadMediaChunked(ChunkedUploadConfiguration chunkedUploadConfiguration) {
+    public UploadedMedia uploadMediaChunked(String fileName, InputStream media) {
         return null;
     }
 
@@ -1363,6 +1331,11 @@ public final class MastodonTwitterImpl implements Twitter {
 
     @Override
     public AccountSettings updateAccountSettings(Integer integer, Boolean aBoolean, String s, String s1, String s2, String s3) {
+        return null;
+    }
+
+    @Override
+    public AccountSettings updateAllowDmsFrom(String allowDmsFrom) {
         return null;
     }
 
@@ -1459,7 +1432,7 @@ public final class MastodonTwitterImpl implements Twitter {
     @Override
     public User createMute(long l) {
         try {
-            new Accounts(client).postMute(l).execute();
+            new Accounts(client).postMute(l, null).execute();
         } catch (Mastodon4jRequestException e) {
             e.printStackTrace();
         }
@@ -1516,7 +1489,7 @@ public final class MastodonTwitterImpl implements Twitter {
     @Override
     public User showUser(String s) throws TwitterException {
         try {
-            return new MTUser(new Accounts(client).getAccountSearch(s, 1).execute().get(0));
+            return new MTUser(new Accounts(client).getAccountSearch(s, 1, null).execute().get(0));
         } catch (Mastodon4jRequestException e) {
             throw new MTException(e);
         }

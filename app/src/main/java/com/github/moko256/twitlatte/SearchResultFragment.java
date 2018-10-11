@@ -17,10 +17,10 @@
 package com.github.moko256.twitlatte;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
 
+import androidx.annotation.NonNull;
 import twitter4j.Paging;
 import twitter4j.Query;
 import twitter4j.RateLimitStatus;
@@ -43,15 +43,12 @@ public class SearchResultFragment extends BaseTweetListFragment {
     public void onCreate(Bundle savedInstanceState) {
         if (savedInstanceState == null) {
             searchText=getActivity().getIntent().getStringExtra(BUNDLE_KEY_SEARCH_QUERY);
+        } else {
+            searchText = savedInstanceState.getString(BUNDLE_KEY_SEARCH_QUERY,"");
         }
-        super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-    }
 
-    @Override
-    public void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        searchText=savedInstanceState.getString(BUNDLE_KEY_SEARCH_QUERY,"");
+        super.onCreate(savedInstanceState);
     }
 
     @Override

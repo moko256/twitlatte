@@ -115,17 +115,14 @@
                 android:key="license_lib_support_v7"
                 android:title="Android Compatibility Library v7"/>
             <Preference
-                android:key="license_lib_support_v13"
-                android:title="Android Compatibility Library v13"/>
-            <Preference
-                android:key="license_lib_support_v14"
-                android:title="Android Compatibility Library v14"/>
-            <Preference
                 android:key="license_lib_support_design"
                 android:title="Android Design Support Library"/>
             <Preference
                 android:key="license_lib_support_custom_tabs"
                 android:title="Android Custom Tabs Support Library"/>
+            <Preference
+                android:key="license_lib_support_arch"
+                android:title="Android Architecture Components"/>
             <Preference
                 android:key="license_lib_exo_player"
                 android:title="ExoPlayer"/>
@@ -148,6 +145,12 @@
                 android:key="license_lib_japng_android"
                 android:title="japng_android"/>
             <Preference
+                android:key="license_lib_kotlin"
+                android:title="Kotlin Programming Language"/>
+            <Preference
+                android:key="license_lib_kotlin_either"
+                android:title="kotlin-either"/>
+            <Preference
                 android:key="license_lib_okhttp"
                 android:title="OkHttp"/>
             <Preference
@@ -168,7 +171,8 @@
         </PreferenceScreen>
         <Preference
             android:key="source_code_link"
-            android:title="GitHub" />
+            android:title="@string/do_see_source_code"
+            android:summary="@string/description_see_source_code" />
         <PreferenceScreen
             android:key="contributors"
             android:title="@string/contributors">

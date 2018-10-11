@@ -20,9 +20,9 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.support.customtabs.CustomTabsIntent
-import android.support.v4.content.ContextCompat
 import android.widget.Toast
+import androidx.browser.customtabs.CustomTabsIntent
+import androidx.core.content.ContextCompat
 import com.github.moko256.twitlatte.GlobalApplication
 import com.github.moko256.twitlatte.R
 
@@ -39,8 +39,10 @@ import com.github.moko256.twitlatte.R
  * @param uri uri string
  */
 fun launchChromeCustomTabs(context: Context, uri: String){
-    val url = Uri.parse(uri)
+    launchChromeCustomTabs(context, Uri.parse(uri))
+}
 
+fun launchChromeCustomTabs(context: Context, url: Uri){
     try {
         if (GlobalApplication.preferenceRepository.getBoolean(GlobalApplication.KEY_USE_CHROME_CUSTOM_TAB, true)) {
             CustomTabsIntent.Builder()

@@ -18,10 +18,7 @@ package com.github.moko256.twitlatte.array;
 
 import org.junit.Test;
 
-import java.util.Arrays;
-import java.util.List;
-
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Created by moko256 on 2018/03/27.
@@ -31,40 +28,18 @@ import static org.junit.Assert.assertTrue;
 public class ArrayUtilsTest {
 
     @Test
-    public void convertToList() {
-        String[] array = new String[]{"0", "1", "2", "aaa", "@@@", "$$$$$$$"};
-        List<String> list = Arrays.asList(array);
-        for (int i = 0, length = array.length; i < length; i++){
-            assertTrue(array[i].equals(list.get(i)));
-        }
-    }
-
-    @Test
     public void toCommaSplitString() {
-        assertTrue(
-                "".contentEquals(ArrayUtils.toCommaSplitString(null))
+        assertEquals(
+                "", ArrayUtils.toCommaSplitString(null).toString()
         );
 
-        assertTrue(
-                "".contentEquals(ArrayUtils.toCommaSplitString(new String[]{}))
+        assertEquals(
+                "", ArrayUtils.toCommaSplitString(new String[]{}).toString()
         );
 
-        String[] array = new String[]{"0", "1", "2", "aaa", "@@@", "$$$$$$$"};
-        CharSequence result = ArrayUtils.toCommaSplitString(array);
-        assertTrue("0,1,2,aaa,@@@,$$$$$$$".contentEquals(result));
+        String[] array = new String[]{"0", "1", "2", "aaa", "@@@", "$$$$$$$", ""};
+        String result = ArrayUtils.toCommaSplitString(array).toString();
+        assertEquals("0,1,2,aaa,@@@,$$$$$$$,", result);
     }
 
-    @Test
-    public void toCommaAndPipeSplitString() {
-        assertTrue(
-                "".contentEquals(ArrayUtils.toCommaAndPipeSplitString(null))
-        );
-
-        assertTrue(
-                "".contentEquals(ArrayUtils.toCommaAndPipeSplitString(new String[][]{new String[]{}}))
-        );
-
-        String[][] array = new String[][]{new String[]{"0", "1", "2"}, new String[]{"aaa", "@@@", "$$$$$$$"}};
-        CharSequence result = ArrayUtils.toCommaAndPipeSplitString(array);
-        assertTrue("0|1|2,aaa|@@@|$$$$$$$".contentEquals(result));
-    }}
+}

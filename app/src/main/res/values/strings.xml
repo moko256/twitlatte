@@ -33,6 +33,7 @@
     <string name="post">Post</string>
     <string name="create_post">Create post</string>
     <string name="reply">Reply</string>
+    <string name="mention">Mention</string>
     <string name="following">Following</string>
     <string name="follower">Followers</string>
     <string name="like">Like</string>
@@ -73,6 +74,7 @@
     <string name="destroy_follow_follower">Cancel f4f</string>
     <string name="spam_report">Report this account as a spam</string>
     <string name="save_image">Save this image</string>
+    <string name="save_video">Save this video</string>
     <string name="error_occurred">Error occurred</string>
     <string name="load_timeline_image_mode">Quality of thumbnail on the timeline</string>
     <string name="version_text">Version</string>
@@ -86,6 +88,8 @@
     <string name="open_web_page_in_the_app">Open web pages in the app</string>
     <string name="viewing_web_page_in_app">Viewing web pages in app</string>
     <string name="viewing_web_page_in_external_browser">Viewing web pages in external browser</string>
+    <string name="crash_log">Crash Log</string>
+    <string name="crash_log_channel_description">Notify crash log when twitlatte crashed</string>
     <string name="regex_mute">Regex mute</string>
     <string name="edit_pattern">Edit Regex pattern</string>
     <string name="use_post_regex_mute">Use for the context and hide post</string>
@@ -104,6 +108,8 @@
     <string name="do_add_content_warning">Add content warning</string>
     <string name="no_app_can_open">No app can open</string>
     <string name="tweet_per_last_24_hours">%d tweets / last 24 hours</string>
+    <string name="do_see_source_code">See source codes of this app</string>
+    <string name="description_see_source_code">Hosted on GitHub</string>
 
     <string name="do_quote">Quote</string>
     <string name="do_logout">Logout</string>

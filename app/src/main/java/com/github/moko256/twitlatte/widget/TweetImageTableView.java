@@ -18,8 +18,6 @@ package com.github.moko256.twitlatte.widget;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.support.v7.content.res.AppCompatResources;
-import android.support.v7.widget.GridLayout;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
@@ -30,13 +28,15 @@ import android.widget.ImageView;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.github.moko256.twitlatte.GlobalApplication;
 import com.github.moko256.twitlatte.R;
-import com.github.moko256.twitlatte.ShowImageActivity;
+import com.github.moko256.twitlatte.ShowMediasActivity;
+import com.github.moko256.twitlatte.entity.Media;
 import com.github.moko256.twitlatte.glide.GlideApp;
 import com.github.moko256.twitlatte.glide.GlideRequests;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
 
+import androidx.appcompat.content.res.AppCompatResources;
+import androidx.gridlayout.widget.GridLayout;
 import jp.wasabeef.glide.transformations.BlurTransformation;
-import twitter4j.MediaEntity;
 
 /**
  * Created by moko256 on 2016/06/11.
@@ -52,7 +52,7 @@ public class TweetImageTableView extends GridLayout {
     private final ImageView playButton[] = new ImageView[4];
     private final ImageView markImage[] = new ImageView[4];
 
-    private MediaEntity mediaEntities[];
+    private Media medias[];
 
     private boolean isOpen = true;
 
@@ -130,7 +130,7 @@ public class TweetImageTableView extends GridLayout {
             int finalI = i;
             containers[i].setOnClickListener(v -> {
                 if (isOpen){
-                    getContext().startActivity(ShowImageActivity.getIntent(getContext(),mediaEntities, finalI));
+                    getContext().startActivity(ShowMediasActivity.getIntent(getContext(), medias, finalI));
                 } else {
                     isOpen = true;
                     updateView();
@@ -164,7 +164,7 @@ public class TweetImageTableView extends GridLayout {
     }
 
     private void updateImageNumber(){
-        int imageNum = mediaEntities.length;
+        int imageNum = medias.length;
         if (imageNum > 4){
             imageNum = 4;
         }
@@ -189,21 +189,24 @@ public class TweetImageTableView extends GridLayout {
         return params;
     }
 
-    public void setMediaEntities(MediaEntity[] mediaEntities, boolean sensitive) {
-        this.mediaEntities = mediaEntities;
+    public void setMediaEntities(Media[] mediaEntities, boolean sensitive) {
+        this.medias = mediaEntities;
         isOpen = !GlobalApplication.preferenceRepository.getString(GlobalApplication.KEY_TIMELINE_IMAGE_LOAD_MODE, "normal").equals("none") && !sensitive;
         updateImageNumber();
         updateView();
     }
 
     private void updateView(){
-        int imageNum = mediaEntities.length;
+        int imageNum = medias.length;
         if (imageNum > 4){
             imageNum = 4;
         }
         for (int ii = 0; ii < imageNum; ii++) {
 
-            String url = mediaEntities[ii].getMediaURLHttps();
+            String thumbnailUrl = medias[ii].getThumbnailUrl();
+            String originalUrl = medias[ii].getOriginalUrl();
+
+            String url = thumbnailUrl == null? originalUrl: thumbnailUrl;
             ImageView imageView = imageViews[ii];
 
             if (isOpen) {
@@ -215,8 +218,9 @@ public class TweetImageTableView extends GridLayout {
                         )
                         .transition(DrawableTransitionOptions.withCrossFade())
                         .into(imageView);
-                switch (mediaEntities[ii].getType()) {
-                    case "video":
+                switch (medias[ii].getImageType()) {
+                    case "video_one":
+                    case "video_multi":
                         if (foregrounds[ii].getVisibility() != VISIBLE) {
                             foregrounds[ii].setVisibility(VISIBLE);
                         }
@@ -227,7 +231,7 @@ public class TweetImageTableView extends GridLayout {
                             markImage[ii].setVisibility(GONE);
                         }
                         break;
-                    case "animated_gif":
+                    case "gif":
                         if (foregrounds[ii].getVisibility() != VISIBLE) {
                             foregrounds[ii].setVisibility(VISIBLE);
                         }

@@ -19,11 +19,11 @@ package com.github.moko256.twitlatte.view
 import android.graphics.drawable.Animatable
 import android.graphics.drawable.Drawable
 import android.os.Handler
-import android.support.v4.content.ContextCompat
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.style.ImageSpan
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import com.github.moko256.twitlatte.R
 import com.github.moko256.twitlatte.entity.Emoji
 import com.github.moko256.twitlatte.glide.GlideRequests
@@ -47,7 +47,7 @@ private val containsEmoji = Pattern.compile(":([a-zA-Z0-9_]{2,}):")
 
 class EmojiToTextViewSetter(private val glideRequests: GlideRequests, private val textView: TextView) {
 
-    fun set(text: CharSequence, emojis: List<Emoji>): Array<Disposable>? {
+    fun set(text: CharSequence, emojis: Array<Emoji>): Array<Disposable>? {
         val disposable = ArrayList<Disposable>(2)
 
         val matcher = containsEmoji.matcher(text)
@@ -137,23 +137,21 @@ class EmojiToTextViewSetter(private val glideRequests: GlideRequests, private va
                     .subscribe { pair ->
                         val emoji = pair.first
                         val drawable = pair.second.mutate()
-                        var w = drawable.intrinsicWidth.toFloat()
-                        var h = drawable.intrinsicHeight.toFloat()
-                        if (w == h) {
-                            w = imageSize
-                            h = imageSize
-                        } else {
-                            if (w > h) {
-                                val d = imageSize / w
-                                w = imageSize
-                                h *= d
-                            } else {
-                                val d = imageSize / h
-                                w *= d
-                                h = imageSize
-                            }
-                        }
-                        drawable.setBounds(0, 0, Math.round(w), Math.round(h))
+
+                        val w = drawable.intrinsicWidth.toFloat()
+                        val h = drawable.intrinsicHeight.toFloat()
+                        val aspect = w / h
+                        drawable.setBounds(
+                                0, 0,
+                                Math.round(
+                                        if (aspect == 1f) {
+                                            imageSize
+                                        } else {
+                                            imageSize * aspect
+                                        }
+                                ),
+                                Math.round(imageSize)
+                        )
 
                         map[emoji.shortCode]?.forEach {
                             builder.setSpan(

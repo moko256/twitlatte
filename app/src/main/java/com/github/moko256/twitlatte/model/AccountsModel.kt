@@ -29,7 +29,7 @@ class AccountsModel(val context: Context) {
 
     private val tokens: ArrayList<AccessToken> by lazy {
         val helper = TokenSQLiteOpenHelper(context)
-        val list = helper.accessTokens.toList()
+        val list = helper.accessTokens.asList()
         helper.close()
         ArrayList(list)
     }

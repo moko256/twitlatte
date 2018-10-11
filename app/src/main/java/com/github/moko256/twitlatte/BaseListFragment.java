@@ -16,18 +16,22 @@
 
 package com.github.moko256.twitlatte;
 
-import android.app.Activity;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.github.moko256.twitlatte.text.TwitterStringUtils;
+import com.google.android.material.snackbar.Snackbar;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 /**
  * Created by moko256 on 2016/10/09.
@@ -36,34 +40,40 @@ import android.view.ViewGroup;
  */
 public abstract class BaseListFragment extends Fragment implements MovableTopInterface {
 
-    private RecyclerView recyclerView;
-    private SwipeRefreshLayout swipeRefreshLayout;
+    protected RecyclerView recyclerView;
+    protected SwipeRefreshLayout swipeRefreshLayout;
 
     private boolean isShowed = false;
     private boolean isProgressCircleLoading = false;
+
+    private View viewForSnackBar;
 
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
 
-        if (savedInstanceState!=null){
-            onRestoreInstanceState(savedInstanceState);
-        }
-
         isShowed = true;
-
-        if (getUserVisibleHint() && !isInitializedList()){
-            onInitializeList();
-        }
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
-        super.onCreateView(inflater,container,savedInstanceState);
-
         View view=inflater.inflate(R.layout.fragment_base_list, container ,false);
 
         recyclerView= view.findViewById(R.id.TLlistView);
+        swipeRefreshLayout= view.findViewById(R.id.srl);
+
+        return view;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        FragmentActivity activity = getActivity();
+        if (activity instanceof GetViewForSnackBar) {
+            viewForSnackBar = ((GetViewForSnackBar) activity).getViewForSnackBar();
+        }
+
         recyclerView.setLayoutManager(initializeRecyclerViewLayoutManager());
         recyclerView.addOnScrollListener(new LoadScrollListener(recyclerView.getLayoutManager()) {
             @Override
@@ -74,7 +84,6 @@ public abstract class BaseListFragment extends Fragment implements MovableTopInt
             }
         });
 
-        swipeRefreshLayout= view.findViewById(R.id.srl);
         swipeRefreshLayout.setColorSchemeResources(R.color.color_primary);
         swipeRefreshLayout.setRefreshing(isProgressCircleLoading);
         swipeRefreshLayout.setOnRefreshListener(()->{
@@ -85,7 +94,9 @@ public abstract class BaseListFragment extends Fragment implements MovableTopInt
             }
         });
 
-        return view;
+        if (getUserVisibleHint() && !isInitializedList()){
+            onInitializeList();
+        }
     }
 
     @Override
@@ -113,10 +124,6 @@ public abstract class BaseListFragment extends Fragment implements MovableTopInt
         recyclerView=null;
     }
 
-    public void onRestoreInstanceState(Bundle savedInstanceState){
-
-    }
-
     protected abstract void onInitializeList();
     protected abstract void onUpdateList();
     protected abstract void onLoadMoreList();
@@ -129,22 +136,6 @@ public abstract class BaseListFragment extends Fragment implements MovableTopInt
         return layoutManager;
     }
 
-    public SwipeRefreshLayout getSwipeRefreshLayout() {
-        return swipeRefreshLayout;
-    }
-
-    protected RecyclerView.Adapter getAdapter() {
-        return recyclerView.getAdapter();
-    }
-
-    public RecyclerView getRecyclerView() {
-        return recyclerView;
-    }
-
-    protected void setAdapter(RecyclerView.Adapter adapter) {
-        recyclerView.setAdapter(adapter);
-    }
-
     protected void setRefreshing(boolean b){
         isProgressCircleLoading = b;
         if (swipeRefreshLayout != null) {
@@ -152,13 +143,20 @@ public abstract class BaseListFragment extends Fragment implements MovableTopInt
         }
     }
 
-    protected Snackbar getSnackBar(String string){
-        Activity parent=getActivity();
-        if(parent instanceof GetSnackBar){
-            return ((GetSnackBar) parent).getSnackBar(string);
-        } else {
-            return Snackbar.make(getView(), string, Snackbar.LENGTH_LONG);
-        }
+    protected Snackbar notifyBySnackBar(int stringId){
+        return Snackbar.make(
+                viewForSnackBar,
+                stringId,
+                Snackbar.LENGTH_SHORT
+        );
+    }
+
+    protected Snackbar notifyErrorBySnackBar(Throwable e){
+        return Snackbar.make(
+                viewForSnackBar,
+                TwitterStringUtils.convertErrorToText(e),
+                Snackbar.LENGTH_LONG
+        );
     }
 
     protected int getFirstVisibleItemPosition(RecyclerView.LayoutManager layoutManager){
@@ -171,8 +169,8 @@ public abstract class BaseListFragment extends Fragment implements MovableTopInt
         return position;
     }
 
-    public interface GetSnackBar {
-        Snackbar getSnackBar(String string);
+    public interface GetViewForSnackBar {
+        View getViewForSnackBar();
     }
 
 }

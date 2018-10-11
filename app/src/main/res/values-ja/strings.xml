@@ -33,7 +33,7 @@
     <string name="follower">フォロワー</string>
     <string name="like">お気に入り</string>
     <string name="account">アカウント</string>
-    <string name="following_and_followers">フォロ中ー・フォロワー</string>
+    <string name="following_and_followers">フォロー中・フォロワー</string>
     <string name="dark_theme">ダークテーマ</string>
     <string name="media">メディア</string>
     <string name="add_image">画像を追加</string>
@@ -44,6 +44,7 @@
     <string name="boosted_by">%1$s(%2$s)がブーストしました</string>
     <string name="reply_to">%sさんへの返信</string>
     <string name="mention_to">%sさんへの言及</string>
+    <string name="mention">メンション</string>
     <string name="application">アプリケーション</string>
     <string name="login_with_another_account">他のアカウントでログイン</string>
     <string name="logout">ログアウト</string>
@@ -69,6 +70,7 @@
     <string name="destroy_follow_follower">FF解除</string>
     <string name="spam_report">スパムとして報告する</string>
     <string name="save_image">この画像を保存する</string>
+    <string name="save_video">この動画を保存する</string>
     <string name="error_occurred">エラーが発生しました</string>
     <string name="load_timeline_image_mode">タイムラインのサムネイルの画質</string>
     <string name="version_text">バージョン</string>
@@ -81,6 +83,8 @@
     <string name="open_web_page_in_the_app">アプリ内でウェブページを開く</string>
     <string name="viewing_web_page_in_app">アプリ内でウェブページを表示します</string>
     <string name="viewing_web_page_in_external_browser">外部ブラウザでウェブページを表示します</string>
+    <string name="crash_log">クラッシュログ</string>
+    <string name="crash_log_channel_description">twitlatteがクラッシュしたら通知する</string>
     <string name="regex_mute">正規表現でのミュート</string>
     <string name="edit_pattern">正規表現パターンの編集</string>
     <string name="use_post_regex_mute">本文へ使用して非表示にする</string>
@@ -99,6 +103,8 @@
     <string name="do_add_content_warning">内容への警告を追加する</string>
     <string name="no_app_can_open">開けるアプリがありません</string>
     <string name="tweet_per_last_24_hours">直近24時間以内で%dツイート</string>
+    <string name="do_see_source_code">このアプリのソースコードを見る</string>
+    <string name="description_see_source_code">GitHubで公開されています</string>
 
     <string name="do_quote">引用する</string>
     <string name="do_logout">ログアウトする</string>

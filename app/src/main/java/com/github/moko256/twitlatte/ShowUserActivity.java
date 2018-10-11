@@ -19,27 +19,29 @@ package com.github.moko256.twitlatte;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.StringRes;
-import android.support.design.widget.Snackbar;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import com.github.moko256.mastodon.MastodonTwitterImpl;
-import com.github.moko256.twitlatte.entity.Type;
+import com.github.moko256.twitlatte.entity.ClientType;
+import com.github.moko256.twitlatte.entity.User;
 import com.github.moko256.twitlatte.intent.AppCustomTabsKt;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
 import com.github.moko256.twitlatte.widget.FragmentPagerAdapter;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.tabs.TabLayout;
 
 import java.util.Objects;
 
+import androidx.annotation.StringRes;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
 import io.reactivex.Completable;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -47,14 +49,13 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
-import twitter4j.User;
 
 /**
  * Created by moko256 on 2016/03/11.
  *
  * @author moko256
  */
-public class ShowUserActivity extends AppCompatActivity implements BaseListFragment.GetSnackBar, BaseTweetListFragment.GetRecyclerViewPool, BaseUsersFragment.GetRecyclerViewPool {
+public class ShowUserActivity extends AppCompatActivity implements BaseListFragment.GetViewForSnackBar, BaseTweetListFragment.GetRecyclerViewPool, BaseUsersFragment.GetRecyclerViewPool {
 
     private CompositeDisposable disposable;
 
@@ -134,8 +135,11 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
                                         user = it;
                                         new ShowUserFragmentsPagerAdapter(getSupportFragmentManager(),this,it.getId()).initAdapter(viewPager);
                                     },
-                                    e -> getSnackBar(TwitterStringUtils.convertErrorToText(e))
-                                            .show()
+                                    e -> Snackbar.make(
+                                            getViewForSnackBar(),
+                                            TwitterStringUtils.convertErrorToText(e),
+                                            Snackbar.LENGTH_LONG
+                                    ).show()
                             )
             );
         }
@@ -168,7 +172,7 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
 
     private String getShareUrl(){
         String url;
-        if (GlobalApplication.clientType == Type.MASTODON){
+        if (GlobalApplication.clientType == ClientType.MASTODON){
             String baseUrl;
             String userName;
             if (user.getScreenName().matches(".*@.*")){
@@ -301,19 +305,22 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
     }
 
 
-    public Single<User> getUserSingle(){
+    private Single<User> getUserSingle(){
         return Single
                 .create(
                         subscriber-> {
                             try {
-                                User user = null;
+                                twitter4j.User user = null;
                                 if (userId != -1) {
                                     user = GlobalApplication.twitter.showUser(userId);
                                 } else if (userScreenName != null) {
                                     user = GlobalApplication.twitter.showUser(userScreenName);
+                                    userId = user.getId();
+                                }
+                                if (user != null) {
                                     GlobalApplication.userCache.add(user);
                                 }
-                                subscriber.onSuccess(user);
+                                subscriber.onSuccess(GlobalApplication.userCache.get(userId));
                             } catch (TwitterException e) {
                                 subscriber.tryOnError(e);
                             }
@@ -322,9 +329,8 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
     }
 
     @Override
-    public Snackbar getSnackBar(String string) {
-        return Snackbar.make(findViewById(R.id.activity_show_user_coordinator_layout), string, Snackbar.LENGTH_LONG);
-
+    public View getViewForSnackBar() {
+        return findViewById(R.id.activity_show_user_coordinator_layout);
     }
 
     @Override

@@ -37,6 +37,7 @@ public class UserLikeFragment extends BaseTweetListFragment implements ToolbarTi
         if (userId == -1){
             userId = getArguments().getLong("userId", -1);
         }
+
         super.onCreate(savedInstanceState);
     }
 

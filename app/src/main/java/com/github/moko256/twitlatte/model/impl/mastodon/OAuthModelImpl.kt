@@ -19,7 +19,7 @@ package com.github.moko256.twitlatte.model.impl.mastodon
 import android.os.Bundle
 import com.github.moko256.twitlatte.GlobalApplication
 import com.github.moko256.twitlatte.entity.AccessToken
-import com.github.moko256.twitlatte.entity.Type
+import com.github.moko256.twitlatte.entity.ClientType
 import com.github.moko256.twitlatte.model.base.OAuthModel
 import com.google.gson.Gson
 import com.sys1yagi.mastodon4j.MastodonClient
@@ -35,12 +35,12 @@ import twitter4j.conf.ConfigurationContext
  *
  * @author moko256
  */
-class OAuthModelImpl(override var isRestartable: Boolean = false) : OAuthModel {
-    private val STATE_MODEL_URL = "state_model_url"
-    private val STATE_MODEL_CLIENT_ID = "state_client_id"
-    private val STATE_MODEL_SECRET = "state_model_secret"
-    private val STATE_MODEL_REDIRECT_URL = "state_model_redirect_url"
+private const val STATE_MODEL_URL = "state_model_url"
+private const val STATE_MODEL_CLIENT_ID = "state_client_id"
+private const val STATE_MODEL_SECRET = "state_model_secret"
+private const val STATE_MODEL_REDIRECT_URL = "state_model_redirect_url"
 
+class OAuthModelImpl(override var isRestartable: Boolean = false) : OAuthModel {
     private lateinit var clientBuilder: MastodonClient.Builder
     private lateinit var apps: Apps
 
@@ -55,7 +55,7 @@ class OAuthModelImpl(override var isRestartable: Boolean = false) : OAuthModel {
 
         clientBuilder = MastodonClient.Builder(
                 savedInstanceState.getString(STATE_MODEL_URL),
-                GlobalApplication.getOkHttpClient(ConfigurationContext.getInstance().httpClientConfiguration).newBuilder(),
+                GlobalApplication.getOkHttpClient(ConfigurationContext.getInstance()).newBuilder(),
                 Gson()
         )
         apps = Apps(clientBuilder.build())
@@ -76,7 +76,7 @@ class OAuthModelImpl(override var isRestartable: Boolean = false) : OAuthModel {
     override fun getAuthUrl(url: String, consumerKey: String, consumerSecret: String, callbackUrl: String?): Single<String> {
         clientBuilder = MastodonClient.Builder(
                 url,
-                GlobalApplication.getOkHttpClient(ConfigurationContext.getInstance().httpClientConfiguration).newBuilder(),
+                GlobalApplication.getOkHttpClient(ConfigurationContext.getInstance()).newBuilder(),
                 Gson()
         )
         apps = Apps(clientBuilder.build())
@@ -132,7 +132,7 @@ class OAuthModelImpl(override var isRestartable: Boolean = false) : OAuthModel {
                 val url = clientBuilder.build().getInstanceName()
                 val account = Accounts(clientBuilder.accessToken(accessToken.accessToken).build()).getVerifyCredentials().execute()
                 val storeToken = AccessToken(
-                        Type.MASTODON,
+                        ClientType.MASTODON,
                         url,
                         account.id,
                         account.acct,

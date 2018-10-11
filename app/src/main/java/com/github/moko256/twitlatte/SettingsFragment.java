@@ -18,13 +18,6 @@ package com.github.moko256.twitlatte;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatDelegate;
-import android.support.v7.preference.EditTextPreference;
-import android.support.v7.preference.ListPreference;
-import android.support.v7.preference.Preference;
-import android.support.v7.preference.PreferenceFragmentCompat;
-import android.support.v7.preference.PreferenceScreen;
 import android.widget.Toast;
 
 import com.github.moko256.twitlatte.entity.AccessToken;
@@ -34,6 +27,14 @@ import com.github.moko256.twitlatte.text.TwitterStringUtils;
 
 import java.util.List;
 import java.util.regex.PatternSyntaxException;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.preference.EditTextPreference;
+import androidx.preference.ListPreference;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceScreen;
 
 /**
  * Created by moko256 on 2016/03/28.
@@ -160,7 +161,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             Preference sourceCodeLink=findPreference("source_code_link");
             sourceCodeLink.setOnPreferenceClickListener(preference -> {
                 AppCustomTabsKt.launchChromeCustomTabs(requireContext(), "https://github.com/moko256/twitlatte");
-                return false;
+                return true;
             });
 
             Preference version=findPreference("app_version");
@@ -172,7 +173,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                     eggCount = 3;
                 }
 
-                return false;
+                return true;
             });
         } else if (preferenceRoot.equals("regexMute")) {
             PreferenceScreen regexMute = getPreferenceScreen();
@@ -186,7 +187,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                             e.printStackTrace();
                             Toast.makeText(requireContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
-                        return false;
+                        return true;
                     });
                 }
             }

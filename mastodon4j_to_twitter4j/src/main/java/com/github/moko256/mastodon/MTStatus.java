@@ -16,14 +16,11 @@
 
 package com.github.moko256.mastodon;
 
-import com.sys1yagi.mastodon4j.api.entity.Attachment;
 import com.sys1yagi.mastodon4j.api.entity.Status;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 import twitter4j.GeoLocation;
 import twitter4j.HashtagEntity;
@@ -44,7 +41,7 @@ import twitter4j.UserMentionEntity;
 
 public class MTStatus implements twitter4j.Status{
 
-    public Status status;
+    public final Status status;
 
     MTStatus(Status status){
         this.status = status;
@@ -52,7 +49,7 @@ public class MTStatus implements twitter4j.Status{
 
     @Override
     public Date getCreatedAt() {
-        return MastodonTwitterImpl.parseDate(status.getCreatedAt());
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
@@ -62,85 +59,67 @@ public class MTStatus implements twitter4j.Status{
 
     @Override
     public String getText() {
-        return status.getContent();
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public int getDisplayTextRangeStart() {
-        return 0;
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public int getDisplayTextRangeEnd() {
-        return getText().length();
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public String getSource() {
-        if (status.getApplication() != null) {
-            //This null check is needed
-            // because status.getApplication.getWebsite may be null though its return type is written non null.
-            //Kotlin 1.2.10
-            if (status.getApplication().getWebsite() != null && !status.getApplication().getWebsite().equals("")) {
-                return "<a href='" + status.getApplication().getWebsite() + "'>" + status.getApplication().getName() + "</a>";
-            } else {
-                return status.getApplication().getName();
-            }
-        } else {
-            return "unknown";
-        }
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public boolean isTruncated() {
-        return false;
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public long getInReplyToStatusId() {
-        Long id = status.getInReplyToId();
-        return id == null?-1:id;
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public long getInReplyToUserId() {
-        Long id = status.getInReplyToAccountId();
-        return id == null?-1:id;
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public String getInReplyToScreenName() {
-        return (getInReplyToUserId() != -1)
-                ?(
-                        status.getMentions().size() > 0?
-                                status.getMentions().get(0).getUsername():
-                                ""
-        ): null;
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public GeoLocation getGeoLocation() {
-        return null;
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public Place getPlace() {
-        return null;
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public boolean isFavorited() {
-        return status.isFavourited();
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public boolean isRetweeted() {
-        return status.isReblogged();
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public int getFavoriteCount() {
-        return status.getFavouritesCount();
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
@@ -160,47 +139,47 @@ public class MTStatus implements twitter4j.Status{
 
     @Override
     public long[] getContributors() {
-        return null;
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public int getRetweetCount() {
-        return status.getReblogsCount();
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public boolean isRetweetedByMe() {
-        return false;
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public long getCurrentUserRetweetId() {
-        return -1;
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public boolean isPossiblySensitive() {
-        return status.isSensitive();
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public String getLang() {
-        return null;//status.getLanguage();
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public Scopes getScopes() {
-        return null;
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public String[] getWithheldInCountries() {
-        return null;
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public long getQuotedStatusId() {
-        return -1;
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
@@ -210,54 +189,47 @@ public class MTStatus implements twitter4j.Status{
 
     @Override
     public URLEntity getQuotedStatusPermalink() {
-        return null;
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public int compareTo(@NotNull twitter4j.Status status) {
-        return 0;
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public UserMentionEntity[] getUserMentionEntities() {
-        return new UserMentionEntity[0];
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public URLEntity[] getURLEntities() {
-        return new URLEntity[0];
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public HashtagEntity[] getHashtagEntities() {
-        return new HashtagEntity[0];
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public MediaEntity[] getMediaEntities() {
-        List<Attachment> medias = status.getMediaAttachments();
-        MediaEntity[] mediaEntities = new MediaEntity[medias.size()];
-        for (int i = 0; i < mediaEntities.length; i++) {
-            Attachment media = medias.get(i);
-
-            mediaEntities[i] = new MTMediaEntity(media);
-        }
-        return mediaEntities;
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public SymbolEntity[] getSymbolEntities() {
-        return new SymbolEntity[0];
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public RateLimitStatus getRateLimitStatus() {
-        return null;
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
     public int getAccessLevel() {
-        return 0;
+        throw new RuntimeException("Deprecated");
     }
 
     @Override
@@ -270,119 +242,4 @@ public class MTStatus implements twitter4j.Status{
         return obj != null && (this == obj || obj instanceof Status && ((Status) obj).getId() == this.getId());
     }
 
-    private static class MTMediaEntity implements MediaEntity {
-        long id;
-        String imageUrl;
-        String videoUrl;
-        String type;
-        Variant[] variants;
-
-        MTMediaEntity(Attachment media) {
-            id = media.getId();
-            type = (media.getType().equals("gifv") ? "animated_gif" : media.getType());
-            if (type.equals("video") || type.equals("animated_gif")) {
-                imageUrl = media.getPreviewUrl();
-                videoUrl = media.getUrl();
-                variants = new Variant[1];
-                variants[0] = new Variant() {
-                    @Override
-                    public int getBitrate() {
-                        return 0;
-                    }
-
-                    @Override
-                    public String getContentType() {
-                        return "video/mp4";
-                    }
-
-                    @Override
-                    public String getUrl() {
-                        return videoUrl;
-                    }
-                };
-            } else {
-                imageUrl = media.getUrl();
-            }
-        }
-
-        @Override
-        public long getId() {
-            return id;
-        }
-
-        @Override
-        public String getMediaURL() {
-            return imageUrl;
-        }
-
-        @Override
-        public String getMediaURLHttps() {
-            return imageUrl;
-        }
-
-        @Override
-        public Map<Integer, Size> getSizes() {
-            return null;
-        }
-
-        @Override
-        public String getType() {
-            return type;
-        }
-
-        @Override
-        public int getVideoAspectRatioWidth() {
-            return 0;
-        }
-
-        @Override
-        public int getVideoAspectRatioHeight() {
-            return 0;
-        }
-
-        @Override
-        public long getVideoDurationMillis() {
-            return 0;
-        }
-
-        @Override
-        public Variant[] getVideoVariants() {
-            return variants;
-        }
-
-        @Override
-        public String getExtAltText() {
-            return null;
-        }
-
-        @Override
-        public String getText() {
-            return null;
-        }
-
-        @Override
-        public String getURL() {
-            return imageUrl;
-        }
-
-        @Override
-        public String getExpandedURL() {
-            return imageUrl;
-        }
-
-        @Override
-        public String getDisplayURL() {
-            return imageUrl;
-        }
-
-        @Override
-        public int getStart() {
-            return 0;
-        }
-
-        @Override
-        public int getEnd() {
-            return 0;
-        }
-    }
 }

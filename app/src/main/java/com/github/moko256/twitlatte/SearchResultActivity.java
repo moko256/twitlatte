@@ -19,12 +19,13 @@ package com.github.moko256.twitlatte;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
+import android.view.View;
 
 import java.util.Objects;
+
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * Created by moko256 on 2017/01/26.
@@ -32,14 +33,13 @@ import java.util.Objects;
  * @author moko256
  */
 
-public class SearchResultActivity extends AppCompatActivity implements BaseListFragment.GetSnackBar, BaseTweetListFragment.GetRecyclerViewPool {
+public class SearchResultActivity extends AppCompatActivity implements BaseListFragment.GetViewForSnackBar, BaseTweetListFragment.GetRecyclerViewPool {
 
     private RecyclerView.RecycledViewPool tweetListViewPool;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_search);
 
         ActionBar actionBar= Objects.requireNonNull(getSupportActionBar());
         actionBar.setTitle(getIntent().getStringExtra("query"));
@@ -51,7 +51,7 @@ public class SearchResultActivity extends AppCompatActivity implements BaseListF
         if (savedInstanceState == null) {
             getSupportFragmentManager()
                     .beginTransaction()
-                    .add(R.id.activity_search_fragment_container,new SearchResultFragment())
+                    .add(android.R.id.content, new SearchResultFragment())
                     .commit();
         }
     }
@@ -67,8 +67,8 @@ public class SearchResultActivity extends AppCompatActivity implements BaseListF
     }
 
     @Override
-    public Snackbar getSnackBar(String string) {
-        return Snackbar.make(findViewById(R.id.activity_search_fragment_container), string, Snackbar.LENGTH_LONG);
+    public View getViewForSnackBar() {
+        return findViewById(android.R.id.content);
     }
 
     @Override
