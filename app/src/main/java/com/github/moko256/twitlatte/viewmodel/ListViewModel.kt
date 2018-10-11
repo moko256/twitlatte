@@ -19,6 +19,8 @@ package com.github.moko256.twitlatte.viewmodel
 import androidx.lifecycle.ViewModel
 import com.github.moko256.twitlatte.GlobalApplication
 import com.github.moko256.twitlatte.database.CachedIdListSQLiteOpenHelper
+import com.github.moko256.twitlatte.entity.EventType
+import com.github.moko256.twitlatte.entity.UpdateEvent
 import com.github.moko256.twitlatte.repository.server.ListServerRepository
 import either.Either
 import either.Left
@@ -243,19 +245,4 @@ class ListViewModel: ViewModel() {
             it.tryOnError(e)
         }
     }
-
-    enum class EventType {
-        NOTHING,
-        ADD_FIRST,
-        ADD_TOP,
-        ADD_BOTTOM,
-        INSERT_AT_GAP,
-        REMOVE_ONLY_GAP
-    }
-
-    data class UpdateEvent(
-            val type: EventType,
-            val position: Int,
-            val size: Int
-    )
 }

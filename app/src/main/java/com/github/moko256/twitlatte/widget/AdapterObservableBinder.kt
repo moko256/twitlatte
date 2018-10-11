@@ -24,6 +24,6 @@ import com.github.moko256.twitlatte.entity.UpdateEvent
  *
  * @author moko256
  */
-fun RecyclerView.Adapter<out RecyclerView.ViewHolder>.convertObservableConsumer(): (UpdateEvent) -> Unit {
+fun RecyclerView.Adapter<out RecyclerView.ViewHolder>.convertObservableConsumer(): (UpdateEvent) -> Unit = {
 
 }
