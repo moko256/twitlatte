@@ -16,7 +16,10 @@
 
 package com.github.moko256.twitlatte.widget
 
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.github.moko256.twitlatte.entity.EventType
 import com.github.moko256.twitlatte.entity.UpdateEvent
 
 /**
@@ -24,6 +27,38 @@ import com.github.moko256.twitlatte.entity.UpdateEvent
  *
  * @author moko256
  */
-fun RecyclerView.Adapter<out RecyclerView.ViewHolder>.convertObservableConsumer(): (UpdateEvent) -> Unit = {
+fun RecyclerView.convertObservableConsumer(): (UpdateEvent) -> Unit = {
+    when (it.type) {
+        EventType.ADD_FIRST -> adapter!!.notifyDataSetChanged()
 
+        EventType.ADD_TOP -> adapter!!.notifyItemRangeInserted(it.position, it.size)
+
+        EventType.ADD_BOTTOM -> adapter!!.notifyItemRangeInserted(it.position, it.size)
+
+        EventType.REMOVE -> adapter!!.notifyItemRangeRemoved(it.position, it.size)
+
+        EventType.INSERT -> {
+            val startView = layoutManager!!.findViewByPosition(it.position)
+            val offset = if (startView == null) {
+                0
+            } else {
+                startView.top - paddingTop
+            }
+
+            val layoutManager = layoutManager
+            if (layoutManager is LinearLayoutManager) {
+                adapter!!.notifyItemRangeInserted(it.position, it.size)
+                layoutManager.scrollToPositionWithOffset(it.position + it.size, offset)
+            } else {
+                adapter!!.notifyItemRangeInserted(it.position, it.size)
+                (layoutManager as StaggeredGridLayoutManager).scrollToPositionWithOffset(it.position + it.size, offset)
+            }
+        }
+
+        EventType.UPDATE -> adapter!!.notifyItemRangeChanged(it.position, it.size)
+
+        else -> {
+
+        }
+    }
 }

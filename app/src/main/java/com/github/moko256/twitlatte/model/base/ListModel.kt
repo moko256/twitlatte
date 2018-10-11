@@ -16,10 +16,21 @@
 
 package com.github.moko256.twitlatte.model.base
 
+import java.io.Closeable
+
 /**
  * Created by moko256 on 2018/08/10.
  *
  * @author moko256
  */
-interface ListModel {
+interface ListModel: Closeable {
+
+    fun getSeeingId(): Long
+    fun updateSeeingPosition(id: Long)
+
+    fun refreshFirst()
+    fun refreshOnTop()
+    fun loadOnBottom()
+    fun loadOnGap(position: Int)
+    fun removeOldCache(position: Int)
 }

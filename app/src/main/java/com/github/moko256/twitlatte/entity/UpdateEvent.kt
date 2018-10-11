@@ -32,6 +32,9 @@ enum class EventType {
     ADD_FIRST,
     ADD_TOP,
     ADD_BOTTOM,
-    INSERT_AT_GAP,
-    REMOVE_ONLY_GAP
+    INSERT,
+    UPDATE,
+    REMOVE,
+    @Deprecated("useless") INSERT_AT_GAP,
+    @Deprecated("useless") REMOVE_ONLY_GAP
 }

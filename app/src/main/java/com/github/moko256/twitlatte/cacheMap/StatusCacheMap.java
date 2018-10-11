@@ -18,13 +18,15 @@ package com.github.moko256.twitlatte.cacheMap;
 
 import android.content.Context;
 
-import com.github.moko256.mastodon.MTStatus;
 import com.github.moko256.twitlatte.GlobalApplication;
-import com.github.moko256.twitlatte.converter.StatusConverterKt;
 import com.github.moko256.twitlatte.database.CachedStatusesSQLiteOpenHelper;
 import com.github.moko256.twitlatte.entity.AccessToken;
+import com.github.moko256.twitlatte.entity.Post;
+import com.github.moko256.twitlatte.entity.Repeat;
+import com.github.moko256.twitlatte.entity.Status;
 import com.github.moko256.twitlatte.entity.StatusObject;
 import com.github.moko256.twitlatte.entity.StatusObjectKt;
+import com.github.moko256.twitlatte.entity.User;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -34,8 +36,6 @@ import java.util.List;
 
 import androidx.annotation.Nullable;
 import androidx.collection.LruCache;
-import twitter4j.Status;
-import twitter4j.User;
 
 /**
  * Created by moko256 on 2016/12/22.
@@ -62,14 +62,11 @@ public class StatusCacheMap {
         return cache.size();
     }
 
-    public void add(@Nullable final Status status, boolean incrementCount) {
-        if (status != null && status.getRetweetedStatus() != null && status.getQuotedStatus() != null) {
+    public void add(@Nullable final Post<Repeat, Status, User> status, boolean incrementCount) {
+        if (status != null && status.getRepeat() == null && status.getQuotedRepeatingStatus() == null) {
             GlobalApplication.userCache.add(status.getUser());
-            StatusObject cacheStatus = (status instanceof MTStatus)?
-                    StatusConverterKt.convertToCommonStatus(((MTStatus) status).status):
-                    StatusConverterKt.convertToCommonStatus(status);
-            cache.put(status.getId(), cacheStatus);
-            diskCache.addCachedStatus(cacheStatus, incrementCount);
+            cache.put(status.getStatus().getId(), status.getStatus());
+            diskCache.addCachedStatus(status.getStatus(), incrementCount);
         } else {
             addAll(Collections.singletonList(status), incrementCount);
         }
@@ -89,63 +86,63 @@ public class StatusCacheMap {
         }
     }
 
-    public void addAll(Collection<? extends Status> c, long... excludeIncrementIds) {
+    public void addAll(Collection<Post<Repeat, Status, User>> c, long... excludeIncrementIds) {
         addAll(c, true, excludeIncrementIds);
     }
 
-    private void addAll(Collection<? extends Status> c, boolean incrementCount, long... excludeIncrementIds) {
+    private void addAll(Collection<Post<Repeat, Status, User>> c, boolean incrementCount, long... excludeIncrementIds) {
         if (c.size() > 0) {
-            ArrayList<Status> statuses = new ArrayList<>(c.size() * 3);
-            ArrayList<Status> repeats = new ArrayList<>(c.size());
+            ArrayList<StatusObject> statuses = new ArrayList<>(c.size() * 3);
+            ArrayList<Repeat> repeats = new ArrayList<>(c.size());
             ArrayList<Status> quotes = new ArrayList<>(c.size());
 
             ArrayList<User> users = new ArrayList<>(c.size() * 3);
 
-            for (Status status : c) {
-                if (status != null) {
-                    statuses.add(status);
-                    if (!users.contains(status.getUser())){
-                        users.add(status.getUser());
-                    }
+            for (Post<Repeat, Status, User> status : c) {
 
-                    if (status.getRetweetedStatus() != null) {
-                        repeats.add(status.getRetweetedStatus());
-                        if (status.getRetweetedStatus().getQuotedStatus() != null){
-                            quotes.add(status.getRetweetedStatus().getQuotedStatus());
-                        }
-                    } else if (status.getQuotedStatus() != null){
-                        quotes.add(status.getQuotedStatus());
-                    }
+                if (status.getStatus() != null && !statuses.contains(status.getStatus())){
+                    statuses.add(status.getStatus());
                 }
-            }
 
-            for (Status status : repeats) {
-                if (!statuses.contains(status)) {
-                    statuses.add(status);
-                    if (!users.contains(status.getUser())){
-                        users.add(status.getUser());
-                    }
+                if (status.getUser() != null && !users.contains(status.getUser())){
+                    users.add(status.getUser());
+                }
+
+                if (status.getRepeatedUser() != null && !users.contains(status.getRepeatedUser())){
+                    users.add(status.getUser());
+                }
+
+                if (status.getQuotedRepeatingStatus() != null && !users.contains(status.getQuotedRepeatingUser())){
+                    users.add(status.getUser());
+                }
+
+                if (status.getRepeat() != null) {
+                    repeats.add(status.getRepeat());
+                }
+
+                if (status.getQuotedRepeatingStatus() != null){
+                    quotes.add(status.getQuotedRepeatingStatus());
                 }
             }
 
             for (Status status : quotes) {
                 if (!statuses.contains(status)) {
                     statuses.add(status);
-                    if (!users.contains(status.getUser())){
-                        users.add(status.getUser());
-                    }
+                }
+            }
+
+            for (Repeat status : repeats) {
+                if (!statuses.contains(status)) {
+                    statuses.add(status);
                 }
             }
 
             GlobalApplication.userCache.addAll(users);
 
             ArrayList<StatusObject> cachedStatuses = new ArrayList<>(statuses.size());
-            for (Status status : statuses){
-                StatusObject cachedStatus = (status instanceof MTStatus)?
-                        StatusConverterKt.convertToCommonStatus(((MTStatus) status).status):
-                        StatusConverterKt.convertToCommonStatus(status);
-                cache.put(status.getId(), cachedStatus);
-                cachedStatuses.add(cachedStatus);
+            for (StatusObject status : statuses){
+                cache.put(StatusObjectKt.getId(status), status);
+                cachedStatuses.add(status);
             }
 
             diskCache.addCachedStatuses(cachedStatuses, incrementCount, excludeIncrementIds);
