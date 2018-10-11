@@ -197,12 +197,15 @@ class ListModelImpl(
                                 ids.removeAt(ids.size - 1)
                                 list.removeAt(position)
                                 database.deleteIds(listOf(-1L))
+                                updateObserver.onNext(UpdateEvent(EventType.REMOVE, position, 0))
+                            } else {
+                                updateObserver.onNext(UpdateEvent(EventType.UPDATE, position, 0))
                             }
 
                             list.addAll(position, ids)
                             database.insertIds(position, ids)
 
-                            updateObserver.onNext(UpdateEvent(EventType.INSERT_AT_GAP, position, ids.size))
+                            updateObserver.onNext(UpdateEvent(EventType.INSERT, position, ids.size))
                         } else {
                             list.removeAt(position)
                             database.deleteIds(listOf(-1L))
