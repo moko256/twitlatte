@@ -18,7 +18,9 @@ package com.github.moko256.twitlatte.model.impl
 
 import com.github.moko256.twitlatte.GlobalApplication
 import com.github.moko256.twitlatte.database.CachedIdListSQLiteOpenHelper
-import com.github.moko256.twitlatte.entity.*
+import com.github.moko256.twitlatte.entity.EventType
+import com.github.moko256.twitlatte.entity.Post
+import com.github.moko256.twitlatte.entity.UpdateEvent
 import com.github.moko256.twitlatte.model.base.ListModel
 import com.github.moko256.twitlatte.repository.server.ListServerRepository
 import io.reactivex.Completable
@@ -31,7 +33,7 @@ import io.reactivex.subjects.PublishSubject
  * @author moko256
  */
 class ListModelImpl(
-        private val api: ListServerRepository<Post<Repeat?, Status, User?>>,
+        private val api: ListServerRepository<Post>,
         private val database: CachedIdListSQLiteOpenHelper
 ): ListModel {
 
@@ -63,7 +65,7 @@ class ListModelImpl(
                     api.get().apply {
                         GlobalApplication.statusCache.addAll(this)
 
-                        val ids = map { it.repeat?.id?:it.status.id }
+                        val ids = map { it.id }
 
                         list.addAll(ids)
                         database.addIds(ids)
@@ -96,7 +98,7 @@ class ListModelImpl(
                         if (isNotEmpty()) {
                             GlobalApplication.statusCache.addAll(this, excludeId)
 
-                            val ids = map { it.repeat?.id?:it.status.id }.toMutableList()
+                            val ids = map { it.id }.toMutableList()
 
                             if (ids[ids.size - 1] == list[0]) {
                                 ids.removeAt(ids.size - 1)
@@ -139,7 +141,7 @@ class ListModelImpl(
                         if (isNotEmpty()) {
                             GlobalApplication.statusCache.addAll(this)
 
-                            val ids = map { it.repeat?.id?:it.status.id }.toMutableList()
+                            val ids = map { it.id }.toMutableList()
 
                             if (ids[ids.size - 1] == list[0]) {
                                 ids.removeAt(ids.size - 1)
@@ -190,7 +192,7 @@ class ListModelImpl(
                         if (isNotEmpty()) {
                             GlobalApplication.statusCache.addAll(this, excludeId)
 
-                            val ids = map { it.repeat?.id?:it.status.id }.toMutableList()
+                            val ids = map { it.id }.toMutableList()
 
                             val noGap = ids[ids.size - 1] == list[position + 1]
                             if (noGap) {

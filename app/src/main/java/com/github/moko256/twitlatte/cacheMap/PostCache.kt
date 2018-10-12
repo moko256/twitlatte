@@ -30,7 +30,7 @@ class PostCache(
         private val statusCache: StatusCacheMap,
         private val userCache: UserCacheMap
 ) {
-    fun getPost(postId: Long): Post<Repeat?, Status?, User?>?{
+    fun getPost(postId: Long): Post?{
         return statusCache.get(postId)?.let { statusObject ->
             val repeat: Repeat?
             val repeatedUser: User?
@@ -67,6 +67,7 @@ class PostCache(
             }
 
             Post(
+                    id = postId,
                     repeat = repeat,
                     repeatedUser = repeatedUser,
                     status = status,

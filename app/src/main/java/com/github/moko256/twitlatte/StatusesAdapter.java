@@ -76,7 +76,7 @@ class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         if (data.get(position) == -1L ){
             return R.layout.layout_list_load_more_text;
         }
-        Post<Repeat, Status, User> post = GlobalApplication.postCache.getPost(data.get(position));
+        Post post = GlobalApplication.postCache.getPost(data.get(position));
 
         if (post == null){
             return R.layout.layout_list_load_more_text;
@@ -145,7 +145,7 @@ class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 onLoadMoreClick.onClick(i);
             });
         } else {
-            Post<Repeat, Status, User> post = GlobalApplication.postCache.getPost(data.get(i));
+            Post post = GlobalApplication.postCache.getPost(data.get(i));
             if (post != null) {
                 if (viewHolder instanceof StatusViewHolder) {
                     ((StatusViewHolder) viewHolder).setStatus(

@@ -62,7 +62,7 @@ public class StatusCacheMap {
         return cache.size();
     }
 
-    public void add(@Nullable final Post<Repeat, Status, User> status, boolean incrementCount) {
+    public void add(@Nullable final Post status, boolean incrementCount) {
         if (status != null && status.getRepeat() == null && status.getQuotedRepeatingStatus() == null) {
             GlobalApplication.userCache.add(status.getUser());
             cache.put(status.getStatus().getId(), status.getStatus());
@@ -86,11 +86,11 @@ public class StatusCacheMap {
         }
     }
 
-    public void addAll(Collection<Post<Repeat, Status, User>> c, long... excludeIncrementIds) {
+    public void addAll(Collection<Post> c, long... excludeIncrementIds) {
         addAll(c, true, excludeIncrementIds);
     }
 
-    private void addAll(Collection<Post<Repeat, Status, User>> c, boolean incrementCount, long... excludeIncrementIds) {
+    private void addAll(Collection<Post> c, boolean incrementCount, long... excludeIncrementIds) {
         if (c.size() > 0) {
             ArrayList<StatusObject> statuses = new ArrayList<>(c.size() * 3);
             ArrayList<Repeat> repeats = new ArrayList<>(c.size());
@@ -98,7 +98,7 @@ public class StatusCacheMap {
 
             ArrayList<User> users = new ArrayList<>(c.size() * 3);
 
-            for (Post<Repeat, Status, User> status : c) {
+            for (Post status : c) {
 
                 if (status.getStatus() != null && !statuses.contains(status.getStatus())){
                     statuses.add(status.getStatus());

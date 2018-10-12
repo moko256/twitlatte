@@ -30,7 +30,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.moko256.twitlatte.entity.Post;
-import com.github.moko256.twitlatte.entity.Repeat;
 import com.github.moko256.twitlatte.entity.Status;
 import com.github.moko256.twitlatte.entity.User;
 import com.github.moko256.twitlatte.glide.GlideApp;
@@ -178,7 +177,7 @@ public class ShowTweetActivity extends AppCompatActivity {
     }
 
     private void prepareStatus() {
-        Post<Repeat, Status, User> status = GlobalApplication.postCache.getPost(statusId);
+        Post status = GlobalApplication.postCache.getPost(statusId);
 
         if (status != null) {
             updateView(status);
@@ -203,7 +202,7 @@ public class ShowTweetActivity extends AppCompatActivity {
         }
     }
 
-    private Single<Post<Repeat, Status, User>> updateStatus(){
+    private Single<Post> updateStatus(){
         return Single.create(
                 subscriber -> {
                     try {
@@ -217,7 +216,7 @@ public class ShowTweetActivity extends AppCompatActivity {
     }
 
     @SuppressLint("CheckResult")
-    private void updateView(Post<Repeat, Status, User> item){
+    private void updateView(Post item){
         shareUrl = item.getStatus().getUrl();
         long replyTweetId = item.getStatus().getInReplyToStatusId();
         if (replyTweetId != -1){

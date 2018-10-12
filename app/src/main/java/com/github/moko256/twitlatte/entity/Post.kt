@@ -21,11 +21,12 @@ package com.github.moko256.twitlatte.entity
  *
  * @author moko256
  */
-data class Post<Repeat, Status, User>(
-        val repeat: Repeat,
-        val repeatedUser: User,
-        val status: Status,
-        val user: User,
-        val quotedRepeatingStatus: Status,
-        val quotedRepeatingUser: User
+data class Post(
+        val id: Long,
+        val repeat: Repeat?,
+        val repeatedUser: User?,
+        val status: Status?,
+        val user: User?,
+        val quotedRepeatingStatus: Status?,
+        val quotedRepeatingUser: User?
 )
