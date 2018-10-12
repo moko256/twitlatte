@@ -60,8 +60,8 @@ data class User(
         val emojis: Array<Emoji>?,
         val isTwitter: Boolean
 ) {
-    private fun toResizedURL(originalURL: String?, sizeSuffix: String): String? {
-        if (null != originalURL && originalURL.isNotEmpty() && isTwitter) {
+    private fun toResizedURL(originalURL: String, sizeSuffix: String): String {
+        if (originalURL.isNotEmpty() && isTwitter) {
             val index = originalURL.lastIndexOf("_")
             val suffixIndex = originalURL.lastIndexOf(".")
             val slashIndex = originalURL.lastIndexOf("/")
@@ -74,19 +74,19 @@ data class User(
         return originalURL
     }
 
-    fun get400x400ProfileImageURLHttps(): String? {
+    fun get400x400ProfileImageURLHttps(): String {
         return toResizedURL(profileImageURLHttps, "_400x400")
     }
 
-    fun getBiggerProfileImageURLHttps(): String? {
+    fun getBiggerProfileImageURLHttps(): String {
         return toResizedURL(profileImageURLHttps, "_bigger")
     }
 
-    fun getMiniProfileImageURLHttps(): String? {
+    fun getMiniProfileImageURLHttps(): String {
         return toResizedURL(profileImageURLHttps, "_mini")
     }
 
-    fun getOriginalProfileImageURLHttps(): String? {
+    fun getOriginalProfileImageURLHttps(): String {
         return toResizedURL(profileImageURLHttps, "")
     }
 
