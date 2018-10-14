@@ -139,13 +139,11 @@ public class StatusCacheMap {
 
             GlobalApplication.userCache.addAll(users);
 
-            ArrayList<StatusObject> cachedStatuses = new ArrayList<>(statuses.size());
             for (StatusObject status : statuses){
                 cache.put(StatusObjectKt.getId(status), status);
-                cachedStatuses.add(status);
             }
 
-            diskCache.addCachedStatuses(cachedStatuses, incrementCount, excludeIncrementIds);
+            diskCache.addCachedStatuses(statuses, incrementCount, excludeIncrementIds);
         }
     }
 
