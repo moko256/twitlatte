@@ -23,10 +23,10 @@ package com.github.moko256.twitlatte.entity
  */
 data class Post(
         val id: Long,
-        val repeat: Repeat?,
-        val repeatedUser: User?,
-        val status: Status?,
-        val user: User?,
-        val quotedRepeatingStatus: Status?,
-        val quotedRepeatingUser: User?
+        val repeat: Repeat? = null,
+        val repeatedUser: User? = null,
+        val status: Status? = null,
+        val user: User? = null,
+        val quotedRepeatingStatus: Status? = null,
+        val quotedRepeatingUser: User? = null
 )
