@@ -172,25 +172,15 @@ class ListModelImpl(
                         if (isNotEmpty()) {
                             GlobalApplication.statusCache.addAll(this)
 
-                            val ids = map { it.id }.toMutableList()
+                            val ids = map { it.id }
 
-                            if (ids[ids.size - 1] == list[0]) {
-                                ids.removeAt(ids.size - 1)
-                            } else {
-                                ids.add(-1L)
-                            }
-
-                            if (ids.size > 0) {
-                                list.addAll(0, ids)
-                                database.insertIds(list.size - size, ids)
-                                updateObserver.onNext(UpdateEvent(
-                                        EventType.ADD_BOTTOM,
-                                        list.size - size,
-                                        size
-                                ))
-                            } else {
-                                updateObserver.onNext(nothingEvent)
-                            }
+                            list.addAll(ids)
+                            database.insertIds(list.size - size, ids)
+                            updateObserver.onNext(UpdateEvent(
+                                    EventType.ADD_BOTTOM,
+                                    list.size - size,
+                                    size
+                            ))
                         } else {
                             updateObserver.onNext(nothingEvent)
                         }
