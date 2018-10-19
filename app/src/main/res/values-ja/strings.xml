@@ -50,7 +50,7 @@
     <string name="logout">ログアウト</string>
     <string name="new_posts">新しい投稿</string>
     <string name="permission_denied">権限が拒否されました</string>
-    <string name="lat_and_lon">緯度:%f 経度:%f</string>
+    <string name="lat_and_lon">緯度:%1$f 経度:%2$f</string>
     <string name="location_is">所在地: %s</string>
     <string name="url_is">URL: %s</string>
     <string name="posts_counts_is">投稿: %d</string>

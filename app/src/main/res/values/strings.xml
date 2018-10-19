@@ -54,7 +54,7 @@
     <string name="logout">Logout</string>
     <string name="new_posts">New posts</string>
     <string name="permission_denied">Permission denied</string>
-    <string name="lat_and_lon">Latitude:%f Longitude: %f</string>
+    <string name="lat_and_lon">Latitude:%1$f Longitude: %2$f</string>
     <string name="location_is">Location: %s</string>
     <string name="url_is">URL: %s</string>
     <string name="posts_counts_is">Posts: %d</string>
