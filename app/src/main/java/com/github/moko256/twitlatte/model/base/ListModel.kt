@@ -16,6 +16,8 @@
 
 package com.github.moko256.twitlatte.model.base
 
+import com.github.moko256.twitlatte.entity.UpdateEvent
+import io.reactivex.Observable
 import java.io.Closeable
 
 /**
@@ -25,8 +27,12 @@ import java.io.Closeable
  */
 interface ListModel: Closeable {
 
-    fun getSeeingId(): Long
-    fun updateSeeingPosition(id: Long)
+    fun getIdsList(): List<Long>
+    fun getListEventObservable(): Observable<UpdateEvent>
+    fun getErrorEventObservable(): Observable<Throwable>
+
+    fun getSeeingPosition(): Int
+    fun updateSeeingPosition(position: Int)
 
     fun refreshFirst()
     fun refreshOnTop()

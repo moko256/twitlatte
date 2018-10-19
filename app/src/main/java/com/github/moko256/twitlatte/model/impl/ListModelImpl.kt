@@ -24,6 +24,7 @@ import com.github.moko256.twitlatte.entity.UpdateEvent
 import com.github.moko256.twitlatte.model.base.ListModel
 import com.github.moko256.twitlatte.repository.server.ListServerRepository
 import io.reactivex.Completable
+import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.PublishSubject
 
@@ -41,8 +42,10 @@ class ListModelImpl(
     private val list = ArrayList<Long>()
     private val requests = CompositeDisposable()
 
-    val updateObserver = PublishSubject.create<UpdateEvent>()
-    val errorObserver = PublishSubject.create<Throwable>()
+    private var seeingId = -1L
+
+    private val updateObserver = PublishSubject.create<UpdateEvent>()
+    private val errorObserver = PublishSubject.create<Throwable>()
 
     init {
         val c = database.ids
@@ -51,27 +54,48 @@ class ListModelImpl(
         }
     }
 
-    override fun getSeeingId(): Long {
-        return database.seeingId
+    override fun getIdsList(): List<Long> {
+        return list
     }
 
-    override fun updateSeeingPosition(id: Long) {
-        database.seeingId = id
+    override fun getListEventObservable(): Observable<UpdateEvent> {
+        return updateObserver
+    }
+
+    override fun getErrorEventObservable(): Observable<Throwable> {
+        return errorObserver
+    }
+
+    override fun getSeeingPosition(): Int {
+        if (seeingId == -1L) {
+            seeingId = database.seeingId
+        }
+        return list.indexOf(seeingId)
+    }
+
+    override fun updateSeeingPosition(position: Int) {
+        val id = getIdsList()[position]
+        if (id != seeingId) {
+            seeingId = id
+            database.seeingId = id
+        }
     }
 
     override fun refreshFirst() {
         requests.add(
                 Completable.create { status ->
-                    api.get().apply {
-                        GlobalApplication.statusCache.addAll(this)
+                    api.get()
+                            .apply {
+                                GlobalApplication.statusCache.addAll(this)
+                            }
+                            .map { it.id }
+                            .let {
+                                list.addAll(it)
+                                database.addIds(it)
+                                updateObserver.onNext(UpdateEvent(EventType.ADD_FIRST, 0, it.size))
 
-                        val ids = map { it.id }
-
-                        list.addAll(ids)
-                        database.addIds(ids)
-                        updateObserver.onNext(UpdateEvent(EventType.ADD_FIRST, 0, ids.size))
-                        status.onComplete()
-                    }
+                                status.onComplete()
+                            }
                 }.doOnError {
                     it.printStackTrace()
                     errorObserver.onNext(it)

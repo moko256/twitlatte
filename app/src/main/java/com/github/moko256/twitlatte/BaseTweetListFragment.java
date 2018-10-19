@@ -20,16 +20,16 @@ import android.content.Context;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Bundle;
-import android.util.TypedValue;
 import android.view.Display;
-import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Toast;
 
 import com.github.moko256.twitlatte.database.CachedIdListSQLiteOpenHelper;
+import com.github.moko256.twitlatte.entity.UpdateEvent;
+import com.github.moko256.twitlatte.model.impl.ListModelImpl;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
 import com.github.moko256.twitlatte.viewmodel.ListViewModel;
+import com.github.moko256.twitlatte.widget.AdapterObservableBinderKt;
 
 import java.util.Objects;
 
@@ -38,12 +38,12 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
-import either.EitherKt;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 import twitter4j.Paging;
 import twitter4j.ResponseList;
 import twitter4j.Status;
@@ -58,11 +58,11 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
 
     StatusesAdapter adapter;
 
-    private Disposable disposable;
+    private CompositeDisposable disposable;
 
     private ListViewModel listViewModel;
 
-    private long LAST_SAVED_LIST_ID;
+    private Function1<UpdateEvent, Unit> adapterObservableBinder;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -70,24 +70,26 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
 
         listViewModel = ViewModelProviders.of(this).get(ListViewModel.class);
         if (!listViewModel.getInitilized()) {
-            listViewModel.statusIdsDatabase = new CachedIdListSQLiteOpenHelper(
-                    requireContext().getApplicationContext(),
-                    GlobalApplication.accessToken,
-                    getCachedIdsDatabaseName()
+            listViewModel.model = new ListModelImpl(
+                    (sinceId, maxId, limit) -> {
+                        Paging paging = new Paging().count(limit);
+                        if (sinceId != null) {
+                            paging.setSinceId(sinceId);
+                        }
+                        if (maxId != null) {
+                            paging.setMaxId(maxId);
+                        }
+                        if (sinceId == null && maxId == null) {
+                            paging.setPage(1);
+                        }
+                        return getResponseList(paging);
+                    },
+                    new CachedIdListSQLiteOpenHelper(
+                            requireContext().getApplicationContext(),
+                            GlobalApplication.accessToken,
+                            getCachedIdsDatabaseName()
+                    )
             );
-            listViewModel.serverRepository = (sinceId, maxId, limit) -> {
-                Paging paging = new Paging().count(limit);
-                if (sinceId != null) {
-                    paging.setSinceId(sinceId);
-                }
-                if (maxId != null) {
-                    paging.setMaxId(maxId);
-                }
-                if (sinceId == null && maxId == null) {
-                    paging.setPage(1);
-                }
-                return getResponseList(paging);
-            };
             listViewModel.start();
         }
     }
@@ -111,8 +113,8 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
             recyclerView.setRecycledViewPool(((GetRecyclerViewPool) getActivity()).getTweetListViewPool());
         }
 
-        adapter=new StatusesAdapter(getContext(), listViewModel.getList());
-        adapter.onLoadMoreClick = position -> listViewModel.loadOnGap(position);
+        adapter=new StatusesAdapter(getContext(), listViewModel.model.getIdsList());
+        adapter.onLoadMoreClick = position -> listViewModel.model.loadOnGap(position);
         adapter.onFavoriteClick = (position, id, hasFavorited) -> {
             if (hasFavorited) {
                 Single
@@ -261,82 +263,44 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
             adapter.notifyDataSetChanged();
         }
 
-        LAST_SAVED_LIST_ID = listViewModel.getSeeingId();
-        recyclerView.getLayoutManager().scrollToPosition(listViewModel.getList().indexOf(LAST_SAVED_LIST_ID));
+        recyclerView.getLayoutManager().scrollToPosition(listViewModel.model.getSeeingPosition());
 
-        disposable = listViewModel.getListObserver()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(it -> {
-                    EitherKt.fold(
-                            it,
-                            left -> {
-                                switch (left.getType()) {
-                                    case ADD_FIRST:
-                                        adapter.notifyDataSetChanged();
-                                        break;
+        adapterObservableBinder = AdapterObservableBinderKt.convertObservableConsumer(recyclerView);
 
-                                    case ADD_TOP:
-                                        adapter.notifyItemRangeInserted(left.getPosition(), left.getSize());
-                                        TypedValue value=new TypedValue();
-                                        Toast t=Toast.makeText(getContext(),R.string.new_posts,Toast.LENGTH_SHORT);
-                                        t.setGravity(
-                                                Gravity.TOP|Gravity.CENTER,
-                                                0,
-                                                requireContext().getTheme().resolveAttribute(R.attr.actionBarSize, value, true)?
-                                                        TypedValue.complexToDimensionPixelOffset(value.data, getResources().getDisplayMetrics()):
-                                                        0
-                                        );
-                                        t.show();
-                                        break;
+        disposable = new CompositeDisposable(
+                listViewModel
+                        .model
+                        .getListEventObservable()
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(it -> {
+                            adapterObservableBinder.invoke(it);
 
-                                    case ADD_BOTTOM:
-                                        adapter.notifyItemRangeInserted(left.getPosition(), left.getSize());
-                                        break;
-
-                                    case REMOVE_ONLY_GAP:
-                                        adapter.notifyItemRemoved(left.getPosition());
-                                        break;
-
-                                    case INSERT_AT_GAP:
-                                        View startView = recyclerView.getLayoutManager().findViewByPosition(left.getPosition());
-                                        int offset = (startView == null) ? 0 : (startView.getTop() - recyclerView.getPaddingTop());
-
-                                        boolean noGap = listViewModel.getList().get(left.getPosition() + left.getSize() - 1).equals(listViewModel.getList().get(left.getPosition() + 1));
-
-                                        if (noGap) {
-                                            adapter.notifyItemRemoved(left.getPosition());
-                                        } else {
-                                            adapter.notifyItemChanged(left.getPosition());
-                                        }
-
-                                        RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
-                                        if (layoutManager instanceof LinearLayoutManager) {
-                                            ((LinearLayoutManager) layoutManager).scrollToPositionWithOffset(left.getPosition() + left.getSize(), offset);
-                                            adapter.notifyItemRangeInserted(left.getPosition(), left.getSize());
-                                        } else {
-                                            ((StaggeredGridLayoutManager) layoutManager).scrollToPositionWithOffset(left.getPosition() + left.getSize(), offset);
-                                        }
-
-                                }
-                                return Unit.INSTANCE;
-                            },
-                            right -> {
-                                notifyErrorBySnackBar(right).show();
-                                return Unit.INSTANCE;
+                            if (swipeRefreshLayout.isRefreshing()){
+                                setRefreshing(false);
                             }
-                    );
-                    if (swipeRefreshLayout.isRefreshing()){
-                        setRefreshing(false);
-                    }
-                });
+                        }),
+
+                listViewModel
+                        .model
+                        .getErrorEventObservable()
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(it -> {
+                            notifyErrorBySnackBar(it).show();
+
+                            if (swipeRefreshLayout.isRefreshing()){
+                                setRefreshing(false);
+                            }
+                        })
+        );
     }
 
     @Override
     public void onDestroyView() {
         disposable.dispose();
+        adapterObservableBinder = null;
         RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
         int position = getFirstVisibleItemPosition(layoutManager);
-        listViewModel.removeOldCache(position);
+        listViewModel.model.removeOldCache(position);
         recyclerView.swapAdapter(null, true);
         adapter=null;
         super.onDestroyView();
@@ -347,35 +311,29 @@ public abstract class BaseTweetListFragment extends BaseListFragment {
         super.onStop();
         int position = getFirstVisibleItemPosition(recyclerView.getLayoutManager());
         if (position >= 0) {
-            long id = listViewModel.getList().get(
-                    position
-            );
-            if (id != LAST_SAVED_LIST_ID) {
-                listViewModel.saveSeeingPosition(id);
-                LAST_SAVED_LIST_ID = id;
-            }
+            listViewModel.model.updateSeeingPosition(position);
         }
     }
 
     @Override
     protected void onInitializeList() {
         setRefreshing(true);
-        listViewModel.refreshFirst();
+        listViewModel.model.refreshFirst();
     }
 
     @Override
     protected void onUpdateList() {
-        listViewModel.refreshOnTop();
+        listViewModel.model.refreshOnTop();
     }
 
     @Override
     protected void onLoadMoreList() {
-        listViewModel.loadOnBottom();
+        listViewModel.model.loadOnBottom();
     }
 
     @Override
     protected boolean isInitializedList() {
-        return !listViewModel.getList().isEmpty();
+        return !listViewModel.model.getIdsList().isEmpty();
     }
 
     @Override

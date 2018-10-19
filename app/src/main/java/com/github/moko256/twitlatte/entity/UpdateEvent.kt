@@ -34,7 +34,5 @@ enum class EventType {
     ADD_BOTTOM,
     INSERT,
     UPDATE,
-    REMOVE,
-    @Deprecated("useless") INSERT_AT_GAP,
-    @Deprecated("useless") REMOVE_ONLY_GAP
+    REMOVE
 }
