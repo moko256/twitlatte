@@ -187,7 +187,7 @@
         android:layout_below="@id/tweet_quote_tweet"
         android:layout_marginTop="20dp"
         android:layout_marginBottom="4dp"
-        android:layout_marginStart="12dp"
+        android:layout_marginStart="44dp"
         android:layout_marginEnd="6dp"
         android:background="?attr/controlBackground"
         app:tint="@color/image_button_color_stateful"
@@ -214,7 +214,7 @@
         android:layout_toEndOf="@id/tweet_content_replies_count"
         android:layout_marginTop="20dp"
         android:layout_marginBottom="4dp"
-        android:layout_marginStart="12dp"
+        android:layout_marginStart="18dp"
         android:layout_marginEnd="6dp"
         tools:button="@drawable/repeat_button_stateful"
         app:buttonTint="@color/toggle_button_color_stateful"/>
@@ -239,7 +239,7 @@
         android:layout_toEndOf="@id/tweet_content_retweet_count"
         android:layout_marginTop="20dp"
         android:layout_marginBottom="4dp"
-        android:layout_marginStart="12dp"
+        android:layout_marginStart="18dp"
         android:layout_marginEnd="6dp"
         android:button="@drawable/like_button_stateful"
         app:buttonTint="@color/toggle_button_color_stateful"/>
