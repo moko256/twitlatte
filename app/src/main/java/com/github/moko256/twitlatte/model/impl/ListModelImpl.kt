@@ -85,7 +85,7 @@ class ListModelImpl(
     override fun refreshFirst() {
         requests.add(
                 Completable.create { status ->
-                    api.get()
+                    api.get(limit = GlobalApplication.statusLimit)
                             .apply {
                                 GlobalApplication.statusCache.addAll(this)
                             }
@@ -119,7 +119,10 @@ class ListModelImpl(
 
         requests.add(
                 Completable.create { status ->
-                    api.get(sinceId = sinceId).apply {
+                    api.get(
+                            sinceId = sinceId,
+                            limit = GlobalApplication.statusLimit
+                    ).apply {
                         if (isNotEmpty()) {
                             GlobalApplication.statusCache.addAll(this, excludeId)
 
@@ -162,7 +165,10 @@ class ListModelImpl(
 
         requests.add(
                 Completable.create { status ->
-                    api.get(maxId = list[list.size - 1] - 1L).apply {
+                    api.get(
+                            maxId = list[list.size - 1] - 1L,
+                            limit = GlobalApplication.statusLimit
+                    ).apply {
                         if (isNotEmpty()) {
                             GlobalApplication.statusCache.addAll(this)
 
@@ -213,7 +219,11 @@ class ListModelImpl(
 
         requests.add(
                 Completable.create { status ->
-                    api.get(sinceId = sinceId, maxId = list[position -1] - 1L).apply {
+                    api.get(
+                            sinceId = sinceId,
+                            maxId = list[position -1] - 1L,
+                            limit = GlobalApplication.statusLimit
+                    ).apply {
                         if (isNotEmpty()) {
                             GlobalApplication.statusCache.addAll(this, excludeId)
 
