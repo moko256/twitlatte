@@ -234,9 +234,9 @@ class ListModelImpl(
                                 ids.removeAt(ids.size - 1)
                                 list.removeAt(position)
                                 database.deleteIds(listOf(-1L))
-                                updateObserver.onNext(UpdateEvent(EventType.REMOVE, position, 0))
+                                updateObserver.onNext(UpdateEvent(EventType.REMOVE, position, 1))
                             } else {
-                                updateObserver.onNext(UpdateEvent(EventType.UPDATE, position, 0))
+                                updateObserver.onNext(UpdateEvent(EventType.UPDATE, position, 1))
                             }
 
                             list.addAll(position, ids)
@@ -246,7 +246,7 @@ class ListModelImpl(
                         } else {
                             list.removeAt(position)
                             database.deleteIds(listOf(-1L))
-                            updateObserver.onNext(UpdateEvent(EventType.REMOVE, position, 0))
+                            updateObserver.onNext(UpdateEvent(EventType.REMOVE, position, 1))
                         }
 
                         status.onComplete()
