@@ -20,8 +20,11 @@ import android.content.Context
 import android.graphics.Point
 import android.graphics.Rect
 import android.os.Bundle
+import android.util.TypedValue
+import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
+import android.widget.Toast
 import androidx.annotation.Nullable
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -29,6 +32,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.github.moko256.twitlatte.converter.convertToPost
 import com.github.moko256.twitlatte.database.CachedIdListSQLiteOpenHelper
+import com.github.moko256.twitlatte.entity.EventType
 import com.github.moko256.twitlatte.entity.Post
 import com.github.moko256.twitlatte.entity.UpdateEvent
 import com.github.moko256.twitlatte.model.impl.ListModelImpl
@@ -267,6 +271,27 @@ abstract class BaseTweetListFragment : BaseListFragment() {
         adapterObservableBinder = recyclerView.convertObservableConsumer()
 
         disposable = CompositeDisposable(
+                listViewModel!!
+                        .model
+                        .getListEventObservable()
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe { it ->
+                            if (it.type == EventType.ADD_TOP && it.size > 0) {
+                                val value = TypedValue()
+                                Toast.makeText(context, R.string.new_posts, Toast.LENGTH_SHORT).apply {
+                                    setGravity(
+                                            Gravity.TOP or Gravity.CENTER,
+                                            0,
+                                            if (requireContext().theme.resolveAttribute(R.attr.actionBarSize, value, true)) {
+                                                TypedValue.complexToDimensionPixelOffset(value.data, resources.displayMetrics)
+                                            } else {
+                                                0
+                                            }
+                                    )
+                                }.show()
+                            }
+                        },
+
                 listViewModel!!
                         .model
                         .getListEventObservable()
