@@ -50,8 +50,8 @@ fun RecyclerView.convertObservableConsumer(): (UpdateEvent) -> Unit = {
                 adapter!!.notifyItemRangeInserted(it.position, it.size)
                 layoutManager.scrollToPositionWithOffset(it.position + it.size, offset)
             } else {
-                adapter!!.notifyItemRangeInserted(it.position, it.size)
                 (layoutManager as StaggeredGridLayoutManager).scrollToPositionWithOffset(it.position + it.size, offset)
+                adapter!!.notifyItemRangeChanged(it.position, it.size)
             }
         }
 
