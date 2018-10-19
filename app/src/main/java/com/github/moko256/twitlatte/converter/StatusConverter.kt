@@ -184,6 +184,15 @@ private fun twitter4j.Status.convertToStatus(): Status {
     )
 }
 
+fun twitter4j.Status.convertToStatusOrRepeat(): StatusObject {
+    return if (retweetedStatus != null) {
+        convertToRepeat()
+    } else {
+        convertToStatus()
+    }
+}
+
+
 private fun twitter4j.Status.convertToRepeat(): Repeat {
     return Repeat(
             id = id,

@@ -17,6 +17,7 @@
 package com.github.moko256.twitlatte.rx
 
 import com.github.moko256.twitlatte.cacheMap.UserCacheMap
+import com.github.moko256.twitlatte.converter.convertToCommonUser
 import com.github.moko256.twitlatte.entity.User
 import io.reactivex.SingleEmitter
 import io.reactivex.SingleOnSubscribe
@@ -37,7 +38,7 @@ class VerifyCredentialOnSubscribe(
         try {
             var me = cache.get(userId)
             if (me == null) {
-                cache.add(client.verifyCredentials())
+                cache.add(client.verifyCredentials().convertToCommonUser())
                 me = cache.get(userId)
             }
             emitter.onSuccess(me)

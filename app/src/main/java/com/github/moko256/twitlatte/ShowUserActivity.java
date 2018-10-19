@@ -25,6 +25,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.github.moko256.mastodon.MastodonTwitterImpl;
+import com.github.moko256.twitlatte.converter.UserConverterKt;
 import com.github.moko256.twitlatte.entity.ClientType;
 import com.github.moko256.twitlatte.entity.User;
 import com.github.moko256.twitlatte.intent.AppCustomTabsKt;
@@ -318,7 +319,7 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
                                     userId = user.getId();
                                 }
                                 if (user != null) {
-                                    GlobalApplication.userCache.add(user);
+                                    GlobalApplication.userCache.add(UserConverterKt.convertToCommonUser(user));
                                 }
                                 subscriber.onSuccess(GlobalApplication.userCache.get(userId));
                             } catch (TwitterException e) {

@@ -47,7 +47,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
  *
  * @author moko256
  */
-class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private final List<Long> data;
     private final Context context;
@@ -64,6 +64,19 @@ class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         this.data = data;
 
         setHasStableIds(true);
+    }
+
+
+    public void setOnLoadMoreClick(OnLoadMoreClickListener onLoadMoreClick) {
+        this.onLoadMoreClick = onLoadMoreClick;
+    }
+
+    public void setOnFavoriteClick(OnFavoriteClickListener onFavoriteClick) {
+        this.onFavoriteClick = onFavoriteClick;
+    }
+
+    public void setOnRepeatClick(OnRepeatClickListener onRepeatClick) {
+        this.onRepeatClick = onRepeatClick;
     }
 
     @Override

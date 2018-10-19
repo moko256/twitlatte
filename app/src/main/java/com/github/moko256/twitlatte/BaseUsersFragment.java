@@ -20,6 +20,8 @@ import android.graphics.Rect;
 import android.os.Bundle;
 import android.view.View;
 
+import com.github.moko256.twitlatte.converter.UserConverterKt;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -194,7 +196,11 @@ public abstract class BaseUsersFragment extends BaseListFragment {
                     try {
                         PagableResponseList<User> pageableResponseList=getResponseList(cursor);
                         next_cursor=pageableResponseList.getNextCursor();
-                        GlobalApplication.userCache.addAll(pageableResponseList);
+                        ArrayList<com.github.moko256.twitlatte.entity.User> users = new ArrayList<>(pageableResponseList.size());
+                        for (User user : pageableResponseList) {
+                            users.add(UserConverterKt.convertToCommonUser(user));
+                        }
+                        GlobalApplication.userCache.addAll(users);
                         subscriber.onSuccess(pageableResponseList);
                     } catch (TwitterException e) {
                         subscriber.tryOnError(e);

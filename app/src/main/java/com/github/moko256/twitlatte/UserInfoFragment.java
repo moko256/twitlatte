@@ -29,6 +29,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.github.moko256.twitlatte.converter.UserConverterKt;
 import com.github.moko256.twitlatte.entity.Emoji;
 import com.github.moko256.twitlatte.entity.User;
 import com.github.moko256.twitlatte.glide.GlideApp;
@@ -259,7 +260,7 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
                 subscriber -> {
                     try {
                         twitter4j.User user = GlobalApplication.twitter.showUser(userId);
-                        GlobalApplication.userCache.add(user);
+                        GlobalApplication.userCache.add(UserConverterKt.convertToCommonUser(user));
                         subscriber.onSuccess(GlobalApplication.userCache.get(userId));
                     } catch (TwitterException e) {
                         subscriber.tryOnError(e);

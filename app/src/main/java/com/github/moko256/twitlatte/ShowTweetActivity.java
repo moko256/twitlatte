@@ -29,6 +29,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.moko256.twitlatte.converter.StatusConverterKt;
 import com.github.moko256.twitlatte.entity.Post;
 import com.github.moko256.twitlatte.entity.Status;
 import com.github.moko256.twitlatte.entity.User;
@@ -207,7 +208,7 @@ public class ShowTweetActivity extends AppCompatActivity {
                 subscriber -> {
                     try {
                         twitter4j.Status result = GlobalApplication.twitter.showStatus(statusId);
-                        GlobalApplication.statusCache.add(result, false);
+                        GlobalApplication.statusCache.add(StatusConverterKt.convertToPost(result), false);
                         subscriber.onSuccess(GlobalApplication.postCache.getPost(statusId));
                     } catch (TwitterException e) {
                         subscriber.tryOnError(e);
@@ -249,7 +250,7 @@ public class ShowTweetActivity extends AppCompatActivity {
                         .create(subscriber -> {
                             try {
                                 twitter4j.Status newStatus = GlobalApplication.twitter.createFavorite(item.getStatus().getId());
-                                GlobalApplication.statusCache.add(newStatus, false);
+                                GlobalApplication.statusCache.add(StatusConverterKt.convertToPost(newStatus), false);
                                 subscriber.onSuccess(newStatus);
                             } catch (TwitterException e) {
                                 subscriber.tryOnError(e);
@@ -286,7 +287,7 @@ public class ShowTweetActivity extends AppCompatActivity {
                         .create(subscriber -> {
                             try {
                                 twitter4j.Status newStatus = GlobalApplication.twitter.destroyFavorite(item.getStatus().getId());
-                                GlobalApplication.statusCache.add(newStatus, false);
+                                GlobalApplication.statusCache.add(StatusConverterKt.convertToPost(newStatus), false);
                                 subscriber.onSuccess(newStatus);
                             } catch (TwitterException e) {
                                 subscriber.tryOnError(e);
@@ -327,7 +328,7 @@ public class ShowTweetActivity extends AppCompatActivity {
                         .create(subscriber -> {
                             try {
                                 twitter4j.Status newStatus = GlobalApplication.twitter.retweetStatus(item.getStatus().getId());
-                                GlobalApplication.statusCache.add(newStatus, false);
+                                GlobalApplication.statusCache.add(StatusConverterKt.convertToPost(newStatus), false);
                                 subscriber.onSuccess(newStatus);
                             } catch (TwitterException e) {
                                 subscriber.tryOnError(e);
@@ -364,7 +365,7 @@ public class ShowTweetActivity extends AppCompatActivity {
                         .create(subscriber -> {
                             try {
                                 twitter4j.Status newStatus = GlobalApplication.twitter.unRetweetStatus(item.getStatus().getId());
-                                GlobalApplication.statusCache.add(newStatus, false);
+                                GlobalApplication.statusCache.add(StatusConverterKt.convertToPost(newStatus), false);
                                 subscriber.onSuccess(newStatus);
                             } catch (TwitterException e) {
                                 subscriber.tryOnError(e);
