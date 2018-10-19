@@ -52,8 +52,13 @@ fun twitter4j.Status.convertToCommonStatus(): Post {
         statusUser = user.convertToCommonUser()
         repeat = null
         repeatUser = null
-        quotedStatus = getQuotedStatus().convertToStatus()
-        quotedStatusUser = getQuotedStatus().user.convertToCommonUser()
+        if (getQuotedStatus() != null) {
+            quotedStatus = getQuotedStatus().convertToStatus()
+            quotedStatusUser = getQuotedStatus().user.convertToCommonUser()
+        } else {
+            quotedStatus = null
+            quotedStatusUser = null
+        }
     } else {
         repeat = convertToRepeat()
         repeatUser = user.convertToCommonUser()
@@ -61,8 +66,13 @@ fun twitter4j.Status.convertToCommonStatus(): Post {
         status = baseRepeat.convertToStatus()
         statusUser = baseRepeat.user.convertToCommonUser()
 
-        quotedStatus = baseRepeat.quotedStatus.convertToStatus()
-        quotedStatusUser = baseRepeat.quotedStatus.user.convertToCommonUser()
+        if (baseRepeat.quotedStatus != null) {
+            quotedStatus = baseRepeat.quotedStatus.convertToStatus()
+            quotedStatusUser = baseRepeat.quotedStatus.user.convertToCommonUser()
+        } else {
+            quotedStatus = null
+            quotedStatusUser = null
+        }
     }
 
     return Post(

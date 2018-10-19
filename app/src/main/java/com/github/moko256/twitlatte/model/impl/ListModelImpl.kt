@@ -26,6 +26,7 @@ import com.github.moko256.twitlatte.repository.server.ListServerRepository
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
 
 /**
@@ -99,7 +100,7 @@ class ListModelImpl(
                 }.doOnError {
                     it.printStackTrace()
                     errorObserver.onNext(it)
-                }.subscribe()
+                }.subscribeOn(Schedulers.io()).subscribe()
         )
     }
 
@@ -146,7 +147,7 @@ class ListModelImpl(
                 }.doOnError {
                     it.printStackTrace()
                     errorObserver.onNext(it)
-                }.subscribe()
+                }.subscribeOn(Schedulers.io()).subscribe()
         )
     }
 
@@ -193,7 +194,7 @@ class ListModelImpl(
                 }.doOnError {
                     it.printStackTrace()
                     errorObserver.onNext(it)
-                }.subscribe()
+                }.subscribeOn(Schedulers.io()).subscribe()
         )
     }
 
@@ -243,7 +244,7 @@ class ListModelImpl(
                 }.doOnError {
                     it.printStackTrace()
                     errorObserver.onNext(it)
-                }.subscribe()
+                }.subscribeOn(Schedulers.io()).subscribe()
         )    }
 
     override fun removeOldCache(position: Int) {
