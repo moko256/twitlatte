@@ -23,6 +23,7 @@ import android.location.LocationManager
 import android.os.Bundle
 import io.reactivex.Single
 import io.reactivex.SingleEmitter
+import java.util.*
 
 /**
  * Created by moko256 on 2018/06/07.
@@ -30,35 +31,52 @@ import io.reactivex.SingleEmitter
  * @author moko256
  */
 class LocationSingleBuilder(
-        private val locationManager: LocationManager,
-        private val criteria: Criteria
+        private val locationManager: LocationManager
 ): LocationListener {
 
     private lateinit var emitter: SingleEmitter<Location>
 
-    val single = Single.create<Location> {
+    val single = Single.create<Location> { emitter ->
         try {
-            locationManager.requestSingleUpdate(
-                    locationManager.getBestProvider(criteria, true), this, null
-            )
+            val criteria = Criteria()
+            criteria.accuracy = Criteria.ACCURACY_COARSE
+            criteria.bearingAccuracy = Criteria.ACCURACY_COARSE
+            criteria.speedAccuracy = Criteria.ACCURACY_LOW
+            locationManager.getBestProvider(criteria, true).also { provider ->
+                locationManager
+                        .getLastKnownLocation(provider)
+                        .takeIf {
+                            it.time < Date().time + 10 * 60 * 1000
+                        }.also {
+                            if (it == null) {
+                                locationManager.requestSingleUpdate(
+                                        provider, this, null
+                                )
+                            } else {
+                                emitter.onSuccess(it)
+                                return@create
+                            }
+                        }
+            }
+
         } catch (e: SecurityException) {
-            it.tryOnError(e)
+            emitter.tryOnError(e)
             return@create
         }
 
-        emitter = it
+        this.emitter = emitter
     }.doOnDispose {
         locationManager.removeUpdates(this)
     }!!
 
     override fun onLocationChanged(location: Location?) {
-        locationManager.removeUpdates(this)
-
         if (location != null) {
             emitter.onSuccess(location)
         } else {
             emitter.tryOnError(NullPointerException("Unable to get location: got location was null"))
         }
+
+        locationManager.removeUpdates(this)
     }
 
     override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?){} //Do nothing

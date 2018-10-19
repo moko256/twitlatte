@@ -23,7 +23,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Rect;
-import android.location.Criteria;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -506,12 +505,9 @@ public class PostActivity extends AppCompatActivity {
 
     private void updateLocation(){
         LocationManager locationManager = (LocationManager) getApplicationContext().getSystemService(LOCATION_SERVICE);
-        Criteria criteria = new Criteria();
-        criteria.setAccuracy(Criteria.ACCURACY_FINE);
-        criteria.setCostAllowed(false);
 
         disposable.add(
-                new LocationSingleBuilder(Objects.requireNonNull(locationManager), criteria)
+                new LocationSingleBuilder(Objects.requireNonNull(locationManager))
                         .getSingle()
                         .subscribe(
                                 it -> {
