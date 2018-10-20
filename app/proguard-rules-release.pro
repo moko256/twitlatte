@@ -2,6 +2,13 @@
 
 -keepattributes SourceFile,LineNumberTable
 
+-keep,allowoptimization class androidx.appcompat.app.AppCompatViewInflater
+
+-dontwarn java.lang.invoke.*
+-dontwarn **$$Lambda$*
+
+
+-dontwarn com.fasterxml.jackson.databind.**
 
 ##---------------Begin: proguard configuration for twitter4j  ----------
 
@@ -10,24 +17,6 @@
 -keep,allowoptimization class twitter4j.conf.PropertyConfigurationFactory
 
 ##---------------End: proguard configuration for twitter4j  ----------
-
-
--keep,allowoptimization class androidx.appcompat.app.AppCompatViewInflater
-
--dontwarn java.lang.invoke.*
--dontwarn **$$Lambda$*
-
-
-# Proguard configuration for Jackson 2.x (fasterxml package instead of codehaus package)
--keep,allowoptimization class com.fasterxml.jackson.databind.ObjectMapper {
-    public <methods>;
-    protected <methods>;
-}
--keep,allowoptimization class com.fasterxml.jackson.databind.ObjectWriter {
-    public ** writeValueAsString(**);
-}
--keepnames class com.fasterxml.jackson.** { *; }
--dontwarn com.fasterxml.jackson.databind.**
 
 
 ##---------------Begin: proguard configuration for Gson  ----------

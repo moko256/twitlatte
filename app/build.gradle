@@ -64,14 +64,17 @@ android {
         exclude '/javax/**'
         exclude '/okhttp3/**'
         exclude '/kotlin/**'
+        exclude '/META-INF/*.version'
         exclude '/META-INF/**.kotlin_module'
         exclude '/META-INF/proguard/**'
+        exclude '/META-INF/services/com.fasterxml.jackson.core.*'
         exclude '/autolink.yml'
         exclude '/extract.yml'
         exclude '/hit_highlighting.yml'
         exclude '/tld_lib.yml'
         exclude '/tlds.yml'
         exclude '/validate.yml'
+        exclude '/v*.json'
     }
 }
 
