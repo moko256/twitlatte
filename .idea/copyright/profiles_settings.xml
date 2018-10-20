@@ -1,6 +1,7 @@
 <component name="CopyrightManager">
-  <settings default="twitlatte_apatch_2_0">
+  <settings>
     <module2copyright>
+      <element module="twitter-text" copyright="no-update" />
       <element module="All" copyright="twitlatte_apatch_2_0" />
     </module2copyright>
   </settings>

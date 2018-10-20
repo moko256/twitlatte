@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="lib-modified-file" pattern="file[alternative_twitter_text]:src/main/java/com/twitter/twittertext/AlternativeTwitterTextParser.java" />
+</component>
