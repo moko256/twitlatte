@@ -20,8 +20,9 @@ import android.content.ContentResolver;
 import android.net.Uri;
 
 import com.github.moko256.twitlatte.model.base.PostTweetModel;
+import com.twitter.twittertext.AlternativeTwitterTextConfigurationKt;
+import com.twitter.twittertext.AlternativeTwitterTextParser;
 import com.twitter.twittertext.TwitterTextParseResults;
-import com.twitter.twittertext.TwitterTextParser;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -52,7 +53,7 @@ public class PostTweetModelImpl implements PostTweetModel {
     private GeoLocation location;
 
     private TwitterTextParseResults resultCache = null;
-    private final int MAX_TWEET_LENGTH = TwitterTextParser.TWITTER_TEXT_WEIGHTED_CHAR_COUNT_CONFIG.getMaxWeightedTweetLength();
+    private final int MAX_TWEET_LENGTH = AlternativeTwitterTextConfigurationKt.TWITTER_TEXT_CONF_V3.getMaxWeightedTweetLength();
 
     public PostTweetModelImpl(Twitter twitter, ContentResolver contentResolver){
         this.twitter = twitter;
@@ -128,7 +129,10 @@ public class PostTweetModelImpl implements PostTweetModel {
 
     private void updateCounter(){
         if (resultCache == null){
-            resultCache = TwitterTextParser.parseTweet(tweetText);
+            resultCache = AlternativeTwitterTextParser.parseTweet(
+                    tweetText,
+                    AlternativeTwitterTextConfigurationKt.TWITTER_TEXT_CONF_V3
+            );
         }
     }
 

@@ -14,10 +14,13 @@
  * limitations under the License.
  */
 
-include ':app'
-include ':alternative_twitter_text'
-include ':mastodon4j_to_twitter4j'
+apply plugin: 'java-library'
+apply plugin: 'kotlin'
 
-include ':japng-android:android_api'
-include ':api'
-project(':api').projectDir = new File('japng-android/japng/api')
+dependencies {
+    api 'com.twitter.twittertext:twitter-text:3.0.1'
+    api "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+}
+
+sourceCompatibility = "8"
+targetCompatibility = "8"
