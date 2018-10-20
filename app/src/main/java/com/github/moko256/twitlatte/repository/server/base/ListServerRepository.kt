@@ -14,29 +14,15 @@
  * limitations under the License.
  */
 
-package com.github.moko256.twitlatte.viewmodel
-
-import androidx.lifecycle.ViewModel
-import com.github.moko256.twitlatte.model.base.ListModel
-import com.github.moko256.twitlatte.model.base.StatusActionModel
+package com.github.moko256.twitlatte.repository.server.base
 
 /**
  * Created by moko256 on 2018/07/13.
  *
  * @author moko256
  */
-class ListViewModel: ViewModel() {
-    var initilized: Boolean = false
+interface ListServerRepository<T> {
 
-    lateinit var listModel: ListModel
-    lateinit var statusActionModel: StatusActionModel
-
-    fun start() {
-        initilized = true
-    }
-
-    override fun onCleared() {
-        listModel.close()
-    }
-
+    @Throws(Throwable::class)
+    fun get(sinceId: Long? = null, maxId: Long? = null, limit: Int = 10): List<T>
 }

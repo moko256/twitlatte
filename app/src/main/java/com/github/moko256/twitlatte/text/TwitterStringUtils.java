@@ -32,6 +32,7 @@ import com.github.moko256.twitlatte.R;
 import com.github.moko256.twitlatte.SearchResultActivity;
 import com.github.moko256.twitlatte.ShowUserActivity;
 import com.github.moko256.twitlatte.entity.ClientType;
+import com.github.moko256.twitlatte.entity.StatusAction;
 import com.github.moko256.twitlatte.intent.AppCustomTabsKt;
 import com.github.moko256.twitlatte.text.link.entity.Link;
 import com.github.moko256.twitlatte.text.style.ClickableNoLineSpan;
@@ -268,13 +269,13 @@ public class TwitterStringUtils {
     }
 
     @StringRes
-    public static int getDidActionStringRes(@ClientType.ClientTypeInt int type, Action action){
+    public static int getDidActionStringRes(@ClientType.ClientTypeInt int type, StatusAction action){
         switch (type){
             case ClientType.TWITTER:
                 switch (action){
-                    case LIKE:
+                    case FAVORITE:
                         return R.string.did_like;
-                    case UNLIKE:
+                    case UNFAVORITE:
                         return R.string.did_unlike;
                     case REPEAT:
                         return R.string.did_retweet;
@@ -286,9 +287,9 @@ public class TwitterStringUtils {
 
             case ClientType.MASTODON:
                 switch (action){
-                    case LIKE:
+                    case FAVORITE:
                         return R.string.did_favorite;
-                    case UNLIKE:
+                    case UNFAVORITE:
                         return R.string.did_unfavorite;
                     case REPEAT:
                         return R.string.did_boost;
@@ -315,13 +316,6 @@ public class TwitterStringUtils {
             default:
                 return 0;
         }
-    }
-
-    public enum Action{
-        LIKE,
-        UNLIKE,
-        REPEAT,
-        UNREPEAT
     }
 
 }

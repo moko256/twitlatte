@@ -14,29 +14,22 @@
  * limitations under the License.
  */
 
-package com.github.moko256.twitlatte.viewmodel
+package com.github.moko256.twitlatte.model.base
 
-import androidx.lifecycle.ViewModel
-import com.github.moko256.twitlatte.model.base.ListModel
-import com.github.moko256.twitlatte.model.base.StatusActionModel
+import com.github.moko256.twitlatte.entity.StatusAction
+import io.reactivex.Observable
 
 /**
- * Created by moko256 on 2018/07/13.
+ * Created by moko256 on 2018/10/20.
  *
  * @author moko256
  */
-class ListViewModel: ViewModel() {
-    var initilized: Boolean = false
+interface StatusActionModel {
+    fun getUpdateObservable(): Observable<Pair<Long, StatusAction>>
+    fun getErrorObservable(): Observable<Pair<Long, Throwable>>
 
-    lateinit var listModel: ListModel
-    lateinit var statusActionModel: StatusActionModel
-
-    fun start() {
-        initilized = true
-    }
-
-    override fun onCleared() {
-        listModel.close()
-    }
-
+    fun createFavorite(targetStatusId: Long)
+    fun removeFavorite(targetStatusId: Long)
+    fun createRepeat(targetStatusId: Long)
+    fun removeRepeat(targetStatusId: Long)
 }

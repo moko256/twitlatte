@@ -16,6 +16,7 @@
 
 package com.github.moko256.twitlatte
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Point
 import android.graphics.Rect
@@ -36,14 +37,14 @@ import com.github.moko256.twitlatte.entity.EventType
 import com.github.moko256.twitlatte.entity.Post
 import com.github.moko256.twitlatte.entity.UpdateEvent
 import com.github.moko256.twitlatte.model.impl.ListModelImpl
-import com.github.moko256.twitlatte.repository.server.ListServerRepository
+import com.github.moko256.twitlatte.model.impl.StatusActionModelImpl
+import com.github.moko256.twitlatte.repository.server.base.ListServerRepository
+import com.github.moko256.twitlatte.repository.server.impl.TwitterStatusActionRepositoryImpl
 import com.github.moko256.twitlatte.text.TwitterStringUtils
 import com.github.moko256.twitlatte.viewmodel.ListViewModel
 import com.github.moko256.twitlatte.widget.convertObservableConsumer
-import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
 import twitter4j.Paging
 import twitter4j.ResponseList
 import twitter4j.Status
@@ -58,9 +59,9 @@ abstract class BaseTweetListFragment : BaseListFragment() {
 
     protected var adapter: StatusesAdapter? = null
 
-    private var disposable: CompositeDisposable? = null
+    private lateinit var disposable: CompositeDisposable
 
-    private var listViewModel: ListViewModel? = null
+    private lateinit var listViewModel: ListViewModel
 
     private var adapterObservableBinder: Function1<UpdateEvent, Unit>? = null
 
@@ -70,8 +71,8 @@ abstract class BaseTweetListFragment : BaseListFragment() {
         super.onCreate(savedInstanceState)
 
         listViewModel = ViewModelProviders.of(this).get(ListViewModel::class.java)
-        if (!listViewModel!!.initilized) {
-            listViewModel!!.model = ListModelImpl(
+        if (!listViewModel.initilized) {
+            listViewModel.listModel = ListModelImpl(
                     object : ListServerRepository<Post> {
                         override fun get(sinceId: Long?, maxId: Long?, limit: Int): List<Post> {
                             val paging = Paging().count(limit)
@@ -95,10 +96,17 @@ abstract class BaseTweetListFragment : BaseListFragment() {
                             cachedIdsDatabaseName
                     )
             )
-            listViewModel!!.start()
+            listViewModel.statusActionModel = StatusActionModelImpl(
+                    TwitterStatusActionRepositoryImpl(
+                            GlobalApplication.twitter
+                    ),
+                    GlobalApplication.statusCache
+            )
+            listViewModel.start()
         }
     }
 
+    @SuppressLint("WrongConstant")
     override fun onActivityCreated(@Nullable savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
@@ -116,148 +124,20 @@ abstract class BaseTweetListFragment : BaseListFragment() {
             recyclerView.setRecycledViewPool((activity as GetRecyclerViewPool).tweetListViewPool)
         }
 
-        adapter = StatusesAdapter(context, listViewModel!!.model.getIdsList())
-        adapter!!.setOnLoadMoreClick { position -> listViewModel!!.model.loadOnGap(position) }
-        adapter!!.setOnFavoriteClick { position, id, hasFavorited ->
+        adapter = StatusesAdapter(context, listViewModel.listModel.getIdsList())
+        adapter!!.setOnLoadMoreClick { position -> listViewModel.listModel.loadOnGap(position) }
+        adapter!!.setOnFavoriteClick { _, id, hasFavorited ->
             if (hasFavorited) {
-                Single
-                        .create<Any> { subscriber ->
-                            try {
-                                val newStatus = GlobalApplication.twitter.destroyFavorite(id)
-                                GlobalApplication.statusCache.add(newStatus.convertToPost(), false)
-                                subscriber.onSuccess(newStatus)
-                            } catch (e: TwitterException) {
-                                subscriber.tryOnError(e)
-                            }
-                        }
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(
-                                {
-                                    if (adapter != null) {
-                                        adapter!!.notifyItemChanged(position)
-                                    }
-
-                                    notifyBySnackBar(
-                                            TwitterStringUtils.getDidActionStringRes(
-                                                    GlobalApplication.clientType,
-                                                    TwitterStringUtils.Action.UNLIKE
-                                            )
-                                    ).show()
-                                },
-                                { throwable ->
-                                    throwable.printStackTrace()
-                                    notifyErrorBySnackBar(throwable).show()
-                                    if (adapter != null) {
-                                        adapter!!.notifyItemChanged(position)
-                                    }
-                                }
-                        )
+                listViewModel.statusActionModel.removeFavorite(id)
             } else {
-                Single
-                        .create<Any> { subscriber ->
-                            try {
-                                val newStatus = GlobalApplication.twitter.createFavorite(id)
-                                GlobalApplication.statusCache.add(newStatus.convertToPost(), false)
-                                subscriber.onSuccess(newStatus)
-                            } catch (e: TwitterException) {
-                                subscriber.tryOnError(e)
-                            }
-                        }
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(
-                                {
-                                    if (adapter != null) {
-                                        adapter!!.notifyItemChanged(position)
-                                    }
-
-                                    notifyBySnackBar(
-                                            TwitterStringUtils.getDidActionStringRes(
-                                                    GlobalApplication.clientType,
-                                                    TwitterStringUtils.Action.LIKE
-                                            )
-                                    ).show()
-                                },
-                                { throwable ->
-                                    throwable.printStackTrace()
-                                    notifyErrorBySnackBar(throwable).show()
-                                    if (adapter != null) {
-                                        adapter!!.notifyItemChanged(position)
-                                    }
-                                }
-                        )
+                listViewModel.statusActionModel.createFavorite(id)
             }
         }
-        adapter!!.setOnRepeatClick { position, id, hasFavorited ->
-            if (hasFavorited) {
-                Single
-                        .create<Any> { subscriber ->
-                            try {
-                                val newStatus = GlobalApplication.twitter.unRetweetStatus(id)
-                                GlobalApplication.statusCache.add(newStatus.convertToPost(), false)
-                                subscriber.onSuccess(newStatus)
-                            } catch (e: TwitterException) {
-                                subscriber.tryOnError(e)
-                            }
-                        }
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(
-                                {
-                                    if (adapter != null) {
-                                        adapter!!.notifyItemChanged(position)
-                                    }
-
-                                    notifyBySnackBar(
-                                            TwitterStringUtils.getDidActionStringRes(
-                                                    GlobalApplication.clientType,
-                                                    TwitterStringUtils.Action.UNREPEAT
-                                            )
-                                    ).show()
-                                },
-                                { throwable ->
-                                    throwable.printStackTrace()
-                                    notifyErrorBySnackBar(throwable).show()
-                                    if (adapter != null) {
-                                        adapter!!.notifyItemChanged(position)
-                                    }
-                                }
-                        )
+        adapter!!.setOnRepeatClick { _, id, hasRepeated ->
+            if (hasRepeated) {
+                listViewModel.statusActionModel.removeRepeat(id)
             } else {
-                Single
-                        .create<Any> { subscriber ->
-                            try {
-                                val newStatus = GlobalApplication.twitter.retweetStatus(id)
-                                GlobalApplication.statusCache.add(newStatus.convertToPost(), false)
-                                subscriber.onSuccess(newStatus)
-                            } catch (e: TwitterException) {
-                                subscriber.tryOnError(e)
-                            }
-                        }
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(
-                                {
-                                    if (adapter != null) {
-                                        adapter!!.notifyItemChanged(position)
-                                    }
-
-                                    notifyBySnackBar(
-                                            TwitterStringUtils.getDidActionStringRes(
-                                                    GlobalApplication.clientType,
-                                                    TwitterStringUtils.Action.REPEAT
-                                            )
-                                    ).show()
-                                },
-                                { throwable ->
-                                    throwable.printStackTrace()
-                                    notifyErrorBySnackBar(throwable).show()
-                                    if (adapter != null) {
-                                        adapter!!.notifyItemChanged(position)
-                                    }
-                                }
-                        )
+                listViewModel.statusActionModel.createRepeat(id)
             }
         }
 
@@ -266,13 +146,13 @@ abstract class BaseTweetListFragment : BaseListFragment() {
             adapter!!.notifyDataSetChanged()
         }
 
-        recyclerView.layoutManager!!.scrollToPosition(listViewModel!!.model.getSeeingPosition())
+        recyclerView.layoutManager!!.scrollToPosition(listViewModel.listModel.getSeeingPosition())
 
         adapterObservableBinder = recyclerView.convertObservableConsumer()
 
         disposable = CompositeDisposable(
-                listViewModel!!
-                        .model
+                listViewModel
+                        .listModel
                         .getListEventObservable()
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe { it ->
@@ -292,8 +172,8 @@ abstract class BaseTweetListFragment : BaseListFragment() {
                             }
                         },
 
-                listViewModel!!
-                        .model
+                listViewModel
+                        .listModel
                         .getListEventObservable()
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe { it ->
@@ -304,8 +184,8 @@ abstract class BaseTweetListFragment : BaseListFragment() {
                             }
                         },
 
-                listViewModel!!
-                        .model
+                listViewModel
+                        .listModel
                         .getErrorEventObservable()
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe { it ->
@@ -314,16 +194,37 @@ abstract class BaseTweetListFragment : BaseListFragment() {
                             if (swipeRefreshLayout.isRefreshing) {
                                 setRefreshing(false)
                             }
+                        },
+
+                listViewModel.statusActionModel.getUpdateObservable()
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe {
+                            adapter!!.notifyItemChanged(listViewModel.listModel.getIdsList().indexOf(it.first))
+
+                            notifyBySnackBar(
+                                    TwitterStringUtils.getDidActionStringRes(
+                                            GlobalApplication.clientType,
+                                            it.second
+                                    )
+                            ).show()
+                        },
+
+                listViewModel.statusActionModel.getErrorObservable()
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe {
+                            it.second.printStackTrace()
+                            notifyErrorBySnackBar(it.second).show()
+                            adapter!!.notifyItemChanged(listViewModel.listModel.getIdsList().indexOf(it.first))
                         }
         )
     }
 
     override fun onDestroyView() {
-        disposable!!.dispose()
+        disposable.dispose()
         adapterObservableBinder = null
         val layoutManager = recyclerView.layoutManager
         val position = getFirstVisibleItemPosition(layoutManager)
-        listViewModel!!.model.removeOldCache(position)
+        listViewModel.listModel.removeOldCache(position)
         recyclerView.swapAdapter(null, true)
         adapter = null
         super.onDestroyView()
@@ -333,25 +234,25 @@ abstract class BaseTweetListFragment : BaseListFragment() {
         super.onStop()
         val position = getFirstVisibleItemPosition(recyclerView.layoutManager)
         if (position >= 0) {
-            listViewModel!!.model.updateSeeingPosition(position)
+            listViewModel.listModel.updateSeeingPosition(position)
         }
     }
 
     override fun onInitializeList() {
         setRefreshing(true)
-        listViewModel!!.model.refreshFirst()
+        listViewModel.listModel.refreshFirst()
     }
 
     override fun onUpdateList() {
-        listViewModel!!.model.refreshOnTop()
+        listViewModel.listModel.refreshOnTop()
     }
 
     override fun onLoadMoreList() {
-        listViewModel!!.model.loadOnBottom()
+        listViewModel.listModel.loadOnBottom()
     }
 
     override fun isInitializedList(): Boolean {
-        return !listViewModel!!.model.getIdsList().isEmpty()
+        return !listViewModel.listModel.getIdsList().isEmpty()
     }
 
     override fun initializeRecyclerViewLayoutManager(): RecyclerView.LayoutManager {

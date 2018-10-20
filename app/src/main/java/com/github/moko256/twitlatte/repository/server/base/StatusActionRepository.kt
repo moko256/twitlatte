@@ -14,15 +14,18 @@
  * limitations under the License.
  */
 
-package com.github.moko256.twitlatte.repository.server
+package com.github.moko256.twitlatte.repository.server.base
+
+import com.github.moko256.twitlatte.entity.Post
 
 /**
- * Created by moko256 on 2018/07/13.
+ * Created by moko256 on 2018/10/20.
  *
  * @author moko256
  */
-interface ListServerRepository<T> {
-
-    @Throws(Throwable::class)
-    fun get(sinceId: Long? = null, maxId: Long? = null, limit: Int = 10): List<T>
+interface StatusActionRepository {
+    fun createFavorite(targetStatusId: Long): Post
+    fun removeFavorite(targetStatusId: Long): Post
+    fun createRepeat(targetStatusId: Long): Post
+    fun removeRepeat(targetStatusId: Long): Post
 }
