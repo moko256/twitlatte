@@ -111,13 +111,13 @@ abstract class BaseTweetListFragment : BaseListFragment() {
     override fun onActivityCreated(@Nullable savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        val dp8 = Math.round(8f * resources.displayMetrics.density)
+        val dp4 = Math.round(4f * resources.displayMetrics.density)
 
-        recyclerView.setPadding(dp8, 0, 0, 0)
+        recyclerView.setPadding(dp4, 0, dp4, 0)
         recyclerView.addItemDecoration(object : RecyclerView.ItemDecoration() {
             override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
-                outRect.right = dp8
-                outRect.top = dp8
+                outRect.right = dp4
+                outRect.top = dp4
             }
         })
 
