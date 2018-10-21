@@ -91,7 +91,7 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
         Post post = GlobalApplication.postCache.getPost(data.get(position));
 
-        if (post == null || post.getStatus() == null){
+        if (!(post != null && post.getStatus() != null)){
             return R.layout.layout_list_load_more_text;
         }
 
@@ -293,8 +293,8 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             }
             retweetUserName.setText(context.getString(
                     TwitterStringUtils.getRepeatedByStringRes(GlobalApplication.clientType),
-                    repeatedUser.getName(),
-                    TwitterStringUtils.plusAtMark(repeatedUser.getScreenName())
+                    repeatedUser == null? "": repeatedUser.getName(),
+                    repeatedUser == null? "": TwitterStringUtils.plusAtMark(repeatedUser.getScreenName())
             ));
 
             if(retweetTimeStamp.getVisibility() != View.VISIBLE){
