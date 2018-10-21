@@ -58,7 +58,7 @@ class StatusActionQueue(
 
         val subject = addIfNoConflict(id, action, willDo, function)
 
-        if (disposable == null && queue.isNotEmpty()) {
+        if (disposable == null) {
             disposable = Observable.interval(delay, queueCount * delay, unit)
                     .subscribe { _ ->
                         queue.poll().let { queueEntity ->
@@ -80,7 +80,7 @@ class StatusActionQueue(
                             }
                         }
                     }
-        } else if (disposable != null && queue.isEmpty()) {
+        } else if (queue.isEmpty()) {
             removeDisposable()
         }
 

@@ -34,8 +34,9 @@ class StatusActionQueueTest {
     @Before
     fun init() {
         testTarget = StatusActionQueue(
-                delay = 1,
-                unit = TimeUnit.MILLISECONDS
+                delay = 5,
+                unit = TimeUnit.MILLISECONDS,
+                doImmediateFirst = false
         )
     }
 
