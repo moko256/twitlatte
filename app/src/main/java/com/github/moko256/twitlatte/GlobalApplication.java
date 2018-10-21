@@ -33,6 +33,7 @@ import com.github.moko256.twitlatte.entity.ClientType;
 import com.github.moko256.twitlatte.model.AccountsModel;
 import com.github.moko256.twitlatte.net.SSLSocketFactoryCompat;
 import com.github.moko256.twitlatte.notification.ExceptionNotification;
+import com.github.moko256.twitlatte.queue.StatusActionQueue;
 import com.github.moko256.twitlatte.repository.PreferenceRepository;
 
 import java.lang.reflect.Field;
@@ -76,6 +77,7 @@ public class GlobalApplication extends Application {
     static long userId;
 
     public static PreferenceRepository preferenceRepository;
+    public static StatusActionQueue statusActionQueue = new StatusActionQueue();
 
     public static final String KEY_ACCOUNT_KEY = "AccountKey";
     public static final String KEY_NIGHT_MODE = "nightModeType";

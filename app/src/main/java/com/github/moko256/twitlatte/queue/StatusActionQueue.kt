@@ -33,17 +33,32 @@ import java.util.concurrent.TimeUnit
 class StatusActionQueue(
         private val queueCount: Int = 20,
         private val delay: Long = 2L,
-        private val unit: TimeUnit = TimeUnit.MINUTES
+        private val unit: TimeUnit = TimeUnit.MINUTES,
+        private val doImmediateFirst: Boolean = true
 ) {
     private val queue = ArrayBlockingQueue<QueueEntity>(queueCount, true)
     private var disposable: Disposable? = null
 
+    private val doneIds = ArrayList<Pair<Long, Action>>(20)
+
     fun add(id: Long, statusAction: StatusAction, function: (Long) -> Unit): Completable {
-        val subject = statusAction.notifyAction { action, willDo ->
-            addIfNoConflict(id, action, willDo, function)
+        val (action, willDo) = statusAction.notifyAction { action, b -> action to b }
+
+        val pair = id to action
+        if (doImmediateFirst && !doneIds.contains(pair)) {
+            if (doneIds.size == 20) {
+                doneIds.removeAt(19)
+            }
+            doneIds.add(0, pair)
+            return Completable.create {
+                function(id)
+                it.onComplete()
+            }.subscribeOn(Schedulers.io())
         }
 
-        if (disposable == null) {
+        val subject = addIfNoConflict(id, action, willDo, function)
+
+        if (disposable == null && queue.isNotEmpty()) {
             disposable = Observable.interval(delay, queueCount * delay, unit)
                     .subscribe { _ ->
                         queue.poll().let { queueEntity ->
@@ -65,6 +80,8 @@ class StatusActionQueue(
                             }
                         }
                     }
+        } else if (disposable != null && queue.isEmpty()) {
+            removeDisposable()
         }
 
         return subject

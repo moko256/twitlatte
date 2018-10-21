@@ -100,6 +100,7 @@ abstract class BaseTweetListFragment : BaseListFragment() {
                     TwitterStatusActionRepositoryImpl(
                             GlobalApplication.twitter
                     ),
+                    GlobalApplication.statusActionQueue,
                     GlobalApplication.statusCache
             )
             listViewModel.start()

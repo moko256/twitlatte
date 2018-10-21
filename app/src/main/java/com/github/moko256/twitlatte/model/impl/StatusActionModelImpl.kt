@@ -21,8 +21,8 @@ import com.github.moko256.twitlatte.cacheMap.StatusCacheMap
 import com.github.moko256.twitlatte.entity.Post
 import com.github.moko256.twitlatte.entity.StatusAction
 import com.github.moko256.twitlatte.model.base.StatusActionModel
+import com.github.moko256.twitlatte.queue.StatusActionQueue
 import com.github.moko256.twitlatte.repository.server.base.StatusActionRepository
-import io.reactivex.Completable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
 
@@ -33,6 +33,7 @@ import io.reactivex.subjects.PublishSubject
  */
 class StatusActionModelImpl(
         private val api: StatusActionRepository,
+        private val queue: StatusActionQueue,
         private val database: StatusCacheMap
 ): StatusActionModel {
 
@@ -69,14 +70,9 @@ class StatusActionModelImpl(
 
     @SuppressLint("CheckResult")
     private fun doAction(targetId: Long, actionType: StatusAction, action: () -> Post) {
-        Completable
-                .create {
-                    try {
-                        database.add(action(), false)
-                        it.onComplete()
-                    } catch (e: Throwable) {
-                        it.tryOnError(e)
-                    }
+        queue
+                .add(targetId, actionType) {
+                    database.add(action(), false)
                 }
                 .subscribeOn(Schedulers.io())
                 .subscribe(

@@ -67,6 +67,7 @@ public class ShowTweetActivity extends AppCompatActivity {
     private CompositeDisposable disposables = new CompositeDisposable();
     private StatusActionModelImpl statusActionModel = new StatusActionModelImpl(
             new TwitterStatusActionRepositoryImpl(GlobalApplication.twitter),
+            GlobalApplication.statusActionQueue,
             GlobalApplication.statusCache
     );
     private long statusId;
