@@ -63,7 +63,7 @@ abstract class BaseTweetListFragment : BaseListFragment() {
 
     private lateinit var listViewModel: ListViewModel
 
-    private var adapterObservableBinder: Function1<UpdateEvent, Unit>? = null
+    private var adapterObservableBinder: ((UpdateEvent) -> Unit)? = null
 
     protected abstract val cachedIdsDatabaseName: String
 
