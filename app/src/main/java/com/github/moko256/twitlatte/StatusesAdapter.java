@@ -91,7 +91,7 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
         Post post = GlobalApplication.postCache.getPost(data.get(position));
 
-        if (post == null){
+        if (post == null || post.getStatus() == null){
             return R.layout.layout_list_load_more_text;
         }
 

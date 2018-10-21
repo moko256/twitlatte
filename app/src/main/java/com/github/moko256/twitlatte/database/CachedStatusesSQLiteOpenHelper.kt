@@ -390,7 +390,7 @@ class CachedStatusesSQLiteOpenHelper(
                 contentValues.put(TABLE_COLUMNS[0], status.createdAt.time)
                 contentValues.put(TABLE_COLUMNS[1], status.id)
                 contentValues.put(TABLE_COLUMNS[2], status.userId)
-                contentValues.put(TABLE_COLUMNS[3], -1)
+                contentValues.put(TABLE_COLUMNS[3], -1L)
                 contentValues.put(TABLE_COLUMNS[4], status.text)
                 contentValues.put(TABLE_COLUMNS[5], status.sourceName)
                 contentValues.put(TABLE_COLUMNS[6], status.sourceWebsite)

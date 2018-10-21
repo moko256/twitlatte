@@ -76,11 +76,16 @@ public class StatusCacheMap {
     StatusObject get(Long id){
         StatusObject memoryCache = cache.get(id);
         if (memoryCache == null){
-            StatusObject storageCache = diskCache.getCachedStatus(id);
-            if (storageCache != null) {
-                cache.put(StatusObjectKt.getId(storageCache), storageCache);
+            try {
+                StatusObject storageCache = diskCache.getCachedStatus(id);
+                if (storageCache != null) {
+                    cache.put(StatusObjectKt.getId(storageCache), storageCache);
+                }
+                return storageCache;
+            } catch (Throwable e) {
+                e.printStackTrace();
+                return null;
             }
-            return storageCache;
         } else {
             return memoryCache;
         }
