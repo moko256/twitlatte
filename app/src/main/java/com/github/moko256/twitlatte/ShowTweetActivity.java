@@ -17,6 +17,8 @@
 package com.github.moko256.twitlatte;
 
 import android.annotation.SuppressLint;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -259,6 +261,20 @@ public class ShowTweetActivity extends AppCompatActivity {
         } else {
             tweetIsReply.setVisibility(GONE);
         }
+
+        statusViewBinder.getTweetSpoilerText().setOnLongClickListener(v -> {
+            Toast.makeText(this, R.string.did_copy, Toast.LENGTH_SHORT).show();
+            ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+            clipboard.setPrimaryClip(ClipData.newPlainText("spoiler_text", item.getStatus().getSpoilerText()));
+            return true;
+        });
+
+        statusViewBinder.getTweetContext().setOnLongClickListener(v -> {
+            Toast.makeText(this, R.string.did_copy, Toast.LENGTH_SHORT).show();
+            ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+            clipboard.setPrimaryClip(ClipData.newPlainText("post_context", item.getStatus().getText()));
+            return true;
+        });
 
         statusViewBinder.getUserImage().setOnClickListener(v -> {
             ActivityOptionsCompat animation = ActivityOptionsCompat

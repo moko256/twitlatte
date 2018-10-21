@@ -138,6 +138,8 @@
     <string name="did_unblock">Unblocked</string>
     <string name="did_destroy_ff">Destroyed follow-follower</string>
 
+    <string name="did_copy">Copied to clip board.</string>
+
     <string name="twitter" translatable="false">Twitter</string>
     <string name="mastodon" translatable="false">Mastodon</string>
 

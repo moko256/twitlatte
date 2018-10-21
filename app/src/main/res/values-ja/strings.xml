@@ -133,6 +133,8 @@
     <string name="did_unblock">ブロック解除しました</string>
     <string name="did_destroy_ff">FF解除しました</string>
 
+    <string name="did_copy">クリップボードにコピーしました</string>
+
     <string name="use_auth_code">認可コードを入力する</string>
 
     <string name="mode_image_level_normal">標準</string>
