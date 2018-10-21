@@ -1,0 +1,10 @@
+Supported keeping display on when movie is playing.
+Fixed some bugs.
+Note: Initial activation after update will freeze a little. Sorry.
+
+Twitter:
+* Supported new characters counting.
+Note: Twitter has restricted twitlatte's key. So, you can't do some action(like, retweet and create tweet). In a few days, it will be lifted.
+
+Mastodon:
+* Supported displaying toot type on boost button.
