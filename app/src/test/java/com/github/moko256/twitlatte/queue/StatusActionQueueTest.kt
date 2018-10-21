@@ -16,11 +16,8 @@
 
 package com.github.moko256.twitlatte.queue
 
-import com.github.moko256.twitlatte.entity.Post
 import com.github.moko256.twitlatte.entity.StatusAction
-import com.github.moko256.twitlatte.repository.server.base.StatusActionRepository
 import io.reactivex.Completable
-import io.reactivex.subjects.PublishSubject
 import org.junit.Before
 import org.junit.Test
 import java.util.concurrent.TimeUnit
@@ -33,13 +30,10 @@ import java.util.concurrent.TimeUnit
 class StatusActionQueueTest {
 
     private lateinit var testTarget: StatusActionQueue
-    private lateinit var mockRepo: MockRepo
 
     @Before
     fun init() {
-        mockRepo = MockRepo()
         testTarget = StatusActionQueue(
-                api = mockRepo,
                 delay = 1,
                 unit = TimeUnit.MILLISECONDS
         )
@@ -47,115 +41,80 @@ class StatusActionQueueTest {
 
     @Test
     fun add0() {
-        testTarget.add(1, StatusAction.FAVORITE).blockingAwait()
+        var flag = false
+        testTarget.add(1, StatusAction.FAVORITE) { flag = true }.blockingAwait()
 
-        mockRepo.notify.onComplete()
-
-        mockRepo.notify.blockingSubscribe { pair ->
-            assert(pair.first == 1L)
-            assert(pair.second == StatusAction.FAVORITE)
-        }
+        assert(flag)
     }
 
     @Test
     fun add1() {
+        var flag1 = false
+        var flag2 = false
         Completable.merge(
                 listOf(
-                        testTarget.add(2, StatusAction.FAVORITE),
-                        testTarget.add(3, StatusAction.FAVORITE)
+                        testTarget.add(2, StatusAction.FAVORITE) { flag1 = true},
+                        testTarget.add(3, StatusAction.FAVORITE) { flag2 = true}
                 )
         ).blockingAwait()
 
-        mockRepo.notify.onComplete()
-
-        mockRepo.notify.blockingIterable().forEachIndexed { index, pair ->
-            assert(pair.first == index + 2L)
-            assert(pair.second == StatusAction.FAVORITE)
-        }
+        assert(flag1)
+        assert(flag2)
     }
 
     @Test
     fun add2() {
+        var flag4 = true
+        var flag5 = true
+        var flag6 = true
+        var flag7 = true
+        var flag8 = false
+
         Completable.merge(
                 listOf(
-                        testTarget.add(4, StatusAction.FAVORITE),
-                        testTarget.add(5, StatusAction.REPEAT),
-                        testTarget.add(4, StatusAction.UNFAVORITE),
-                        testTarget.add(5, StatusAction.UNREPEAT),
-                        testTarget.add(4, StatusAction.REPEAT)
+                        testTarget.add(4, StatusAction.FAVORITE) { flag4 = false},
+                        testTarget.add(5, StatusAction.REPEAT) { flag5 = false},
+                        testTarget.add(4, StatusAction.UNFAVORITE) { flag6 = false},
+                        testTarget.add(5, StatusAction.UNREPEAT) { flag7 = false},
+                        testTarget.add(4, StatusAction.REPEAT) { flag8 = true}
                 )
         ).blockingAwait()
 
-        mockRepo.notify.onComplete()
-
-        var i = 0
-
-        mockRepo.notify.blockingSubscribe{ pair ->
-            if (i == 0) {
-                assert(pair.first == 4L)
-                assert(pair.second == StatusAction.REPEAT)
-            } else {
-                assert(false)
-            }
-            i++
-        }
+        assert(flag4 && flag5 && flag6 && flag7 && flag8)
     }
 
-    @Test(expected = NoSuchElementException::class)
+    @Test()
     fun add3() {
+        var flag9 = true
+        var flag10 = true
+        var flag11 = true
+        var flag12 = true
+
         Completable.merge(
                 listOf(
-                        testTarget.add(6, StatusAction.FAVORITE),
-                        testTarget.add(6, StatusAction.REPEAT),
-                        testTarget.add(6, StatusAction.UNFAVORITE),
-                        testTarget.add(6, StatusAction.UNREPEAT)
+                        testTarget.add(6, StatusAction.FAVORITE) { flag9= false},
+                        testTarget.add(6, StatusAction.REPEAT) { flag10 = false},
+                        testTarget.add(6, StatusAction.UNFAVORITE) { flag11 = false},
+                        testTarget.add(6, StatusAction.UNREPEAT) { flag12 = false}
                 )
         ).blockingAwait()
 
-        mockRepo.notify.onComplete()
-        mockRepo.notify.blockingFirst()
-        assert(false) //will not reach
+        assert(flag9 && flag10 && flag11 && flag12)
     }
 
     @Test
     fun add4() {
         repeat(21) {
             try {
+                var flag = false
                 testTarget
-                        .add(it + 7L, StatusAction.FAVORITE)
+                        .add(it + 7L, StatusAction.FAVORITE) { _ -> flag = true }
                         .blockingAwait()
+                assert(flag)
                 assert(it < 27)
             } catch (e: Throwable) {
                 assert(it == 27)
             }
-        }
-    }
-
-    private class MockRepo: StatusActionRepository {
-        val notify = PublishSubject.create<Pair<Long, StatusAction>>()
-
-        override fun createFavorite(targetStatusId: Long): Post {
-            println(targetStatusId.toString() + ": create favorite")
-            notify.onNext(targetStatusId to StatusAction.FAVORITE)
-            return Post(id = targetStatusId)
-        }
-
-        override fun removeFavorite(targetStatusId: Long): Post {
-            println(targetStatusId.toString() + ": destroy favorite")
-            notify.onNext(targetStatusId to StatusAction.UNFAVORITE)
-            return Post(id = targetStatusId)
-        }
-
-        override fun createRepeat(targetStatusId: Long): Post {
-            println(targetStatusId.toString() + ": create repeat")
-            notify.onNext(targetStatusId to StatusAction.REPEAT)
-            return Post(id = targetStatusId)
-        }
-
-        override fun removeRepeat(targetStatusId: Long): Post {
-            println(targetStatusId.toString() + ": destroy repeat")
-            notify.onNext(targetStatusId to StatusAction.UNREPEAT)
-            return Post(id = targetStatusId)
         }
     }
 }

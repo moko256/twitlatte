@@ -17,7 +17,6 @@
 package com.github.moko256.twitlatte.queue
 
 import com.github.moko256.twitlatte.entity.StatusAction
-import com.github.moko256.twitlatte.repository.server.base.StatusActionRepository
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
@@ -32,7 +31,6 @@ import java.util.concurrent.TimeUnit
  * @author moko256
  */
 class StatusActionQueue(
-        private val api: StatusActionRepository,
         private val queueCount: Int = 20,
         private val delay: Long = 2L,
         private val unit: TimeUnit = TimeUnit.MINUTES
@@ -40,9 +38,9 @@ class StatusActionQueue(
     private val queue = ArrayBlockingQueue<QueueEntity>(queueCount, true)
     private var disposable: Disposable? = null
 
-    fun add(id: Long, statusAction: StatusAction): Completable {
+    fun add(id: Long, statusAction: StatusAction, function: (Long) -> Unit): Completable {
         val subject = statusAction.notifyAction { action, willDo ->
-            addIfNoConflict(id, action, willDo)
+            addIfNoConflict(id, action, willDo, function)
         }
 
         if (disposable == null) {
@@ -53,26 +51,14 @@ class StatusActionQueue(
                                 removeDisposable()
                             } else {
                                 Completable.create {
-                                    when(queueEntity.action) {
-                                        Action.FAVORITE -> if (queueEntity.willDo) {
-                                            api.createFavorite(queueEntity.id)
-                                        } else {
-                                            api.removeFavorite(queueEntity.id)
-                                        }
-
-                                        Action.REPEAT -> if (queueEntity.willDo) {
-                                            api.createRepeat(queueEntity.id)
-                                        } else {
-                                            api.removeRepeat(queueEntity.id)
-                                        }
-                                    }
+                                    queueEntity.function(queueEntity.id)
                                     it.onComplete()
                                 }.subscribeOn(Schedulers.io()).subscribe(
                                         {
                                             queueEntity.resultSubject.onComplete()
                                         },
                                         {
-                                            addIfNoConflict(queueEntity.id, queueEntity.action, queueEntity.willDo)
+                                            addIfNoConflict(queueEntity.id, queueEntity.action, queueEntity.willDo, queueEntity.function)
                                             queueEntity.resultSubject.onError(it)
                                         }
                                 )
@@ -89,14 +75,14 @@ class StatusActionQueue(
         disposable = null
     }
 
-    private fun addIfNoConflict(id: Long, action: Action, willDo: Boolean): CompletableSubject {
+    private fun addIfNoConflict(id: Long, action: Action, willDo: Boolean, function: (Long) -> Unit): CompletableSubject {
         return queue.singleOrNull {
             it.id == id && it.action == action
         }.let { queueEntity ->
             if (queueEntity == null) {
                 val subject = CompletableSubject.create()
                 try {
-                    queue.add(QueueEntity(id, action, willDo, subject))
+                    queue.add(QueueEntity(id, action, willDo, function, subject))
                 } catch (e: IllegalStateException) {
                     subject.onError(e)
                 }
@@ -121,6 +107,7 @@ private data class QueueEntity(
         val id: Long,
         val action: Action,
         val willDo: Boolean,
+        val function: (Long) -> Unit,
         val resultSubject: CompletableSubject
 )
 
