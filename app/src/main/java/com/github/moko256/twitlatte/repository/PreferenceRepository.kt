@@ -28,7 +28,7 @@ import java.util.regex.PatternSyntaxException
 class PreferenceRepository(private val preferences: SharedPreferences) {
 
     fun getString(key: String, defaultValue: String): String
-            = preferences.getString(key, defaultValue)
+            = preferences.getString(key, defaultValue)!!
 
     fun getString(key: String): String?
             = preferences.getString(key, null)

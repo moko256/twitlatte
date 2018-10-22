@@ -49,12 +49,12 @@ class OAuthModelImpl(override var isRestartable: Boolean = false) : OAuthModel {
     private lateinit var redirectUrl: String
 
     override fun restoreInstanceState(savedInstanceState: Bundle) {
-        clientId = savedInstanceState.getString(STATE_MODEL_CLIENT_ID)
-        clientSecret = savedInstanceState.getString(STATE_MODEL_SECRET)
-        redirectUrl = savedInstanceState.getString(STATE_MODEL_REDIRECT_URL)
+        clientId = savedInstanceState.getString(STATE_MODEL_CLIENT_ID)!!
+        clientSecret = savedInstanceState.getString(STATE_MODEL_SECRET)!!
+        redirectUrl = savedInstanceState.getString(STATE_MODEL_REDIRECT_URL)!!
 
         clientBuilder = MastodonClient.Builder(
-                savedInstanceState.getString(STATE_MODEL_URL),
+                savedInstanceState.getString(STATE_MODEL_URL)!!,
                 GlobalApplication.getOkHttpClient(ConfigurationContext.getInstance()).newBuilder(),
                 Gson()
         )
