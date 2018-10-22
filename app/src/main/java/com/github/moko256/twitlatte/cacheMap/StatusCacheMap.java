@@ -114,11 +114,11 @@ public class StatusCacheMap {
                 }
 
                 if (status.getRepeatedUser() != null && !users.contains(status.getRepeatedUser())){
-                    users.add(status.getUser());
+                    users.add(status.getRepeatedUser());
                 }
 
-                if (status.getQuotedRepeatingStatus() != null && !users.contains(status.getQuotedRepeatingUser())){
-                    users.add(status.getUser());
+                if (status.getQuotedRepeatingUser() != null && !users.contains(status.getQuotedRepeatingUser())){
+                    users.add(status.getQuotedRepeatingUser());
                 }
 
                 if (status.getRepeat() != null) {
