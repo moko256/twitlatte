@@ -301,12 +301,14 @@ class CachedStatusesSQLiteOpenHelper(
 
         synchronized(this) {
             val database = readableDatabase
-            for (id in ids) {
+
+            ids.forEach { id ->
                 val c = database.query(
                         TABLE_NAME,
                         arrayOf(TABLE_COLUMNS[1], TABLE_COLUMNS[3], TABLE_COLUMNS[25]),
                         "id=" + id.toString(), null, null, null, null
                 )
+
                 while (c.moveToNext()) {
                     val repeatId = c.getLong(1)
                     val quotedId = c.getLong(2)
@@ -320,12 +322,14 @@ class CachedStatusesSQLiteOpenHelper(
                         }
                     }
                 }
+
                 c.close()
             }
+
             database.close()
         }
 
-        if (result.size > 0) {
+        if (result.isNotEmpty()) {
             result.addAll(getIdsInUse(result))
         }
         return result

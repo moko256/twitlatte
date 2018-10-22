@@ -136,11 +136,7 @@ public class StatusCacheMap {
                 }
             }
 
-            for (Repeat status : repeats) {
-                if (!statuses.contains(status)) {
-                    statuses.add(status);
-                }
-            }
+            statuses.addAll(repeats);
 
             GlobalApplication.userCache.addAll(users);
 
@@ -153,7 +149,7 @@ public class StatusCacheMap {
     }
 
     public void delete(List<Long> ids){
-        List<Long> list = new ArrayList<>(ids.size() * 6);
+        List<Long> list = new ArrayList<>(ids.size());
         for (Long id : ids) {
             if (id != null) {
                 list.add(id);
@@ -161,7 +157,7 @@ public class StatusCacheMap {
         }
         List<Long> use = diskCache.getIdsInUse(list);
 
-        HashSet<Long> remove = new HashSet<>();
+        HashSet<Long> remove = new HashSet<>(list.size() + use.size());
         remove.addAll(list);
         remove.addAll(use);
         diskCache.deleteCachedStatuses(remove);
