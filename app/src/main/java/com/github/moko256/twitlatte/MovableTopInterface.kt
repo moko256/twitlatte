@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-package com.github.moko256.twitlatte;
-
-import androidx.viewpager.widget.ViewPager;
+package com.github.moko256.twitlatte
 
 /**
- * Created by moko256 on 2016/06/23.
+ * Created by moko256 on 2017/07/15.
  *
  * @author moko256
  */
-public interface UseTabsInterface {
-    ViewPager getTabsViewPager();
+
+interface MovableTopInterface {
+    fun moveToTop()
 }

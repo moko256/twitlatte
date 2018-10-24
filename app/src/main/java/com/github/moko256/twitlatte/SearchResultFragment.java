@@ -42,7 +42,7 @@ public class SearchResultFragment extends BaseTweetListFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         if (savedInstanceState == null) {
-            searchText=getActivity().getIntent().getStringExtra(BUNDLE_KEY_SEARCH_QUERY);
+            searchText = getActivity().getIntent().getStringExtra(BUNDLE_KEY_SEARCH_QUERY);
         } else {
             searchText = savedInstanceState.getString(BUNDLE_KEY_SEARCH_QUERY,"");
         }
@@ -64,7 +64,8 @@ public class SearchResultFragment extends BaseTweetListFragment {
     }
 
     @Override
-    protected ResponseList<Status> getResponseList(Paging paging) throws TwitterException {
+    @NonNull
+    protected ResponseList<Status> getResponseList(@NonNull Paging paging) throws TwitterException {
         SearchResultList result=new SearchResultList();
         if (!searchText.equals("")){
             Query query=new Query(searchText)
@@ -101,6 +102,7 @@ public class SearchResultFragment extends BaseTweetListFragment {
     }
 
     @Override
+    @NonNull
     protected String getCachedIdsDatabaseName() {
         byte[] bytes = searchText.getBytes();
         StringBuilder bytesStr = new StringBuilder("Search_");

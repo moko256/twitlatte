@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package com.github.moko256.twitlatte;
+package com.github.moko256.twitlatte
 
-import androidx.annotation.IdRes;
+import androidx.annotation.StringRes
 
 /**
  * Created by moko256 on 2016/06/23.
  *
  * @author moko256
  */
-interface NavigationPositionInterface {
-    @IdRes
-    int getNavigationPosition();
+interface ToolbarTitleInterface {
+    @get:StringRes
+    val titleResourceId: Int
 }

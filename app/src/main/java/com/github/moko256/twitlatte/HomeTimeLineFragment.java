@@ -16,6 +16,7 @@
 
 package com.github.moko256.twitlatte;
 
+import androidx.annotation.NonNull;
 import twitter4j.Paging;
 import twitter4j.ResponseList;
 import twitter4j.Status;
@@ -29,7 +30,8 @@ import twitter4j.TwitterException;
 public class HomeTimeLineFragment extends BaseTweetListFragment implements ToolbarTitleInterface,NavigationPositionInterface {
 
     @Override
-    protected ResponseList<Status> getResponseList(Paging paging) throws TwitterException {
+    @NonNull
+    protected ResponseList<Status> getResponseList(@NonNull Paging paging) throws TwitterException {
         return GlobalApplication.twitter.getHomeTimeline(paging);
     }
 
@@ -44,6 +46,7 @@ public class HomeTimeLineFragment extends BaseTweetListFragment implements Toolb
     }
 
     @Override
+    @NonNull
     protected String getCachedIdsDatabaseName() {
         return "HomeTimeline";
     }

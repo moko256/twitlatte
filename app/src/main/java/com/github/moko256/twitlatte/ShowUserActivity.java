@@ -36,6 +36,7 @@ import com.google.android.material.tabs.TabLayout;
 
 import java.util.Objects;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
@@ -340,6 +341,7 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
     }
 
     @Override
+    @NonNull
     public RecyclerView.RecycledViewPool getTweetListViewPool() {
         return tweetListViewPool;
     }

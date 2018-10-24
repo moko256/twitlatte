@@ -61,6 +61,7 @@ public class MyFollowFollowerFragment extends Fragment implements ToolbarTitleIn
     }
 
     @Override
+    @NonNull
     public ViewPager getTabsViewPager() {
         return viewPager;
     }

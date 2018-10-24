@@ -525,6 +525,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
     }
 
     @Override
+    @NonNull
     public RecyclerView.RecycledViewPool getTweetListViewPool() {
         return tweetListViewPool;
     }

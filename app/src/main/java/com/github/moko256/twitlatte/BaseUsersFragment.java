@@ -74,7 +74,7 @@ public abstract class BaseUsersFragment extends BaseListFragment {
 
         recyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
             @Override
-            public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+            public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
                 super.getItemOffsets(outRect, view, parent, state);
                 if (parent.getChildAdapterPosition(view)==0){
                     outRect.top=Math.round(getResources().getDisplayMetrics().density*8f);

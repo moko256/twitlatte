@@ -63,9 +63,7 @@ class MediaTimelineFragment : BaseTweetListFragment(), ToolbarTitleInterface {
         }
     }
 
-    override fun getTitleResourceId(): Int {
-        return R.string.media
-    }
+    override val titleResourceId = R.string.media
 
     companion object {
 

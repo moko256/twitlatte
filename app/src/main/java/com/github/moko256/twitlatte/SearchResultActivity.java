@@ -23,6 +23,7 @@ import android.view.View;
 
 import java.util.Objects;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
@@ -72,6 +73,7 @@ public class SearchResultActivity extends AppCompatActivity implements BaseListF
     }
 
     @Override
+    @NonNull
     public RecyclerView.RecycledViewPool getTweetListViewPool() {
         return tweetListViewPool;
     }
