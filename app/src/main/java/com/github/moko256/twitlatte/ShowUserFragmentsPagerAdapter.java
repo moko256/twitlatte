@@ -73,11 +73,11 @@ public class ShowUserFragmentsPagerAdapter extends FragmentPagerAdapter {
             case FRAGMENT_INFO:
                 return UserInfoFragment.newInstance(userId);
             case FRAGMENT_TIMELINE:
-                return UserTimelineFragment.newInstance(userId);
+                return UserTimelineFragment.Companion.newInstance(userId);
             case FRAGMENT_LIKE:
-                return UserLikeFragment.newInstance(userId);
+                return UserLikeFragment.Companion.newInstance(userId);
             case FRAGMENT_MEDIA:
-                return MediaTimelineFragment.newInstance(userId);
+                return MediaTimelineFragment.Companion.newInstance(userId);
             case FRAGMENT_FOLLOW:
                 return UserFollowsFragment.newInstance(userId);
             case FRAGMENT_FOLLOWER:

@@ -67,7 +67,6 @@ class MediaTimelineFragment : BaseTweetListFragment(), ToolbarTitleInterface {
 
     companion object {
 
-        @JvmStatic
         fun newInstance(userId: Long): MediaTimelineFragment {
             return MediaTimelineFragment().apply {
                 arguments = Bundle().apply {

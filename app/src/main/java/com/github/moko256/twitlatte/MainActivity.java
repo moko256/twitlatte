@@ -163,7 +163,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                         replaceFragment(new MyFollowFollowerFragment());
                         break;
                     case R.id.nav_like:
-                        replaceFragment(UserLikeFragment.newInstance(GlobalApplication.userId));
+                        replaceFragment(UserLikeFragment.Companion.newInstance(GlobalApplication.userId));
                         break;
                     case R.id.nav_settings:
                         startActivity(new Intent(this,SettingsActivity.class));
