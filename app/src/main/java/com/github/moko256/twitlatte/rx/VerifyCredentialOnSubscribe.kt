@@ -36,10 +36,10 @@ class VerifyCredentialOnSubscribe(
 ): SingleOnSubscribe<User> {
     override fun subscribe(emitter: SingleEmitter<User>) {
         try {
-            var me = cache.get(userId)
+            var me = cache[userId]
             if (me == null) {
-                cache.add(client.verifyCredentials().convertToCommonUser())
-                me = cache.get(userId)
+                me = client.verifyCredentials().convertToCommonUser()
+                cache.add(me)
             }
             emitter.onSuccess(me)
         } catch (e: TwitterException) {
