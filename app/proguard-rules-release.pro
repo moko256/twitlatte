@@ -13,7 +13,11 @@
 ##---------------Begin: proguard configuration for twitter4j  ----------
 
 -dontwarn twitter4j.**
--keep,allowoptimization class twitter4j.* { *; }
+-keep,allowoptimization class !twitter4j.*Logger*,twitter4j.* { *; }
+-keep,allowoptimization class twitter4j.Logger
+-keep,allowoptimization class twitter4j.LoggerFactory
+-keep,allowoptimization class twitter4j.StdOutLogger
+-keep,allowoptimization class twitter4j.StdOutLoggerFactory
 -keep,allowoptimization class twitter4j.conf.PropertyConfigurationFactory
 
 ##---------------End: proguard configuration for twitter4j  ----------
@@ -52,14 +56,6 @@
 -dontwarn org.codehaus.mojo.animal_sniffer.*
 
 # OkHttp platform used only on JVM and when Conscrypt dependency is available.
--dontwarn okhttp3.internal.platform.ConscryptPlatform
+# -dontwarn okhttp3.internal.platform.ConscryptPlatform
 
 ##---------------End: proguard configuration for OkHttp  ----------
-
-
-##---------------Begin: proguard configuration for Okio  ----------
-
-# Animal Sniffer compileOnly dependency to ensure APIs are compatible with older versions of Java.
--dontwarn org.codehaus.mojo.animal_sniffer.*
-
-##---------------End: proguard configuration for Okio  ----------

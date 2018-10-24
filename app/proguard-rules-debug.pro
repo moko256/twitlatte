@@ -2,7 +2,11 @@
 
 -ignorewarnings
 
--keep class twitter4j.* { *; }
+-keep class !twitter4j.*Logger*,twitter4j.* { *; }
+-keep class twitter4j.Logger
+-keep class twitter4j.LoggerFactory
+-keep class twitter4j.StdOutLogger
+-keep class twitter4j.StdOutLoggerFactory
 -keep class twitter4j.conf.PropertyConfigurationFactory
 
 -keep class com.github.moko256.twitlatte.** { *; }
