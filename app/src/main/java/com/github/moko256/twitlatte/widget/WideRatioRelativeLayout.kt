@@ -27,26 +27,28 @@ import android.widget.RelativeLayout
  * @author moko256
  */
 
-class WideRatioRelativeLayout @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) : RelativeLayout(context, attrs, defStyle) {
+class WideRatioRelativeLayout @JvmOverloads constructor(
+        context: Context,
+        attrs: AttributeSet? = null,
+        defStyle: Int = 0
+): RelativeLayout(context, attrs, defStyle) {
 
     override fun onMeasure(widthSpec: Int, heightSpec: Int) {
         var widthSize = View.MeasureSpec.getSize(widthSpec)
         var heightSize = View.MeasureSpec.getSize(heightSpec)
 
-        var widthMode = View.MeasureSpec.getMode(widthSpec)
-        var heightMode = View.MeasureSpec.getMode(heightSpec)
+        val widthMode = View.MeasureSpec.getMode(widthSpec)
+        val heightMode = View.MeasureSpec.getMode(heightSpec)
 
         if (widthMode != View.MeasureSpec.EXACTLY) {
-            widthMode = View.MeasureSpec.EXACTLY
             widthSize = heightSize / 9 * 16
         } else if (heightMode != View.MeasureSpec.EXACTLY) {
-            heightMode = View.MeasureSpec.EXACTLY
             heightSize = widthSize / 16 * 9
         }
 
         super.onMeasure(
-                View.MeasureSpec.makeMeasureSpec(widthSize, widthMode),
-                View.MeasureSpec.makeMeasureSpec(heightSize, heightMode)
+                View.MeasureSpec.makeMeasureSpec(widthSize, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(heightSize, View.MeasureSpec.EXACTLY)
         )
     }
 

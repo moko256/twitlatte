@@ -29,23 +29,21 @@ import com.github.moko256.twitlatte.entity.ClientType
  * @author moko256
  */
 
-class UserHeaderImageView: AppCompatImageView {
-
-    constructor(context: Context): super(context)
-
-    constructor(context: Context, attrs: AttributeSet): super(context, attrs)
-
-    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int): super(context, attrs, defStyleAttr)
+class UserHeaderImageView @JvmOverloads constructor(
+        context: Context,
+        attrs: AttributeSet? = null,
+        defStyle: Int = 0
+): AppCompatImageView(context, attrs, defStyle) {
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        var heightMode = View.MeasureSpec.getMode(heightMeasureSpec)
-        if (heightMode != View.MeasureSpec.EXACTLY) {
-            heightMode = View.MeasureSpec.EXACTLY
-        }
+        val modifiedWidthMeasureSpec = View.MeasureSpec.makeMeasureSpec(
+                View.MeasureSpec.getSize(widthMeasureSpec),
+                View.MeasureSpec.EXACTLY
+        )
         val modifiedHeightMeasureSpec = View.MeasureSpec.makeMeasureSpec(
                 View.MeasureSpec.getSize(widthMeasureSpec) / if (GlobalApplication.clientType == ClientType.TWITTER) 3 else 2,
-                heightMode
+                View.MeasureSpec.EXACTLY
         )
-        setMeasuredDimension(widthMeasureSpec, modifiedHeightMeasureSpec)
+        setMeasuredDimension(modifiedWidthMeasureSpec, modifiedHeightMeasureSpec)
     }
 }
