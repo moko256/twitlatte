@@ -14,14 +14,11 @@
  * limitations under the License.
  */
 
-package com.github.moko256.twitlatte.widget;
+package com.github.moko256.twitlatte.widget
 
-import android.content.Context;
-import android.util.AttributeSet;
-import android.view.MotionEvent;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import android.content.Context
+import android.util.AttributeSet
+import android.view.MotionEvent
 
 /**
  * Created by moko256 on 2018/02/18.
@@ -29,22 +26,17 @@ import androidx.annotation.Nullable;
  * @author moko256
  */
 
-public class ViewPager extends androidx.viewpager.widget.ViewPager {
+class ViewPager : androidx.viewpager.widget.ViewPager {
 
-    public ViewPager(@NonNull Context context) {
-        super(context);
-    }
+    constructor(context: Context) : super(context)
 
-    public ViewPager(@NonNull Context context, @Nullable AttributeSet attrs) {
-        super(context, attrs);
-    }
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
 
-    @Override
-    public boolean onInterceptTouchEvent(MotionEvent ev) {
-        try {
-            return super.onInterceptTouchEvent(ev);
-        } catch (IllegalArgumentException e) {
-            return false;
+    override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
+        return try {
+            super.onInterceptTouchEvent(ev)
+        } catch (e: IllegalArgumentException) {
+            false
         }
     }
 }

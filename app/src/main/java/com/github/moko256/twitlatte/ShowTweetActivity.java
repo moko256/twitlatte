@@ -38,7 +38,7 @@ import com.github.moko256.twitlatte.entity.User;
 import com.github.moko256.twitlatte.glide.GlideApp;
 import com.github.moko256.twitlatte.intent.AppCustomTabsKt;
 import com.github.moko256.twitlatte.model.base.PostTweetModel;
-import com.github.moko256.twitlatte.model.impl.PostTweetModelCreator;
+import com.github.moko256.twitlatte.model.impl.PostTweetModelCreatorKt;
 import com.github.moko256.twitlatte.model.impl.StatusActionModelImpl;
 import com.github.moko256.twitlatte.repository.server.impl.TwitterStatusActionRepositoryImpl;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
@@ -344,7 +344,7 @@ public class ShowTweetActivity extends AppCompatActivity {
 
         replyButton.setOnClickListener(v -> {
             replyButton.setEnabled(false);
-            PostTweetModel model = PostTweetModelCreator.getInstance(GlobalApplication.twitter, getContentResolver());
+            PostTweetModel model = PostTweetModelCreatorKt.getInstance(GlobalApplication.twitter, getContentResolver());
             model.setTweetText(replyText.getText().toString());
             model.setInReplyToStatusId(item.getStatus().getId());
             disposables.add(

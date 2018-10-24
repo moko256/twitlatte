@@ -45,7 +45,7 @@ import android.widget.Toast;
 import com.github.moko256.twitlatte.entity.ClientType;
 import com.github.moko256.twitlatte.glide.GlideApp;
 import com.github.moko256.twitlatte.model.base.PostTweetModel;
-import com.github.moko256.twitlatte.model.impl.PostTweetModelCreator;
+import com.github.moko256.twitlatte.model.impl.PostTweetModelCreatorKt;
 import com.github.moko256.twitlatte.rx.LocationSingleBuilder;
 import com.github.moko256.twitlatte.rx.VerifyCredentialOnSubscribe;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
@@ -111,7 +111,7 @@ public class PostActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post);
 
-        model = PostTweetModelCreator.getInstance(GlobalApplication.twitter, getContentResolver());
+        model = PostTweetModelCreatorKt.getInstance(GlobalApplication.twitter, getContentResolver());
         disposable = new CompositeDisposable();
 
         rootViewGroup= findViewById(R.id.activity_tweet_send_layout_root);
