@@ -2,7 +2,7 @@
 
 -ignorewarnings
 
--keep class !twitter4j.*Logger*,twitter4j.* { *; }
+-keep class twitter4j.* { *; }
 -keep class twitter4j.Logger
 -keep class twitter4j.LoggerFactory
 -keep class twitter4j.StdOutLogger
