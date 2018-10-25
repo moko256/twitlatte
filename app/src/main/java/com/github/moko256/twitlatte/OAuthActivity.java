@@ -45,6 +45,9 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.internal.disposables.CancellableDisposable;
 import io.reactivex.schedulers.Schedulers;
 
+import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY_ACCOUNT_KEY;
+import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY_USE_CHROME_CUSTOM_TAB;
+
 /**
  * Created by moko256 on 2016/04/29.
  *
@@ -195,7 +198,7 @@ public class OAuthActivity extends AppCompatActivity {
     private void storeAccessToken(AccessToken accessToken){
         GlobalApplication.accountsModel.add(accessToken);
 
-        GlobalApplication.preferenceRepository.putString(GlobalApplication.KEY_ACCOUNT_KEY, accessToken.getKeyString());
+        GlobalApplication.preferenceRepository.putString(KEY_ACCOUNT_KEY, accessToken.getKeyString());
 
         ((GlobalApplication) getApplication()).initTwitter(accessToken);
 
@@ -322,7 +325,7 @@ public class OAuthActivity extends AppCompatActivity {
     private void startBrowser(String url){
         Uri uri = Uri.parse(url);
         try {
-            if (GlobalApplication.preferenceRepository.getBoolean(GlobalApplication.KEY_USE_CHROME_CUSTOM_TAB, true)) {
+            if (GlobalApplication.preferenceRepository.getBoolean(KEY_USE_CHROME_CUSTOM_TAB, true)) {
                 new CustomTabsIntent.Builder()
                         .setShowTitle(false)
                         .setToolbarColor(ContextCompat.getColor(this, R.color.color_primary))

@@ -42,6 +42,17 @@ import androidx.core.app.ActivityOptionsCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
+import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY_IS_PATTERN_TWEET_MUTE;
+import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY_IS_PATTERN_TWEET_MUTE_SHOW_ONLY_IMAGE;
+import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY_IS_PATTERN_TWEET_SOURCE_MUTE;
+import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY_IS_PATTERN_USER_NAME_MUTE;
+import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY_IS_PATTERN_USER_SCREEN_NAME_MUTE;
+import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY_TWEET_MUTE_PATTERN;
+import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY_TWEET_MUTE_SHOW_ONLY_IMAGE_PATTERN;
+import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY_TWEET_SOURCE_MUTE_PATTERN;
+import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY_USER_NAME_MUTE_PATTERN;
+import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY_USER_SCREEN_NAME_MUTE_PATTERN;
+
 /**
  * Created by moko256 on 2016/02/11.
  *
@@ -99,16 +110,16 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         User user = post.getUser();
 
         PreferenceRepository conf = GlobalApplication.preferenceRepository;
-        if((conf.getBoolean(GlobalApplication.KEY_IS_PATTERN_TWEET_MUTE, false) && conf.getPattern(GlobalApplication.KEY_TWEET_MUTE_PATTERN).matcher(item.getText()).find()) ||
-                (conf.getBoolean(GlobalApplication.KEY_IS_PATTERN_USER_SCREEN_NAME_MUTE, false) && conf.getPattern(GlobalApplication.KEY_USER_SCREEN_NAME_MUTE_PATTERN).matcher(user.getScreenName()).find()) ||
-                (conf.getBoolean(GlobalApplication.KEY_IS_PATTERN_USER_NAME_MUTE, false) && conf.getPattern(GlobalApplication.KEY_USER_NAME_MUTE_PATTERN).matcher(user.getName()).find()) ||
-                (conf.getBoolean(GlobalApplication.KEY_IS_PATTERN_TWEET_SOURCE_MUTE, false) && conf.getPattern(GlobalApplication.KEY_TWEET_SOURCE_MUTE_PATTERN).matcher((item.getSourceName() != null)?item.getSourceName():"").find())
+        if((conf.getBoolean(KEY_IS_PATTERN_TWEET_MUTE, false) && conf.getPattern(KEY_TWEET_MUTE_PATTERN).matcher(item.getText()).find()) ||
+                (conf.getBoolean(KEY_IS_PATTERN_USER_SCREEN_NAME_MUTE, false) && conf.getPattern(KEY_USER_SCREEN_NAME_MUTE_PATTERN).matcher(user.getScreenName()).find()) ||
+                (conf.getBoolean(KEY_IS_PATTERN_USER_NAME_MUTE, false) && conf.getPattern(KEY_USER_NAME_MUTE_PATTERN).matcher(user.getName()).find()) ||
+                (conf.getBoolean(KEY_IS_PATTERN_TWEET_SOURCE_MUTE, false) && conf.getPattern(KEY_TWEET_SOURCE_MUTE_PATTERN).matcher((item.getSourceName() != null)?item.getSourceName():"").find())
                 ){
             return R.layout.layout_list_muted_text;
         }
-        if (shouldShowMediaOnly || (conf.getBoolean(GlobalApplication.KEY_IS_PATTERN_TWEET_MUTE_SHOW_ONLY_IMAGE, false)
+        if (shouldShowMediaOnly || (conf.getBoolean(KEY_IS_PATTERN_TWEET_MUTE_SHOW_ONLY_IMAGE, false)
                 && item.getMedias() != null
-                && conf.getPattern(GlobalApplication.KEY_TWEET_MUTE_SHOW_ONLY_IMAGE_PATTERN).matcher(item.getText()).find())) {
+                && conf.getPattern(KEY_TWEET_MUTE_SHOW_ONLY_IMAGE_PATTERN).matcher(item.getText()).find())) {
             return R.layout.layout_list_tweet_only_image;
         }
         if (post.getRepeat() != null) {

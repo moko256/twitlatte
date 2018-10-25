@@ -23,9 +23,9 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.github.chrisbanes.photoview.PhotoView
 import com.github.chuross.flinglayout.FlingLayout
 import com.github.moko256.twitlatte.GlobalApplication
-import com.github.moko256.twitlatte.GlobalApplication.KEY_TIMELINE_IMAGE_LOAD_MODE
 import com.github.moko256.twitlatte.R
 import com.github.moko256.twitlatte.glide.GlideApp
+import com.github.moko256.twitlatte.repository.KEY_TIMELINE_IMAGE_LOAD_MODE
 import com.github.moko256.twitlatte.text.TwitterStringUtils
 
 /**

@@ -29,6 +29,7 @@ import com.github.moko256.twitlatte.entity.Status
 import com.github.moko256.twitlatte.entity.User
 import com.github.moko256.twitlatte.entity.Visibility
 import com.github.moko256.twitlatte.glide.GlideRequests
+import com.github.moko256.twitlatte.repository.KEY_TIMELINE_IMAGE_LOAD_MODE
 import com.github.moko256.twitlatte.text.TwitterStringUtils
 import com.github.moko256.twitlatte.view.EmojiToTextViewSetter
 import com.github.moko256.twitlatte.widget.TweetImageTableView
@@ -127,7 +128,7 @@ class StatusViewBinder(private val glideRequests: GlideRequests, private val vie
             }
         }
 
-        val timelineImageLoadMode = GlobalApplication.preferenceRepository.getString(GlobalApplication.KEY_TIMELINE_IMAGE_LOAD_MODE, "normal")
+        val timelineImageLoadMode = GlobalApplication.preferenceRepository.getString(KEY_TIMELINE_IMAGE_LOAD_MODE, "normal")
         if (timelineImageLoadMode != "none") {
             glideRequests
                     .load(

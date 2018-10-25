@@ -25,6 +25,21 @@ import java.util.regex.PatternSyntaxException
  *
  * @author moko256
  */
+const val KEY_ACCOUNT_KEY = "AccountKey"
+const val KEY_NIGHT_MODE = "nightModeType"
+const val KEY_USE_CHROME_CUSTOM_TAB = "useChromeCustomTab"
+const val KEY_IS_PATTERN_TWEET_MUTE = "patternTweetMuteEnabled"
+const val KEY_TWEET_MUTE_PATTERN = "tweetMutePattern"
+const val KEY_IS_PATTERN_TWEET_MUTE_SHOW_ONLY_IMAGE = "patternTweetMuteShowOnlyImageEnabled"
+const val KEY_TWEET_MUTE_SHOW_ONLY_IMAGE_PATTERN = "tweetMuteShowOnlyImagePattern"
+const val KEY_IS_PATTERN_USER_SCREEN_NAME_MUTE = "patternUserScreenNameMuteEnabled"
+const val KEY_USER_SCREEN_NAME_MUTE_PATTERN = "userScreenNameMutePattern"
+const val KEY_IS_PATTERN_USER_NAME_MUTE = "patternUserNameMuteEnabled"
+const val KEY_USER_NAME_MUTE_PATTERN = "userNameMutePattern"
+const val KEY_IS_PATTERN_TWEET_SOURCE_MUTE = "patternTweetSourceMuteEnabled"
+const val KEY_TWEET_SOURCE_MUTE_PATTERN = "tweetSourceMutePattern"
+const val KEY_TIMELINE_IMAGE_LOAD_MODE = "timelineImageMode"
+
 class PreferenceRepository(private val preferences: SharedPreferences) {
 
     fun getString(key: String, defaultValue: String): String

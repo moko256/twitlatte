@@ -52,6 +52,9 @@ import twitter4j.TwitterFactory;
 import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
 
+import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY_ACCOUNT_KEY;
+import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY_NIGHT_MODE;
+
 /**
  * Created by moko256 on 2016/04/30.
  *
@@ -73,21 +76,6 @@ public class GlobalApplication extends Application {
 
     public static PreferenceRepository preferenceRepository;
     public static StatusActionQueue statusActionQueue = new StatusActionQueue();
-
-    public static final String KEY_ACCOUNT_KEY = "AccountKey";
-    public static final String KEY_NIGHT_MODE = "nightModeType";
-    public static final String KEY_USE_CHROME_CUSTOM_TAB = "useChromeCustomTab";
-    public static final String KEY_IS_PATTERN_TWEET_MUTE = "patternTweetMuteEnabled";
-    public static final String KEY_TWEET_MUTE_PATTERN = "tweetMutePattern";
-    public static final String KEY_IS_PATTERN_TWEET_MUTE_SHOW_ONLY_IMAGE = "patternTweetMuteShowOnlyImageEnabled";
-    public static final String KEY_TWEET_MUTE_SHOW_ONLY_IMAGE_PATTERN = "tweetMuteShowOnlyImagePattern";
-    public static final String KEY_IS_PATTERN_USER_SCREEN_NAME_MUTE = "patternUserScreenNameMuteEnabled";
-    public static final String KEY_USER_SCREEN_NAME_MUTE_PATTERN = "userScreenNameMutePattern";
-    public static final String KEY_IS_PATTERN_USER_NAME_MUTE = "patternUserNameMuteEnabled";
-    public static final String KEY_USER_NAME_MUTE_PATTERN = "userNameMutePattern";
-    public static final String KEY_IS_PATTERN_TWEET_SOURCE_MUTE = "patternTweetSourceMuteEnabled";
-    public static final String KEY_TWEET_SOURCE_MUTE_PATTERN = "tweetSourceMutePattern";
-    public static final String KEY_TIMELINE_IMAGE_LOAD_MODE = "timelineImageMode";
 
     public final static UserCacheMap userCache = new UserCacheMap();
     public final static StatusCacheMap statusCache = new StatusCacheMap();

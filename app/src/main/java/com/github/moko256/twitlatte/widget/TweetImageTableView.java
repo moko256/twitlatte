@@ -38,6 +38,8 @@ import androidx.appcompat.content.res.AppCompatResources;
 import androidx.gridlayout.widget.GridLayout;
 import jp.wasabeef.glide.transformations.BlurTransformation;
 
+import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY_TIMELINE_IMAGE_LOAD_MODE;
+
 /**
  * Created by moko256 on 2016/06/11.
  *
@@ -191,7 +193,7 @@ public class TweetImageTableView extends GridLayout {
 
     public void setMediaEntities(Media[] mediaEntities, boolean sensitive) {
         this.medias = mediaEntities;
-        isOpen = !GlobalApplication.preferenceRepository.getString(GlobalApplication.KEY_TIMELINE_IMAGE_LOAD_MODE, "normal").equals("none") && !sensitive;
+        isOpen = !GlobalApplication.preferenceRepository.getString(KEY_TIMELINE_IMAGE_LOAD_MODE, "normal").equals("none") && !sensitive;
         updateImageNumber();
         updateView();
     }
@@ -212,7 +214,7 @@ public class TweetImageTableView extends GridLayout {
             if (isOpen) {
                 requests
                         .load(
-                                GlobalApplication.preferenceRepository.getString(GlobalApplication.KEY_TIMELINE_IMAGE_LOAD_MODE, "normal").equals("normal")?
+                                GlobalApplication.preferenceRepository.getString(KEY_TIMELINE_IMAGE_LOAD_MODE, "normal").equals("normal")?
                                         TwitterStringUtils.convertSmallImageUrl(url):
                                         TwitterStringUtils.convertThumbImageUrl(url)
                         )
@@ -255,7 +257,7 @@ public class TweetImageTableView extends GridLayout {
                         break;
                 }
             } else {
-                String timelineImageLoadMode = GlobalApplication.preferenceRepository.getString(GlobalApplication.KEY_TIMELINE_IMAGE_LOAD_MODE, "normal");
+                String timelineImageLoadMode = GlobalApplication.preferenceRepository.getString(KEY_TIMELINE_IMAGE_LOAD_MODE, "normal");
                 if (!timelineImageLoadMode.equals("none")){
                     requests
                             .load(

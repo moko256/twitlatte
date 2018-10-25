@@ -36,6 +36,9 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceScreen;
 
+import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY_ACCOUNT_KEY;
+import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY_NIGHT_MODE;
+
 /**
  * Created by moko256 on 2016/03/28.
  *
@@ -72,10 +75,10 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             entries[entries.length-1]=getString(R.string.login_with_another_account);
             entryValues[entryValues.length-1]="-1";
 
-            ListPreference nowAccountList=(ListPreference) findPreference(GlobalApplication.KEY_ACCOUNT_KEY);
+            ListPreference nowAccountList=(ListPreference) findPreference(KEY_ACCOUNT_KEY);
             nowAccountList.setEntries(entries);
             nowAccountList.setEntryValues(entryValues);
-            nowAccountList.setDefaultValue(GlobalApplication.preferenceRepository.getString(GlobalApplication.KEY_ACCOUNT_KEY,"-1"));
+            nowAccountList.setDefaultValue(GlobalApplication.preferenceRepository.getString(KEY_ACCOUNT_KEY,"-1"));
             nowAccountList.setOnPreferenceChangeListener(
                     (preference, newValue) -> {
                         if (newValue.equals("-1")){
@@ -100,7 +103,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                         .setPositiveButton(R.string.do_logout,
                                 (dialog, i) -> {
                                     accountsModel.delete(accountsModel.get(
-                                            GlobalApplication.preferenceRepository.getString(GlobalApplication.KEY_ACCOUNT_KEY,"-1")
+                                            GlobalApplication.preferenceRepository.getString(KEY_ACCOUNT_KEY,"-1")
                                     ));
 
                                     int point = accountsModel.size() - 1;
@@ -108,7 +111,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                                         AccessToken accessToken = accountsModel.getAccessTokens().get(point);
 
                                         GlobalApplication.preferenceRepository.putString(
-                                                GlobalApplication.KEY_ACCOUNT_KEY, accessToken.getKeyString()
+                                                KEY_ACCOUNT_KEY, accessToken.getKeyString()
                                         );
 
                                         ((GlobalApplication) requireActivity().getApplication()).initTwitter(accessToken);
@@ -119,7 +122,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                                         GlobalApplication.twitter = null;
                                         GlobalApplication.accessToken = null;
                                         GlobalApplication.preferenceRepository.putString(
-                                                GlobalApplication.KEY_ACCOUNT_KEY, "-1"
+                                                KEY_ACCOUNT_KEY, "-1"
                                         );
                                         startActivity(
                                                 new Intent(getContext(), OAuthActivity.class)
@@ -133,7 +136,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 return false;
             });
 
-            ListPreference nowThemeMode=(ListPreference) findPreference(GlobalApplication.KEY_NIGHT_MODE);
+            ListPreference nowThemeMode=(ListPreference) findPreference(KEY_NIGHT_MODE);
             nowThemeMode.setOnPreferenceChangeListener(
                     (preference, newValue) -> {
                         switch(String.valueOf(newValue)){

@@ -25,6 +25,7 @@ import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat
 import com.github.moko256.twitlatte.GlobalApplication
 import com.github.moko256.twitlatte.R
+import com.github.moko256.twitlatte.repository.KEY_USE_CHROME_CUSTOM_TAB
 
 /**
  * Created by moko256 on 2018/01/21.
@@ -44,7 +45,7 @@ fun launchChromeCustomTabs(context: Context, uri: String){
 
 fun launchChromeCustomTabs(context: Context, url: Uri){
     try {
-        if (GlobalApplication.preferenceRepository.getBoolean(GlobalApplication.KEY_USE_CHROME_CUSTOM_TAB, true)) {
+        if (GlobalApplication.preferenceRepository.getBoolean(KEY_USE_CHROME_CUSTOM_TAB, true)) {
             CustomTabsIntent.Builder()
                     .setToolbarColor(ContextCompat.getColor(context, R.color.color_primary))
                     .setSecondaryToolbarColor(ContextCompat.getColor(context, R.color.color_primary_dark))
