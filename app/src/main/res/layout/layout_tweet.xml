@@ -88,19 +88,18 @@
         android:layout_marginLeft="-16dp"
         android:layout_marginRight="-16dp"/>
 
-    <androidx.appcompat.widget.AppCompatCheckBox
+    <com.github.moko256.twitlatte.widget.CheckableImageView
         android:id="@+id/tweet_spoiler_opener"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
         android:layout_below="@id/tweet_image_container"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="6dp"
-        android:layout_marginStart="6dp"
-        android:layout_marginEnd="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="12dp"
+        android:padding="6dp"
         android:background="?attr/controlBackground"
-        android:button="@drawable/opener_button_stateful"
-        app:buttonTint="@color/image_button_color_stateful"
+        app:srcCompat="@drawable/opener_button_stateful"
+        app:tint="@color/image_button_color_stateful"
         tools:ignore="PrivateResource"
         android:theme="@style/ExpandAndCloseToggleBackgroundColor"/>
 

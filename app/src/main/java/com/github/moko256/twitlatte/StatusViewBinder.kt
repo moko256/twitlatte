@@ -23,7 +23,10 @@ import android.text.format.DateUtils
 import android.text.method.LinkMovementMethod
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.ImageButton
+import android.widget.ImageView
+import android.widget.RelativeLayout
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.github.moko256.twitlatte.entity.Status
@@ -56,7 +59,7 @@ class StatusViewBinder(private val glideRequests: GlideRequests, private val vie
     val userName: TextView = viewGroup.findViewById(R.id.tweet_user_name)
     val userId: TextView = viewGroup.findViewById(R.id.tweet_user_id)
     val tweetSpoilerText: TextView = viewGroup.findViewById(R.id.tweet_spoiler)
-    val contentOpenerToggle: CheckBox = viewGroup.findViewById(R.id.tweet_spoiler_opener)
+    val contentOpenerToggle: CheckableImageView = viewGroup.findViewById(R.id.tweet_spoiler_opener)
     val tweetContext: TextView = viewGroup.findViewById(R.id.tweet_content)
     val timeStampText: TextView = viewGroup.findViewById(R.id.tweet_time_stamp_text)
     val quoteTweetLayout: RelativeLayout = viewGroup.findViewById(R.id.tweet_quote_tweet)
@@ -73,11 +76,11 @@ class StatusViewBinder(private val glideRequests: GlideRequests, private val vie
     val repliesCount: TextView = viewGroup.findViewById(R.id.tweet_content_replies_count)
 
     init {
-        contentOpenerToggle.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                tweetContext.visibility = View.VISIBLE
+        contentOpenerToggle.onCheckedChangeListener = { _, isChecked ->
+            tweetContext.visibility = if (isChecked) {
+                View.VISIBLE
             } else {
-                tweetContext.visibility = View.GONE
+                View.GONE
             }
         }
 
