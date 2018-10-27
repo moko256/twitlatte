@@ -97,10 +97,14 @@ class ListModelImpl(
 
                                 status.onComplete()
                             }
-                }.doOnError {
-                    it.printStackTrace()
-                    errorObserver.onNext(it)
-                }.subscribeOn(Schedulers.io()).subscribe()
+                }.subscribeOn(Schedulers.io())
+                        .subscribe(
+                                {},
+                                {
+                                    it.printStackTrace()
+                                    errorObserver.onNext(it)
+                                }
+                        )
         )
     }
 
@@ -147,10 +151,14 @@ class ListModelImpl(
 
                         status.onComplete()
                     }
-                }.doOnError {
-                    it.printStackTrace()
-                    errorObserver.onNext(it)
-                }.subscribeOn(Schedulers.io()).subscribe()
+                }.subscribeOn(Schedulers.io())
+                        .subscribe(
+                                {},
+                                {
+                                    it.printStackTrace()
+                                    errorObserver.onNext(it)
+                                }
+                        )
         )
     }
 
@@ -187,10 +195,14 @@ class ListModelImpl(
 
                         status.onComplete()
                     }
-                }.doOnError {
-                    it.printStackTrace()
-                    errorObserver.onNext(it)
-                }.subscribeOn(Schedulers.io()).subscribe()
+                }.subscribeOn(Schedulers.io())
+                        .subscribe(
+                                {},
+                                {
+                                    it.printStackTrace()
+                                    errorObserver.onNext(it)
+                                }
+                        )
         )
     }
 
@@ -241,11 +253,16 @@ class ListModelImpl(
 
                         status.onComplete()
                     }
-                }.doOnError {
-                    it.printStackTrace()
-                    errorObserver.onNext(it)
-                }.subscribeOn(Schedulers.io()).subscribe()
-        )    }
+                }.subscribeOn(Schedulers.io())
+                        .subscribe(
+                                {},
+                                {
+                                    it.printStackTrace()
+                                    errorObserver.onNext(it)
+                                }
+                        )
+        )
+    }
 
     override fun removeOldCache(position: Int) {
         if (list.size - position > GlobalApplication.statusCacheListLimit) {
