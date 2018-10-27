@@ -148,9 +148,6 @@
                 android:key="license_lib_kotlin"
                 android:title="Kotlin Programming Language"/>
             <Preference
-                android:key="license_lib_kotlin_either"
-                android:title="kotlin-either"/>
-            <Preference
                 android:key="license_lib_okhttp"
                 android:title="OkHttp"/>
             <Preference
