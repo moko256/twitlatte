@@ -24,6 +24,7 @@ import android.text.method.LinkMovementMethod
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.core.content.ContextCompat
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.github.moko256.twitlatte.entity.Status
 import com.github.moko256.twitlatte.entity.User
@@ -32,6 +33,7 @@ import com.github.moko256.twitlatte.glide.GlideRequests
 import com.github.moko256.twitlatte.repository.KEY_TIMELINE_IMAGE_LOAD_MODE
 import com.github.moko256.twitlatte.text.TwitterStringUtils
 import com.github.moko256.twitlatte.view.EmojiToTextViewSetter
+import com.github.moko256.twitlatte.widget.CheckableImageView
 import com.github.moko256.twitlatte.widget.TweetImageTableView
 import io.reactivex.disposables.CompositeDisposable
 
@@ -63,8 +65,8 @@ class StatusViewBinder(private val glideRequests: GlideRequests, private val vie
     val quoteTweetUserId: TextView = viewGroup.findViewById(R.id.tweet_quote_tweet_user_id)
     val quoteTweetContext: TextView = viewGroup.findViewById(R.id.tweet_quote_tweet_content)
     val imageTableView: TweetImageTableView = viewGroup.findViewById(R.id.tweet_image_container)
-    val likeButton: CheckBox = viewGroup.findViewById(R.id.tweet_content_like_button)
-    val retweetButton: CheckBox = viewGroup.findViewById(R.id.tweet_content_retweet_button)
+    val likeButton: CheckableImageView = viewGroup.findViewById(R.id.tweet_content_like_button)
+    val retweetButton: CheckableImageView = viewGroup.findViewById(R.id.tweet_content_retweet_button)
     val replyButton: ImageButton = viewGroup.findViewById(R.id.tweet_content_reply_button)
     val likeCount: TextView = viewGroup.findViewById(R.id.tweet_content_like_count)
     val retweetCount: TextView = viewGroup.findViewById(R.id.tweet_content_retweet_count)
@@ -293,7 +295,7 @@ class StatusViewBinder(private val glideRequests: GlideRequests, private val vie
             }
         }
         retweetButton.isEnabled = isRepeatEnabled
-        retweetButton.setButtonDrawable(repeatIconResourceId)
+        retweetButton.setImageDrawable(ContextCompat.getDrawable(viewGroup.context, repeatIconResourceId))
 
         likeCount.text = if (status.favoriteCount != 0) TwitterStringUtils.convertToSIUnitString(status.favoriteCount) else ""
         retweetCount.text = if (status.repeatCount != 0) TwitterStringUtils.convertToSIUnitString(status.repeatCount) else ""

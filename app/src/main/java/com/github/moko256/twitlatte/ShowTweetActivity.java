@@ -53,6 +53,7 @@ import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
+import kotlin.Unit;
 import twitter4j.TwitterException;
 
 import static android.view.View.GONE;
@@ -294,19 +295,21 @@ public class ShowTweetActivity extends AppCompatActivity {
         ));
 
         statusViewBinder.getLikeButton().setOnCheckedChangeListener((compoundButton, b) -> {
-            if (b && (!item.getStatus().isFavorited())) {
+            if (b) {
                 statusActionModel.createFavorite(item.getId());
-            } else if ((!b) && item.getStatus().isFavorited()) {
+            } else {
                 statusActionModel.removeFavorite(item.getId());
             }
+            return Unit.INSTANCE;
         });
 
         statusViewBinder.getRetweetButton().setOnCheckedChangeListener((compoundButton, b) -> {
-            if (b && (!item.getStatus().isRepeated())) {
+            if (b) {
                 statusActionModel.createRepeat(item.getId());
-            } else if ((!b) && item.getStatus().isRepeated()) {
+            } else {
                 statusActionModel.removeRepeat(item.getId());
             }
+            return Unit.INSTANCE;
         });
 
         statusViewBinder.getReplyButton().setOnClickListener(

@@ -182,13 +182,13 @@
 
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/tweet_content_reply_button"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
         android:layout_below="@id/tweet_quote_tweet"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="4dp"
-        android:layout_marginStart="44dp"
-        android:layout_marginEnd="6dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="-8dp"
+        android:layout_marginStart="36dp"
+        android:layout_marginEnd="4dp"
         android:background="?attr/controlBackground"
         app:tint="@color/image_button_color_stateful"
         app:srcCompat="@drawable/ic_reply_white_24dp"
@@ -198,7 +198,7 @@
         android:id="@+id/tweet_content_replies_count"
         android:layout_width="30sp"
         android:layout_height="24dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="30dp"
         android:layout_below="@id/tweet_quote_tweet"
         android:layout_toEndOf="@id/tweet_content_reply_button"
         android:gravity="start|center_vertical"
@@ -206,24 +206,27 @@
         android:textStyle="bold"
         tools:text="32K"/>
 
-    <androidx.appcompat.widget.AppCompatCheckBox
+    <com.github.moko256.twitlatte.widget.CheckableImageView
         android:id="@+id/tweet_content_retweet_button"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
         android:layout_below="@id/tweet_quote_tweet"
         android:layout_toEndOf="@id/tweet_content_replies_count"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="4dp"
-        android:layout_marginStart="18dp"
-        android:layout_marginEnd="6dp"
-        tools:button="@drawable/repeat_button_stateful"
-        app:buttonTint="@color/toggle_button_color_stateful"/>
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="-8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="4dp"
+        android:background="?attr/controlBackground"
+        android:padding="6dp"
+        tools:srcCompat="@drawable/repeat_button_stateful"
+        app:tint="@color/toggle_button_color_stateful"
+        tools:ignore="PrivateResource" />
 
     <TextView
         android:id="@+id/tweet_content_retweet_count"
         android:layout_width="30sp"
         android:layout_height="24dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="30dp"
         android:layout_below="@id/tweet_quote_tweet"
         android:layout_toEndOf="@id/tweet_content_retweet_button"
         android:gravity="start|center_vertical"
@@ -231,24 +234,27 @@
         android:textStyle="bold"
         tools:text="50M"/>
 
-    <androidx.appcompat.widget.AppCompatCheckBox
+    <com.github.moko256.twitlatte.widget.CheckableImageView
         android:id="@+id/tweet_content_like_button"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
         android:layout_below="@id/tweet_quote_tweet"
         android:layout_toEndOf="@id/tweet_content_retweet_count"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="4dp"
-        android:layout_marginStart="18dp"
-        android:layout_marginEnd="6dp"
-        android:button="@drawable/like_button_stateful"
-        app:buttonTint="@color/toggle_button_color_stateful"/>
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="-8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="4dp"
+        android:background="?attr/controlBackground"
+        android:padding="6dp"
+        app:srcCompat="@drawable/like_button_stateful"
+        app:tint="@color/toggle_button_color_stateful"
+        tools:ignore="PrivateResource"/>
 
     <TextView
         android:id="@+id/tweet_content_like_count"
         android:layout_width="30sp"
         android:layout_height="24dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="30dp"
         android:layout_below="@id/tweet_quote_tweet"
         android:layout_toEndOf="@id/tweet_content_like_button"
         android:gravity="start|center_vertical"

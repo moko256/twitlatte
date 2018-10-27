@@ -41,6 +41,7 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
+import kotlin.Unit;
 
 import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY_IS_PATTERN_TWEET_MUTE;
 import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY_IS_PATTERN_TWEET_MUTE_SHOW_ONLY_IMAGE;
@@ -252,19 +253,13 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             ));
 
             statusViewBinder.getLikeButton().setOnCheckedChangeListener((compoundButton, b) -> {
-                if (b && (!status.isFavorited())) {
-                    onFavoriteClick.onClick(getLayoutPosition(), status.getId(), false);
-                } else if ((!b) && status.isFavorited()) {
-                    onFavoriteClick.onClick(getLayoutPosition(), status.getId(), true);
-                }
+                onFavoriteClick.onClick(getLayoutPosition(), status.getId(), !b);
+                return Unit.INSTANCE;
             });
 
             statusViewBinder.getRetweetButton().setOnCheckedChangeListener((compoundButton, b) -> {
-                if (b && (!status.isRepeated())) {
-                    onRepeatClick.onClick(getLayoutPosition(), status.getId(), false);
-                } else if ((!b) && status.isRepeated()) {
-                    onRepeatClick.onClick(getLayoutPosition(), status.getId(), true);
-                }
+                onRepeatClick.onClick(getLayoutPosition(), status.getId(), !b);
+                return Unit.INSTANCE;
             });
 
             statusViewBinder.getReplyButton().setOnClickListener(
