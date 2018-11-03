@@ -50,6 +50,12 @@
             android:title="@string/open_web_page_in_the_app"
             android:summaryOn="@string/viewing_web_page_in_app"
             android:summaryOff="@string/viewing_web_page_in_external_browser"/>
+        <SwitchPreference
+            android:key="hideSensitiveMedia"
+            android:defaultValue="true"
+            android:title="@string/hide_sensitive_media"
+            android:summaryOn="@string/hiding_sensitive_media"
+            android:summaryOff="@string/showing_sensitive_media"/>
         <PreferenceScreen
             android:title="@string/regex_mute"
             android:key="regexMute">

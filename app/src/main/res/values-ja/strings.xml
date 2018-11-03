@@ -83,6 +83,9 @@
     <string name="open_web_page_in_the_app">アプリ内でウェブページを開く</string>
     <string name="viewing_web_page_in_app">アプリ内でウェブページを表示します</string>
     <string name="viewing_web_page_in_external_browser">外部ブラウザでウェブページを表示します</string>
+    <string name="hide_sensitive_media">過激な表現を含むメディアをぼかす</string>
+    <string name="hiding_sensitive_media">過激な表現を含むメディアをタイムライン上でぼかします</string>
+    <string name="showing_sensitive_media">すべてのメディアをタイムライン上でぼかさず表示します</string>
     <string name="regex_mute">正規表現でのミュート</string>
     <string name="edit_pattern">正規表現パターンの編集</string>
     <string name="use_post_regex_mute">本文へ使用して非表示にする</string>

@@ -38,6 +38,7 @@ import androidx.appcompat.content.res.AppCompatResources;
 import androidx.gridlayout.widget.GridLayout;
 import jp.wasabeef.glide.transformations.BlurTransformation;
 
+import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY_HIDE_SENSITIVE_MEDIA;
 import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY_TIMELINE_IMAGE_LOAD_MODE;
 
 /**
@@ -193,7 +194,8 @@ public class TweetImageTableView extends GridLayout {
 
     public void setMediaEntities(Media[] mediaEntities, boolean sensitive) {
         this.medias = mediaEntities;
-        isOpen = !GlobalApplication.preferenceRepository.getString(KEY_TIMELINE_IMAGE_LOAD_MODE, "normal").equals("none") && !sensitive;
+        isOpen = !GlobalApplication.preferenceRepository.getString(KEY_TIMELINE_IMAGE_LOAD_MODE, "normal").equals("none")
+                && !(sensitive && GlobalApplication.preferenceRepository.getBoolean(KEY_HIDE_SENSITIVE_MEDIA, true));
         updateImageNumber();
         updateView();
     }

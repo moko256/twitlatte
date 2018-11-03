@@ -88,6 +88,9 @@
     <string name="open_web_page_in_the_app">Open web pages in the app</string>
     <string name="viewing_web_page_in_app">Viewing web pages in app</string>
     <string name="viewing_web_page_in_external_browser">Viewing web pages in external browser</string>
+    <string name="hide_sensitive_media">Blur sensitive medias</string>
+    <string name="hiding_sensitive_media">Blurring sensitive medias on the timeline</string>
+    <string name="showing_sensitive_media">Not blurring all medias on the timeline</string>
     <string name="regex_mute">Regex mute</string>
     <string name="edit_pattern">Edit Regex pattern</string>
     <string name="use_post_regex_mute">Use for the context and hide post</string>

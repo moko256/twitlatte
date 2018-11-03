@@ -28,6 +28,7 @@ import java.util.regex.PatternSyntaxException
 const val KEY_ACCOUNT_KEY = "AccountKey"
 const val KEY_NIGHT_MODE = "nightModeType"
 const val KEY_USE_CHROME_CUSTOM_TAB = "useChromeCustomTab"
+const val KEY_HIDE_SENSITIVE_MEDIA = "hideSensitiveMedia"
 const val KEY_IS_PATTERN_TWEET_MUTE = "patternTweetMuteEnabled"
 const val KEY_TWEET_MUTE_PATTERN = "tweetMutePattern"
 const val KEY_IS_PATTERN_TWEET_MUTE_SHOW_ONLY_IMAGE = "patternTweetMuteShowOnlyImageEnabled"
