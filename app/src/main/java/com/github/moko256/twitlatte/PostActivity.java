@@ -89,6 +89,8 @@ public class PostActivity extends AppCompatActivity {
 
     private boolean isPosting = false;
 
+    private MenuItem postButton;
+
     private ViewGroup rootViewGroup;
     private Toolbar toolbar;
     private ActionBar actionBar;
@@ -171,20 +173,7 @@ public class PostActivity extends AppCompatActivity {
         });
         editText.setOnKeyListener((v, keyCode, event) -> {
             if (!isPosting && event.getAction() == KeyEvent.ACTION_DOWN && event.isCtrlPressed() && keyCode == KeyEvent.KEYCODE_ENTER){
-                isPosting = true;
-                disposable.add(
-                        model.postTweet()
-                                .subscribeOn(Schedulers.io())
-                                .observeOn(AndroidSchedulers.mainThread())
-                                .subscribe(
-                                        PostActivity.this::finish,
-                                        e->{
-                                            e.printStackTrace();
-                                            isPosting = false;
-                                            errorNotify(e);
-                                        }
-                                )
-                );
+                doSend();
                 return true;
             }
             return false;
@@ -329,6 +318,38 @@ public class PostActivity extends AppCompatActivity {
         editText.setHint(model.isReply()? R.string.reply: R.string.post);
     }
 
+    private void doSend() {
+        if (model.isValidTweet()) {
+            doReallySend();
+        } else {
+            new AlertDialog
+                    .Builder(this)
+                    .setMessage(R.string.confirm_send_invalid_post)
+                    .setPositiveButton(R.string.post, (dialog, which) -> doReallySend())
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .show();
+        }
+    }
+
+    private void doReallySend() {
+        isPosting = true;
+        postButton.setEnabled(false);
+        disposable.add(
+                model.postTweet()
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                                this::finish,
+                                e->{
+                                    e.printStackTrace();
+                                    postButton.setEnabled(true);
+                                    isPosting = false;
+                                    errorNotify(e);
+                                }
+                        )
+        );
+    }
+
     @SuppressLint("SetTextI18n")
     private void updateCounter() {
         counterTextView.setText(String.valueOf(
@@ -357,28 +378,14 @@ public class PostActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_post_tweet_toolbar, menu);
+        postButton = menu.findItem(R.id.action_send);
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (!isPosting && item.getItemId() == R.id.action_send) {
-            isPosting = true;
-            item.setEnabled(false);
-            disposable.add(
-                    model.postTweet()
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(
-                                    this::finish,
-                                    e->{
-                                        e.printStackTrace();
-                                        item.setEnabled(true);
-                                        isPosting = false;
-                                        errorNotify(e);
-                                    }
-                            )
-            );
+            doSend();
             return true;
         } else {
             return super.onOptionsItemSelected(item);
@@ -485,6 +492,7 @@ public class PostActivity extends AppCompatActivity {
         userIcon = null;
         actionBar = null;
         toolbar = null;
+        postButton = null;
         model = null;
     }
 

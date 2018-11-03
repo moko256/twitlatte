@@ -116,6 +116,7 @@
 
     <string name="confirm_logout">Logout?</string>
     <string name="confirm_discard_post">Discard post?</string>
+    <string name="confirm_send_invalid_post">Send post?\n\nContent is too much or empty and it may failure.</string>
     <string name="confirm_message">Do this action?</string>
 
     <string name="did_post">Posted</string>
