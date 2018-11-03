@@ -165,6 +165,7 @@ public class PostActivity extends AppCompatActivity {
             if (model.getUriList().size() < model.getUriListSizeLimit()) {
                 addedImagesAdapter.addImageAndUpdateView(imageUri);
                 model.getUriList().add(imageUri);
+                updateCounter();
                 isPossiblySensitive.setEnabled(true);
                 return true;
             } else {
@@ -205,6 +206,7 @@ public class PostActivity extends AppCompatActivity {
             addedImagesAdapter.removeImageAndUpdateView(position);
             model.getUriList().remove(position);
             boolean enabled = model.getUriList().size() > 0;
+            updateCounter();
             isPossiblySensitive.setEnabled(enabled);
             isPossiblySensitive.setChecked(isPossiblySensitive.isChecked() && enabled);
         };
@@ -310,6 +312,7 @@ public class PostActivity extends AppCompatActivity {
                 if (uris != null) {
                     addedImagesAdapter.getImagesList().addAll(uris);
                     model.getUriList().addAll(uris);
+                    updateCounter();
                     isPossiblySensitive.setEnabled(true);
                 }
             }
@@ -444,6 +447,7 @@ public class PostActivity extends AppCompatActivity {
                 if (resultUri != null) {
                     addedImagesAdapter.addImageAndUpdateView(resultUri);
                     model.getUriList().add(resultUri);
+                    updateCounter();
                     isPossiblySensitive.setEnabled(true);
                 } else if (resultUris != null) {
                     int resultSize = resultUris.getItemCount();
@@ -456,7 +460,7 @@ public class PostActivity extends AppCompatActivity {
                     }
                     addedImagesAdapter.addImagesAndUpdateView(arrayList);
                     model.getUriList().addAll(arrayList);
-
+                    updateCounter();
                     isPossiblySensitive.setEnabled(true);
                 }
             }
@@ -498,7 +502,7 @@ public class PostActivity extends AppCompatActivity {
 
     @Override
     public boolean onSupportNavigateUp(){
-        if (editText.getText().length() > 0) {
+        if (editText.getText().length() > 0 || addedImagesAdapter.getImagesList().size() > 0) {
             new AlertDialog.Builder(this)
                     .setMessage(R.string.confirm_discard_post)
                     .setPositiveButton(R.string.do_discard, (dialog, which) -> finish())
