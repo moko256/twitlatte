@@ -84,8 +84,7 @@ class CachedStatusesSQLiteOpenHelper(
         } else {
             null
         },
-        null,
-        /*BuildConfig.CACHE_DATABASE_VERSION*/4
+        null, 4
 ) {
 
     override fun onCreate(db: SQLiteDatabase) {

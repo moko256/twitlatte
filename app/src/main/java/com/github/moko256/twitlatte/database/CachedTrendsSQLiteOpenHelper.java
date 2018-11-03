@@ -22,7 +22,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.github.moko256.twitlatte.BuildConfig;
 import com.github.moko256.twitlatte.entity.AccessToken;
 import com.github.moko256.twitlatte.entity.Trend;
 
@@ -41,7 +40,7 @@ public class CachedTrendsSQLiteOpenHelper extends SQLiteOpenHelper {
     private static final String TABLE_NAME = "Trends";
 
     public CachedTrendsSQLiteOpenHelper(Context context, AccessToken accessToken){
-        super(context, accessToken != null? new File(context.getCacheDir(), accessToken.getKeyString() + "/" + "Trends.db").getAbsolutePath(): null, null, BuildConfig.CACHE_DATABASE_VERSION);
+        super(context, accessToken != null? new File(context.getCacheDir(), accessToken.getKeyString() + "/" + "Trends.db").getAbsolutePath(): null, null, 2);
     }
 
     @Override
