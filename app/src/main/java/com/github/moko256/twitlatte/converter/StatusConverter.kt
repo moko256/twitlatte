@@ -125,7 +125,7 @@ private fun twitter4j.Status.convertToStatus(): Status {
             userId = user.id,
             text = urls?.first ?: text ?: "",
             sourceName = parsedSource?.first,
-            sourceWebsite = parsedSource?.second?.first()?.url,
+            sourceWebsite = parsedSource?.second?.firstOrNull()?.url,
             createdAt = createdAt,
             inReplyToStatusId = inReplyToStatusId,
             inReplyToUserId = inReplyToUserId,

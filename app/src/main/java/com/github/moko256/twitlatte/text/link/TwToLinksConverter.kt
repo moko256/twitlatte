@@ -40,15 +40,14 @@ fun convertToContentAndLinks(
                     + hashtagEntities.size
                     + userMentionEntities.size
                     + urlEntities.size
-                    + if (mediaEntities.isNotEmpty()) { 1 } else { 0 }
+                    + 1
     )
     entities.addAll(symbolEntities.map { "symbol" to it })
     entities.addAll(hashtagEntities.map { "hashtag" to it })
     entities.addAll(userMentionEntities.map { "user" to it })
     entities.addAll(urlEntities.map { "url" to it })
-    val media = mediaEntities.firstOrNull()
-    if (media != null) {
-        entities.add("url" to media)
+    mediaEntities.firstOrNull()?.let {
+        entities.add("url" to it)
     }
 
     entities.sortBy { it.second.start }
@@ -60,24 +59,26 @@ fun convertToContentAndLinks(
         val end = it.second.end + sp
 
         if (it.first == "url") {
-            if (start <= stringBuilder.length && end <= stringBuilder.length) {
-                val url = (it.second as URLEntity).url
-                val displayUrl = (it.second as URLEntity).displayURL
-
-                val urlLength = url.length
-                val displayUrlLength = displayUrl.length
-
-                val dusp = displayUrlLength - urlLength
-
-                stringBuilder.replace(start, end, displayUrl)
-                links.add(Link(
-                        (it.second as URLEntity).expandedURL,
-                        start,
-                        end + dusp
-                ))
-
-                sp += dusp
+            val nowLength = stringBuilder.length
+            if (start >= nowLength || end >= nowLength) {
+                stringBuilder.append(CharArray(end - nowLength) { ' ' })
             }
+            val url = (it.second as URLEntity).url
+            val displayUrl = (it.second as URLEntity).displayURL
+
+            val urlLength = url.length
+            val displayUrlLength = displayUrl.length
+
+            val dusp = displayUrlLength - urlLength
+
+            stringBuilder.replace(start, end, displayUrl)
+            links.add(Link(
+                    (it.second as URLEntity).expandedURL,
+                    start,
+                    end + dusp
+            ))
+
+            sp += dusp + 1
         } else {
             links.add(Link(
                     "twitlatte://${it.first}/" + it.second.text,
