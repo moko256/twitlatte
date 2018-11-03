@@ -198,7 +198,7 @@ public class PostActivity extends AppCompatActivity {
                                 .addCategory(Intent.CATEGORY_OPENABLE)
                                 .putExtra(Intent.EXTRA_MIME_TYPES, new String[]{"image/*", "video/*"})
                                 .putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
-                                .setType("*/*"), getString(R.string.add_image)
+                                .setType("*/*"), getString(R.string.add_media)
                 ),
                 REQUEST_GET_IMAGE
         );
@@ -214,7 +214,7 @@ public class PostActivity extends AppCompatActivity {
             Intent open = new Intent(Intent.ACTION_VIEW)
                     .setData(model.getUriList().get(position))
                     .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            startActivity(Intent.createChooser(open, getString(R.string.open_image)));
+            startActivity(Intent.createChooser(open, getString(R.string.open_media)));
         };
         imagesRecyclerView.setAdapter(addedImagesAdapter);
 

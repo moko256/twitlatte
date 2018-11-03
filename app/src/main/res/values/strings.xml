@@ -40,9 +40,9 @@
     <string name="account">Account</string>
     <string name="dark_theme">Dark theme</string>
     <string name="media">Media</string>
-    <string name="add_image">Add image…</string>
-    <string name="open_image">Open image…</string>
-    <string name="possibly_sensitive">Include sensitivity in the images</string>
+    <string name="add_media">Add media…</string>
+    <string name="open_media">Open media…</string>
+    <string name="possibly_sensitive">Include sensitivity in the medias</string>
     <string name="add_location">Add location</string>
     <string name="following_and_followers">Following and followers</string>
     <string name="retweeted_by">Retweeted by %1$s(%2$s)</string>

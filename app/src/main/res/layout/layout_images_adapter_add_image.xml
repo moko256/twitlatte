@@ -37,5 +37,5 @@
         android:paddingRight="16dp"
         android:gravity="center_vertical"
         android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-        android:text="@string/add_image"/>
+        android:text="@string/add_media"/>
 </RelativeLayout>
