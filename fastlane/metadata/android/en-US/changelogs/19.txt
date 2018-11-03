@@ -1,0 +1,5 @@
+Expand Fav/RT buttons' touch area.
+Enable to choose in settings whether blurring sensitive medias or not on the timeline. (Default: blurring)
+Fixed some bugs.
+
+Note: Twitter has restricted twitlatte's key. So, you can't do some action(like, retweet and create tweet). In a few days, it will be lifted.
