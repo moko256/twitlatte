@@ -22,11 +22,13 @@ android {
     buildToolsVersion "28.0.3"
 
     defaultConfig {
-        applicationId 'com.github.moko256.twitlatte'
         minSdkVersion 19
         targetSdkVersion 28
-        versionCode 19
-        versionName '1.6.2'
+
+        applicationId 'com.github.moko256.twitlatte'
+        versionCode 20
+        versionName '1.6.3'
+
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         Base64.Decoder e = Base64.decoder
