@@ -59,10 +59,6 @@ fun convertToContentAndLinks(
         val end = it.second.end + sp
 
         if (it.first == "url") {
-            val nowLength = stringBuilder.length
-            if (start >= nowLength || end >= nowLength) {
-                stringBuilder.append(CharArray(end - nowLength) { ' ' })
-            }
             val url = (it.second as URLEntity).url
             val displayUrl = (it.second as URLEntity).displayURL
 
@@ -71,6 +67,11 @@ fun convertToContentAndLinks(
 
             val dusp = displayUrlLength - urlLength
 
+            val nowLength = stringBuilder.length
+            if (start >= nowLength || end + dusp >= nowLength) {
+                stringBuilder.append(CharArray(end + dusp - nowLength) { ' ' })
+            }
+
             stringBuilder.replace(start, end, displayUrl)
             links.add(Link(
                     (it.second as URLEntity).expandedURL,
@@ -78,7 +79,7 @@ fun convertToContentAndLinks(
                     end + dusp
             ))
 
-            sp += dusp + 1
+            sp += dusp
         } else {
             links.add(Link(
                     "twitlatte://${it.first}/" + it.second.text,
