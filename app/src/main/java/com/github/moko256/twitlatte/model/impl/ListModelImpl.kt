@@ -85,18 +85,22 @@ class ListModelImpl(
     override fun refreshFirst() {
         requests.add(
                 Completable.create { status ->
-                    api.get(limit = GlobalApplication.statusLimit)
-                            .apply {
-                                GlobalApplication.statusCache.addAll(this)
-                            }
-                            .map { it.id }
-                            .let {
-                                list.addAll(it)
-                                database.addIds(it)
-                                updateObserver.onNext(UpdateEvent(EventType.ADD_FIRST, 0, it.size))
+                    try {
+                        api.get(limit = GlobalApplication.statusLimit)
+                                .apply {
+                                    GlobalApplication.statusCache.addAll(this)
+                                }
+                                .map { it.id }
+                                .let {
+                                    list.addAll(it)
+                                    database.addIds(it)
+                                    updateObserver.onNext(UpdateEvent(EventType.ADD_FIRST, 0, it.size))
 
-                                status.onComplete()
-                            }
+                                    status.onComplete()
+                                }
+                    } catch (e: Throwable) {
+                        status.tryOnError(e)
+                    }
                 }.subscribeOn(Schedulers.io())
                         .subscribe(
                                 {},
@@ -123,33 +127,37 @@ class ListModelImpl(
 
         requests.add(
                 Completable.create { status ->
-                    api.get(
-                            sinceId = sinceId,
-                            limit = GlobalApplication.statusLimit
-                    ).apply {
-                        if (isNotEmpty()) {
-                            GlobalApplication.statusCache.addAll(this, excludeId)
+                    try {
+                        api.get(
+                                sinceId = sinceId,
+                                limit = GlobalApplication.statusLimit
+                        ).apply {
+                            if (isNotEmpty()) {
+                                GlobalApplication.statusCache.addAll(this, excludeId)
 
-                            val ids = map { it.id }.toMutableList()
+                                val ids = map { it.id }.toMutableList()
 
-                            if (ids[ids.size - 1] == list[0]) {
-                                ids.removeAt(ids.size - 1)
-                            } else {
-                                ids.add(-1L)
-                            }
+                                if (ids[ids.size - 1] == list[0]) {
+                                    ids.removeAt(ids.size - 1)
+                                } else {
+                                    ids.add(-1L)
+                                }
 
-                            if (ids.size > 0) {
-                                list.addAll(0, ids)
-                                database.insertIds(0, ids)
-                                updateObserver.onNext(UpdateEvent(EventType.ADD_TOP, 0, ids.size))
+                                if (ids.size > 0) {
+                                    list.addAll(0, ids)
+                                    database.insertIds(0, ids)
+                                    updateObserver.onNext(UpdateEvent(EventType.ADD_TOP, 0, ids.size))
+                                } else {
+                                    updateObserver.onNext(nothingEvent)
+                                }
                             } else {
                                 updateObserver.onNext(nothingEvent)
                             }
-                        } else {
-                            updateObserver.onNext(nothingEvent)
-                        }
 
-                        status.onComplete()
+                            status.onComplete()
+                        }
+                    } catch (e: Throwable) {
+                        status.tryOnError(e)
                     }
                 }.subscribeOn(Schedulers.io())
                         .subscribe(
@@ -173,27 +181,31 @@ class ListModelImpl(
 
         requests.add(
                 Completable.create { status ->
-                    api.get(
-                            maxId = list[list.size - 1] - 1L,
-                            limit = GlobalApplication.statusLimit
-                    ).apply {
-                        if (isNotEmpty()) {
-                            GlobalApplication.statusCache.addAll(this)
+                    try {
+                        api.get(
+                                maxId = list[list.size - 1] - 1L,
+                                limit = GlobalApplication.statusLimit
+                        ).apply {
+                            if (isNotEmpty()) {
+                                GlobalApplication.statusCache.addAll(this)
 
-                            val ids = map { it.id }
+                                val ids = map { it.id }
 
-                            list.addAll(ids)
-                            database.insertIds(list.size - size, ids)
-                            updateObserver.onNext(UpdateEvent(
-                                    EventType.ADD_BOTTOM,
-                                    list.size - size,
-                                    size
-                            ))
-                        } else {
-                            updateObserver.onNext(nothingEvent)
+                                list.addAll(ids)
+                                database.insertIds(list.size - size, ids)
+                                updateObserver.onNext(UpdateEvent(
+                                        EventType.ADD_BOTTOM,
+                                        list.size - size,
+                                        size
+                                ))
+                            } else {
+                                updateObserver.onNext(nothingEvent)
+                            }
+
+                            status.onComplete()
                         }
-
-                        status.onComplete()
+                    } catch (e: Throwable) {
+                        status.tryOnError(e)
                     }
                 }.subscribeOn(Schedulers.io())
                         .subscribe(
@@ -221,37 +233,41 @@ class ListModelImpl(
 
         requests.add(
                 Completable.create { status ->
-                    api.get(
-                            sinceId = sinceId,
-                            maxId = list[position -1] - 1L,
-                            limit = GlobalApplication.statusLimit
-                    ).apply {
-                        if (isNotEmpty()) {
-                            GlobalApplication.statusCache.addAll(this, excludeId)
+                    try {
+                        api.get(
+                                sinceId = sinceId,
+                                maxId = list[position -1] - 1L,
+                                limit = GlobalApplication.statusLimit
+                        ).apply {
+                            if (isNotEmpty()) {
+                                GlobalApplication.statusCache.addAll(this, excludeId)
 
-                            val ids = map { it.id }.toMutableList()
+                                val ids = map { it.id }.toMutableList()
 
-                            val noGap = ids[ids.size - 1] == list[position + 1]
-                            if (noGap) {
-                                ids.removeAt(ids.size - 1)
+                                val noGap = ids[ids.size - 1] == list[position + 1]
+                                if (noGap) {
+                                    ids.removeAt(ids.size - 1)
+                                    list.removeAt(position)
+                                    database.deleteIds(listOf(-1L))
+                                    updateObserver.onNext(UpdateEvent(EventType.REMOVE, position, 1))
+                                } else {
+                                    updateObserver.onNext(UpdateEvent(EventType.UPDATE, position, 1))
+                                }
+
+                                list.addAll(position, ids)
+                                database.insertIds(position, ids)
+
+                                updateObserver.onNext(UpdateEvent(EventType.INSERT, position, ids.size))
+                            } else {
                                 list.removeAt(position)
                                 database.deleteIds(listOf(-1L))
                                 updateObserver.onNext(UpdateEvent(EventType.REMOVE, position, 1))
-                            } else {
-                                updateObserver.onNext(UpdateEvent(EventType.UPDATE, position, 1))
                             }
 
-                            list.addAll(position, ids)
-                            database.insertIds(position, ids)
-
-                            updateObserver.onNext(UpdateEvent(EventType.INSERT, position, ids.size))
-                        } else {
-                            list.removeAt(position)
-                            database.deleteIds(listOf(-1L))
-                            updateObserver.onNext(UpdateEvent(EventType.REMOVE, position, 1))
+                            status.onComplete()
                         }
-
-                        status.onComplete()
+                    } catch (e: Throwable) {
+                        status.tryOnError(e)
                     }
                 }.subscribeOn(Schedulers.io())
                         .subscribe(

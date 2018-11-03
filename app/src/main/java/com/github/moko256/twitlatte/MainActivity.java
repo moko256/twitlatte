@@ -262,27 +262,31 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
         disposable.add(
                 Single.create(
                         singleSubscriber -> {
-                            AccountsModel accountsModel = GlobalApplication.accountsModel;
-                            List<AccessToken> accessTokens = accountsModel.getAccessTokens();
+                            try {
+                                AccountsModel accountsModel = GlobalApplication.accountsModel;
+                                List<AccessToken> accessTokens = accountsModel.getAccessTokens();
 
-                            ArrayList<User> users = new ArrayList<>(accessTokens.size());
-                            for (AccessToken accessToken : accessTokens){
-                                long id = accessToken.getUserId();
-                                CachedUsersSQLiteOpenHelper userHelper = new CachedUsersSQLiteOpenHelper(getApplicationContext(), accessToken);
-                                User user = userHelper.getCachedUser(id);
-                                if (user == null){
-                                    try {
-                                        user = UserConverterKt.convertToCommonUser(((GlobalApplication) getApplication()).createTwitterInstance(accessToken).verifyCredentials());
-                                        userHelper.addCachedUser(user);
-                                    } catch (TwitterException e) {
-                                        e.printStackTrace();
-                                    } finally {
-                                        userHelper.close();
+                                ArrayList<User> users = new ArrayList<>(accessTokens.size());
+                                for (AccessToken accessToken : accessTokens){
+                                    long id = accessToken.getUserId();
+                                    CachedUsersSQLiteOpenHelper userHelper = new CachedUsersSQLiteOpenHelper(getApplicationContext(), accessToken);
+                                    User user = userHelper.getCachedUser(id);
+                                    if (user == null){
+                                        try {
+                                            user = UserConverterKt.convertToCommonUser(((GlobalApplication) getApplication()).createTwitterInstance(accessToken).verifyCredentials());
+                                            userHelper.addCachedUser(user);
+                                        } catch (TwitterException e) {
+                                            e.printStackTrace();
+                                        } finally {
+                                            userHelper.close();
+                                        }
                                     }
+                                    users.add(user);
                                 }
-                                users.add(user);
+                                singleSubscriber.onSuccess(new Pair<>(users, accessTokens));
+                            } catch (Throwable e) {
+                                singleSubscriber.tryOnError(e);
                             }
-                            singleSubscriber.onSuccess(new Pair<>(users, accessTokens));
                         })
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())

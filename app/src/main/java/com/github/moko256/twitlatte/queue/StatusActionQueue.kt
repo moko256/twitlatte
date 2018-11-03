@@ -51,8 +51,12 @@ class StatusActionQueue(
             }
             doneIds.add(0, pair)
             return Completable.create {
-                function(id)
-                it.onComplete()
+                try {
+                    function(id)
+                    it.onComplete()
+                } catch (e: Throwable) {
+                    it.tryOnError(e)
+                }
             }.subscribeOn(Schedulers.io())
         }
 
@@ -60,21 +64,25 @@ class StatusActionQueue(
 
         if (disposable == null) {
             disposable = Observable.interval(delay, queueCount * delay, unit)
-                    .subscribe { _ ->
+                    .subscribe {
                         queue.poll().let { queueEntity ->
                             if (queueEntity == null) {
                                 removeDisposable()
                             } else {
-                                Completable.create {
-                                    queueEntity.function(queueEntity.id)
-                                    it.onComplete()
+                                Completable.create { emitter ->
+                                    try {
+                                        queueEntity.function(queueEntity.id)
+                                        emitter.onComplete()
+                                    } catch (e: Throwable) {
+                                        emitter.tryOnError(e)
+                                    }
                                 }.subscribeOn(Schedulers.io()).subscribe(
                                         {
                                             queueEntity.resultSubject.onComplete()
                                         },
-                                        {
+                                        { error ->
                                             addIfNoConflict(queueEntity.id, queueEntity.action, queueEntity.willDo, queueEntity.function)
-                                            queueEntity.resultSubject.onError(it)
+                                            queueEntity.resultSubject.onError(error)
                                         }
                                 )
                             }
