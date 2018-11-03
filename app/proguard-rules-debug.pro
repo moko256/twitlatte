@@ -11,6 +11,11 @@
 
 -keep class com.github.moko256.twitlatte.** { *; }
 
+-keep class com.twitter.twittertext.TwitterTextConfiguration {
+    private static com.twitter.twittertext.TwitterTextConfiguration getDefaultConfig();
+    private boolean emojiParsingEnabled;
+}
+
 -keep class androidx.appcompat.app.AppCompatViewInflater
 
 
