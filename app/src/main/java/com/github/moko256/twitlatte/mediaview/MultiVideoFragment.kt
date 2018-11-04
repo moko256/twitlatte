@@ -29,6 +29,7 @@ import com.google.android.exoplayer2.upstream.DataSource
 class MultiVideoFragment: AbstractVideoFragment() {
     override fun generateMediaSource(factory: DataSource.Factory): MediaSource {
         return HlsMediaSource.Factory(factory)
+                .setAllowChunklessPreparation(true)
                 .createMediaSource(Uri.parse(media.originalUrl))
     }
 }
