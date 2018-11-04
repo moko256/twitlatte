@@ -175,10 +175,10 @@ public class TwitterStringUtils {
                     }
                 };
             }
-            int nowLength = spannableStringBuilder.length();
+            int nowLength = text.length();
             int start = link.getStart();
             int end = link.getEnd();
-            if (end < nowLength) {
+            if (end <= nowLength) {
                 spannableStringBuilder.setSpan(span, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
         }

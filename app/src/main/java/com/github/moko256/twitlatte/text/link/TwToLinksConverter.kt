@@ -68,8 +68,8 @@ fun convertToContentAndLinks(
             val dusp = displayUrlLength - urlLength
 
             val nowLength = stringBuilder.length
-            if (start >= nowLength || end + dusp >= nowLength) {
-                stringBuilder.append(CharArray(end + dusp - nowLength) { ' ' })
+            if (start >= nowLength || end > nowLength) {
+                stringBuilder.append(CharArray(end - nowLength) { ' ' })
             }
 
             stringBuilder.replace(start, end, displayUrl)
