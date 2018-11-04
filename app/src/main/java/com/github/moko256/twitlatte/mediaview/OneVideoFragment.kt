@@ -17,6 +17,7 @@
 package com.github.moko256.twitlatte.mediaview
 
 import android.net.Uri
+import com.github.moko256.twitlatte.exoplayer.Mp4OrWebPExtractorFactory
 import com.google.android.exoplayer2.source.ExtractorMediaSource
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.upstream.DataSource
@@ -29,6 +30,7 @@ import com.google.android.exoplayer2.upstream.DataSource
 class OneVideoFragment: AbstractVideoFragment() {
     override fun generateMediaSource(factory: DataSource.Factory): MediaSource {
         return ExtractorMediaSource.Factory(factory)
+                .setExtractorsFactory(Mp4OrWebPExtractorFactory())
                 .createMediaSource(Uri.parse(media.originalUrl))
     }
 }

@@ -17,6 +17,7 @@
 package com.github.moko256.twitlatte.mediaview
 
 import android.net.Uri
+import com.github.moko256.twitlatte.exoplayer.Mp4OrWebPExtractorFactory
 import com.google.android.exoplayer2.source.ExtractorMediaSource
 import com.google.android.exoplayer2.source.LoopingMediaSource
 import com.google.android.exoplayer2.source.MediaSource
@@ -35,6 +36,7 @@ class GifFragment: AbstractVideoFragment() {
     override fun generateMediaSource(factory: DataSource.Factory): MediaSource {
         return LoopingMediaSource(
                 ExtractorMediaSource.Factory(factory)
+                        .setExtractorsFactory(Mp4OrWebPExtractorFactory())
                         .createMediaSource(
                                 Uri.parse(media.originalUrl)
                         )
