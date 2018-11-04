@@ -1,5 +1,8 @@
 # ProGuard rules for release build
 
+# see https://www.guardsquare.com/en/products/proguard/manual/usage/optimizations
+-optimizations !code/simplification/arithmetic,!code/simplification/cast,!code/removal/advanced,!class/merging/*,field/*,code/*,class/*,method/inlining/*,method/marking/final,method/marking/private
+
 -keepattributes SourceFile,LineNumberTable
 
 -keep,allowoptimization class androidx.appcompat.app.AppCompatViewInflater
@@ -13,12 +16,12 @@
 ##---------------Begin: proguard configuration for twitter4j  ----------
 
 -dontwarn twitter4j.**
--keep,allowoptimization class !twitter4j.*Logger*,twitter4j.* { *; }
+-keep class !twitter4j.*Logger*,twitter4j.* { *; }
 -keep,allowoptimization class twitter4j.Logger
--keep,allowoptimization class twitter4j.LoggerFactory
+-keep class twitter4j.LoggerFactory
 -keep,allowoptimization class twitter4j.StdOutLogger
--keep,allowoptimization class twitter4j.StdOutLoggerFactory
--keep,allowoptimization class twitter4j.conf.PropertyConfigurationFactory
+-keep class twitter4j.StdOutLoggerFactory
+-keep class twitter4j.conf.PropertyConfigurationFactory
 
 ##---------------End: proguard configuration for twitter4j  ----------
 
