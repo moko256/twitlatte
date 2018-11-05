@@ -14,11 +14,16 @@
  * limitations under the License.
  */
 
-include ':app'
-include ':mastodon4j_to_twitter4j'
-include ':alternative_twitter_text'
-include ':alternative_twitter4j'
+package twitter4j
 
-include ':japng-android:android_api'
-include ':api'
-project(':api').projectDir = new File('japng-android/japng/api')
+import twitter4j.auth.AuthorizationFactory
+import twitter4j.conf.Configuration
+
+/**
+ * Created by moko256 on 2018/11/05.
+ *
+ * @author moko256
+ */
+fun Configuration.createTwitterInstance(): Twitter {
+    return TwitterImpl(this, AuthorizationFactory.getInstance(this))
+}

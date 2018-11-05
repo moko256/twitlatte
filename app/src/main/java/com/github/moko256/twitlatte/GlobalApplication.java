@@ -46,9 +46,9 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.collection.LruCache;
 import okhttp3.OkHttpClient;
 import twitter4j.AlternativeHttpClientImpl;
+import twitter4j.AlternativeTwitterFactoryKt;
 import twitter4j.HttpClientFactory;
 import twitter4j.Twitter;
-import twitter4j.TwitterFactory;
 import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
 
@@ -158,7 +158,7 @@ public class GlobalApplication extends Application {
             t = twitterCache.get(conf);
 
             if (t == null) {
-                t = new TwitterFactory(conf).getInstance();
+                t = AlternativeTwitterFactoryKt.createTwitterInstance(conf);
                 twitterCache.put(conf, t);
             }
         } else {
