@@ -16,12 +16,12 @@
 ##---------------Begin: proguard configuration for twitter4j  ----------
 
 -dontwarn twitter4j.**
--keep class twitter4j.AlternativeHttpClientImpl { *; }
--keep,allowoptimization class twitter4j.Logger
--keep class twitter4j.LoggerFactory
--keep,allowoptimization class twitter4j.StdOutLogger
--keep class twitter4j.StdOutLoggerFactory
--keep class twitter4j.conf.PropertyConfigurationFactory
+-keep class twitter4j.AlternativeHttpClientImpl {
+    public <init>(twitter4j.HttpClientConfiguration);
+}
+-keep class twitter4j.conf.PropertyConfigurationFactory {
+    public <init>();
+}
 
 ##---------------End: proguard configuration for twitter4j  ----------
 

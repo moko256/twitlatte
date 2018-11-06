@@ -192,7 +192,7 @@ public class GlobalApplication extends Application {
                 try {
                     X509TrustManager trustManager = systemDefaultTrustManager();
 
-                    Field field = httpClient.getClass().getDeclaredField("okHttpClient");
+                    Field field = AlternativeHttpClientImpl.class.getDeclaredField("okHttpClient");
                     field.setAccessible(true);
                     field.set(
                             httpClient,
