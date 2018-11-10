@@ -210,11 +210,7 @@ public class OAuthActivity extends AppCompatActivity {
     public void onStartTwitterAuthClick(View view) {
         initType(ClientType.TWITTER);
 
-        startAuthAndOpenDialogIfNeeded(
-                "twitter.com",
-                BuildConfig.CONSUMER_KEY,
-                BuildConfig.CONSUMER_SECRET
-        );
+        startAuthAndOpenDialogIfNeeded("twitter.com");
     }
 
     public void onStartMastodonAuthClick(View view) {
@@ -233,11 +229,7 @@ public class OAuthActivity extends AppCompatActivity {
                         android.R.string.ok,
                         (dialog, which) -> {
                             isUrlEnterDialogShown = false;
-                            startAuthAndOpenDialogIfNeeded(
-                                    lastUrl,
-                                    "",
-                                    ""
-                            );
+                            startAuthAndOpenDialogIfNeeded(lastUrl);
                         }
                 )
                 .setNegativeButton(android.R.string.cancel, null)
@@ -263,7 +255,7 @@ public class OAuthActivity extends AppCompatActivity {
         compositeDisposable.add(new CancellableDisposable(domainConfirm::dismiss));
     }
 
-    private void startAuthAndOpenDialogIfNeeded(@NonNull String url, @NonNull String consumerKey, @NonNull String consumerSecret) {
+    private void startAuthAndOpenDialogIfNeeded(@NonNull String url) {
         String callbackUrl;
         if (requirePin) {
             showPinDialog();
@@ -273,12 +265,7 @@ public class OAuthActivity extends AppCompatActivity {
         }
 
         compositeDisposable.add(model
-                .getAuthUrl(
-                        url,
-                        consumerKey,
-                        consumerSecret,
-                        callbackUrl
-                )
+                .getAuthUrl(url, callbackUrl)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(

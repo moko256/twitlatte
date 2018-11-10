@@ -33,9 +33,7 @@ android {
 
         Base64.Decoder e = Base64.decoder
 
-        buildConfigField 'String', 'CONSUMER_KEY', "\"${new String(e.decode(e.decode(cs)))}\""
-        buildConfigField 'String', 'CONSUMER_SECRET', "\"${new String(e.decode(e.decode(ck + cc)))}\""
-
+        buildConfigField 'byte[]', 'p', "${e.decode(e.decode(d+a+c+b+"=")).toString().replace("[", "{").replace("]", "}")}"
         vectorDrawables.useSupportLibrary = true
         resConfigs 'en', 'ja', 'ldltr'
     }
@@ -131,7 +129,9 @@ dependencies {
 }
 
 buildscript {
-    ext.cc = "JhMlEyUkZoTWFHdERibkl4V0hCSmFYaEhNMXBUZFZVM2Jubz0="
-    ext.cs = "YjNCSE5reGhVWFJQZW5KSk1XRTJjSGhJWVVOdlVqbEpSQT09"
-    ext.ck = "U2xveVduVmlXWGhPZW5SaFduVjROM1pPYmpoQ1VsRn"
+    ext.a = "RmxhbXRVTVdKdWRWQjRlbk40UlVoSk9F"
+    ext.b = "Tk2Y0U0MWExb3dhMjAwZEVGMlRrbz0"
+    ext.c = "cGliR0Z5UkRsbGNXWk1PVkJRYjFaUlZGTlZRb"
+    ext.d = "VkRsNWJtTTFUblJQY3pOS1ZHWlZZVEJXWjNodGJE"
+    ext.e = "p2ZW5CT05XdGFNlaFlTeffmw1xYm1N"
 }

@@ -38,7 +38,7 @@ import kotlin.Pair;
 public class TokenSQLiteOpenHelper extends SQLiteOpenHelper {
 
     private static final String TABLE_NAME = "AccountTokenList";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
     private static final String[] TABLE_COLUMNS = new String[]{ "type", "url", "userId", "userName", "token", "tokenSecret"};
 
     public static final String TWITTER_URL = "twitter.com";
@@ -62,7 +62,9 @@ public class TokenSQLiteOpenHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
-
+        if (oldVersion < 2) {
+            sqLiteDatabase.execSQL("update " + TABLE_NAME + " set token='',tokenSecret='' where type=0");
+        }
     }
 
     public AccessToken[] getAccessTokens(){

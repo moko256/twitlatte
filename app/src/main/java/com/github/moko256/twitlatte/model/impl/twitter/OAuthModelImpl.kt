@@ -17,6 +17,7 @@
 package com.github.moko256.twitlatte.model.impl.twitter
 
 import android.os.Bundle
+import com.github.moko256.twitlatte.BuildConfig
 import com.github.moko256.twitlatte.database.TokenSQLiteOpenHelper
 import com.github.moko256.twitlatte.entity.AccessToken
 import com.github.moko256.twitlatte.entity.ClientType
@@ -56,8 +57,8 @@ class OAuthModelImpl(override var isRestartable: Boolean = false) : OAuthModel {
         }
     }
 
-    override fun getAuthUrl(url: String,consumerKey: String, consumerSecret: String, callbackUrl: String?): Single<String> {
-        oauth.setOAuthConsumer(consumerKey, consumerSecret)
+    override fun getAuthUrl(url: String, callbackUrl: String?): Single<String> {
+        oauth.setOAuthConsumer(String(BuildConfig.p, 1, 25), String(BuildConfig.p, 27, 50))
 
         return Single.create {
             try {

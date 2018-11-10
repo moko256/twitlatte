@@ -19,6 +19,7 @@ package com.github.moko256.twitlatte;
 import android.app.Application;
 import android.os.Build;
 import android.preference.PreferenceManager;
+import android.widget.Toast;
 
 import com.github.moko256.mastodon.MastodonTwitterImpl;
 import com.github.moko256.twitlatte.cacheMap.PostCache;
@@ -145,10 +146,13 @@ public class GlobalApplication extends Application {
         Configuration conf;
 
         if (accessToken.getType() == ClientType.TWITTER){
+            if (accessToken.getToken().isEmpty()) {
+                Toast.makeText(this, R.string.please_re_login, Toast.LENGTH_LONG).show();
+            }
             conf = new ConfigurationBuilder()
                     .setTweetModeExtended(true)
-                    .setOAuthConsumerKey(BuildConfig.CONSUMER_KEY)
-                    .setOAuthConsumerSecret(BuildConfig.CONSUMER_SECRET)
+                    .setOAuthConsumerKey(new String(BuildConfig.p, 1, 25))
+                    .setOAuthConsumerSecret(new String(BuildConfig.p, 27, 50))
                     .setOAuthAccessToken(accessToken.getToken())
                     .setOAuthAccessTokenSecret(accessToken.getTokenSecret())
                     .build();

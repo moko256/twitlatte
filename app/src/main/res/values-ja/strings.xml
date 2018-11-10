@@ -106,6 +106,7 @@
     <string name="tweet_per_last_24_hours">直近24時間以内で%dツイート</string>
     <string name="do_see_source_code">このアプリのソースコードを見る</string>
     <string name="description_see_source_code">GitHubで公開されています</string>
+    <string name="please_re_login">twitlatteはいくつかのAPIキーをアップデートしました\nこのアカウントで再度ログインしてください</string>
 
     <string name="do_quote">引用する</string>
     <string name="do_logout">ログアウトする</string>
