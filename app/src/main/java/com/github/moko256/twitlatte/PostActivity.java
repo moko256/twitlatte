@@ -248,6 +248,7 @@ public class PostActivity extends AppCompatActivity {
                             contentWarningText.requestFocus();
                         } else {
                             contentWarningText.setVisibility(View.GONE);
+                            model.setContentWarning("");
                         }
                     }
             );
