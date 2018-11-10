@@ -112,7 +112,7 @@ class OAuthModelImpl(override var isRestartable: Boolean = false) : OAuthModel {
                             clientId = clientId,
                             scope = Scope(Scope.Name.ALL)
                     )
-                }.replace("scope=", "scopes="))
+                })
                 isRestartable = true
             } catch (e: Mastodon4jRequestException) {
                 it.tryOnError(e)
