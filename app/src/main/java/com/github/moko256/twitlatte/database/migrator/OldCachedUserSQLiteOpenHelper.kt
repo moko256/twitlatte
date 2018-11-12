@@ -20,7 +20,7 @@ import android.content.ContentValues
 import android.database.DatabaseUtils
 import android.database.sqlite.SQLiteDatabase
 import com.github.moko256.twitlatte.array.toCommaSplitString
-import com.github.moko256.twitlatte.text.link.MTHtmlParser
+import com.github.moko256.twitlatte.text.link.convertHtmlToContentAndLinks
 import com.github.moko256.twitlatte.text.link.convertToContentAndLinks
 import com.github.moko256.twitlatte.text.splitWithComma
 import twitter4j.URLEntity
@@ -72,47 +72,45 @@ private val TABLE_COLUMNS = arrayOf(
         "Emoji_urls"
 )
 
-object OldCachedUserSQLiteOpenHelper {
-    fun migrateV2toV3(isTwitter: Boolean, table_name: String, db: SQLiteDatabase) {
-        val c = db.query(
-                table_name,
-                TABLE_COLUMNS,
-                null, null, null, null, null
+fun migrateV2toV3(isTwitter: Boolean, table_name: String, db: SQLiteDatabase) {
+    val c = db.query(
+            table_name,
+            TABLE_COLUMNS,
+            null, null, null, null, null
+    )
+    while (c.moveToNext()) {
+        val id = c.getLong(0)
+        val text = c.getString(1)
+        val entity = restoreURLEntities(
+                c.getString(2).splitWithComma(),
+                c.getString(3).splitWithComma(),
+                c.getString(4).splitWithComma(),
+                c.getString(5).splitWithComma(),
+                c.getString(6).splitWithComma(),
+                c.getString(7).splitWithComma()
         )
-        while (c.moveToNext()) {
-            val id = c.getLong(0)
-            val text = c.getString(1)
-            val entity = restoreURLEntities(
-                    c.getString(2).splitWithComma(),
-                    c.getString(3).splitWithComma(),
-                    c.getString(4).splitWithComma(),
-                    c.getString(5).splitWithComma(),
-                    c.getString(6).splitWithComma(),
-                    c.getString(7).splitWithComma()
+        val (fixedText, links) = if (isTwitter) {
+            convertToContentAndLinks(
+                    text,
+                    emptyArray(),
+                    emptyArray(),
+                    emptyArray(),
+                    emptyArray(),
+                    entity
             )
-            val (fixedText, links) = if (isTwitter) {
-                convertToContentAndLinks(
-                        text,
-                        emptyArray(),
-                        emptyArray(),
-                        emptyArray(),
-                        emptyArray(),
-                        entity
-                )
-            } else {
-                MTHtmlParser.convertToContentAndLinks(text)
-            }
-            val values = ContentValues(TABLE_COLUMNS.size)
-            DatabaseUtils.cursorRowToContentValues(c, values)
-            values.put("id", id)
-            values.put("description", fixedText)
-            values.put("urls_urls", links.map { it.url }.toTypedArray().toCommaSplitString().toString())
-            values.put("urls_starts", links.map { it.start.toString() }.toTypedArray().toCommaSplitString().toString())
-            values.put("urls_ends", links.map { it.end.toString() }.toTypedArray().toCommaSplitString().toString())
-            db.replace(table_name, null, values)
+        } else {
+            text.convertHtmlToContentAndLinks()
         }
-        c.close()
+        val values = ContentValues(TABLE_COLUMNS.size)
+        DatabaseUtils.cursorRowToContentValues(c, values)
+        values.put("id", id)
+        values.put("description", fixedText)
+        values.put("urls_urls", links.map { it.url }.toTypedArray().toCommaSplitString().toString())
+        values.put("urls_starts", links.map { it.start.toString() }.toTypedArray().toCommaSplitString().toString())
+        values.put("urls_ends", links.map { it.end.toString() }.toTypedArray().toCommaSplitString().toString())
+        db.replace(table_name, null, values)
     }
+    c.close()
 }
 
 private fun restoreURLEntities(texts: List<String>?,
@@ -140,11 +138,11 @@ private fun restoreURLEntities(texts: List<String>?,
                 }
 
                 override fun getStart(): Int {
-                    return Integer.parseInt(starts!![i].trim { it <= ' ' })
+                    return starts!![i].trim { it <= ' ' }.toInt()
                 }
 
                 override fun getEnd(): Int {
-                    return Integer.parseInt(ends!![i].trim { it <= ' ' })
+                    return ends!![i].trim { it <= ' ' }.toInt()
                 }
             }
         }

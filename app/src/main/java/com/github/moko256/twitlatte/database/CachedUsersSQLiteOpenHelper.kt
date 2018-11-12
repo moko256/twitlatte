@@ -21,7 +21,7 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import com.github.moko256.twitlatte.array.toCommaSplitString
-import com.github.moko256.twitlatte.database.migrator.OldCachedUserSQLiteOpenHelper
+import com.github.moko256.twitlatte.database.migrator.migrateV2toV3
 import com.github.moko256.twitlatte.entity.AccessToken
 import com.github.moko256.twitlatte.entity.ClientType
 import com.github.moko256.twitlatte.entity.Emoji
@@ -97,9 +97,7 @@ class CachedUsersSQLiteOpenHelper(context: Context, accessToken: AccessToken?) :
             db.execSQL("alter table $TABLE_NAME add column urls_urls")
             db.execSQL("alter table $TABLE_NAME add column urls_starts")
             db.execSQL("alter table $TABLE_NAME add column urls_ends")
-            OldCachedUserSQLiteOpenHelper.migrateV2toV3(
-                    isTwitter, TABLE_NAME, db
-            )
+            migrateV2toV3(isTwitter, TABLE_NAME, db)
         }
     }
 

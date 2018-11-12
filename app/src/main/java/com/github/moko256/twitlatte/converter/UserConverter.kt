@@ -19,7 +19,7 @@ package com.github.moko256.twitlatte.converter
 import com.github.moko256.mastodon.MTUser
 import com.github.moko256.twitlatte.entity.Emoji
 import com.github.moko256.twitlatte.entity.User
-import com.github.moko256.twitlatte.text.link.MTHtmlParser
+import com.github.moko256.twitlatte.text.link.convertHtmlToContentAndLinks
 import com.github.moko256.twitlatte.text.link.convertToContentAndLinks
 import com.sys1yagi.mastodon4j.api.entity.Account
 
@@ -87,7 +87,7 @@ private fun twitter4j.User.convertToCommonUserInternal(): User {
 }
 
 fun Account.convertToCommonUser(): User {
-    val urls = MTHtmlParser.convertToContentAndLinks(note)
+    val urls = note.convertHtmlToContentAndLinks()
 
     return User(
             id = id,

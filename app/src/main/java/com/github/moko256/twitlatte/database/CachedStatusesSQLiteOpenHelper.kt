@@ -25,7 +25,7 @@ import com.github.moko256.twitlatte.array.toCommaSplitString
 import com.github.moko256.twitlatte.converter.convertToStatusOrRepeat
 import com.github.moko256.twitlatte.database.migrator.OldCachedStatusesSQLiteOpenHelper
 import com.github.moko256.twitlatte.entity.*
-import com.github.moko256.twitlatte.text.link.MTHtmlParser
+import com.github.moko256.twitlatte.text.link.convertHtmlToContentAndLinks
 import com.github.moko256.twitlatte.text.link.entity.Link
 import com.github.moko256.twitlatte.text.splitWithComma
 import java.io.File
@@ -125,14 +125,14 @@ class CachedStatusesSQLiteOpenHelper(
                 val contentValue = createStatusContentValues(if (accessToken?.type == ClientType.MASTODON) {
 
                     if (status.retweetedStatusId == -1L) {
-                        val urls = MTHtmlParser.convertToContentAndLinks(status.text)
+                        val urls = status.text.convertHtmlToContentAndLinks()
 
 
                         val (sourceName, sourceWebsite) = if (
                                 status.source.length > 8
                                 && status.source.substring(0 .. 7) == "<a href="
                         ) {
-                            val parsedSource = MTHtmlParser.convertToContentAndLinks(status.source)
+                            val parsedSource = status.source.convertHtmlToContentAndLinks()
 
                             parsedSource.first to parsedSource.second.first().url
                         } else {

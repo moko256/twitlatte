@@ -18,7 +18,7 @@ package com.github.moko256.twitlatte.converter
 
 import com.github.moko256.mastodon.MTStatus
 import com.github.moko256.twitlatte.entity.*
-import com.github.moko256.twitlatte.text.link.MTHtmlParser
+import com.github.moko256.twitlatte.text.link.convertHtmlToContentAndLinks
 import com.github.moko256.twitlatte.text.link.convertToContentAndLinks
 import com.github.moko256.twitlatte.text.link.entity.Link
 import com.google.android.exoplayer2.util.MimeTypes
@@ -90,7 +90,7 @@ private fun twitter4j.Status.convertToStatus(): Status {
     val parsedSource: Pair<String, Array<Link>>? = if (source == null) {
         null
     } else {
-        MTHtmlParser.convertToContentAndLinks(source)
+        source.convertHtmlToContentAndLinks()
     }
     val urls = if (symbolEntities.isEmpty()
             && hashtagEntities.isEmpty()
@@ -242,7 +242,7 @@ fun com.sys1yagi.mastodon4j.api.entity.Status.convertToCommonStatus(): Post {
 }
 
 private fun com.sys1yagi.mastodon4j.api.entity.Status.convertToStatus(): Status {
-    val urls = MTHtmlParser.convertToContentAndLinks(text = content)
+    val urls = content.convertHtmlToContentAndLinks()
 
     return Status(
             id = id,
