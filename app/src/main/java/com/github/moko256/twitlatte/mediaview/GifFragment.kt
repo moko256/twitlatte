@@ -33,13 +33,15 @@ class GifFragment: AbstractVideoFragment() {
         isLoop = true
     }
 
+    @Suppress("DEPRECATION")
     override fun generateMediaSource(factory: DataSource.Factory): MediaSource {
         return LoopingMediaSource(
-                ExtractorMediaSource.Factory(factory)
-                        .setExtractorsFactory(Mp4OrWebPExtractorFactory())
-                        .createMediaSource(
-                                Uri.parse(media.originalUrl)
-                        )
+                ExtractorMediaSource(
+                        Uri.parse(media.originalUrl),
+                        factory,
+                        Mp4OrWebPExtractorFactory(),
+                        null, null
+                )
         )
     }
 }

@@ -1024,19 +1024,18 @@ public final class MastodonTwitterImpl implements Twitter {
 
     @Override
     public QueryResult search(Query query) {
-        Pageable<com.sys1yagi.mastodon4j.api.entity.Status> pageable = null;
+        Pageable<com.sys1yagi.mastodon4j.api.entity.Status> pageable;
         try {
             pageable = new com.sys1yagi.mastodon4j.api.method.Timelines(client)
                     .getHashtagTimeline(query.getQuery(), false, false, MTRangeConverter.convert(query))
                     .execute();
         } catch (Mastodon4jRequestException e) {
             e.printStackTrace();
+            return null;
         }
 
         long previous;
         long next;
-
-        if (pageable == null) return null;
 
         if (pageable.getLink() != null) {
             next = pageable.getLink().getMaxId();
