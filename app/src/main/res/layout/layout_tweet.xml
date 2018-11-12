@@ -52,7 +52,6 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="16dp"
         android:id="@+id/tweet_icon"
         android:layout_below="@id/tweet_retweet_user_name"
         android:transitionName="icon_image"
@@ -75,8 +74,8 @@
         android:layout_height="wrap_content"
         android:id="@+id/tweet_reply_user_name"
         android:layout_below="@id/tweet_icon"
-        android:layout_marginTop="-8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="-8dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Caption"
         tools:text="@string/reply_to"/>
 
@@ -111,6 +110,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/tweet_reply_user_name"
+        android:layout_marginTop="16dp"
         android:layout_marginLeft="-16dp"
         android:layout_marginRight="-16dp"/>
 
