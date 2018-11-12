@@ -250,7 +250,7 @@ private fun com.sys1yagi.mastodon4j.api.entity.Status.convertToStatus(): Status 
             text = urls.first,
             sourceName = application?.name,
             sourceWebsite = application?.website,
-            createdAt = ISO8601DateConverter.toDate(createdAt),
+            createdAt = createdAt.toISO8601Date(),
             inReplyToStatusId = inReplyToId.convertIfZero(),
             inReplyToUserId = inReplyToAccountId.convertIfZero(),
             inReplyToScreenName = if (inReplyToAccountId != 0L) {
@@ -322,7 +322,7 @@ private fun com.sys1yagi.mastodon4j.api.entity.Status.convertToRepeat(): Repeat 
             id = id,
             userId = account.id,
             repeatedStatusId = reblog!!.id,
-            createdAt = ISO8601DateConverter.toDate(createdAt)
+            createdAt = createdAt.toISO8601Date()
     )
 }
 

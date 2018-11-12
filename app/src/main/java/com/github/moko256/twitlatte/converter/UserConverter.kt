@@ -113,7 +113,7 @@ fun Account.convertToCommonUser(): User {
             isProfileUseBackgroundImage = true,
             isDefaultProfile = true,
             friendsCount = followingCount,
-            createdAt = ISO8601DateConverter.toDate(createdAt),
+            createdAt = createdAt.toISO8601Date(),
             favoritesCount = -1,
             utcOffset = 0,
             timeZone = null,
