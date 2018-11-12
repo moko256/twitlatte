@@ -18,7 +18,6 @@ package com.github.moko256.twitlatte;
 
 import android.app.Activity;
 import android.content.Context;
-import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -117,14 +116,10 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 (conf.getBoolean(KEY_IS_PATTERN_TWEET_SOURCE_MUTE, false) && conf.getPattern(KEY_TWEET_SOURCE_MUTE_PATTERN).matcher((item.getSourceName() != null)?item.getSourceName():"").find())
                 ){
             return R.layout.layout_list_muted_text;
-        }
-        if (shouldShowMediaOnly || (conf.getBoolean(KEY_IS_PATTERN_TWEET_MUTE_SHOW_ONLY_IMAGE, false)
+        } else if (shouldShowMediaOnly || (conf.getBoolean(KEY_IS_PATTERN_TWEET_MUTE_SHOW_ONLY_IMAGE, false)
                 && item.getMedias() != null
                 && conf.getPattern(KEY_TWEET_MUTE_SHOW_ONLY_IMAGE_PATTERN).matcher(item.getText()).find())) {
             return R.layout.layout_list_tweet_only_image;
-        }
-        if (post.getRepeat() != null) {
-            return R.layout.layout_retweeted_post_card;
         } else {
             return R.layout.layout_post_card;
         }
@@ -147,8 +142,6 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 return new MutedTweetViewHolder(child);
             case R.layout.layout_list_tweet_only_image:
                 return new ImagesOnlyTweetViewHolder(child);
-            case R.layout.layout_retweeted_post_card:
-                return new RepeatedStatusViewHolder(GlideApp.with(context), child);
             case R.layout.layout_post_card:
                 return new StatusViewHolder(GlideApp.with(context), child);
             default:
@@ -172,22 +165,14 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         } else {
             Post post = GlobalApplication.postCache.getPost(data.get(i));
             if (post != null) {
-                if (viewHolder instanceof StatusViewHolder) {
-                    ((StatusViewHolder) viewHolder).setStatus(
-                            post.getUser(),
-                            post.getStatus(),
-                            post.getQuotedRepeatingUser(),
-                            post.getQuotedRepeatingStatus()
-                    );
-                    if (viewHolder instanceof RepeatedStatusViewHolder){
-                        ((RepeatedStatusViewHolder) viewHolder).setRepeatUser(
-                                post.getRepeatedUser(),
-                                post.getRepeat()
-                        );
-                    }
-                } else if (viewHolder instanceof ImagesOnlyTweetViewHolder){
-                    ((ImagesOnlyTweetViewHolder) viewHolder).setStatus(post.getStatus());
-                }
+                ((StatusViewHolder) viewHolder).setStatus(
+                        post.getRepeatedUser(),
+                        post.getRepeat(),
+                        post.getUser(),
+                        post.getStatus(),
+                        post.getQuotedRepeatingUser(),
+                        post.getQuotedRepeatingStatus()
+                );
             }
         }
     }
@@ -196,8 +181,6 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public void onViewRecycled(@NonNull RecyclerView.ViewHolder holder) {
         if (holder instanceof StatusViewHolder){
             ((StatusViewHolder) holder).clear();
-        } else if (holder instanceof ImagesOnlyTweetViewHolder){
-            ((ImagesOnlyTweetViewHolder) holder).setStatus(null);
         }
     }
 
@@ -218,7 +201,7 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             statusViewBinder = new StatusViewBinder(glideRequests, itemView);
         }
 
-        void setStatus(User user, Status status, User quotedStatusUser, Status quotedStatus) {
+        void setStatus(User repeatedUser, Repeat repeat, User user, Status status, User quotedStatusUser, Status quotedStatus) {
             View.OnClickListener onContentClick = v -> {
                 ActivityOptionsCompat animation = ActivityOptionsCompat
                         .makeSceneTransitionAnimation(
@@ -257,7 +240,7 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 return Unit.INSTANCE;
             });
 
-            statusViewBinder.getRetweetButton().setOnCheckedChangeListener((compoundButton, b) -> {
+            statusViewBinder.getRepeatButton().setOnCheckedChangeListener((compoundButton, b) -> {
                 onRepeatClick.onClick(getLayoutPosition(), status.getId(), !b);
                 return Unit.INSTANCE;
             });
@@ -274,43 +257,11 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     ))
             );
 
-            statusViewBinder.setStatus(user, status, quotedStatusUser, quotedStatus);
+            statusViewBinder.setStatus(repeatedUser, repeat, user, status, quotedStatusUser, quotedStatus);
         }
 
         void clear() {
             statusViewBinder.clear();
-        }
-    }
-
-    private class RepeatedStatusViewHolder extends StatusViewHolder {
-        private final TextView retweetUserName;
-        private final TextView retweetTimeStamp;
-
-        RepeatedStatusViewHolder(GlideRequests glideRequests, ViewGroup itemView) {
-            super(glideRequests, itemView);
-
-            retweetUserName = itemView.findViewById(R.id.tweet_retweet_user_name);
-            retweetTimeStamp = itemView.findViewById(R.id.tweet_retweet_time_stamp_text);
-        }
-
-        void setRepeatUser(User repeatedUser, Repeat status) {
-            if(retweetUserName.getVisibility() != View.VISIBLE){
-                retweetUserName.setVisibility(View.VISIBLE);
-            }
-            retweetUserName.setText(context.getString(
-                    TwitterStringUtils.getRepeatedByStringRes(GlobalApplication.clientType),
-                    repeatedUser == null? "": repeatedUser.getName(),
-                    repeatedUser == null? "": TwitterStringUtils.plusAtMark(repeatedUser.getScreenName())
-            ));
-
-            if(retweetTimeStamp.getVisibility() != View.VISIBLE){
-                retweetTimeStamp.setVisibility(View.VISIBLE);
-            }
-            retweetTimeStamp.setText(DateUtils.getRelativeTimeSpanString(
-                    status.getCreatedAt().getTime(),
-                    System.currentTimeMillis(),
-                    0
-            ));
         }
     }
 

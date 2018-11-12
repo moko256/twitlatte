@@ -29,6 +29,7 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.github.moko256.twitlatte.entity.Repeat
 import com.github.moko256.twitlatte.entity.Status
 import com.github.moko256.twitlatte.entity.User
 import com.github.moko256.twitlatte.entity.Visibility
@@ -54,6 +55,8 @@ class StatusViewBinder(private val glideRequests: GlideRequests, private val vie
     private var spoilerTextEmojiSetter: EmojiToTextViewSetter? = null
     private var userNameEmojiSetter: EmojiToTextViewSetter? = null
 
+    val repeatUserName: TextView = viewGroup.findViewById(R.id.tweet_retweet_user_name)
+    val repeatTimeStamp: TextView = viewGroup.findViewById(R.id.tweet_retweet_time_stamp_text)
     val userImage: ImageView = viewGroup.findViewById(R.id.tweet_icon)
     val replyUserName: TextView = viewGroup.findViewById(R.id.tweet_reply_user_name)
     val userName: TextView = viewGroup.findViewById(R.id.tweet_user_name)
@@ -69,10 +72,10 @@ class StatusViewBinder(private val glideRequests: GlideRequests, private val vie
     val quoteTweetContext: TextView = viewGroup.findViewById(R.id.tweet_quote_tweet_content)
     val imageTableView: TweetImageTableView = viewGroup.findViewById(R.id.tweet_image_container)
     val likeButton: CheckableImageView = viewGroup.findViewById(R.id.tweet_content_like_button)
-    val retweetButton: CheckableImageView = viewGroup.findViewById(R.id.tweet_content_retweet_button)
+    val repeatButton: CheckableImageView = viewGroup.findViewById(R.id.tweet_content_retweet_button)
     val replyButton: ImageButton = viewGroup.findViewById(R.id.tweet_content_reply_button)
     val likeCount: TextView = viewGroup.findViewById(R.id.tweet_content_like_count)
-    val retweetCount: TextView = viewGroup.findViewById(R.id.tweet_content_retweet_count)
+    val repeatCount: TextView = viewGroup.findViewById(R.id.tweet_content_retweet_count)
     val repliesCount: TextView = viewGroup.findViewById(R.id.tweet_content_replies_count)
 
     init {
@@ -92,16 +95,60 @@ class StatusViewBinder(private val glideRequests: GlideRequests, private val vie
         }
     }
 
-    fun setStatus(user: User?, status: Status, quotedStatusUser: User? = null, quotedStatus: Status? = null) {
+    fun setStatus(
+            repeatedUser: User?,
+            repeated: Repeat?,
+            user: User?,
+            status: Status,
+            quotedStatusUser: User?,
+            quotedStatus: Status?
+    ) {
         if (hasStatus) {
             clear()
         }
 
-        updateView(user, status, quotedStatusUser, quotedStatus)
+        updateView(repeatedUser, repeated, user, status, quotedStatusUser, quotedStatus)
         hasStatus = true
     }
 
-    private fun updateView(user: User?, status: Status, quotedStatusUser: User?, quotedStatus: Status?) {
+    private fun updateView(
+            repeatedUser: User?,
+            repeated: Repeat?,
+            user: User?,
+            status: Status,
+            quotedStatusUser: User?,
+            quotedStatus: Status?
+    ) {
+
+        if (repeatedUser != null) {
+            if (repeatUserName.visibility != View.VISIBLE) {
+                repeatUserName.visibility = View.VISIBLE
+            }
+            repeatUserName.text = viewGroup.context.getString(
+                    TwitterStringUtils.getRepeatedByStringRes(GlobalApplication.clientType),
+                    repeatedUser.name,
+                    TwitterStringUtils.plusAtMark(repeatedUser.screenName)
+            )
+        } else {
+            if (repeatUserName.visibility != View.GONE) {
+                repeatUserName.visibility = View.GONE
+            }
+        }
+
+        if (repeated != null) {
+            if (repeatTimeStamp.visibility != View.VISIBLE) {
+                repeatTimeStamp.visibility = View.VISIBLE
+            }
+            repeatTimeStamp.text = DateUtils.getRelativeTimeSpanString(
+                    status.createdAt.time,
+                    System.currentTimeMillis(),
+                    0
+            )
+        } else {
+            if (repeatTimeStamp.visibility != View.GONE) {
+                repeatTimeStamp.visibility = View.GONE
+            }
+        }
 
         val isReply = status.inReplyToScreenName != null
         if (isReply) {
@@ -268,7 +315,7 @@ class StatusViewBinder(private val glideRequests: GlideRequests, private val vie
 
         likeButton.isChecked = status.isFavorited
 
-        retweetButton.isChecked = status.isRepeated
+        repeatButton.isChecked = status.isRepeated
 
         val isRepeatEnabled: Boolean
         val repeatIconResourceId: Int
@@ -297,11 +344,11 @@ class StatusViewBinder(private val glideRequests: GlideRequests, private val vie
                 repeatIconResourceId = R.drawable.lock_button_stateful
             }
         }
-        retweetButton.isEnabled = isRepeatEnabled
-        retweetButton.setImageDrawable(ContextCompat.getDrawable(viewGroup.context, repeatIconResourceId))
+        repeatButton.isEnabled = isRepeatEnabled
+        repeatButton.setImageDrawable(ContextCompat.getDrawable(viewGroup.context, repeatIconResourceId))
 
         likeCount.text = if (status.favoriteCount != 0) TwitterStringUtils.convertToSIUnitString(status.favoriteCount) else ""
-        retweetCount.text = if (status.repeatCount != 0) TwitterStringUtils.convertToSIUnitString(status.repeatCount) else ""
+        repeatCount.text = if (status.repeatCount != 0) TwitterStringUtils.convertToSIUnitString(status.repeatCount) else ""
         repliesCount.text = if (status.repliesCount != 0) TwitterStringUtils.convertToSIUnitString(status.repliesCount) else ""
     }
 

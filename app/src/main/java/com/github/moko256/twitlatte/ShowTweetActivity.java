@@ -303,7 +303,7 @@ public class ShowTweetActivity extends AppCompatActivity {
             return Unit.INSTANCE;
         });
 
-        statusViewBinder.getRetweetButton().setOnCheckedChangeListener((compoundButton, b) -> {
+        statusViewBinder.getRepeatButton().setOnCheckedChangeListener((compoundButton, b) -> {
             if (b) {
                 statusActionModel.createRepeat(item.getId());
             } else {
@@ -325,6 +325,8 @@ public class ShowTweetActivity extends AppCompatActivity {
         );
 
         statusViewBinder.setStatus(
+                item.getRepeatedUser(),
+                item.getRepeat(),
                 item.getUser(),
                 item.getStatus(),
                 item.getQuotedRepeatingUser(),
