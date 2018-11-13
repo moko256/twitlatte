@@ -53,10 +53,11 @@ fun splitAccessTokenKey(accessTokenKey: String): Pair<String, Long> {
 class ClientType{
 
     @Retention(AnnotationRetention.SOURCE)
-    @IntDef(ClientType.TWITTER, ClientType.MASTODON)
+    @IntDef(ClientType.NOTHING, ClientType.TWITTER, ClientType.MASTODON)
     annotation class ClientTypeInt
 
     companion object{
+        const val NOTHING: Int = -1
         const val TWITTER: Int = 0
         const val MASTODON: Int = 1
     }

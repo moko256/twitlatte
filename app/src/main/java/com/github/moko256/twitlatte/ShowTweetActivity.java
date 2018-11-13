@@ -252,7 +252,6 @@ public class ShowTweetActivity extends AppCompatActivity {
                 });
     }
 
-    @SuppressLint("CheckResult")
     private void updateView(Post item){
         shareUrl = item.getStatus().getUrl();
         long replyTweetId = item.getStatus().getInReplyToStatusId();

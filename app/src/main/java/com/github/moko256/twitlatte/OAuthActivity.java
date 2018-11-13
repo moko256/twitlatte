@@ -62,7 +62,7 @@ public class OAuthActivity extends AppCompatActivity {
     private static final String STATE_ENTERING_PIN = "state_entering_pin";
 
     @ClientType.ClientTypeInt
-    private int authClientType = -1;
+    private int authClientType = ClientType.NOTHING;
 
     private OAuthModel model;
 
@@ -163,7 +163,7 @@ public class OAuthActivity extends AppCompatActivity {
             }
 
             Toast.makeText(this, R.string.error_occurred, Toast.LENGTH_SHORT).show();
-            initType(-1);
+            initType(ClientType.NOTHING);
         }
     }
 
@@ -204,7 +204,7 @@ public class OAuthActivity extends AppCompatActivity {
 
         startActivity(new Intent(this,MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
         finish();
-        initType(-1);
+        initType(ClientType.NOTHING);
     }
 
     public void onStartTwitterAuthClick(View view) {
@@ -329,7 +329,7 @@ public class OAuthActivity extends AppCompatActivity {
     }
 
     private void onError(Throwable e){
-        initType(-1);
+        initType(ClientType.NOTHING);
 
         e.printStackTrace();
         Toast.makeText(

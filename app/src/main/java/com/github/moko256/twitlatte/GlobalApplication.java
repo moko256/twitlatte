@@ -71,7 +71,7 @@ public class GlobalApplication extends Application {
     public static AccessToken accessToken;
 
     @ClientType.ClientTypeInt
-    public static int clientType = -1;
+    public static int clientType = ClientType.NOTHING;
 
     static long userId;
 

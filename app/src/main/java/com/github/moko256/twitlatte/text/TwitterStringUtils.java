@@ -38,6 +38,8 @@ import com.github.moko256.twitlatte.text.link.entity.Link;
 import com.github.moko256.twitlatte.text.style.ClickableNoLineSpan;
 import com.sys1yagi.mastodon4j.api.exception.Mastodon4jRequestException;
 
+import java.util.Objects;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
@@ -125,12 +127,12 @@ public class TwitterStringUtils {
             Object span;
 
             final Uri uri = Uri.parse(link.getUrl());
-            if (uri.getScheme().equals("twitlatte")) {
+            if (uri.getScheme() != null && uri.getHost() != null && uri.getScheme().equals("twitlatte")) {
                 switch (uri.getHost()) {
                     case "symbol":
                         span = new ClickableNoLineSpan() {
                             @Override
-                            public void onClick(View view) {
+                            public void onClick(@NonNull View view) {
                                 context.startActivity(
                                         SearchResultActivity.getIntent(context, "$" + uri.getLastPathSegment())
                                 );
@@ -141,7 +143,7 @@ public class TwitterStringUtils {
                     case "hashtag":
                         span = new ClickableNoLineSpan() {
                             @Override
-                            public void onClick(View view) {
+                            public void onClick(@NonNull View view) {
                                 context.startActivity(
                                         SearchResultActivity.getIntent(context, "#" + uri.getLastPathSegment())
                                 );
@@ -151,7 +153,7 @@ public class TwitterStringUtils {
                     case "user":
                         span = new ClickableNoLineSpan() {
                             @Override
-                            public void onClick(View view) {
+                            public void onClick(@NonNull View view) {
                                 context.startActivity(
                                         ShowUserActivity.getIntent(context, uri.getLastPathSegment())
                                 );
@@ -161,7 +163,7 @@ public class TwitterStringUtils {
                     default:
                         span = new ClickableNoLineSpan() {
                             @Override
-                            public void onClick(View view) {
+                            public void onClick(@NonNull View view) {
                                 context.startActivity(SearchResultActivity.getIntent(context, uri.getLastPathSegment()));
                             }
                         };
@@ -170,7 +172,7 @@ public class TwitterStringUtils {
             } else {
                 span = new ClickableNoLineSpan() {
                     @Override
-                    public void onClick(View view) {
+                    public void onClick(@NonNull View view) {
                         AppCustomTabsKt.launchChromeCustomTabs(context, uri);
                     }
                 };
@@ -193,7 +195,7 @@ public class TwitterStringUtils {
             spannableStringBuilder.setSpan(
                     new ClickableNoLineSpan() {
                         @Override
-                        public void onClick(View view) {
+                        public void onClick(@NonNull View view) {
                             AppCustomTabsKt.launchChromeCustomTabs(context, url);
                         }
                     }, 4, name.length() + 4, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -241,8 +243,8 @@ public class TwitterStringUtils {
             int length = result.length();
             result.append("\uFFFC");
 
-            Drawable drawable = AppCompatResources
-                    .getDrawable(context, R.drawable.ic_lock_black_24dp)
+            Drawable drawable = Objects.requireNonNull(AppCompatResources
+                    .getDrawable(context, R.drawable.ic_lock_black_24dp))
                     .mutate();
             drawable.setBounds(left, 0, textSize + left, textSize
             );
@@ -258,8 +260,8 @@ public class TwitterStringUtils {
             int length = result.length();
             result.append("\uFFFC");
 
-            Drawable drawable = AppCompatResources
-                    .getDrawable(context, R.drawable.ic_check_circle_black_24dp)
+            Drawable drawable = Objects.requireNonNull(AppCompatResources
+                    .getDrawable(context, R.drawable.ic_check_circle_black_24dp))
                     .mutate();
             drawable.setBounds(left, 0, textSize + left, textSize);
 
@@ -286,8 +288,6 @@ public class TwitterStringUtils {
                         return R.string.did_retweet;
                     case UNREPEAT:
                         return R.string.did_unretweet;
-                     default:
-                        return 0;
                 }
 
             case ClientType.MASTODON:
@@ -300,8 +300,6 @@ public class TwitterStringUtils {
                         return R.string.did_boost;
                     case UNREPEAT:
                         return R.string.did_unboost;
-                    default:
-                        return 0;
                 }
 
             default:
