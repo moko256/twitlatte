@@ -165,14 +165,18 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         } else {
             Post post = GlobalApplication.postCache.getPost(data.get(i));
             if (post != null) {
-                ((StatusViewHolder) viewHolder).setStatus(
-                        post.getRepeatedUser(),
-                        post.getRepeat(),
-                        post.getUser(),
-                        post.getStatus(),
-                        post.getQuotedRepeatingUser(),
-                        post.getQuotedRepeatingStatus()
-                );
+                if (viewHolder instanceof StatusViewHolder) {
+                    ((StatusViewHolder) viewHolder).setStatus(
+                            post.getRepeatedUser(),
+                            post.getRepeat(),
+                            post.getUser(),
+                            post.getStatus(),
+                            post.getQuotedRepeatingUser(),
+                            post.getQuotedRepeatingStatus()
+                    );
+                } else if (viewHolder instanceof ImagesOnlyTweetViewHolder){
+                    ((ImagesOnlyTweetViewHolder) viewHolder).setStatus(post.getStatus());
+                }
             }
         }
     }
@@ -181,6 +185,8 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public void onViewRecycled(@NonNull RecyclerView.ViewHolder holder) {
         if (holder instanceof StatusViewHolder){
             ((StatusViewHolder) holder).clear();
+        } else if (holder instanceof ImagesOnlyTweetViewHolder) {
+            ((ImagesOnlyTweetViewHolder) holder).setStatus(null);
         }
     }
 

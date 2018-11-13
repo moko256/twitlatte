@@ -40,6 +40,7 @@ import com.github.moko256.twitlatte.view.EmojiToTextViewSetter
 import com.github.moko256.twitlatte.widget.CheckableImageView
 import com.github.moko256.twitlatte.widget.TweetImageTableView
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 
 /**
  * Created by moko256 on 2018/09/03.
@@ -291,6 +292,13 @@ class StatusViewBinder(private val glideRequests: GlideRequests, private val vie
                     quoteTweetImages.visibility = View.VISIBLE
                 }
                 quoteTweetImages.setMediaEntities(quotedStatus.medias, quotedStatus.isSensitive)
+                disposable.add(object: Disposable {
+                    override fun isDisposed() = false
+
+                    override fun dispose() {
+                        quoteTweetImages.clearImages()
+                    }
+                })
             } else {
                 if (quoteTweetImages.visibility != View.GONE) {
                     quoteTweetImages.visibility = View.GONE
@@ -309,6 +317,13 @@ class StatusViewBinder(private val glideRequests: GlideRequests, private val vie
         if (medias?.isNotEmpty() == true) {
             imageTableView.visibility = View.VISIBLE
             imageTableView.setMediaEntities(medias, status.isSensitive)
+            disposable.add(object: Disposable {
+                override fun isDisposed() = false
+
+                override fun dispose() {
+                    imageTableView.clearImages()
+                }
+            })
         } else {
             imageTableView.visibility = View.GONE
         }
