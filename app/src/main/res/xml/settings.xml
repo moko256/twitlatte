@@ -15,182 +15,193 @@
   ~ limitations under the License.
   -->
 
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <PreferenceCategory android:title="@string/account">
+<androidx.preference.PreferenceScreen
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <PreferenceCategory app:title="@string/account">
         <ListPreference
-            android:key="AccountKey"
-            android:title="@string/account"
-            android:summary="%s"
-            android:dialogTitle="@string/account"/>
+            app:key="AccountKey"
+            app:title="@string/account"
+            app:summary="%s"
+            app:dialogTitle="@string/account"/>
         <Preference
-            android:key="logout"
-            android:title="@string/logout"/>
+            app:key="logout"
+            app:title="@string/logout"/>
     </PreferenceCategory>
     <PreferenceCategory
-        android:title="@string/application">
+        app:title="@string/application">
         <ListPreference
-            android:key="nightModeType"
-            android:defaultValue="@string/mode_night_no_value"
-            android:title="@string/dark_theme"
-            android:summary="%s"
-            android:dialogTitle="@string/dark_theme"
-            android:entries="@array/choose_night_mode_entries"
-            android:entryValues="@array/choose_night_mode_entries_value"/>
+            app:key="nightModeType"
+            app:defaultValue="@string/mode_night_no_value"
+            app:title="@string/dark_theme"
+            app:summary="%s"
+            app:dialogTitle="@string/dark_theme"
+            app:entries="@array/choose_night_mode_entries"
+            app:entryValues="@array/choose_night_mode_entries_value"/>
         <ListPreference
-            android:key="timelineImageMode"
-            android:defaultValue="normal"
-            android:title="@string/load_timeline_image_mode"
-            android:summary="%s"
-            android:dialogTitle="@string/load_timeline_image_mode"
-            android:entries="@array/choose_timeline_image_load_entries"
-            android:entryValues="@array/choose_timeline_image_load_entries_value"/>
-        <SwitchPreference
-            android:key="useChromeCustomTab"
-            android:defaultValue="true"
-            android:title="@string/open_web_page_in_the_app"
-            android:summaryOn="@string/viewing_web_page_in_app"
-            android:summaryOff="@string/viewing_web_page_in_external_browser"/>
-        <SwitchPreference
-            android:key="hideSensitiveMedia"
-            android:defaultValue="true"
-            android:title="@string/hide_sensitive_media"
-            android:summaryOn="@string/hiding_sensitive_media"
-            android:summaryOff="@string/showing_sensitive_media"/>
+            app:key="timelineImageMode"
+            app:defaultValue="normal"
+            app:title="@string/load_timeline_image_mode"
+            app:summary="%s"
+            app:dialogTitle="@string/load_timeline_image_mode"
+            app:entries="@array/choose_timeline_image_load_entries"
+            app:entryValues="@array/choose_timeline_image_load_entries_value"/>
+        <SwitchPreferenceCompat
+            app:key="useChromeCustomTab"
+            app:defaultValue="true"
+            app:title="@string/open_web_page_in_the_app"
+            app:summaryOn="@string/viewing_web_page_in_app"
+            app:summaryOff="@string/viewing_web_page_in_external_browser"/>
+        <SwitchPreferenceCompat
+            app:key="hideSensitiveMedia"
+            app:defaultValue="true"
+            app:title="@string/hide_sensitive_media"
+            app:summaryOn="@string/hiding_sensitive_media"
+            app:summaryOff="@string/showing_sensitive_media"/>
         <PreferenceScreen
-            android:title="@string/regex_mute"
-            android:key="regexMute">
-            <SwitchPreference
-                android:key="patternTweetMuteEnabled"
-                android:defaultValue="false"
-                android:title="@string/use_post_regex_mute"/>
+            app:title="@string/regex_mute"
+            app:key="regexMute">
+            <SwitchPreferenceCompat
+                app:key="patternTweetMuteEnabled"
+                app:defaultValue="false"
+                app:title="@string/use_post_regex_mute"/>
             <EditTextPreference
-                android:key="tweetMutePattern"
-                android:title="@string/post_mute_regex_pattern"
-                android:dialogTitle="@string/edit_pattern"/>
+                app:key="tweetMutePattern"
+                app:title="@string/post_mute_regex_pattern"
+                app:dialogTitle="@string/edit_pattern"
+                app:useSimpleSummaryProvider="true"
+                app:dependency="patternTweetMuteEnabled"/>
 
-            <SwitchPreference
-                android:key="patternTweetMuteShowOnlyImageEnabled"
-                android:defaultValue="false"
-                android:title="@string/use_post_regex_mute_show_only_image"/>
+            <SwitchPreferenceCompat
+                app:key="patternTweetMuteShowOnlyImageEnabled"
+                app:defaultValue="false"
+                app:title="@string/use_post_regex_mute_show_only_image"/>
             <EditTextPreference
-                android:key="tweetMuteShowOnlyImagePattern"
-                android:title="@string/post_mute_regex_pattern_show_only_image"
-                android:dialogTitle="@string/edit_pattern"/>
+                app:key="tweetMuteShowOnlyImagePattern"
+                app:title="@string/post_mute_regex_pattern_show_only_image"
+                app:dialogTitle="@string/edit_pattern"
+                app:useSimpleSummaryProvider="true"
+                app:dependency="patternTweetMuteShowOnlyImageEnabled"/>
 
-            <SwitchPreference
-                android:key="patternUserScreenNameMuteEnabled"
-                android:defaultValue="false"
-                android:title="@string/use_user_screen_name_regex_mute"/>
+            <SwitchPreferenceCompat
+                app:key="patternUserScreenNameMuteEnabled"
+                app:defaultValue="false"
+                app:title="@string/use_user_screen_name_regex_mute"/>
             <EditTextPreference
-                android:key="userScreenNameMutePattern"
-                android:title="@string/user_screen_name_mute_regex_pattern"
-                android:dialogTitle="@string/edit_pattern"/>
+                app:key="userScreenNameMutePattern"
+                app:title="@string/user_screen_name_mute_regex_pattern"
+                app:dialogTitle="@string/edit_pattern"
+                app:useSimpleSummaryProvider="true"
+                app:dependency="patternUserScreenNameMuteEnabled"/>
 
-            <SwitchPreference
-                android:key="patternUserNameMuteEnabled"
-                android:defaultValue="false"
-                android:title="@string/use_user_name_regex_mute"/>
+            <SwitchPreferenceCompat
+                app:key="patternUserNameMuteEnabled"
+                app:defaultValue="false"
+                app:title="@string/use_user_name_regex_mute"/>
             <EditTextPreference
-                android:key="tweetUserNamePattern"
-                android:title="@string/user_name_mute_regex_pattern"
-                android:dialogTitle="@string/edit_pattern"/>
+                app:key="tweetUserNamePattern"
+                app:title="@string/user_name_mute_regex_pattern"
+                app:dialogTitle="@string/edit_pattern"
+                app:useSimpleSummaryProvider="true"
+                app:dependency="patternUserNameMuteEnabled"/>
 
-            <SwitchPreference
-                android:key="patternTweetSourceMuteEnabled"
-                android:defaultValue="false"
-                android:title="@string/use_tweet_source_mute"/>
+            <SwitchPreferenceCompat
+                app:key="patternTweetSourceMuteEnabled"
+                app:defaultValue="false"
+                app:title="@string/use_tweet_source_mute"/>
             <EditTextPreference
-                android:key="tweetSourceMutePattern"
-                android:title="@string/tweet_source_mute_regex_pattern"
-                android:dialogTitle="@string/edit_pattern"/>
+                app:key="tweetSourceMutePattern"
+                app:title="@string/tweet_source_mute_regex_pattern"
+                app:dialogTitle="@string/edit_pattern"
+                app:useSimpleSummaryProvider="true"
+                app:dependency="patternTweetSourceMuteEnabled"/>
         </PreferenceScreen>
     </PreferenceCategory>
     <PreferenceCategory
-        android:title="@string/about">
+        app:title="@string/about">
         <Preference
-            android:key="license_at_this_app"
-            android:title="@string/license_at_this_app"
-            android:summary="@string/apache_license_2_0"/>
+            app:key="license_at_this_app"
+            app:title="@string/license_at_this_app"
+            app:summary="@string/apache_license_2_0"/>
         <PreferenceScreen
-            android:key="license"
-            android:title="@string/open_source_license">
+            app:key="license"
+            app:title="@string/open_source_license">
             <Preference
-                android:key="license_lib_support_v4"
-                android:title="Android Compatibility Library v4"/>
+                app:key="license_lib_support_v4"
+                app:title="Android Compatibility Library v4"/>
             <Preference
-                android:key="license_lib_support_v7"
-                android:title="Android Compatibility Library v7"/>
+                app:key="license_lib_support_v7"
+                app:title="Android Compatibility Library v7"/>
             <Preference
-                android:key="license_lib_support_design"
-                android:title="Android Design Support Library"/>
+                app:key="license_lib_support_design"
+                app:title="Android Design Support Library"/>
             <Preference
-                android:key="license_lib_support_custom_tabs"
-                android:title="Android Custom Tabs Support Library"/>
+                app:key="license_lib_support_custom_tabs"
+                app:title="Android Custom Tabs Support Library"/>
             <Preference
-                android:key="license_lib_support_arch"
-                android:title="Android Architecture Components"/>
+                app:key="license_lib_support_arch"
+                app:title="Android Architecture Components"/>
             <Preference
-                android:key="license_lib_exo_player"
-                android:title="ExoPlayer"/>
+                app:key="license_lib_exo_player"
+                app:title="ExoPlayer"/>
             <Preference
-                android:key="license_lib_glide"
-                android:title="Glide"/>
+                app:key="license_lib_glide"
+                app:title="Glide"/>
             <Preference
-                android:key="license_lib_gson"
-                android:title="google-gson"/>
+                app:key="license_lib_gson"
+                app:title="google-gson"/>
             <Preference
-                android:key="license_lib_photo_view"
-                android:title="PhotoView"/>
+                app:key="license_lib_photo_view"
+                app:title="PhotoView"/>
             <Preference
-                android:key="license_lib_fling_layout"
-                android:title="FlingLayout"/>
+                app:key="license_lib_fling_layout"
+                app:title="FlingLayout"/>
             <Preference
-                android:key="license_lib_japng"
-                android:title="japng"/>
+                app:key="license_lib_japng"
+                app:title="japng"/>
             <Preference
-                android:key="license_lib_japng_android"
-                android:title="japng_android"/>
+                app:key="license_lib_japng_android"
+                app:title="japng_android"/>
             <Preference
-                android:key="license_lib_kotlin"
-                android:title="Kotlin Programming Language"/>
+                app:key="license_lib_kotlin"
+                app:title="Kotlin Programming Language"/>
             <Preference
-                android:key="license_lib_okhttp"
-                android:title="OkHttp"/>
+                app:key="license_lib_okhttp"
+                app:title="OkHttp"/>
             <Preference
-                android:key="license_lib_mastodon4j"
-                android:title="mastodon4j"/>
+                app:key="license_lib_mastodon4j"
+                app:title="mastodon4j"/>
             <Preference
-                android:key="license_lib_twitter4j"
-                android:title="Twitter4J"/>
+                app:key="license_lib_twitter4j"
+                app:title="Twitter4J"/>
             <Preference
-                android:key="license_lib_twitter_text"
-                android:title="twitter-text"/>
+                app:key="license_lib_twitter_text"
+                app:title="twitter-text"/>
             <Preference
-                android:key="license_lib_rx_java"
-                android:title="RxJava"/>
+                app:key="license_lib_rx_java"
+                app:title="RxJava"/>
             <Preference
-                android:key="license_lib_rx_android"
-                android:title="RxAndroid"/>
+                app:key="license_lib_rx_android"
+                app:title="RxAndroid"/>
         </PreferenceScreen>
         <Preference
-            android:key="source_code_link"
-            android:title="@string/do_see_source_code"
-            android:summary="@string/description_see_source_code" />
+            app:key="source_code_link"
+            app:title="@string/do_see_source_code"
+            app:summary="@string/description_see_source_code" />
         <PreferenceScreen
-            android:key="contributors"
-            android:title="@string/contributors">
+            app:key="contributors"
+            app:title="@string/contributors">
             <Preference
-                android:key="moko256"
-                android:title="moko256"/>
+                app:key="moko256"
+                app:title="moko256"/>
             <Preference
-                android:key="jiro-aqua"
-                android:title="jiro-aqua"/>
+                app:key="jiro-aqua"
+                app:title="jiro-aqua"/>
             <Preference
-                android:key="Poussinou"
-                android:title="Poussinou"/>
+                app:key="Poussinou"
+                app:title="Poussinou"/>
         </PreferenceScreen>
         <Preference
-            android:key="app_version"
-            android:title="@string/version_text"/>
+            app:key="app_version"
+            app:title="@string/version_text"/>
     </PreferenceCategory>
-</PreferenceScreen>
+</androidx.preference.PreferenceScreen>
