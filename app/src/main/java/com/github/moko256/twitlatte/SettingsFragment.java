@@ -49,16 +49,10 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     private int eggCount = 3;
 
     @Override
-    public void onCreatePreferences(Bundle bundle, String s) {
-        setPreferencesFromResource(R.xml.settings, s);
-    }
+    public void onCreatePreferences(Bundle bundle, String rootKey) {
+        setPreferencesFromResource(R.xml.settings, rootKey);
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        String preferenceRoot = getArguments() != null? getArguments().getString(ARG_PREFERENCE_ROOT, null): null;
-        if (preferenceRoot == null){
+        if (rootKey == null){
             AccountsModel accountsModel = GlobalApplication.accountsModel;
             List<AccessToken> accessTokens = accountsModel.getAccessTokens();
 
@@ -178,7 +172,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
                 return true;
             });
-        } else if (preferenceRoot.equals("regexMute")) {
+        } else if (rootKey.equals("regexMute")) {
             PreferenceScreen regexMute = getPreferenceScreen();
             for (int i = 0, length = regexMute.getPreferenceCount(); i < length; i++) {
                 Preference name = regexMute.getPreference(i);
@@ -194,7 +188,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                     });
                 }
             }
-        } else if (preferenceRoot.equals("license")) {
+        } else if (rootKey.equals("license")) {
             PreferenceScreen license = getPreferenceScreen();
             for (int i = 0, length = license.getPreferenceCount(); i < length; i++) {
                 license.getPreference(i).setOnPreferenceClickListener(preference -> {
@@ -206,7 +200,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                     return true;
                 });
             }
-        } else if (preferenceRoot.equals("contributors")) {
+        } else if (rootKey.equals("contributors")) {
             PreferenceScreen contributor = getPreferenceScreen();
             for (int i = 0, length = contributor.getPreferenceCount(); i < length; i++) {
                 Preference name = contributor.getPreference(i);
@@ -218,7 +212,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 });
             }
         }
-
     }
 
 }
