@@ -32,11 +32,11 @@ internal class FollowFollowerTabsPagerAdapter(
         private val userId: Long
 ): FragmentPagerAdapter(fm) {
 
-    override fun getItem(position: Int): Fragment? {
-        return when (position) {
-            0 -> UserFollowsFragment.newInstance(userId)
-            1 -> UserFollowersFragment.newInstance(userId)
-            else -> null
+    override fun getItem(position: Int): Fragment {
+        return if (position == 0) {
+            UserFollowsFragment.newInstance(userId)
+        } else {
+            UserFollowersFragment.newInstance(userId)
         }
     }
 
