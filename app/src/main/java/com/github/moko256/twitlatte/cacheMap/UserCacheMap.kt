@@ -44,6 +44,15 @@ class UserCacheMap {
         diskCache = CachedUsersSQLiteOpenHelper(context, accessToken)
     }
 
+    fun close() {
+        if (diskCache != null) {
+            diskCache!!.close()
+        }
+        if (cache.size() > 0) {
+            cache.evictAll()
+        }
+    }
+
     fun size(): Int {
         return cache.size()
     }

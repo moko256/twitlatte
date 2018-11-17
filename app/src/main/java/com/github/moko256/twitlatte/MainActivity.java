@@ -243,11 +243,10 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                                 updateDrawerImage();
                                 clearAndPrepareFragment();
                             } else {
-                                GlobalApplication.twitter = null;
-                                GlobalApplication.accessToken = null;
                                 GlobalApplication.preferenceRepository.putString(
                                         KEY_ACCOUNT_KEY, "-1"
                                 );
+                                ((GlobalApplication) getApplication()).clearTwitter();
                                 startActivity(
                                         new Intent(this, OAuthActivity.class)
                                                 .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)

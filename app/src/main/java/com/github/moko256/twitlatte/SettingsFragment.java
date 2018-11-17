@@ -113,11 +113,11 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                                                 new Intent(getContext(), MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
                                         );
                                     } else {
-                                        GlobalApplication.twitter = null;
-                                        GlobalApplication.accessToken = null;
                                         GlobalApplication.preferenceRepository.putString(
                                                 KEY_ACCOUNT_KEY, "-1"
                                         );
+
+                                        ((GlobalApplication) requireActivity().getApplication()).clearTwitter();
                                         startActivity(
                                                 new Intent(getContext(), OAuthActivity.class)
                                                         .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)

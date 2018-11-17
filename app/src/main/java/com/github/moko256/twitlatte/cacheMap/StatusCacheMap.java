@@ -58,6 +58,16 @@ public class StatusCacheMap {
         diskCache = new CachedStatusesSQLiteOpenHelper(context, accessToken);
     }
 
+    public void close() {
+        if (diskCache != null) {
+            diskCache.close();
+            diskCache = null;
+        }
+        if (cache.size() > 0) {
+            cache.evictAll();
+        }
+    }
+
     public int size() {
         return cache.size();
     }

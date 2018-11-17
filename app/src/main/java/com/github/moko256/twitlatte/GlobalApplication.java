@@ -139,6 +139,16 @@ public class GlobalApplication extends Application {
         statusLimit = clientType == ClientType.TWITTER? 200: 40;
     }
 
+    public void clearTwitter(){
+        userId = 0;
+        clientType = ClientType.NOTHING;
+        twitter = null;
+        accessToken = null;
+        userCache.close();
+        statusCache.close();
+        statusLimit = 0;
+    }
+
     @NonNull
     public Twitter createTwitterInstance(@NonNull AccessToken accessToken){
         Twitter t;
