@@ -26,7 +26,6 @@ import android.widget.Toast.LENGTH_SHORT
 import com.github.moko256.twitlatte.GlobalApplication
 import com.github.moko256.twitlatte.R
 import com.github.moko256.twitlatte.exoplayer.AudioAndVideoRenderer
-import com.google.android.exoplayer2.DefaultLoadControl
 import com.google.android.exoplayer2.ExoPlayerFactory
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.Player.REPEAT_MODE_ALL
@@ -65,8 +64,7 @@ abstract class AbstractVideoFragment: AbstractMediaFragment() {
         player = ExoPlayerFactory.newSimpleInstance(
                 context,
                 AudioAndVideoRenderer(requireContext()),
-                trackSelector,
-                DefaultLoadControl()
+                trackSelector
         ).apply {
             prepare(generateMediaSource(
                     OkHttpDataSourceFactory(GlobalApplication.getOkHttpClient(), null)
