@@ -141,7 +141,7 @@ class StatusViewBinder(private val glideRequests: GlideRequests, private val vie
                 repeatTimeStamp.visibility = View.VISIBLE
             }
             repeatTimeStamp.text = DateUtils.getRelativeTimeSpanString(
-                    status.createdAt.time,
+                    repeated.createdAt.time,
                     System.currentTimeMillis(),
                     0
             )
