@@ -42,8 +42,9 @@ fun String.convertHtmlToContentAndLinks(): Pair<String, Array<Link>> = try {
     this to emptyArray()
 }
 
-private const val TYPE_URL = 0
-private const val TYPE_OTHER = 1
+private const val TYPE_NOTHING = 0
+private const val TYPE_URL = 1
+private const val TYPE_OTHER = 2
 
 private class MastodonHtmlHandler: DefaultHandler() {
     lateinit var stringBuilder: StringBuilder
@@ -109,23 +110,22 @@ private class MastodonHtmlHandler: DefaultHandler() {
     }
 
     override fun characters(ch: CharArray, start: Int, length: Int) {
-        if (type == TYPE_URL && !isDisplayable) {
+        if (type == TYPE_NOTHING || type != TYPE_URL || isDisplayable) {
+            stringBuilder.append(ch, start, length)
+        } else {
             isNextDots = if (isNextDots) {
                 stringBuilder.append("…")
                 false
             } else {
-                stringBuilder.append(ch, start, length)
                 true
             }
-        } else {
-            stringBuilder.append(ch, start, length)
         }
     }
 
     override fun endElement(uri: String, localName: String, qName: String) {
         if (localName == "a") {
             isNextDots = false
-
+            type = TYPE_NOTHING
             this.linkList.add(Link(contentUrl, linkStart, stringBuilder.length))
         }
     }
