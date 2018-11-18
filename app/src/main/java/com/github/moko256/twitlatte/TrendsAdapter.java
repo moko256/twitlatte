@@ -63,14 +63,10 @@ public class TrendsAdapter extends RecyclerView.Adapter<TrendsAdapter.ViewHolder
 
         viewHolder.text.setText(item.getName());
         if (item.getVolume() != -1) {
-            if (viewHolder.volume.getVisibility() != View.VISIBLE) {
-                viewHolder.volume.setVisibility(View.VISIBLE);
-            }
+            viewHolder.volume.setVisibility(View.VISIBLE);
             viewHolder.volume.setText(context.getString(R.string.tweet_per_last_24_hours, item.getVolume()));
         } else {
-            if (viewHolder.volume.getVisibility() != View.GONE) {
-                viewHolder.volume.setVisibility(View.GONE);
-            }
+            viewHolder.volume.setVisibility(View.GONE);
         }
         viewHolder.itemView.setOnClickListener(v -> context.startActivity(SearchResultActivity.getIntent(context, item.getName())));
 

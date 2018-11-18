@@ -122,41 +122,30 @@ class StatusViewBinder(private val glideRequests: GlideRequests, private val vie
     ) {
 
         if (repeatedUser != null) {
-            if (repeatUserName.visibility != View.VISIBLE) {
-                repeatUserName.visibility = View.VISIBLE
-            }
+            repeatUserName.visibility = View.VISIBLE
             repeatUserName.text = viewGroup.context.getString(
                     TwitterStringUtils.getRepeatedByStringRes(GlobalApplication.clientType),
                     repeatedUser.name,
                     TwitterStringUtils.plusAtMark(repeatedUser.screenName)
             )
         } else {
-            if (repeatUserName.visibility != View.GONE) {
-                repeatUserName.visibility = View.GONE
-            }
+            repeatUserName.visibility = View.GONE
         }
 
         if (repeated != null) {
-            if (repeatTimeStamp.visibility != View.VISIBLE) {
-                repeatTimeStamp.visibility = View.VISIBLE
-            }
+            repeatTimeStamp.visibility = View.VISIBLE
             repeatTimeStamp.text = DateUtils.getRelativeTimeSpanString(
                     repeated.createdAt.time,
                     System.currentTimeMillis(),
                     0
             )
         } else {
-            if (repeatTimeStamp.visibility != View.GONE) {
-                repeatTimeStamp.visibility = View.GONE
-            }
+            repeatTimeStamp.visibility = View.GONE
         }
 
         val isReply = status.inReplyToScreenName != null
         if (isReply) {
-            if (replyUserName.visibility != View.VISIBLE) {
-                replyUserName.visibility = View.VISIBLE
-            }
-
+            replyUserName.visibility = View.VISIBLE
             replyUserName.text= if (status.inReplyToScreenName?.isEmpty() == true) {
                 viewGroup.context.getString(
                         if (status.inReplyToStatusId != -1L) {
@@ -176,9 +165,7 @@ class StatusViewBinder(private val glideRequests: GlideRequests, private val vie
                 )
             }
         } else {
-            if (replyUserName.visibility != View.GONE) {
-                replyUserName.visibility = View.GONE
-            }
+            replyUserName.visibility = View.GONE
         }
 
         val timelineImageLoadMode = GlobalApplication.preferenceRepository.getString(KEY_TIMELINE_IMAGE_LOAD_MODE, "normal")
@@ -221,9 +208,7 @@ class StatusViewBinder(private val glideRequests: GlideRequests, private val vie
         tweetContext.text = linkedSequence
 
         if (!TextUtils.isEmpty(linkedSequence)) {
-            if (tweetContext.visibility != View.VISIBLE) {
-                tweetContext.visibility = View.VISIBLE
-            }
+            tweetContext.visibility = View.VISIBLE
 
             if (status.emojis != null) {
                 if (contextEmojiSetter == null) {
@@ -235,30 +220,18 @@ class StatusViewBinder(private val glideRequests: GlideRequests, private val vie
                 }
             }
         } else {
-            if (tweetContext.visibility != View.GONE) {
-                tweetContext.visibility = View.GONE
-            }
+            tweetContext.visibility = View.GONE
         }
 
         tweetSpoilerText.text = status.spoilerText
         if (status.spoilerText == null) {
-            if (tweetSpoilerText.visibility != View.GONE) {
-                tweetSpoilerText.visibility = View.GONE
-            }
-            if (contentOpenerToggle.visibility != View.GONE) {
-                contentOpenerToggle.visibility = View.GONE
-            }
+            tweetSpoilerText.visibility = View.GONE
+            contentOpenerToggle.visibility = View.GONE
         } else {
             contentOpenerToggle.isChecked = false
-            if (tweetContext.visibility != View.GONE) {
-                tweetContext.visibility = View.GONE
-            }
-            if (tweetSpoilerText.visibility != View.VISIBLE) {
-                tweetSpoilerText.visibility = View.VISIBLE
-            }
-            if (contentOpenerToggle.visibility != View.VISIBLE) {
-                contentOpenerToggle.visibility = View.VISIBLE
-            }
+            tweetContext.visibility = View.GONE
+            tweetSpoilerText.visibility = View.VISIBLE
+            contentOpenerToggle.visibility = View.VISIBLE
 
             if (status.emojis != null) {
                 if (spoilerTextEmojiSetter == null) {
@@ -278,9 +251,7 @@ class StatusViewBinder(private val glideRequests: GlideRequests, private val vie
         )
 
         if (quotedStatus != null && quotedStatusUser != null) {
-            if (quoteTweetLayout.visibility != View.VISIBLE) {
-                quoteTweetLayout.visibility = View.VISIBLE
-            }
+            quoteTweetLayout.visibility = View.VISIBLE
             quoteTweetUserName.text = TwitterStringUtils.plusUserMarks(
                     quotedStatusUser.name,
                     quoteTweetUserName,
@@ -288,9 +259,7 @@ class StatusViewBinder(private val glideRequests: GlideRequests, private val vie
                     quotedStatusUser.isVerified
             )
             if (quotedStatus.medias?.isNotEmpty() == true) {
-                if (quoteTweetImages.visibility != View.VISIBLE) {
-                    quoteTweetImages.visibility = View.VISIBLE
-                }
+                quoteTweetImages.visibility = View.VISIBLE
                 quoteTweetImages.setMediaEntities(quotedStatus.medias, quotedStatus.isSensitive)
                 disposable.add(object: Disposable {
                     override fun isDisposed() = false
@@ -300,16 +269,12 @@ class StatusViewBinder(private val glideRequests: GlideRequests, private val vie
                     }
                 })
             } else {
-                if (quoteTweetImages.visibility != View.GONE) {
-                    quoteTweetImages.visibility = View.GONE
-                }
+                quoteTweetImages.visibility = View.GONE
             }
             quoteTweetUserId.text = TwitterStringUtils.plusAtMark(quotedStatusUser.screenName)
             quoteTweetContext.text = quotedStatus.text
         } else {
-            if (quoteTweetLayout.visibility != View.GONE) {
-                quoteTweetLayout.visibility = View.GONE
-            }
+            quoteTweetLayout.visibility = View.GONE
         }
 
         val medias = status.medias

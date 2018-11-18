@@ -225,37 +225,19 @@ public class TweetImageTableView extends GridLayout {
                 switch (medias[ii].getImageType()) {
                     case "video_one":
                     case "video_multi":
-                        if (foregrounds[ii].getVisibility() != VISIBLE) {
-                            foregrounds[ii].setVisibility(VISIBLE);
-                        }
-                        if (playButton[ii].getVisibility() != VISIBLE) {
-                            playButton[ii].setVisibility(VISIBLE);
-                        }
-                        if (markImage[ii].getVisibility() != GONE) {
-                            markImage[ii].setVisibility(GONE);
-                        }
+                        foregrounds[ii].setVisibility(VISIBLE);
+                        playButton[ii].setVisibility(VISIBLE);
+                        markImage[ii].setVisibility(GONE);
                         break;
                     case "gif":
-                        if (foregrounds[ii].getVisibility() != VISIBLE) {
-                            foregrounds[ii].setVisibility(VISIBLE);
-                        }
-                        if (playButton[ii].getVisibility() != VISIBLE) {
-                            playButton[ii].setVisibility(VISIBLE);
-                        }
-                        if (markImage[ii].getVisibility() != VISIBLE) {
-                            markImage[ii].setVisibility(VISIBLE);
-                        }
+                        foregrounds[ii].setVisibility(VISIBLE);
+                        playButton[ii].setVisibility(VISIBLE);
+                        markImage[ii].setVisibility(VISIBLE);
                         break;
                     default:
-                        if (foregrounds[ii].getVisibility() != GONE) {
-                            foregrounds[ii].setVisibility(GONE);
-                        }
-                        if (playButton[ii].getVisibility() != GONE) {
-                            playButton[ii].setVisibility(GONE);
-                        }
-                        if (markImage[ii].getVisibility() != GONE) {
-                            markImage[ii].setVisibility(GONE);
-                        }
+                        foregrounds[ii].setVisibility(GONE);
+                        playButton[ii].setVisibility(GONE);
+                        markImage[ii].setVisibility(GONE);
                         break;
                 }
             } else {
@@ -274,15 +256,9 @@ public class TweetImageTableView extends GridLayout {
                     imageView.setImageResource(R.drawable.border_frame);
                 }
 
-                if (foregrounds[ii].getVisibility() != GONE) {
-                    foregrounds[ii].setVisibility(GONE);
-                }
-                if (playButton[ii].getVisibility() != GONE) {
-                    playButton[ii].setVisibility(GONE);
-                }
-                if (markImage[ii].getVisibility() != GONE) {
-                    markImage[ii].setVisibility(GONE);
-                }
+                foregrounds[ii].setVisibility(GONE);
+                playButton[ii].setVisibility(GONE);
+                markImage[ii].setVisibility(GONE);
             }
         }
     }

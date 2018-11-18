@@ -447,14 +447,10 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
             }
 
             if(fragment instanceof UseTabsInterface) {
-                if(tabLayout.getVisibility()!=View.VISIBLE){
-                    tabLayout.setVisibility(View.VISIBLE);
-                }
+                tabLayout.setVisibility(View.VISIBLE);
                 tabLayout.setupWithViewPager(((UseTabsInterface)fragment).getTabsViewPager());
             } else{
-                if(tabLayout.getVisibility()!=View.GONE) {
-                    tabLayout.setVisibility(View.GONE);
-                }
+                tabLayout.setVisibility(View.GONE);
             }
         }
     }
