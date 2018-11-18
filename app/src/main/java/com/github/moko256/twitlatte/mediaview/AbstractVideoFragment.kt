@@ -29,6 +29,7 @@ import com.github.moko256.twitlatte.exoplayer.AudioAndVideoRenderer
 import com.google.android.exoplayer2.DefaultLoadControl
 import com.google.android.exoplayer2.ExoPlayerFactory
 import com.google.android.exoplayer2.Player
+import com.google.android.exoplayer2.Player.REPEAT_MODE_ALL
 import com.google.android.exoplayer2.Player.STATE_READY
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSourceFactory
@@ -71,7 +72,9 @@ abstract class AbstractVideoFragment: AbstractMediaFragment() {
                     OkHttpDataSourceFactory(GlobalApplication.getOkHttpClient(), null)
             ))
 
-            if (!isLoop) {
+            if (isLoop) {
+                repeatMode = REPEAT_MODE_ALL
+            } else {
                 addListener(object: Player.EventListener{
                     override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
                         activity?.window?.decorView?.keepScreenOn =

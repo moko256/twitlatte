@@ -16,32 +16,13 @@
 
 package com.github.moko256.twitlatte.mediaview
 
-import android.net.Uri
-import com.github.moko256.twitlatte.exoplayer.Mp4OrWebPExtractorFactory
-import com.google.android.exoplayer2.source.ExtractorMediaSource
-import com.google.android.exoplayer2.source.LoopingMediaSource
-import com.google.android.exoplayer2.source.MediaSource
-import com.google.android.exoplayer2.upstream.DataSource
-
 /**
  * Created by moko256 on 2018/10/07.
  *
  * @author moko256
  */
-class GifFragment: AbstractVideoFragment() {
+class GifFragment: OneVideoFragment() {
     init {
         isLoop = true
-    }
-
-    @Suppress("DEPRECATION")
-    override fun generateMediaSource(factory: DataSource.Factory): MediaSource {
-        return LoopingMediaSource(
-                ExtractorMediaSource(
-                        Uri.parse(media.originalUrl),
-                        factory,
-                        Mp4OrWebPExtractorFactory(),
-                        null, null
-                )
-        )
     }
 }

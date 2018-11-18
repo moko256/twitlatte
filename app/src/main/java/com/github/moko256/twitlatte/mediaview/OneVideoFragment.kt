@@ -27,7 +27,7 @@ import com.google.android.exoplayer2.upstream.DataSource
  *
  * @author moko256
  */
-class OneVideoFragment: AbstractVideoFragment() {
+open class OneVideoFragment: AbstractVideoFragment() {
     @Suppress("DEPRECATION")
     override fun generateMediaSource(factory: DataSource.Factory): MediaSource {
         return ExtractorMediaSource(
