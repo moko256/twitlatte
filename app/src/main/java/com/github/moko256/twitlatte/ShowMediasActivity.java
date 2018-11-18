@@ -47,7 +47,7 @@ public class ShowMediasActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_show_image);
+        setContentView(R.layout.layout_single_pager);
 
         mediaEntities = (List<Media>) getIntent().getSerializableExtra(FRAG_MEDIA_ENTITIES);
 
@@ -58,7 +58,7 @@ public class ShowMediasActivity extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeAsUpIndicator(R.drawable.ic_clear_white_24dp);
 
-        pager= findViewById(R.id.activity_show_image_view_pager);
+        pager= findViewById(R.id.layout_single_view_pager);
         pager.setAdapter(new MediasAdapter(getSupportFragmentManager(),mediaEntities));
         pager.setCurrentItem(position);
     }
