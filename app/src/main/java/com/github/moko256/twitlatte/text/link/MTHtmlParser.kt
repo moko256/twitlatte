@@ -109,15 +109,13 @@ private class MastodonHtmlHandler: DefaultHandler() {
     }
 
     override fun characters(ch: CharArray, start: Int, length: Int) {
-        if (type == TYPE_URL) {
-            if (isDisplayable) {
-                isNextDots = if (isNextDots) {
-                    stringBuilder.append("…")
-                    false
-                } else {
-                    stringBuilder.append(ch, start, length)
-                    true
-                }
+        if (type == TYPE_URL && !isDisplayable) {
+            isNextDots = if (isNextDots) {
+                stringBuilder.append("…")
+                false
+            } else {
+                stringBuilder.append(ch, start, length)
+                true
             }
         } else {
             stringBuilder.append(ch, start, length)
