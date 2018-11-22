@@ -21,8 +21,4 @@ package com.github.moko256.twitlatte.text
  *
  * @author moko256
  */
-fun String?.splitWithComma() = if (this != null && isNotEmpty()) {
-    split(",")
-} else {
-    null
-}
+fun String?.splitWithComma() = this?.takeIf { it.isNotEmpty() }?.split(",")
