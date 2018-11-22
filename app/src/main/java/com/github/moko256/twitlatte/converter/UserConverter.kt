@@ -125,11 +125,7 @@ fun Account.convertToCommonUser(): User {
             isVerified = false,
             isTranslator = false,
             isFollowRequestSent = false,
-            descriptionLinks = if (urls.second.isEmpty()) {
-                null
-            } else {
-                urls.second
-            },
+            descriptionLinks = urls.second?.takeIf { it.isNotEmpty() },
             emojis = if (emojis.isEmpty()) {
                 null
             } else {

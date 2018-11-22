@@ -20,7 +20,6 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import com.github.moko256.twitlatte.array.toCommaSplitString
 import com.github.moko256.twitlatte.database.migrator.migrateV2toV3
 import com.github.moko256.twitlatte.entity.AccessToken
 import com.github.moko256.twitlatte.entity.ClientType
@@ -82,7 +81,7 @@ class CachedUsersSQLiteOpenHelper(context: Context, accessToken: AccessToken?) :
 
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL(
-                "create table " + TABLE_NAME + "(" + TABLE_COLUMNS.toCommaSplitString() + ", primary key(id))"
+                "create table " + TABLE_NAME + "(" + TABLE_COLUMNS.joinToString(",") + ", primary key(id))"
         )
         db.execSQL("create unique index idindex on $TABLE_NAME(id)")
     }
@@ -231,9 +230,9 @@ class CachedUsersSQLiteOpenHelper(context: Context, accessToken: AccessToken?) :
                 starts[i] = entity.start.toString()
                 ends[i] = entity.end.toString()
             }
-            contentValues.put(TABLE_COLUMNS[31], urls.toCommaSplitString().toString())
-            contentValues.put(TABLE_COLUMNS[32], starts.toCommaSplitString().toString())
-            contentValues.put(TABLE_COLUMNS[33], ends.toCommaSplitString().toString())
+            contentValues.put(TABLE_COLUMNS[31], urls.joinToString(","))
+            contentValues.put(TABLE_COLUMNS[32], starts.joinToString(","))
+            contentValues.put(TABLE_COLUMNS[33], ends.joinToString(","))
         }
 
         if (user.emojis != null) {
@@ -245,8 +244,8 @@ class CachedUsersSQLiteOpenHelper(context: Context, accessToken: AccessToken?) :
                 shortCodes[i] = emoji.shortCode
                 urls[i] = emoji.url
             }
-            contentValues.put(TABLE_COLUMNS[34], shortCodes.toCommaSplitString().toString())
-            contentValues.put(TABLE_COLUMNS[35], urls.toCommaSplitString().toString())
+            contentValues.put(TABLE_COLUMNS[34], shortCodes.joinToString(","))
+            contentValues.put(TABLE_COLUMNS[35], urls.joinToString(","))
         }
 
         database.replace(TABLE_NAME, null, contentValues)

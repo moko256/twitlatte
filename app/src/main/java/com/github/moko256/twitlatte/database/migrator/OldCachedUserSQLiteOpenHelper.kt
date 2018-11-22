@@ -19,7 +19,6 @@ package com.github.moko256.twitlatte.database.migrator
 import android.content.ContentValues
 import android.database.DatabaseUtils
 import android.database.sqlite.SQLiteDatabase
-import com.github.moko256.twitlatte.array.toCommaSplitString
 import com.github.moko256.twitlatte.text.link.convertHtmlToContentAndLinks
 import com.github.moko256.twitlatte.text.link.convertToContentAndLinks
 import com.github.moko256.twitlatte.text.splitWithComma
@@ -105,9 +104,9 @@ fun migrateV2toV3(isTwitter: Boolean, table_name: String, db: SQLiteDatabase) {
         DatabaseUtils.cursorRowToContentValues(c, values)
         values.put("id", id)
         values.put("description", fixedText)
-        values.put("urls_urls", links.map { it.url }.toTypedArray().toCommaSplitString().toString())
-        values.put("urls_starts", links.map { it.start.toString() }.toTypedArray().toCommaSplitString().toString())
-        values.put("urls_ends", links.map { it.end.toString() }.toTypedArray().toCommaSplitString().toString())
+        values.put("urls_urls", links?.joinToString(",") { it.url }?:"")
+        values.put("urls_starts", links?.joinToString(",") { it.start.toString() }?:"")
+        values.put("urls_ends", links?.joinToString(",") { it.end.toString() }?:"")
         db.replace(table_name, null, values)
     }
     c.close()

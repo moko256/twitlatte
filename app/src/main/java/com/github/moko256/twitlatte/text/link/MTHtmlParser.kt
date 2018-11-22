@@ -33,13 +33,13 @@ private val parser = Parser().apply {
     contentHandler = handler
 }
 
-fun String.convertHtmlToContentAndLinks(): Pair<String, Array<Link>> = try {
+fun String.convertHtmlToContentAndLinks(): Pair<String, Array<Link>?> = try {
     parser.parse(InputSource(reader()))
 
-    handler.stringBuilder.toString() to handler.linkList.toTypedArray()
+    handler.stringBuilder.toString() to handler.linkList.takeIf { it.isNotEmpty() }?.toTypedArray()
 } catch (e: Throwable) {
     e.printStackTrace()
-    this to emptyArray()
+    this to null
 }
 
 private const val TYPE_NOTHING = 0

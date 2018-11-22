@@ -87,11 +87,7 @@ fun twitter4j.Status.convertToCommonStatus(): Post {
 }
 
 private fun twitter4j.Status.convertToStatus(): Status {
-    val parsedSource: Pair<String, Array<Link>>? = if (source == null) {
-        null
-    } else {
-        source.convertHtmlToContentAndLinks()
-    }
+    val parsedSource: Pair<String, Array<Link>?>? = source?.convertHtmlToContentAndLinks()
     val urls = if (symbolEntities.isEmpty()
             && hashtagEntities.isEmpty()
             && userMentionEntities.isEmpty()
@@ -112,13 +108,7 @@ private fun twitter4j.Status.convertToStatus(): Status {
     }
 
     val mentions
-            = if (userMentionEntities.isNotEmpty()) {
-        userMentionEntities.map {
-            it.screenName
-        }.toTypedArray()
-    } else {
-        null
-    }
+            = userMentionEntities.takeIf { it.isNotEmpty() }?.map { it.screenName }?.toTypedArray()
 
     return Status(
             id = id,
@@ -137,53 +127,49 @@ private fun twitter4j.Status.convertToStatus(): Status {
             repliesCount = 0,
             isSensitive = isPossiblySensitive,
             lang = lang,
-            medias = if (mediaEntities.isNotEmpty()) {
-                mediaEntities.map {
-                    var downloadVideoUrl: String? = null
-                    var originalUrl: String? = null
-                    var type: String? = null
+            medias = mediaEntities.takeIf { it.isNotEmpty() }?.map {
+                var downloadVideoUrl: String? = null
+                var originalUrl: String? = null
+                var type: String? = null
 
-                    when (it.type) {
-                        "video" -> {
-                            for (variant in it.videoVariants) {
-                                if (variant.contentType == MimeTypes.APPLICATION_M3U8) {
-                                    originalUrl = variant.url
-                                    type = Media.ImageType.VIDEO_MULTI.value
-                                } else if (variant.contentType == MimeTypes.VIDEO_MP4) {
-                                    downloadVideoUrl = variant.url
-                                }
-                            }
-
-                            if (downloadVideoUrl == null) {
-                                originalUrl = it.videoVariants[0].url
-                                type = Media.ImageType.VIDEO_ONE.value
+                when (it.type) {
+                    "video" -> {
+                        for (variant in it.videoVariants) {
+                            if (variant.contentType == MimeTypes.APPLICATION_M3U8) {
+                                originalUrl = variant.url
+                                type = Media.ImageType.VIDEO_MULTI.value
+                            } else if (variant.contentType == MimeTypes.VIDEO_MP4) {
+                                downloadVideoUrl = variant.url
                             }
                         }
-                        "animated_gif" -> {
+
+                        if (downloadVideoUrl == null) {
                             originalUrl = it.videoVariants[0].url
-                            type = Media.ImageType.GIF.value
-                        }
-                        else -> {
-                            originalUrl = null
-                            type = Media.ImageType.PICTURE.value
+                            type = Media.ImageType.VIDEO_ONE.value
                         }
                     }
+                    "animated_gif" -> {
+                        originalUrl = it.videoVariants[0].url
+                        type = Media.ImageType.GIF.value
+                    }
+                    else -> {
+                        originalUrl = null
+                        type = Media.ImageType.PICTURE.value
+                    }
+                }
 
-                    Media(
-                            thumbnailUrl = if (originalUrl != null) {
-                                it.mediaURLHttps
-                            } else {
-                                null
-                            },
-                            downloadVideoUrl = downloadVideoUrl,
-                            originalUrl = originalUrl ?: it.mediaURLHttps,
-                            imageType = type
-                                    ?: Media.ImageType.PICTURE.value
-                    )
-                }.toTypedArray()
-            } else {
-                null
-            },
+                Media(
+                        thumbnailUrl = if (originalUrl != null) {
+                            it.mediaURLHttps
+                        } else {
+                            null
+                        },
+                        downloadVideoUrl = downloadVideoUrl,
+                        originalUrl = originalUrl ?: it.mediaURLHttps,
+                        imageType = type
+                                ?: Media.ImageType.PICTURE.value
+                )
+            }?.toTypedArray(),
             urls = urls?.second,
             mentions = mentions,
             emojis = null,
@@ -253,11 +239,7 @@ private fun com.sys1yagi.mastodon4j.api.entity.Status.convertToStatus(): Status 
             createdAt = createdAt.toISO8601Date(),
             inReplyToStatusId = inReplyToId.convertIfZero(),
             inReplyToUserId = inReplyToAccountId.convertIfZero(),
-            inReplyToScreenName = if (inReplyToAccountId != 0L) {
-                ""
-            } else {
-                null
-            },
+            inReplyToScreenName = if (inReplyToAccountId != 0L) { "" } else { null },
             isFavorited = isFavourited,
             isRepeated = isReblogged,
             favoriteCount = favouritesCount,
@@ -265,53 +247,39 @@ private fun com.sys1yagi.mastodon4j.api.entity.Status.convertToStatus(): Status 
             repliesCount = repliesCount,
             isSensitive = isSensitive,
             lang = language,
-            medias = if (mediaAttachments.isNotEmpty()) {
-                mediaAttachments.map {
-                    val resultUrl = it.url
-                    val thumbnailUrl: String?
-                    val type: Media.ImageType
+            medias = mediaAttachments.takeIf { it.isNotEmpty() }?.map {
+                val resultUrl = it.url
+                val thumbnailUrl: String?
+                val type: Media.ImageType
 
-                    when (it.type) {
-                        Attachment.Type.Video.value -> {
-                            thumbnailUrl = it.previewUrl
-                            type = Media.ImageType.VIDEO_ONE
-                        }
-                        Attachment.Type.Gifv.value -> {
-                            thumbnailUrl = it.previewUrl
-                            type = Media.ImageType.GIF
-                        }
-                        else -> {
-                            thumbnailUrl = null
-                            type = Media.ImageType.PICTURE
-                        }
+                when (it.type) {
+                    Attachment.Type.Video.value -> {
+                        thumbnailUrl = it.previewUrl
+                        type = Media.ImageType.VIDEO_ONE
                     }
+                    Attachment.Type.Gifv.value -> {
+                        thumbnailUrl = it.previewUrl
+                        type = Media.ImageType.GIF
+                    }
+                    else -> {
+                        thumbnailUrl = null
+                        type = Media.ImageType.PICTURE
+                    }
+                }
 
-                    Media(
-                            thumbnailUrl = thumbnailUrl,
-                            originalUrl = resultUrl,
-                            imageType = type.value
-                    )
-                }.toTypedArray()
-            } else {
-                null
-            },
+                Media(
+                        thumbnailUrl = thumbnailUrl,
+                        originalUrl = resultUrl,
+                        imageType = type.value
+                )
+            }?.toTypedArray(),
             urls = urls.second,
-            mentions = mentions.map {
-                it.acct
-            }.toTypedArray(),
-            emojis = if (emojis.isNotEmpty()) {
-                emojis.map {
-                    Emoji(url = it.url, shortCode = it.shortcode)
-                }.toTypedArray()
-            } else {
-                null
-            },
+            mentions = mentions.takeIf { it.isNotEmpty() }?.map { it.acct }?.toTypedArray(),
+            emojis = emojis.takeIf { it.isNotEmpty() }?.map {
+                Emoji(url = it.url, shortCode = it.shortcode)
+            }?.toTypedArray(),
             url = url,
-            spoilerText = if (spoilerText.isNotEmpty()) {
-                spoilerText
-            } else {
-                null
-            },
+            spoilerText = spoilerText.takeIf { it.isNotEmpty() },
             quotedStatusId = -1,
             visibility = visibility
     )

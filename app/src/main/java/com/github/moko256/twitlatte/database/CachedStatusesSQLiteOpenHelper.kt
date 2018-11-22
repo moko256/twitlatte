@@ -21,7 +21,6 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.database.sqlite.SQLiteStatement
-import com.github.moko256.twitlatte.array.toCommaSplitString
 import com.github.moko256.twitlatte.converter.convertToStatusOrRepeat
 import com.github.moko256.twitlatte.database.migrator.OldCachedStatusesSQLiteOpenHelper
 import com.github.moko256.twitlatte.entity.*
@@ -89,7 +88,7 @@ class CachedStatusesSQLiteOpenHelper(
 
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL(
-                "create table $TABLE_NAME(${TABLE_COLUMNS.toCommaSplitString()}, primary key(id))"
+                "create table $TABLE_NAME(${TABLE_COLUMNS.joinToString(",")}, primary key(id))"
         )
         db.execSQL("create unique index IdIndex on $TABLE_NAME(id)")
 
@@ -113,7 +112,7 @@ class CachedStatusesSQLiteOpenHelper(
             val oldStatuses = OldCachedStatusesSQLiteOpenHelper.getCachedStatus(db)
 
             db.execSQL(
-                    "create table $TABLE_NAME(${TABLE_COLUMNS.toCommaSplitString()}, primary key(id))"
+                    "create table $TABLE_NAME(${TABLE_COLUMNS.joinToString(",")}, primary key(id))"
             )
 
             db.execSQL(
@@ -134,7 +133,7 @@ class CachedStatusesSQLiteOpenHelper(
                         ) {
                             val parsedSource = status.source.convertHtmlToContentAndLinks()
 
-                            parsedSource.first to parsedSource.second.first().url
+                            parsedSource.first to parsedSource.second?.first()?.url
                         } else {
                             status.source to null
                         }
@@ -157,40 +156,36 @@ class CachedStatusesSQLiteOpenHelper(
                                 repliesCount = status.repliesCount,
                                 isSensitive = status.isPossiblySensitive,
                                 lang = status.lang,
-                                medias = if (status.mediaEntities.isNotEmpty()) {
-                                    status.mediaEntities.map {
-                                        val thumbnailUrl: String?
-                                        val resultUrl: String
-                                        val type: String
+                                medias = status.mediaEntities.takeIf { it.isNotEmpty() }?.map {
+                                    val thumbnailUrl: String?
+                                    val resultUrl: String
+                                    val type: String
 
-                                        when(it.type) {
-                                            "video" -> {
-                                                thumbnailUrl = it.mediaURLHttps
-                                                resultUrl = it.videoVariants[0].url
-                                                type = Media.ImageType.VIDEO_ONE.value
-                                            }
-                                            "animated_gif" -> {
-                                                thumbnailUrl = it.mediaURLHttps
-                                                resultUrl = it.videoVariants[0].url
-                                                type = Media.ImageType.GIF.value
-                                            }
-                                            else -> {
-                                                thumbnailUrl = null
-                                                resultUrl = it.mediaURLHttps
-                                                type = Media.ImageType.PICTURE.value
-                                            }
+                                    when(it.type) {
+                                        "video" -> {
+                                            thumbnailUrl = it.mediaURLHttps
+                                            resultUrl = it.videoVariants[0].url
+                                            type = Media.ImageType.VIDEO_ONE.value
                                         }
+                                        "animated_gif" -> {
+                                            thumbnailUrl = it.mediaURLHttps
+                                            resultUrl = it.videoVariants[0].url
+                                            type = Media.ImageType.GIF.value
+                                        }
+                                        else -> {
+                                            thumbnailUrl = null
+                                            resultUrl = it.mediaURLHttps
+                                            type = Media.ImageType.PICTURE.value
+                                        }
+                                    }
 
-                                        Media(
-                                                thumbnailUrl = thumbnailUrl,
-                                                originalUrl = resultUrl,
-                                                downloadVideoUrl = null,
-                                                imageType = type
-                                        )
-                                    }.toTypedArray()
-                                } else {
-                                    null
-                                },
+                                    Media(
+                                            thumbnailUrl = thumbnailUrl,
+                                            originalUrl = resultUrl,
+                                            downloadVideoUrl = null,
+                                            imageType = type
+                                    )
+                                }?.toTypedArray(),
                                 urls = urls.second,
                                 emojis = status.emojis?.toTypedArray(),
                                 url = status.remoteUrl,
@@ -409,7 +404,7 @@ class CachedStatusesSQLiteOpenHelper(
                 contentValues.put(TABLE_COLUMNS[16], status.lang)
 
                 if (status.mentions != null) {
-                    contentValues.put(TABLE_COLUMNS[17], status.mentions.toCommaSplitString().toString())
+                    contentValues.put(TABLE_COLUMNS[17], status.mentions.joinToString(","))
                 }
 
                 if (status.urls != null) {
@@ -423,9 +418,9 @@ class CachedStatusesSQLiteOpenHelper(
                         starts[i] = entity.start.toString()
                         ends[i] = entity.end.toString()
                     }
-                    contentValues.put(TABLE_COLUMNS[18], urls.toCommaSplitString().toString())
-                    contentValues.put(TABLE_COLUMNS[19], starts.toCommaSplitString().toString())
-                    contentValues.put(TABLE_COLUMNS[20], ends.toCommaSplitString().toString())
+                    contentValues.put(TABLE_COLUMNS[18], urls.joinToString(","))
+                    contentValues.put(TABLE_COLUMNS[19], starts.joinToString(","))
+                    contentValues.put(TABLE_COLUMNS[20], ends.joinToString(","))
                 }
 
                 if (status.medias != null) {
@@ -441,10 +436,10 @@ class CachedStatusesSQLiteOpenHelper(
                         downloadVideoUrls[i] = entity.downloadVideoUrl
                         types[i] = entity.imageType
                     }
-                    contentValues.put(TABLE_COLUMNS[21], thumbnailUrls.toCommaSplitString().toString())
-                    contentValues.put(TABLE_COLUMNS[22], originalUrls.toCommaSplitString().toString())
-                    contentValues.put(TABLE_COLUMNS[23], downloadVideoUrls.toCommaSplitString().toString())
-                    contentValues.put(TABLE_COLUMNS[24], types.toCommaSplitString().toString())
+                    contentValues.put(TABLE_COLUMNS[21], thumbnailUrls.joinToString(","))
+                    contentValues.put(TABLE_COLUMNS[22], originalUrls.joinToString(","))
+                    contentValues.put(TABLE_COLUMNS[23], downloadVideoUrls.joinToString(","))
+                    contentValues.put(TABLE_COLUMNS[24], types.joinToString(","))
                 }
 
                 contentValues.put(TABLE_COLUMNS[25], status.quotedStatusId)
@@ -460,8 +455,8 @@ class CachedStatusesSQLiteOpenHelper(
                         shortCodes[i] = emoji.shortCode
                         urls[i] = emoji.url
                     }
-                    contentValues.put(TABLE_COLUMNS[27], shortCodes.toCommaSplitString().toString())
-                    contentValues.put(TABLE_COLUMNS[28], urls.toCommaSplitString().toString())
+                    contentValues.put(TABLE_COLUMNS[27], shortCodes.joinToString(","))
+                    contentValues.put(TABLE_COLUMNS[28], urls.joinToString(","))
                 }
                 contentValues.put(TABLE_COLUMNS[29], status.spoilerText)
                 contentValues.put(TABLE_COLUMNS[30], status.visibility)
