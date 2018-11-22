@@ -35,7 +35,7 @@ class ViewPager : androidx.viewpager.widget.ViewPager {
     override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
         return try {
             super.onInterceptTouchEvent(ev)
-        } catch (e: IllegalArgumentException) {
+        } catch (ignore: IllegalArgumentException) {
             false
         }
     }
