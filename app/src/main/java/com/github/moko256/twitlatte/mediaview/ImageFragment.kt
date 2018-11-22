@@ -20,6 +20,8 @@ import android.os.Bundle
 import android.view.View
 import android.view.View.SYSTEM_UI_FLAG_FULLSCREEN
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.target.Target.SIZE_ORIGINAL
+import com.github.chrisbanes.photoview.PhotoView
 import com.github.chuross.flinglayout.FlingLayout
 import com.github.moko256.twitlatte.GlobalApplication
 import com.github.moko256.twitlatte.R
@@ -61,15 +63,17 @@ class ImageFragment: AbstractMediaFragment() {
 
         requests
                 .load(TwitterStringUtils.convertLargeImageUrl(url))
-                .fitCenter()
+                .override(SIZE_ORIGINAL)
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
-                .thumbnail(requests.load(
-                        if (GlobalApplication.preferenceRepository.getString(KEY_TIMELINE_IMAGE_LOAD_MODE, "normal") == "normal") {
-                            TwitterStringUtils.convertSmallImageUrl(url)
-                        } else {
-                            TwitterStringUtils.convertThumbImageUrl(url)
-                        }
-                ))
+                .thumbnail(
+                        requests.load(
+                                if (GlobalApplication.preferenceRepository.getString(KEY_TIMELINE_IMAGE_LOAD_MODE, "normal") == "normal") {
+                                    TwitterStringUtils.convertSmallImageUrl(url)
+                                } else {
+                                    TwitterStringUtils.convertThumbImageUrl(url)
+                                }
+                        ).override(SIZE_ORIGINAL)
+                )
                 .into(imageView)
     }
 
