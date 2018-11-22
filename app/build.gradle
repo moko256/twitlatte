@@ -111,7 +111,7 @@ dependencies {
 
     implementation project(':mastodon4j_to_twitter4j')
 
-    implementation 'com.davemorrissey.labs:subsampling-scale-image-view:3.10.0'
+    implementation 'com.github.chrisbanes:PhotoView:2.2.0'
     implementation 'com.github.chuross:flinglayout:0.5.0'
 
     implementation project(':japng-android:android_api')
