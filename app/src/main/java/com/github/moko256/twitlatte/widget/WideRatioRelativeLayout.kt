@@ -47,8 +47,8 @@ class WideRatioRelativeLayout @JvmOverloads constructor(
         }
 
         super.onMeasure(
-                View.MeasureSpec.makeMeasureSpec(widthSize, View.MeasureSpec.EXACTLY),
-                View.MeasureSpec.makeMeasureSpec(heightSize, View.MeasureSpec.EXACTLY)
+                View.MeasureSpec.makeMeasureSpec(widthSize + paddingLeft + paddingRight, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(heightSize + paddingTop + paddingBottom, View.MeasureSpec.EXACTLY)
         )
     }
 
