@@ -487,7 +487,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                                             disposable.addAll(set);
                                         }
                                     }
-                                    userIdText.setText(TwitterStringUtils.plusAtMark(user.getScreenName()));
+                                    userIdText.setText(TwitterStringUtils.plusAtMark(user.getScreenName(), GlobalApplication.accessToken.getUrl()));
 
                                     userImage.setOnClickListener(v -> startMyUserActivity());
 
