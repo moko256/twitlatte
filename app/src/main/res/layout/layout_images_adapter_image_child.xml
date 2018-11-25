@@ -15,10 +15,8 @@
   ~ limitations under the License.
   -->
 
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="144dp"
     android:layout_height="144dp"
     android:foreground="?attr/selectableItemBackground">
@@ -26,20 +24,6 @@
         android:id="@+id/layout_images_adapter_image_child_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-    <TextView
-        android:id="@+id/layout_images_adapter_image_child_title"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_alignParentBottom="true"
-        android:paddingStart="16dp"
-        android:paddingEnd="48dp"
-        android:gravity="center_vertical"
-        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-        android:textColor="#FFFFFF"
-        android:background="#50000000"
-        android:ellipsize="middle"
-        android:singleLine="true"
-        tools:text="Titttttttttttttttttle"/>
     <ImageButton
         android:id="@+id/action_delete"
         android:layout_width="48dp"

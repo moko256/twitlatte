@@ -40,8 +40,8 @@
     <string name="account">Account</string>
     <string name="dark_theme">Dark theme</string>
     <string name="media">Media</string>
-    <string name="add_media">Add media…</string>
-    <string name="open_media">Open media…</string>
+    <string name="add_media">Add media</string>
+    <string name="open_media">Open this media</string>
     <string name="possibly_sensitive">Include sensitivity in the medias</string>
     <string name="add_location">Add location</string>
     <string name="following_and_followers">Following and followers</string>

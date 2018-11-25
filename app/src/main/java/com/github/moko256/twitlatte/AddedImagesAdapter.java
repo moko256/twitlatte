@@ -17,15 +17,12 @@
 package com.github.moko256.twitlatte;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.net.Uri;
-import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.github.moko256.twitlatte.glide.GlideApp;
 import com.github.moko256.twitlatte.glide.GlideRequests;
@@ -79,21 +76,6 @@ public class AddedImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             ImageChildViewHolder viewHolder = (ImageChildViewHolder) holder;
             Uri image = images.get(position);
 
-            String fileName = null;
-            Cursor cursor = context.getContentResolver().query(
-                    image,
-                    new String[]{MediaStore.MediaColumns.DISPLAY_NAME},
-                    null, null, null);
-            if (cursor != null && cursor.moveToNext()){
-                fileName = cursor.getString(
-                        cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DISPLAY_NAME)
-                );
-            }
-            if (cursor != null) {
-                cursor.close();
-            }
-
-            viewHolder.title.setText(fileName != null? fileName : image.getLastPathSegment());
             viewHolder.deleteButton.setOnClickListener(
                     v -> onDeleteButtonListener.doAction(viewHolder.getLayoutPosition())
             );
@@ -163,7 +145,6 @@ public class AddedImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     private final static class ImageChildViewHolder extends RecyclerView.ViewHolder{
 
         final ImageView image;
-        final TextView title;
         final ImageButton deleteButton;
 
         final GlideRequests requests;
@@ -171,7 +152,6 @@ public class AddedImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         ImageChildViewHolder(View itemView) {
             super(itemView);
             image = itemView.findViewById(R.id.layout_images_adapter_image_child_image);
-            title = itemView.findViewById(R.id.layout_images_adapter_image_child_title);
             deleteButton = itemView.findViewById(R.id.action_delete);
             requests = GlideApp.with(itemView);
         }

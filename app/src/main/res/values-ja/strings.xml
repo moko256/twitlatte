@@ -37,7 +37,7 @@
     <string name="dark_theme">ダークテーマ</string>
     <string name="media">メディア</string>
     <string name="add_media">メディアを追加</string>
-    <string name="open_media">メディアを開く</string>
+    <string name="open_media">このメディアを開く</string>
     <string name="possibly_sensitive">メディアに過激な表現を含む</string>
     <string name="add_location">位置情報を追加</string>
     <string name="retweeted_by">%1$s(%2$s)がリツイートしました</string>
