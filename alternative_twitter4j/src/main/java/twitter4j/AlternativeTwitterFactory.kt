@@ -16,7 +16,7 @@
 
 package twitter4j
 
-import twitter4j.auth.AuthorizationFactory
+import twitter4j.auth.OAuthAuthorization
 import twitter4j.conf.Configuration
 
 /**
@@ -25,5 +25,5 @@ import twitter4j.conf.Configuration
  * @author moko256
  */
 fun Configuration.createTwitterInstance(): Twitter {
-    return TwitterImpl(this, AuthorizationFactory.getInstance(this))
+    return TwitterImpl(this, OAuthAuthorization(this))
 }
