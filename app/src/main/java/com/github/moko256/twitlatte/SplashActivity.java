@@ -53,22 +53,27 @@ public class SplashActivity extends AppCompatActivity {
             Bundle extras = intent.getExtras();
             if (extras != null){
                 try {
+                    String text = null;
+                    ArrayList<Uri> list = null;
+
                     if (extras.getCharSequence(Intent.EXTRA_TEXT) != null) {
                         CharSequence subject = extras.getCharSequence(Intent.EXTRA_SUBJECT);
-                        StringBuilder text = new StringBuilder();
+                        StringBuilder rawText = new StringBuilder();
                         if (subject != null) {
-                            text.append(subject).append(" ");
+                            rawText.append(subject).append(" ");
                         }
-                        text.append(extras.getCharSequence(Intent.EXTRA_TEXT));
-                        return PostActivity.getIntent(
-                                this,
-                                -1,
-                                text.toString()
-                        );
-                    } else if (extras.get(Intent.EXTRA_STREAM) != null) {
-                        ArrayList<Uri> list = extras.getParcelableArrayList(Intent.EXTRA_STREAM);
-                        return PostActivity.getIntent(this, list);
+                        rawText.append(extras.getCharSequence(Intent.EXTRA_TEXT));
+                        text = rawText.toString();
                     }
+                    if (extras.get(Intent.EXTRA_STREAM) != null) {
+                        if (intent.getAction().equals(Intent.ACTION_SEND_MULTIPLE)) {
+                            list = extras.getParcelableArrayList(Intent.EXTRA_STREAM);
+                        } else {
+                            list = new ArrayList<>(1);
+                            list.add(extras.getParcelable(Intent.EXTRA_STREAM));
+                        }
+                    }
+                    return PostActivity.getIntent(this, -1, text, list);
                 } catch (Throwable e) {
                     e.printStackTrace();
                 }
@@ -137,7 +142,6 @@ public class SplashActivity extends AppCompatActivity {
                             if (data.getHost().equals("share")) {
                                 return PostActivity.getIntent(
                                         this,
-                                        -1,
                                         data.getQueryParameter("text")
                                 );
                             }

@@ -211,10 +211,14 @@ public class PostActivity extends AppCompatActivity {
             isPossiblySensitive.setChecked(isPossiblySensitive.isChecked() && enabled);
         };
         addedImagesAdapter.onImageClickListener = position -> {
-            Intent open = new Intent(Intent.ACTION_VIEW)
-                    .setData(model.getUriList().get(position))
-                    .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            startActivity(Intent.createChooser(open, getString(R.string.open_media)));
+            try {
+                Intent open = new Intent(Intent.ACTION_VIEW)
+                        .setData(model.getUriList().get(position))
+                        .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                startActivity(Intent.createChooser(open, getString(R.string.open_media)));
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
         };
         imagesRecyclerView.setAdapter(addedImagesAdapter);
 
@@ -533,14 +537,24 @@ public class PostActivity extends AppCompatActivity {
     }
 
     public static Intent getIntent(Context context, String text){
-        return new Intent(context,PostActivity.class).putExtra(INTENT_EXTRA_TWEET_TEXT, text);
+        return getIntent(context, -1, text, null);
     }
 
     public static Intent getIntent(Context context, long inReplyToStatusId, String text){
-        return PostActivity.getIntent(context, text).putExtra(INTENT_EXTRA_IN_REPLY_TO_STATUS_ID, inReplyToStatusId);
+        return getIntent(context, inReplyToStatusId, text, null);
     }
 
-    public static Intent getIntent(Context context, ArrayList<Uri> imageUri){
-        return new Intent(context, PostActivity.class).putExtra(INTENT_EXTRA_IMAGE_URI, imageUri);
+    public static Intent getIntent(Context context, long inReplyToStatusId, String text, ArrayList<Uri> imageUri){
+        Intent intent = new Intent(context, PostActivity.class);
+        if (text != null) {
+            intent.putExtra(INTENT_EXTRA_TWEET_TEXT, text);
+        }
+        if (inReplyToStatusId != -1) {
+            intent.putExtra(INTENT_EXTRA_IN_REPLY_TO_STATUS_ID, inReplyToStatusId);
+        }
+        if (imageUri != null) {
+            intent.putExtra(INTENT_EXTRA_IMAGE_URI, imageUri);
+        }
+        return intent;
     }
 }
