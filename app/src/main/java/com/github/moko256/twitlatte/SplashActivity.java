@@ -73,7 +73,9 @@ public class SplashActivity extends AppCompatActivity {
                             list.add(extras.getParcelable(Intent.EXTRA_STREAM));
                         }
                     }
-                    return PostActivity.getIntent(this, -1, text, list);
+                    if (text != null && list != null) {
+                        return PostActivity.getIntent(this, -1, text, list);
+                    }
                 } catch (Throwable e) {
                     e.printStackTrace();
                 }
