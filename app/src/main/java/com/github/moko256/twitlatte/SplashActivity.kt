@@ -134,13 +134,13 @@ class SplashActivity : AppCompatActivity() {
                                 if (text != null) {
                                     append(text)
                                 }
-                            }
+                            }.toString()
                         } else {
                             null
                         }
 
                         if (rawText != null || list != null) {
-                            return PostActivity.getIntent(this, -1, rawText.toString(), list)
+                            return PostActivity.getIntent(this, -1, rawText, list)
                         }
                     } catch (e: Throwable) {
                         e.printStackTrace()
