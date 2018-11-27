@@ -27,6 +27,7 @@ import com.github.moko256.twitlatte.entity.Trend;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -62,13 +63,21 @@ public class CachedTrendsSQLiteOpenHelper extends SQLiteOpenHelper {
         synchronized (this) {
             SQLiteDatabase database = getReadableDatabase();
             Cursor c = database.query(TABLE_NAME, new String[]{"name", "volume"}, null, null, null, null, null);
-            trends = new ArrayList<>(c.getCount());
 
-            while (c.moveToNext()) {
-                trends.add(new Trend(
-                        c.getString(0),
-                        c.getInt(1)
-                ));
+            try {
+                trends = new ArrayList<>(c.getCount());
+
+                while (c.moveToNext()) {
+                    trends.add(new Trend(
+                            c.getString(0),
+                            c.getInt(1)
+                    ));
+                }
+            } catch (Throwable e) {
+                trends = Collections.emptyList();
+                SQLiteDatabase writableDatabase = getWritableDatabase();
+                writableDatabase.delete(TABLE_NAME, null, null);
+                writableDatabase.close();
             }
 
             c.close();
