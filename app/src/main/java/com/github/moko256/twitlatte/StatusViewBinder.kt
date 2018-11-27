@@ -124,7 +124,7 @@ class StatusViewBinder(private val glideRequests: GlideRequests, private val vie
         if (repeatedUser != null) {
             repeatUserName.visibility = View.VISIBLE
             repeatUserName.text = viewGroup.context.getString(
-                    TwitterStringUtils.getRepeatedByStringRes(GlobalApplication.clientType),
+                    TwitterStringUtils.getRepeatedByStringRes(GlobalApplication.accessToken.type),
                     repeatedUser.name,
                     TwitterStringUtils.plusAtMark(repeatedUser.screenName)
             )

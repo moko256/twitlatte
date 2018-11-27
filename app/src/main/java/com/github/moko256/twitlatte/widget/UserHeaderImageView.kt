@@ -41,7 +41,7 @@ class UserHeaderImageView @JvmOverloads constructor(
                 View.MeasureSpec.EXACTLY
         )
         val modifiedHeightMeasureSpec = View.MeasureSpec.makeMeasureSpec(
-                View.MeasureSpec.getSize(widthMeasureSpec) / if (GlobalApplication.clientType == ClientType.TWITTER) 3 else 2,
+                View.MeasureSpec.getSize(widthMeasureSpec) / if (GlobalApplication.accessToken.type == ClientType.TWITTER) 3 else 2,
                 View.MeasureSpec.EXACTLY
         )
         setMeasuredDimension(modifiedWidthMeasureSpec, modifiedHeightMeasureSpec)

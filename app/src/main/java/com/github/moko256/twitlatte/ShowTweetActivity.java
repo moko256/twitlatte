@@ -136,7 +136,7 @@ public class ShowTweetActivity extends AppCompatActivity {
                             Toast.makeText(
                                     this,
                                     TwitterStringUtils.getDidActionStringRes(
-                                            GlobalApplication.clientType,
+                                            GlobalApplication.accessToken.getType(),
                                             it.getSecond()
                                     ),
                                     Toast.LENGTH_SHORT
@@ -316,7 +316,7 @@ public class ShowTweetActivity extends AppCompatActivity {
                         this,
                         item.getStatus().getId(),
                         TwitterStringUtils.convertToReplyTopString(
-                                GlobalApplication.userCache.get(GlobalApplication.userId).getScreenName(),
+                                GlobalApplication.userCache.get(GlobalApplication.accessToken.getUserId()).getScreenName(),
                                 item.getUser().getScreenName(),
                                 item.getStatus().getMentions()
                         ).toString()
@@ -372,7 +372,7 @@ public class ShowTweetActivity extends AppCompatActivity {
     }
 
     private void resetReplyText(User postedUser, Status status){
-        User user = GlobalApplication.userCache.get(GlobalApplication.userId);
+        User user = GlobalApplication.userCache.get(GlobalApplication.accessToken.getUserId());
 
         replyText.setText(TwitterStringUtils.convertToReplyTopString(
                 user != null ? user.getScreenName() : GlobalApplication.accessToken.getScreenName(),

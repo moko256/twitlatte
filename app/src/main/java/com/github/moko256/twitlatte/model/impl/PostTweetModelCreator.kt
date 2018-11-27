@@ -32,7 +32,7 @@ import twitter4j.Twitter
  */
 
 fun getInstance(twitter: Twitter, resolver: ContentResolver): PostTweetModel {
-    return if (GlobalApplication.clientType == ClientType.MASTODON) {
+    return if (GlobalApplication.accessToken.type == ClientType.MASTODON) {
         com.github.moko256.twitlatte.model.impl.mastodon.PostTweetModelImpl((twitter as MastodonTwitterImpl).client, resolver)
     } else {
         com.github.moko256.twitlatte.model.impl.twitter.PostTweetModelImpl(twitter, resolver)

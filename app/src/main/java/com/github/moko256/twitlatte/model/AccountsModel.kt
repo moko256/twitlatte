@@ -25,7 +25,7 @@ import com.github.moko256.twitlatte.entity.AccessToken
  *
  * @author moko256
  */
-class AccountsModel(val context: Context) {
+class AccountsModel(private val context: Context) {
 
     private val tokens: ArrayList<AccessToken> by lazy {
         val helper = TokenSQLiteOpenHelper(context)

@@ -45,7 +45,7 @@ public class TrendsActivity extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeAsUpIndicator(R.drawable.ic_back_white_24dp);
 
-        if (savedInstanceState == null && GlobalApplication.clientType == ClientType.TWITTER) {
+        if (savedInstanceState == null && GlobalApplication.accessToken.getType() == ClientType.TWITTER) {
             getSupportFragmentManager()
                     .beginTransaction()
                     .add(android.R.id.content, new TrendsFragment())

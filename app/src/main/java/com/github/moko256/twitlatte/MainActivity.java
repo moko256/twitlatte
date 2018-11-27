@@ -165,7 +165,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                         replaceFragment(new MyFollowFollowerFragment());
                         break;
                     case R.id.nav_like:
-                        replaceFragment(UserLikeFragment.Companion.newInstance(GlobalApplication.userId));
+                        replaceFragment(UserLikeFragment.Companion.newInstance(GlobalApplication.accessToken.getUserId()));
                         break;
                     case R.id.nav_settings:
                         startActivity(new Intent(this,SettingsActivity.class));
@@ -208,7 +208,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                 changeIsDrawerAccountsSelection();
             }
 
-            if (accessToken.getUserId() != GlobalApplication.userId) {
+            if (accessToken.getUserId() != GlobalApplication.accessToken.getUserId()) {
                 GlobalApplication.preferenceRepository.putString(
                         KEY_ACCOUNT_KEY, accessToken.getKeyString()
                 );
@@ -224,7 +224,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                 .setCancelable(true)
                 .setPositiveButton(R.string.do_logout,
                         (dialog, i) -> {
-                            AccountsModel accountsModel = GlobalApplication.accountsModel;
+                            AccountsModel accountsModel = GlobalApplication.getAccountsModel(this);
 
                             AccessToken token = accountsModel.get(
                                     GlobalApplication.preferenceRepository.getString(KEY_ACCOUNT_KEY, "-1")
@@ -262,7 +262,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                 Single.create(
                         singleSubscriber -> {
                             try {
-                                AccountsModel accountsModel = GlobalApplication.accountsModel;
+                                AccountsModel accountsModel = GlobalApplication.getAccountsModel(this);
                                 List<AccessToken> accessTokens = accountsModel.getAccessTokens();
 
                                 ArrayList<User> users = new ArrayList<>(accessTokens.size());
@@ -408,7 +408,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                 userImage,
                 "icon_image"
         );
-        startActivity(ShowUserActivity.getIntent(this, GlobalApplication.userId), animation.toBundle());
+        startActivity(ShowUserActivity.getIntent(this, GlobalApplication.accessToken.getUserId()), animation.toBundle());
     }
 
     private void addFragment(Fragment fragment){
@@ -461,7 +461,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                         new VerifyCredentialOnSubscribe(
                                 GlobalApplication.twitter,
                                 GlobalApplication.userCache,
-                                GlobalApplication.userId
+                                GlobalApplication.accessToken.getUserId()
                         ))
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())

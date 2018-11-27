@@ -196,7 +196,7 @@ public class OAuthActivity extends AppCompatActivity {
     }
 
     private void storeAccessToken(AccessToken accessToken){
-        GlobalApplication.accountsModel.add(accessToken);
+        GlobalApplication.getAccountsModel(this).add(accessToken);
 
         GlobalApplication.preferenceRepository.putString(KEY_ACCOUNT_KEY, accessToken.getKeyString());
 

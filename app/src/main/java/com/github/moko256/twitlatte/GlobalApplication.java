@@ -16,6 +16,7 @@
 
 package com.github.moko256.twitlatte;
 
+import android.app.Activity;
 import android.app.Application;
 import android.os.Build;
 import android.preference.PreferenceManager;
@@ -70,11 +71,6 @@ public class GlobalApplication extends Application {
     public static Twitter twitter;
     public static AccessToken accessToken;
 
-    @ClientType.ClientTypeInt
-    public static int clientType = ClientType.NOTHING;
-
-    static long userId;
-
     public static PreferenceRepository preferenceRepository;
     public static StatusActionQueue statusActionQueue = new StatusActionQueue();
 
@@ -82,7 +78,7 @@ public class GlobalApplication extends Application {
     public final static StatusCacheMap statusCache = new StatusCacheMap();
     public final static PostCache postCache = new PostCache(statusCache, userCache);
 
-    public static AccountsModel accountsModel;
+    private AccountsModel accountsModel;
 
     @Override
     public void onCreate() {
@@ -130,23 +126,23 @@ public class GlobalApplication extends Application {
     }
 
     public void initTwitter(@NonNull AccessToken accessToken){
-        userId = accessToken.getUserId();
-        clientType = accessToken.getType();
         twitter = createTwitterInstance(accessToken);
         GlobalApplication.accessToken = accessToken;
         userCache.prepare(this, accessToken);
         statusCache.prepare(this, accessToken);
-        statusLimit = clientType == ClientType.TWITTER? 200: 40;
+        statusLimit = accessToken.getType() == ClientType.TWITTER? 200: 40;
     }
 
     public void clearTwitter(){
-        userId = 0;
-        clientType = ClientType.NOTHING;
         twitter = null;
         accessToken = null;
         userCache.close();
         statusCache.close();
         statusLimit = 0;
+    }
+
+    public static AccountsModel getAccountsModel(Activity activity) {
+        return ((GlobalApplication) activity.getApplication()).accountsModel;
     }
 
     @NonNull

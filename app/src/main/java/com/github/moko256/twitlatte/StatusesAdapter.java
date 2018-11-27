@@ -256,7 +256,7 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                             context,
                             status.getId(),
                             TwitterStringUtils.convertToReplyTopString(
-                                    GlobalApplication.userCache.get(GlobalApplication.userId).getScreenName(),
+                                    GlobalApplication.userCache.get(GlobalApplication.accessToken.getUserId()).getScreenName(),
                                     user.getScreenName(),
                                     status.getMentions()
                             ).toString()

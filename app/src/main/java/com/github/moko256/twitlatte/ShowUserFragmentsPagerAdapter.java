@@ -18,6 +18,7 @@ package com.github.moko256.twitlatte;
 
 import android.content.Context;
 
+import com.github.moko256.twitlatte.entity.AccessToken;
 import com.github.moko256.twitlatte.entity.ClientType;
 import com.github.moko256.twitlatte.widget.FragmentPagerAdapter;
 
@@ -51,13 +52,14 @@ public class ShowUserFragmentsPagerAdapter extends FragmentPagerAdapter {
     ShowUserFragmentsPagerAdapter(FragmentManager fm, Context context, long userId) {
         super(fm);
 
+        AccessToken accessToken = GlobalApplication.accessToken;
         list = new ArrayList<>(5);
         list.add(FRAGMENT_INFO);
         list.add(FRAGMENT_TIMELINE);
-        if (GlobalApplication.clientType == ClientType.MASTODON){
+        if (accessToken.getType() == ClientType.MASTODON){
             list.add(FRAGMENT_MEDIA);
         }
-        if (!(GlobalApplication.clientType == ClientType.MASTODON && userId != GlobalApplication.userId)){
+        if (!(accessToken.getType() == ClientType.MASTODON && userId != accessToken.getUserId())){
             list.add(FRAGMENT_LIKE);
         }
         list.add(FRAGMENT_FOLLOW);

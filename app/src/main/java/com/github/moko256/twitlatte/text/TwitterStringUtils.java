@@ -204,25 +204,25 @@ public class TwitterStringUtils {
     }
 
     public static String convertThumbImageUrl(String baseUrl){
-        return (GlobalApplication.clientType == ClientType.TWITTER)?
+        return (GlobalApplication.accessToken.getType() == ClientType.TWITTER)?
                 baseUrl + ":thumb":
                 baseUrl.replace("original", "small");
     }
 
     public static String convertSmallImageUrl(String baseUrl){
-        return (GlobalApplication.clientType == ClientType.TWITTER)?
+        return (GlobalApplication.accessToken.getType() == ClientType.TWITTER)?
                 baseUrl + ":small":
                 baseUrl.replace("original", "small");
     }
 
     public static String convertOriginalImageUrl(String baseUrl){
-        return (GlobalApplication.clientType == ClientType.TWITTER)?
+        return (GlobalApplication.accessToken.getType() == ClientType.TWITTER)?
                 baseUrl + ":orig":
                 baseUrl;
     }
 
     public static String convertLargeImageUrl(String baseUrl){
-        return (GlobalApplication.clientType == ClientType.TWITTER)?
+        return (GlobalApplication.accessToken.getType() == ClientType.TWITTER)?
                 baseUrl + ":large":
                 baseUrl;
     }

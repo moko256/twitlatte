@@ -174,7 +174,7 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
 
     private String getShareUrl(){
         String url;
-        if (GlobalApplication.clientType == ClientType.MASTODON){
+        if (GlobalApplication.accessToken.getType() == ClientType.MASTODON){
             String baseUrl;
             String userName;
             if (user.getScreenName().matches(".*@.*")){

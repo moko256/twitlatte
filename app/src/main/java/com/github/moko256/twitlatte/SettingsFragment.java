@@ -53,7 +53,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         setPreferencesFromResource(R.xml.settings, rootKey);
 
         if (rootKey == null){
-            AccountsModel accountsModel = GlobalApplication.accountsModel;
+            AccountsModel accountsModel = GlobalApplication.getAccountsModel(requireActivity());
             List<AccessToken> accessTokens = accountsModel.getAccessTokens();
 
             CharSequence[] entries = new CharSequence[accessTokens.size() + 1];
@@ -79,7 +79,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                             startActivity(new Intent(getContext(),OAuthActivity.class));
                             return false;
                         } else {
-                            AccessToken accessToken = GlobalApplication.accountsModel.get((String) newValue);
+                            AccessToken accessToken = GlobalApplication.getAccountsModel(requireActivity()).get((String) newValue);
 
                             ((GlobalApplication) requireActivity().getApplication()).initTwitter(accessToken);
                             startActivity(

@@ -132,7 +132,7 @@ public class PostActivity extends AppCompatActivity {
                         new VerifyCredentialOnSubscribe(
                                 GlobalApplication.twitter,
                                 GlobalApplication.userCache,
-                                GlobalApplication.userId
+                                GlobalApplication.accessToken.getUserId()
                         ))
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
@@ -231,7 +231,7 @@ public class PostActivity extends AppCompatActivity {
         postVisibility = findViewById(R.id.activity_tweet_visibility_spinner);
         contentWarningText = findViewById(R.id.tweet_text_warning);
         contentWarningEnabled = findViewById(R.id.activity_tweet_add_content_warning);
-        if (GlobalApplication.clientType == ClientType.MASTODON) {
+        if (GlobalApplication.accessToken.getType() == ClientType.MASTODON) {
             contentWarningText.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -275,7 +275,7 @@ public class PostActivity extends AppCompatActivity {
         }
 
         addLocation = findViewById(R.id.activity_tweet_add_location);
-        if (GlobalApplication.clientType == ClientType.TWITTER) {
+        if (GlobalApplication.accessToken.getType() == ClientType.TWITTER) {
             addLocation.setVisibility(View.VISIBLE);
             addLocation.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 if (isChecked){

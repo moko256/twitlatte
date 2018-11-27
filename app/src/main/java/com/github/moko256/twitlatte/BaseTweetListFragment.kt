@@ -204,7 +204,7 @@ abstract class BaseTweetListFragment : BaseListFragment() {
 
                             notifyBySnackBar(
                                     TwitterStringUtils.getDidActionStringRes(
-                                            GlobalApplication.clientType,
+                                            GlobalApplication.accessToken.type,
                                             it.second
                                     )
                             ).show()
