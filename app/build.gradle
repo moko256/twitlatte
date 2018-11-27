@@ -73,6 +73,7 @@ android {
         exclude '/tlds.yml'
         exclude '/validate.yml'
         exclude '/v*.json'
+        setMerges(Collections.EMPTY_SET)
     }
 }
 
