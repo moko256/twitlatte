@@ -67,7 +67,10 @@ abstract class AbstractVideoFragment: AbstractMediaFragment() {
                 trackSelector
         ).apply {
             prepare(generateMediaSource(
-                    OkHttpDataSourceFactory(GlobalApplication.getOkHttpClient(), null)
+                    OkHttpDataSourceFactory(
+                            GlobalApplication.getOkHttpClient(requireActivity().application),
+                            null
+                    )
             ))
 
             if (isLoop) {

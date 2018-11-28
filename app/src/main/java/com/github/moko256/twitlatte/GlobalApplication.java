@@ -18,6 +18,8 @@ package com.github.moko256.twitlatte;
 
 import android.app.Activity;
 import android.app.Application;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.widget.Toast;
@@ -65,11 +67,13 @@ import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY
  */
 public class GlobalApplication extends Application {
 
+    private final static String INTENT_CLIENT_KEY = "intent_client_key";
+
     public final static int statusCacheListLimit = 1000;
 
     private final static LruCache<Configuration, Twitter> twitterCache = new LruCache<>(4);
 
-    private static Client currentClient;
+    private Client currentClient;
 
     private final static UserCacheMap userCache = new UserCacheMap();
     private final static StatusCacheMap statusCache = new StatusCacheMap();
@@ -109,13 +113,31 @@ public class GlobalApplication extends Application {
     }
 
     public static Client getClient(Activity activity) {
-        // TODO activity.getApplication().currentClient
-        // TODO activity.getIntent() and get key
-        return currentClient;
+        GlobalApplication application = (GlobalApplication) activity.getApplication();
+        String key = activity.getIntent().getStringExtra(INTENT_CLIENT_KEY);
+        if (key != null) {
+            AccessToken accessToken = getAccountsModel(activity).get(key);
+            Client client = new Client(
+                    accessToken,
+                    application.createTwitterInstance(accessToken),
+                    new StatusCacheMap(),
+                    new UserCacheMap()
+            );
+            client.getUserCache().prepare(activity, accessToken);
+            client.getStatusCache().prepare(activity, accessToken, client.getUserCache());
+            return client;
+        } else {
+            return application.currentClient;
+        }
     }
 
-    public static Client getCurrentClient() {
-        return currentClient;
+    public static Intent setAccountKey(Intent intent, AccessToken accessToken) {
+        intent.putExtra(INTENT_CLIENT_KEY, accessToken.getKeyString());
+        return intent;
+    }
+
+    public static Client getCurrentClient(Activity activity) {
+        return ((GlobalApplication) activity.getApplication()).currentClient;
     }
 
     public void initTwitter(@NonNull AccessToken accessToken){
@@ -224,8 +246,8 @@ public class GlobalApplication extends Application {
     }
 
     @NonNull
-    public static OkHttpClient getOkHttpClient(){
-        return getOkHttpClient(currentClient.getTwitter().getConfiguration());
+    public static OkHttpClient getOkHttpClient(Context application){
+        return getOkHttpClient(((GlobalApplication) application).currentClient.getTwitter().getConfiguration());
     }
 
     @NonNull

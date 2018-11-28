@@ -19,6 +19,7 @@ package com.github.moko256.twitlatte.model
 import android.content.Context
 import com.github.moko256.twitlatte.database.TokenSQLiteOpenHelper
 import com.github.moko256.twitlatte.entity.AccessToken
+import com.github.moko256.twitlatte.entity.ClientType
 
 /**
  * Created by moko256 on 2018/03/29.
@@ -39,6 +40,10 @@ class AccountsModel(private val context: Context) {
 
     fun get(key: String): AccessToken?
             = tokens.find { accessToken -> accessToken.getKeyString() == key }
+
+    //TODO Replace more correctly method
+    fun selectFirstByType(@ClientType.ClientTypeInt type: Int): AccessToken?
+            = tokens.find { accessToken -> accessToken.type == type }
 
     fun add(accessToken: AccessToken) {
         val helper = TokenSQLiteOpenHelper(context)

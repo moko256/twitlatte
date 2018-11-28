@@ -20,6 +20,8 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.github.moko256.twitlatte.entity.AccessToken
+import com.github.moko256.twitlatte.entity.ClientType.Companion.TWITTER
 import java.util.*
 
 /**
@@ -38,10 +40,6 @@ class SplashActivity : AppCompatActivity() {
 
     private fun switchIntent(): Intent {
 
-        if (GlobalApplication.getCurrentClient() == null) {
-            return Intent(this, OAuthActivity::class.java)
-        }
-
         val intent = intent
         if (intent != null && (intent.action != null || intent.action != Intent.ACTION_MAIN)) {
 
@@ -54,15 +52,18 @@ class SplashActivity : AppCompatActivity() {
                                     val replyId = data.getQueryParameter("in_reply_to_status_id")
                                     return PostActivity.getIntent(
                                             this,
-                                            if (replyId != null) java.lang.Long.valueOf(replyId) else -1,
+                                            replyId?.toLong()?:-1,
                                             data.getQueryParameter("message")
                                     )
                                 }
-                                "status" -> return ShowTweetActivity.getIntent(this, java.lang.Long.valueOf(data.getQueryParameter("id")!!))
+                                "status" -> return ShowTweetActivity.getIntent(
+                                        this,
+                                        data.getQueryParameter("id")?.toLong()?:-1
+                                )
                                 "user" -> {
                                     val userId = data.getQueryParameter("id")
                                     return if (userId != null) {
-                                        ShowUserActivity.getIntent(this, java.lang.Long.valueOf(userId))
+                                        ShowUserActivity.getIntent(this, userId.toLong())
                                     } else {
                                         ShowUserActivity.getIntent(this, data.getQueryParameter("screen_name"))
                                     }
@@ -78,25 +79,38 @@ class SplashActivity : AppCompatActivity() {
                                     1 -> return when (lastPathSegment) {
                                         "share" -> generatePostIntent(data)
                                         "search" -> SearchResultActivity.getIntent(this, data.getQueryParameter("q"))
-                                        else -> ShowUserActivity.getIntent(this, lastPathSegment)
+                                        else -> ShowUserActivity
+                                                .getIntent(this, lastPathSegment)
+                                                .setAccountKey(
+                                                        GlobalApplication.getAccountsModel(this)
+                                                                .selectFirstByType(TWITTER)!!
+                                                )
                                     }
                                     2 -> if (pathSegments[0] == "intent" && lastPathSegment == "tweet") {
                                         return generatePostIntent(data)
                                     } else if (pathSegments[0] == "hashtag") {
-                                        return ShowUserActivity.getIntent(this, "#$lastPathSegment")
+                                        return SearchResultActivity.getIntent(this, "#$lastPathSegment")
                                     }
 
                                     3 -> {
                                         val s = pathSegments[1]
                                         if (s == "status" || s == "statuses") {
-                                            return ShowTweetActivity.getIntent(this, java.lang.Long.valueOf(lastPathSegment!!))
+                                            return ShowTweetActivity
+                                                    .getIntent(this, lastPathSegment?.toLong()?:-1)
+                                                    .setAccountKey(
+                                                            GlobalApplication.getAccountsModel(this)
+                                                                    .selectFirstByType(TWITTER)!!
+                                                    )
+
                                         }
                                     }
                                 }
 
                                 return if (data.getQueryParameter("status") != null) {
                                     PostActivity.getIntent(this, data.getQueryParameter("status"))
-                                } else Intent.createChooser(Intent(Intent.ACTION_VIEW, data), "")
+                                } else {
+                                    Intent.createChooser(Intent(Intent.ACTION_VIEW, data), "")
+                                }
 
                             }
                             "web+mastodon" -> if (data.host == "share") {
@@ -150,45 +164,45 @@ class SplashActivity : AppCompatActivity() {
 
         }
 
-        return Intent(this, MainActivity::class.java)
+        return if (GlobalApplication.getCurrentClient(this) == null) {
+            Intent(this, OAuthActivity::class.java)
+        } else {
+            Intent(this, MainActivity::class.java)
+        }
     }
 
     private fun generatePostIntent(data: Uri): Intent {
-        val tweet = StringBuilder(data.getQueryParameter("text")!!)
-        val url = data.getQueryParameter("url")
-        if (url != null) {
-            tweet.append(" ")
-                    .append(url)
+        val tweet = StringBuilder(data.getQueryParameter("text")?:"")
+
+        data.getQueryParameter("url")?.let {
+            tweet.append(" ").append(it)
         }
-        val hashtagstr = data.getQueryParameter("hashtags")
-        if (hashtagstr != null) {
-            val hashtags = hashtagstr.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-            for (hashtag in hashtags) {
-                tweet.append(" #")
-                        .append(hashtag)
-            }
+
+        data.getQueryParameter("hashtags")
+                ?.split(",")
+                ?.forEach {
+                    tweet.append(" #").append(it)
+                }
+
+        data.getQueryParameter("via")?.let {
+            tweet.append(" via @").append(it)
         }
-        val via = data.getQueryParameter("via")
-        if (via != null) {
-            tweet.append(" via @")
-                    .append(via)
-        }
-        val relatedstr = data.getQueryParameter("related")
-        if (relatedstr != null) {
-            val relates = relatedstr.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-            for (related in relates) {
-                tweet.append(" @")
-                        .append(related)
-            }
-        }
+
+        data.getQueryParameter("related")
+                ?.split(",")
+                ?.forEach {
+                    tweet.append(" @").append(it)
+                }
 
         return PostActivity.getIntent(
                 this,
-                if (data.getQueryParameter("in-reply-to") != null)
-                    java.lang.Long.valueOf(data.getQueryParameter("in-reply-to")!!)
-                else
-                    -1L,
+                data.getQueryParameter("in-reply-to")?.toLong()?:-1,
                 tweet.toString()
         )
     }
+}
+
+private fun Intent.setAccountKey(accessToken: AccessToken): Intent {
+    GlobalApplication.setAccountKey(this, accessToken)
+    return this
 }

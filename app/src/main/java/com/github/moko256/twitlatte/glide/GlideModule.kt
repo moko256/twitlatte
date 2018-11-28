@@ -59,7 +59,7 @@ class GlideModule : AppGlideModule() {
                 InputStream::class.java,
                 OkHttpUrlLoader.Factory {request ->
                     GlobalApplication
-                            .getOkHttpClient()
+                            .getOkHttpClient(context)
                             .newCall(request)
                 }
         )
