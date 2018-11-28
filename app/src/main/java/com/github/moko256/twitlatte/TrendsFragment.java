@@ -23,6 +23,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.github.moko256.twitlatte.database.CachedTrendsSQLiteOpenHelper;
+import com.github.moko256.twitlatte.entity.Client;
 import com.github.moko256.twitlatte.entity.Trend;
 
 import java.io.IOException;
@@ -30,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -53,6 +55,7 @@ public class TrendsFragment extends BaseListFragment {
 
     private CompositeDisposable disposable;
 
+    private Client client;
     private CachedTrendsSQLiteOpenHelper helper;
 
     @Override
@@ -60,9 +63,10 @@ public class TrendsFragment extends BaseListFragment {
         super.onCreate(savedInstanceState);
 
         disposable = new CompositeDisposable();
+        client = GlobalApplication.getClient(getActivity());
         helper = new CachedTrendsSQLiteOpenHelper(
                 requireContext().getApplicationContext(),
-                GlobalApplication.accessToken
+                client.getAccessToken()
         );
         List<Trend> trends = helper.getTrends();
         if (trends.size() > 0){
@@ -79,7 +83,7 @@ public class TrendsFragment extends BaseListFragment {
 
         recyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
             @Override
-            public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+            public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
                 super.getItemOffsets(outRect, view, parent, state);
                 if (parent.getChildAdapterPosition(view)==0){
                     outRect.top=Math.round(getResources().getDisplayMetrics().density*8f);
@@ -158,8 +162,8 @@ public class TrendsFragment extends BaseListFragment {
         return Single.create(
                 subscriber->{
                     try {
-                        Trends trends = GlobalApplication.twitter
-                                .getPlaceTrends(GlobalApplication.twitter.getClosestTrends(geolocation).get(0).getWoeid());
+                        Trends trends = client.getTwitter()
+                                .getPlaceTrends(client.getTwitter().getClosestTrends(geolocation).get(0).getWoeid());
                         twitter4j.Trend[] result = trends.getTrends();
                         ArrayList<Trend> arrayList = new ArrayList<>(result.length);
 

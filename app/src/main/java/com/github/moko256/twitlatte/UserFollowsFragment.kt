@@ -17,47 +17,44 @@
 package com.github.moko256.twitlatte
 
 import android.os.Bundle
-import twitter4j.Paging
-import twitter4j.ResponseList
-import twitter4j.Status
+
+import twitter4j.PagableResponseList
 import twitter4j.TwitterException
+import twitter4j.User
 
 /**
- * Created by moko256 on 2016/06/30.
+ * Created by moko256 on 2016/03/29.
  *
  * @author moko256
  */
-class UserTimelineFragment : BaseTweetListFragment(), ToolbarTitleInterface {
+class UserFollowsFragment : BaseUsersFragment(), ToolbarTitleInterface, NavigationPositionInterface {
 
-    private var userId: Long = -1L
+    private var userId = -1L
 
-    override val titleResourceId: Int
-        get() = R.string.post
+    override val titleResourceId = R.string.following
 
-    override val cachedIdsDatabaseName: String
-        get() = "UserTimeline_" + userId.toString()
+    override val navigationPosition = R.id.nav_follow_and_follower
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onInitializeList() {
         if (userId == -1L) {
             userId = arguments!!.getLong("userId", -1L)
         }
-
-        super.onCreate(savedInstanceState)
+        super.onInitializeList()
     }
 
     @Throws(TwitterException::class)
-    override fun getResponseList(paging: Paging): ResponseList<Status> {
-        return client.twitter.getUserTimeline(userId, paging)
+    override fun getResponseList(cursor: Long): PagableResponseList<User> {
+        return client.twitter.getFriendsList(userId, cursor)
     }
 
     companion object {
-
-        fun newInstance(userId: Long): UserTimelineFragment {
-            return UserTimelineFragment().apply {
-                arguments = Bundle().apply {
-                    putLong("userId", userId)
+        fun newInstance(userId: Long): UserFollowsFragment {
+            return UserFollowsFragment().apply {
+                arguments = Bundle().also { args ->
+                    args.putLong("userId", userId)
                 }
             }
         }
     }
+
 }

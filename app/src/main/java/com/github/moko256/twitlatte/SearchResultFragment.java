@@ -73,7 +73,7 @@ public class SearchResultFragment extends BaseTweetListFragment {
                     .sinceId(paging.getSinceId())
                     .maxId(paging.getMaxId())
                     .resultType(Query.ResultType.recent);
-            result.addAll(GlobalApplication.twitter.search().search(query).getTweets());
+            result.addAll(client.getTwitter().search().search(query).getTweets());
         }
         return result;
     }

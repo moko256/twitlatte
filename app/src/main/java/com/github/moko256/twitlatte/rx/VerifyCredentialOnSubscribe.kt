@@ -16,12 +16,11 @@
 
 package com.github.moko256.twitlatte.rx
 
-import com.github.moko256.twitlatte.cacheMap.UserCacheMap
 import com.github.moko256.twitlatte.converter.convertToCommonUser
+import com.github.moko256.twitlatte.entity.Client
 import com.github.moko256.twitlatte.entity.User
 import io.reactivex.SingleEmitter
 import io.reactivex.SingleOnSubscribe
-import twitter4j.Twitter
 import twitter4j.TwitterException
 
 /**
@@ -30,16 +29,14 @@ import twitter4j.TwitterException
  * @author moko256
  */
 class VerifyCredentialOnSubscribe(
-        private val client: Twitter,
-        private val cache: UserCacheMap,
-        private val userId: Long
+        private val client: Client
 ): SingleOnSubscribe<User> {
     override fun subscribe(emitter: SingleEmitter<User>) {
         try {
-            var me = cache[userId]
+            var me = client.userCache[client.accessToken.userId]
             if (me == null) {
-                me = client.verifyCredentials().convertToCommonUser()
-                cache.add(me)
+                me = client.twitter.verifyCredentials().convertToCommonUser()
+                client.userCache.add(me)
             }
             emitter.onSuccess(me)
         } catch (e: TwitterException) {

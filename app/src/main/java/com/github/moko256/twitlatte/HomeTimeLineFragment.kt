@@ -36,6 +36,6 @@ class HomeTimeLineFragment : BaseTweetListFragment(), ToolbarTitleInterface, Nav
 
     @Throws(TwitterException::class)
     override fun getResponseList(paging: Paging): ResponseList<Status> {
-        return GlobalApplication.twitter.getHomeTimeline(paging)
+        return client.twitter.getHomeTimeline(paging)
     }
 }

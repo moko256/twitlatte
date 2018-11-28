@@ -32,6 +32,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.moko256.twitlatte.converter.StatusConverterKt;
+import com.github.moko256.twitlatte.entity.Client;
 import com.github.moko256.twitlatte.entity.Post;
 import com.github.moko256.twitlatte.entity.Status;
 import com.github.moko256.twitlatte.entity.User;
@@ -68,11 +69,7 @@ import static android.view.View.VISIBLE;
 public class ShowTweetActivity extends AppCompatActivity {
 
     private CompositeDisposable disposables = new CompositeDisposable();
-    private StatusActionModelImpl statusActionModel = new StatusActionModelImpl(
-            new TwitterStatusActionRepositoryImpl(GlobalApplication.twitter),
-            GlobalApplication.statusActionQueue,
-            GlobalApplication.statusCache
-    );
+    private StatusActionModelImpl statusActionModel;
     private long statusId;
     private String shareUrl = "";
 
@@ -84,6 +81,8 @@ public class ShowTweetActivity extends AppCompatActivity {
     private EditText replyText;
     private Button replyButton;
 
+    private Client client;
+
     @SuppressLint("WrongConstant")
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -92,13 +91,20 @@ public class ShowTweetActivity extends AppCompatActivity {
 
         statusId = getIntent().getLongExtra("statusId", -1);
 
+        client = GlobalApplication.getClient(this);
+        statusActionModel = new StatusActionModelImpl(
+                new TwitterStatusActionRepositoryImpl(client.getTwitter()),
+                GlobalApplication.statusActionQueue,
+                client.getStatusCache()
+        );
+
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeAsUpIndicator(R.drawable.ic_back_white_24dp);
 
         tweetIsReply = findViewById(R.id.tweet_show_is_reply_text);
         ViewGroup statusViewFrame = findViewById(R.id.tweet_show_tweet);
-        statusViewBinder = new StatusViewBinder(GlideApp.with(this), statusViewFrame);
+        statusViewBinder = new StatusViewBinder(client.getAccessToken(), GlideApp.with(this), statusViewFrame);
         timestampText = findViewById(R.id.tweet_show_timestamp);
         viaText = findViewById(R.id.tweet_show_via);
         replyText= findViewById(R.id.tweet_show_tweet_reply_text);
@@ -136,7 +142,7 @@ public class ShowTweetActivity extends AppCompatActivity {
                             Toast.makeText(
                                     this,
                                     TwitterStringUtils.getDidActionStringRes(
-                                            GlobalApplication.accessToken.getType(),
+                                            client.getAccessToken().getType(),
                                             it.getSecond()
                                     ),
                                     Toast.LENGTH_SHORT
@@ -214,7 +220,7 @@ public class ShowTweetActivity extends AppCompatActivity {
     }
 
     private void prepareStatus() {
-        Post status = GlobalApplication.postCache.getPost(statusId);
+        Post status = client.getPostCache().getPost(statusId);
 
         if (status != null) {
             updateView(status);
@@ -243,9 +249,9 @@ public class ShowTweetActivity extends AppCompatActivity {
         return Single.create(
                 subscriber -> {
                     try {
-                        twitter4j.Status result = GlobalApplication.twitter.showStatus(statusId);
-                        GlobalApplication.statusCache.add(StatusConverterKt.convertToPost(result), false);
-                        subscriber.onSuccess(GlobalApplication.postCache.getPost(statusId));
+                        twitter4j.Status result = client.getTwitter().showStatus(statusId);
+                        client.getStatusCache().add(StatusConverterKt.convertToPost(result), false);
+                        subscriber.onSuccess(client.getPostCache().getPost(statusId));
                     } catch (TwitterException e) {
                         subscriber.tryOnError(e);
                     }
@@ -316,7 +322,7 @@ public class ShowTweetActivity extends AppCompatActivity {
                         this,
                         item.getStatus().getId(),
                         TwitterStringUtils.convertToReplyTopString(
-                                GlobalApplication.userCache.get(GlobalApplication.accessToken.getUserId()).getScreenName(),
+                                client.getUserCache().get(client.getAccessToken().getUserId()).getScreenName(),
                                 item.getUser().getScreenName(),
                                 item.getStatus().getMentions()
                         ).toString()
@@ -348,7 +354,7 @@ public class ShowTweetActivity extends AppCompatActivity {
 
         replyButton.setOnClickListener(v -> {
             replyButton.setEnabled(false);
-            PostTweetModel model = PostTweetModelCreatorKt.getInstance(GlobalApplication.twitter, getContentResolver());
+            PostTweetModel model = PostTweetModelCreatorKt.getInstance(client, getContentResolver());
             model.setTweetText(replyText.getText().toString());
             model.setInReplyToStatusId(item.getStatus().getId());
             disposables.add(
@@ -372,10 +378,10 @@ public class ShowTweetActivity extends AppCompatActivity {
     }
 
     private void resetReplyText(User postedUser, Status status){
-        User user = GlobalApplication.userCache.get(GlobalApplication.accessToken.getUserId());
+        User user = client.getUserCache().get(client.getAccessToken().getUserId());
 
         replyText.setText(TwitterStringUtils.convertToReplyTopString(
-                user != null ? user.getScreenName() : GlobalApplication.accessToken.getScreenName(),
+                user != null ? user.getScreenName() : client.getAccessToken().getScreenName(),
                 postedUser.getScreenName(),
                 status.getMentions()
         ));

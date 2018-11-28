@@ -21,6 +21,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.github.moko256.twitlatte.converter.UserConverterKt;
+import com.github.moko256.twitlatte.entity.Client;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +45,7 @@ import twitter4j.User;
  */
 public abstract class BaseUsersFragment extends BaseListFragment {
 
+    protected Client client;
     private UsersAdapter adapter;
     private List<Long> list;
     private long next_cursor;
@@ -54,6 +56,7 @@ public abstract class BaseUsersFragment extends BaseListFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        client = GlobalApplication.getClient(getActivity());
         list=new ArrayList<>();
         disposable = new CompositeDisposable();
 
@@ -86,7 +89,7 @@ public abstract class BaseUsersFragment extends BaseListFragment {
             recyclerView.setRecycledViewPool(((GetRecyclerViewPool) getActivity()).getUserListViewPool());
         }
 
-        adapter=new UsersAdapter(getContext(), list);
+        adapter=new UsersAdapter(client.getUserCache(), getContext(), list);
         recyclerView.setAdapter(adapter);
         if(!isInitializedList()){
             adapter.notifyDataSetChanged();
@@ -200,7 +203,7 @@ public abstract class BaseUsersFragment extends BaseListFragment {
                         for (User user : pageableResponseList) {
                             users.add(UserConverterKt.convertToCommonUser(user));
                         }
-                        GlobalApplication.userCache.addAll(users);
+                        client.getUserCache().addAll(users);
                         subscriber.onSuccess(pageableResponseList);
                     } catch (TwitterException e) {
                         subscriber.tryOnError(e);

@@ -17,13 +17,10 @@
 package com.github.moko256.twitlatte.model.impl
 
 import android.content.ContentResolver
-
 import com.github.moko256.mastodon.MastodonTwitterImpl
-import com.github.moko256.twitlatte.GlobalApplication
+import com.github.moko256.twitlatte.entity.Client
 import com.github.moko256.twitlatte.entity.ClientType
 import com.github.moko256.twitlatte.model.base.PostTweetModel
-
-import twitter4j.Twitter
 
 /**
  * Created by moko256 on 2017/10/23.
@@ -31,10 +28,10 @@ import twitter4j.Twitter
  * @author moko256
  */
 
-fun getInstance(twitter: Twitter, resolver: ContentResolver): PostTweetModel {
-    return if (GlobalApplication.accessToken.type == ClientType.MASTODON) {
-        com.github.moko256.twitlatte.model.impl.mastodon.PostTweetModelImpl((twitter as MastodonTwitterImpl).client, resolver)
+fun getInstance(client: Client, resolver: ContentResolver): PostTweetModel {
+    return if (client.accessToken.type == ClientType.MASTODON) {
+        com.github.moko256.twitlatte.model.impl.mastodon.PostTweetModelImpl((client.twitter as MastodonTwitterImpl).client, resolver)
     } else {
-        com.github.moko256.twitlatte.model.impl.twitter.PostTweetModelImpl(twitter, resolver)
+        com.github.moko256.twitlatte.model.impl.twitter.PostTweetModelImpl(client.twitter, resolver)
     }
 }

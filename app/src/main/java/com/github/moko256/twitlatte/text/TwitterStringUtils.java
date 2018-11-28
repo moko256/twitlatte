@@ -27,7 +27,6 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.github.moko256.mastodon.MTException;
-import com.github.moko256.twitlatte.GlobalApplication;
 import com.github.moko256.twitlatte.R;
 import com.github.moko256.twitlatte.SearchResultActivity;
 import com.github.moko256.twitlatte.ShowUserActivity;
@@ -203,26 +202,26 @@ public class TwitterStringUtils {
         }
     }
 
-    public static String convertThumbImageUrl(String baseUrl){
-        return (GlobalApplication.accessToken.getType() == ClientType.TWITTER)?
+    public static String convertThumbImageUrl(@ClientType.ClientTypeInt int type, String baseUrl){
+        return (type == ClientType.TWITTER)?
                 baseUrl + ":thumb":
                 baseUrl.replace("original", "small");
     }
 
-    public static String convertSmallImageUrl(String baseUrl){
-        return (GlobalApplication.accessToken.getType() == ClientType.TWITTER)?
+    public static String convertSmallImageUrl(@ClientType.ClientTypeInt int type, String baseUrl){
+        return (type == ClientType.TWITTER)?
                 baseUrl + ":small":
                 baseUrl.replace("original", "small");
     }
 
-    public static String convertOriginalImageUrl(String baseUrl){
-        return (GlobalApplication.accessToken.getType() == ClientType.TWITTER)?
+    public static String convertOriginalImageUrl(@ClientType.ClientTypeInt int type, String baseUrl){
+        return (type == ClientType.TWITTER)?
                 baseUrl + ":orig":
                 baseUrl;
     }
 
-    public static String convertLargeImageUrl(String baseUrl){
-        return (GlobalApplication.accessToken.getType() == ClientType.TWITTER)?
+    public static String convertLargeImageUrl(@ClientType.ClientTypeInt int type, String baseUrl){
+        return (type == ClientType.TWITTER)?
                 baseUrl + ":large":
                 baseUrl;
     }

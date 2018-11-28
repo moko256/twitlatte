@@ -38,7 +38,7 @@ class SplashActivity : AppCompatActivity() {
 
     private fun switchIntent(): Intent {
 
-        if (GlobalApplication.twitter == null) {
+        if (GlobalApplication.getCurrentClient() == null) {
             return Intent(this, OAuthActivity::class.java)
         }
 

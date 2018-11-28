@@ -23,10 +23,10 @@ import android.preference.PreferenceManager;
 import android.widget.Toast;
 
 import com.github.moko256.mastodon.MastodonTwitterImpl;
-import com.github.moko256.twitlatte.cacheMap.PostCache;
 import com.github.moko256.twitlatte.cacheMap.StatusCacheMap;
 import com.github.moko256.twitlatte.cacheMap.UserCacheMap;
 import com.github.moko256.twitlatte.entity.AccessToken;
+import com.github.moko256.twitlatte.entity.Client;
 import com.github.moko256.twitlatte.entity.ClientType;
 import com.github.moko256.twitlatte.model.AccountsModel;
 import com.github.moko256.twitlatte.net.SSLSocketFactoryCompat;
@@ -64,21 +64,19 @@ import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY
  */
 public class GlobalApplication extends Application {
 
-    public static int statusLimit;
     public final static int statusCacheListLimit = 1000;
 
     private final static LruCache<Configuration, Twitter> twitterCache = new LruCache<>(4);
-    public static Twitter twitter;
-    public static AccessToken accessToken;
+
+    private static Client currentClient;
+
+    private final static UserCacheMap userCache = new UserCacheMap();
+    private final static StatusCacheMap statusCache = new StatusCacheMap();
+
+    private AccountsModel accountsModel;
 
     public static PreferenceRepository preferenceRepository;
     public static StatusActionQueue statusActionQueue = new StatusActionQueue();
-
-    public final static UserCacheMap userCache = new UserCacheMap();
-    public final static StatusCacheMap statusCache = new StatusCacheMap();
-    public final static PostCache postCache = new PostCache(statusCache, userCache);
-
-    private AccountsModel accountsModel;
 
     @Override
     public void onCreate() {
@@ -125,20 +123,31 @@ public class GlobalApplication extends Application {
         super.onCreate();
     }
 
+    public static Client getClient(Activity activity) {
+        // TODO activity.getApplication().currentClient
+        // TODO activity.getIntent() and get key
+        return currentClient;
+    }
+
+    public static Client getCurrentClient() {
+        return currentClient;
+    }
+
     public void initTwitter(@NonNull AccessToken accessToken){
-        twitter = createTwitterInstance(accessToken);
-        GlobalApplication.accessToken = accessToken;
         userCache.prepare(this, accessToken);
-        statusCache.prepare(this, accessToken);
-        statusLimit = accessToken.getType() == ClientType.TWITTER? 200: 40;
+        statusCache.prepare(this, accessToken, userCache);
+        currentClient = new Client(
+                accessToken,
+                createTwitterInstance(accessToken),
+                statusCache,
+                userCache
+        );
     }
 
     public void clearTwitter(){
-        twitter = null;
-        accessToken = null;
+        currentClient = null;
         userCache.close();
         statusCache.close();
-        statusLimit = 0;
     }
 
     public static AccountsModel getAccountsModel(Activity activity) {
@@ -231,7 +240,7 @@ public class GlobalApplication extends Application {
 
     @NonNull
     public static OkHttpClient getOkHttpClient(){
-        return getOkHttpClient(twitter.getConfiguration());
+        return getOkHttpClient(currentClient.getTwitter().getConfiguration());
     }
 
     @NonNull

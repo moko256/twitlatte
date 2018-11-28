@@ -47,7 +47,7 @@ class UserLikeFragment : BaseTweetListFragment(), ToolbarTitleInterface {
 
     @Throws(TwitterException::class)
     override fun getResponseList(paging: Paging): ResponseList<Status> {
-        return GlobalApplication.twitter.getFavorites(userId, paging)
+        return client.twitter.getFavorites(userId, paging)
     }
 
     companion object {

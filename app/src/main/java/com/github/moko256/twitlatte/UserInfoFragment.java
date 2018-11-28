@@ -30,6 +30,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.github.moko256.twitlatte.converter.UserConverterKt;
+import com.github.moko256.twitlatte.entity.Client;
 import com.github.moko256.twitlatte.entity.Emoji;
 import com.github.moko256.twitlatte.entity.User;
 import com.github.moko256.twitlatte.glide.GlideApp;
@@ -38,6 +39,7 @@ import com.github.moko256.twitlatte.intent.AppCustomTabsKt;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
 import com.github.moko256.twitlatte.text.style.ClickableNoLineSpan;
 import com.github.moko256.twitlatte.view.EmojiToTextViewSetter;
+import com.github.moko256.twitlatte.widget.UserHeaderImageView;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.text.DateFormat;
@@ -54,6 +56,8 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import twitter4j.TwitterException;
 
+import static com.github.moko256.twitlatte.entity.ClientType.TWITTER;
+
 /**
  * Created by moko256 on 2017/01/15.
  *
@@ -63,12 +67,13 @@ import twitter4j.TwitterException;
 public class UserInfoFragment extends Fragment implements ToolbarTitleInterface {
 
     private CompositeDisposable disposable;
+    private Client client;
 
     private GlideRequests glideRequests;
 
     private SwipeRefreshLayout swipeRefreshLayout;
 
-    private ImageView header;
+    private UserHeaderImageView header;
     private ImageView icon;
 
     private TextView userNameText;
@@ -97,9 +102,10 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         disposable = new CompositeDisposable();
+        client = GlobalApplication.getClient(getActivity());
         userId = Objects.requireNonNull(getArguments()).getLong("userId");
 
-        User cachedUser = GlobalApplication.userCache.get(userId);
+        User cachedUser = client.getUserCache().get(userId);
         if (cachedUser==null){
             disposable.add(
                     updateUser()
@@ -139,6 +145,7 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
                 )));
 
         header= view.findViewById(R.id.show_user_bgimage);
+        header.setWidthPerHeight((client.getAccessToken().getType() == TWITTER)? 3: 2);
         icon= view.findViewById(R.id.show_user_image);
 
         userNameText = view.findViewById(R.id.show_user_name);
@@ -152,7 +159,7 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
         userFollowCount = view.findViewById(R.id.show_user_follow_count);
         userFollowerCount = view.findViewById(R.id.show_user_follower_count);
 
-        User cachedUser = GlobalApplication.userCache.get(userId);
+        User cachedUser = client.getUserCache().get(userId);
         if (cachedUser!=null){
             setShowUserInfo(cachedUser);
         }
@@ -259,9 +266,9 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
         return Single.create(
                 subscriber -> {
                     try {
-                        twitter4j.User user = GlobalApplication.twitter.showUser(userId);
-                        GlobalApplication.userCache.add(UserConverterKt.convertToCommonUser(user));
-                        subscriber.onSuccess(GlobalApplication.userCache.get(userId));
+                        twitter4j.User user = client.getTwitter().showUser(userId);
+                        client.getUserCache().add(UserConverterKt.convertToCommonUser(user));
+                        subscriber.onSuccess(client.getUserCache().get(userId));
                     } catch (TwitterException e) {
                         subscriber.tryOnError(e);
                     }

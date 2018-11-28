@@ -47,8 +47,9 @@ public class StatusCacheMap {
 
     private final LruCache<Long, StatusObject> cache =new LruCache<>(GlobalApplication.statusCacheListLimit / 4);
     private CachedStatusesSQLiteOpenHelper diskCache;
+    private UserCacheMap userCache;
 
-    public void prepare(Context context, AccessToken accessToken){
+    public void prepare(Context context, AccessToken accessToken, UserCacheMap userCache){
         if (diskCache != null){
             diskCache.close();
         }
@@ -56,6 +57,7 @@ public class StatusCacheMap {
             cache.evictAll();
         }
         diskCache = new CachedStatusesSQLiteOpenHelper(context, accessToken);
+        this.userCache = userCache;
     }
 
     public void close() {
@@ -74,7 +76,7 @@ public class StatusCacheMap {
 
     public void add(@Nullable final Post status, boolean incrementCount) {
         if (status != null && status.getRepeat() == null && status.getQuotedRepeatingStatus() == null) {
-            GlobalApplication.userCache.add(status.getUser());
+            userCache.add(status.getUser());
             cache.put(status.getStatus().getId(), status.getStatus());
             diskCache.addCachedStatus(status.getStatus(), incrementCount);
         } else {
@@ -148,7 +150,7 @@ public class StatusCacheMap {
 
             statuses.addAll(repeats);
 
-            GlobalApplication.userCache.addAll(users);
+            userCache.addAll(users);
 
             for (StatusObject status : statuses){
                 cache.put(StatusObjectKt.getId(status), status);

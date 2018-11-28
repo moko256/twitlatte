@@ -35,6 +35,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.github.chuross.flinglayout.FlingLayout
 import com.github.moko256.twitlatte.R
+import com.github.moko256.twitlatte.entity.ClientType
 import com.github.moko256.twitlatte.entity.Media
 import com.github.moko256.twitlatte.text.TwitterStringUtils
 
@@ -44,15 +45,21 @@ import com.github.moko256.twitlatte.text.TwitterStringUtils
  * @author moko256
  */
 private const val FRAG_MEDIA_ENTITY = "media_entity"
+private const val FRAG_CLIENT_TYPE = "client_type"
+
 private const val REQUEST_CODE_PERMISSION_STORAGE = 1
 
 abstract class AbstractMediaFragment: Fragment() {
 
     protected lateinit var media: Media
 
-    fun setMediaToArg(media: Media) {
+    @ClientType.ClientTypeInt
+    protected var type: Int = ClientType.NOTHING
+
+    fun setMediaToArg(media: Media, @ClientType.ClientTypeInt type: Int) {
         val bundle = Bundle()
         bundle.putSerializable(FRAG_MEDIA_ENTITY, media)
+        bundle.putInt(FRAG_CLIENT_TYPE, type)
 
         arguments = bundle
     }
@@ -63,6 +70,7 @@ abstract class AbstractMediaFragment: Fragment() {
         setHasOptionsMenu(true)
         showSystemUI()
         media = arguments!!.getSerializable(FRAG_MEDIA_ENTITY) as Media
+        type = arguments!!.getInt(FRAG_CLIENT_TYPE)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -145,7 +153,7 @@ abstract class AbstractMediaFragment: Fragment() {
     }
 
     private fun contentDownload() {
-        val path = media.downloadVideoUrl ?: TwitterStringUtils.convertOriginalImageUrl(media.originalUrl)
+        val path = media.downloadVideoUrl ?: TwitterStringUtils.convertOriginalImageUrl(type, media.originalUrl)
 
         val manager: DownloadManager = activity?.getSystemService(DOWNLOAD_SERVICE) as DownloadManager
 

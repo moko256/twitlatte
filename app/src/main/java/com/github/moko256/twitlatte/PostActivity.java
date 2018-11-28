@@ -42,6 +42,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.moko256.twitlatte.entity.Client;
 import com.github.moko256.twitlatte.entity.ClientType;
 import com.github.moko256.twitlatte.glide.GlideApp;
 import com.github.moko256.twitlatte.model.base.PostTweetModel;
@@ -85,6 +86,7 @@ public class PostActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_PERMISSION_LOCATION = 400;
     private static final String[] POST_VISIBILITY = {"Public", "Unlisted", "Private", "Direct"};
 
+    private Client client;
     private PostTweetModel model;
 
     private boolean isPosting = false;
@@ -113,7 +115,8 @@ public class PostActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post);
 
-        model = PostTweetModelCreatorKt.getInstance(GlobalApplication.twitter, getContentResolver());
+        client = GlobalApplication.getClient(this);
+        model = PostTweetModelCreatorKt.getInstance(client, getContentResolver());
         disposable = new CompositeDisposable();
 
         rootViewGroup= findViewById(R.id.activity_tweet_send_layout_root);
@@ -129,11 +132,7 @@ public class PostActivity extends AppCompatActivity {
 
         disposable.add(
                 Single.create(
-                        new VerifyCredentialOnSubscribe(
-                                GlobalApplication.twitter,
-                                GlobalApplication.userCache,
-                                GlobalApplication.accessToken.getUserId()
-                        ))
+                        new VerifyCredentialOnSubscribe(client))
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
@@ -231,7 +230,7 @@ public class PostActivity extends AppCompatActivity {
         postVisibility = findViewById(R.id.activity_tweet_visibility_spinner);
         contentWarningText = findViewById(R.id.tweet_text_warning);
         contentWarningEnabled = findViewById(R.id.activity_tweet_add_content_warning);
-        if (GlobalApplication.accessToken.getType() == ClientType.MASTODON) {
+        if (client.getAccessToken().getType() == ClientType.MASTODON) {
             contentWarningText.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -275,7 +274,7 @@ public class PostActivity extends AppCompatActivity {
         }
 
         addLocation = findViewById(R.id.activity_tweet_add_location);
-        if (GlobalApplication.accessToken.getType() == ClientType.TWITTER) {
+        if (client.getAccessToken().getType() == ClientType.TWITTER) {
             addLocation.setVisibility(View.VISIBLE);
             addLocation.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 if (isChecked){
@@ -503,6 +502,7 @@ public class PostActivity extends AppCompatActivity {
         toolbar = null;
         postButton = null;
         model = null;
+        client = null;
     }
 
     @Override

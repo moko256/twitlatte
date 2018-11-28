@@ -55,7 +55,7 @@ class MediaTimelineFragment : BaseTweetListFragment(), ToolbarTitleInterface {
 
     @Throws(TwitterException::class)
     override fun getResponseList(paging: Paging): ResponseList<Status> {
-        val accounts = Accounts((GlobalApplication.twitter as MastodonTwitterImpl).client)
+        val accounts = Accounts((client.twitter as MastodonTwitterImpl).client)
         try {
             return MTResponseList.convert(accounts.getStatuses(userId, true, false, false, MTRangeConverter.convert(paging)).execute())
         } catch (e: Mastodon4jRequestException) {

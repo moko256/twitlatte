@@ -20,6 +20,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.github.moko256.twitlatte.entity.ClientType;
 import com.github.moko256.twitlatte.entity.Media;
 
 import java.io.Serializable;
@@ -38,6 +39,7 @@ import androidx.viewpager.widget.ViewPager;
  */
 public class ShowMediasActivity extends AppCompatActivity {
     private static final String FRAG_MEDIA_ENTITIES="MediaEntities";
+    private static final String FRAG_CLIENT_TYPE="client_type";
     private static final String FRAG_POSITION="position";
 
     private List<Media> mediaEntities;
@@ -59,7 +61,13 @@ public class ShowMediasActivity extends AppCompatActivity {
         actionBar.setHomeAsUpIndicator(R.drawable.ic_clear_white_24dp);
 
         pager= findViewById(R.id.activity_show_image_view_pager);
-        pager.setAdapter(new MediasAdapter(getSupportFragmentManager(),mediaEntities));
+        pager.setAdapter(
+                new MediasAdapter(
+                        getSupportFragmentManager(),
+                        mediaEntities,
+                        getIntent().getIntExtra(FRAG_CLIENT_TYPE, ClientType.NOTHING)
+                )
+        );
         pager.setCurrentItem(position);
     }
 
@@ -76,9 +84,10 @@ public class ShowMediasActivity extends AppCompatActivity {
         return true;
     }
 
-    public static Intent getIntent(Context context, Media[] entities , int position){
+    public static Intent getIntent(Context context, Media[] entities, @ClientType.ClientTypeInt int type, int position){
         return new Intent(context,ShowMediasActivity.class)
                 .putExtra(FRAG_MEDIA_ENTITIES, (Serializable) Arrays.asList(entities))
+                .putExtra(FRAG_CLIENT_TYPE, type)
                 .putExtra(FRAG_POSITION,position);
     }
 }

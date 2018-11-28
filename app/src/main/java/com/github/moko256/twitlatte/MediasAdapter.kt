@@ -19,6 +19,7 @@ package com.github.moko256.twitlatte
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
+import com.github.moko256.twitlatte.entity.ClientType
 import com.github.moko256.twitlatte.entity.Media
 import com.github.moko256.twitlatte.mediaview.GifFragment
 import com.github.moko256.twitlatte.mediaview.ImageFragment
@@ -30,7 +31,11 @@ import com.github.moko256.twitlatte.mediaview.OneVideoFragment
  *
  * @author moko256
  */
-class MediasAdapter(fm: FragmentManager, private val medias: List<Media>) : FragmentPagerAdapter(fm) {
+class MediasAdapter(
+        fm: FragmentManager,
+        private val medias: List<Media>,
+        @ClientType.ClientTypeInt private val type: Int
+) : FragmentPagerAdapter(fm) {
 
     override fun getItem(position: Int): Fragment {
         val media = medias[position]
@@ -42,7 +47,7 @@ class MediasAdapter(fm: FragmentManager, private val medias: List<Media>) : Frag
             "photo" -> ImageFragment()
             else -> ImageFragment()
         }.apply {
-            setMediaToArg(media)
+            setMediaToArg(media, type)
         }
 
     }

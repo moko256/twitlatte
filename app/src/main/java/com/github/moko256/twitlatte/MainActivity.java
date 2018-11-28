@@ -33,6 +33,7 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.github.moko256.twitlatte.converter.UserConverterKt;
 import com.github.moko256.twitlatte.database.CachedUsersSQLiteOpenHelper;
 import com.github.moko256.twitlatte.entity.AccessToken;
+import com.github.moko256.twitlatte.entity.Client;
 import com.github.moko256.twitlatte.entity.Emoji;
 import com.github.moko256.twitlatte.entity.User;
 import com.github.moko256.twitlatte.glide.GlideApp;
@@ -80,6 +81,8 @@ import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY
 public class MainActivity extends AppCompatActivity implements BaseListFragment.GetViewForSnackBar, BaseTweetListFragment.GetRecyclerViewPool, BaseUsersFragment.GetRecyclerViewPool {
 
     private CompositeDisposable disposable;
+    private Client client;
+    private AccountsModel accountsModel;
 
     @Nullable
     private DrawerLayout drawer;
@@ -107,6 +110,8 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
         setContentView(R.layout.activity_main);
 
         disposable = new CompositeDisposable();
+        client = GlobalApplication.getClient(this);
+        accountsModel = GlobalApplication.getAccountsModel(this);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -165,7 +170,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                         replaceFragment(new MyFollowFollowerFragment());
                         break;
                     case R.id.nav_like:
-                        replaceFragment(UserLikeFragment.Companion.newInstance(GlobalApplication.accessToken.getUserId()));
+                        replaceFragment(UserLikeFragment.Companion.newInstance(client.getAccessToken().getUserId()));
                         break;
                     case R.id.nav_settings:
                         startActivity(new Intent(this,SettingsActivity.class));
@@ -208,7 +213,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                 changeIsDrawerAccountsSelection();
             }
 
-            if (accessToken.getUserId() != GlobalApplication.accessToken.getUserId()) {
+            if (accessToken.getUserId() != client.getAccessToken().getUserId()) {
                 GlobalApplication.preferenceRepository.putString(
                         KEY_ACCOUNT_KEY, accessToken.getKeyString()
                 );
@@ -224,8 +229,6 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                 .setCancelable(true)
                 .setPositiveButton(R.string.do_logout,
                         (dialog, i) -> {
-                            AccountsModel accountsModel = GlobalApplication.getAccountsModel(this);
-
                             AccessToken token = accountsModel.get(
                                     GlobalApplication.preferenceRepository.getString(KEY_ACCOUNT_KEY, "-1")
                             );
@@ -262,7 +265,6 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                 Single.create(
                         singleSubscriber -> {
                             try {
-                                AccountsModel accountsModel = GlobalApplication.getAccountsModel(this);
                                 List<AccessToken> accessTokens = accountsModel.getAccessTokens();
 
                                 ArrayList<User> users = new ArrayList<>(accessTokens.size());
@@ -293,7 +295,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                                 o -> {
                                     Pair<ArrayList<User>, ArrayList<AccessToken>> pairs = (Pair<ArrayList<User>, ArrayList<AccessToken>>) o;
                                     adapter.addAndUpdate(pairs.first, pairs.second);
-                                    adapter.setSelectedPosition(GlobalApplication.accessToken);
+                                    adapter.setSelectedPosition(client.getAccessToken());
                                     adapter.notifyDataSetChanged();
                                 },
                                 Throwable::printStackTrace
@@ -408,7 +410,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                 userImage,
                 "icon_image"
         );
-        startActivity(ShowUserActivity.getIntent(this, GlobalApplication.accessToken.getUserId()), animation.toBundle());
+        startActivity(ShowUserActivity.getIntent(this, client.getAccessToken().getUserId()), animation.toBundle());
     }
 
     private void addFragment(Fragment fragment){
@@ -457,12 +459,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
 
     private void updateDrawerImage(){
         disposable.add(
-                Single.create(
-                        new VerifyCredentialOnSubscribe(
-                                GlobalApplication.twitter,
-                                GlobalApplication.userCache,
-                                GlobalApplication.accessToken.getUserId()
-                        ))
+                Single.create(new VerifyCredentialOnSubscribe(client))
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
@@ -487,7 +484,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                                             disposable.addAll(set);
                                         }
                                     }
-                                    userIdText.setText(TwitterStringUtils.plusAtMark(user.getScreenName(), GlobalApplication.accessToken.getUrl()));
+                                    userIdText.setText(TwitterStringUtils.plusAtMark(user.getScreenName(), client.getAccessToken().getUrl()));
 
                                     userImage.setOnClickListener(v -> startMyUserActivity());
 

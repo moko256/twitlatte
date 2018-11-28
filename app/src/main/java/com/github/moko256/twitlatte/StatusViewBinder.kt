@@ -29,10 +29,7 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import com.github.moko256.twitlatte.entity.Repeat
-import com.github.moko256.twitlatte.entity.Status
-import com.github.moko256.twitlatte.entity.User
-import com.github.moko256.twitlatte.entity.Visibility
+import com.github.moko256.twitlatte.entity.*
 import com.github.moko256.twitlatte.glide.GlideRequests
 import com.github.moko256.twitlatte.repository.KEY_TIMELINE_IMAGE_LOAD_MODE
 import com.github.moko256.twitlatte.text.TwitterStringUtils
@@ -47,7 +44,11 @@ import io.reactivex.disposables.Disposable
  *
  * @author moko256
  */
-class StatusViewBinder(private val glideRequests: GlideRequests, private val viewGroup: ViewGroup) {
+class StatusViewBinder(
+        private val accessToken: AccessToken,
+        private val glideRequests: GlideRequests,
+        private val viewGroup: ViewGroup
+) {
     private val disposable = CompositeDisposable()
 
     private var hasStatus = false
@@ -124,7 +125,7 @@ class StatusViewBinder(private val glideRequests: GlideRequests, private val vie
         if (repeatedUser != null) {
             repeatUserName.visibility = View.VISIBLE
             repeatUserName.text = viewGroup.context.getString(
-                    TwitterStringUtils.getRepeatedByStringRes(GlobalApplication.accessToken.type),
+                    TwitterStringUtils.getRepeatedByStringRes(accessToken.type),
                     repeatedUser.name,
                     TwitterStringUtils.plusAtMark(repeatedUser.screenName)
             )
@@ -260,7 +261,7 @@ class StatusViewBinder(private val glideRequests: GlideRequests, private val vie
             )
             if (quotedStatus.medias?.isNotEmpty() == true) {
                 quoteTweetImages.visibility = View.VISIBLE
-                quoteTweetImages.setMediaEntities(quotedStatus.medias, quotedStatus.isSensitive)
+                quoteTweetImages.setMediaEntities(quotedStatus.medias, accessToken.type, quotedStatus.isSensitive)
                 disposable.add(object: Disposable {
                     override fun isDisposed() = false
 
@@ -281,7 +282,7 @@ class StatusViewBinder(private val glideRequests: GlideRequests, private val vie
 
         if (medias?.isNotEmpty() == true) {
             imageTableView.visibility = View.VISIBLE
-            imageTableView.setMediaEntities(medias, status.isSensitive)
+            imageTableView.setMediaEntities(medias, accessToken.type, status.isSensitive)
             disposable.add(object: Disposable {
                 override fun isDisposed() = false
 
@@ -316,7 +317,7 @@ class StatusViewBinder(private val glideRequests: GlideRequests, private val vie
                 }
             }
         } else {
-            if (user != null && (!user.isProtected || user.id == GlobalApplication.accessToken.userId)) {
+            if (user != null && (!user.isProtected || user.id == accessToken.userId)) {
                 isRepeatEnabled = true
                 repeatIconResourceId = R.drawable.repeat_button_stateful
             } else {

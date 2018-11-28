@@ -36,6 +36,6 @@ class MentionsFragment : BaseTweetListFragment(), ToolbarTitleInterface, Navigat
 
     @Throws(TwitterException::class)
     override fun getResponseList(paging: Paging): ResponseList<Status> {
-        return GlobalApplication.twitter.getMentionsTimeline(paging)
+        return client.twitter.getMentionsTimeline(paging)
     }
 }

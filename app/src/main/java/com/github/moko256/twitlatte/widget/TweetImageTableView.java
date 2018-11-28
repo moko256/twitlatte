@@ -29,6 +29,7 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.github.moko256.twitlatte.GlobalApplication;
 import com.github.moko256.twitlatte.R;
 import com.github.moko256.twitlatte.ShowMediasActivity;
+import com.github.moko256.twitlatte.entity.ClientType;
 import com.github.moko256.twitlatte.entity.Media;
 import com.github.moko256.twitlatte.glide.GlideApp;
 import com.github.moko256.twitlatte.glide.GlideRequests;
@@ -56,6 +57,9 @@ public class TweetImageTableView extends GridLayout {
     private final ImageView markImage[] = new ImageView[4];
 
     private Media medias[];
+
+    @ClientType.ClientTypeInt
+    private int type = ClientType.NOTHING;
 
     private boolean isOpen = true;
 
@@ -133,7 +137,7 @@ public class TweetImageTableView extends GridLayout {
             int finalI = i;
             containers[i].setOnClickListener(v -> {
                 if (isOpen){
-                    getContext().startActivity(ShowMediasActivity.getIntent(getContext(), medias, finalI));
+                    getContext().startActivity(ShowMediasActivity.getIntent(getContext(), medias, type, finalI));
                 } else {
                     isOpen = true;
                     updateView();
@@ -192,8 +196,13 @@ public class TweetImageTableView extends GridLayout {
         return params;
     }
 
-    public void setMediaEntities(Media[] mediaEntities, boolean sensitive) {
+    public void setMediaEntities(
+            Media[] mediaEntities,
+            @ClientType.ClientTypeInt int type,
+            boolean sensitive
+    ) {
         this.medias = mediaEntities;
+        this.type = type;
         isOpen = !GlobalApplication.preferenceRepository.getString(KEY_TIMELINE_IMAGE_LOAD_MODE, "normal").equals("none")
                 && !(sensitive && GlobalApplication.preferenceRepository.getBoolean(KEY_HIDE_SENSITIVE_MEDIA, true));
         updateImageNumber();
@@ -217,8 +226,8 @@ public class TweetImageTableView extends GridLayout {
                 requests
                         .load(
                                 GlobalApplication.preferenceRepository.getString(KEY_TIMELINE_IMAGE_LOAD_MODE, "normal").equals("normal")?
-                                        TwitterStringUtils.convertSmallImageUrl(url):
-                                        TwitterStringUtils.convertThumbImageUrl(url)
+                                        TwitterStringUtils.convertSmallImageUrl(type, url):
+                                        TwitterStringUtils.convertThumbImageUrl(type, url)
                         )
                         .transition(DrawableTransitionOptions.withCrossFade())
                         .into(imageView);
@@ -246,8 +255,8 @@ public class TweetImageTableView extends GridLayout {
                     requests
                             .load(
                                     timelineImageLoadMode.equals("normal")?
-                                            TwitterStringUtils.convertSmallImageUrl(url):
-                                            TwitterStringUtils.convertThumbImageUrl(url)
+                                            TwitterStringUtils.convertSmallImageUrl(type, url):
+                                            TwitterStringUtils.convertThumbImageUrl(type, url)
                             )
                             .transform(new BlurTransformation())
                             .transition(DrawableTransitionOptions.withCrossFade())

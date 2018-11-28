@@ -33,6 +33,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.github.moko256.twitlatte.converter.convertToPost
 import com.github.moko256.twitlatte.database.CachedIdListSQLiteOpenHelper
+import com.github.moko256.twitlatte.entity.Client
 import com.github.moko256.twitlatte.entity.EventType
 import com.github.moko256.twitlatte.entity.Post
 import com.github.moko256.twitlatte.entity.UpdateEvent
@@ -58,9 +59,9 @@ import twitter4j.TwitterException
 abstract class BaseTweetListFragment : BaseListFragment() {
 
     protected var adapter: StatusesAdapter? = null
+    protected lateinit var client: Client
 
     private lateinit var disposable: CompositeDisposable
-
     private lateinit var listViewModel: ListViewModel
 
     private var adapterObservableBinder: ((UpdateEvent) -> Unit)? = null
@@ -70,6 +71,7 @@ abstract class BaseTweetListFragment : BaseListFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        client = GlobalApplication.getClient(activity)
         listViewModel = ViewModelProviders.of(this).get(ListViewModel::class.java)
         if (!listViewModel.initilized) {
             listViewModel.listModel = ListModelImpl(
@@ -90,18 +92,19 @@ abstract class BaseTweetListFragment : BaseListFragment() {
                             }
                         }
                     },
+                    client,
                     CachedIdListSQLiteOpenHelper(
                             requireContext().applicationContext,
-                            GlobalApplication.accessToken,
+                            client.accessToken,
                             cachedIdsDatabaseName
                     )
             )
             listViewModel.statusActionModel = StatusActionModelImpl(
                     TwitterStatusActionRepositoryImpl(
-                            GlobalApplication.twitter
+                            client.twitter
                     ),
                     GlobalApplication.statusActionQueue,
-                    GlobalApplication.statusCache
+                    client.statusCache
             )
             listViewModel.start()
         }
@@ -125,7 +128,12 @@ abstract class BaseTweetListFragment : BaseListFragment() {
             recyclerView.setRecycledViewPool((activity as GetRecyclerViewPool).tweetListViewPool)
         }
 
-        adapter = StatusesAdapter(context, listViewModel.listModel.getIdsList())
+        adapter = StatusesAdapter(
+                client,
+                GlobalApplication.preferenceRepository,
+                context,
+                listViewModel.listModel.getIdsList()
+        )
         adapter!!.setOnLoadMoreClick { position -> listViewModel.listModel.loadOnGap(position) }
         adapter!!.setOnFavoriteClick { _, id, hasFavorited ->
             if (hasFavorited) {
@@ -204,7 +212,7 @@ abstract class BaseTweetListFragment : BaseListFragment() {
 
                             notifyBySnackBar(
                                     TwitterStringUtils.getDidActionStringRes(
-                                            GlobalApplication.accessToken.type,
+                                            client.accessToken.type,
                                             it.second
                                     )
                             ).show()

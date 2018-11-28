@@ -25,6 +25,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.github.moko256.twitlatte.cacheMap.UserCacheMap;
 import com.github.moko256.twitlatte.entity.Emoji;
 import com.github.moko256.twitlatte.entity.User;
 import com.github.moko256.twitlatte.glide.GlideApp;
@@ -47,10 +48,12 @@ import io.reactivex.disposables.Disposable;
  */
 class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> {
 
+    private final UserCacheMap userCache;
     private final List<Long> data;
     private final Context context;
 
-    UsersAdapter(Context context, List<Long> data) {
+    UsersAdapter(UserCacheMap userCache, Context context, List<Long> data) {
+        this.userCache = userCache;
         this.context = context;
         this.data = data;
 
@@ -70,7 +73,7 @@ class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, final int i) {
-        User item=GlobalApplication.userCache.get(data.get(i));
+        User item = userCache.get(data.get(i));
 
         viewHolder.request
                 .load(item.get400x400ProfileImageURLHttps())

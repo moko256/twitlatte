@@ -20,8 +20,6 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.View
 import androidx.appcompat.widget.AppCompatImageView
-import com.github.moko256.twitlatte.GlobalApplication
-import com.github.moko256.twitlatte.entity.ClientType
 
 /**
  * Created by moko256 on 2017/07/15.
@@ -34,6 +32,7 @@ class UserHeaderImageView @JvmOverloads constructor(
         attrs: AttributeSet? = null,
         defStyle: Int = 0
 ): AppCompatImageView(context, attrs, defStyle) {
+    var widthPerHeight: Int = 1
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val modifiedWidthMeasureSpec = View.MeasureSpec.makeMeasureSpec(
@@ -41,7 +40,7 @@ class UserHeaderImageView @JvmOverloads constructor(
                 View.MeasureSpec.EXACTLY
         )
         val modifiedHeightMeasureSpec = View.MeasureSpec.makeMeasureSpec(
-                View.MeasureSpec.getSize(widthMeasureSpec) / if (GlobalApplication.accessToken.type == ClientType.TWITTER) 3 else 2,
+                View.MeasureSpec.getSize(widthMeasureSpec) / widthPerHeight,
                 View.MeasureSpec.EXACTLY
         )
         setMeasuredDimension(modifiedWidthMeasureSpec, modifiedHeightMeasureSpec)

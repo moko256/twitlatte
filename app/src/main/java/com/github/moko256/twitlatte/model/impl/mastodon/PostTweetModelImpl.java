@@ -19,8 +19,6 @@ package com.github.moko256.twitlatte.model.impl.mastodon;
 import android.content.ContentResolver;
 import android.net.Uri;
 
-import com.github.moko256.mastodon.MastodonTwitterImpl;
-import com.github.moko256.twitlatte.GlobalApplication;
 import com.github.moko256.twitlatte.model.base.PostTweetModel;
 import com.sys1yagi.mastodon4j.MastodonClient;
 import com.sys1yagi.mastodon4j.api.entity.Attachment;
@@ -33,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import androidx.annotation.NonNull;
 import io.reactivex.Completable;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -83,13 +82,14 @@ public class PostTweetModelImpl implements PostTweetModel {
         this.possiblySensitive = possiblySensitive;
     }
 
+    @NonNull
     @Override
     public String getTweetText() {
         return tweetText;
     }
 
     @Override
-    public void setTweetText(String tweetText) {
+    public void setTweetText(@NonNull String tweetText) {
         this.tweetText = tweetText;
     }
 
@@ -130,6 +130,7 @@ public class PostTweetModelImpl implements PostTweetModel {
         }
     }
 
+    @NonNull
     @Override
     public List<Uri> getUriList() {
         return uriList;
@@ -160,6 +161,7 @@ public class PostTweetModelImpl implements PostTweetModel {
         this.visibility = visibility;
     }
 
+    @NonNull
     @Override
     public Completable postTweet() {
         return Completable.create(subscriber -> {
@@ -170,7 +172,7 @@ public class PostTweetModelImpl implements PostTweetModel {
                     for (Uri uri: uriList) {
                         InputStream image = contentResolver.openInputStream(uri);
                         String name = uri.getLastPathSegment();
-                        Attachment attachment = new Media(((MastodonTwitterImpl) GlobalApplication.twitter).client)
+                        Attachment attachment = new Media(client)
                                 .postMedia(
                                         MultipartBody.Part.createFormData(
                                                 "file",

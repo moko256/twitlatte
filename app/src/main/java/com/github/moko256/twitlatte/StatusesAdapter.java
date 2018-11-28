@@ -24,6 +24,7 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.github.moko256.twitlatte.entity.Client;
 import com.github.moko256.twitlatte.entity.Post;
 import com.github.moko256.twitlatte.entity.Repeat;
 import com.github.moko256.twitlatte.entity.Status;
@@ -62,6 +63,8 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     private final List<Long> data;
     private final Context context;
+    private final Client client;
+    private final PreferenceRepository conf;
 
     public OnLoadMoreClickListener onLoadMoreClick;
 
@@ -70,10 +73,11 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     public boolean shouldShowMediaOnly = false;
 
-    StatusesAdapter(Context context, List<Long> data) {
+    StatusesAdapter(Client client, PreferenceRepository preferenceRepository, Context context, List<Long> data) {
+        this.client = client;
+        this.conf = preferenceRepository;
         this.context = context;
         this.data = data;
-
         setHasStableIds(true);
     }
 
@@ -100,7 +104,7 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         if (data.get(position) == -1L ){
             return R.layout.layout_list_load_more_text;
         }
-        Post post = GlobalApplication.postCache.getPost(data.get(position));
+        Post post = client.getPostCache().getPost(data.get(position));
 
         if (!(post != null && post.getStatus() != null)){
             return R.layout.layout_list_load_more_text;
@@ -109,7 +113,6 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         Status item = post.getStatus();
         User user = post.getUser();
 
-        PreferenceRepository conf = GlobalApplication.preferenceRepository;
         if((conf.getBoolean(KEY_IS_PATTERN_TWEET_MUTE, false) && conf.getPattern(KEY_TWEET_MUTE_PATTERN).matcher(item.getText()).find()) ||
                 (conf.getBoolean(KEY_IS_PATTERN_USER_SCREEN_NAME_MUTE, false) && conf.getPattern(KEY_USER_SCREEN_NAME_MUTE_PATTERN).matcher(user.getScreenName()).find()) ||
                 (conf.getBoolean(KEY_IS_PATTERN_USER_NAME_MUTE, false) && conf.getPattern(KEY_USER_NAME_MUTE_PATTERN).matcher(user.getName()).find()) ||
@@ -163,7 +166,7 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 onLoadMoreClick.onClick(i);
             });
         } else {
-            Post post = GlobalApplication.postCache.getPost(data.get(i));
+            Post post = client.getPostCache().getPost(data.get(i));
             if (post != null) {
                 if (viewHolder instanceof StatusViewHolder) {
                     ((StatusViewHolder) viewHolder).setStatus(
@@ -204,7 +207,7 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         StatusViewHolder(GlideRequests glideRequests, ViewGroup itemView) {
             super(itemView);
-            statusViewBinder = new StatusViewBinder(glideRequests, itemView);
+            statusViewBinder = new StatusViewBinder(client.getAccessToken(), glideRequests, itemView);
         }
 
         void setStatus(User repeatedUser, Repeat repeat, User user, Status status, User quotedStatusUser, Status quotedStatus) {
@@ -256,7 +259,7 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                             context,
                             status.getId(),
                             TwitterStringUtils.convertToReplyTopString(
-                                    GlobalApplication.userCache.get(GlobalApplication.accessToken.getUserId()).getScreenName(),
+                                    client.getUserCache().get(client.getAccessToken().getUserId()).getScreenName(),
                                     user.getScreenName(),
                                     status.getMentions()
                             ).toString()
@@ -311,7 +314,11 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         void setStatus(Status status) {
             if (status != null) {
-                tweetImageTableView.setMediaEntities(status.getMedias(), status.isSensitive());
+                tweetImageTableView.setMediaEntities(
+                        status.getMedias(),
+                        client.getAccessToken().getType(),
+                        status.isSensitive()
+                );
                 tweetImageTableView.setOnLongClickListener(v -> {
                     context.startActivity(ShowTweetActivity.getIntent(context, status.getId()));
                     return true;

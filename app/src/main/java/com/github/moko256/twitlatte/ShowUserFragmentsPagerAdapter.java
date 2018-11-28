@@ -19,6 +19,7 @@ package com.github.moko256.twitlatte;
 import android.content.Context;
 
 import com.github.moko256.twitlatte.entity.AccessToken;
+import com.github.moko256.twitlatte.entity.Client;
 import com.github.moko256.twitlatte.entity.ClientType;
 import com.github.moko256.twitlatte.widget.FragmentPagerAdapter;
 
@@ -49,10 +50,10 @@ public class ShowUserFragmentsPagerAdapter extends FragmentPagerAdapter {
     final private Context context;
     final private long userId;
 
-    ShowUserFragmentsPagerAdapter(FragmentManager fm, Context context, long userId) {
+    ShowUserFragmentsPagerAdapter(Client client, FragmentManager fm, Context context, long userId) {
         super(fm);
 
-        AccessToken accessToken = GlobalApplication.accessToken;
+        AccessToken accessToken = client.getAccessToken();
         list = new ArrayList<>(5);
         list.add(FRAGMENT_INFO);
         list.add(FRAGMENT_TIMELINE);
@@ -81,9 +82,9 @@ public class ShowUserFragmentsPagerAdapter extends FragmentPagerAdapter {
             case FRAGMENT_MEDIA:
                 return MediaTimelineFragment.Companion.newInstance(userId);
             case FRAGMENT_FOLLOW:
-                return UserFollowsFragment.newInstance(userId);
+                return UserFollowsFragment.Companion.newInstance(userId);
             case FRAGMENT_FOLLOWER:
-                return UserFollowersFragment.newInstance(userId);
+                return UserFollowersFragment.Companion.newInstance(userId);
             default:
                 return null;
         }

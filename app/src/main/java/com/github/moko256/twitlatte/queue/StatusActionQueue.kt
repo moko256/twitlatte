@@ -30,6 +30,7 @@ import java.util.concurrent.TimeUnit
  *
  * @author moko256
  */
+// TODO support multi accounts
 class StatusActionQueue(
         private val queueCount: Int = 20,
         private val delay: Long = 2L,

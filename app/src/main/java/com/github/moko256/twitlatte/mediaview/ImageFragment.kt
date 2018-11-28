@@ -62,15 +62,15 @@ class ImageFragment: AbstractMediaFragment() {
         val url = media.originalUrl
 
         requests
-                .load(TwitterStringUtils.convertLargeImageUrl(url))
+                .load(TwitterStringUtils.convertLargeImageUrl(type, url))
                 .override(SIZE_ORIGINAL)
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .thumbnail(
                         requests.load(
                                 if (GlobalApplication.preferenceRepository.getString(KEY_TIMELINE_IMAGE_LOAD_MODE, "normal") == "normal") {
-                                    TwitterStringUtils.convertSmallImageUrl(url)
+                                    TwitterStringUtils.convertSmallImageUrl(type, url)
                                 } else {
-                                    TwitterStringUtils.convertThumbImageUrl(url)
+                                    TwitterStringUtils.convertThumbImageUrl(type, url)
                                 }
                         ).override(SIZE_ORIGINAL)
                 )

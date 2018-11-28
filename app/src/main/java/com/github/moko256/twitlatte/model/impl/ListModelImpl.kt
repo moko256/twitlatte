@@ -18,6 +18,7 @@ package com.github.moko256.twitlatte.model.impl
 
 import com.github.moko256.twitlatte.GlobalApplication
 import com.github.moko256.twitlatte.database.CachedIdListSQLiteOpenHelper
+import com.github.moko256.twitlatte.entity.Client
 import com.github.moko256.twitlatte.entity.EventType
 import com.github.moko256.twitlatte.entity.Post
 import com.github.moko256.twitlatte.entity.UpdateEvent
@@ -36,6 +37,7 @@ import io.reactivex.subjects.PublishSubject
  */
 class ListModelImpl(
         private val api: ListServerRepository<Post>,
+        private val client: Client,
         private val database: CachedIdListSQLiteOpenHelper
 ): ListModel {
 
@@ -86,9 +88,9 @@ class ListModelImpl(
         requests.add(
                 Completable.create { status ->
                     try {
-                        api.get(limit = GlobalApplication.statusLimit)
+                        api.get(limit = client.statusLimit)
                                 .apply {
-                                    GlobalApplication.statusCache.addAll(this)
+                                    client.statusCache.addAll(this)
                                 }
                                 .map { it.id }
                                 .let {
@@ -130,10 +132,10 @@ class ListModelImpl(
                     try {
                         api.get(
                                 sinceId = sinceId,
-                                limit = GlobalApplication.statusLimit
+                                limit = client.statusLimit
                         ).apply {
                             if (isNotEmpty()) {
-                                GlobalApplication.statusCache.addAll(this, excludeId)
+                                client.statusCache.addAll(this, excludeId)
 
                                 val ids = map { it.id }.toMutableList()
 
@@ -184,10 +186,10 @@ class ListModelImpl(
                     try {
                         api.get(
                                 maxId = list[list.size - 1] - 1L,
-                                limit = GlobalApplication.statusLimit
+                                limit = client.statusLimit
                         ).apply {
                             if (isNotEmpty()) {
-                                GlobalApplication.statusCache.addAll(this)
+                                client.statusCache.addAll(this)
 
                                 val ids = map { it.id }
 
@@ -237,10 +239,10 @@ class ListModelImpl(
                         api.get(
                                 sinceId = sinceId,
                                 maxId = list[position -1] - 1L,
-                                limit = GlobalApplication.statusLimit
+                                limit = client.statusLimit
                         ).apply {
                             if (isNotEmpty()) {
-                                GlobalApplication.statusCache.addAll(this, excludeId)
+                                client.statusCache.addAll(this, excludeId)
 
                                 val ids = map { it.id }.toMutableList()
 
@@ -285,7 +287,7 @@ class ListModelImpl(
             val subList = list.subList(position + GlobalApplication.statusCacheListLimit, list.size)
             database.deleteIds(subList)
 
-            GlobalApplication.statusCache.delete(subList)
+            client.statusCache.delete(subList)
         }
     }
 
