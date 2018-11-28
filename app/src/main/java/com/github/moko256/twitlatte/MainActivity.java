@@ -218,6 +218,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                         KEY_ACCOUNT_KEY, accessToken.getKeyString()
                 );
                 ((GlobalApplication) getApplication()).initTwitter(accessToken);
+                client = GlobalApplication.getClient(this);
                 adapter.updateSelectedPosition(accessToken);
                 updateDrawerImage();
                 clearAndPrepareFragment();
@@ -242,6 +243,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                                         KEY_ACCOUNT_KEY, accessToken.getKeyString()
                                 );
                                 ((GlobalApplication) getApplication()).initTwitter(accessToken);
+                                client = GlobalApplication.getClient(this);
                                 adapter.updateSelectedPosition(accessToken);
                                 updateDrawerImage();
                                 clearAndPrepareFragment();
