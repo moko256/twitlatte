@@ -20,6 +20,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
 
+import com.github.moko256.twitlatte.converter.ThemePreferenceConverterKt;
 import com.github.moko256.twitlatte.entity.AccessToken;
 import com.github.moko256.twitlatte.intent.AppCustomTabsKt;
 import com.github.moko256.twitlatte.model.AccountsModel;
@@ -133,14 +134,9 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             ListPreference nowThemeMode=(ListPreference) findPreference(KEY_NIGHT_MODE);
             nowThemeMode.setOnPreferenceChangeListener(
                     (preference, newValue) -> {
-                        switch(String.valueOf(newValue)){
-                            case "mode_night_no":
-                                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);break;
-                            case "mode_night_auto":AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_AUTO);break;
-                            case "mode_night_follow_system":AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);break;
-                            case "mode_night_yes":AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);break;
-                            default:AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-                        }
+                        AppCompatDelegate.setDefaultNightMode(
+                                ThemePreferenceConverterKt.convertToAppCompatNightThemeMode(String.valueOf(newValue))
+                        );
                         return true;
                     }
             );

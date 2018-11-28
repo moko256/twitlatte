@@ -25,6 +25,7 @@ import android.widget.Toast;
 import com.github.moko256.mastodon.MastodonTwitterImpl;
 import com.github.moko256.twitlatte.cacheMap.StatusCacheMap;
 import com.github.moko256.twitlatte.cacheMap.UserCacheMap;
+import com.github.moko256.twitlatte.converter.ThemePreferenceConverterKt;
 import com.github.moko256.twitlatte.entity.AccessToken;
 import com.github.moko256.twitlatte.entity.Client;
 import com.github.moko256.twitlatte.entity.ClientType;
@@ -85,27 +86,11 @@ public class GlobalApplication extends Application {
         );
 
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
-
-        @AppCompatDelegate.NightMode
-        int mode=AppCompatDelegate.MODE_NIGHT_NO;
-
-        switch(preferenceRepository.getString(KEY_NIGHT_MODE,"mode_night_no_value")){
-
-            case "mode_night_no":
-                mode=AppCompatDelegate.MODE_NIGHT_NO;
-                break;
-            case "mode_night_auto":
-                mode=AppCompatDelegate.MODE_NIGHT_AUTO;
-                break;
-            case "mode_night_follow_system":
-                mode=AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM;
-                break;
-            case "mode_night_yes":
-                mode=AppCompatDelegate.MODE_NIGHT_YES;
-                break;
-        }
-
-        AppCompatDelegate.setDefaultNightMode(mode);
+        AppCompatDelegate.setDefaultNightMode(
+                ThemePreferenceConverterKt.convertToAppCompatNightThemeMode(
+                        preferenceRepository.getString(KEY_NIGHT_MODE,"mode_night_no_value")
+                )
+        );
 
         accountsModel = new AccountsModel(this);
 
