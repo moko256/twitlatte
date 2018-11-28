@@ -35,6 +35,7 @@ import com.github.moko256.twitlatte.model.AccountsModel;
 import com.github.moko256.twitlatte.net.SSLSocketFactoryCompat;
 import com.github.moko256.twitlatte.queue.StatusActionQueue;
 import com.github.moko256.twitlatte.repository.PreferenceRepository;
+import com.github.moko256.twitlatte.text.TwitterStringUtils;
 
 import java.lang.reflect.Field;
 import java.security.KeyStore;
@@ -125,6 +126,14 @@ public class GlobalApplication extends Application {
             );
             client.getUserCache().prepare(activity, accessToken);
             client.getStatusCache().prepare(activity, accessToken, client.getUserCache());
+            Toast.makeText(
+                    activity,
+                    TwitterStringUtils.plusAtMark(
+                            accessToken.getScreenName(),
+                            accessToken.getUrl()
+                    ),
+                    Toast.LENGTH_SHORT
+            ).show();
             return client;
         } else {
             return application.currentClient;
