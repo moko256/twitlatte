@@ -32,20 +32,10 @@ import com.github.moko256.twitlatte.entity.AccessToken;
 import com.github.moko256.twitlatte.entity.Client;
 import com.github.moko256.twitlatte.entity.ClientType;
 import com.github.moko256.twitlatte.model.AccountsModel;
-import com.github.moko256.twitlatte.net.SSLSocketFactoryCompat;
+import com.github.moko256.twitlatte.net.CompatSocketFactoryReplacerKt;
 import com.github.moko256.twitlatte.queue.StatusActionQueue;
 import com.github.moko256.twitlatte.repository.PreferenceRepository;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
-
-import java.lang.reflect.Field;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
-
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.TrustManagerFactory;
-import javax.net.ssl.X509TrustManager;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -221,37 +211,8 @@ public class GlobalApplication extends Application {
 
     private static void replaceCompatibleOkHttpClient(Configuration conf){
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
-            AlternativeHttpClientImpl httpClient = getT4jHttpClient(conf);
-            OkHttpClient oldClient = httpClient.getOkHttpClient();
-            if (!(oldClient.sslSocketFactory() instanceof SSLSocketFactoryCompat)){
-                try {
-                    X509TrustManager trustManager = systemDefaultTrustManager();
-
-                    Field field = AlternativeHttpClientImpl.class.getDeclaredField("okHttpClient");
-                    field.setAccessible(true);
-                    field.set(
-                            httpClient,
-                            oldClient.newBuilder()
-                                    .sslSocketFactory(new SSLSocketFactoryCompat(trustManager), trustManager)
-                                    .build()
-                    );
-                } catch (NoSuchFieldException | IllegalAccessException | NoSuchAlgorithmException | KeyStoreException e) {
-                    e.printStackTrace();
-                }
-            }
+            CompatSocketFactoryReplacerKt.replaceSocketFactory(getT4jHttpClient(conf));
         }
-    }
-
-    private static X509TrustManager systemDefaultTrustManager() throws NoSuchAlgorithmException, KeyStoreException, IllegalStateException {
-        TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(
-                TrustManagerFactory.getDefaultAlgorithm());
-        trustManagerFactory.init((KeyStore) null);
-        TrustManager[] trustManagers = trustManagerFactory.getTrustManagers();
-        if (trustManagers.length != 1 || !(trustManagers[0] instanceof X509TrustManager)) {
-            throw new IllegalStateException("Unexpected default trust managers:"
-                    + Arrays.toString(trustManagers));
-        }
-        return (X509TrustManager) trustManagers[0];
     }
 
     @NonNull
