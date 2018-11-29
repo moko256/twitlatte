@@ -202,7 +202,7 @@ fun Context.getOkHttpClient() =
         (this as GlobalApplication).currentClient!!.twitter.configuration.getOkHttpClient()
 
 fun Configuration.getOkHttpClient() =
-        replaceCompatibleOkHttpClient().getT4jHttpClient().okHttpClient
+        replaceCompatibleOkHttpClient().getT4jHttpClient().okHttpClient!!
 
 private fun Configuration.getT4jHttpClient() =
         HttpClientFactory.getInstance(this.httpClientConfiguration) as AlternativeHttpClientImpl
