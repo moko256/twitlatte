@@ -18,7 +18,7 @@ package com.github.moko256.twitlatte.cacheMap;
 
 import android.content.Context;
 
-import com.github.moko256.twitlatte.GlobalApplication;
+import com.github.moko256.twitlatte.GlobalApplicationKt;
 import com.github.moko256.twitlatte.database.CachedStatusesSQLiteOpenHelper;
 import com.github.moko256.twitlatte.entity.AccessToken;
 import com.github.moko256.twitlatte.entity.Post;
@@ -45,7 +45,7 @@ import androidx.collection.LruCache;
 
 public class StatusCacheMap {
 
-    private final LruCache<Long, StatusObject> cache =new LruCache<>(GlobalApplication.statusCacheListLimit / 4);
+    private final LruCache<Long, StatusObject> cache =new LruCache<>(GlobalApplicationKt.LIMIT_OF_SIZE_OF_STATUSES_LIST / 4);
     private CachedStatusesSQLiteOpenHelper diskCache;
     private UserCacheMap userCache;
 

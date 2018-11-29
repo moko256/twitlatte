@@ -46,7 +46,7 @@ public class TrendsActivity extends AppCompatActivity {
         actionBar.setHomeAsUpIndicator(R.drawable.ic_back_white_24dp);
 
         if (savedInstanceState == null &&
-                GlobalApplication.getClient(this).getAccessToken().getType()
+                GlobalApplicationKt.getClient(this).getAccessToken().getType()
                         == ClientType.TWITTER
                 ) {
             getSupportFragmentManager()

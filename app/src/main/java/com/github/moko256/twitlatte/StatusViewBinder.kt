@@ -169,7 +169,7 @@ class StatusViewBinder(
             replyUserName.visibility = View.GONE
         }
 
-        val timelineImageLoadMode = GlobalApplication.preferenceRepository.getString(KEY_TIMELINE_IMAGE_LOAD_MODE, "normal")
+        val timelineImageLoadMode = preferenceRepository.getString(KEY_TIMELINE_IMAGE_LOAD_MODE, "normal")
         if (timelineImageLoadMode != "none") {
             glideRequests
                     .load(

@@ -110,8 +110,8 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
         setContentView(R.layout.activity_main);
 
         disposable = new CompositeDisposable();
-        client = GlobalApplication.getClient(this);
-        accountsModel = GlobalApplication.getAccountsModel(this);
+        client = GlobalApplicationKt.getClient(this);
+        accountsModel = GlobalApplicationKt.getAccountsModel(this);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -214,11 +214,11 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
             }
 
             if (accessToken.getUserId() != client.getAccessToken().getUserId()) {
-                GlobalApplication.preferenceRepository.putString(
+                GlobalApplicationKt.preferenceRepository.putString(
                         KEY_ACCOUNT_KEY, accessToken.getKeyString()
                 );
                 ((GlobalApplication) getApplication()).initTwitter(accessToken);
-                client = GlobalApplication.getClient(this);
+                client = GlobalApplicationKt.getClient(this);
                 adapter.updateSelectedPosition(accessToken);
                 updateDrawerImage();
                 clearAndPrepareFragment();
@@ -231,7 +231,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                 .setPositiveButton(R.string.do_logout,
                         (dialog, i) -> {
                             AccessToken token = accountsModel.get(
-                                    GlobalApplication.preferenceRepository.getString(KEY_ACCOUNT_KEY, "-1")
+                                    GlobalApplicationKt.preferenceRepository.getString(KEY_ACCOUNT_KEY, "-1")
                             );
                             accountsModel.delete(token);
                             adapter.removeAccessTokensAndUpdate(token);
@@ -239,16 +239,16 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                             int point = accountsModel.size() - 1;
                             if (point != -1) {
                                 AccessToken accessToken = accountsModel.getAccessTokens().get(point);
-                                GlobalApplication.preferenceRepository.putString(
+                                GlobalApplicationKt.preferenceRepository.putString(
                                         KEY_ACCOUNT_KEY, accessToken.getKeyString()
                                 );
                                 ((GlobalApplication) getApplication()).initTwitter(accessToken);
-                                client = GlobalApplication.getClient(this);
+                                client = GlobalApplicationKt.getClient(this);
                                 adapter.updateSelectedPosition(accessToken);
                                 updateDrawerImage();
                                 clearAndPrepareFragment();
                             } else {
-                                GlobalApplication.preferenceRepository.putString(
+                                GlobalApplicationKt.preferenceRepository.putString(
                                         KEY_ACCOUNT_KEY, "-1"
                                 );
                                 ((GlobalApplication) getApplication()).clearTwitter();

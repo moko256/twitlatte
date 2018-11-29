@@ -26,7 +26,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
-import com.github.moko256.twitlatte.GlobalApplication;
+import com.github.moko256.twitlatte.GlobalApplicationKt;
 import com.github.moko256.twitlatte.R;
 import com.github.moko256.twitlatte.ShowMediasActivity;
 import com.github.moko256.twitlatte.entity.ClientType;
@@ -203,8 +203,8 @@ public class TweetImageTableView extends GridLayout {
     ) {
         this.medias = mediaEntities;
         this.type = type;
-        isOpen = !GlobalApplication.preferenceRepository.getString(KEY_TIMELINE_IMAGE_LOAD_MODE, "normal").equals("none")
-                && !(sensitive && GlobalApplication.preferenceRepository.getBoolean(KEY_HIDE_SENSITIVE_MEDIA, true));
+        isOpen = !GlobalApplicationKt.preferenceRepository.getString(KEY_TIMELINE_IMAGE_LOAD_MODE, "normal").equals("none")
+                && !(sensitive && GlobalApplicationKt.preferenceRepository.getBoolean(KEY_HIDE_SENSITIVE_MEDIA, true));
         updateImageNumber();
         updateView();
     }
@@ -225,7 +225,7 @@ public class TweetImageTableView extends GridLayout {
             if (isOpen) {
                 requests
                         .load(
-                                GlobalApplication.preferenceRepository.getString(KEY_TIMELINE_IMAGE_LOAD_MODE, "normal").equals("normal")?
+                                GlobalApplicationKt.preferenceRepository.getString(KEY_TIMELINE_IMAGE_LOAD_MODE, "normal").equals("normal")?
                                         TwitterStringUtils.convertSmallImageUrl(type, url):
                                         TwitterStringUtils.convertThumbImageUrl(type, url)
                         )
@@ -250,7 +250,7 @@ public class TweetImageTableView extends GridLayout {
                         break;
                 }
             } else {
-                String timelineImageLoadMode = GlobalApplication.preferenceRepository.getString(KEY_TIMELINE_IMAGE_LOAD_MODE, "normal");
+                String timelineImageLoadMode = GlobalApplicationKt.preferenceRepository.getString(KEY_TIMELINE_IMAGE_LOAD_MODE, "normal");
                 if (!timelineImageLoadMode.equals("none")){
                     requests
                             .load(

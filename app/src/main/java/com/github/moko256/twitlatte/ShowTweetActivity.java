@@ -91,10 +91,10 @@ public class ShowTweetActivity extends AppCompatActivity {
 
         statusId = getIntent().getLongExtra("statusId", -1);
 
-        client = GlobalApplication.getClient(this);
+        client = GlobalApplicationKt.getClient(this);
         statusActionModel = new StatusActionModelImpl(
                 new TwitterStatusActionRepositoryImpl(client.getTwitter()),
-                GlobalApplication.statusActionQueue,
+                GlobalApplicationKt.statusActionQueue,
                 client.getStatusCache()
         );
 

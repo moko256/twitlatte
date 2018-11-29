@@ -16,7 +16,7 @@
 
 package com.github.moko256.twitlatte.model.impl
 
-import com.github.moko256.twitlatte.GlobalApplication
+import com.github.moko256.twitlatte.LIMIT_OF_SIZE_OF_STATUSES_LIST
 import com.github.moko256.twitlatte.database.CachedIdListSQLiteOpenHelper
 import com.github.moko256.twitlatte.entity.Client
 import com.github.moko256.twitlatte.entity.EventType
@@ -283,8 +283,8 @@ class ListModelImpl(
     }
 
     override fun removeOldCache(position: Int) {
-        if (list.size - position > GlobalApplication.statusCacheListLimit) {
-            val subList = list.subList(position + GlobalApplication.statusCacheListLimit, list.size)
+        if (list.size - position > LIMIT_OF_SIZE_OF_STATUSES_LIST) {
+            val subList = list.subList(position + LIMIT_OF_SIZE_OF_STATUSES_LIST, list.size)
             database.deleteIds(subList)
 
             client.statusCache.delete(subList)

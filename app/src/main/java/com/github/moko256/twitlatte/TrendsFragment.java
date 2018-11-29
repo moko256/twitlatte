@@ -63,7 +63,7 @@ public class TrendsFragment extends BaseListFragment {
         super.onCreate(savedInstanceState);
 
         disposable = new CompositeDisposable();
-        client = GlobalApplication.getClient(getActivity());
+        client = GlobalApplicationKt.getClient(requireActivity());
         helper = new CachedTrendsSQLiteOpenHelper(
                 requireContext().getApplicationContext(),
                 client.getAccessToken()

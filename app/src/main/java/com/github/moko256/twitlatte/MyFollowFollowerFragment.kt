@@ -43,7 +43,7 @@ class MyFollowFollowerFragment : Fragment(), ToolbarTitleInterface, NavigationPo
             FollowFollowerTabsPagerAdapter(
                     childFragmentManager,
                     context,
-                    GlobalApplication.getClient(activity).accessToken.userId
+                    requireActivity().getClient()!!.accessToken.userId
             ).initAdapter(tabsViewPager)
         }
     }

@@ -81,7 +81,7 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
         setContentView(R.layout.activity_show_user);
 
         disposable = new CompositeDisposable();
-        client = GlobalApplication.getClient(this);
+        client = GlobalApplicationKt.getClient(this);
 
         setSupportActionBar(findViewById(R.id.toolbar_show_user));
 

@@ -102,7 +102,7 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         disposable = new CompositeDisposable();
-        client = GlobalApplication.getClient(getActivity());
+        client = GlobalApplicationKt.getClient(requireActivity());
         userId = Objects.requireNonNull(getArguments()).getLong("userId");
 
         User cachedUser = client.getUserCache().get(userId);

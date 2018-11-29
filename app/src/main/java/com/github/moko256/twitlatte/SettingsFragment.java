@@ -54,7 +54,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         setPreferencesFromResource(R.xml.settings, rootKey);
 
         if (rootKey == null){
-            AccountsModel accountsModel = GlobalApplication.getAccountsModel(requireActivity());
+            AccountsModel accountsModel = GlobalApplicationKt.getAccountsModel(requireActivity());
             List<AccessToken> accessTokens = accountsModel.getAccessTokens();
 
             CharSequence[] entries = new CharSequence[accessTokens.size() + 1];
@@ -73,14 +73,14 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             ListPreference nowAccountList=(ListPreference) findPreference(KEY_ACCOUNT_KEY);
             nowAccountList.setEntries(entries);
             nowAccountList.setEntryValues(entryValues);
-            nowAccountList.setDefaultValue(GlobalApplication.preferenceRepository.getString(KEY_ACCOUNT_KEY,"-1"));
+            nowAccountList.setDefaultValue(GlobalApplicationKt.preferenceRepository.getString(KEY_ACCOUNT_KEY,"-1"));
             nowAccountList.setOnPreferenceChangeListener(
                     (preference, newValue) -> {
                         if (newValue.equals("-1")){
                             startActivity(new Intent(getContext(),OAuthActivity.class));
                             return false;
                         } else {
-                            AccessToken accessToken = GlobalApplication.getAccountsModel(requireActivity()).get((String) newValue);
+                            AccessToken accessToken = GlobalApplicationKt.getAccountsModel(requireActivity()).get((String) newValue);
 
                             ((GlobalApplication) requireActivity().getApplication()).initTwitter(accessToken);
                             startActivity(
@@ -98,14 +98,14 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                         .setPositiveButton(R.string.do_logout,
                                 (dialog, i) -> {
                                     accountsModel.delete(accountsModel.get(
-                                            GlobalApplication.preferenceRepository.getString(KEY_ACCOUNT_KEY,"-1")
+                                            GlobalApplicationKt.preferenceRepository.getString(KEY_ACCOUNT_KEY,"-1")
                                     ));
 
                                     int point = accountsModel.size() - 1;
                                     if (point != -1) {
                                         AccessToken accessToken = accountsModel.getAccessTokens().get(point);
 
-                                        GlobalApplication.preferenceRepository.putString(
+                                        GlobalApplicationKt.preferenceRepository.putString(
                                                 KEY_ACCOUNT_KEY, accessToken.getKeyString()
                                         );
 
@@ -114,7 +114,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                                                 new Intent(getContext(), MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
                                         );
                                     } else {
-                                        GlobalApplication.preferenceRepository.putString(
+                                        GlobalApplicationKt.preferenceRepository.putString(
                                                 KEY_ACCOUNT_KEY, "-1"
                                         );
 
@@ -175,7 +175,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 if (name instanceof EditTextPreference) {
                     name.setOnPreferenceChangeListener((preference, newValue) -> {
                         try {
-                            GlobalApplication.preferenceRepository.updateRegex(preference.getKey(), (String) newValue);
+                            GlobalApplicationKt.preferenceRepository.updateRegex(preference.getKey(), (String) newValue);
                         } catch (PatternSyntaxException e){
                             e.printStackTrace();
                             Toast.makeText(requireContext(), e.getMessage(), Toast.LENGTH_SHORT).show();

@@ -71,7 +71,7 @@ abstract class BaseTweetListFragment : BaseListFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        client = GlobalApplication.getClient(activity)
+        client = requireActivity().getClient()!!
         listViewModel = ViewModelProviders.of(this).get(ListViewModel::class.java)
         if (!listViewModel.initilized) {
             listViewModel.listModel = ListModelImpl(
@@ -103,7 +103,7 @@ abstract class BaseTweetListFragment : BaseListFragment() {
                     TwitterStatusActionRepositoryImpl(
                             client.twitter
                     ),
-                    GlobalApplication.statusActionQueue,
+                    statusActionQueue,
                     client.statusCache
             )
             listViewModel.start()
@@ -130,7 +130,7 @@ abstract class BaseTweetListFragment : BaseListFragment() {
 
         adapter = StatusesAdapter(
                 client,
-                GlobalApplication.preferenceRepository,
+                preferenceRepository,
                 context,
                 listViewModel.listModel.getIdsList()
         )

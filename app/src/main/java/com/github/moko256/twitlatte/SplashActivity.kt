@@ -20,7 +20,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.github.moko256.twitlatte.entity.AccessToken
 import com.github.moko256.twitlatte.entity.ClientType.Companion.TWITTER
 import java.util.*
 
@@ -82,7 +81,7 @@ class SplashActivity : AppCompatActivity() {
                                         else -> ShowUserActivity
                                                 .getIntent(this, lastPathSegment)
                                                 .setAccountKey(
-                                                        GlobalApplication.getAccountsModel(this)
+                                                        getAccountsModel()
                                                                 .selectFirstByType(TWITTER)!!
                                                 )
                                     }
@@ -98,7 +97,7 @@ class SplashActivity : AppCompatActivity() {
                                             return ShowTweetActivity
                                                     .getIntent(this, lastPathSegment?.toLong()?:-1)
                                                     .setAccountKey(
-                                                            GlobalApplication.getAccountsModel(this)
+                                                            getAccountsModel()
                                                                     .selectFirstByType(TWITTER)!!
                                                     )
 
@@ -164,7 +163,7 @@ class SplashActivity : AppCompatActivity() {
 
         }
 
-        return if (GlobalApplication.getCurrentClient(this) == null) {
+        return if (getCurrentClient() == null) {
             Intent(this, OAuthActivity::class.java)
         } else {
             Intent(this, MainActivity::class.java)
@@ -200,9 +199,4 @@ class SplashActivity : AppCompatActivity() {
                 tweet.toString()
         )
     }
-}
-
-private fun Intent.setAccountKey(accessToken: AccessToken): Intent {
-    GlobalApplication.setAccountKey(this, accessToken)
-    return this
 }

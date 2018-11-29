@@ -115,7 +115,7 @@ public class PostActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post);
 
-        client = GlobalApplication.getClient(this);
+        client = GlobalApplicationKt.getClient(this);
         model = PostTweetModelCreatorKt.getInstance(client, getContentResolver());
         disposable = new CompositeDisposable();
 

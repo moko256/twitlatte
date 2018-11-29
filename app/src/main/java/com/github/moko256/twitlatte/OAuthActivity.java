@@ -196,9 +196,9 @@ public class OAuthActivity extends AppCompatActivity {
     }
 
     private void storeAccessToken(AccessToken accessToken){
-        GlobalApplication.getAccountsModel(this).add(accessToken);
+        GlobalApplicationKt.getAccountsModel(this).add(accessToken);
 
-        GlobalApplication.preferenceRepository.putString(KEY_ACCOUNT_KEY, accessToken.getKeyString());
+        GlobalApplicationKt.preferenceRepository.putString(KEY_ACCOUNT_KEY, accessToken.getKeyString());
 
         ((GlobalApplication) getApplication()).initTwitter(accessToken);
 
@@ -312,7 +312,7 @@ public class OAuthActivity extends AppCompatActivity {
     private void startBrowser(String url){
         Uri uri = Uri.parse(url);
         try {
-            if (GlobalApplication.preferenceRepository.getBoolean(KEY_USE_CHROME_CUSTOM_TAB, true)) {
+            if (GlobalApplicationKt.preferenceRepository.getBoolean(KEY_USE_CHROME_CUSTOM_TAB, true)) {
                 new CustomTabsIntent.Builder()
                         .setShowTitle(false)
                         .setToolbarColor(ContextCompat.getColor(this, R.color.color_primary))
