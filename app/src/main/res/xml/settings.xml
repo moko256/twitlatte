@@ -21,7 +21,7 @@
         <ListPreference
             app:key="AccountKey"
             app:title="@string/account"
-            app:summary="%s"
+            app:useSimpleSummaryProvider="true"
             app:dialogTitle="@string/account"/>
         <Preference
             app:key="logout"
@@ -33,7 +33,7 @@
             app:key="nightModeType"
             app:defaultValue="@string/mode_night_no_value"
             app:title="@string/dark_theme"
-            app:summary="%s"
+            app:useSimpleSummaryProvider="true"
             app:dialogTitle="@string/dark_theme"
             app:entries="@array/choose_night_mode_entries"
             app:entryValues="@array/choose_night_mode_entries_value"/>
@@ -41,7 +41,7 @@
             app:key="timelineImageMode"
             app:defaultValue="normal"
             app:title="@string/load_timeline_image_mode"
-            app:summary="%s"
+            app:useSimpleSummaryProvider="true"
             app:dialogTitle="@string/load_timeline_image_mode"
             app:entries="@array/choose_timeline_image_load_entries"
             app:entryValues="@array/choose_timeline_image_load_entries_value"/>
