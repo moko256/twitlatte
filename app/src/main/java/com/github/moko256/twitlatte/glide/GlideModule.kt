@@ -57,9 +57,7 @@ class GlideModule : AppGlideModule() {
         registry.replace(
                 GlideUrl::class.java,
                 InputStream::class.java,
-                OkHttpUrlLoader.Factory {request ->
-                    appOkHttpClientInstance.newCall(request)
-                }
+                OkHttpUrlLoader.Factory(appOkHttpClientInstance)
         )
     }
 

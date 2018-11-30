@@ -32,11 +32,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.github.moko256.twitlatte.database.CachedIdListSQLiteOpenHelper
-import com.github.moko256.twitlatte.entity.*
+import com.github.moko256.twitlatte.entity.Client
+import com.github.moko256.twitlatte.entity.EventType
+import com.github.moko256.twitlatte.entity.Post
+import com.github.moko256.twitlatte.entity.UpdateEvent
 import com.github.moko256.twitlatte.model.impl.ListModelImpl
 import com.github.moko256.twitlatte.model.impl.StatusActionModelImpl
 import com.github.moko256.twitlatte.repository.server.base.ListServerRepository
-import com.github.moko256.twitlatte.repository.server.impl.TwitterStatusActionRepositoryImpl
 import com.github.moko256.twitlatte.text.TwitterStringUtils
 import com.github.moko256.twitlatte.viewmodel.ListViewModel
 import com.github.moko256.twitlatte.widget.convertObservableConsumer
@@ -48,7 +50,7 @@ import io.reactivex.disposables.CompositeDisposable
  *
  * @author moko256
  */
-abstract class BaseTweetListFragment : BaseListFragment() {
+abstract class BaseTweetListFragment : BaseListFragment(), ListServerRepository<Post> {
 
     protected var adapter: StatusesAdapter? = null
     protected lateinit var client: Client
@@ -67,11 +69,7 @@ abstract class BaseTweetListFragment : BaseListFragment() {
         listViewModel = ViewModelProviders.of(this).get(ListViewModel::class.java)
         if (!listViewModel.initilized) {
             listViewModel.listModel = ListModelImpl(
-                    object : ListServerRepository<Post> {
-                        override fun get(paging: Paging): List<Post> {
-                            return getResponseList(paging)
-                        }
-                    },
+                    this,
                     client,
                     CachedIdListSQLiteOpenHelper(
                             requireContext().applicationContext,
@@ -80,9 +78,7 @@ abstract class BaseTweetListFragment : BaseListFragment() {
                     )
             )
             listViewModel.statusActionModel = StatusActionModelImpl(
-                    TwitterStatusActionRepositoryImpl(
-                            client.apiClient
-                    ),
+                    client.apiClient,
                     statusActionQueue,
                     client.statusCache
             )
@@ -267,9 +263,6 @@ abstract class BaseTweetListFragment : BaseListFragment() {
             )
         }
     }
-
-    @Throws(Throwable::class)
-    protected abstract fun getResponseList(paging: Paging): List<Post>
 
     internal interface GetRecyclerViewPool {
         val tweetListViewPool: RecyclerView.RecycledViewPool

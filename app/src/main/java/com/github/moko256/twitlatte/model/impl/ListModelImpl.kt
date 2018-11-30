@@ -85,7 +85,7 @@ class ListModelImpl(
         requests.add(
                 Completable.create { status ->
                     try {
-                        api.get(Paging(count = client.statusLimit))
+                        api.request(Paging(count = client.statusLimit))
                                 .apply {
                                     client.statusCache.addAll(this)
                                 }
@@ -127,7 +127,7 @@ class ListModelImpl(
         requests.add(
                 Completable.create { status ->
                     try {
-                        api.get(Paging(
+                        api.request(Paging(
                                 sinceId = sinceId,
                                 count = client.statusLimit
                         )).apply {
@@ -181,7 +181,7 @@ class ListModelImpl(
         requests.add(
                 Completable.create { status ->
                     try {
-                        api.get(Paging(
+                        api.request(Paging(
                                 maxId = list[list.size - 1] - 1L,
                                 count = client.statusLimit
                         )).apply {
@@ -233,7 +233,7 @@ class ListModelImpl(
         requests.add(
                 Completable.create { status ->
                     try {
-                        api.get(Paging(
+                        api.request(Paging(
                                 sinceId = sinceId,
                                 maxId = list[position -1] - 1L,
                                 count = client.statusLimit

@@ -69,7 +69,7 @@ public class SearchResultFragment extends BaseTweetListFragment {
 
     @NotNull
     @Override
-    protected List<Post> getResponseList(@NotNull Paging paging) throws Throwable {
+    public List<Post> request(@NotNull Paging paging) throws Throwable {
         if (!searchText.equals("")){
             return client.getApiClient().getPostByQuery(searchText, paging);
         } else {

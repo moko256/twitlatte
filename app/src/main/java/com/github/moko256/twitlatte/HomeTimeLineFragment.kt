@@ -33,7 +33,7 @@ class HomeTimeLineFragment : BaseTweetListFragment(), ToolbarTitleInterface, Nav
     override val cachedIdsDatabaseName = "HomeTimeline"
 
     @Throws(Throwable::class)
-    override fun getResponseList(paging: Paging): List<Post> {
+    override fun request(paging: Paging): List<Post> {
         return client.apiClient.getHomeTimeline(paging)
     }
 }

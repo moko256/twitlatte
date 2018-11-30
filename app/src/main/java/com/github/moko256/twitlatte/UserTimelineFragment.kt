@@ -44,7 +44,7 @@ class UserTimelineFragment : BaseTweetListFragment(), ToolbarTitleInterface {
     }
 
     @Throws(Throwable::class)
-    override fun getResponseList(paging: Paging): List<Post> {
+    override fun request(paging: Paging): List<Post> {
         return client.apiClient.getUserTimeline(userId, paging)
     }
 

@@ -33,7 +33,7 @@ class MentionsFragment : BaseTweetListFragment(), ToolbarTitleInterface, Navigat
     override val cachedIdsDatabaseName = "MentionsToMe"
 
     @Throws(Throwable::class)
-    override fun getResponseList(paging: Paging): List<Post> {
+    override fun request(paging: Paging): List<Post> {
         return client.apiClient.getMentionsTimeline(paging)
     }
 }

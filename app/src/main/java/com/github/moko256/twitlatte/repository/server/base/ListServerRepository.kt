@@ -26,5 +26,5 @@ import com.github.moko256.twitlatte.entity.Paging
 interface ListServerRepository<T> {
 
     @Throws(Throwable::class)
-    fun get(paging: Paging): List<T>
+    fun request(paging: Paging): List<T>
 }

@@ -40,7 +40,6 @@ import com.github.moko256.twitlatte.intent.AppCustomTabsKt;
 import com.github.moko256.twitlatte.model.base.PostTweetModel;
 import com.github.moko256.twitlatte.model.impl.PostTweetModelCreatorKt;
 import com.github.moko256.twitlatte.model.impl.StatusActionModelImpl;
-import com.github.moko256.twitlatte.repository.server.impl.TwitterStatusActionRepositoryImpl;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
 
 import java.text.DateFormat;
@@ -91,7 +90,7 @@ public class ShowTweetActivity extends AppCompatActivity {
 
         client = GlobalApplicationKt.getClient(this);
         statusActionModel = new StatusActionModelImpl(
-                new TwitterStatusActionRepositoryImpl(client.getApiClient()),
+                client.getApiClient(),
                 GlobalApplicationKt.statusActionQueue,
                 client.getStatusCache()
         );

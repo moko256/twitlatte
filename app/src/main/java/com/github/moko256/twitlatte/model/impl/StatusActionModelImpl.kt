@@ -17,12 +17,12 @@
 package com.github.moko256.twitlatte.model.impl
 
 import android.annotation.SuppressLint
+import com.github.moko256.twitlatte.api.base.ApiClient
 import com.github.moko256.twitlatte.cacheMap.StatusCacheMap
 import com.github.moko256.twitlatte.entity.Post
 import com.github.moko256.twitlatte.entity.StatusAction
 import com.github.moko256.twitlatte.model.base.StatusActionModel
 import com.github.moko256.twitlatte.queue.StatusActionQueue
-import com.github.moko256.twitlatte.repository.server.base.StatusActionRepository
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
 
@@ -32,7 +32,7 @@ import io.reactivex.subjects.PublishSubject
  * @author moko256
  */
 class StatusActionModelImpl(
-        private val api: StatusActionRepository,
+        private val apiClient: ApiClient,
         private val queue: StatusActionQueue,
         private val database: StatusCacheMap
 ): StatusActionModel {
@@ -46,25 +46,25 @@ class StatusActionModelImpl(
 
     override fun createFavorite(targetStatusId: Long) {
         doAction(targetStatusId, StatusAction.FAVORITE) {
-            api.createFavorite(targetStatusId)
+            apiClient.createFavorite(targetStatusId)
         }
     }
 
     override fun removeFavorite(targetStatusId: Long) {
         doAction(targetStatusId, StatusAction.UNFAVORITE) {
-            api.removeFavorite(targetStatusId)
+            apiClient.destroyFavorite(targetStatusId)
         }
     }
 
     override fun createRepeat(targetStatusId: Long) {
         doAction(targetStatusId, StatusAction.REPEAT) {
-            api.createRepeat(targetStatusId)
+            apiClient.createRepeat(targetStatusId)
         }
     }
 
     override fun removeRepeat(targetStatusId: Long) {
         doAction(targetStatusId, StatusAction.UNREPEAT) {
-            api.removeRepeat(targetStatusId)
+            apiClient.destroyRepeat(targetStatusId)
         }
     }
 
