@@ -25,7 +25,7 @@ import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
 import com.github.moko256.twitlatte.R
 import com.github.moko256.twitlatte.exoplayer.AudioAndVideoRenderer
-import com.github.moko256.twitlatte.getOkHttpClient
+import com.github.moko256.twitlatte.net.appOkHttpClientInstance
 import com.google.android.exoplayer2.ExoPlayerFactory
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.Player.REPEAT_MODE_ALL
@@ -68,7 +68,7 @@ abstract class AbstractVideoFragment: AbstractMediaFragment() {
         ).apply {
             prepare(generateMediaSource(
                     OkHttpDataSourceFactory(
-                            requireActivity().application.getOkHttpClient(),
+                            appOkHttpClientInstance,
                             null
                     )
             ))

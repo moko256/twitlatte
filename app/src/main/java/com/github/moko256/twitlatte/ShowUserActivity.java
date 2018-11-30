@@ -24,8 +24,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.github.moko256.mastodon.MastodonTwitterImpl;
-import com.github.moko256.twitlatte.converter.UserConverterKt;
+import com.github.moko256.twitlatte.api.base.ApiClient;
 import com.github.moko256.twitlatte.entity.Client;
 import com.github.moko256.twitlatte.entity.ClientType;
 import com.github.moko256.twitlatte.entity.User;
@@ -50,8 +49,6 @@ import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
-import twitter4j.Twitter;
-import twitter4j.TwitterException;
 
 /**
  * Created by moko256 on 2016/03/11.
@@ -186,7 +183,7 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
                 baseUrl = split[1];
                 userName = split[0];
             } else {
-                baseUrl = ((MastodonTwitterImpl) client.getTwitter()).client.getInstanceName();
+                baseUrl = client.getAccessToken().getUrl();
                 userName = user.getScreenName();
             }
 
@@ -205,7 +202,7 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
     public boolean onOptionsItemSelected(MenuItem item) {
         ThrowableFunc throwableFunc=null;
         @StringRes int didAction = -1;
-        Twitter twitter = client.getTwitter();
+        ApiClient apiClient = client.getApiClient();
 
         switch (item.getItemId()){
             case R.id.action_share:
@@ -221,38 +218,38 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
                 AppCustomTabsKt.launchChromeCustomTabs(this, getShareUrl());
                 break;
             case R.id.action_create_follow:
-                throwableFunc=()->twitter.createFriendship(user.getId());
+                throwableFunc=()->apiClient.createFriendship(user.getId());
                 didAction = R.string.did_follow;
                 break;
             case R.id.action_destroy_follow:
-                throwableFunc=()->twitter.destroyFriendship(user.getId());
+                throwableFunc=()->apiClient.destroyFriendship(user.getId());
                 didAction = R.string.did_unfollow;
                 break;
             case R.id.action_create_mute:
-                throwableFunc=()->twitter.createMute(user.getId());
+                throwableFunc=()->apiClient.createMute(user.getId());
                 didAction = R.string.did_mute;
                 break;
             case R.id.action_destroy_mute:
-                throwableFunc=()->twitter.destroyMute(user.getId());
+                throwableFunc=()->apiClient.destroyMute(user.getId());
                 didAction = R.string.did_unmute;
                 break;
             case R.id.action_create_block:
-                throwableFunc=()->twitter.createBlock(user.getId());
+                throwableFunc=()->apiClient.createBlock(user.getId());
                 didAction = R.string.did_block;
                 break;
             case R.id.action_destroy_block:
-                throwableFunc=()->twitter.destroyBlock(user.getId());
+                throwableFunc=()->apiClient.destroyBlock(user.getId());
                 didAction = R.string.did_unblock;
                 break;
             case R.id.action_destroy_follow_follower:
                 throwableFunc=()->{
-                    twitter.createBlock(user.getId());
-                    twitter.destroyBlock(user.getId());
+                    apiClient.createBlock(user.getId());
+                    apiClient.destroyBlock(user.getId());
                 };
                 didAction = R.string.did_destroy_ff;
                 break;
             case R.id.action_spam_report:
-                throwableFunc=()->twitter.reportSpam(user.getId());
+                throwableFunc=()->apiClient.reportSpam(user.getId());
                 break;
         }
 
@@ -316,18 +313,18 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
                 .create(
                         subscriber-> {
                             try {
-                                twitter4j.User user = null;
+                                User user = null;
                                 if (userId != -1) {
-                                    user = client.getTwitter().showUser(userId);
+                                    user = client.getApiClient().showUser(userId);
                                 } else if (userScreenName != null) {
-                                    user = client.getTwitter().showUser(userScreenName);
+                                    user = client.getApiClient().showUser(userScreenName);
                                     userId = user.getId();
                                 }
                                 if (user != null) {
-                                    client.getUserCache().add(UserConverterKt.convertToCommonUser(user));
+                                    client.getUserCache().add(user);
                                 }
                                 subscriber.onSuccess(client.getUserCache().get(userId));
-                            } catch (TwitterException e) {
+                            } catch (Throwable e) {
                                 subscriber.tryOnError(e);
                             }
                         }

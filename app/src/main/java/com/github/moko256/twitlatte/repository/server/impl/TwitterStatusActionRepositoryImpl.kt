@@ -16,30 +16,29 @@
 
 package com.github.moko256.twitlatte.repository.server.impl
 
-import com.github.moko256.twitlatte.converter.convertToPost
+import com.github.moko256.twitlatte.api.base.ApiClient
 import com.github.moko256.twitlatte.entity.Post
 import com.github.moko256.twitlatte.repository.server.base.StatusActionRepository
-import twitter4j.Twitter
 
 /**
  * Created by moko256 on 2018/10/20.
  *
  * @author moko256
  */
-class TwitterStatusActionRepositoryImpl(private val twitter: Twitter): StatusActionRepository {
+class TwitterStatusActionRepositoryImpl(private val apiClient: ApiClient): StatusActionRepository {
     override fun createFavorite(targetStatusId: Long): Post {
-        return twitter.createFavorite(targetStatusId).convertToPost()
+        return apiClient.createFavorite(targetStatusId)
     }
 
     override fun removeFavorite(targetStatusId: Long): Post {
-        return twitter.destroyFavorite(targetStatusId).convertToPost()
+        return apiClient.destroyFavorite(targetStatusId)
     }
 
     override fun createRepeat(targetStatusId: Long): Post {
-        return twitter.retweetStatus(targetStatusId).convertToPost()
+        return apiClient.createRepeat(targetStatusId)
     }
 
     override fun removeRepeat(targetStatusId: Long): Post {
-        return twitter.unRetweetStatus(targetStatusId).convertToPost()
+        return apiClient.destroyRepeat(targetStatusId)
     }
 }

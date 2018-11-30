@@ -14,26 +14,21 @@
  * limitations under the License.
  */
 
-package com.github.moko256.twitlatte
+package com.github.moko256.twitlatte.net
 
-import com.github.moko256.twitlatte.entity.Paging
-import com.github.moko256.twitlatte.entity.Post
+import okhttp3.ConnectionPool
+import okhttp3.OkHttpClient
+import java.util.concurrent.TimeUnit
 
 /**
- * Created by moko256 on 2016/03/23.
+ * Created by moko256 on 2018/11/30.
  *
  * @author moko256
  */
-class MentionsFragment : BaseTweetListFragment(), ToolbarTitleInterface, NavigationPositionInterface {
-
-    override val titleResourceId = R.string.mentions
-
-    override val navigationPosition = R.id.nav_mentions
-
-    override val cachedIdsDatabaseName = "MentionsToMe"
-
-    @Throws(Throwable::class)
-    override fun getResponseList(paging: Paging): List<Post> {
-        return client.apiClient.getMentionsTimeline(paging)
-    }
-}
+val appOkHttpClientInstance: OkHttpClient = OkHttpClient.Builder()
+        .connectionPool(ConnectionPool(5, 300, TimeUnit.MILLISECONDS))
+        .followSslRedirects(false)
+        .connectTimeout(20000, TimeUnit.MILLISECONDS)
+        .readTimeout(120000, TimeUnit.MILLISECONDS)
+        .replaceSocketFactoryIfNeeded()
+        .build()

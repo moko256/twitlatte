@@ -16,6 +16,8 @@
 
 package com.github.moko256.twitlatte.net
 
+import android.os.Build
+import okhttp3.OkHttpClient
 import twitter4j.AlternativeHttpClientImpl
 import java.security.KeyStore
 import java.security.KeyStoreException
@@ -29,30 +31,26 @@ import javax.net.ssl.X509TrustManager
  * @author moko256
  */
 
-fun AlternativeHttpClientImpl.replaceSocketFactory() {
+fun AlternativeHttpClientImpl.replaceOkHttpClient(newOkHttpClient: OkHttpClient) {
+    AlternativeHttpClientImpl::class.java
+            .getDeclaredField("okHttpClient")
+            .also {
+                it.isAccessible = true
 
-    val okHttpClient = okHttpClient
+                it.set(this, newOkHttpClient)
+            }
+}
 
-    if (okHttpClient.sslSocketFactory() !is SSLSocketFactoryCompat) {
+fun OkHttpClient.Builder.replaceSocketFactoryIfNeeded(): OkHttpClient.Builder = apply {
+    if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
         try {
 
             val trustManager = systemDefaultTrustManager()
 
-            AlternativeHttpClientImpl::class.java.getDeclaredField("okHttpClient")
-                    .also { field ->
-                        field.isAccessible = true
-
-                        field.set(
-                                this,
-                                okHttpClient
-                                        .newBuilder()
-                                        .sslSocketFactory(
-                                                SSLSocketFactoryCompat(trustManager),
-                                                trustManager
-                                        )
-                                        .build()
-                        )
-                    }
+            sslSocketFactory(
+                    SSLSocketFactoryCompat(trustManager),
+                    trustManager
+            )
 
         } catch (e: NoSuchFieldException) {
             e.printStackTrace()

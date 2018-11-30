@@ -31,12 +31,8 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import com.github.moko256.twitlatte.converter.convertToPost
 import com.github.moko256.twitlatte.database.CachedIdListSQLiteOpenHelper
-import com.github.moko256.twitlatte.entity.Client
-import com.github.moko256.twitlatte.entity.EventType
-import com.github.moko256.twitlatte.entity.Post
-import com.github.moko256.twitlatte.entity.UpdateEvent
+import com.github.moko256.twitlatte.entity.*
 import com.github.moko256.twitlatte.model.impl.ListModelImpl
 import com.github.moko256.twitlatte.model.impl.StatusActionModelImpl
 import com.github.moko256.twitlatte.repository.server.base.ListServerRepository
@@ -46,10 +42,6 @@ import com.github.moko256.twitlatte.viewmodel.ListViewModel
 import com.github.moko256.twitlatte.widget.convertObservableConsumer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import twitter4j.Paging
-import twitter4j.ResponseList
-import twitter4j.Status
-import twitter4j.TwitterException
 
 /**
  * Created by moko256 on 2016/03/27.
@@ -76,20 +68,8 @@ abstract class BaseTweetListFragment : BaseListFragment() {
         if (!listViewModel.initilized) {
             listViewModel.listModel = ListModelImpl(
                     object : ListServerRepository<Post> {
-                        override fun get(sinceId: Long?, maxId: Long?, limit: Int): List<Post> {
-                            val paging = Paging().count(limit)
-                            if (sinceId != null) {
-                                paging.sinceId = sinceId
-                            }
-                            if (maxId != null) {
-                                paging.maxId = maxId
-                            }
-                            if (sinceId == null && maxId == null) {
-                                paging.page = 1
-                            }
-                            return getResponseList(paging).map {
-                                it.convertToPost()
-                            }
+                        override fun get(paging: Paging): List<Post> {
+                            return getResponseList(paging)
                         }
                     },
                     client,
@@ -101,7 +81,7 @@ abstract class BaseTweetListFragment : BaseListFragment() {
             )
             listViewModel.statusActionModel = StatusActionModelImpl(
                     TwitterStatusActionRepositoryImpl(
-                            client.twitter
+                            client.apiClient
                     ),
                     statusActionQueue,
                     client.statusCache
@@ -288,8 +268,8 @@ abstract class BaseTweetListFragment : BaseListFragment() {
         }
     }
 
-    @Throws(TwitterException::class)
-    protected abstract fun getResponseList(paging: Paging): ResponseList<Status>
+    @Throws(Throwable::class)
+    protected abstract fun getResponseList(paging: Paging): List<Post>
 
     internal interface GetRecyclerViewPool {
         val tweetListViewPool: RecyclerView.RecycledViewPool

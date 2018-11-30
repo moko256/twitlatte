@@ -14,26 +14,15 @@
  * limitations under the License.
  */
 
-package com.github.moko256.twitlatte
-
-import com.github.moko256.twitlatte.entity.Paging
-import com.github.moko256.twitlatte.entity.Post
+package com.github.moko256.twitlatte.entity
 
 /**
- * Created by moko256 on 2016/03/23.
+ * Created by moko256 on 2018/11/30.
  *
  * @author moko256
  */
-class MentionsFragment : BaseTweetListFragment(), ToolbarTitleInterface, NavigationPositionInterface {
-
-    override val titleResourceId = R.string.mentions
-
-    override val navigationPosition = R.id.nav_mentions
-
-    override val cachedIdsDatabaseName = "MentionsToMe"
-
-    @Throws(Throwable::class)
-    override fun getResponseList(paging: Paging): List<Post> {
-        return client.apiClient.getMentionsTimeline(paging)
-    }
-}
+data class PageableResponse<R>(
+        val previousId: Long,
+        val nextId: Long,
+        val list: List<R>
+)

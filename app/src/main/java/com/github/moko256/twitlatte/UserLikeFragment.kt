@@ -17,10 +17,8 @@
 package com.github.moko256.twitlatte
 
 import android.os.Bundle
-import twitter4j.Paging
-import twitter4j.ResponseList
-import twitter4j.Status
-import twitter4j.TwitterException
+import com.github.moko256.twitlatte.entity.Paging
+import com.github.moko256.twitlatte.entity.Post
 
 /**
  * Created by moko256 on 2017/03/04.
@@ -45,9 +43,9 @@ class UserLikeFragment : BaseTweetListFragment(), ToolbarTitleInterface {
         super.onCreate(savedInstanceState)
     }
 
-    @Throws(TwitterException::class)
-    override fun getResponseList(paging: Paging): ResponseList<Status> {
-        return client.twitter.getFavorites(userId, paging)
+    @Throws(Throwable::class)
+    override fun getResponseList(paging: Paging): List<Post> {
+        return client.apiClient.getFavorites(userId, paging)
     }
 
     companion object {

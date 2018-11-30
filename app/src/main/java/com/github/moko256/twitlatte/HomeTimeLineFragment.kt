@@ -16,10 +16,8 @@
 
 package com.github.moko256.twitlatte
 
-import twitter4j.Paging
-import twitter4j.ResponseList
-import twitter4j.Status
-import twitter4j.TwitterException
+import com.github.moko256.twitlatte.entity.Paging
+import com.github.moko256.twitlatte.entity.Post
 
 /**
  * Created by moko256 on 2016/03/23.
@@ -34,8 +32,8 @@ class HomeTimeLineFragment : BaseTweetListFragment(), ToolbarTitleInterface, Nav
 
     override val cachedIdsDatabaseName = "HomeTimeline"
 
-    @Throws(TwitterException::class)
-    override fun getResponseList(paging: Paging): ResponseList<Status> {
-        return client.twitter.getHomeTimeline(paging)
+    @Throws(Throwable::class)
+    override fun getResponseList(paging: Paging): List<Post> {
+        return client.apiClient.getHomeTimeline(paging)
     }
 }

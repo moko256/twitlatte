@@ -18,10 +18,7 @@ package com.github.moko256.twitlatte.model.impl
 
 import com.github.moko256.twitlatte.LIMIT_OF_SIZE_OF_STATUSES_LIST
 import com.github.moko256.twitlatte.database.CachedIdListSQLiteOpenHelper
-import com.github.moko256.twitlatte.entity.Client
-import com.github.moko256.twitlatte.entity.EventType
-import com.github.moko256.twitlatte.entity.Post
-import com.github.moko256.twitlatte.entity.UpdateEvent
+import com.github.moko256.twitlatte.entity.*
 import com.github.moko256.twitlatte.model.base.ListModel
 import com.github.moko256.twitlatte.repository.server.base.ListServerRepository
 import io.reactivex.Completable
@@ -88,7 +85,7 @@ class ListModelImpl(
         requests.add(
                 Completable.create { status ->
                     try {
-                        api.get(limit = client.statusLimit)
+                        api.get(Paging(count = client.statusLimit))
                                 .apply {
                                     client.statusCache.addAll(this)
                                 }
@@ -130,10 +127,10 @@ class ListModelImpl(
         requests.add(
                 Completable.create { status ->
                     try {
-                        api.get(
+                        api.get(Paging(
                                 sinceId = sinceId,
-                                limit = client.statusLimit
-                        ).apply {
+                                count = client.statusLimit
+                        )).apply {
                             if (isNotEmpty()) {
                                 client.statusCache.addAll(this, excludeId)
 
@@ -184,10 +181,10 @@ class ListModelImpl(
         requests.add(
                 Completable.create { status ->
                     try {
-                        api.get(
+                        api.get(Paging(
                                 maxId = list[list.size - 1] - 1L,
-                                limit = client.statusLimit
-                        ).apply {
+                                count = client.statusLimit
+                        )).apply {
                             if (isNotEmpty()) {
                                 client.statusCache.addAll(this)
 
@@ -236,11 +233,11 @@ class ListModelImpl(
         requests.add(
                 Completable.create { status ->
                     try {
-                        api.get(
+                        api.get(Paging(
                                 sinceId = sinceId,
                                 maxId = list[position -1] - 1L,
-                                limit = client.statusLimit
-                        ).apply {
+                                count = client.statusLimit
+                        )).apply {
                             if (isNotEmpty()) {
                                 client.statusCache.addAll(this, excludeId)
 

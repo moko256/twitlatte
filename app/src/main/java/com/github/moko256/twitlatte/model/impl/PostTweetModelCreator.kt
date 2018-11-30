@@ -17,7 +17,6 @@
 package com.github.moko256.twitlatte.model.impl
 
 import android.content.ContentResolver
-import com.github.moko256.mastodon.MastodonTwitterImpl
 import com.github.moko256.twitlatte.entity.Client
 import com.github.moko256.twitlatte.entity.ClientType
 import com.github.moko256.twitlatte.model.base.PostTweetModel
@@ -30,8 +29,8 @@ import com.github.moko256.twitlatte.model.base.PostTweetModel
 
 fun getInstance(client: Client, resolver: ContentResolver): PostTweetModel {
     return if (client.accessToken.type == ClientType.MASTODON) {
-        com.github.moko256.twitlatte.model.impl.mastodon.PostTweetModelImpl((client.twitter as MastodonTwitterImpl).client, resolver)
+        com.github.moko256.twitlatte.model.impl.mastodon.PostTweetModelImpl(client.apiClient.getBaseClient(), resolver)
     } else {
-        com.github.moko256.twitlatte.model.impl.twitter.PostTweetModelImpl(client.twitter, resolver)
+        com.github.moko256.twitlatte.model.impl.twitter.PostTweetModelImpl(client.apiClient.getBaseClient(), resolver)
     }
 }

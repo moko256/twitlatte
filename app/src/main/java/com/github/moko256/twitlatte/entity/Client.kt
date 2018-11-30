@@ -16,11 +16,11 @@
 
 package com.github.moko256.twitlatte.entity
 
+import com.github.moko256.twitlatte.api.base.ApiClient
 import com.github.moko256.twitlatte.cacheMap.PostCache
 import com.github.moko256.twitlatte.cacheMap.StatusCacheMap
 import com.github.moko256.twitlatte.cacheMap.UserCacheMap
 import com.github.moko256.twitlatte.entity.ClientType.Companion.TWITTER
-import twitter4j.Twitter
 
 /**
  * Created by moko256 on 2018/11/28.
@@ -29,7 +29,7 @@ import twitter4j.Twitter
  */
 data class Client(
         val accessToken: AccessToken,
-        val twitter: Twitter,
+        val apiClient: ApiClient,
         val statusCache: StatusCacheMap,
         val userCache: UserCacheMap
 ) {

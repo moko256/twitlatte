@@ -29,7 +29,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
-import com.github.moko256.twitlatte.converter.UserConverterKt;
 import com.github.moko256.twitlatte.entity.Client;
 import com.github.moko256.twitlatte.entity.Emoji;
 import com.github.moko256.twitlatte.entity.User;
@@ -54,7 +53,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
-import twitter4j.TwitterException;
 
 import static com.github.moko256.twitlatte.entity.ClientType.TWITTER;
 
@@ -266,10 +264,10 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
         return Single.create(
                 subscriber -> {
                     try {
-                        twitter4j.User user = client.getTwitter().showUser(userId);
-                        client.getUserCache().add(UserConverterKt.convertToCommonUser(user));
+                        User user = client.getApiClient().showUser(userId);
+                        client.getUserCache().add(user);
                         subscriber.onSuccess(client.getUserCache().get(userId));
-                    } catch (TwitterException e) {
+                    } catch (Throwable e) {
                         subscriber.tryOnError(e);
                     }
                 });

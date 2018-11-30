@@ -39,9 +39,6 @@ import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
-import twitter4j.GeoLocation;
-import twitter4j.Trends;
-import twitter4j.TwitterException;
 
 /**
  * Created by moko256 on 2017/07/05.
@@ -158,30 +155,23 @@ public class TrendsFragment extends BaseListFragment {
         return new LinearLayoutManager(getContext());
     }
 
-    private Single<List<Trend>> getResponseSingle(GeoLocation geolocation) {
+    private Single<List<Trend>> getResponseSingle(Address address) {
         return Single.create(
                 subscriber->{
                     try {
-                        Trends trends = client.getTwitter()
-                                .getPlaceTrends(client.getTwitter().getClosestTrends(geolocation).get(0).getWoeid());
-                        twitter4j.Trend[] result = trends.getTrends();
-                        ArrayList<Trend> arrayList = new ArrayList<>(result.length);
+                        List<Trend> trends = client.getApiClient().getClosestTrends(address);
 
-                        for (twitter4j.Trend trend : result) {
-                            arrayList.add(new Trend(trend.getName(), trend.getTweetVolume()));
-                        }
+                        helper.setTrends(trends);
 
-                        helper.setTrends(arrayList);
-
-                        subscriber.onSuccess(arrayList);
-                    } catch (TwitterException e) {
+                        subscriber.onSuccess(trends);
+                    } catch (Throwable e) {
                         subscriber.tryOnError(e);
                     }
                 }
         );
     }
 
-    private Single<GeoLocation> getGeoLocationSingle(){
+    private Single<Address> getGeoLocationSingle(){
         return Single.create(
                 subscriber -> {
                     try {
@@ -189,7 +179,7 @@ public class TrendsFragment extends BaseListFragment {
                         Locale locale = Locale.getDefault();
                         Address address = geocoder.getFromLocationName(locale.getDisplayCountry(), 1).get(0);
                         if (address != null){
-                            subscriber.onSuccess(new GeoLocation(address.getLatitude(), address.getLongitude()));
+                            subscriber.onSuccess(address);
                         } else {
                             subscriber.tryOnError(new Exception("Cannot use trends"));
                         }

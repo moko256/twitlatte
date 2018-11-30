@@ -29,7 +29,7 @@ import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.module.AppGlideModule
 import com.bumptech.glide.request.RequestOptions
 import com.github.moko256.twitlatte.R
-import com.github.moko256.twitlatte.getOkHttpClient
+import com.github.moko256.twitlatte.net.appOkHttpClientInstance
 import java.io.InputStream
 
 /**
@@ -58,7 +58,7 @@ class GlideModule : AppGlideModule() {
                 GlideUrl::class.java,
                 InputStream::class.java,
                 OkHttpUrlLoader.Factory {request ->
-                    context.getOkHttpClient().newCall(request)
+                    appOkHttpClientInstance.newCall(request)
                 }
         )
     }

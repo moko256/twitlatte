@@ -19,8 +19,8 @@ package com.github.moko256.twitlatte.model.impl.mastodon
 import android.os.Bundle
 import com.github.moko256.twitlatte.entity.AccessToken
 import com.github.moko256.twitlatte.entity.ClientType
-import com.github.moko256.twitlatte.getOkHttpClient
 import com.github.moko256.twitlatte.model.base.OAuthModel
+import com.github.moko256.twitlatte.net.appOkHttpClientInstance
 import com.google.gson.Gson
 import com.sys1yagi.mastodon4j.MastodonClient
 import com.sys1yagi.mastodon4j.api.Scope
@@ -28,7 +28,6 @@ import com.sys1yagi.mastodon4j.api.exception.Mastodon4jRequestException
 import com.sys1yagi.mastodon4j.api.method.Accounts
 import com.sys1yagi.mastodon4j.api.method.Apps
 import io.reactivex.Single
-import twitter4j.conf.ConfigurationContext
 
 /**
  * Created by moko256 on 2017/10/29.
@@ -55,7 +54,7 @@ class OAuthModelImpl(override var isRestartable: Boolean = false) : OAuthModel {
 
         clientBuilder = MastodonClient.Builder(
                 savedInstanceState.getString(STATE_MODEL_URL)!!,
-                ConfigurationContext.getInstance().getOkHttpClient().newBuilder(),
+                appOkHttpClientInstance.newBuilder(),
                 Gson()
         )
         apps = Apps(clientBuilder.build())
@@ -76,7 +75,7 @@ class OAuthModelImpl(override var isRestartable: Boolean = false) : OAuthModel {
     override fun getAuthUrl(url: String, callbackUrl: String?): Single<String> {
         clientBuilder = MastodonClient.Builder(
                 url,
-                ConfigurationContext.getInstance().getOkHttpClient().newBuilder(),
+                appOkHttpClientInstance.newBuilder(),
                 Gson()
         )
         apps = Apps(clientBuilder.build())

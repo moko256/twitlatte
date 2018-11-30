@@ -18,15 +18,19 @@ package com.github.moko256.twitlatte;
 
 import android.os.Bundle;
 
+import com.github.moko256.twitlatte.entity.Paging;
+import com.github.moko256.twitlatte.entity.Post;
+
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import androidx.annotation.NonNull;
-import twitter4j.Paging;
-import twitter4j.Query;
 import twitter4j.RateLimitStatus;
 import twitter4j.ResponseList;
 import twitter4j.Status;
-import twitter4j.TwitterException;
 
 /**
  * Created by moko256 on 2016/07/27.
@@ -63,19 +67,14 @@ public class SearchResultFragment extends BaseTweetListFragment {
         searchText=null;
     }
 
+    @NotNull
     @Override
-    @NonNull
-    protected ResponseList<Status> getResponseList(@NonNull Paging paging) throws TwitterException {
-        SearchResultList result=new SearchResultList();
+    protected List<Post> getResponseList(@NotNull Paging paging) throws Throwable {
         if (!searchText.equals("")){
-            Query query=new Query(searchText)
-                    .count(paging.getCount())
-                    .sinceId(paging.getSinceId())
-                    .maxId(paging.getMaxId())
-                    .resultType(Query.ResultType.recent);
-            result.addAll(client.getTwitter().search().search(query).getTweets());
+            return client.getApiClient().getPostByQuery(searchText, paging);
+        } else {
+            return Collections.emptyList();
         }
-        return result;
     }
 
     private static final class SearchResultList extends ArrayList<Status> implements ResponseList<Status>{

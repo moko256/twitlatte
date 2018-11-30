@@ -17,10 +17,8 @@
 package com.github.moko256.twitlatte
 
 import android.os.Bundle
-
-import twitter4j.PagableResponseList
-import twitter4j.TwitterException
-import twitter4j.User
+import com.github.moko256.twitlatte.entity.PageableResponse
+import com.github.moko256.twitlatte.entity.User
 
 /**
  * Created by moko256 on 2016/03/29.
@@ -42,9 +40,9 @@ class UserFollowersFragment : BaseUsersFragment(), ToolbarTitleInterface, Naviga
         super.onInitializeList()
     }
 
-    @Throws(TwitterException::class)
-    override fun getResponseList(cursorLong: Long): PagableResponseList<User> {
-        return client.twitter.getFollowersList(userId, cursorLong)
+    @Throws(Throwable::class)
+    override fun getResponseList(cursorLong: Long): PageableResponse<User> {
+        return client.apiClient.getFollowersList(userId, cursorLong)
     }
 
     companion object {

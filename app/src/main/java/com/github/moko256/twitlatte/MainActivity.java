@@ -28,9 +28,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
-import com.github.moko256.twitlatte.converter.UserConverterKt;
 import com.github.moko256.twitlatte.database.CachedUsersSQLiteOpenHelper;
 import com.github.moko256.twitlatte.entity.AccessToken;
 import com.github.moko256.twitlatte.entity.Client;
@@ -69,7 +69,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
-import twitter4j.TwitterException;
 
 import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY_ACCOUNT_KEY;
 
@@ -112,6 +111,10 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
         disposable = new CompositeDisposable();
         client = GlobalApplicationKt.getClient(this);
         accountsModel = GlobalApplicationKt.getAccountsModel(this);
+
+        if (client.getAccessToken().getToken().isEmpty()) {
+            Toast.makeText(this, R.string.please_re_login, Toast.LENGTH_LONG).show();
+        }
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -276,9 +279,9 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                                     User user = userHelper.getCachedUser(id);
                                     if (user == null){
                                         try {
-                                            user = UserConverterKt.convertToCommonUser(((GlobalApplication) getApplication()).createTwitterInstance(accessToken).verifyCredentials());
+                                            user = ((GlobalApplication) getApplication()).createTwitterInstance(accessToken).verifyCredentials();
                                             userHelper.addCachedUser(user);
-                                        } catch (TwitterException e) {
+                                        } catch (Throwable e) {
                                             e.printStackTrace();
                                         } finally {
                                             userHelper.close();

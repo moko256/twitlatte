@@ -18,16 +18,8 @@ package com.github.moko256.twitlatte
 
 import android.os.Bundle
 import androidx.annotation.Nullable
-import com.github.moko256.mastodon.MTException
-import com.github.moko256.mastodon.MTRangeConverter
-import com.github.moko256.mastodon.MTResponseList
-import com.github.moko256.mastodon.MastodonTwitterImpl
-import com.sys1yagi.mastodon4j.api.exception.Mastodon4jRequestException
-import com.sys1yagi.mastodon4j.api.method.Accounts
-import twitter4j.Paging
-import twitter4j.ResponseList
-import twitter4j.Status
-import twitter4j.TwitterException
+import com.github.moko256.twitlatte.entity.Paging
+import com.github.moko256.twitlatte.entity.Post
 
 /**
  * Created by moko256 on 2018/03/10.
@@ -53,14 +45,9 @@ class MediaTimelineFragment : BaseTweetListFragment(), ToolbarTitleInterface {
         adapter!!.shouldShowMediaOnly = true
     }
 
-    @Throws(TwitterException::class)
-    override fun getResponseList(paging: Paging): ResponseList<Status> {
-        val accounts = Accounts((client.twitter as MastodonTwitterImpl).client)
-        try {
-            return MTResponseList.convert(accounts.getStatuses(userId, true, false, false, MTRangeConverter.convert(paging)).execute())
-        } catch (e: Mastodon4jRequestException) {
-            throw MTException(e)
-        }
+    @Throws(Throwable::class)
+    override fun getResponseList(paging: Paging): List<Post> {
+        return client.apiClient.getMediasTimeline(userId, paging)
     }
 
     override val titleResourceId = R.string.media

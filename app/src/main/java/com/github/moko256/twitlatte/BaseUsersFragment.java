@@ -20,8 +20,9 @@ import android.graphics.Rect;
 import android.os.Bundle;
 import android.view.View;
 
-import com.github.moko256.twitlatte.converter.UserConverterKt;
 import com.github.moko256.twitlatte.entity.Client;
+import com.github.moko256.twitlatte.entity.PageableResponse;
+import com.github.moko256.twitlatte.entity.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,9 +35,6 @@ import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
-import twitter4j.PagableResponseList;
-import twitter4j.TwitterException;
-import twitter4j.User;
 
 /**
  * Created by moko256 on 2016/03/29.
@@ -136,7 +134,7 @@ public abstract class BaseUsersFragment extends BaseListFragment {
                                     list.clear();
                                     list.addAll(
                                             Observable
-                                                    .fromIterable(result)
+                                                    .fromIterable(result.getList())
                                                     .map(User::getId)
                                                     .toList().blockingGet()
                                     );
@@ -166,12 +164,12 @@ public abstract class BaseUsersFragment extends BaseListFragment {
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
                                 result -> {
-                                    int size = result.size();
+                                    int size = result.getList().size();
                                     if (size > 0) {
                                         int l = list.size();
                                         list.addAll(
                                                 Observable
-                                                        .fromIterable(result)
+                                                        .fromIterable(result.getList())
                                                         .map(User::getId)
                                                         .toList().blockingGet()
                                         );
@@ -193,26 +191,22 @@ public abstract class BaseUsersFragment extends BaseListFragment {
         return !list.isEmpty();
     }
 
-    private Single<PagableResponseList<User>> getResponseSingle(long cursor) {
+    private Single<PageableResponse<User>> getResponseSingle(long cursor) {
         return Single.create(
                 subscriber->{
                     try {
-                        PagableResponseList<User> pageableResponseList=getResponseList(cursor);
-                        next_cursor=pageableResponseList.getNextCursor();
-                        ArrayList<com.github.moko256.twitlatte.entity.User> users = new ArrayList<>(pageableResponseList.size());
-                        for (User user : pageableResponseList) {
-                            users.add(UserConverterKt.convertToCommonUser(user));
-                        }
-                        client.getUserCache().addAll(users);
+                        PageableResponse<User> pageableResponseList = getResponseList(cursor);
+                        next_cursor = pageableResponseList.getNextId();
+                        client.getUserCache().addAll(pageableResponseList.getList());
                         subscriber.onSuccess(pageableResponseList);
-                    } catch (TwitterException e) {
+                    } catch (Throwable e) {
                         subscriber.tryOnError(e);
                     }
                 }
         );
     }
 
-    protected abstract PagableResponseList<User> getResponseList(long cursor) throws TwitterException;
+    protected abstract PageableResponse<User> getResponseList(long cursor) throws Throwable;
 
     interface GetRecyclerViewPool {
         RecyclerView.RecycledViewPool getUserListViewPool();

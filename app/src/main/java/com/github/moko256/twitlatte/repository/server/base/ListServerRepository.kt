@@ -16,6 +16,8 @@
 
 package com.github.moko256.twitlatte.repository.server.base
 
+import com.github.moko256.twitlatte.entity.Paging
+
 /**
  * Created by moko256 on 2018/07/13.
  *
@@ -24,5 +26,5 @@ package com.github.moko256.twitlatte.repository.server.base
 interface ListServerRepository<T> {
 
     @Throws(Throwable::class)
-    fun get(sinceId: Long? = null, maxId: Long? = null, limit: Int = 10): List<T>
+    fun get(paging: Paging): List<T>
 }

@@ -31,7 +31,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.github.moko256.twitlatte.converter.StatusConverterKt;
 import com.github.moko256.twitlatte.entity.Client;
 import com.github.moko256.twitlatte.entity.Post;
 import com.github.moko256.twitlatte.entity.Status;
@@ -55,7 +54,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import kotlin.Unit;
-import twitter4j.TwitterException;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
@@ -93,7 +91,7 @@ public class ShowTweetActivity extends AppCompatActivity {
 
         client = GlobalApplicationKt.getClient(this);
         statusActionModel = new StatusActionModelImpl(
-                new TwitterStatusActionRepositoryImpl(client.getTwitter()),
+                new TwitterStatusActionRepositoryImpl(client.getApiClient()),
                 GlobalApplicationKt.statusActionQueue,
                 client.getStatusCache()
         );
@@ -249,10 +247,10 @@ public class ShowTweetActivity extends AppCompatActivity {
         return Single.create(
                 subscriber -> {
                     try {
-                        twitter4j.Status result = client.getTwitter().showStatus(statusId);
-                        client.getStatusCache().add(StatusConverterKt.convertToPost(result), false);
+                        Post result = client.getApiClient().showPost(statusId);
+                        client.getStatusCache().add(result, false);
                         subscriber.onSuccess(client.getPostCache().getPost(statusId));
-                    } catch (TwitterException e) {
+                    } catch (Throwable e) {
                         subscriber.tryOnError(e);
                     }
                 });
