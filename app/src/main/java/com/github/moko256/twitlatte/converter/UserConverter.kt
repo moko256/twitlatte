@@ -16,7 +16,6 @@
 
 package com.github.moko256.twitlatte.converter
 
-import com.github.moko256.mastodon.MTUser
 import com.github.moko256.twitlatte.entity.Emoji
 import com.github.moko256.twitlatte.entity.User
 import com.github.moko256.twitlatte.text.link.convertHtmlToContentAndLinks
@@ -28,13 +27,7 @@ import com.sys1yagi.mastodon4j.api.entity.Account
  *
  * @author moko256
  */
-fun twitter4j.User.convertToCommonUser(): User = if (this is MTUser) {
-    account.convertToCommonUser()
-} else {
-    convertToCommonUserInternal()
-}
-
-private fun twitter4j.User.convertToCommonUserInternal(): User {
+fun twitter4j.User.convertToCommonUser(): User {
     val urls = if (descriptionURLEntities.isNotEmpty()) {
         convertToContentAndLinks(
                 description,

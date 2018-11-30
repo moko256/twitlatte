@@ -16,7 +16,6 @@
 
 package com.github.moko256.twitlatte.converter
 
-import com.github.moko256.mastodon.MTStatus
 import com.github.moko256.twitlatte.entity.*
 import com.github.moko256.twitlatte.text.link.convertHtmlToContentAndLinks
 import com.github.moko256.twitlatte.text.link.convertToContentAndLinks
@@ -30,15 +29,6 @@ import com.sys1yagi.mastodon4j.api.entity.Attachment
  * @author moko256
  */
 fun twitter4j.Status.convertToPost(): Post {
-    return if (this is MTStatus) {
-        this.status.convertToCommonStatus()
-    } else {
-        this.convertToCommonStatus()
-    }
-}
-
-
-fun twitter4j.Status.convertToCommonStatus(): Post {
     val status: Status
     val statusUser: User
     val repeat: Repeat?

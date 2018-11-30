@@ -26,7 +26,6 @@ import android.text.style.ImageSpan;
 import android.view.View;
 import android.widget.TextView;
 
-import com.github.moko256.mastodon.MTException;
 import com.github.moko256.twitlatte.R;
 import com.github.moko256.twitlatte.SearchResultActivity;
 import com.github.moko256.twitlatte.ShowUserActivity;
@@ -109,7 +108,13 @@ public class TwitterStringUtils {
             return ((TwitterException) e).getErrorMessage();
         } else if (e instanceof Mastodon4jRequestException
                 && ((Mastodon4jRequestException) e).isErrorResponse()) {
-            return MTException.convertErrorString((Mastodon4jRequestException) e);
+            String message;
+            try {
+                message = ((Mastodon4jRequestException) e).getResponse().body().string();
+            } catch (Exception e1){
+                message = "Unknown";
+            }
+            return message;
         } else {
             return e.getMessage();
         }
