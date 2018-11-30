@@ -82,14 +82,14 @@ public class CachedStatusesSQLiteOpenHelperTest {
     }
 
     private void addCacheTest(){
-        helper.addCachedStatus(StatusConverterKt.convertToCommonStatus(new TestStatus(TEST_DUMMY_STATUS_ID_1, TEST_DUMMY_STATUS_TEXT_0)), false);
+        helper.addCachedStatus(StatusConverterKt.convertToStatus(new TestStatus(TEST_DUMMY_STATUS_ID_1, TEST_DUMMY_STATUS_TEXT_0)), false);
         StatusObject addedStatusResult = helper.getCachedStatus(TEST_DUMMY_STATUS_ID_1);
 
         assertEquals(((com.github.moko256.twitlatte.entity.Status) addedStatusResult).getText(), TEST_DUMMY_STATUS_TEXT_0);
     }
 
     private void updateCacheTest(){
-        helper.addCachedStatus(StatusConverterKt.convertToCommonStatus(new TestStatus(TEST_DUMMY_STATUS_ID_1, TEST_DUMMY_STATUS_TEXT_1)), false);
+        helper.addCachedStatus(StatusConverterKt.convertToStatus(new TestStatus(TEST_DUMMY_STATUS_ID_1, TEST_DUMMY_STATUS_TEXT_1)), false);
         StatusObject updatedStatusResult = helper.getCachedStatus(TEST_DUMMY_STATUS_ID_1);
 
         assertEquals(((com.github.moko256.twitlatte.entity.Status) updatedStatusResult).getText(), TEST_DUMMY_STATUS_TEXT_1);
@@ -103,8 +103,8 @@ public class CachedStatusesSQLiteOpenHelperTest {
 
     private void addStatusesTest(){
         helper.addCachedStatuses(Arrays.asList(
-                StatusConverterKt.convertToCommonStatus(new TestStatus(TEST_DUMMY_STATUS_ID_1, TEST_DUMMY_STATUS_TEXT_0)),
-                StatusConverterKt.convertToCommonStatus(new TestStatus(TEST_DUMMY_STATUS_ID_2, TEST_DUMMY_STATUS_TEXT_1))), false
+                StatusConverterKt.convertToStatus(new TestStatus(TEST_DUMMY_STATUS_ID_1, TEST_DUMMY_STATUS_TEXT_0)),
+                StatusConverterKt.convertToStatus(new TestStatus(TEST_DUMMY_STATUS_ID_2, TEST_DUMMY_STATUS_TEXT_1))), false
         );
 
         assertEquals(((com.github.moko256.twitlatte.entity.Status) helper.getCachedStatus(TEST_DUMMY_STATUS_ID_1)).getText(), TEST_DUMMY_STATUS_TEXT_0);
