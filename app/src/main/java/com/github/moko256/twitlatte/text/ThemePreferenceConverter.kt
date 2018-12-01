@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.moko256.twitlatte.converter
+package com.github.moko256.twitlatte.text
 
 import androidx.appcompat.app.AppCompatDelegate
 

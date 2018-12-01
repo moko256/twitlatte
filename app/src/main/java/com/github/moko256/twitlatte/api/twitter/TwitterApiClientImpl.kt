@@ -17,10 +17,6 @@
 package com.github.moko256.twitlatte.api.twitter
 
 import com.github.moko256.twitlatte.api.base.ApiClient
-import com.github.moko256.twitlatte.converter.convertToCommonUser
-import com.github.moko256.twitlatte.converter.convertToPost
-import com.github.moko256.twitlatte.converter.convertToTwitterPaging
-import com.github.moko256.twitlatte.converter.convertToTwitterQuery
 import com.github.moko256.twitlatte.entity.*
 import twitter4j.GeoLocation
 import twitter4j.Twitter

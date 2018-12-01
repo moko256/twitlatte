@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.moko256.twitlatte.text.link
+package com.github.moko256.twitlatte.api.twitter
 
 import com.github.moko256.twitlatte.text.link.entity.Link
 import twitter4j.*

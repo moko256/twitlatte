@@ -19,8 +19,8 @@ package com.github.moko256.twitlatte.database.migrator
 import android.content.ContentValues
 import android.database.DatabaseUtils
 import android.database.sqlite.SQLiteDatabase
+import com.github.moko256.twitlatte.api.twitter.convertToContentAndLinks
 import com.github.moko256.twitlatte.text.link.convertHtmlToContentAndLinks
-import com.github.moko256.twitlatte.text.link.convertToContentAndLinks
 import com.github.moko256.twitlatte.text.splitWithComma
 import twitter4j.URLEntity
 

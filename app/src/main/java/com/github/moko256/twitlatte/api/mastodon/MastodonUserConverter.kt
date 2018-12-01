@@ -14,70 +14,19 @@
  * limitations under the License.
  */
 
-package com.github.moko256.twitlatte.converter
+package com.github.moko256.twitlatte.api.mastodon
 
+import com.github.moko256.twitlatte.date.toISO8601Date
 import com.github.moko256.twitlatte.entity.Emoji
 import com.github.moko256.twitlatte.entity.User
 import com.github.moko256.twitlatte.text.link.convertHtmlToContentAndLinks
-import com.github.moko256.twitlatte.text.link.convertToContentAndLinks
 import com.sys1yagi.mastodon4j.api.entity.Account
 
 /**
- * Created by moko256 on 2018/09/09.
+ * Created by moko256 on 2018/12/01.
  *
  * @author moko256
  */
-fun twitter4j.User.convertToCommonUser(): User {
-    val urls = if (descriptionURLEntities.isNotEmpty()) {
-        convertToContentAndLinks(
-                description,
-                emptyArray(),
-                emptyArray(),
-                emptyArray(),
-                emptyArray(),
-                descriptionURLEntities
-        )
-    } else {
-        null
-    }
-
-    return User(
-            id = id,
-            name = name,
-            screenName = screenName,
-            location = location,
-            description = urls?.first ?: description,
-            isContributorsEnabled = isContributorsEnabled,
-            profileImageURLHttps = profileImageURLHttps,
-            isDefaultProfileImage = isDefaultProfileImage,
-            url = url,
-            isProtected = isProtected,
-            followersCount = followersCount,
-            profileBackgroundColor = profileBackgroundColor,
-            profileTextColor = profileTextColor,
-            profileLinkColor = profileLinkColor,
-            profileSidebarFillColor = profileSidebarFillColor,
-            profileSidebarBorderColor = profileSidebarBorderColor,
-            isProfileUseBackgroundImage = isProfileUseBackgroundImage,
-            isDefaultProfile = isDefaultProfile,
-            friendsCount = friendsCount,
-            createdAt = createdAt,
-            favoritesCount = favouritesCount,
-            utcOffset = utcOffset,
-            timeZone = timeZone,
-            profileBackgroundImageURLHttps = profileBackgroundImageUrlHttps,
-            profileBannerImageUrl = if (profileBannerURL != null) profileBannerURL!!.replace("/web$".toRegex(), "") else null,
-            isProfileBackgroundTiled = isProfileBackgroundTiled,
-            lang = lang,
-            statusesCount = statusesCount,
-            isVerified = isVerified,
-            isTranslator = isTranslator,
-            isFollowRequestSent = isFollowRequestSent,
-            descriptionLinks = urls?.second,
-            emojis = null,
-            isTwitter = true
-    )
-}
 
 fun Account.convertToCommonUser(): User {
     val urls = note.convertHtmlToContentAndLinks()

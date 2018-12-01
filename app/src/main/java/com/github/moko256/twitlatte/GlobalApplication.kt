@@ -28,7 +28,6 @@ import com.github.moko256.twitlatte.api.generateMastodonApiClient
 import com.github.moko256.twitlatte.api.generateTwitterApiClient
 import com.github.moko256.twitlatte.cacheMap.StatusCacheMap
 import com.github.moko256.twitlatte.cacheMap.UserCacheMap
-import com.github.moko256.twitlatte.converter.convertToAppCompatNightThemeMode
 import com.github.moko256.twitlatte.entity.AccessToken
 import com.github.moko256.twitlatte.entity.Client
 import com.github.moko256.twitlatte.entity.ClientType
@@ -40,6 +39,7 @@ import com.github.moko256.twitlatte.repository.KEY_ACCOUNT_KEY
 import com.github.moko256.twitlatte.repository.KEY_NIGHT_MODE
 import com.github.moko256.twitlatte.repository.PreferenceRepository
 import com.github.moko256.twitlatte.text.TwitterStringUtils
+import com.github.moko256.twitlatte.text.convertToAppCompatNightThemeMode
 import twitter4j.AlternativeHttpClientImpl
 import twitter4j.HttpClientFactory
 import twitter4j.conf.ConfigurationContext

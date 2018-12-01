@@ -17,9 +17,6 @@
 package com.github.moko256.twitlatte.api.mastodon
 
 import com.github.moko256.twitlatte.api.base.ApiClient
-import com.github.moko256.twitlatte.converter.convertToCommonStatus
-import com.github.moko256.twitlatte.converter.convertToCommonUser
-import com.github.moko256.twitlatte.converter.convertToMastodonRange
 import com.github.moko256.twitlatte.entity.*
 import com.sys1yagi.mastodon4j.MastodonClient
 import com.sys1yagi.mastodon4j.api.Range

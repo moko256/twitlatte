@@ -14,42 +14,16 @@
  * limitations under the License.
  */
 
-package com.github.moko256.twitlatte.converter
+package com.github.moko256.twitlatte.api.mastodon
 
 import com.github.moko256.twitlatte.entity.Paging
 import com.sys1yagi.mastodon4j.api.Range
-import twitter4j.Query
 
 /**
- * Created by moko256 on 2018/11/30.
+ * Created by moko256 on 2018/12/01.
  *
  * @author moko256
  */
-
-fun Paging.convertToTwitterPaging(): twitter4j.Paging {
-    val paging = twitter4j.Paging()
-    paging.count = count
-    if (this.sinceId > 0) {
-        paging.sinceId = sinceId
-    }
-    if (this.maxId > 0) {
-        paging.maxId = maxId
-    }
-    return paging
-}
-
-fun Paging.convertToTwitterQuery(keyword: String): Query {
-    val query = Query()
-    query.query = keyword
-    query.count = count
-    if (this.sinceId > 0) {
-        query.sinceId = sinceId
-    }
-    if (this.maxId > 0) {
-        query.maxId = maxId
-    }
-    return query
-}
 
 fun Paging.convertToMastodonRange(): Range {
     return Range(
