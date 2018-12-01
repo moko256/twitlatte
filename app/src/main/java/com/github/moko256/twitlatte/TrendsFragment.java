@@ -159,7 +159,7 @@ public class TrendsFragment extends BaseListFragment {
         return Single.create(
                 subscriber->{
                     try {
-                        List<Trend> trends = client.getApiClient().getClosestTrends(address);
+                        List<Trend> trends = client.getApiClient().getClosestTrends(address.getLatitude(), address.getLongitude());
 
                         helper.setTrends(trends);
 

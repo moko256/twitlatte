@@ -16,7 +16,6 @@
 
 package com.github.moko256.twitlatte.api.base
 
-import android.location.Address
 import com.github.moko256.twitlatte.entity.*
 
 /**
@@ -44,7 +43,7 @@ interface ApiClient {
 
     fun verifyCredentials(): User
 
-    fun getClosestTrends(address: Address): List<Trend>
+    fun getClosestTrends(latitude: Double, longitude: Double): List<Trend>
 
     fun createFavorite(statusId: Long): Post
     fun destroyFavorite(statusId: Long): Post

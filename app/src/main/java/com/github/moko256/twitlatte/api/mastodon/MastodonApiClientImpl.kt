@@ -16,7 +16,6 @@
 
 package com.github.moko256.twitlatte.api.mastodon
 
-import android.location.Address
 import com.github.moko256.twitlatte.api.base.ApiClient
 import com.github.moko256.twitlatte.converter.convertToCommonStatus
 import com.github.moko256.twitlatte.converter.convertToCommonUser
@@ -134,7 +133,7 @@ class MastodonApiClientImpl(private val client: MastodonClient): ApiClient {
         return Accounts(client).getVerifyCredentials().execute().convertToCommonUser()
     }
 
-    override fun getClosestTrends(address: Address): List<Trend> {
+    override fun getClosestTrends(latitude: Double, longitude: Double): List<Trend> {
         throw UnsupportedOperationException()
     }
 

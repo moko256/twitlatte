@@ -16,7 +16,6 @@
 
 package com.github.moko256.twitlatte.api.twitter
 
-import android.location.Address
 import com.github.moko256.twitlatte.api.base.ApiClient
 import com.github.moko256.twitlatte.converter.convertToCommonUser
 import com.github.moko256.twitlatte.converter.convertToPost
@@ -96,11 +95,11 @@ class TwitterApiClientImpl(private val client: Twitter): ApiClient {
         return client.verifyCredentials().convertToCommonUser()
     }
 
-    override fun getClosestTrends(address: Address): List<Trend> {
+    override fun getClosestTrends(latitude: Double, longitude: Double): List<Trend> {
         return client
                 .getPlaceTrends(
                         client.getClosestTrends(
-                                GeoLocation(address.latitude, address.longitude)
+                                GeoLocation(latitude, longitude)
                         )[0].woeid
                 )
                 .trends.map { Trend(it.name, it.tweetVolume) }
