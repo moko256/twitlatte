@@ -77,6 +77,10 @@ android {
     }
 }
 
+kapt {
+    useBuildCache = true
+}
+
 dependencies {
 
     testImplementation 'junit:junit:4.12'
