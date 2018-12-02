@@ -5,7 +5,7 @@
 
 -keepattributes SourceFile,LineNumberTable
 
--keep,allowoptimization class androidx.appcompat.app.AppCompatViewInflater
+-keepnames class androidx.appcompat.app.AppCompatViewInflater
 
 -dontwarn java.lang.invoke.*
 -dontwarn **$$Lambda$*
@@ -41,7 +41,7 @@
 # Prevent proguard from stripping interface information from TypeAdapterFactory,
 # JsonSerializer, JsonDeserializer instances (so they can be used in @JsonAdapter)
 -keep,allowoptimization class * implements com.google.gson.TypeAdapterFactory
--keep,allowoptimization class * implements com.google.gson.JsonSerializer
+#-keep,allowoptimization class * implements com.google.gson.JsonSerializer
 -keep,allowoptimization class * implements com.google.gson.JsonDeserializer
 
 ##---------------End: proguard configuration for Gson  ----------
