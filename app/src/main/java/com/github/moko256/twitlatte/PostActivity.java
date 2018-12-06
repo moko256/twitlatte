@@ -40,7 +40,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.github.moko256.twitlatte.api.mastodon.MastodonStatusCounter;
 import com.github.moko256.twitlatte.api.twitter.TwitterStatusCounter;
@@ -193,7 +192,12 @@ public class PostActivity extends AppCompatActivity {
         imagesRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         imagesRecyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
             @Override
-            public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+            public void getItemOffsets(
+                    @NonNull Rect outRect,
+                    @NonNull View view,
+                    @NonNull RecyclerView parent,
+                    @NonNull RecyclerView.State state
+            ) {
                 outRect.right = Math.round(getResources().getDisplayMetrics().density);
             }
         });
@@ -539,7 +543,7 @@ public class PostActivity extends AppCompatActivity {
                                     model.setLocation(new Pair<>(it.getLatitude(), it.getLongitude()));
                                     locationText.setText(getString(R.string.lat_and_lon, it.getLatitude(), it.getLongitude()));
                                 },
-                                e -> Toast.makeText(this, TwitterStringUtils.convertErrorToText(e), Toast.LENGTH_SHORT).show()
+                                this::errorNotify
                         )
         );
     }
