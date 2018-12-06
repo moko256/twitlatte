@@ -66,7 +66,7 @@ interface ApiClient {
     fun postStatus(
             inReplyToStatusId: Long,
             contentWarning: String?,
-            tweetText: String,
+            context: String,
             imageIdList: List<Long>?,
             isPossiblySensitive: Boolean,
             location: Pair<Double, Double>?,

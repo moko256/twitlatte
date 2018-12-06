@@ -195,9 +195,9 @@ class MastodonApiClientImpl(private val client: MastodonClient): ApiClient {
                 .id
     }
 
-    override fun postStatus(inReplyToStatusId: Long, contentWarning: String?, tweetText: String, imageIdList: List<Long>?, isPossiblySensitive: Boolean, location: Pair<Double, Double>?, visibility: String?) {
+    override fun postStatus(inReplyToStatusId: Long, contentWarning: String?, context: String, imageIdList: List<Long>?, isPossiblySensitive: Boolean, location: Pair<Double, Double>?, visibility: String?) {
         Statuses(client).postStatus(
-                tweetText,
+                context,
                 inReplyToStatusId.takeIf { it > 0 },
                 imageIdList,
                 isPossiblySensitive.takeIf { it },

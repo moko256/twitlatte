@@ -155,8 +155,8 @@ class TwitterApiClientImpl(private val client: Twitter): ApiClient {
         }.mediaId
     }
 
-    override fun postStatus(inReplyToStatusId: Long, contentWarning: String?, tweetText: String, imageIdList: List<Long>?, isPossiblySensitive: Boolean, location: Pair<Double, Double>?, visibility: String?) {
-        val statusUpdate = StatusUpdate(tweetText)
+    override fun postStatus(inReplyToStatusId: Long, contentWarning: String?, context: String, imageIdList: List<Long>?, isPossiblySensitive: Boolean, location: Pair<Double, Double>?, visibility: String?) {
+        val statusUpdate = StatusUpdate(context)
         imageIdList?.takeIf { it.isNotEmpty() }?.let {
             statusUpdate.setMediaIds(*it.toLongArray())
             statusUpdate.isPossiblySensitive = isPossiblySensitive
