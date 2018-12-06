@@ -21,7 +21,7 @@ import com.github.moko256.twitlatte.api.base.ApiClient
 import com.github.moko256.twitlatte.api.mastodon.MastodonApiClientImpl
 import com.github.moko256.twitlatte.api.twitter.TwitterApiClientImpl
 import com.github.moko256.twitlatte.entity.AccessToken
-import com.google.gson.Gson
+import com.github.moko256.twitlatte.gson.gson
 import com.sys1yagi.mastodon4j.MastodonClient
 import okhttp3.OkHttpClient
 import twitter4j.conf.ConfigurationBuilder
@@ -45,8 +45,6 @@ fun generateTwitterApiClient(accessToken: AccessToken): ApiClient {
                     .createTwitterInstance()
     )
 }
-
-private val gson = Gson()
 
 fun generateMastodonApiClient(okHttpClient: OkHttpClient, accessToken: AccessToken): ApiClient {
     return MastodonApiClientImpl(

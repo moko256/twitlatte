@@ -30,9 +30,13 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.github.moko256.twitlatte.api.OAuthApiClientGeneratorKt;
+import com.github.moko256.twitlatte.database.TokenSQLiteOpenHelper;
 import com.github.moko256.twitlatte.entity.AccessToken;
 import com.github.moko256.twitlatte.entity.ClientType;
 import com.github.moko256.twitlatte.model.base.OAuthModel;
+import com.github.moko256.twitlatte.model.impl.OAuthModelImpl;
+import com.github.moko256.twitlatte.net.OkHttpHolderKt;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
 
 import androidx.annotation.NonNull;
@@ -170,10 +174,16 @@ public class OAuthActivity extends AppCompatActivity {
     private void initType(@ClientType.ClientTypeInt int authClientType){
         switch (authClientType) {
             case ClientType.TWITTER:
-                model = new com.github.moko256.twitlatte.model.impl.twitter.OAuthModelImpl();
+                model = new OAuthModelImpl(
+                        OAuthApiClientGeneratorKt.generateTwitterOAuthApiClient()
+                );
                 break;
             case ClientType.MASTODON:
-                model = new com.github.moko256.twitlatte.model.impl.mastodon.OAuthModelImpl();
+                model = new OAuthModelImpl(
+                        OAuthApiClientGeneratorKt.generateMastodonOAuthApiClient(
+                                OkHttpHolderKt.getAppOkHttpClientInstance()
+                        )
+                );
                 break;
             default:
                 model = null;
@@ -210,7 +220,7 @@ public class OAuthActivity extends AppCompatActivity {
     public void onStartTwitterAuthClick(View view) {
         initType(ClientType.TWITTER);
 
-        startAuthAndOpenDialogIfNeeded("twitter.com");
+        startAuthAndOpenDialogIfNeeded(TokenSQLiteOpenHelper.TWITTER_URL);
     }
 
     public void onStartMastodonAuthClick(View view) {
