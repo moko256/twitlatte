@@ -37,8 +37,6 @@ import com.github.moko256.twitlatte.entity.Status;
 import com.github.moko256.twitlatte.entity.User;
 import com.github.moko256.twitlatte.glide.GlideApp;
 import com.github.moko256.twitlatte.intent.AppCustomTabsKt;
-import com.github.moko256.twitlatte.model.base.PostTweetModel;
-import com.github.moko256.twitlatte.model.impl.PostTweetModelCreatorKt;
 import com.github.moko256.twitlatte.model.impl.StatusActionModelImpl;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
 
@@ -48,6 +46,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import io.reactivex.Completable;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -351,12 +350,24 @@ public class ShowTweetActivity extends AppCompatActivity {
 
         replyButton.setOnClickListener(v -> {
             replyButton.setEnabled(false);
-            PostTweetModel model = PostTweetModelCreatorKt.getInstance(client, getContentResolver());
-            model.setTweetText(replyText.getText().toString());
-            model.setInReplyToStatusId(item.getStatus().getId());
             disposables.add(
-                    model.postTweet()
-                            .subscribeOn(Schedulers.io())
+                    Completable.create(emitter -> {
+                        try {
+                            client.getApiClient().postStatus(
+                                    item.getStatus().getId(),
+                                    null,
+                                    replyText.getText().toString(),
+                                    null,
+                                    false,
+                                    null,
+                                    null
+                            );
+                            emitter.onComplete();
+                        } catch (Throwable e) {
+                            e.printStackTrace();
+                            emitter.tryOnError(e);
+                        }
+                    }).subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe(
                                     () -> {

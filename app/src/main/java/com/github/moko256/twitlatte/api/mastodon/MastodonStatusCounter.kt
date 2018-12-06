@@ -14,42 +14,24 @@
  * limitations under the License.
  */
 
-package com.github.moko256.twitlatte.model.base
+package com.github.moko256.twitlatte.api.mastodon
 
-import android.net.Uri
-
-import io.reactivex.Completable
-import twitter4j.GeoLocation
+import com.github.moko256.twitlatte.api.base.StatusCounter
 
 /**
- * Created by moko256 on 2017/07/22.
+ * Created by moko256 on 2018/12/06.
  *
  * @author moko256
  */
+class MastodonStatusCounter: StatusCounter {
+    override fun getLength(text: String): Int {
+        return text.codePointCount(0, text.length)
+    }
 
-interface PostTweetModel {
+    override fun isValid(text: String): Boolean {
+        return getLength(text) <= limit
+    }
 
-    var inReplyToStatusId: Long
-
-    var isPossiblySensitive: Boolean
-
-    var tweetText: String
-
-    var contentWarning: String?
-
-    val tweetLength: Int
-    val maxTweetLength: Int
-
-    val isReply: Boolean
-    val isValidTweet: Boolean
-
-    val uriList: List<Uri>
-    val uriListSizeLimit: Int
-
-    var location: GeoLocation?
-
-    var visibility: String?
-
-    fun postTweet(): Completable
+    override val limit: Int = 500
 
 }

@@ -42,11 +42,13 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.moko256.twitlatte.api.mastodon.MastodonStatusCounter;
+import com.github.moko256.twitlatte.api.twitter.TwitterStatusCounter;
 import com.github.moko256.twitlatte.entity.Client;
 import com.github.moko256.twitlatte.entity.ClientType;
 import com.github.moko256.twitlatte.glide.GlideApp;
-import com.github.moko256.twitlatte.model.base.PostTweetModel;
-import com.github.moko256.twitlatte.model.impl.PostTweetModelCreatorKt;
+import com.github.moko256.twitlatte.model.base.PostStatusModel;
+import com.github.moko256.twitlatte.model.impl.PostStatusModelImpl;
 import com.github.moko256.twitlatte.rx.LocationSingleBuilder;
 import com.github.moko256.twitlatte.rx.VerifyCredentialOnSubscribe;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
@@ -69,7 +71,7 @@ import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
-import twitter4j.GeoLocation;
+import kotlin.Pair;
 
 /**
  * Created by moko256 on 2015/11/08.
@@ -87,7 +89,7 @@ public class PostActivity extends AppCompatActivity {
     private static final String[] POST_VISIBILITY = {"Public", "Unlisted", "Private", "Direct"};
 
     private Client client;
-    private PostTweetModel model;
+    private PostStatusModel model;
 
     private boolean isPosting = false;
 
@@ -116,7 +118,13 @@ public class PostActivity extends AppCompatActivity {
         setContentView(R.layout.activity_post);
 
         client = GlobalApplicationKt.getClient(this);
-        model = PostTweetModelCreatorKt.getInstance(client, getContentResolver());
+        model = new PostStatusModelImpl(
+                getContentResolver(),
+                client.getApiClient(),
+                client.getAccessToken().getType() == ClientType.TWITTER?
+                        new TwitterStatusCounter():
+                        new MastodonStatusCounter()
+        );
         disposable = new CompositeDisposable();
 
         rootViewGroup= findViewById(R.id.activity_tweet_send_layout_root);
@@ -153,7 +161,7 @@ public class PostActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                model.setTweetText(s.toString());
+                model.setStatusText(s.toString());
                 updateCounter();
             }
 
@@ -326,7 +334,7 @@ public class PostActivity extends AppCompatActivity {
     }
 
     private void doSend() {
-        if (model.isValidTweet()) {
+        if (model.isValid()) {
             doReallySend();
         } else {
             new AlertDialog
@@ -342,7 +350,7 @@ public class PostActivity extends AppCompatActivity {
         isPosting = true;
         postButton.setEnabled(false);
         disposable.add(
-                model.postTweet()
+                model.post()
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
@@ -360,10 +368,10 @@ public class PostActivity extends AppCompatActivity {
     @SuppressLint("SetTextI18n")
     private void updateCounter() {
         counterTextView.setText(String.valueOf(
-                model.getTweetLength())+" / "+String.valueOf(model.getMaxTweetLength()
+                model.getTweetLength())+" / "+String.valueOf(model.getStatusTextLimit()
         ));
         counterTextView.setTextColor(
-                model.isValidTweet()?
+                model.isValid()?
                         Color.GRAY:
                         Color.RED
         );
@@ -528,7 +536,7 @@ public class PostActivity extends AppCompatActivity {
                         .getSingle()
                         .subscribe(
                                 it -> {
-                                    model.setLocation(new GeoLocation(it.getLatitude(), it.getLongitude()));
+                                    model.setLocation(new Pair<>(it.getLatitude(), it.getLongitude()));
                                     locationText.setText(getString(R.string.lat_and_lon, it.getLatitude(), it.getLongitude()));
                                 },
                                 e -> Toast.makeText(this, TwitterStringUtils.convertErrorToText(e), Toast.LENGTH_SHORT).show()

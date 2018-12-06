@@ -46,7 +46,7 @@ class LocationSingleBuilder(
                 locationManager
                         .getLastKnownLocation(provider)
                         .takeIf {
-                            it.time < Date().time + 10 * 60 * 1000
+                            it != null && it.time < Date().time + 10 * 60 * 1000
                         }.also {
                             if (it == null) {
                                 locationManager.requestSingleUpdate(

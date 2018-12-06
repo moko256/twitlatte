@@ -17,6 +17,7 @@
 package com.github.moko256.twitlatte.api.base
 
 import com.github.moko256.twitlatte.entity.*
+import java.io.InputStream
 
 /**
  * Created by moko256 on 2018/11/30.
@@ -60,4 +61,15 @@ interface ApiClient {
     fun destroyMute(userId: Long)
 
     fun reportSpam(userId: Long)
+
+    fun uploadMedia(inputStream: InputStream, name: String, type: String): Long
+    fun postStatus(
+            inReplyToStatusId: Long,
+            contentWarning: String?,
+            tweetText: String,
+            imageIdList: List<Long>?,
+            isPossiblySensitive: Boolean,
+            location: Pair<Double, Double>?,
+            visibility: String?
+    )
 }

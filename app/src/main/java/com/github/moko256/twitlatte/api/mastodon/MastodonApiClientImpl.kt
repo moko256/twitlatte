@@ -20,10 +20,12 @@ import com.github.moko256.twitlatte.api.base.ApiClient
 import com.github.moko256.twitlatte.entity.*
 import com.sys1yagi.mastodon4j.MastodonClient
 import com.sys1yagi.mastodon4j.api.Range
-import com.sys1yagi.mastodon4j.api.method.Accounts
-import com.sys1yagi.mastodon4j.api.method.Favourites
-import com.sys1yagi.mastodon4j.api.method.Statuses
-import com.sys1yagi.mastodon4j.api.method.Timelines
+import com.sys1yagi.mastodon4j.api.method.*
+import com.sys1yagi.mastodon4j.api.method.Media
+import okhttp3.MediaType
+import okhttp3.MultipartBody
+import twitter4j.AlternativeHttpClientImpl
+import java.io.InputStream
 
 /**
  * Created by moko256 on 2018/11/30.
@@ -176,6 +178,34 @@ class MastodonApiClientImpl(private val client: MastodonClient): ApiClient {
 
     override fun reportSpam(userId: Long) {
         throw UnsupportedOperationException()
+    }
+
+    override fun uploadMedia(inputStream: InputStream, name: String, type: String): Long {
+        return Media(client)
+                .postMedia(
+                        MultipartBody.Part.createFormData(
+                                "file",
+                                name,
+                                AlternativeHttpClientImpl.createInputStreamRequestBody(
+                                        MediaType.parse(type),
+                                        inputStream
+                                )
+                        ), null, null)
+                .execute()
+                .id
+    }
+
+    override fun postStatus(inReplyToStatusId: Long, contentWarning: String?, tweetText: String, imageIdList: List<Long>?, isPossiblySensitive: Boolean, location: Pair<Double, Double>?, visibility: String?) {
+        Statuses(client).postStatus(
+                tweetText,
+                inReplyToStatusId.takeIf { it > 0 },
+                imageIdList,
+                isPossiblySensitive.takeIf { it },
+                contentWarning?.takeIf { it.isNotEmpty() },
+                visibility?.let {
+                    com.sys1yagi.mastodon4j.api.entity.Status.Visibility.valueOf(it)
+                }, null
+        ).execute()
     }
 
 }

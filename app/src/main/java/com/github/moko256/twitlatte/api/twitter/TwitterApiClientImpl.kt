@@ -19,7 +19,9 @@ package com.github.moko256.twitlatte.api.twitter
 import com.github.moko256.twitlatte.api.base.ApiClient
 import com.github.moko256.twitlatte.entity.*
 import twitter4j.GeoLocation
+import twitter4j.StatusUpdate
 import twitter4j.Twitter
+import java.io.InputStream
 
 /**
  * Created by moko256 on 2018/11/30.
@@ -143,6 +145,29 @@ class TwitterApiClientImpl(private val client: Twitter): ApiClient {
 
     override fun reportSpam(userId: Long) {
         client.reportSpam(userId)
+    }
+
+    override fun uploadMedia(inputStream: InputStream, name: String, type: String): Long {
+        return if (type.startsWith("video/")) {
+            client.uploadMediaChunked(name, inputStream)
+        } else {
+            client.uploadMedia(name, inputStream)
+        }.mediaId
+    }
+
+    override fun postStatus(inReplyToStatusId: Long, contentWarning: String?, tweetText: String, imageIdList: List<Long>?, isPossiblySensitive: Boolean, location: Pair<Double, Double>?, visibility: String?) {
+        val statusUpdate = StatusUpdate(tweetText)
+        imageIdList?.takeIf { it.isNotEmpty() }?.let {
+            statusUpdate.setMediaIds(*it.toLongArray())
+            statusUpdate.isPossiblySensitive = isPossiblySensitive
+        }
+        if (inReplyToStatusId > 0) {
+            statusUpdate.inReplyToStatusId = inReplyToStatusId
+        }
+        if (location != null) {
+            statusUpdate.location = GeoLocation(location.first, location.second)
+        }
+        client.updateStatus(statusUpdate)
     }
 
 }
