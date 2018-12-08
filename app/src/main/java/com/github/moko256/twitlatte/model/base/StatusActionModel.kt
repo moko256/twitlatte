@@ -16,7 +16,7 @@
 
 package com.github.moko256.twitlatte.model.base
 
-import com.github.moko256.core.client.base.entity.StatusAction
+import com.github.moko256.latte.client.base.entity.StatusAction
 import io.reactivex.Observable
 
 /**

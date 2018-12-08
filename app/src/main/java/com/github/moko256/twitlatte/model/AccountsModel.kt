@@ -18,7 +18,7 @@ package com.github.moko256.twitlatte.model
 
 import android.content.Context
 import com.github.moko256.twitlatte.database.TokenSQLiteOpenHelper
-import com.github.moko256.core.client.base.entity.AccessToken
+import com.github.moko256.latte.client.base.entity.AccessToken
 
 /**
  * Created by moko256 on 2018/03/29.

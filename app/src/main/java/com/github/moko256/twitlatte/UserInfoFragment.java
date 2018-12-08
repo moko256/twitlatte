@@ -30,8 +30,8 @@ import android.widget.TextView;
 
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.github.moko256.twitlatte.entity.Client;
-import com.github.moko256.core.client.base.entity.Emoji;
-import com.github.moko256.core.client.base.entity.User;
+import com.github.moko256.latte.client.base.entity.Emoji;
+import com.github.moko256.latte.client.base.entity.User;
 import com.github.moko256.twitlatte.glide.GlideApp;
 import com.github.moko256.twitlatte.glide.GlideRequests;
 import com.github.moko256.twitlatte.intent.AppCustomTabsKt;
@@ -54,7 +54,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-import static com.github.moko256.twitlatte.core.client.twitter.TwitterApiClientImplKt.CLIENT_TYPE_TWITTER;
+import static com.github.moko256.latte.client.twitter.TwitterApiClientImplKt.CLIENT_TYPE_TWITTER;
 
 /**
  * Created by moko256 on 2017/01/15.

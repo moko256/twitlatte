@@ -41,15 +41,14 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.github.moko256.twitlatte.core.client.mastodon.MastodonStatusCounter;
-import com.github.moko256.twitlatte.core.client.twitter.TwitterStatusCounter;
+import com.github.moko256.latte.client.mastodon.MastodonStatusCounter;
+import com.github.moko256.latte.client.twitter.TwitterStatusCounter;
 import com.github.moko256.twitlatte.entity.Client;
 import com.github.moko256.twitlatte.glide.GlideApp;
 import com.github.moko256.twitlatte.model.base.PostStatusModel;
 import com.github.moko256.twitlatte.model.impl.PostStatusModelImpl;
 import com.github.moko256.twitlatte.rx.LocationSingleBuilder;
 import com.github.moko256.twitlatte.rx.VerifyCredentialOnSubscribe;
-import com.github.moko256.twitlatte.text.TwitterStringUtils;
 import com.github.moko256.twitlatte.widget.ImageKeyboardEditText;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -71,8 +70,8 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import kotlin.Pair;
 
-import static com.github.moko256.twitlatte.core.client.mastodon.MastodonApiClientImplKt.CLIENT_TYPE_MASTODON;
-import static com.github.moko256.twitlatte.core.client.twitter.TwitterApiClientImplKt.CLIENT_TYPE_TWITTER;
+import static com.github.moko256.latte.client.mastodon.MastodonApiClientImplKt.CLIENT_TYPE_MASTODON;
+import static com.github.moko256.latte.client.twitter.TwitterApiClientImplKt.CLIENT_TYPE_TWITTER;
 
 /**
  * Created by moko256 on 2015/11/08.

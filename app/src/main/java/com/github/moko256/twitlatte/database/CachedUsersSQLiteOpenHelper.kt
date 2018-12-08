@@ -20,11 +20,11 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import com.github.moko256.core.client.base.entity.AccessToken
-import com.github.moko256.core.client.base.entity.Emoji
-import com.github.moko256.core.client.base.entity.User
-import com.github.moko256.twitlatte.core.client.twitter.CLIENT_TYPE_TWITTER
-import com.github.moko256.twitlatte.core.html.entity.Link
+import com.github.moko256.latte.client.base.entity.AccessToken
+import com.github.moko256.latte.client.base.entity.Emoji
+import com.github.moko256.latte.client.base.entity.User
+import com.github.moko256.latte.client.twitter.CLIENT_TYPE_TWITTER
+import com.github.moko256.latte.html.entity.Link
 import com.github.moko256.twitlatte.text.splitWithComma
 import java.io.File
 import java.util.*

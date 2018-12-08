@@ -16,8 +16,8 @@
 
 package com.github.moko256.twitlatte.database;
 
-import com.github.moko256.core.client.base.entity.AccessToken;
-import com.github.moko256.core.client.base.entity.Trend;
+import com.github.moko256.latte.client.base.entity.AccessToken;
+import com.github.moko256.latte.client.base.entity.Trend;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

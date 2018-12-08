@@ -20,7 +20,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.github.moko256.twitlatte.core.client.twitter.CLIENT_TYPE_TWITTER
+import com.github.moko256.latte.client.twitter.CLIENT_TYPE_TWITTER
 import java.util.*
 
 /**

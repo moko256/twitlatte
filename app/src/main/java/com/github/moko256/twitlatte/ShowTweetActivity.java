@@ -32,9 +32,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.moko256.twitlatte.entity.Client;
-import com.github.moko256.core.client.base.entity.Post;
-import com.github.moko256.core.client.base.entity.Status;
-import com.github.moko256.core.client.base.entity.User;
+import com.github.moko256.latte.client.base.entity.Post;
+import com.github.moko256.latte.client.base.entity.Status;
+import com.github.moko256.latte.client.base.entity.User;
 import com.github.moko256.twitlatte.glide.GlideApp;
 import com.github.moko256.twitlatte.intent.AppCustomTabsKt;
 import com.github.moko256.twitlatte.model.impl.StatusActionModelImpl;

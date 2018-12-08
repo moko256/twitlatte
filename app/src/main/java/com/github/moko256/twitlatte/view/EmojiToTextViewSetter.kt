@@ -25,7 +25,7 @@ import android.text.style.ImageSpan
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.github.moko256.twitlatte.R
-import com.github.moko256.core.client.base.entity.Emoji
+import com.github.moko256.latte.client.base.entity.Emoji
 import com.github.moko256.twitlatte.glide.GlideRequests
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers

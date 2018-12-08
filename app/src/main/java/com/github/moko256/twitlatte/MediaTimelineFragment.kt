@@ -18,8 +18,8 @@ package com.github.moko256.twitlatte
 
 import android.os.Bundle
 import androidx.annotation.Nullable
-import com.github.moko256.core.client.base.entity.Paging
-import com.github.moko256.core.client.base.entity.Post
+import com.github.moko256.latte.client.base.entity.Paging
+import com.github.moko256.latte.client.base.entity.Post
 
 /**
  * Created by moko256 on 2018/03/10.

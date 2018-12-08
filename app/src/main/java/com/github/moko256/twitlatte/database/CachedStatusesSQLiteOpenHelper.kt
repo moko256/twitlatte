@@ -21,8 +21,8 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.database.sqlite.SQLiteStatement
-import com.github.moko256.core.client.base.entity.*
-import com.github.moko256.twitlatte.core.html.entity.Link
+import com.github.moko256.latte.client.base.entity.*
+import com.github.moko256.latte.html.entity.Link
 import com.github.moko256.twitlatte.text.splitWithComma
 import java.io.File
 import java.util.*

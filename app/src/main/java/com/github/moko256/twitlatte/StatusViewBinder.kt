@@ -29,7 +29,7 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import com.github.moko256.core.client.base.entity.*
+import com.github.moko256.latte.client.base.entity.*
 import com.github.moko256.twitlatte.glide.GlideRequests
 import com.github.moko256.twitlatte.repository.KEY_TIMELINE_IMAGE_LOAD_MODE
 import com.github.moko256.twitlatte.text.TwitterStringUtils

@@ -17,7 +17,7 @@
 package com.github.moko256.twitlatte.model.base
 
 import android.os.Bundle
-import com.github.moko256.core.client.base.entity.AccessToken
+import com.github.moko256.latte.client.base.entity.AccessToken
 import io.reactivex.Single
 
 /**

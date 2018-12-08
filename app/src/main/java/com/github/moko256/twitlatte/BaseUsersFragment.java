@@ -21,8 +21,8 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.github.moko256.twitlatte.entity.Client;
-import com.github.moko256.core.client.base.entity.PageableResponse;
-import com.github.moko256.core.client.base.entity.User;
+import com.github.moko256.latte.client.base.entity.PageableResponse;
+import com.github.moko256.latte.client.base.entity.User;
 
 import java.util.ArrayList;
 import java.util.List;

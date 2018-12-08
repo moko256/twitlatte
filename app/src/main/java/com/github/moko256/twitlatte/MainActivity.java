@@ -32,10 +32,10 @@ import android.widget.Toast;
 
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.github.moko256.twitlatte.database.CachedUsersSQLiteOpenHelper;
-import com.github.moko256.core.client.base.entity.AccessToken;
+import com.github.moko256.latte.client.base.entity.AccessToken;
 import com.github.moko256.twitlatte.entity.Client;
-import com.github.moko256.core.client.base.entity.Emoji;
-import com.github.moko256.core.client.base.entity.User;
+import com.github.moko256.latte.client.base.entity.Emoji;
+import com.github.moko256.latte.client.base.entity.User;
 import com.github.moko256.twitlatte.glide.GlideApp;
 import com.github.moko256.twitlatte.glide.GlideRequests;
 import com.github.moko256.twitlatte.model.AccountsModel;

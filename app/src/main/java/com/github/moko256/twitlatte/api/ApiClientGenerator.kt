@@ -16,11 +16,11 @@
 
 package com.github.moko256.twitlatte.api
 
-import com.github.moko256.core.client.base.ApiClient
-import com.github.moko256.core.client.base.entity.AccessToken
+import com.github.moko256.latte.client.base.ApiClient
+import com.github.moko256.latte.client.base.entity.AccessToken
 import com.github.moko256.twitlatte.BuildConfig
-import com.github.moko256.twitlatte.core.client.mastodon.MastodonApiClientImpl
-import com.github.moko256.twitlatte.core.client.twitter.TwitterApiClientImpl
+import com.github.moko256.latte.client.mastodon.MastodonApiClientImpl
+import com.github.moko256.latte.client.twitter.TwitterApiClientImpl
 import okhttp3.OkHttpClient
 
 /**

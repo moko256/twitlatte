@@ -20,7 +20,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
 
-import com.github.moko256.core.client.base.entity.AccessToken;
+import com.github.moko256.latte.client.base.entity.AccessToken;
 import com.github.moko256.twitlatte.intent.AppCustomTabsKt;
 import com.github.moko256.twitlatte.model.AccountsModel;
 import com.github.moko256.twitlatte.text.ThemePreferenceConverterKt;

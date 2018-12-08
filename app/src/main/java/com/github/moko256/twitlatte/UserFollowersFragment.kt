@@ -17,8 +17,8 @@
 package com.github.moko256.twitlatte
 
 import android.os.Bundle
-import com.github.moko256.core.client.base.entity.PageableResponse
-import com.github.moko256.core.client.base.entity.User
+import com.github.moko256.latte.client.base.entity.PageableResponse
+import com.github.moko256.latte.client.base.entity.User
 
 /**
  * Created by moko256 on 2016/03/29.

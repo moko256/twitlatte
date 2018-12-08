@@ -19,7 +19,7 @@ package com.github.moko256.twitlatte
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
-import com.github.moko256.core.client.base.entity.Media
+import com.github.moko256.latte.client.base.entity.Media
 import com.github.moko256.twitlatte.mediaview.GifFragment
 import com.github.moko256.twitlatte.mediaview.ImageFragment
 import com.github.moko256.twitlatte.mediaview.MultiVideoFragment
