@@ -5,16 +5,9 @@
 
 -keepattributes SourceFile,LineNumberTable
 
--keepnames class androidx.appcompat.app.AppCompatViewInflater
-
--dontwarn java.lang.invoke.*
--dontwarn **$$Lambda$*
-
-
 -dontwarn com.fasterxml.jackson.databind.**
 
 ##---------------Begin: proguard configuration for twitter4j  ----------
-
 -dontwarn twitter4j.**
 -keep class twitter4j.AlternativeHttpClientImpl {
     public <init>(twitter4j.HttpClientConfiguration);
@@ -22,9 +15,7 @@
 -keep class twitter4j.conf.PropertyConfigurationFactory {
     public <init>();
 }
-
 ##---------------End: proguard configuration for twitter4j  ----------
-
 
 ##---------------Begin: proguard configuration for Gson  ----------
 # Gson uses generic type information stored in a class file when working with fields. Proguard
@@ -43,22 +34,4 @@
 -keep,allowoptimization class * implements com.google.gson.TypeAdapterFactory
 #-keep,allowoptimization class * implements com.google.gson.JsonSerializer
 -keep,allowoptimization class * implements com.google.gson.JsonDeserializer
-
 ##---------------End: proguard configuration for Gson  ----------
-
-
-##---------------Begin: proguard configuration for OkHttp  ----------
-
-# JSR 305 annotations are for embedding nullability information.
--dontwarn javax.annotation.**
-
-# A resource is loaded with a relative path so the package of this class must be preserved.
--keepnames class okhttp3.internal.publicsuffix.PublicSuffixDatabase
-
-# Animal Sniffer compileOnly dependency to ensure APIs are compatible with older versions of Java.
--dontwarn org.codehaus.mojo.animal_sniffer.*
-
-# OkHttp platform used only on JVM and when Conscrypt dependency is available.
-# -dontwarn okhttp3.internal.platform.ConscryptPlatform
-
-##---------------End: proguard configuration for OkHttp  ----------
