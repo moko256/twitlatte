@@ -18,6 +18,7 @@ package com.github.moko256.twitlatte
 
 import android.os.Bundle
 import android.view.Menu
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import com.github.moko256.latte.client.twitter.CLIENT_TYPE_TWITTER
@@ -28,7 +29,7 @@ import com.github.moko256.latte.client.twitter.CLIENT_TYPE_TWITTER
  * @author moko256
  */
 
-class TrendsActivity : AppCompatActivity() {
+class TrendsActivity : AppCompatActivity(), BaseListFragment.GetViewForSnackBar {
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -44,6 +45,10 @@ class TrendsActivity : AppCompatActivity() {
                     .add(android.R.id.content, TrendsFragment())
                     .commit()
         }
+    }
+
+    override fun getViewForSnackBar(): View {
+        return findViewById(android.R.id.content)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
