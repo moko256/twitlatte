@@ -26,10 +26,10 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.github.moko256.latte.client.base.entity.Media;
 import com.github.moko256.twitlatte.GlobalApplicationKt;
 import com.github.moko256.twitlatte.R;
 import com.github.moko256.twitlatte.ShowMediasActivity;
-import com.github.moko256.latte.client.base.entity.Media;
 import com.github.moko256.twitlatte.glide.GlideApp;
 import com.github.moko256.twitlatte.glide.GlideRequests;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;

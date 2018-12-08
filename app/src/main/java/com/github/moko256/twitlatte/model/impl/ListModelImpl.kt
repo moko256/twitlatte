@@ -16,13 +16,15 @@
 
 package com.github.moko256.twitlatte.model.impl
 
-import com.github.moko256.twitlatte.LIMIT_OF_SIZE_OF_STATUSES_LIST
-import com.github.moko256.twitlatte.database.CachedIdListSQLiteOpenHelper
-import com.github.moko256.twitlatte.entity.*
-import com.github.moko256.twitlatte.model.base.ListModel
-import com.github.moko256.twitlatte.repository.server.base.ListServerRepository
 import com.github.moko256.latte.client.base.entity.Paging
 import com.github.moko256.latte.client.base.entity.Post
+import com.github.moko256.twitlatte.LIMIT_OF_SIZE_OF_STATUSES_LIST
+import com.github.moko256.twitlatte.database.CachedIdListSQLiteOpenHelper
+import com.github.moko256.twitlatte.entity.Client
+import com.github.moko256.twitlatte.entity.EventType
+import com.github.moko256.twitlatte.entity.UpdateEvent
+import com.github.moko256.twitlatte.model.base.ListModel
+import com.github.moko256.twitlatte.repository.server.base.ListServerRepository
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable

@@ -30,9 +30,9 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.github.moko256.latte.client.base.entity.AccessToken;
 import com.github.moko256.twitlatte.api.OAuthApiClientGeneratorKt;
 import com.github.moko256.twitlatte.database.TokenSQLiteOpenHelper;
-import com.github.moko256.latte.client.base.entity.AccessToken;
 import com.github.moko256.twitlatte.model.base.OAuthModel;
 import com.github.moko256.twitlatte.model.impl.OAuthModelImpl;
 import com.github.moko256.twitlatte.net.OkHttpHolderKt;

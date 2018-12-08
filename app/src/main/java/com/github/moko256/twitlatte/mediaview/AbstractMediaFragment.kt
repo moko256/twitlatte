@@ -34,9 +34,9 @@ import androidx.annotation.MenuRes
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.github.chuross.flinglayout.FlingLayout
-import com.github.moko256.twitlatte.R
 import com.github.moko256.latte.client.base.CLIENT_TYPE_NOTHING
 import com.github.moko256.latte.client.base.entity.Media
+import com.github.moko256.twitlatte.R
 import com.github.moko256.twitlatte.text.TwitterStringUtils
 
 /**

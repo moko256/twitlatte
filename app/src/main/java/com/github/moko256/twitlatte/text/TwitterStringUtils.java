@@ -26,10 +26,10 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.github.moko256.latte.client.base.entity.StatusAction;
+import com.github.moko256.latte.html.entity.Link;
 import com.github.moko256.twitlatte.R;
 import com.github.moko256.twitlatte.SearchResultActivity;
 import com.github.moko256.twitlatte.ShowUserActivity;
-import com.github.moko256.latte.html.entity.Link;
 import com.github.moko256.twitlatte.intent.AppCustomTabsKt;
 import com.github.moko256.twitlatte.text.style.ClickableNoLineSpan;
 

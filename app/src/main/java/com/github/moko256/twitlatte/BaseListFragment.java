@@ -21,7 +21,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.github.moko256.twitlatte.text.TwitterStringUtils;
 import com.google.android.material.snackbar.Snackbar;
 
 import androidx.annotation.NonNull;

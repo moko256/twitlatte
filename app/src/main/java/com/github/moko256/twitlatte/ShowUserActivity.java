@@ -25,8 +25,8 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.github.moko256.latte.client.base.ApiClient;
-import com.github.moko256.twitlatte.entity.Client;
 import com.github.moko256.latte.client.base.entity.User;
+import com.github.moko256.twitlatte.entity.Client;
 import com.github.moko256.twitlatte.intent.AppCustomTabsKt;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
 import com.github.moko256.twitlatte.widget.FragmentPagerAdapter;

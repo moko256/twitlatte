@@ -18,10 +18,10 @@ package com.github.moko256.twitlatte.cacheMap
 
 import android.content.Context
 import androidx.collection.LruCache
-import com.github.moko256.twitlatte.LIMIT_OF_SIZE_OF_STATUSES_LIST
-import com.github.moko256.twitlatte.database.CachedUsersSQLiteOpenHelper
 import com.github.moko256.latte.client.base.entity.AccessToken
 import com.github.moko256.latte.client.base.entity.User
+import com.github.moko256.twitlatte.LIMIT_OF_SIZE_OF_STATUSES_LIST
+import com.github.moko256.twitlatte.database.CachedUsersSQLiteOpenHelper
 
 /**
  * Created by moko256 on 2016/12/22.

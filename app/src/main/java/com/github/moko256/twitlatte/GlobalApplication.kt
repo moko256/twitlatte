@@ -25,12 +25,12 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.collection.LruCache
 import com.github.moko256.latte.client.base.ApiClient
 import com.github.moko256.latte.client.base.entity.AccessToken
+import com.github.moko256.latte.client.twitter.CLIENT_TYPE_TWITTER
+import com.github.moko256.latte.client.twitter.okhttp.replaceOkHttpClient
 import com.github.moko256.twitlatte.api.generateMastodonApiClient
 import com.github.moko256.twitlatte.api.generateTwitterApiClient
 import com.github.moko256.twitlatte.cacheMap.StatusCacheMap
 import com.github.moko256.twitlatte.cacheMap.UserCacheMap
-import com.github.moko256.latte.client.twitter.CLIENT_TYPE_TWITTER
-import com.github.moko256.latte.client.twitter.okhttp.replaceOkHttpClient
 import com.github.moko256.twitlatte.entity.Client
 import com.github.moko256.twitlatte.model.AccountsModel
 import com.github.moko256.twitlatte.net.appOkHttpClientInstance

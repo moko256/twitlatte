@@ -31,10 +31,10 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.github.moko256.latte.client.base.entity.Post
 import com.github.moko256.twitlatte.database.CachedIdListSQLiteOpenHelper
 import com.github.moko256.twitlatte.entity.Client
 import com.github.moko256.twitlatte.entity.EventType
-import com.github.moko256.latte.client.base.entity.Post
 import com.github.moko256.twitlatte.entity.UpdateEvent
 import com.github.moko256.twitlatte.model.impl.ListModelImpl
 import com.github.moko256.twitlatte.model.impl.StatusActionModelImpl

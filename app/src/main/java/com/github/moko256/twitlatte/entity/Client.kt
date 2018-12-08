@@ -17,11 +17,11 @@
 package com.github.moko256.twitlatte.entity
 
 import com.github.moko256.latte.client.base.ApiClient
+import com.github.moko256.latte.client.base.entity.AccessToken
 import com.github.moko256.latte.client.twitter.CLIENT_TYPE_TWITTER
 import com.github.moko256.twitlatte.cacheMap.PostCache
 import com.github.moko256.twitlatte.cacheMap.StatusCacheMap
 import com.github.moko256.twitlatte.cacheMap.UserCacheMap
-import com.github.moko256.latte.client.base.entity.AccessToken
 
 /**
  * Created by moko256 on 2018/11/28.

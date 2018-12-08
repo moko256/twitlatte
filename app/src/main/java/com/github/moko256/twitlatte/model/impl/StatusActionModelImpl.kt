@@ -18,9 +18,9 @@ package com.github.moko256.twitlatte.model.impl
 
 import android.annotation.SuppressLint
 import com.github.moko256.latte.client.base.ApiClient
-import com.github.moko256.twitlatte.cacheMap.StatusCacheMap
 import com.github.moko256.latte.client.base.entity.Post
 import com.github.moko256.latte.client.base.entity.StatusAction
+import com.github.moko256.twitlatte.cacheMap.StatusCacheMap
 import com.github.moko256.twitlatte.model.base.StatusActionModel
 import com.github.moko256.twitlatte.queue.StatusActionQueue
 import io.reactivex.schedulers.Schedulers

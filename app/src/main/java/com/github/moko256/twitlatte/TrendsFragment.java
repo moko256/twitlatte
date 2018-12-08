@@ -22,9 +22,9 @@ import android.location.Geocoder;
 import android.os.Bundle;
 import android.view.View;
 
+import com.github.moko256.latte.client.base.entity.Trend;
 import com.github.moko256.twitlatte.database.CachedTrendsSQLiteOpenHelper;
 import com.github.moko256.twitlatte.entity.Client;
-import com.github.moko256.latte.client.base.entity.Trend;
 
 import java.io.IOException;
 import java.util.ArrayList;
