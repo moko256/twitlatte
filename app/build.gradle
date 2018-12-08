@@ -117,7 +117,7 @@ dependencies {
     implementation project(':mastodon4j:mastodon4j')
     implementation project(':alternative_twitter4j')
 
-    implementation 'com.github.chrisbanes:PhotoView:2.2.0'
+    implementation 'com.github.chrisbanes:PhotoView:2.3.0'
     implementation 'com.github.chuross:flinglayout:0.5.0'
 
     implementation project(':japng-android:android_api')
