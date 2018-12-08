@@ -33,7 +33,6 @@ import android.widget.Toast;
 import com.github.moko256.twitlatte.api.OAuthApiClientGeneratorKt;
 import com.github.moko256.twitlatte.database.TokenSQLiteOpenHelper;
 import com.github.moko256.twitlatte.entity.AccessToken;
-import com.github.moko256.twitlatte.entity.ClientType;
 import com.github.moko256.twitlatte.model.base.OAuthModel;
 import com.github.moko256.twitlatte.model.impl.OAuthModelImpl;
 import com.github.moko256.twitlatte.net.OkHttpHolderKt;
@@ -49,6 +48,9 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.internal.disposables.CancellableDisposable;
 import io.reactivex.schedulers.Schedulers;
 
+import static com.github.moko256.twitlatte.api.base.ApiClientKt.CLIENT_TYPE_NOTHING;
+import static com.github.moko256.twitlatte.api.mastodon.MastodonApiClientImplKt.CLIENT_TYPE_MASTODON;
+import static com.github.moko256.twitlatte.api.twitter.TwitterApiClientImplKt.CLIENT_TYPE_TWITTER;
 import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY_ACCOUNT_KEY;
 import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY_USE_CHROME_CUSTOM_TAB;
 
@@ -65,8 +67,7 @@ public class OAuthActivity extends AppCompatActivity {
     private static final String STATE_LAST_URL = "state_last_url";
     private static final String STATE_ENTERING_PIN = "state_entering_pin";
 
-    @ClientType.ClientTypeInt
-    private int authClientType = ClientType.NOTHING;
+    private int authClientType = CLIENT_TYPE_NOTHING;
 
     private OAuthModel model;
 
@@ -167,18 +168,18 @@ public class OAuthActivity extends AppCompatActivity {
             }
 
             Toast.makeText(this, R.string.error_occurred, Toast.LENGTH_SHORT).show();
-            initType(ClientType.NOTHING);
+            initType(CLIENT_TYPE_NOTHING);
         }
     }
 
-    private void initType(@ClientType.ClientTypeInt int authClientType){
+    private void initType(int authClientType){
         switch (authClientType) {
-            case ClientType.TWITTER:
+            case CLIENT_TYPE_TWITTER:
                 model = new OAuthModelImpl(
                         OAuthApiClientGeneratorKt.generateTwitterOAuthApiClient()
                 );
                 break;
-            case ClientType.MASTODON:
+            case CLIENT_TYPE_MASTODON:
                 model = new OAuthModelImpl(
                         OAuthApiClientGeneratorKt.generateMastodonOAuthApiClient(
                                 OkHttpHolderKt.getAppOkHttpClientInstance()
@@ -187,7 +188,7 @@ public class OAuthActivity extends AppCompatActivity {
                 break;
             default:
                 model = null;
-                authClientType = -1;
+                authClientType = CLIENT_TYPE_NOTHING;
                 break;
         }
         this.authClientType = authClientType;
@@ -214,17 +215,17 @@ public class OAuthActivity extends AppCompatActivity {
 
         startActivity(new Intent(this,MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
         finish();
-        initType(ClientType.NOTHING);
+        initType(CLIENT_TYPE_NOTHING);
     }
 
     public void onStartTwitterAuthClick(View view) {
-        initType(ClientType.TWITTER);
+        initType(CLIENT_TYPE_TWITTER);
 
         startAuthAndOpenDialogIfNeeded(TokenSQLiteOpenHelper.TWITTER_URL);
     }
 
     public void onStartMastodonAuthClick(View view) {
-        initType(ClientType.MASTODON);
+        initType(CLIENT_TYPE_MASTODON);
 
         isUrlEnterDialogShown = true;
 
@@ -339,7 +340,7 @@ public class OAuthActivity extends AppCompatActivity {
     }
 
     private void onError(Throwable e){
-        initType(ClientType.NOTHING);
+        initType(CLIENT_TYPE_NOTHING);
 
         e.printStackTrace();
         Toast.makeText(

@@ -138,7 +138,7 @@ public class ShowTweetActivity extends AppCompatActivity {
                             Toast.makeText(
                                     this,
                                     TwitterStringUtils.getDidActionStringRes(
-                                            client.getAccessToken().getType(),
+                                            client.getAccessToken().getClientType(),
                                             it.getSecond()
                                     ),
                                     Toast.LENGTH_SHORT

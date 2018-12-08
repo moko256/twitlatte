@@ -16,8 +16,6 @@
 
 package com.github.moko256.twitlatte.entity
 
-import androidx.annotation.IntDef
-
 /**
  * Created by moko256 on 2018/01/13.
  *
@@ -25,7 +23,7 @@ import androidx.annotation.IntDef
  */
 
 data class AccessToken(
-        @ClientType.ClientTypeInt val type: Int,
+        val clientType: Int,
         val url: String,
         val userId: Long,
         val screenName: String,
@@ -48,17 +46,4 @@ data class AccessToken(
 fun splitAccessTokenKey(accessTokenKey: String): Pair<String, Long> {
     val splitString = accessTokenKey.split("@")
     return splitString[0] to splitString[1].toLong()
-}
-
-class ClientType{
-
-    @Retention(AnnotationRetention.SOURCE)
-    @IntDef(ClientType.NOTHING, ClientType.TWITTER, ClientType.MASTODON)
-    annotation class ClientTypeInt
-
-    companion object{
-        const val NOTHING: Int = -1
-        const val TWITTER: Int = 0
-        const val MASTODON: Int = 1
-    }
 }

@@ -125,7 +125,7 @@ class StatusViewBinder(
         if (repeatedUser != null) {
             repeatUserName.visibility = View.VISIBLE
             repeatUserName.text = viewGroup.context.getString(
-                    TwitterStringUtils.getRepeatedByStringRes(accessToken.type),
+                    TwitterStringUtils.getRepeatedByStringRes(accessToken.clientType),
                     repeatedUser.name,
                     TwitterStringUtils.plusAtMark(repeatedUser.screenName)
             )
@@ -261,7 +261,7 @@ class StatusViewBinder(
             )
             if (quotedStatus.medias?.isNotEmpty() == true) {
                 quoteTweetImages.visibility = View.VISIBLE
-                quoteTweetImages.setMediaEntities(quotedStatus.medias, accessToken.type, quotedStatus.isSensitive)
+                quoteTweetImages.setMediaEntities(quotedStatus.medias, accessToken.clientType, quotedStatus.isSensitive)
                 disposable.add(object: Disposable {
                     override fun isDisposed() = false
 
@@ -282,7 +282,7 @@ class StatusViewBinder(
 
         if (medias?.isNotEmpty() == true) {
             imageTableView.visibility = View.VISIBLE
-            imageTableView.setMediaEntities(medias, accessToken.type, status.isSensitive)
+            imageTableView.setMediaEntities(medias, accessToken.clientType, status.isSensitive)
             disposable.add(object: Disposable {
                 override fun isDisposed() = false
 

@@ -20,7 +20,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.github.moko256.twitlatte.entity.ClientType;
 import com.github.moko256.twitlatte.entity.Media;
 
 import java.io.Serializable;
@@ -31,6 +30,8 @@ import java.util.Objects;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
+
+import static com.github.moko256.twitlatte.api.base.ApiClientKt.CLIENT_TYPE_NOTHING;
 
 /**
  * Created by moko256 on 2016/06/26.
@@ -65,7 +66,7 @@ public class ShowMediasActivity extends AppCompatActivity {
                 new MediasAdapter(
                         getSupportFragmentManager(),
                         mediaEntities,
-                        getIntent().getIntExtra(FRAG_CLIENT_TYPE, ClientType.NOTHING)
+                        getIntent().getIntExtra(FRAG_CLIENT_TYPE, CLIENT_TYPE_NOTHING)
                 )
         );
         pager.setCurrentItem(position);
@@ -84,10 +85,10 @@ public class ShowMediasActivity extends AppCompatActivity {
         return true;
     }
 
-    public static Intent getIntent(Context context, Media[] entities, @ClientType.ClientTypeInt int type, int position){
+    public static Intent getIntent(Context context, Media[] entities, int clientType, int position){
         return new Intent(context,ShowMediasActivity.class)
                 .putExtra(FRAG_MEDIA_ENTITIES, (Serializable) Arrays.asList(entities))
-                .putExtra(FRAG_CLIENT_TYPE, type)
+                .putExtra(FRAG_CLIENT_TYPE, clientType)
                 .putExtra(FRAG_POSITION,position);
     }
 }

@@ -188,7 +188,7 @@ abstract class BaseTweetListFragment : BaseListFragment(), ListServerRepository<
 
                             notifyBySnackBar(
                                     TwitterStringUtils.getDidActionStringRes(
-                                            client.accessToken.type,
+                                            client.accessToken.clientType,
                                             it.second
                                     )
                             ).show()

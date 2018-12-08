@@ -20,7 +20,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.github.moko256.twitlatte.entity.ClientType.Companion.TWITTER
+import com.github.moko256.twitlatte.api.twitter.CLIENT_TYPE_TWITTER
 import java.util.*
 
 /**
@@ -82,7 +82,7 @@ class SplashActivity : AppCompatActivity() {
                                                 .getIntent(this, lastPathSegment)
                                                 .setAccountKey(
                                                         getAccountsModel()
-                                                                .selectFirstByType(TWITTER)!!
+                                                                .selectFirstByType(CLIENT_TYPE_TWITTER)!!
                                                 )
                                     }
                                     2 -> if (pathSegments[0] == "intent" && lastPathSegment == "tweet") {
@@ -98,7 +98,7 @@ class SplashActivity : AppCompatActivity() {
                                                     .getIntent(this, lastPathSegment?.toLong()?:-1)
                                                     .setAccountKey(
                                                             getAccountsModel()
-                                                                    .selectFirstByType(TWITTER)!!
+                                                                    .selectFirstByType(CLIENT_TYPE_TWITTER)!!
                                                     )
 
                                         }

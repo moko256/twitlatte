@@ -32,6 +32,8 @@ import java.io.InputStream
  *
  * @author moko256
  */
+const val CLIENT_TYPE_MASTODON = 1
+
 class MastodonApiClientImpl(private val client: MastodonClient): ApiClient {
 
     @Suppress("UNCHECKED_CAST")

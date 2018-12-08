@@ -18,7 +18,6 @@ package com.github.moko256.twitlatte.api.mastodon
 
 import com.github.moko256.twitlatte.api.base.AuthApiClient
 import com.github.moko256.twitlatte.entity.AccessToken
-import com.github.moko256.twitlatte.entity.ClientType
 import com.github.moko256.twitlatte.entity.RequestToken
 import com.github.moko256.twitlatte.gson.gson
 import com.sys1yagi.mastodon4j.MastodonClient
@@ -80,7 +79,7 @@ class MastodonAuthApiClient(okHttpClient: OkHttpClient): AuthApiClient {
         ).getVerifyCredentials().execute()
 
         return AccessToken(
-                ClientType.MASTODON,
+                CLIENT_TYPE_MASTODON,
                 requestToken.serverUrl,
                 account.id,
                 account.acct,

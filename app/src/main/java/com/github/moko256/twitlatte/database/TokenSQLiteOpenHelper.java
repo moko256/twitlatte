@@ -128,7 +128,7 @@ public class TokenSQLiteOpenHelper extends SQLiteOpenHelper {
             SQLiteDatabase database = getWritableDatabase();
 
             ContentValues contentValues = new ContentValues(TABLE_COLUMNS.length);
-            contentValues.put("type", accessToken.getType());
+            contentValues.put("type", accessToken.getClientType());
             contentValues.put("url", accessToken.getUrl());
             contentValues.put("userName", accessToken.getScreenName());
             contentValues.put("userId", String.valueOf(accessToken.getUserId()));

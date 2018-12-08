@@ -54,7 +54,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-import static com.github.moko256.twitlatte.entity.ClientType.TWITTER;
+import static com.github.moko256.twitlatte.api.twitter.TwitterApiClientImplKt.CLIENT_TYPE_TWITTER;
 
 /**
  * Created by moko256 on 2017/01/15.
@@ -143,7 +143,7 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
                 )));
 
         header= view.findViewById(R.id.show_user_bgimage);
-        header.setWidthPerHeight((client.getAccessToken().getType() == TWITTER)? 3: 2);
+        header.setWidthPerHeight((client.getAccessToken().getClientType() == CLIENT_TYPE_TWITTER)? 3: 2);
         icon= view.findViewById(R.id.show_user_image);
 
         userNameText = view.findViewById(R.id.show_user_name);

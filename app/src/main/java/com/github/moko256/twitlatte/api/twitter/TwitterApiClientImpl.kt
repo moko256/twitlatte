@@ -28,6 +28,8 @@ import java.io.InputStream
  *
  * @author moko256
  */
+const val CLIENT_TYPE_TWITTER = 0
+
 class TwitterApiClientImpl(private val client: Twitter): ApiClient {
 
     @Suppress("UNCHECKED_CAST")

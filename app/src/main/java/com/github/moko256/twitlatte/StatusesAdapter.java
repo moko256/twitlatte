@@ -316,7 +316,7 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             if (status != null) {
                 tweetImageTableView.setMediaEntities(
                         status.getMedias(),
-                        client.getAccessToken().getType(),
+                        client.getAccessToken().getClientType(),
                         status.isSensitive()
                 );
                 tweetImageTableView.setOnLongClickListener(v -> {

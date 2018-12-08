@@ -29,7 +29,6 @@ import android.widget.TextView;
 import com.github.moko256.twitlatte.R;
 import com.github.moko256.twitlatte.SearchResultActivity;
 import com.github.moko256.twitlatte.ShowUserActivity;
-import com.github.moko256.twitlatte.entity.ClientType;
 import com.github.moko256.twitlatte.entity.StatusAction;
 import com.github.moko256.twitlatte.intent.AppCustomTabsKt;
 import com.github.moko256.twitlatte.text.link.entity.Link;
@@ -45,6 +44,9 @@ import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 import twitter4j.TwitterException;
+
+import static com.github.moko256.twitlatte.api.mastodon.MastodonApiClientImplKt.CLIENT_TYPE_MASTODON;
+import static com.github.moko256.twitlatte.api.twitter.TwitterApiClientImplKt.CLIENT_TYPE_TWITTER;
 
 /**
  * Created by moko256 on 2016/08/06.
@@ -207,26 +209,26 @@ public class TwitterStringUtils {
         }
     }
 
-    public static String convertThumbImageUrl(@ClientType.ClientTypeInt int type, String baseUrl){
-        return (type == ClientType.TWITTER)?
+    public static String convertThumbImageUrl(int clientType, String baseUrl){
+        return (clientType == CLIENT_TYPE_TWITTER)?
                 baseUrl + ":thumb":
                 baseUrl.replace("original", "small");
     }
 
-    public static String convertSmallImageUrl(@ClientType.ClientTypeInt int type, String baseUrl){
-        return (type == ClientType.TWITTER)?
+    public static String convertSmallImageUrl(int clientType, String baseUrl){
+        return (clientType == CLIENT_TYPE_TWITTER)?
                 baseUrl + ":small":
                 baseUrl.replace("original", "small");
     }
 
-    public static String convertOriginalImageUrl(@ClientType.ClientTypeInt int type, String baseUrl){
-        return (type == ClientType.TWITTER)?
+    public static String convertOriginalImageUrl(int clientType, String baseUrl){
+        return (clientType == CLIENT_TYPE_TWITTER)?
                 baseUrl + ":orig":
                 baseUrl;
     }
 
-    public static String convertLargeImageUrl(@ClientType.ClientTypeInt int type, String baseUrl){
-        return (type == ClientType.TWITTER)?
+    public static String convertLargeImageUrl(int clientType, String baseUrl){
+        return (clientType == CLIENT_TYPE_TWITTER)?
                 baseUrl + ":large":
                 baseUrl;
     }
@@ -280,9 +282,9 @@ public class TwitterStringUtils {
     }
 
     @StringRes
-    public static int getDidActionStringRes(@ClientType.ClientTypeInt int type, StatusAction action){
-        switch (type){
-            case ClientType.TWITTER:
+    public static int getDidActionStringRes(int clientType, StatusAction action){
+        switch (clientType){
+            case CLIENT_TYPE_TWITTER:
                 switch (action){
                     case FAVORITE:
                         return R.string.did_like;
@@ -294,7 +296,7 @@ public class TwitterStringUtils {
                         return R.string.did_unretweet;
                 }
 
-            case ClientType.MASTODON:
+            case CLIENT_TYPE_MASTODON:
                 switch (action){
                     case FAVORITE:
                         return R.string.did_favorite;
@@ -312,12 +314,12 @@ public class TwitterStringUtils {
     }
 
     @StringRes
-    public static int getRepeatedByStringRes(@ClientType.ClientTypeInt int type){
-        switch (type){
-            case ClientType.TWITTER:
+    public static int getRepeatedByStringRes(int clientType){
+        switch (clientType){
+            case CLIENT_TYPE_TWITTER:
                 return R.string.retweeted_by;
 
-            case ClientType.MASTODON:
+            case CLIENT_TYPE_MASTODON:
                 return R.string.boosted_by;
 
             default:

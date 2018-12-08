@@ -18,7 +18,6 @@ package com.github.moko256.twitlatte.api.twitter
 
 import com.github.moko256.twitlatte.api.base.AuthApiClient
 import com.github.moko256.twitlatte.entity.AccessToken
-import com.github.moko256.twitlatte.entity.ClientType
 import com.github.moko256.twitlatte.entity.RequestToken
 import twitter4j.auth.OAuthAuthorization
 import twitter4j.conf.ConfigurationBuilder
@@ -59,7 +58,7 @@ class TwitterAuthApiClient(consumerKey: String, consumerSecret: String): AuthApi
                 key
         ).let {
             AccessToken(
-                    ClientType.TWITTER,
+                    CLIENT_TYPE_TWITTER,
                     requestToken.serverUrl,
                     it.userId,
                     it.screenName,

@@ -20,7 +20,7 @@ import android.os.Bundle
 import android.view.Menu
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
-import com.github.moko256.twitlatte.entity.ClientType
+import com.github.moko256.twitlatte.api.twitter.CLIENT_TYPE_TWITTER
 
 /**
  * Created by moko256 on 2017/07/05.
@@ -38,7 +38,7 @@ class TrendsActivity : AppCompatActivity() {
             it.setHomeAsUpIndicator(R.drawable.ic_back_white_24dp)
         }
 
-        if (savedInstanceState == null && getClient()?.accessToken?.type == ClientType.TWITTER) {
+        if (savedInstanceState == null && getClient()?.accessToken?.clientType == CLIENT_TYPE_TWITTER) {
             supportFragmentManager
                     .beginTransaction()
                     .add(android.R.id.content, TrendsFragment())

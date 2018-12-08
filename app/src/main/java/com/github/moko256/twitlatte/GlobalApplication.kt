@@ -26,11 +26,11 @@ import androidx.collection.LruCache
 import com.github.moko256.twitlatte.api.base.ApiClient
 import com.github.moko256.twitlatte.api.generateMastodonApiClient
 import com.github.moko256.twitlatte.api.generateTwitterApiClient
+import com.github.moko256.twitlatte.api.twitter.CLIENT_TYPE_TWITTER
 import com.github.moko256.twitlatte.cacheMap.StatusCacheMap
 import com.github.moko256.twitlatte.cacheMap.UserCacheMap
 import com.github.moko256.twitlatte.entity.AccessToken
 import com.github.moko256.twitlatte.entity.Client
-import com.github.moko256.twitlatte.entity.ClientType
 import com.github.moko256.twitlatte.model.AccountsModel
 import com.github.moko256.twitlatte.net.appOkHttpClientInstance
 import com.github.moko256.twitlatte.net.replaceOkHttpClient
@@ -120,7 +120,7 @@ class GlobalApplication : Application() {
         var apiClient = apiClientCache.get(accessToken.getKeyString())
 
         if (apiClient == null) {
-            apiClient = if (accessToken.type == ClientType.TWITTER) {
+            apiClient = if (accessToken.clientType == CLIENT_TYPE_TWITTER) {
                 generateTwitterApiClient(accessToken)
             } else {
                 generateMastodonApiClient(appOkHttpClientInstance, accessToken)

@@ -24,6 +24,8 @@ import java.io.InputStream
  *
  * @author moko256
  */
+const val CLIENT_TYPE_NOTHING = -1
+
 interface ApiClient {
     fun <T> getBaseClient(): T
 

@@ -20,7 +20,6 @@ import android.content.Context;
 
 import com.github.moko256.twitlatte.entity.AccessToken;
 import com.github.moko256.twitlatte.entity.Client;
-import com.github.moko256.twitlatte.entity.ClientType;
 import com.github.moko256.twitlatte.widget.FragmentPagerAdapter;
 
 import java.util.ArrayList;
@@ -28,6 +27,8 @@ import java.util.List;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+
+import static com.github.moko256.twitlatte.api.mastodon.MastodonApiClientImplKt.CLIENT_TYPE_MASTODON;
 
 /**
  * Created by moko256 on 2017/01/15.
@@ -57,10 +58,10 @@ public class ShowUserFragmentsPagerAdapter extends FragmentPagerAdapter {
         list = new ArrayList<>(5);
         list.add(FRAGMENT_INFO);
         list.add(FRAGMENT_TIMELINE);
-        if (accessToken.getType() == ClientType.MASTODON){
+        if (accessToken.getClientType() == CLIENT_TYPE_MASTODON){
             list.add(FRAGMENT_MEDIA);
         }
-        if (!(accessToken.getType() == ClientType.MASTODON && userId != accessToken.getUserId())){
+        if (!(accessToken.getClientType() == CLIENT_TYPE_MASTODON && userId != accessToken.getUserId())){
             list.add(FRAGMENT_LIKE);
         }
         list.add(FRAGMENT_FOLLOW);

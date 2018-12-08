@@ -26,7 +26,6 @@ import android.widget.Toast;
 
 import com.github.moko256.twitlatte.api.base.ApiClient;
 import com.github.moko256.twitlatte.entity.Client;
-import com.github.moko256.twitlatte.entity.ClientType;
 import com.github.moko256.twitlatte.entity.User;
 import com.github.moko256.twitlatte.intent.AppCustomTabsKt;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
@@ -49,6 +48,8 @@ import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
+
+import static com.github.moko256.twitlatte.api.mastodon.MastodonApiClientImplKt.CLIENT_TYPE_MASTODON;
 
 /**
  * Created by moko256 on 2016/03/11.
@@ -175,7 +176,7 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
 
     private String getShareUrl(){
         String url;
-        if (client.getAccessToken().getType() == ClientType.MASTODON){
+        if (client.getAccessToken().getClientType() == CLIENT_TYPE_MASTODON){
             String baseUrl;
             String userName;
             if (user.getScreenName().matches(".*@.*")){

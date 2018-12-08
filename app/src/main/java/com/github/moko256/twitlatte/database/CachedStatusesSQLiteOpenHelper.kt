@@ -21,6 +21,7 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.database.sqlite.SQLiteStatement
+import com.github.moko256.twitlatte.api.mastodon.CLIENT_TYPE_MASTODON
 import com.github.moko256.twitlatte.api.twitter.convertToStatusOrRepeat
 import com.github.moko256.twitlatte.database.migrator.OldCachedStatusesSQLiteOpenHelper
 import com.github.moko256.twitlatte.entity.*
@@ -121,7 +122,7 @@ class CachedStatusesSQLiteOpenHelper(
             db.execSQL("create unique index CountsIdIndex on $TABLE_NAME(id)")
 
             oldStatuses.forEach { status ->
-                val contentValue = createStatusContentValues(if (accessToken?.type == ClientType.MASTODON) {
+                val contentValue = createStatusContentValues(if (accessToken?.clientType == CLIENT_TYPE_MASTODON) {
 
                     if (status.retweetedStatusId == -1L) {
                         val urls = status.text.convertHtmlToContentAndLinks()

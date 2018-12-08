@@ -17,10 +17,10 @@
 package com.github.moko256.twitlatte.entity
 
 import com.github.moko256.twitlatte.api.base.ApiClient
+import com.github.moko256.twitlatte.api.twitter.CLIENT_TYPE_TWITTER
 import com.github.moko256.twitlatte.cacheMap.PostCache
 import com.github.moko256.twitlatte.cacheMap.StatusCacheMap
 import com.github.moko256.twitlatte.cacheMap.UserCacheMap
-import com.github.moko256.twitlatte.entity.ClientType.Companion.TWITTER
 
 /**
  * Created by moko256 on 2018/11/28.
@@ -35,6 +35,6 @@ data class Client(
 ) {
     val postCache: PostCache = PostCache(statusCache, userCache)
 
-    val statusLimit: Int = if (accessToken.type == TWITTER) 200 else 40
+    val statusLimit: Int = if (accessToken.clientType == CLIENT_TYPE_TWITTER) 200 else 40
 
 }
