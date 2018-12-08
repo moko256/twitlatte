@@ -28,7 +28,7 @@ import com.sys1yagi.mastodon4j.api.entity.Account
  * @author moko256
  */
 
-fun Account.convertToCommonUser(): User {
+internal fun Account.convertToCommonUser(): User {
     val urls = note.convertHtmlToContentAndLinks()
 
     return User(

@@ -24,7 +24,7 @@ import twitter4j.*
  *
  * @author moko256
  */
-fun convertToContentAndLinks(
+internal fun convertToContentAndLinks(
         text: String,
         symbolEntities: Array<SymbolEntity>,
         hashtagEntities: Array<HashtagEntity>,

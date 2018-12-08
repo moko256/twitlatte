@@ -26,7 +26,7 @@ import com.twitter.twittertext.TwitterTextParseResults
  *
  * @author moko256
  */
-class TwitterStatusCounter: StatusCounter {
+internal class TwitterStatusCounter: StatusCounter {
     private var resultCacheString: String? = null
     private var resultCache: TwitterTextParseResults? = null
 

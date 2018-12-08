@@ -24,4 +24,4 @@ import com.google.gson.Gson
  * @author moko256
  */
 
-val gson = Gson()
+internal val gson = Gson()

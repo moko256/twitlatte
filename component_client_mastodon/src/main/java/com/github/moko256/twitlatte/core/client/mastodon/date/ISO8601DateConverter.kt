@@ -31,7 +31,7 @@ private val dateParser = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").apply 
     timeZone = TimeZone.getTimeZone("GMT")
 }
 
-fun String.toISO8601Date(): Date {
+internal fun String.toISO8601Date(): Date {
     try {
         synchronized(dateParser) {
             return dateParser.parse(this)
@@ -39,18 +39,6 @@ fun String.toISO8601Date(): Date {
     } catch (e: ParseException) {
         e.printStackTrace()
         return Date(0)
-    }
-
-}
-
-fun Date.toISO8601DateString(): String {
-    try {
-        synchronized(dateParser) {
-            return dateParser.format(this)
-        }
-    } catch (e: ParseException) {
-        e.printStackTrace()
-        return "1970-01-01T00:00:00.000Z"
     }
 
 }

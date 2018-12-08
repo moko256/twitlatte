@@ -27,7 +27,7 @@ import com.sys1yagi.mastodon4j.api.entity.Attachment
  * @author moko256
  */
 
-fun com.sys1yagi.mastodon4j.api.entity.Status.convertToCommonStatus(): Post {
+internal fun com.sys1yagi.mastodon4j.api.entity.Status.convertToCommonStatus(): Post {
     val status: Status
     val statusUser: User
     val repeat: Repeat?

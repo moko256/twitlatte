@@ -28,7 +28,7 @@ import com.sys1yagi.mastodon4j.api.exception.Mastodon4jRequestException
  * @author moko256
  */
 
-fun <T: Any> MastodonRequest<T>.executeAndConvertError(): T {
+internal fun <T: Any> MastodonRequest<T>.executeAndConvertError(): T {
     try {
         return execute()
     } catch (e: Mastodon4jRequestException) {
@@ -44,6 +44,6 @@ fun <T: Any> MastodonRequest<T>.executeAndConvertError(): T {
     }
 }
 
-data class Error(
+internal data class Error(
         @SerializedName("error") val error: String
 )

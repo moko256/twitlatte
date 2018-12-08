@@ -24,7 +24,7 @@ import com.github.moko256.core.client.base.entity.User
  * @author moko256
  */
 
-fun twitter4j.User.convertToCommonUser(): User {
+internal fun twitter4j.User.convertToCommonUser(): User {
     val urls = if (descriptionURLEntities.isNotEmpty()) {
         convertToContentAndLinks(
                 description,

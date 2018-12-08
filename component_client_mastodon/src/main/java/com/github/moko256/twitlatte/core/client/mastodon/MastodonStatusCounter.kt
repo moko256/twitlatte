@@ -23,7 +23,7 @@ import com.github.moko256.core.client.base.StatusCounter
  *
  * @author moko256
  */
-class MastodonStatusCounter: StatusCounter {
+internal class MastodonStatusCounter: StatusCounter {
     override fun getLength(text: String): Int {
         return text.codePointCount(0, text.length)
     }

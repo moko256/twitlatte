@@ -25,7 +25,7 @@ import com.sys1yagi.mastodon4j.api.Range
  * @author moko256
  */
 
-fun Paging.convertToMastodonRange(): Range {
+internal fun Paging.convertToMastodonRange(): Range {
     return Range(
             limit = count,
             sinceId = sinceId.takeIf { it > 0 },

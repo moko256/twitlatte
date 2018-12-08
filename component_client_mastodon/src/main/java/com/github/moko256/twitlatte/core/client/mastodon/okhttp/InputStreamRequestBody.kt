@@ -29,7 +29,7 @@ import java.io.InputStream
  *
  * @author moko256
  */
-class InputStreamRequestBody(private val mediaType: MediaType?, private val inputStream: InputStream): RequestBody() {
+internal class InputStreamRequestBody(private val mediaType: MediaType?, private val inputStream: InputStream): RequestBody() {
     override fun contentType(): MediaType {
         return mediaType!!
     }

@@ -25,7 +25,7 @@ import twitter4j.Query
  * @author moko256
  */
 
-fun Paging.convertToTwitterPaging(): twitter4j.Paging {
+internal fun Paging.convertToTwitterPaging(): twitter4j.Paging {
     val paging = twitter4j.Paging()
     paging.count = count
     if (this.sinceId > 0) {
@@ -37,7 +37,7 @@ fun Paging.convertToTwitterPaging(): twitter4j.Paging {
     return paging
 }
 
-fun Paging.convertToTwitterQuery(keyword: String): Query {
+internal fun Paging.convertToTwitterQuery(keyword: String): Query {
     val query = Query()
     query.query = keyword
     query.count = count

@@ -26,7 +26,7 @@ import com.github.moko256.twitlatte.core.html.entity.Link
  * @author moko256
  */
 
-fun twitter4j.Status.convertToPost(): Post {
+internal fun twitter4j.Status.convertToPost(): Post {
     val status: Status
     val statusUser: User
     val repeat: Repeat?
@@ -166,14 +166,6 @@ private fun twitter4j.Status.convertToStatus(): Status {
             quotedStatusId = quotedStatusId,
             visibility = null
     )
-}
-
-fun twitter4j.Status.convertToStatusOrRepeat(): StatusObject {
-    return if (retweetedStatus != null) {
-        convertToRepeat()
-    } else {
-        convertToStatus()
-    }
 }
 
 
