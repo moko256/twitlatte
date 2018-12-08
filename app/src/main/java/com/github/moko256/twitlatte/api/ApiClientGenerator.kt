@@ -16,16 +16,12 @@
 
 package com.github.moko256.twitlatte.api
 
+import com.github.moko256.core.client.base.ApiClient
+import com.github.moko256.core.client.base.entity.AccessToken
 import com.github.moko256.twitlatte.BuildConfig
-import com.github.moko256.twitlatte.api.base.ApiClient
-import com.github.moko256.twitlatte.api.mastodon.MastodonApiClientImpl
-import com.github.moko256.twitlatte.api.twitter.TwitterApiClientImpl
-import com.github.moko256.twitlatte.entity.AccessToken
-import com.github.moko256.twitlatte.gson.gson
-import com.sys1yagi.mastodon4j.MastodonClient
+import com.github.moko256.twitlatte.core.client.mastodon.MastodonApiClientImpl
+import com.github.moko256.twitlatte.core.client.twitter.TwitterApiClientImpl
 import okhttp3.OkHttpClient
-import twitter4j.conf.ConfigurationBuilder
-import twitter4j.createTwitterInstance
 
 /**
  * Created by moko256 on 2018/11/30.
@@ -35,22 +31,17 @@ import twitter4j.createTwitterInstance
 
 fun generateTwitterApiClient(accessToken: AccessToken): ApiClient {
     return TwitterApiClientImpl(
-            ConfigurationBuilder()
-                    .setTweetModeExtended(true)
-                    .setOAuthConsumerKey(String(BuildConfig.p, 1, 25))
-                    .setOAuthConsumerSecret(String(BuildConfig.p, 27, 50))
-                    .setOAuthAccessToken(accessToken.token)
-                    .setOAuthAccessTokenSecret(accessToken.tokenSecret)
-                    .build()
-                    .createTwitterInstance()
+            String(BuildConfig.p, 1, 25),
+            String(BuildConfig.p, 27, 50),
+            accessToken.token,
+            accessToken.tokenSecret
     )
 }
 
 fun generateMastodonApiClient(okHttpClient: OkHttpClient, accessToken: AccessToken): ApiClient {
     return MastodonApiClientImpl(
-            MastodonClient
-                    .Builder(accessToken.url, okHttpClient.newBuilder(), gson)
-                    .accessToken(accessToken.token)
-                    .build()
+            okHttpClient,
+            accessToken.url,
+            accessToken.token
     )
 }

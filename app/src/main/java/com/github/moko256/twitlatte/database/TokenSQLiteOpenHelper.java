@@ -22,8 +22,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.github.moko256.twitlatte.entity.AccessToken;
-import com.github.moko256.twitlatte.entity.AccessTokenKt;
+import com.github.moko256.core.client.base.entity.AccessToken;
+import com.github.moko256.core.client.base.entity.AccessTokenKt;
 
 import org.jetbrains.annotations.TestOnly;
 

@@ -29,7 +29,7 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import com.github.moko256.twitlatte.entity.*
+import com.github.moko256.core.client.base.entity.*
 import com.github.moko256.twitlatte.glide.GlideRequests
 import com.github.moko256.twitlatte.repository.KEY_TIMELINE_IMAGE_LOAD_MODE
 import com.github.moko256.twitlatte.text.TwitterStringUtils
@@ -208,14 +208,15 @@ class StatusViewBinder(
 
         tweetContext.text = linkedSequence
 
+        val emojis = status.emojis
         if (!TextUtils.isEmpty(linkedSequence)) {
             tweetContext.visibility = View.VISIBLE
 
-            if (status.emojis != null) {
+            if (emojis != null) {
                 if (contextEmojiSetter == null) {
                     contextEmojiSetter = EmojiToTextViewSetter(glideRequests, tweetContext)
                 }
-                val set = contextEmojiSetter!!.set(linkedSequence, status.emojis)
+                val set = contextEmojiSetter!!.set(linkedSequence, emojis)
                 if (set != null) {
                     disposable.addAll(*set)
                 }
@@ -224,8 +225,9 @@ class StatusViewBinder(
             tweetContext.visibility = View.GONE
         }
 
-        tweetSpoilerText.text = status.spoilerText
-        if (status.spoilerText == null) {
+        val text = status.spoilerText
+        tweetSpoilerText.text = text
+        if (text == null) {
             tweetSpoilerText.visibility = View.GONE
             contentOpenerToggle.visibility = View.GONE
         } else {
@@ -234,11 +236,11 @@ class StatusViewBinder(
             tweetSpoilerText.visibility = View.VISIBLE
             contentOpenerToggle.visibility = View.VISIBLE
 
-            if (status.emojis != null) {
+            if (emojis != null) {
                 if (spoilerTextEmojiSetter == null) {
                     spoilerTextEmojiSetter = EmojiToTextViewSetter(glideRequests, tweetSpoilerText)
                 }
-                val set = spoilerTextEmojiSetter!!.set(status.spoilerText, status.emojis)
+                val set = spoilerTextEmojiSetter!!.set(text, emojis)
                 if (set != null) {
                     disposable.addAll(*set)
                 }

@@ -20,12 +20,11 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import com.github.moko256.twitlatte.api.twitter.CLIENT_TYPE_TWITTER
-import com.github.moko256.twitlatte.database.migrator.migrateV2toV3
-import com.github.moko256.twitlatte.entity.AccessToken
-import com.github.moko256.twitlatte.entity.Emoji
-import com.github.moko256.twitlatte.entity.User
-import com.github.moko256.twitlatte.text.link.entity.Link
+import com.github.moko256.core.client.base.entity.AccessToken
+import com.github.moko256.core.client.base.entity.Emoji
+import com.github.moko256.core.client.base.entity.User
+import com.github.moko256.twitlatte.core.client.twitter.CLIENT_TYPE_TWITTER
+import com.github.moko256.twitlatte.core.html.entity.Link
 import com.github.moko256.twitlatte.text.splitWithComma
 import java.io.File
 import java.util.*
@@ -87,16 +86,10 @@ class CachedUsersSQLiteOpenHelper(context: Context, accessToken: AccessToken?) :
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        if (oldVersion < 2) {
-            db.execSQL("alter table $TABLE_NAME add column Emoji_shortcodes")
-            db.execSQL("alter table $TABLE_NAME add column Emoji_urls")
-        }
-
         if (oldVersion < 3) {
-            db.execSQL("alter table $TABLE_NAME add column urls_urls")
-            db.execSQL("alter table $TABLE_NAME add column urls_starts")
-            db.execSQL("alter table $TABLE_NAME add column urls_ends")
-            migrateV2toV3(isTwitter, TABLE_NAME, db)
+            db.execSQL("drop table CachedStatuses")
+
+            onCreate(db)
         }
     }
 
@@ -219,13 +212,14 @@ class CachedUsersSQLiteOpenHelper(context: Context, accessToken: AccessToken?) :
         contentValues.put(TABLE_COLUMNS[29], user.isTranslator)
         contentValues.put(TABLE_COLUMNS[30], user.isFollowRequestSent)
 
-        if (user.descriptionLinks != null) {
-            val size = user.descriptionLinks.size
+        val descriptionLinks = user.descriptionLinks
+        if (descriptionLinks != null) {
+            val size = descriptionLinks.size
             val urls = arrayOfNulls<String>(size)
             val starts = arrayOfNulls<String>(size)
             val ends = arrayOfNulls<String>(size)
 
-            user.descriptionLinks.forEachIndexed { i, entity ->
+            descriptionLinks.forEachIndexed { i, entity ->
                 urls[i] = entity.url
                 starts[i] = entity.start.toString()
                 ends[i] = entity.end.toString()
@@ -235,12 +229,13 @@ class CachedUsersSQLiteOpenHelper(context: Context, accessToken: AccessToken?) :
             contentValues.put(TABLE_COLUMNS[33], ends.joinToString(","))
         }
 
-        if (user.emojis != null) {
-            val listSize = user.emojis.size
+        val emojis = user.emojis
+        if (emojis != null) {
+            val listSize = emojis.size
             val shortCodes = arrayOfNulls<String>(listSize)
             val urls = arrayOfNulls<String>(listSize)
 
-            user.emojis.forEachIndexed { i, emoji ->
+            emojis.forEachIndexed { i, emoji ->
                 shortCodes[i] = emoji.shortCode
                 urls[i] = emoji.url
             }

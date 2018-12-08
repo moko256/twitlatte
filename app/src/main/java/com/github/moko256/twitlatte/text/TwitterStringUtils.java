@@ -21,19 +21,17 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
-import android.text.TextUtils;
 import android.text.style.ImageSpan;
 import android.view.View;
 import android.widget.TextView;
 
+import com.github.moko256.core.client.base.entity.StatusAction;
 import com.github.moko256.twitlatte.R;
 import com.github.moko256.twitlatte.SearchResultActivity;
 import com.github.moko256.twitlatte.ShowUserActivity;
-import com.github.moko256.twitlatte.entity.StatusAction;
+import com.github.moko256.twitlatte.core.html.entity.Link;
 import com.github.moko256.twitlatte.intent.AppCustomTabsKt;
-import com.github.moko256.twitlatte.text.link.entity.Link;
 import com.github.moko256.twitlatte.text.style.ClickableNoLineSpan;
-import com.sys1yagi.mastodon4j.api.exception.Mastodon4jRequestException;
 
 import java.util.Objects;
 
@@ -43,10 +41,9 @@ import androidx.annotation.StringRes;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
-import twitter4j.TwitterException;
 
-import static com.github.moko256.twitlatte.api.mastodon.MastodonApiClientImplKt.CLIENT_TYPE_MASTODON;
-import static com.github.moko256.twitlatte.api.twitter.TwitterApiClientImplKt.CLIENT_TYPE_TWITTER;
+import static com.github.moko256.twitlatte.core.client.mastodon.MastodonApiClientImplKt.CLIENT_TYPE_MASTODON;
+import static com.github.moko256.twitlatte.core.client.twitter.TwitterApiClientImplKt.CLIENT_TYPE_TWITTER;
 
 /**
  * Created by moko256 on 2016/08/06.
@@ -103,23 +100,6 @@ public class TwitterStringUtils {
             }
         }
         return userIdsStr;
-    }
-
-    public static String convertErrorToText(@NonNull Throwable e){
-        if (e instanceof TwitterException && !TextUtils.isEmpty(((TwitterException) e).getErrorMessage())){
-            return ((TwitterException) e).getErrorMessage();
-        } else if (e instanceof Mastodon4jRequestException
-                && ((Mastodon4jRequestException) e).isErrorResponse()) {
-            String message;
-            try {
-                message = ((Mastodon4jRequestException) e).getResponse().body().string();
-            } catch (Exception e1){
-                message = "Unknown";
-            }
-            return message;
-        } else {
-            return e.getMessage();
-        }
     }
 
     public static CharSequence getLinkedSequence(Context context, String text, Link[] links){

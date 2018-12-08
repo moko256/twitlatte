@@ -20,8 +20,8 @@ import android.content.Context
 import androidx.collection.LruCache
 import com.github.moko256.twitlatte.LIMIT_OF_SIZE_OF_STATUSES_LIST
 import com.github.moko256.twitlatte.database.CachedUsersSQLiteOpenHelper
-import com.github.moko256.twitlatte.entity.AccessToken
-import com.github.moko256.twitlatte.entity.User
+import com.github.moko256.core.client.base.entity.AccessToken
+import com.github.moko256.core.client.base.entity.User
 
 /**
  * Created by moko256 on 2016/12/22.

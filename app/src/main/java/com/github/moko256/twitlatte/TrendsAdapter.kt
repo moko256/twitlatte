@@ -22,7 +22,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.github.moko256.twitlatte.entity.Trend
+import com.github.moko256.core.client.base.entity.Trend
 
 /**
  * Created by moko256 on 2017/07/05.

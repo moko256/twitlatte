@@ -20,7 +20,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.github.moko256.twitlatte.entity.Media;
+import com.github.moko256.core.client.base.entity.Media;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -31,7 +31,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 
-import static com.github.moko256.twitlatte.api.base.ApiClientKt.CLIENT_TYPE_NOTHING;
+import static com.github.moko256.core.client.base.ApiClientKt.CLIENT_TYPE_NOTHING;
 
 /**
  * Created by moko256 on 2016/06/26.

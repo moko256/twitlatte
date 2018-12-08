@@ -24,9 +24,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.github.moko256.twitlatte.api.base.ApiClient;
+import com.github.moko256.core.client.base.ApiClient;
 import com.github.moko256.twitlatte.entity.Client;
-import com.github.moko256.twitlatte.entity.User;
+import com.github.moko256.core.client.base.entity.User;
 import com.github.moko256.twitlatte.intent.AppCustomTabsKt;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
 import com.github.moko256.twitlatte.widget.FragmentPagerAdapter;
@@ -49,7 +49,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 
-import static com.github.moko256.twitlatte.api.mastodon.MastodonApiClientImplKt.CLIENT_TYPE_MASTODON;
+import static com.github.moko256.twitlatte.core.client.mastodon.MastodonApiClientImplKt.CLIENT_TYPE_MASTODON;
 
 /**
  * Created by moko256 on 2016/03/11.
@@ -140,7 +140,7 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
                                     },
                                     e -> Snackbar.make(
                                             getViewForSnackBar(),
-                                            TwitterStringUtils.convertErrorToText(e),
+                                            e.getMessage(),
                                             Snackbar.LENGTH_LONG
                                     ).show()
                             )

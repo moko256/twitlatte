@@ -29,7 +29,7 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.github.moko256.twitlatte.GlobalApplicationKt;
 import com.github.moko256.twitlatte.R;
 import com.github.moko256.twitlatte.ShowMediasActivity;
-import com.github.moko256.twitlatte.entity.Media;
+import com.github.moko256.core.client.base.entity.Media;
 import com.github.moko256.twitlatte.glide.GlideApp;
 import com.github.moko256.twitlatte.glide.GlideRequests;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
@@ -38,7 +38,7 @@ import androidx.appcompat.content.res.AppCompatResources;
 import androidx.gridlayout.widget.GridLayout;
 import jp.wasabeef.glide.transformations.BlurTransformation;
 
-import static com.github.moko256.twitlatte.api.base.ApiClientKt.CLIENT_TYPE_NOTHING;
+import static com.github.moko256.core.client.base.ApiClientKt.CLIENT_TYPE_NOTHING;
 import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY_HIDE_SENSITIVE_MEDIA;
 import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY_TIMELINE_IMAGE_LOAD_MODE;
 

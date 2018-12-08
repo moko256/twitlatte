@@ -21,12 +21,8 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.database.sqlite.SQLiteStatement
-import com.github.moko256.twitlatte.api.mastodon.CLIENT_TYPE_MASTODON
-import com.github.moko256.twitlatte.api.twitter.convertToStatusOrRepeat
-import com.github.moko256.twitlatte.database.migrator.OldCachedStatusesSQLiteOpenHelper
-import com.github.moko256.twitlatte.entity.*
-import com.github.moko256.twitlatte.text.link.convertHtmlToContentAndLinks
-import com.github.moko256.twitlatte.text.link.entity.Link
+import com.github.moko256.core.client.base.entity.*
+import com.github.moko256.twitlatte.core.html.entity.Link
 import com.github.moko256.twitlatte.text.splitWithComma
 import java.io.File
 import java.util.*
@@ -100,123 +96,9 @@ class CachedStatusesSQLiteOpenHelper(
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        if (oldVersion < 2) {
-            db.execSQL("alter table $TABLE_NAME add column contentWarning")
-        }
-
-        if (oldVersion < 3) {
-            db.execSQL("alter table $TABLE_NAME add column repliesCount")
-        }
-
         if (oldVersion < 4) {
-            db.execSQL("alter table CachedStatuses rename to CachedStatusesOld")
-            val oldStatuses = OldCachedStatusesSQLiteOpenHelper.getCachedStatus(db)
-
-            db.execSQL(
-                    "create table $TABLE_NAME(${TABLE_COLUMNS.joinToString(",")}, primary key(id))"
-            )
-
-            db.execSQL(
-                    "create table $COUNTS_TABLE_NAME(id integer primary key,count integer default 0)"
-            )
-            db.execSQL("create unique index CountsIdIndex on $TABLE_NAME(id)")
-
-            oldStatuses.forEach { status ->
-                val contentValue = createStatusContentValues(if (accessToken?.clientType == CLIENT_TYPE_MASTODON) {
-
-                    if (status.retweetedStatusId == -1L) {
-                        val urls = status.text.convertHtmlToContentAndLinks()
-
-
-                        val (sourceName, sourceWebsite) = if (
-                                status.source.length > 8
-                                && status.source.substring(0 .. 7) == "<a href="
-                        ) {
-                            val parsedSource = status.source.convertHtmlToContentAndLinks()
-
-                            parsedSource.first to parsedSource.second?.first()?.url
-                        } else {
-                            status.source to null
-                        }
-                        //val sourceName = parsedSource.first
-                        //val sourceWebsite = parsedSource.second.first().url
-                        Status(
-                                id = status.id,
-                                userId = status.user.id,
-                                text = urls.first,
-                                sourceName = sourceName,
-                                sourceWebsite = sourceWebsite,
-                                createdAt = status.createdAt,
-                                inReplyToStatusId = status.inReplyToStatusId,
-                                inReplyToUserId = status.inReplyToUserId,
-                                inReplyToScreenName = status.inReplyToScreenName,
-                                isFavorited = status.isFavorited,
-                                isRepeated = status.isRetweeted,
-                                favoriteCount = status.favoriteCount,
-                                repeatCount = status.retweetCount,
-                                repliesCount = status.repliesCount,
-                                isSensitive = status.isPossiblySensitive,
-                                lang = status.lang,
-                                medias = status.mediaEntities.takeIf { it.isNotEmpty() }?.map {
-                                    val thumbnailUrl: String?
-                                    val resultUrl: String
-                                    val type: String
-
-                                    when(it.type) {
-                                        "video" -> {
-                                            thumbnailUrl = it.mediaURLHttps
-                                            resultUrl = it.videoVariants[0].url
-                                            type = Media.ImageType.VIDEO_ONE.value
-                                        }
-                                        "animated_gif" -> {
-                                            thumbnailUrl = it.mediaURLHttps
-                                            resultUrl = it.videoVariants[0].url
-                                            type = Media.ImageType.GIF.value
-                                        }
-                                        else -> {
-                                            thumbnailUrl = null
-                                            resultUrl = it.mediaURLHttps
-                                            type = Media.ImageType.PICTURE.value
-                                        }
-                                    }
-
-                                    Media(
-                                            thumbnailUrl = thumbnailUrl,
-                                            originalUrl = resultUrl,
-                                            downloadVideoUrl = null,
-                                            imageType = type
-                                    )
-                                }?.toTypedArray(),
-                                urls = urls.second,
-                                emojis = status.emojis?.toTypedArray(),
-                                url = status.remoteUrl,
-                                mentions = status.userMentionEntities.map {
-                                    it.screenName
-                                }.toTypedArray(),
-                                spoilerText = status.spoilerText,
-                                quotedStatusId = status.quotedStatusId,
-                                visibility = null
-                        )
-                    } else {
-                        Repeat(
-                                id = status.id,
-                                userId = status.user.id,
-                                repeatedStatusId = status.retweetedStatusId,
-                                createdAt = status.createdAt
-                        )
-                    }
-                } else {
-                    status.convertToStatusOrRepeat()
-                })
-
-                db.insert(TABLE_NAME, null, contentValue)
-
-                db.execSQL("insert into $COUNTS_TABLE_NAME(id) values(${status.id})")
-            }
-
-            oldStatuses.close()
-
-            db.execSQL("drop table CachedStatusesOld")
+            db.execSQL("drop table CachedStatuses")
+            onCreate(db)
         }
     }
 
@@ -404,17 +286,19 @@ class CachedStatusesSQLiteOpenHelper(
                 contentValues.put(TABLE_COLUMNS[15], status.isSensitive)
                 contentValues.put(TABLE_COLUMNS[16], status.lang)
 
-                if (status.mentions != null) {
-                    contentValues.put(TABLE_COLUMNS[17], status.mentions.joinToString(","))
+                val mentions = status.mentions
+                if (mentions != null) {
+                    contentValues.put(TABLE_COLUMNS[17], mentions.joinToString(","))
                 }
 
-                if (status.urls != null) {
-                    val size = status.urls.size
+                val urlEntities = status.urls
+                if (urlEntities != null) {
+                    val size = urlEntities.size
                     val urls = arrayOfNulls<String>(size)
                     val starts = arrayOfNulls<String>(size)
                     val ends = arrayOfNulls<String>(size)
 
-                    status.urls.forEachIndexed { i, entity ->
+                    urlEntities.forEachIndexed { i, entity ->
                         urls[i] = entity.url
                         starts[i] = entity.start.toString()
                         ends[i] = entity.end.toString()
@@ -424,14 +308,15 @@ class CachedStatusesSQLiteOpenHelper(
                     contentValues.put(TABLE_COLUMNS[20], ends.joinToString(","))
                 }
 
-                if (status.medias != null) {
-                    val size = status.medias.size
+                val medias = status.medias
+                if (medias != null) {
+                    val size = medias.size
                     val thumbnailUrls = arrayOfNulls<String>(size)
                     val originalUrls = arrayOfNulls<String>(size)
                     val downloadVideoUrls = arrayOfNulls<String>(size)
                     val types = arrayOfNulls<String>(size)
 
-                    status.medias.forEachIndexed { i, entity ->
+                    medias.forEachIndexed { i, entity ->
                         thumbnailUrls[i] = entity.thumbnailUrl
                         originalUrls[i] = entity.originalUrl
                         downloadVideoUrls[i] = entity.downloadVideoUrl
@@ -447,12 +332,13 @@ class CachedStatusesSQLiteOpenHelper(
 
                 contentValues.put(TABLE_COLUMNS[26], status.url)
 
-                if (status.emojis != null) {
-                    val size = status.emojis.size
+                val emojis = status.emojis
+                if (emojis != null) {
+                    val size = emojis.size
                     val shortCodes = arrayOfNulls<String>(size)
                     val urls = arrayOfNulls<String>(size)
 
-                    status.emojis.forEachIndexed { i, emoji ->
+                    emojis.forEachIndexed { i, emoji ->
                         shortCodes[i] = emoji.shortCode
                         urls[i] = emoji.url
                     }

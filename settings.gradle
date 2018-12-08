@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-include ':app'
+include ':app', ':component_client_base', ':component_html_parse', ':component_client_twitter', ':component_client_mastodon'
 include ':mastodon4j:mastodon4j'
 include ':alternative_twitter_text'
 include ':alternative_twitter4j'

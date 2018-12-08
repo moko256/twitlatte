@@ -16,7 +16,7 @@
 
 package com.github.moko256.twitlatte.repository.server.base
 
-import com.github.moko256.twitlatte.entity.Paging
+import com.github.moko256.core.client.base.entity.Paging
 
 /**
  * Created by moko256 on 2018/07/13.

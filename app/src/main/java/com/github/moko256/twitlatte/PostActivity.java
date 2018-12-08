@@ -41,8 +41,8 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.github.moko256.twitlatte.api.mastodon.MastodonStatusCounter;
-import com.github.moko256.twitlatte.api.twitter.TwitterStatusCounter;
+import com.github.moko256.twitlatte.core.client.mastodon.MastodonStatusCounter;
+import com.github.moko256.twitlatte.core.client.twitter.TwitterStatusCounter;
 import com.github.moko256.twitlatte.entity.Client;
 import com.github.moko256.twitlatte.glide.GlideApp;
 import com.github.moko256.twitlatte.model.base.PostStatusModel;
@@ -71,8 +71,8 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import kotlin.Pair;
 
-import static com.github.moko256.twitlatte.api.mastodon.MastodonApiClientImplKt.CLIENT_TYPE_MASTODON;
-import static com.github.moko256.twitlatte.api.twitter.TwitterApiClientImplKt.CLIENT_TYPE_TWITTER;
+import static com.github.moko256.twitlatte.core.client.mastodon.MastodonApiClientImplKt.CLIENT_TYPE_MASTODON;
+import static com.github.moko256.twitlatte.core.client.twitter.TwitterApiClientImplKt.CLIENT_TYPE_TWITTER;
 
 /**
  * Created by moko256 on 2015/11/08.
@@ -386,7 +386,7 @@ public class PostActivity extends AppCompatActivity {
     private void errorNotify(Throwable e) {
         Snackbar.make(
                 rootViewGroup,
-                TwitterStringUtils.convertErrorToText(e),
+                e.getMessage(),
                 Snackbar.LENGTH_INDEFINITE
         ).show();
     }

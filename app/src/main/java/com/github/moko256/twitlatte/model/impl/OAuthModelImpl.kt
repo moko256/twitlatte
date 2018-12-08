@@ -17,9 +17,9 @@
 package com.github.moko256.twitlatte.model.impl
 
 import android.os.Bundle
-import com.github.moko256.twitlatte.api.base.AuthApiClient
-import com.github.moko256.twitlatte.entity.AccessToken
-import com.github.moko256.twitlatte.entity.RequestToken
+import com.github.moko256.core.client.base.AuthApiClient
+import com.github.moko256.core.client.base.entity.AccessToken
+import com.github.moko256.core.client.base.entity.RequestToken
 import com.github.moko256.twitlatte.model.base.OAuthModel
 import io.reactivex.Single
 

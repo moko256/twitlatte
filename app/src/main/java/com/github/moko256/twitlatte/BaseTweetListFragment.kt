@@ -34,7 +34,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.github.moko256.twitlatte.database.CachedIdListSQLiteOpenHelper
 import com.github.moko256.twitlatte.entity.Client
 import com.github.moko256.twitlatte.entity.EventType
-import com.github.moko256.twitlatte.entity.Post
+import com.github.moko256.core.client.base.entity.Post
 import com.github.moko256.twitlatte.entity.UpdateEvent
 import com.github.moko256.twitlatte.model.impl.ListModelImpl
 import com.github.moko256.twitlatte.model.impl.StatusActionModelImpl

@@ -82,6 +82,15 @@ kapt {
 }
 
 dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.4'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
+
+    implementation project(':component_client_twitter')
+    implementation project(':component_client_mastodon')
+
+    implementation project(':japng-android:android_api')
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
@@ -98,15 +107,10 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-extensions:2.0.0"
     implementation "androidx.lifecycle:lifecycle-viewmodel:2.0.0"
 
-    implementation "com.squareup.okhttp3:okhttp:3.12.0"
-    implementation 'com.squareup.okio:okio:2.1.0'
-
     implementation "com.google.android.exoplayer:exoplayer-core:$exoplayer_version"
     implementation "com.google.android.exoplayer:exoplayer-hls:$exoplayer_version"
     implementation "com.google.android.exoplayer:exoplayer-ui:$exoplayer_version"
     implementation "com.google.android.exoplayer:extension-okhttp:$exoplayer_version"
-
-    implementation "com.google.code.gson:gson:2.8.5"
 
     implementation "com.github.bumptech.glide:glide:$glide_version"
     kapt "com.github.bumptech.glide:compiler:$glide_version"
@@ -114,25 +118,8 @@ dependencies {
 
     implementation 'jp.wasabeef:glide-transformations:3.3.0'
 
-    implementation project(':mastodon4j:mastodon4j')
-    implementation project(':alternative_twitter4j')
-
     implementation 'com.github.chrisbanes:PhotoView:2.3.0'
     implementation 'com.github.chuross:flinglayout:0.5.0'
-
-    implementation project(':japng-android:android_api')
-
-    implementation project(':alternative_twitter_text')
-
-    implementation 'io.reactivex.rxjava2:rxjava:2.2.4'
-    implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
-
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-
-    // Android 4.4.2 uses 1.2. That's why
-    //noinspection GradleDependency
-    compileOnly 'org.ccil.cowan.tagsoup:tagsoup:1.2'
-
 }
 
 buildscript {

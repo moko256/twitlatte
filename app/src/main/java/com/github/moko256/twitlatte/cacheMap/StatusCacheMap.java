@@ -18,15 +18,15 @@ package com.github.moko256.twitlatte.cacheMap;
 
 import android.content.Context;
 
+import com.github.moko256.core.client.base.entity.StatusObjectKt;
 import com.github.moko256.twitlatte.GlobalApplicationKt;
 import com.github.moko256.twitlatte.database.CachedStatusesSQLiteOpenHelper;
-import com.github.moko256.twitlatte.entity.AccessToken;
-import com.github.moko256.twitlatte.entity.Post;
-import com.github.moko256.twitlatte.entity.Repeat;
-import com.github.moko256.twitlatte.entity.Status;
-import com.github.moko256.twitlatte.entity.StatusObject;
-import com.github.moko256.twitlatte.entity.StatusObjectKt;
-import com.github.moko256.twitlatte.entity.User;
+import com.github.moko256.core.client.base.entity.AccessToken;
+import com.github.moko256.core.client.base.entity.Post;
+import com.github.moko256.core.client.base.entity.Repeat;
+import com.github.moko256.core.client.base.entity.Status;
+import com.github.moko256.core.client.base.entity.StatusObject;
+import com.github.moko256.core.client.base.entity.User;
 
 import java.util.ArrayList;
 import java.util.Collection;

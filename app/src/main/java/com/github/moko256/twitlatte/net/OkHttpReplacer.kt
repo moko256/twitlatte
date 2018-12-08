@@ -18,7 +18,6 @@ package com.github.moko256.twitlatte.net
 
 import android.os.Build
 import okhttp3.OkHttpClient
-import twitter4j.AlternativeHttpClientImpl
 import java.security.KeyStore
 import java.security.KeyStoreException
 import java.security.NoSuchAlgorithmException
@@ -30,16 +29,6 @@ import javax.net.ssl.X509TrustManager
  *
  * @author moko256
  */
-
-fun AlternativeHttpClientImpl.replaceOkHttpClient(newOkHttpClient: OkHttpClient) {
-    AlternativeHttpClientImpl::class.java
-            .getDeclaredField("okHttpClient")
-            .also {
-                it.isAccessible = true
-
-                it.set(this, newOkHttpClient)
-            }
-}
 
 fun OkHttpClient.Builder.replaceSocketFactoryIfNeeded(): OkHttpClient.Builder = apply {
     if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {

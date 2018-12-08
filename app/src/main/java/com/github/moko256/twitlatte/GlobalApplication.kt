@@ -23,26 +23,23 @@ import android.preference.PreferenceManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.collection.LruCache
-import com.github.moko256.twitlatte.api.base.ApiClient
+import com.github.moko256.core.client.base.ApiClient
+import com.github.moko256.core.client.base.entity.AccessToken
 import com.github.moko256.twitlatte.api.generateMastodonApiClient
 import com.github.moko256.twitlatte.api.generateTwitterApiClient
-import com.github.moko256.twitlatte.api.twitter.CLIENT_TYPE_TWITTER
 import com.github.moko256.twitlatte.cacheMap.StatusCacheMap
 import com.github.moko256.twitlatte.cacheMap.UserCacheMap
-import com.github.moko256.twitlatte.entity.AccessToken
+import com.github.moko256.twitlatte.core.client.twitter.CLIENT_TYPE_TWITTER
+import com.github.moko256.twitlatte.core.client.twitter.okhttp.replaceOkHttpClient
 import com.github.moko256.twitlatte.entity.Client
 import com.github.moko256.twitlatte.model.AccountsModel
 import com.github.moko256.twitlatte.net.appOkHttpClientInstance
-import com.github.moko256.twitlatte.net.replaceOkHttpClient
 import com.github.moko256.twitlatte.queue.StatusActionQueue
 import com.github.moko256.twitlatte.repository.KEY_ACCOUNT_KEY
 import com.github.moko256.twitlatte.repository.KEY_NIGHT_MODE
 import com.github.moko256.twitlatte.repository.PreferenceRepository
 import com.github.moko256.twitlatte.text.TwitterStringUtils
 import com.github.moko256.twitlatte.text.convertToAppCompatNightThemeMode
-import twitter4j.AlternativeHttpClientImpl
-import twitter4j.HttpClientFactory
-import twitter4j.conf.ConfigurationContext
 
 /**
  * Created by moko256 on 2016/04/30.
@@ -80,11 +77,7 @@ class GlobalApplication : Application() {
                         .convertToAppCompatNightThemeMode()
         )
 
-        (HttpClientFactory
-                .getInstance(
-                        ConfigurationContext.getInstance().httpClientConfiguration
-                ) as AlternativeHttpClientImpl)
-                .replaceOkHttpClient(appOkHttpClientInstance)
+        replaceOkHttpClient(appOkHttpClientInstance)
 
         preferenceRepository
                 .getString(KEY_ACCOUNT_KEY, "-1")

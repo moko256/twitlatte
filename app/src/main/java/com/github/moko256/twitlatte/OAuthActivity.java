@@ -32,7 +32,7 @@ import android.widget.Toast;
 
 import com.github.moko256.twitlatte.api.OAuthApiClientGeneratorKt;
 import com.github.moko256.twitlatte.database.TokenSQLiteOpenHelper;
-import com.github.moko256.twitlatte.entity.AccessToken;
+import com.github.moko256.core.client.base.entity.AccessToken;
 import com.github.moko256.twitlatte.model.base.OAuthModel;
 import com.github.moko256.twitlatte.model.impl.OAuthModelImpl;
 import com.github.moko256.twitlatte.net.OkHttpHolderKt;
@@ -48,9 +48,9 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.internal.disposables.CancellableDisposable;
 import io.reactivex.schedulers.Schedulers;
 
-import static com.github.moko256.twitlatte.api.base.ApiClientKt.CLIENT_TYPE_NOTHING;
-import static com.github.moko256.twitlatte.api.mastodon.MastodonApiClientImplKt.CLIENT_TYPE_MASTODON;
-import static com.github.moko256.twitlatte.api.twitter.TwitterApiClientImplKt.CLIENT_TYPE_TWITTER;
+import static com.github.moko256.core.client.base.ApiClientKt.CLIENT_TYPE_NOTHING;
+import static com.github.moko256.twitlatte.core.client.mastodon.MastodonApiClientImplKt.CLIENT_TYPE_MASTODON;
+import static com.github.moko256.twitlatte.core.client.twitter.TwitterApiClientImplKt.CLIENT_TYPE_TWITTER;
 import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY_ACCOUNT_KEY;
 import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY_USE_CHROME_CUSTOM_TAB;
 
@@ -345,7 +345,7 @@ public class OAuthActivity extends AppCompatActivity {
         e.printStackTrace();
         Toast.makeText(
                 this,
-                getString(R.string.error_occurred) + "\n\n" + TwitterStringUtils.convertErrorToText(e),
+                getString(R.string.error_occurred) + "\n\n" + e.getMessage(),
                 Toast.LENGTH_LONG
         ).show();
     }

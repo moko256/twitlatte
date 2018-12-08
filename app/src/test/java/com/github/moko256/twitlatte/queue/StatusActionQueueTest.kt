@@ -16,7 +16,7 @@
 
 package com.github.moko256.twitlatte.queue
 
-import com.github.moko256.twitlatte.entity.StatusAction
+import com.github.moko256.core.client.base.entity.StatusAction
 import io.reactivex.Completable
 import org.junit.Before
 import org.junit.Test

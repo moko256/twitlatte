@@ -26,8 +26,8 @@ import android.widget.TextView;
 
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.github.moko256.twitlatte.cacheMap.UserCacheMap;
-import com.github.moko256.twitlatte.entity.Emoji;
-import com.github.moko256.twitlatte.entity.User;
+import com.github.moko256.core.client.base.entity.Emoji;
+import com.github.moko256.core.client.base.entity.User;
 import com.github.moko256.twitlatte.glide.GlideApp;
 import com.github.moko256.twitlatte.glide.GlideRequests;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;

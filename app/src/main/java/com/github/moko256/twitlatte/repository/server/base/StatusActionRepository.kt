@@ -16,7 +16,7 @@
 
 package com.github.moko256.twitlatte.repository.server.base
 
-import com.github.moko256.twitlatte.entity.Post
+import com.github.moko256.core.client.base.entity.Post
 
 /**
  * Created by moko256 on 2018/10/20.

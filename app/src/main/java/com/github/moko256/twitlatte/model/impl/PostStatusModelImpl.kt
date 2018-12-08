@@ -18,8 +18,8 @@ package com.github.moko256.twitlatte.model.impl
 
 import android.content.ContentResolver
 import android.net.Uri
-import com.github.moko256.twitlatte.api.base.ApiClient
-import com.github.moko256.twitlatte.api.base.StatusCounter
+import com.github.moko256.core.client.base.ApiClient
+import com.github.moko256.core.client.base.StatusCounter
 import com.github.moko256.twitlatte.model.base.PostStatusModel
 import io.reactivex.Completable
 

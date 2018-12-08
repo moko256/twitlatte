@@ -17,9 +17,9 @@
 package com.github.moko256.twitlatte.api
 
 import com.github.moko256.twitlatte.BuildConfig
-import com.github.moko256.twitlatte.api.base.AuthApiClient
-import com.github.moko256.twitlatte.api.mastodon.MastodonAuthApiClient
-import com.github.moko256.twitlatte.api.twitter.TwitterAuthApiClient
+import com.github.moko256.core.client.base.AuthApiClient
+import com.github.moko256.twitlatte.core.client.mastodon.MastodonAuthApiClient
+import com.github.moko256.twitlatte.core.client.twitter.TwitterAuthApiClient
 import okhttp3.OkHttpClient
 
 /**

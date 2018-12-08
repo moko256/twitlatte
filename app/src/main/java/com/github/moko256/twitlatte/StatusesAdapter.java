@@ -25,10 +25,10 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.github.moko256.twitlatte.entity.Client;
-import com.github.moko256.twitlatte.entity.Post;
-import com.github.moko256.twitlatte.entity.Repeat;
-import com.github.moko256.twitlatte.entity.Status;
-import com.github.moko256.twitlatte.entity.User;
+import com.github.moko256.core.client.base.entity.Post;
+import com.github.moko256.core.client.base.entity.Repeat;
+import com.github.moko256.core.client.base.entity.Status;
+import com.github.moko256.core.client.base.entity.User;
 import com.github.moko256.twitlatte.glide.GlideApp;
 import com.github.moko256.twitlatte.glide.GlideRequests;
 import com.github.moko256.twitlatte.repository.PreferenceRepository;

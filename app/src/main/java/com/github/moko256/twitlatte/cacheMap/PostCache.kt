@@ -16,10 +16,10 @@
 
 package com.github.moko256.twitlatte.cacheMap
 
-import com.github.moko256.twitlatte.entity.Post
-import com.github.moko256.twitlatte.entity.Repeat
-import com.github.moko256.twitlatte.entity.Status
-import com.github.moko256.twitlatte.entity.User
+import com.github.moko256.core.client.base.entity.Post
+import com.github.moko256.core.client.base.entity.Repeat
+import com.github.moko256.core.client.base.entity.Status
+import com.github.moko256.core.client.base.entity.User
 
 /**
  * Created by moko256 on 2018/10/05.

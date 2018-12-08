@@ -154,7 +154,7 @@ public abstract class BaseListFragment extends Fragment implements MovableTopInt
     protected Snackbar notifyErrorBySnackBar(Throwable e){
         return Snackbar.make(
                 viewForSnackBar,
-                TwitterStringUtils.convertErrorToText(e),
+                e.getMessage(),
                 Snackbar.LENGTH_LONG
         );
     }

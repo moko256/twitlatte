@@ -24,7 +24,7 @@ import android.view.View;
 
 import com.github.moko256.twitlatte.database.CachedTrendsSQLiteOpenHelper;
 import com.github.moko256.twitlatte.entity.Client;
-import com.github.moko256.twitlatte.entity.Trend;
+import com.github.moko256.core.client.base.entity.Trend;
 
 import java.io.IOException;
 import java.util.ArrayList;
