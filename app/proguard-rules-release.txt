@@ -5,6 +5,8 @@
 
 -keepattributes SourceFile,LineNumberTable
 
+-dontwarn org.ccil.cowan.tagsoup.Parser
+
 -dontwarn com.fasterxml.jackson.databind.**
 
 ##---------------Begin: proguard configuration for twitter4j  ----------
