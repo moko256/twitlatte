@@ -1,7 +1,7 @@
 # ProGuard rules for release build
 
 # see https://www.guardsquare.com/en/products/proguard/manual/usage/optimizations
--optimizations !code/simplification/arithmetic,!code/simplification/cast,!code/removal/advanced,!class/merging/*,field/*,code/*,class/*,method/inlining/*,method/marking/final,method/marking/private
+-optimizations !code/simplification/cast,!code/removal/advanced,!class/merging/horizontal,field/*,code/*,class/*,method/inlining/*,method/marking/final,method/marking/private
 
 -keepattributes SourceFile,LineNumberTable
 
