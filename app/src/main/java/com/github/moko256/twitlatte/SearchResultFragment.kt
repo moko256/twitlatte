@@ -32,17 +32,18 @@ class SearchResultFragment : BaseTweetListFragment() {
 
     private var searchText: String = ""
 
-    override val cachedIdsDatabaseName: String = searchText.toByteArray().let { bytes ->
-        StringBuilder("Search_").apply {
-            bytes.forEach {
-                if (it < 0) {
-                    append("_").append((-it).toString())
-                } else {
-                    append(it.toString())
+    override val cachedIdsDatabaseName: String
+        get() = searchText.toByteArray().let { bytes ->
+            StringBuilder("Search_").apply {
+                bytes.forEach {
+                    if (it < 0) {
+                        append("_").append((-it).toString())
+                    } else {
+                        append(it.toString())
+                    }
                 }
-            }
-        }.toString()
-    }
+            }.toString()
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         searchText = activity?.intent?.getStringExtra(BUNDLE_KEY_SEARCH_QUERY)?:""
