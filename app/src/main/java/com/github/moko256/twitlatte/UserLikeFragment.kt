@@ -29,8 +29,7 @@ class UserLikeFragment : BaseTweetListFragment(), ToolbarTitleInterface {
 
     private var userId: Long = -1L
 
-    override val titleResourceId: Int
-        get() = R.string.like
+    override val titleResourceId = R.string.like
 
     override val cachedIdsDatabaseName: String
         get() = "UserLike_" + userId.toString()

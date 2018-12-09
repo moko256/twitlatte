@@ -29,8 +29,7 @@ class UserTimelineFragment : BaseTweetListFragment(), ToolbarTitleInterface {
 
     private var userId: Long = -1L
 
-    override val titleResourceId: Int
-        get() = R.string.post
+    override val titleResourceId = R.string.post
 
     override val cachedIdsDatabaseName: String
         get() = "UserTimeline_" + userId.toString()
