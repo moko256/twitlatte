@@ -76,7 +76,7 @@ private class MastodonHtmlHandler: DefaultHandler() {
                 when {
                     classValue?.contains("hashtag")?:false -> {
                         type = TYPE_OTHER
-                        val tag = linkHref.substringAfterLast("/")
+                        val tag = linkHref.substringAfterLast('/')
                         contentUrl = "twitlatte://tag/$tag"
                     }
                     classValue?.contains("mention")?:false -> {
@@ -114,7 +114,7 @@ private class MastodonHtmlHandler: DefaultHandler() {
             stringBuilder.append(ch, start, length)
         } else {
             isNextDots = if (isNextDots) {
-                stringBuilder.append("…")
+                stringBuilder.append('…')
                 false
             } else {
                 true

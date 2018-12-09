@@ -142,7 +142,7 @@ class SplashActivity : AppCompatActivity() {
                             StringBuilder().apply {
                                 if (subject != null) {
                                     append(subject)
-                                    append(" ")
+                                    append(' ')
                                 }
                                 if (text != null) {
                                     append(text)
@@ -174,7 +174,7 @@ class SplashActivity : AppCompatActivity() {
         val tweet = StringBuilder(data.getQueryParameter("text")?:"")
 
         data.getQueryParameter("url")?.let {
-            tweet.append(" ").append(it)
+            tweet.append(' ').append(it)
         }
 
         data.getQueryParameter("hashtags")

@@ -37,7 +37,7 @@ class SearchResultFragment : BaseTweetListFragment() {
             StringBuilder("Search_").apply {
                 bytes.forEach {
                     if (it < 0) {
-                        append("_").append((-it).toString())
+                        append('_').append((-it).toString())
                     } else {
                         append(it.toString())
                     }

@@ -62,9 +62,9 @@ data class User(
 ) {
     private fun toResizedURL(originalURL: String, sizeSuffix: String): String {
         if (originalURL.isNotEmpty() && isTwitter) {
-            val index = originalURL.lastIndexOf("_")
-            val suffixIndex = originalURL.lastIndexOf(".")
-            val slashIndex = originalURL.lastIndexOf("/")
+            val index = originalURL.lastIndexOf('_')
+            val suffixIndex = originalURL.lastIndexOf('.')
+            val slashIndex = originalURL.lastIndexOf('/')
             var url = originalURL.substring(0, index) + sizeSuffix
             if (suffixIndex > slashIndex) {
                 url += originalURL.substring(suffixIndex)

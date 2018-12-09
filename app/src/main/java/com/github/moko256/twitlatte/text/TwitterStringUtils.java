@@ -57,7 +57,7 @@ public class TwitterStringUtils {
     public static StringBuilder plusAtMark(String... strings){
         StringBuilder stringBuilder = new StringBuilder();
         for (String string: strings) {
-            stringBuilder.append("@").append(string);
+            stringBuilder.append('@').append(string);
         }
         return stringBuilder;
     }
@@ -67,19 +67,19 @@ public class TwitterStringUtils {
         StringBuilder builder = new StringBuilder(5);
         if (num < 0) {
             num *= -1;
-            builder.append("-");
+            builder.append('-');
         }
 
         float k = num / 1000;
         if (k < 1) return builder.append(String.valueOf(num));
 
         float m = k / 1000;
-        if (m < 1) return builder.append(String.valueOf(Math.round(k))).append("K");
+        if (m < 1) return builder.append(String.valueOf(Math.round(k))).append('K');
 
         float g = m / 1000;
-        if (g < 1) return builder.append(String.valueOf(Math.round(m))).append("M");
+        if (g < 1) return builder.append(String.valueOf(Math.round(m))).append('M');
 
-        return builder.append(String.valueOf(Math.round(g))).append("G");
+        return builder.append(String.valueOf(Math.round(g))).append('G');
     }
 
     @NonNull
@@ -89,13 +89,13 @@ public class TwitterStringUtils {
         StringBuilder userIdsStr = new StringBuilder();
 
         if (!userScreenName.equals(replyToScreenName)) {
-            userIdsStr.append("@").append(replyToScreenName).append(" ");
+            userIdsStr.append('@').append(replyToScreenName).append(' ');
         }
 
         if (users != null) {
             for (String screenName : users) {
                 if (!(screenName.equals(userScreenName) || screenName.equals(replyToScreenName))) {
-                    userIdsStr.append("@").append(screenName).append(" ");
+                    userIdsStr.append('@').append(screenName).append(' ');
                 }
             }
         }
