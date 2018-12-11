@@ -189,6 +189,12 @@ class MastodonApiClientImpl(okHttpClient: OkHttpClient, url: String, token: Stri
         throw UnsupportedOperationException()
     }
 
+    override fun getCustomEmojis(): List<Emoji> {
+        return Instances(client).getCustomEmojis().executeAndConvertError().map {
+            Emoji(it.shortcode, it.staticUrl)
+        }
+    }
+
     override fun uploadMedia(inputStream: InputStream, name: String, type: String): Long {
         return Media(client)
                 .postMedia(

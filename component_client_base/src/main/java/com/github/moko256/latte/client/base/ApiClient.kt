@@ -64,6 +64,8 @@ interface ApiClient {
 
     fun reportSpam(userId: Long)
 
+    fun getCustomEmojis(): List<Emoji>
+
     fun uploadMedia(inputStream: InputStream, name: String, type: String): Long
     fun postStatus(
             inReplyToStatusId: Long,

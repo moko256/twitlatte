@@ -164,6 +164,10 @@ class TwitterApiClientImpl(
         client.reportSpam(userId)
     }
 
+    override fun getCustomEmojis(): List<Emoji> {
+        throw UnsupportedOperationException()
+    }
+
     override fun uploadMedia(inputStream: InputStream, name: String, type: String): Long {
         return if (type.startsWith("video/")) {
             client.uploadMediaChunked(name, inputStream)
