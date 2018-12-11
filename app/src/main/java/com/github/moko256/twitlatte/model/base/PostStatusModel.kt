@@ -17,7 +17,9 @@
 package com.github.moko256.twitlatte.model.base
 
 import android.net.Uri
+import com.github.moko256.latte.client.base.entity.Emoji
 import io.reactivex.Completable
+import io.reactivex.Single
 
 /**
  * Created by moko256 on 2017/07/22.
@@ -51,4 +53,5 @@ interface PostStatusModel {
 
     fun post(): Completable
 
+    fun requestCustomEmojis(): Single<List<Emoji>>
 }

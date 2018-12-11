@@ -20,8 +20,10 @@ import android.content.ContentResolver
 import android.net.Uri
 import com.github.moko256.latte.client.base.ApiClient
 import com.github.moko256.latte.client.base.StatusCounter
+import com.github.moko256.latte.client.base.entity.Emoji
 import com.github.moko256.twitlatte.model.base.PostStatusModel
 import io.reactivex.Completable
+import io.reactivex.Single
 
 /**
  * Created by moko256 on 2017/10/23.
@@ -102,4 +104,13 @@ class PostStatusModelImpl(
         }
     }
 
+    override fun requestCustomEmojis(): Single<List<Emoji>> {
+        return Single.create {
+            try {
+                it.onSuccess(apiClient.getCustomEmojis())
+            } catch (e: Throwable) {
+                it.tryOnError(e)
+            }
+        }
+    }
 }
