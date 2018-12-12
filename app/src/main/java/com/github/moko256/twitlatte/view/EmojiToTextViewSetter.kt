@@ -35,7 +35,6 @@ import io.reactivex.internal.disposables.CancellableDisposable
 import io.reactivex.schedulers.Schedulers
 import net.ellerton.japng.android.api.PngAndroid
 import java.io.InputStream
-import java.util.regex.Pattern
 
 /**
  * Created by moko256 on 2018/07/20.
@@ -43,7 +42,7 @@ import java.util.regex.Pattern
  * @author moko256
  */
 
-private val containsEmoji = Pattern.compile(":([a-zA-Z0-9_]{2,}):")
+private val containsEmoji = ":([a-zA-Z0-9_]{2,}):".toPattern()
 
 class EmojiToTextViewSetter(private val glideRequests: GlideRequests, private val textView: TextView) {
 
