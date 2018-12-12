@@ -19,7 +19,7 @@ package com.github.moko256.twitlatte.view
 import android.graphics.drawable.Animatable
 import android.graphics.drawable.Drawable
 import android.os.Handler
-import android.text.SpannableStringBuilder
+import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.ImageSpan
 import android.widget.TextView
@@ -91,7 +91,7 @@ class EmojiToTextViewSetter(private val glideRequests: GlideRequests, private va
 
         if (containedEmoji.isNotEmpty()) {
 
-            val builder = SpannableStringBuilder.valueOf(text)
+            val builder = text as SpannableString
 
             val handler = Handler()
 

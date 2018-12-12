@@ -18,7 +18,7 @@ package com.github.moko256.twitlatte;
 
 import android.graphics.Color;
 import android.os.Bundle;
-import android.text.SpannableStringBuilder;
+import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
@@ -240,15 +240,15 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
         final String url = user.getUrl();
         if (!TextUtils.isEmpty(url)){
             String text = getString(R.string.url_is, url);
-            SpannableStringBuilder builder = new SpannableStringBuilder(text);
+            SpannableString spannableString = new SpannableString(text);
             int start = text.indexOf(url);
-            builder.setSpan(new ClickableNoLineSpan() {
+            spannableString.setSpan(new ClickableNoLineSpan() {
                 @Override
-                public void onClick(View widget) {
+                public void onClick(@NonNull View widget) {
                     AppCustomTabsKt.launchChromeCustomTabs(requireContext(), url);
                 }
             }, start, start + url.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            userUrl.setText(builder);
+            userUrl.setText(spannableString);
             userUrl.setMovementMethod(LinkMovementMethod.getInstance());
         } else {
             userUrl.setVisibility(View.GONE);

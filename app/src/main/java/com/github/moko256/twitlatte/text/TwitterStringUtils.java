@@ -19,6 +19,7 @@ package com.github.moko256.twitlatte.text;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.ImageSpan;
@@ -107,7 +108,7 @@ public class TwitterStringUtils {
             return text;
         }
 
-        SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(text);
+        SpannableString spannableString = new SpannableString(text);
 
         for (Link link : links) {
             Object span;
@@ -167,25 +168,25 @@ public class TwitterStringUtils {
             int start = link.getStart();
             int end = link.getEnd();
             if (end <= nowLength) {
-                spannableStringBuilder.setSpan(span, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                spannableString.setSpan(span, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
         }
-        return spannableStringBuilder;
+        return spannableString;
     }
 
     public static CharSequence appendLinkAtViaText(Context context, String name, String url) {
         if (url == null) {
             return name;
         } else {
-            SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder("via:" + name);
-            spannableStringBuilder.setSpan(
+            SpannableString spannableString = new SpannableString("via:" + name);
+            spannableString.setSpan(
                     new ClickableNoLineSpan() {
                         @Override
                         public void onClick(@NonNull View view) {
                             AppCustomTabsKt.launchChromeCustomTabs(context, url);
                         }
                     }, 4, name.length() + 4, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            return spannableStringBuilder;
+            return spannableString;
         }
     }
 
