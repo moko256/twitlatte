@@ -19,7 +19,7 @@ apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion 28
-    buildToolsVersion "28.0.3"
+    buildToolsVersion '28.0.3'
 
     defaultConfig {
         minSdkVersion 19
@@ -29,7 +29,7 @@ android {
         versionCode 21
         versionName '1.6.4'
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
 
         Base64.Decoder e = Base64.decoder
 
@@ -82,7 +82,7 @@ kapt {
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 
     implementation 'io.reactivex.rxjava2:rxjava:2.2.4'
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
@@ -95,17 +95,17 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
 
-    implementation "androidx.core:core:1.0.1"
-    implementation "androidx.appcompat:appcompat:1.0.2"
-    implementation "com.google.android.material:material:1.0.0"
-    implementation "androidx.cardview:cardview:1.0.0"
-    implementation "androidx.recyclerview:recyclerview:1.0.0"
-    implementation "androidx.gridlayout:gridlayout:1.0.0"
-    implementation "androidx.preference:preference:1.1.0-alpha01"
-    implementation "androidx.browser:browser:1.0.0"
+    implementation 'androidx.core:core:1.0.1'
+    implementation 'androidx.appcompat:appcompat:1.0.2'
+    implementation 'com.google.android.material:material:1.0.0'
+    implementation 'androidx.cardview:cardview:1.0.0'
+    implementation 'androidx.recyclerview:recyclerview:1.0.0'
+    implementation 'androidx.gridlayout:gridlayout:1.0.0'
+    implementation 'androidx.preference:preference:1.1.0-alpha01'
+    implementation 'androidx.browser:browser:1.0.0'
 
-    implementation "androidx.lifecycle:lifecycle-extensions:2.0.0"
-    implementation "androidx.lifecycle:lifecycle-viewmodel:2.0.0"
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel:2.0.0'
 
     implementation "com.google.android.exoplayer:exoplayer-core:$exoplayer_version"
     implementation "com.google.android.exoplayer:exoplayer-hls:$exoplayer_version"
@@ -122,10 +122,18 @@ dependencies {
     implementation 'com.github.chuross:flinglayout:0.5.0'
 }
 
+repositories {
+    google()
+    jcenter()
+    maven {
+        url 'https://jitpack.io'
+    }
+}
+
 buildscript {
-    ext.a = "RmxhbXRVTVdKdWRWQjRlbk40UlVoSk9F"
-    ext.b = "Tk2Y0U0MWExb3dhMjAwZEVGMlRrbz0"
-    ext.c = "cGliR0Z5UkRsbGNXWk1PVkJRYjFaUlZGTlZRb"
-    ext.d = "VkRsNWJtTTFUblJQY3pOS1ZHWlZZVEJXWjNodGJE"
-    ext.e = "p2ZW5CT05XdGFNlaFlTeffmw1xYm1N"
+    ext.a = 'RmxhbXRVTVdKdWRWQjRlbk40UlVoSk9F'
+    ext.b = 'Tk2Y0U0MWExb3dhMjAwZEVGMlRrbz0'
+    ext.c = 'cGliR0Z5UkRsbGNXWk1PVkJRYjFaUlZGTlZRb'
+    ext.d = 'VkRsNWJtTTFUblJQY3pOS1ZHWlZZVEJXWjNodGJE'
+    ext.e = 'p2ZW5CT05XdGFNlaFlTeffmw1xYm1N'
 }

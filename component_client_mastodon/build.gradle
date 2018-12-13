@@ -18,13 +18,17 @@ apply plugin: 'java-library'
 apply plugin: 'kotlin'
 
 dependencies {
-    api "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 
     api project(':component_client_base')
 
-    implementation "com.google.code.gson:gson:2.8.5"
+    implementation 'com.google.code.gson:gson:2.8.5'
     implementation project(':mastodon4j:mastodon4j')
 }
 
-sourceCompatibility = "8"
-targetCompatibility = "8"
+repositories {
+    jcenter()
+}
+
+sourceCompatibility = '8'
+targetCompatibility = '8'
