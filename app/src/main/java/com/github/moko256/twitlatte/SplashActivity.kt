@@ -48,10 +48,12 @@ class SplashActivity : AppCompatActivity() {
                         when (data.scheme) {
                             "twitter" -> when (data.host) {
                                 "post" -> {
-                                    val replyId = data.getQueryParameter("in_reply_to_status_id")
                                     return PostActivity.getIntent(
                                             this,
-                                            replyId?.toLong()?:-1,
+                                            data
+                                                    .getQueryParameter("in_reply_to_status_id")
+                                                    ?.toLong()
+                                                    ?:-1,
                                             data.getQueryParameter("message")
                                     )
                                 }
@@ -71,31 +73,28 @@ class SplashActivity : AppCompatActivity() {
                             }
                             "https" -> {
                                 val pathSegments = data.pathSegments
-                                val size = pathSegments.size
 
-                                val lastPathSegment = data.lastPathSegment
-                                when (size) {
-                                    1 -> return when (lastPathSegment) {
+                                when (pathSegments.size) {
+                                    1 -> return when (pathSegments[0]) {
                                         "share" -> generatePostIntent(data)
                                         "search" -> SearchResultActivity.getIntent(this, data.getQueryParameter("q"))
                                         else -> ShowUserActivity
-                                                .getIntent(this, lastPathSegment)
+                                                .getIntent(this, pathSegments[0])
                                                 .setAccountKey(
                                                         getAccountsModel()
                                                                 .selectFirstByType(CLIENT_TYPE_TWITTER)!!
                                                 )
                                     }
-                                    2 -> if (pathSegments[0] == "intent" && lastPathSegment == "tweet") {
+                                    2 -> if (pathSegments[0] == "intent" && pathSegments[1] == "tweet") {
                                         return generatePostIntent(data)
                                     } else if (pathSegments[0] == "hashtag") {
-                                        return SearchResultActivity.getIntent(this, "#$lastPathSegment")
+                                        return SearchResultActivity.getIntent(this, "#${pathSegments[1]}")
                                     }
 
-                                    3 -> {
-                                        val s = pathSegments[1]
-                                        if (s == "status" || s == "statuses") {
+                                    3, 5 -> {
+                                        if (pathSegments[1] == "status" || pathSegments[1] == "statuses") {
                                             return ShowTweetActivity
-                                                    .getIntent(this, lastPathSegment?.toLong()?:-1)
+                                                    .getIntent(this, pathSegments[2].toLong())
                                                     .setAccountKey(
                                                             getAccountsModel()
                                                                     .selectFirstByType(CLIENT_TYPE_TWITTER)!!
@@ -163,11 +162,14 @@ class SplashActivity : AppCompatActivity() {
 
         }
 
-        return if (getCurrentClient() == null) {
-            Intent(this, OAuthActivity::class.java)
-        } else {
-            Intent(this, MainActivity::class.java)
-        }
+        return Intent(
+                this,
+                if (getCurrentClient() == null) {
+                    OAuthActivity::class.java
+                } else {
+                    MainActivity::class.java
+                }
+        )
     }
 
     private fun generatePostIntent(data: Uri): Intent {
