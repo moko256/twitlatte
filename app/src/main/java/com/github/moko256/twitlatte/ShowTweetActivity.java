@@ -199,7 +199,7 @@ public class ShowTweetActivity extends AppCompatActivity {
                         getString(R.string.share)));
                 break;
             case R.id.action_open_in_browser:
-                AppCustomTabsKt.launchChromeCustomTabs(this, shareUrl);
+                AppCustomTabsKt.launchChromeCustomTabs(this, shareUrl, BuildConfig.APPLICATION_ID);
                 break;
             }
         return super.onOptionsItemSelected(item);

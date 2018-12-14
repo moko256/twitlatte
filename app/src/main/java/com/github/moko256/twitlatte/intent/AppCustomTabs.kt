@@ -39,21 +39,35 @@ import com.github.moko256.twitlatte.repository.KEY_USE_CHROME_CUSTOM_TAB
  * @param context context that launch uri
  * @param uri uri string
  */
-fun launchChromeCustomTabs(context: Context, uri: String){
-    launchChromeCustomTabs(context, Uri.parse(uri))
+fun launchChromeCustomTabs(context: Context, uri: String, excludePackageName: String? = null){
+    launchChromeCustomTabs(context, Uri.parse(uri), excludePackageName)
 }
 
-fun launchChromeCustomTabs(context: Context, url: Uri){
+fun launchChromeCustomTabs(context: Context, url: Uri, excludePackageName: String? = null){
+    launchChromeCustomTabs(context, url, excludePackageName) {
+        CustomTabsIntent.Builder()
+                .setToolbarColor(ContextCompat.getColor(context, R.color.color_primary))
+                .setSecondaryToolbarColor(ContextCompat.getColor(context, R.color.color_primary_dark))
+                .setStartAnimations(context, R.anim.custom_tabs_slide_in_right, R.anim.custom_tabs_slide_out_left)
+                .setExitAnimations(context, R.anim.custom_tabs_slide_in_left, R.anim.custom_tabs_slide_out_right)
+                .addDefaultShareMenuItem()
+    }
+}
+
+fun launchChromeCustomTabs(context: Context, url: Uri, excludePackageName: String? = null, builder: () -> CustomTabsIntent.Builder){
     try {
         if (preferenceRepository.getBoolean(KEY_USE_CHROME_CUSTOM_TAB, true)) {
-            CustomTabsIntent.Builder()
-                    .setToolbarColor(ContextCompat.getColor(context, R.color.color_primary))
-                    .setSecondaryToolbarColor(ContextCompat.getColor(context, R.color.color_primary_dark))
-                    .setStartAnimations(context, R.anim.custom_tabs_slide_in_right, R.anim.custom_tabs_slide_out_left)
-                    .setExitAnimations(context, R.anim.custom_tabs_slide_in_left, R.anim.custom_tabs_slide_out_right)
-                    .addDefaultShareMenuItem()
-                    .build()
-                    .launchUrl(context, url)
+            builder().build().let {
+                ContextCompat.startActivity(
+                        context,
+                        if (excludePackageName != null) {
+                            it.intent.setData(url).excludeApp(excludePackageName)
+                        } else {
+                            it.intent.setData(url)
+                        },
+                        it.startAnimationBundle
+                )
+            }
         } else {
             context.startActivity(Intent(Intent.ACTION_VIEW, url))
         }

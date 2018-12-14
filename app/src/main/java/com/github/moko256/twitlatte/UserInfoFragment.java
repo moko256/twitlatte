@@ -245,7 +245,7 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
             spannableString.setSpan(new ClickableNoLineSpan() {
                 @Override
                 public void onClick(@NonNull View widget) {
-                    AppCustomTabsKt.launchChromeCustomTabs(requireContext(), url);
+                    AppCustomTabsKt.launchChromeCustomTabs(requireContext(), url, null);
                 }
             }, start, start + url.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             userUrl.setText(spannableString);

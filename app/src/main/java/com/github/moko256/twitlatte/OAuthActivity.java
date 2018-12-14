@@ -16,7 +16,6 @@
 
 package com.github.moko256.twitlatte;
 
-import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -33,6 +32,7 @@ import android.widget.Toast;
 import com.github.moko256.latte.client.base.entity.AccessToken;
 import com.github.moko256.twitlatte.api.OAuthApiClientGeneratorKt;
 import com.github.moko256.twitlatte.database.TokenSQLiteOpenHelper;
+import com.github.moko256.twitlatte.intent.AppCustomTabsKt;
 import com.github.moko256.twitlatte.model.base.OAuthModel;
 import com.github.moko256.twitlatte.model.impl.OAuthModelImpl;
 import com.github.moko256.twitlatte.net.OkHttpHolderKt;
@@ -51,7 +51,6 @@ import static com.github.moko256.latte.client.base.ApiClientKt.CLIENT_TYPE_NOTHI
 import static com.github.moko256.latte.client.mastodon.MastodonApiClientImplKt.CLIENT_TYPE_MASTODON;
 import static com.github.moko256.latte.client.twitter.TwitterApiClientImplKt.CLIENT_TYPE_TWITTER;
 import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY_ACCOUNT_KEY;
-import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY_USE_CHROME_CUSTOM_TAB;
 
 /**
  * Created by moko256 on 2016/04/29.
@@ -321,21 +320,19 @@ public class OAuthActivity extends AppCompatActivity {
 
     private void startBrowser(String url){
         Uri uri = Uri.parse(url);
-        try {
-            if (GlobalApplicationKt.preferenceRepository.getBoolean(KEY_USE_CHROME_CUSTOM_TAB, true)) {
-                new CustomTabsIntent.Builder()
+        AppCustomTabsKt.launchChromeCustomTabs(
+                this,
+                uri,
+                null,
+                () -> new CustomTabsIntent.Builder()
                         .setShowTitle(false)
-                        .setToolbarColor(ContextCompat.getColor(this, R.color.color_primary))
-                        .setSecondaryToolbarColor(ContextCompat.getColor(this, R.color.color_primary_dark))
-                        .build()
-                        .launchUrl(OAuthActivity.this, uri);
-            } else {
-                startActivity(new Intent(Intent.ACTION_VIEW, uri));
-            }
-        } catch (ActivityNotFoundException e) {
-            e.printStackTrace();
-            Toast.makeText(this, R.string.no_app_can_open, Toast.LENGTH_SHORT).show();
-        }
+                        .setToolbarColor(
+                                ContextCompat.getColor(this, R.color.color_primary)
+                        )
+                        .setSecondaryToolbarColor(
+                                ContextCompat.getColor(this, R.color.color_primary_dark)
+                        )
+        );
     }
 
     private void onError(Throwable e){
