@@ -153,7 +153,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
             Preference sourceCodeLink=findPreference("source_code_link");
             sourceCodeLink.setOnPreferenceClickListener(preference -> {
-                AppCustomTabsKt.launchChromeCustomTabs(requireContext(), "https://github.com/moko256/twitlatte", null);
+                AppCustomTabsKt.launchChromeCustomTabs(requireContext(), "https://github.com/moko256/twitlatte", false);
                 return true;
             });
 
@@ -203,7 +203,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 String uri = "https://github.com/" + name.getKey();
                 name.setSummary(uri);
                 name.setOnPreferenceClickListener(preference -> {
-                    AppCustomTabsKt.launchChromeCustomTabs(requireContext(), uri, null);
+                    AppCustomTabsKt.launchChromeCustomTabs(requireContext(), uri, false);
                     return true;
                 });
             }

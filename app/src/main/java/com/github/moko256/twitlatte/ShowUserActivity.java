@@ -216,7 +216,7 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
                 ));
                 break;
             case R.id.action_open_in_browser:
-                AppCustomTabsKt.launchChromeCustomTabs(this, getShareUrl(), BuildConfig.APPLICATION_ID);
+                AppCustomTabsKt.launchChromeCustomTabs(this, getShareUrl(), true);
                 break;
             case R.id.action_create_follow:
                 throwableFunc=()->apiClient.createFriendship(user.getId());

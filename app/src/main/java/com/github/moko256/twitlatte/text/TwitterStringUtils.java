@@ -160,7 +160,7 @@ public class TwitterStringUtils {
                 span = new ClickableNoLineSpan() {
                     @Override
                     public void onClick(@NonNull View view) {
-                        AppCustomTabsKt.launchChromeCustomTabs(context, uri, null);
+                        AppCustomTabsKt.launchChromeCustomTabs(context, uri, false);
                     }
                 };
             }
@@ -183,7 +183,7 @@ public class TwitterStringUtils {
                     new ClickableNoLineSpan() {
                         @Override
                         public void onClick(@NonNull View view) {
-                            AppCustomTabsKt.launchChromeCustomTabs(context, url, null);
+                            AppCustomTabsKt.launchChromeCustomTabs(context, url, false);
                         }
                     }, 4, name.length() + 4, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             return spannableString;

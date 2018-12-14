@@ -323,7 +323,7 @@ public class OAuthActivity extends AppCompatActivity {
         AppCustomTabsKt.launchChromeCustomTabs(
                 this,
                 uri,
-                null,
+                false,
                 () -> new CustomTabsIntent.Builder()
                         .setShowTitle(false)
                         .setToolbarColor(

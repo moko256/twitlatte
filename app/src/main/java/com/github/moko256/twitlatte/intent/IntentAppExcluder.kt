@@ -16,8 +16,11 @@
 
 package com.github.moko256.twitlatte.intent
 
+import android.content.ComponentName
 import android.content.Intent
 import android.os.Build
+import com.github.moko256.twitlatte.BuildConfig
+import com.github.moko256.twitlatte.SplashActivity
 
 /**
  * Created by moko256 on 2018/12/14.
@@ -25,9 +28,10 @@ import android.os.Build
  * @author moko256
  */
 
-fun Intent.excludeApp(packageName: String): Intent = apply {
+fun Intent.excludeOwnApp(): Intent = run {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-        putExtra(Intent.EXTRA_EXCLUDE_COMPONENTS, packageName)
+        Intent.createChooser(this, "Open")
+                .putExtra(Intent.EXTRA_EXCLUDE_COMPONENTS, arrayOf(ComponentName(BuildConfig.APPLICATION_ID, SplashActivity::class.java.name)))
     } else {
         Intent.createChooser(this, "Open")
     }

@@ -39,12 +39,12 @@ import com.github.moko256.twitlatte.repository.KEY_USE_CHROME_CUSTOM_TAB
  * @param context context that launch uri
  * @param uri uri string
  */
-fun launchChromeCustomTabs(context: Context, uri: String, excludePackageName: String? = null){
-    launchChromeCustomTabs(context, Uri.parse(uri), excludePackageName)
+fun launchChromeCustomTabs(context: Context, uri: String, excludeOwn: Boolean = false){
+    launchChromeCustomTabs(context, Uri.parse(uri), excludeOwn)
 }
 
-fun launchChromeCustomTabs(context: Context, url: Uri, excludePackageName: String? = null){
-    launchChromeCustomTabs(context, url, excludePackageName) {
+fun launchChromeCustomTabs(context: Context, url: Uri, excludeOwn: Boolean = false){
+    launchChromeCustomTabs(context, url, excludeOwn) {
         CustomTabsIntent.Builder()
                 .setToolbarColor(ContextCompat.getColor(context, R.color.color_primary))
                 .setSecondaryToolbarColor(ContextCompat.getColor(context, R.color.color_primary_dark))
@@ -54,14 +54,14 @@ fun launchChromeCustomTabs(context: Context, url: Uri, excludePackageName: Strin
     }
 }
 
-fun launchChromeCustomTabs(context: Context, url: Uri, excludePackageName: String? = null, builder: () -> CustomTabsIntent.Builder){
+fun launchChromeCustomTabs(context: Context, url: Uri, excludeOwn: Boolean = false, builder: () -> CustomTabsIntent.Builder){
     try {
         if (preferenceRepository.getBoolean(KEY_USE_CHROME_CUSTOM_TAB, true)) {
             builder().build().let {
                 ContextCompat.startActivity(
                         context,
-                        if (excludePackageName != null) {
-                            it.intent.setData(url).excludeApp(excludePackageName)
+                        if (excludeOwn) {
+                            it.intent.setData(url).excludeOwnApp()
                         } else {
                             it.intent.setData(url)
                         },
@@ -69,7 +69,16 @@ fun launchChromeCustomTabs(context: Context, url: Uri, excludePackageName: Strin
                 )
             }
         } else {
-            context.startActivity(Intent(Intent.ACTION_VIEW, url))
+            context.startActivity(
+                    Intent(Intent.ACTION_VIEW, url)
+                            .let {
+                                if (excludeOwn) {
+                                    it.excludeOwnApp()
+                                } else {
+                                    it
+                                }
+                            }
+            )
         }
     } catch (e: ActivityNotFoundException) {
         e.printStackTrace()
