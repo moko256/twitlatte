@@ -17,6 +17,7 @@
 package com.github.moko256.latte.client.mastodon
 
 import com.github.moko256.latte.client.base.ApiClient
+import com.github.moko256.latte.client.base.StatusCounter
 import com.github.moko256.latte.client.base.entity.*
 import com.github.moko256.latte.client.mastodon.gson.gson
 import com.github.moko256.latte.client.mastodon.okhttp.InputStreamRequestBody
@@ -45,6 +46,10 @@ class MastodonApiClientImpl(okHttpClient: OkHttpClient, url: String, token: Stri
 
     @Suppress("UNCHECKED_CAST")
     override fun <T> getBaseClient(): T = client as T
+
+    override fun generateCounter(): StatusCounter {
+        return MastodonStatusCounter()
+    }
 
     override fun showPost(statusId: Long): Post {
         return Statuses(client).getStatus(statusId).executeAndConvertError().convertToCommonStatus()

@@ -17,6 +17,7 @@
 package com.github.moko256.latte.client.twitter
 
 import com.github.moko256.latte.client.base.ApiClient
+import com.github.moko256.latte.client.base.StatusCounter
 import com.github.moko256.latte.client.base.entity.*
 import twitter4j.GeoLocation
 import twitter4j.StatusUpdate
@@ -49,6 +50,10 @@ class TwitterApiClientImpl(
 
     @Suppress("UNCHECKED_CAST")
     override fun <T> getBaseClient(): T = client as T
+
+    override fun generateCounter(): StatusCounter {
+        return TwitterStatusCounter()
+    }
 
     override fun showPost(statusId: Long): Post {
         return client.showStatus(statusId).convertToPost()

@@ -29,6 +29,8 @@ const val CLIENT_TYPE_NOTHING = -1
 interface ApiClient {
     fun <T> getBaseClient(): T
 
+    fun generateCounter(): StatusCounter
+
     fun showPost(statusId: Long): Post
     fun showUser(userId: Long): User
     fun showUser(screenName: String): User

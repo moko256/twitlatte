@@ -41,8 +41,6 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.github.moko256.latte.client.mastodon.MastodonStatusCounter;
-import com.github.moko256.latte.client.twitter.TwitterStatusCounter;
 import com.github.moko256.twitlatte.entity.Client;
 import com.github.moko256.twitlatte.glide.GlideApp;
 import com.github.moko256.twitlatte.model.base.PostStatusModel;
@@ -120,10 +118,7 @@ public class PostActivity extends AppCompatActivity {
         client = GlobalApplicationKt.getClient(this);
         model = new PostStatusModelImpl(
                 getContentResolver(),
-                client.getApiClient(),
-                client.getAccessToken().getClientType() == CLIENT_TYPE_TWITTER?
-                        new TwitterStatusCounter():
-                        new MastodonStatusCounter()
+                client.getApiClient()
         );
         disposable = new CompositeDisposable();
 
