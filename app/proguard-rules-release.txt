@@ -1,5 +1,8 @@
 # ProGuard rules for release build
 
+# see https://www.guardsquare.com/en/products/proguard/manual/usage/optimizations
+-optimizations field/*,code/*,class/*,method/*
+
 -keepattributes SourceFile,LineNumberTable
 
 -dontwarn org.ccil.cowan.tagsoup.Parser
