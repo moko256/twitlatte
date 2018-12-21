@@ -103,6 +103,8 @@ public class PostActivity extends AppCompatActivity {
     private CheckBox contentWarningEnabled;
     private RecyclerView imagesRecyclerView;
     private AddedImagesAdapter addedImagesAdapter;
+    private RecyclerView emojiInputRecyclerView;
+    private EmojiAdapter emojiAdapter;
     private CheckBox isPossiblySensitive;
     private Spinner postVisibility;
     private CheckBox addLocation;

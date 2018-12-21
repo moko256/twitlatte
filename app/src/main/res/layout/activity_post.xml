@@ -82,12 +82,18 @@
                 android:gravity="end"
                 tools:text="0 / 500"/>
 
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/suggestions_of_emoji"
+                android:layout_width="match_parent"
+                android:layout_height="32dp"
+                android:layout_marginTop="8dp"
+                android:layout_below="@id/tweet_text_edit_counter" />
 
             <CheckBox
                 android:id="@+id/activity_tweet_add_content_warning"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/tweet_text_edit_counter"
+                android:layout_below="@id/suggestions_of_emoji"
                 android:layout_marginTop="8dp"
                 android:text="@string/do_add_content_warning"/>
 
