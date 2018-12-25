@@ -15,32 +15,16 @@
 
 ##---------------Begin: proguard configuration for twitter4j  ----------
 -dontwarn twitter4j.**
--keep class twitter4j.AlternativeHttpClientImpl {
+-keepclassmembers class twitter4j.AlternativeHttpClientImpl {
     public <init>(twitter4j.HttpClientConfiguration);
 }
--keep class twitter4j.conf.PropertyConfigurationFactory {
-    public <init>();
-}
+-adaptclassstrings twitter4j.conf.*
 -assumevalues class * implements twitter4j.Logger {
     boolean isDebugEnabled() return false;
 }
 ##---------------End: proguard configuration for twitter4j  ----------
 
 ##---------------Begin: proguard configuration for Gson  ----------
-# Gson uses generic type information stored in a class file when working with fields. Proguard
-# removes such information by default, so configure it to keep all of it.
 -keepattributes Signature
-
-# Gson specific classes
 -dontwarn sun.misc.**
-#-keep class com.google.gson.stream.** { *; }
-
-# Application classes that will be serialized/deserialized over Gson
-#-keep class com.google.gson.examples.android.model.** { *; }
-
-# Prevent proguard from stripping interface information from TypeAdapterFactory,
-# JsonSerializer, JsonDeserializer instances (so they can be used in @JsonAdapter)
-#-keep,allowoptimization class * implements com.google.gson.TypeAdapterFactory
-#-keep,allowoptimization class * implements com.google.gson.JsonSerializer
-#-keep,allowoptimization class * implements com.google.gson.JsonDeserializer
 ##---------------End: proguard configuration for Gson  ----------
