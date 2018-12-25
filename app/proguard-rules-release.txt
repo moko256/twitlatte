@@ -9,6 +9,10 @@
 
 -dontwarn com.fasterxml.jackson.databind.**
 
+-assumevalues class android.os.Build$VERSION {
+    int SDK_INT = 19..2147483647;
+}
+
 ##---------------Begin: proguard configuration for twitter4j  ----------
 -dontwarn twitter4j.**
 -keep class twitter4j.AlternativeHttpClientImpl {
