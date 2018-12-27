@@ -39,7 +39,7 @@ internal fun <T: Any> MastodonRequest<T>.executeAndConvertError(): T {
                     } catch (e: JsonParseException) {
                         it.message() ?: it.toString()
                     }
-                }
+                }?:e.toString(), e
         )
     }
 }
