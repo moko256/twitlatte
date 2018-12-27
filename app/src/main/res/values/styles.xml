@@ -59,10 +59,6 @@
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
-    <style name="SettingsActivityTheme" parent="AppTheme">
-        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
-    </style>
-
     <style name="ExpandAndCloseToggleBackgroundColor">
         <item name="colorControlActivated">?attr/colorControlNormal</item>
     </style>
