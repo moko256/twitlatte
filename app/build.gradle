@@ -1,3 +1,5 @@
+import com.github.moko256.plugin.optimizer.twittertext.TwitterTextTransformerPlugin
+
 /*
  * Copyright 2015-2018 The twitlatte authors
  *
@@ -16,6 +18,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
+apply plugin: TwitterTextTransformerPlugin
 
 android {
     compileSdkVersion 28
