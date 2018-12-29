@@ -20,10 +20,17 @@ import com.android.build.api.transform.Format
 import com.android.build.api.transform.QualifiedContent
 import com.android.build.api.transform.Transform
 import com.android.build.api.transform.TransformInvocation
-import com.android.build.gradle.AppExtension
+import com.android.build.gradle.BaseExtension
+import com.twitter.twittertext.TwitterTextConfiguration
+import javassist.ClassPool
+import javassist.CtClass
+import javassist.CtField
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import java.io.File
+import java.util.jar.JarEntry
+import java.util.jar.JarInputStream
+import java.util.jar.JarOutputStream
 
 /**
  * Created by moko256 on 2018/12/29.
@@ -31,6 +38,8 @@ import java.io.File
  * @author moko256
  */
 class TwitterTextTransformer: Transform() {
+    private val twitterTextJarNameRegex = "jetified-twitter-text-[0-9]\\.[0-9]\\.[0-9]\\.jar".toRegex()
+
     override fun getName(): String {
         return "TwitterTextTransformer"
     }
@@ -48,33 +57,108 @@ class TwitterTextTransformer: Transform() {
     }
 
     override fun transform(transformInvocation: TransformInvocation) {
-
         val outputProvider = transformInvocation.outputProvider
         val outputDir = outputProvider.getContentLocation(name, inputTypes, scopes, Format.DIRECTORY)
-        val inputs = transformInvocation.inputs
-        val classNames = inputs.map { transformInput ->
-            transformInput.directoryInputs.map { directoryInput ->
-                val path = directoryInput.file.absolutePath
-                directoryInput
-                        .file
-                        .walk()
-                        .filter { it.isFile && it.absolutePath.endsWith(".class") }
-                        .map {
-                            it.absolutePath
-                                    .removePrefix(path + File.separatorChar)
-                                    .removeSuffix(".class")
-                        }
+        outputDir.deleteRecursively()
+        outputDir.mkdir()
+
+        val inputJars = transformInvocation.inputs
+                .map {
+                    it.jarInputs
+                }
+                .flatten()
+                .onEach { println("COPY  " + it.file.absolutePath) }
+                .map { it.file }
+
+        var created = false
+        val (twitterTextJars, otherJars) = inputJars
+                .asSequence()
+                .partition {
+                    val matches = it.name.matches(twitterTextJarNameRegex)
+                    if (matches && !created) {
+                        created = true
+                        true
+                    } else {
+                        false
+                    }
+                }
+        val twitterTextJar = twitterTextJars.first()
+
+        otherJars
+                .forEach {
+                    it.copyTo(outputDir.resolve(it.absolutePath.hashCode().toString() + ".jar"))
+                }
+
+        val tempJarOutput = outputDir.resolve("__output__")
+        tempJarOutput.mkdir()
+
+        JarInputStream(twitterTextJar.inputStream()).use {
+            var entry = it.nextEntry
+            while (entry != null) {
+                val dst = tempJarOutput.resolve(entry.name)
+                dst.parentFile.mkdirs()
+                dst.writeBytes(it.readBytes())
+                println("EXTRACT" + entry.name)
+                entry = it.nextEntry
             }
         }
+
+        val ctClass = ClassPool()
+                .apply {
+                    appendPathList(tempJarOutput.absolutePath)
+                }
+                .getCtClass("TwitterTextParser")
+
+        replaceCode(ctClass, "TWITTER_TEXT_CODE_POINT_COUNT_CONFIG")
+        replaceCode(ctClass, "TWITTER_TEXT_WEIGHTED_CHAR_COUNT_CONFIG")
+        replaceCode(ctClass, "TWITTER_TEXT_EMOJI_CHAR_COUNT_CONFIG")
+
+        ctClass.writeFile()
+
+        JarOutputStream(outputDir.resolve(twitterTextJar.name).outputStream()).use { jarOut ->
+            tempJarOutput.walk().forEach {
+                jarOut.putNextEntry(
+                        JarEntry(it.absolutePath.removePrefix(tempJarOutput.absolutePath).removePrefix(File.separator))
+                )
+                it.inputStream().use { fileIn ->
+                    jarOut.write(fileIn.readBytes())
+                }
+            }
+        }
+        println("FIN")
     }
 
+    fun replaceCode(ctClass: CtClass, varName: String) {
+        val value = TwitterTextConfiguration::class.java
+                .getDeclaredField(varName)
+                .get(null) as TwitterTextConfiguration
+        val ranges = value.ranges.map {
+            it.range.start.toString() + "|" + it.range.end.toString() + "|" + it.weight.toString()
+        }.joinToString("$")
+
+        val field = ctClass.getDeclaredField(varName)
+        ctClass.removeField(field)
+        ctClass.addField(field, CtField.Initializer.byExpr(
+                "new com.twitter.twittertext.TwitterTextConfiguration()" +
+                        ".setVersion(${value.version})" +
+                        ".setMaxWeightedTweetLength(${value.maxWeightedTweetLength})" +
+                        ".setScale(${value.scale})" +
+                        ".setDefaultWeight(${value.defaultWeight})" +
+                        ".setTransformedURLLength(${value.version})" +
+                        ".setEmojiParsingEnabled(${value.version})" +
+                        if (varName == "TWITTER_TEXT_CODE_POINT_COUNT_CONFIG") {
+                            ".setRanges(com.twitter.twittertext.TwitterTextConfiguration.DEFAULT_RANGES)"
+                        } else {
+                            ""
+                        }
+        ))
+    }
 }
 
 class TwitterTextTransformerPlugin: Plugin<Project> {
     override fun apply(project: Project) {
-        project.extensions
-                .getByType(AppExtension::class.java)
-                .registerTransform(TwitterTextTransformer())
+        val android = project.extensions.getByName("android") as BaseExtension
+        android.registerTransform(TwitterTextTransformer())
     }
 
 }
