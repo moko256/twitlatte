@@ -17,9 +17,8 @@
 package com.github.moko256.latte.client.twitter
 
 import com.github.moko256.latte.client.base.StatusCounter
-import com.twitter.twittertext.AlternativeTwitterTextParser
-import com.twitter.twittertext.TWITTER_TEXT_CONF_V3
 import com.twitter.twittertext.TwitterTextParseResults
+import com.twitter.twittertext.TwitterTextParser
 
 /**
  * Created by moko256 on 2018/12/06.
@@ -43,8 +42,8 @@ internal class TwitterStatusCounter: StatusCounter {
     private fun updateCounter(text: String) {
         if (text != resultCacheString) {
             resultCacheString = text
-            resultCache = AlternativeTwitterTextParser.parseTweet(text, TWITTER_TEXT_CONF_V3)
+            resultCache = TwitterTextParser.parseTweet(text, TwitterTextParser.TWITTER_TEXT_EMOJI_CHAR_COUNT_CONFIG)
         }
     }
-    override val limit: Int = TWITTER_TEXT_CONF_V3.maxWeightedTweetLength
+    override val limit: Int = TwitterTextParser.TWITTER_TEXT_EMOJI_CHAR_COUNT_CONFIG.maxWeightedTweetLength
 }

@@ -22,12 +22,13 @@ import com.android.build.api.transform.Transform
 import com.android.build.api.transform.TransformInvocation
 import com.android.build.gradle.BaseExtension
 import com.twitter.twittertext.TwitterTextConfiguration
+import com.twitter.twittertext.TwitterTextParser.*
+import javassist.ClassClassPath
 import javassist.ClassPool
-import javassist.CtClass
-import javassist.CtField
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import java.io.File
+import java.io.IOException
 import java.util.jar.JarEntry
 import java.util.jar.JarInputStream
 import java.util.jar.JarOutputStream
@@ -58,16 +59,21 @@ class TwitterTextTransformer: Transform() {
 
     override fun transform(transformInvocation: TransformInvocation) {
         val outputProvider = transformInvocation.outputProvider
+
+        try {
+            outputProvider.deleteAll()
+        } catch (ignore: IOException) {}
+
         val outputDir = outputProvider.getContentLocation(name, inputTypes, scopes, Format.DIRECTORY)
-        outputDir.deleteRecursively()
-        outputDir.mkdir()
+        outputDir.mkdirs()
+
+        transformInvocation.inputs
 
         val inputJars = transformInvocation.inputs
                 .map {
                     it.jarInputs
                 }
                 .flatten()
-                .onEach { println("COPY  " + it.file.absolutePath) }
                 .map { it.file }
 
         var created = false
@@ -85,11 +91,11 @@ class TwitterTextTransformer: Transform() {
         val twitterTextJar = twitterTextJars.first()
 
         otherJars
-                .forEach {
-                    it.copyTo(outputDir.resolve(it.absolutePath.hashCode().toString() + ".jar"))
+                .forEachIndexed { index, file ->
+                    file.copyTo(outputDir.resolve((index + 1).toString() + ".jar"))
                 }
 
-        val tempJarOutput = outputDir.resolve("__output__")
+        val tempJarOutput = outputDir.resolve("0")
         tempJarOutput.mkdir()
 
         JarInputStream(twitterTextJar.inputStream()).use {
@@ -97,61 +103,68 @@ class TwitterTextTransformer: Transform() {
             while (entry != null) {
                 val dst = tempJarOutput.resolve(entry.name)
                 dst.parentFile.mkdirs()
-                dst.writeBytes(it.readBytes())
-                println("EXTRACT" + entry.name)
+                dst.outputStream().use { out ->
+                    it.copyTo(out)
+                }
                 entry = it.nextEntry
             }
         }
 
         val ctClass = ClassPool()
                 .apply {
+                    appendSystemPath()
+                    appendClassPath(
+                            ClassClassPath(String::class.java)
+                    )
                     appendPathList(tempJarOutput.absolutePath)
                 }
-                .getCtClass("TwitterTextParser")
+                .getCtClass("com.twitter.twittertext.TwitterTextConfiguration")
+        val replaceCode = replaceCode()
+        ctClass.getDeclaredMethod("configurationFromJson").setBody(replaceCode)
+        ctClass.writeFile(tempJarOutput.absolutePath)
 
-        replaceCode(ctClass, "TWITTER_TEXT_CODE_POINT_COUNT_CONFIG")
-        replaceCode(ctClass, "TWITTER_TEXT_WEIGHTED_CHAR_COUNT_CONFIG")
-        replaceCode(ctClass, "TWITTER_TEXT_EMOJI_CHAR_COUNT_CONFIG")
-
-        ctClass.writeFile()
-
-        JarOutputStream(outputDir.resolve(twitterTextJar.name).outputStream()).use { jarOut ->
-            tempJarOutput.walk().forEach {
+        JarOutputStream(outputDir.resolve("0.jar").outputStream()).use { jarOut ->
+            tempJarOutput.walk().filter { it.absolutePath != tempJarOutput.absolutePath && !it.isDirectory }.forEach {
                 jarOut.putNextEntry(
                         JarEntry(it.absolutePath.removePrefix(tempJarOutput.absolutePath).removePrefix(File.separator))
                 )
                 it.inputStream().use { fileIn ->
-                    jarOut.write(fileIn.readBytes())
+                    fileIn.copyTo(jarOut)
                 }
             }
         }
-        println("FIN")
+        tempJarOutput.deleteRecursively()
     }
 
-    fun replaceCode(ctClass: CtClass, varName: String) {
-        val value = TwitterTextConfiguration::class.java
-                .getDeclaredField(varName)
-                .get(null) as TwitterTextConfiguration
-        val ranges = value.ranges.map {
-            it.range.start.toString() + "|" + it.range.end.toString() + "|" + it.weight.toString()
-        }.joinToString("$")
+    private fun replaceCode(): String {
+       return StringBuilder().also {
+           appendCaseBlock(it,"v1", TWITTER_TEXT_CODE_POINT_COUNT_CONFIG)
+           appendCaseBlock(it,"v2", TWITTER_TEXT_WEIGHTED_CHAR_COUNT_CONFIG)
+           appendCaseBlock(it,"v3", TWITTER_TEXT_EMOJI_CHAR_COUNT_CONFIG)
+           it.append("{ throw new Exception(); }")
+       }.toString()
+    }
 
-        val field = ctClass.getDeclaredField(varName)
-        ctClass.removeField(field)
-        ctClass.addField(field, CtField.Initializer.byExpr(
-                "new com.twitter.twittertext.TwitterTextConfiguration()" +
-                        ".setVersion(${value.version})" +
-                        ".setMaxWeightedTweetLength(${value.maxWeightedTweetLength})" +
-                        ".setScale(${value.scale})" +
-                        ".setDefaultWeight(${value.defaultWeight})" +
-                        ".setTransformedURLLength(${value.version})" +
-                        ".setEmojiParsingEnabled(${value.version})" +
-                        if (varName == "TWITTER_TEXT_CODE_POINT_COUNT_CONFIG") {
-                            ".setRanges(com.twitter.twittertext.TwitterTextConfiguration.DEFAULT_RANGES)"
+    private fun appendCaseBlock(builder: StringBuilder, jsonName: String, value: TwitterTextConfiguration) {
+        builder.append("if ($1.equals(\"$jsonName\")) {")
+
+                .append("return new com.twitter.twittertext.TwitterTextConfiguration()")
+                .append(".setVersion(${value.version})")
+                .append(".setMaxWeightedTweetLength(${value.maxWeightedTweetLength})")
+                .append(".setScale(${value.scale})")
+                .append(".setDefaultWeight(${value.defaultWeight})")
+                .append(".setTransformedURLLength(${value.version})")
+                .append(".setEmojiParsingEnabled(${value.emojiParsingEnabled})")
+                .append(".setRanges(")
+                .append(
+                        if (jsonName == "v1") {
+                            "com.twitter.twittertext.TwitterTextConfiguration.DEFAULT_RANGES"
                         } else {
-                            ""
+                            "java.util.Collections.EMPTY_LIST"
                         }
-        ))
+                )
+                .append(");")
+                .append("} else ")
     }
 }
 

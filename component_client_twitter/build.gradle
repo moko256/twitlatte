@@ -1,3 +1,5 @@
+import com.github.moko256.plugin.optimizer.twittertext.TwitterTextTransformerPlugin
+
 /*
  * Copyright 2015-2018 The twitlatte authors
  *
@@ -23,7 +25,7 @@ dependencies {
     api project(':component_client_base')
 
     implementation project(':alternative_twitter4j')
-    implementation project(':alternative_twitter_text')
+    implementation 'com.twitter.twittertext:twitter-text:3.0.1'
 }
 
 repositories {
