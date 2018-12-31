@@ -27,7 +27,10 @@ import javassist.CtClass
 import javassist.CtField
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import java.io.File
+import java.util.jar.JarEntry
 import java.util.jar.JarInputStream
+import java.util.jar.JarOutputStream
 
 /**
  * Created by moko256 on 2018/12/29.
@@ -81,22 +84,12 @@ class TwitterTextTransformer: Transform() {
                 }
         val twitterTextJar = twitterTextJars.first()
 
-        val commonPath = otherJars
-                .map {
-                    it.toPath().toList()
+        otherJars
+                .forEach {
+                    it.copyTo(outputDir.resolve(it.absolutePath.hashCode().toString() + ".jar"))
                 }
-                .let {
-                    val mostSmallSize = it.map { it.size }.min() ?: 0
-                    val commonPath = it
-                            .map {
-                                it.takeLast(mostSmallSize)
-                            }
-                            .distinct()
-                    commonPath.single()
-                }.first()
-        commonPath.toFile().copyRecursively(outputDir)
 
-        val tempJarOutput = outputDir.resolve("twitter-text.jar")
+        val tempJarOutput = outputDir.resolve("__output__")
         tempJarOutput.mkdir()
 
         JarInputStream(twitterTextJar.inputStream()).use {
@@ -122,6 +115,16 @@ class TwitterTextTransformer: Transform() {
 
         ctClass.writeFile()
 
+        JarOutputStream(outputDir.resolve(twitterTextJar.name).outputStream()).use { jarOut ->
+            tempJarOutput.walk().forEach {
+                jarOut.putNextEntry(
+                        JarEntry(it.absolutePath.removePrefix(tempJarOutput.absolutePath).removePrefix(File.separator))
+                )
+                it.inputStream().use { fileIn ->
+                    jarOut.write(fileIn.readBytes())
+                }
+            }
+        }
         println("FIN")
     }
 
