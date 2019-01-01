@@ -16,10 +16,7 @@
 
 package com.github.moko256.plugin.optimizer.twittertext
 
-import com.android.build.api.transform.Format
-import com.android.build.api.transform.QualifiedContent
-import com.android.build.api.transform.Transform
-import com.android.build.api.transform.TransformInvocation
+import com.android.build.api.transform.*
 import com.android.build.gradle.BaseExtension
 import com.twitter.twittertext.TwitterTextConfiguration
 import com.twitter.twittertext.TwitterTextParser.*
@@ -28,112 +25,169 @@ import javassist.ClassPool
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import java.io.File
-import java.io.IOException
+import java.nio.file.Files
 import java.util.jar.JarEntry
 import java.util.jar.JarInputStream
 import java.util.jar.JarOutputStream
+import kotlin.reflect.jvm.jvmName
 
 /**
  * Created by moko256 on 2018/12/29.
  *
  * @author moko256
  */
+private val twitterTextJarNameRegex = "jetified-twitter-text-[0-9]\\.[0-9]\\.[0-9]\\.jar".toRegex()
+
+private enum class BuildStatus {
+    CREATE,
+    STAY,
+    DELETE
+}
+
 class TwitterTextTransformer: Transform() {
-    private val twitterTextJarNameRegex = "jetified-twitter-text-[0-9]\\.[0-9]\\.[0-9]\\.jar".toRegex()
+    override fun getName(): String = "TwitterTextTransformer"
 
-    override fun getName(): String {
-        return "TwitterTextTransformer"
-    }
+    override fun isIncremental(): Boolean = false
+    override fun isCacheable(): Boolean = true
 
-    override fun getInputTypes(): MutableSet<QualifiedContent.ContentType> {
-        return mutableSetOf(QualifiedContent.DefaultContentType.CLASSES)
-    }
+    override fun getInputTypes(): MutableSet<QualifiedContent.ContentType> = mutableSetOf(
+            QualifiedContent.DefaultContentType.CLASSES
+    )
 
-    override fun isIncremental(): Boolean {
-        return false
-    }
-
-    override fun getScopes(): MutableSet<in QualifiedContent.Scope> {
-        return mutableSetOf(QualifiedContent.Scope.EXTERNAL_LIBRARIES)
-    }
+    override fun getScopes(): MutableSet<in QualifiedContent.Scope> = mutableSetOf(
+            QualifiedContent.Scope.EXTERNAL_LIBRARIES
+    )
 
     override fun transform(transformInvocation: TransformInvocation) {
-        val outputProvider = transformInvocation.outputProvider
-
+        val outputDir = transformInvocation
+                .outputProvider
+                .getContentLocation(name, inputTypes, scopes, Format.DIRECTORY)
         try {
-            outputProvider.deleteAll()
-        } catch (ignore: IOException) {}
-
-        val outputDir = outputProvider.getContentLocation(name, inputTypes, scopes, Format.DIRECTORY)
-        outputDir.mkdirs()
+            outputDir.deleteRecursively()
+            outputDir.mkdirs()
+        } catch (ignore: Throwable) {
+        }
 
         transformInvocation.inputs
-
-        val inputJars = transformInvocation.inputs
-                .map {
-                    it.jarInputs
+                .asSequence()
+                .map { input ->
+                    listOf(
+                            input.jarInputs.map { mapOf(it.file to it.status) },
+                            input.directoryInputs.map { it.changedFiles }
+                    )
                 }
                 .flatten()
-                .map { it.file }
-
-        var created = false
-        val (twitterTextJars, otherJars) = inputJars
-                .asSequence()
-                .partition {
-                    val matches = it.name.matches(twitterTextJarNameRegex)
-                    if (matches && !created) {
-                        created = true
-                        true
+                .flatten()
+                .map { it.entries }
+                .flatten()
+                .onEach {
+                    println("LOGGING [" + it.value.name + "] " + it.key.absolutePath)
+                }
+                .filter { !transformInvocation.isIncremental || it.value != Status.NOTCHANGED }
+                .forEachIndexed { index, jarInput ->
+                    val buildStatus = if (transformInvocation.isIncremental) {
+                        when(jarInput.value!!) {
+                            Status.ADDED, Status.CHANGED -> {
+                                BuildStatus.CREATE
+                            }
+                            Status.REMOVED -> {
+                                BuildStatus.DELETE
+                            }
+                            Status.NOTCHANGED -> {
+                                BuildStatus.STAY
+                            }
+                        }
                     } else {
-                        false
+                        BuildStatus.CREATE
+                    }
+                    val matches = jarInput.key.name.matches(twitterTextJarNameRegex)
+                    if (matches) {
+                        twitterTextJarsTransform(buildStatus, jarInput, "0", outputDir)
+                    } else {
+                        otherJarsTransform(buildStatus, jarInput, (index + 1).toString(), outputDir)
                     }
                 }
-        val twitterTextJar = twitterTextJars.first()
+    }
 
-        otherJars
-                .forEachIndexed { index, file ->
-                    file.copyTo(outputDir.resolve((index + 1).toString() + ".jar"))
+    private fun twitterTextJarsTransform(buildStatus: BuildStatus, twitterTextJar: Map.Entry<File, Status>, jarName: String, outputDir: File) {
+        val convertedTwitterTextJar = outputDir.resolve("$jarName.jar")
+
+        when (buildStatus) {
+            BuildStatus.CREATE -> {
+                val tempJarOutput = outputDir.resolve(jarName)
+                tempJarOutput.mkdir()
+
+                JarInputStream(twitterTextJar.key.inputStream()).use {
+                    var entry = it.nextEntry
+                    while (entry != null) {
+                        val dst = tempJarOutput.resolve(entry.name)
+                        dst.parentFile.mkdirs()
+                        dst.outputStream().use { out ->
+                            it.copyTo(out)
+                        }
+                        entry = it.nextEntry
+                    }
                 }
 
-        val tempJarOutput = outputDir.resolve("0")
-        tempJarOutput.mkdir()
+                ClassPool()
+                        .apply {
+                            appendSystemPath()
+                            appendClassPath(
+                                    ClassClassPath(String::class.java)
+                            )
+                            appendPathList(tempJarOutput.absolutePath)
+                        }
+                        .getCtClass(TwitterTextConfiguration::class.jvmName)
+                        .apply {
+                            getDeclaredMethod("configurationFromJson")
+                                    .setBody(replaceCode())
 
-        JarInputStream(twitterTextJar.inputStream()).use {
-            var entry = it.nextEntry
-            while (entry != null) {
-                val dst = tempJarOutput.resolve(entry.name)
-                dst.parentFile.mkdirs()
-                dst.outputStream().use { out ->
-                    it.copyTo(out)
+                            writeFile(tempJarOutput.absolutePath)
+                        }
+
+                JarOutputStream(convertedTwitterTextJar.outputStream()).use { jarOut ->
+                    tempJarOutput
+                            .walk()
+                            .filter { !it.isDirectory }
+                            .forEach {
+                                jarOut.putNextEntry(
+                                        JarEntry(
+                                                it.absolutePath
+                                                        .removePrefix(tempJarOutput.absolutePath)
+                                                        .removePrefix(File.separator)
+                                        )
+                                )
+                                it.inputStream().use { fileIn ->
+                                    fileIn.copyTo(jarOut)
+                                }
+                            }
                 }
-                entry = it.nextEntry
+                tempJarOutput.deleteRecursively()
+                twitterTextJar.key.delete()
             }
+            BuildStatus.DELETE -> {
+                convertedTwitterTextJar.delete()
+            }
+            BuildStatus.STAY -> {}
         }
+    }
 
-        val ctClass = ClassPool()
-                .apply {
-                    appendSystemPath()
-                    appendClassPath(
-                            ClassClassPath(String::class.java)
-                    )
-                    appendPathList(tempJarOutput.absolutePath)
-                }
-                .getCtClass("com.twitter.twittertext.TwitterTextConfiguration")
-        val replaceCode = replaceCode()
-        ctClass.getDeclaredMethod("configurationFromJson").setBody(replaceCode)
-        ctClass.writeFile(tempJarOutput.absolutePath)
-
-        JarOutputStream(outputDir.resolve("0.jar").outputStream()).use { jarOut ->
-            tempJarOutput.walk().filter { it.absolutePath != tempJarOutput.absolutePath && !it.isDirectory }.forEach {
-                jarOut.putNextEntry(
-                        JarEntry(it.absolutePath.removePrefix(tempJarOutput.absolutePath).removePrefix(File.separator))
+    private fun otherJarsTransform(buildStatus: BuildStatus, input: Map.Entry<File, Status>, jarName: String, outputDir: File) {
+        when (buildStatus) {
+            BuildStatus.CREATE -> {
+                input.key.copyTo(
+                        outputDir.resolve("$jarName.jar")
                 )
-                it.inputStream().use { fileIn ->
-                    fileIn.copyTo(jarOut)
-                }
             }
+            BuildStatus.DELETE -> {
+                outputDir
+                        .listFiles { file ->
+                            Files.isSameFile(input.key.toPath(), file.toPath())
+                        }
+                        .forEach { it.delete() }
+            }
+            BuildStatus.STAY -> {}
         }
-        tempJarOutput.deleteRecursively()
     }
 
     private fun replaceCode(): String {
@@ -141,14 +195,14 @@ class TwitterTextTransformer: Transform() {
            appendCaseBlock(it,"v1.json", TWITTER_TEXT_CODE_POINT_COUNT_CONFIG)
            appendCaseBlock(it,"v2.json", TWITTER_TEXT_WEIGHTED_CHAR_COUNT_CONFIG)
            appendCaseBlock(it,"v3.json", TWITTER_TEXT_EMOJI_CHAR_COUNT_CONFIG)
-           it.append("{ throw new Exception(); }")
+           it.append("{ throw new IllegalStateException(\"Unknown json: \" + $1); }")
        }.toString()
     }
 
     private fun appendCaseBlock(builder: StringBuilder, jsonName: String, value: TwitterTextConfiguration) {
         builder.append("if ($1.equals(\"$jsonName\")) {")
 
-                .append("return new com.twitter.twittertext.TwitterTextConfiguration()")
+                .append("return new ${TwitterTextConfiguration::class.jvmName}()")
                 .append(".setVersion(${value.version})")
                 .append(".setMaxWeightedTweetLength(${value.maxWeightedTweetLength})")
                 .append(".setScale(${value.scale})")
@@ -157,8 +211,8 @@ class TwitterTextTransformer: Transform() {
                 .append(".setEmojiParsingEnabled(${value.emojiParsingEnabled})")
                 .append(".setRanges(")
                 .append(
-                        if (jsonName == "v1.json") {
-                            "com.twitter.twittertext.TwitterTextConfiguration.DEFAULT_RANGES"
+                        if (value.ranges.isNotEmpty()) {
+                            "${TwitterTextConfiguration::class.jvmName}.DEFAULT_RANGES"
                         } else {
                             "java.util.Collections.EMPTY_LIST"
                         }
@@ -168,6 +222,7 @@ class TwitterTextTransformer: Transform() {
     }
 }
 
+@Suppress("unused")
 class TwitterTextTransformerPlugin: Plugin<Project> {
     override fun apply(project: Project) {
         val android = project.extensions.getByName("android") as BaseExtension
