@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2018 The twitlatte authors
+ * Copyright 2015-2019 The twitlatte authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,6 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.github.moko256.latte.client.base.entity.Emoji
 import com.github.moko256.twitlatte.R
-import com.github.moko256.twitlatte.glide.GlideRequests
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable

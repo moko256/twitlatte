@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2018 The twitlatte authors
+ * Copyright 2015-2019 The twitlatte authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,6 @@ import com.bumptech.glide.request.target.Target.SIZE_ORIGINAL
 import com.github.chrisbanes.photoview.PhotoView
 import com.github.chuross.flinglayout.FlingLayout
 import com.github.moko256.twitlatte.R
-import com.github.moko256.twitlatte.glide.GlideApp
 import com.github.moko256.twitlatte.preferenceRepository
 import com.github.moko256.twitlatte.repository.KEY_TIMELINE_IMAGE_LOAD_MODE
 import com.github.moko256.twitlatte.text.TwitterStringUtils

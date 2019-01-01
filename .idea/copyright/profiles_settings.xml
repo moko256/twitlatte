@@ -1,7 +1,6 @@
 <component name="CopyrightManager">
-  <settings>
+  <settings default="twitlatte_apatch_2_0">
     <module2copyright>
-      <element module="All" copyright="twitlatte_apatch_2_0" />
       <element module="lib-modified-file" copyright="no-update" />
     </module2copyright>
   </settings>

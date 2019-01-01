@@ -1,3 +1,3 @@
 <component name="DependencyValidationManager">
-  <scope name="lib-modified-file" pattern="file[alternative_twitter_text]:src/main/java/com/twitter/twittertext/AlternativeTwitterTextParser.java" />
+  <scope name="lib-modified-file" pattern="file[mastodon4j-mastodon4j]:*/||file[japng-android]:*/||file[api]:*/||file[android_api]:*/" />
 </component>
