@@ -138,9 +138,9 @@ class TwitterTextTransformer: Transform() {
 
     private fun replaceCode(): String {
        return StringBuilder().also {
-           appendCaseBlock(it,"v1", TWITTER_TEXT_CODE_POINT_COUNT_CONFIG)
-           appendCaseBlock(it,"v2", TWITTER_TEXT_WEIGHTED_CHAR_COUNT_CONFIG)
-           appendCaseBlock(it,"v3", TWITTER_TEXT_EMOJI_CHAR_COUNT_CONFIG)
+           appendCaseBlock(it,"v1.json", TWITTER_TEXT_CODE_POINT_COUNT_CONFIG)
+           appendCaseBlock(it,"v2.json", TWITTER_TEXT_WEIGHTED_CHAR_COUNT_CONFIG)
+           appendCaseBlock(it,"v3.json", TWITTER_TEXT_EMOJI_CHAR_COUNT_CONFIG)
            it.append("{ throw new Exception(); }")
        }.toString()
     }
@@ -157,7 +157,7 @@ class TwitterTextTransformer: Transform() {
                 .append(".setEmojiParsingEnabled(${value.emojiParsingEnabled})")
                 .append(".setRanges(")
                 .append(
-                        if (jsonName == "v1") {
+                        if (jsonName == "v1.json") {
                             "com.twitter.twittertext.TwitterTextConfiguration.DEFAULT_RANGES"
                         } else {
                             "java.util.Collections.EMPTY_LIST"
