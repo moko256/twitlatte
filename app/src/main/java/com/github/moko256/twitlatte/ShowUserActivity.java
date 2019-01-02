@@ -88,7 +88,6 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
         actionBar.setHomeAsUpIndicator(R.drawable.ic_back_white_24dp);
 
         viewPager= findViewById(R.id.show_user_view_pager);
-        viewPager.setOffscreenPageLimit(1);
 
         tabLayout= findViewById(R.id.tab_show_user);
         tabLayout.setupWithViewPager(viewPager);

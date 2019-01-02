@@ -38,7 +38,6 @@ class MyFollowFollowerFragment : Fragment(), ToolbarTitleInterface, NavigationPo
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_follow_follower, container, false).also { view ->
             tabsViewPager = view.findViewById(R.id.follow_follower_pager)
-            tabsViewPager.offscreenPageLimit = 0
 
             FollowFollowerTabsPagerAdapter(
                     childFragmentManager,
