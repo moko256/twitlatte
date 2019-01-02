@@ -23,6 +23,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.github.moko256.latte.client.base.entity.ListEntry
+import com.github.moko256.twitlatte.text.TwitterStringUtils.plusUserMarks
 
 /**
  * Created by moko256 on 2019/01/02.
@@ -59,7 +60,7 @@ class ListsEntriesAdapter(private val context: Context, private val data: List<L
     override fun onBindViewHolder(viewHolder: ListsEntriesAdapter.ViewHolder, i: Int) {
         val entry = data[i]
 
-        viewHolder.title.text = entry.title
+        viewHolder.title.text = plusUserMarks(entry.title, viewHolder.title, !entry.isPublic, false)
         viewHolder.description?.text = entry.description
         viewHolder.itemView.setOnClickListener {
             context.startActivity(ListsTimelineActivity.getIntent(context, entry))
