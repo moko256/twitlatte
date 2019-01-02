@@ -151,6 +151,9 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".ListsTimelineActivity"
+            android:label="@string/lists" />
+        <activity
             android:name=".TrendsActivity"
             android:label="@string/trends" />
         <activity

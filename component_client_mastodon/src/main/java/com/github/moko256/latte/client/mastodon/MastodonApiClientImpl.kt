@@ -107,14 +107,16 @@ class MastodonApiClientImpl(okHttpClient: OkHttpClient, url: String, token: Stri
                 .getStatuses(accountId = userId, range = paging.convertToMastodonRange())
                 .executeAndConvertError()
                 .part
-                .map { it.convertToCommonStatus() }    }
+                .map { it.convertToCommonStatus() }
+    }
 
     override fun getPostByQuery(query: String, paging: Paging): List<Post> {
         return Timelines(client)
                 .getHashtagTimeline(hashtag = query, range = paging.convertToMastodonRange())
                 .executeAndConvertError()
                 .part
-                .map { it.convertToCommonStatus() }    }
+                .map { it.convertToCommonStatus() }
+    }
 
     override fun getFriendsList(userId: Long, cursor: Long): PageableResponse<User> {
         return Accounts(client)
@@ -192,6 +194,18 @@ class MastodonApiClientImpl(okHttpClient: OkHttpClient, url: String, token: Stri
 
     override fun reportSpam(userId: Long) {
         throw UnsupportedOperationException()
+    }
+
+    override fun getLists(userId: Long): List<ListEntry> {
+        return Lists(client).getLists().executeAndConvertError()
+                .map { ListEntry(it.id, it.title, null, false) }
+    }
+
+    override fun getListTimeline(listId: Long, paging: Paging): List<Post> {
+        return Timelines(client).getListTimeline(listId, paging.convertToMastodonRange())
+                .executeAndConvertError()
+                .part
+                .map { it.convertToCommonStatus() }
     }
 
     override fun getCustomEmojis(): List<Emoji> {

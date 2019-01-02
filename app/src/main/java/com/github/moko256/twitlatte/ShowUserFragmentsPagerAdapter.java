@@ -25,6 +25,7 @@ import com.github.moko256.twitlatte.widget.FragmentPagerAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
@@ -44,6 +45,7 @@ public class ShowUserFragmentsPagerAdapter extends FragmentPagerAdapter {
     private static final int FRAGMENT_MEDIA = 3;
     private static final int FRAGMENT_FOLLOW = 4;
     private static final int FRAGMENT_FOLLOWER = 5;
+    private static final int FRAGMENT_LIST = 6;
 
 
     final private List<Integer> list;
@@ -61,16 +63,18 @@ public class ShowUserFragmentsPagerAdapter extends FragmentPagerAdapter {
         if (accessToken.getClientType() == CLIENT_TYPE_MASTODON){
             list.add(FRAGMENT_MEDIA);
         }
-        if (!(accessToken.getClientType() == CLIENT_TYPE_MASTODON && userId != accessToken.getUserId())){
-            list.add(FRAGMENT_LIKE);
-        }
         list.add(FRAGMENT_FOLLOW);
         list.add(FRAGMENT_FOLLOWER);
+        if (!(accessToken.getClientType() == CLIENT_TYPE_MASTODON && userId != accessToken.getUserId())){
+            list.add(list.size() - 2, FRAGMENT_LIKE);
+            list.add(FRAGMENT_LIST);
+        }
 
         this.context = context;
         this.userId = userId;
     }
 
+    @NonNull
     @Override
     public Fragment getItem(int position) {
         switch (list.get(position)){
@@ -86,8 +90,10 @@ public class ShowUserFragmentsPagerAdapter extends FragmentPagerAdapter {
                 return UserFollowsFragment.Companion.newInstance(userId);
             case FRAGMENT_FOLLOWER:
                 return UserFollowersFragment.Companion.newInstance(userId);
+            case FRAGMENT_LIST:
+                return ListsListFragment.Companion.newInstance(userId);
             default:
-                return null;
+                throw new IllegalStateException("Unreachable");
         }
     }
 

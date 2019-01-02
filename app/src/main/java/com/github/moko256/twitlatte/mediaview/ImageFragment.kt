@@ -24,6 +24,7 @@ import com.bumptech.glide.request.target.Target.SIZE_ORIGINAL
 import com.github.chrisbanes.photoview.PhotoView
 import com.github.chuross.flinglayout.FlingLayout
 import com.github.moko256.twitlatte.R
+import com.github.moko256.twitlatte.glide.GlideApp
 import com.github.moko256.twitlatte.preferenceRepository
 import com.github.moko256.twitlatte.repository.KEY_TIMELINE_IMAGE_LOAD_MODE
 import com.github.moko256.twitlatte.text.TwitterStringUtils

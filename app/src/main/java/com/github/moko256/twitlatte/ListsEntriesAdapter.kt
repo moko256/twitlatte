@@ -22,47 +22,47 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.github.moko256.latte.client.base.entity.Trend
+import com.github.moko256.latte.client.base.entity.ListEntry
 
 /**
- * Created by moko256 on 2017/07/05.
+ * Created by moko256 on 2019/01/02.
  *
  * @author moko256
  */
 
-class TrendsAdapter(private val context: Context, private val data: List<Trend>) : RecyclerView.Adapter<TrendsAdapter.ViewHolder>() {
+class ListsEntriesAdapter(private val context: Context, private val data: List<ListEntry>) : RecyclerView.Adapter<ListsEntriesAdapter.ViewHolder>() {
 
     init {
         setHasStableIds(true)
     }
 
     override fun getItemId(position: Int): Long {
-        return data[position].hashCode().toLong()
+        return data[position].listId
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if(data[position].volume == -1) {
+        return if(data[position].description == null) {
             R.layout.layout_material_list_item_single_line
         } else {
             R.layout.layout_material_list_item_two_line
         }
     }
 
-    override fun onCreateViewHolder(viewGroup: ViewGroup, i: Int): TrendsAdapter.ViewHolder {
-        return TrendsAdapter.ViewHolder(
+    override fun onCreateViewHolder(viewGroup: ViewGroup, i: Int): ListsEntriesAdapter.ViewHolder {
+        return ListsEntriesAdapter.ViewHolder(
                 LayoutInflater
                         .from(context)
-                        .inflate(i, viewGroup, false)
+                        .inflate(R.layout.layout_material_list_item_two_line, viewGroup, false)
         )
     }
 
-    override fun onBindViewHolder(viewHolder: TrendsAdapter.ViewHolder, i: Int) {
-        val (name, volume) = data[i]
+    override fun onBindViewHolder(viewHolder: ListsEntriesAdapter.ViewHolder, i: Int) {
+        val entry = data[i]
 
-        viewHolder.text.text = name
-        viewHolder.volume?.text = context.getString(R.string.tweet_per_last_24_hours, volume)
+        viewHolder.title.text = entry.title
+        viewHolder.description?.text = entry.description
         viewHolder.itemView.setOnClickListener {
-            context.startActivity(SearchResultActivity.getIntent(context, name))
+            context.startActivity(ListsTimelineActivity.getIntent(context, entry))
         }
 
     }
@@ -70,7 +70,7 @@ class TrendsAdapter(private val context: Context, private val data: List<Trend>)
     override fun getItemCount(): Int = data.size
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val text: TextView = itemView.findViewById(R.id.primary_text)
-        val volume: TextView? = itemView.findViewById(R.id.secondary_text)
+        val title: TextView = itemView.findViewById(R.id.primary_text)
+        val description: TextView? = itemView.findViewById(R.id.secondary_text)
     }
 }

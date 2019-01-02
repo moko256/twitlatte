@@ -33,7 +33,6 @@ import java.util.Locale;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -148,11 +147,6 @@ public class TrendsFragment extends BaseListFragment {
     @Override
     protected boolean isInitializedList() {
         return !list.isEmpty();
-    }
-
-    @Override
-    protected RecyclerView.LayoutManager initializeRecyclerViewLayoutManager() {
-        return new LinearLayoutManager(getContext());
     }
 
     private Single<List<Trend>> getResponseSingle(Address address) {

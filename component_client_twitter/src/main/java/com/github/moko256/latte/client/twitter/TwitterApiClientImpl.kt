@@ -169,6 +169,16 @@ class TwitterApiClientImpl(
         client.reportSpam(userId)
     }
 
+    override fun getLists(userId: Long): List<ListEntry> {
+        return client.getUserLists(userId)
+                .map { ListEntry(it.id, it.name, it.description, it.isPublic) }
+    }
+
+    override fun getListTimeline(listId: Long, paging: Paging): List<Post> {
+        return client.getUserListStatuses(listId, paging.convertToTwitterPaging())
+                .map { it.convertToPost() }
+    }
+
     override fun getCustomEmojis(): List<Emoji> {
         throw UnsupportedOperationException()
     }

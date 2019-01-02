@@ -22,6 +22,7 @@ import android.widget.ImageView
 import androidx.annotation.DrawableRes
 import androidx.recyclerview.widget.RecyclerView
 import com.github.moko256.latte.client.base.entity.Emoji
+import com.github.moko256.twitlatte.glide.GlideRequests
 
 /**
  * Created by moko256 on 2018/12/11.

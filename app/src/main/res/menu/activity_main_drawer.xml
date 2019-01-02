@@ -44,6 +44,11 @@
             android:id="@+id/nav_like"
             android:icon="@drawable/ic_favorite_black_24dp"
             android:title="@string/like" />
+
+        <item
+            android:id="@+id/nav_lists"
+            android:icon="@drawable/ic_list_black_24dp"
+            android:title="@string/lists" />
     </group>
 
     <group

@@ -66,6 +66,9 @@ interface ApiClient {
 
     fun reportSpam(userId: Long)
 
+    fun getLists(userId: Long): List<ListEntry>
+    fun getListTimeline(listId: Long, paging: Paging): List<Post>
+
     fun getCustomEmojis(): List<Emoji>
 
     fun uploadMedia(inputStream: InputStream, name: String, type: String): Long

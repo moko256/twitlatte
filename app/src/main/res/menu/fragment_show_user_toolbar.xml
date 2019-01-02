@@ -31,10 +31,6 @@
         android:title="@string/add_to_list"
         app:showAsAction="never" />
     <item
-        android:id="@+id/action_show_list"
-        android:title="@string/show_list"
-        app:showAsAction="never" />
-    <item
         android:id="@+id/action_create_follow"
         android:title="@string/create_follow"
         app:showAsAction="never" />
