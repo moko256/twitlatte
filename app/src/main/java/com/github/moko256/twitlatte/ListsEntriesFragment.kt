@@ -33,7 +33,7 @@ import io.reactivex.schedulers.Schedulers
  *
  * @author moko256
  */
-class ListsListFragment: BaseListFragment(), ToolbarTitleInterface {
+class ListsEntriesFragment: BaseListFragment(), ToolbarTitleInterface {
 
     private var userId = -1L
 
@@ -147,8 +147,8 @@ class ListsListFragment: BaseListFragment(), ToolbarTitleInterface {
     }
 
     companion object {
-        fun newInstance(userId: Long): ListsListFragment {
-            return ListsListFragment().apply {
+        fun newInstance(userId: Long): ListsEntriesFragment {
+            return ListsEntriesFragment().apply {
                 arguments = Bundle().apply {
                     putLong("listId", userId)
                 }

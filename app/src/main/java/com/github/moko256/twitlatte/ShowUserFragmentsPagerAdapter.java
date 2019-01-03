@@ -91,7 +91,7 @@ public class ShowUserFragmentsPagerAdapter extends FragmentPagerAdapter {
             case FRAGMENT_FOLLOWER:
                 return UserFollowersFragment.Companion.newInstance(userId);
             case FRAGMENT_LIST:
-                return ListsListFragment.Companion.newInstance(userId);
+                return ListsEntriesFragment.Companion.newInstance(userId);
             default:
                 throw new IllegalStateException("Unreachable");
         }

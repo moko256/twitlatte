@@ -176,7 +176,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
                         replaceFragment(UserLikeFragment.Companion.newInstance(client.getAccessToken().getUserId()));
                         break;
                     case R.id.nav_lists:
-                        replaceFragment(ListsListFragment.Companion.newInstance(client.getAccessToken().getUserId()));
+                        replaceFragment(ListsEntriesFragment.Companion.newInstance(client.getAccessToken().getUserId()));
                         break;
                     case R.id.nav_settings:
                         startActivity(new Intent(this,SettingsActivity.class));
