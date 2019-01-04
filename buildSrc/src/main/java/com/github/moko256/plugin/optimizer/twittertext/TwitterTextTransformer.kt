@@ -24,11 +24,8 @@ import javassist.ClassClassPath
 import javassist.ClassPool
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.tasks.Copy
 import java.io.File
-import java.nio.file.Files
-import java.util.jar.JarEntry
-import java.util.jar.JarInputStream
-import java.util.jar.JarOutputStream
 import kotlin.reflect.jvm.jvmName
 
 /**
@@ -44,10 +41,10 @@ private enum class BuildStatus {
     DELETE
 }
 
-class TwitterTextTransformer: Transform() {
+class TwitterTextTransformer(private val project: Project): Transform() {
     override fun getName(): String = "TwitterTextTransformer"
 
-    override fun isIncremental(): Boolean = false
+    override fun isIncremental(): Boolean = true
     override fun isCacheable(): Boolean = true
 
     override fun getInputTypes(): MutableSet<QualifiedContent.ContentType> = mutableSetOf(
@@ -62,24 +59,27 @@ class TwitterTextTransformer: Transform() {
         val outputDir = transformInvocation
                 .outputProvider
                 .getContentLocation(name, inputTypes, scopes, Format.DIRECTORY)
-        try {
-            outputDir.deleteRecursively()
-            outputDir.mkdirs()
-        } catch (ignore: Throwable) {
-        }
 
         transformInvocation.inputs
                 .asSequence()
                 .map { input ->
-                    listOf(
-                            input.jarInputs.map { mapOf(it.file to it.status) },
-                            input.directoryInputs.map { it.changedFiles }
-                    )
+                    input.jarInputs.map { mapOf(it.file to it.status) }
                 }
-                .flatten()
                 .flatten()
                 .map { it.entries }
                 .flatten()
+                .also { entries ->
+                    entries
+                            .firstOrNull {
+                                it.value == Status.NOTCHANGED || it.value == Status.CHANGED
+                            }?.let {
+                                try {
+                                    outputDir.deleteRecursively()
+                                    outputDir.mkdirs()
+                                } catch (ignore: Throwable) {
+                                }
+                            }
+                }
                 .onEach {
                     println("LOGGING [" + it.value.name + "] " + it.key.absolutePath)
                 }
@@ -110,24 +110,15 @@ class TwitterTextTransformer: Transform() {
     }
 
     private fun twitterTextJarsTransform(buildStatus: BuildStatus, twitterTextJar: Map.Entry<File, Status>, jarName: String, outputDir: File) {
-        val convertedTwitterTextJar = outputDir.resolve("$jarName.jar")
-
         when (buildStatus) {
             BuildStatus.CREATE -> {
                 val tempJarOutput = outputDir.resolve(jarName)
-                tempJarOutput.mkdir()
 
-                JarInputStream(twitterTextJar.key.inputStream()).use {
-                    var entry = it.nextEntry
-                    while (entry != null) {
-                        val dst = tempJarOutput.resolve(entry.name)
-                        dst.parentFile.mkdirs()
-                        dst.outputStream().use { out ->
-                            it.copyTo(out)
-                        }
-                        entry = it.nextEntry
-                    }
-                }
+                extractJar(
+                        "twitterTextJarExtract",
+                        twitterTextJar.key,
+                        tempJarOutput
+                )
 
                 ClassPool()
                         .apply {
@@ -144,29 +135,9 @@ class TwitterTextTransformer: Transform() {
 
                             writeFile(tempJarOutput.absolutePath)
                         }
-
-                JarOutputStream(convertedTwitterTextJar.outputStream()).use { jarOut ->
-                    tempJarOutput
-                            .walk()
-                            .filter { !it.isDirectory }
-                            .forEach {
-                                jarOut.putNextEntry(
-                                        JarEntry(
-                                                it.absolutePath
-                                                        .removePrefix(tempJarOutput.absolutePath)
-                                                        .removePrefix(File.separator)
-                                        )
-                                )
-                                it.inputStream().use { fileIn ->
-                                    fileIn.copyTo(jarOut)
-                                }
-                            }
-                }
-                tempJarOutput.deleteRecursively()
-                twitterTextJar.key.delete()
             }
             BuildStatus.DELETE -> {
-                convertedTwitterTextJar.delete()
+                TODO()
             }
             BuildStatus.STAY -> {}
         }
@@ -175,16 +146,14 @@ class TwitterTextTransformer: Transform() {
     private fun otherJarsTransform(buildStatus: BuildStatus, input: Map.Entry<File, Status>, jarName: String, outputDir: File) {
         when (buildStatus) {
             BuildStatus.CREATE -> {
-                input.key.copyTo(
-                        outputDir.resolve("$jarName.jar")
+                extractJar(
+                        "other${jarName}JarExtract",
+                        input.key,
+                        outputDir.resolve(jarName)
                 )
             }
             BuildStatus.DELETE -> {
-                outputDir
-                        .listFiles { file ->
-                            Files.isSameFile(input.key.toPath(), file.toPath())
-                        }
-                        .forEach { it.delete() }
+                TODO()
             }
             BuildStatus.STAY -> {}
         }
@@ -220,13 +189,20 @@ class TwitterTextTransformer: Transform() {
                 .append(");")
                 .append("} else ")
     }
+
+    private fun extractJar(name: String, file: File, outputDir: File) {
+        project.tasks.create(name, Copy::class.java) {
+            it.from(project.zipTree(file.path))
+            it.into(outputDir.path)
+        }.execute()
+    }
 }
 
 @Suppress("unused")
 class TwitterTextTransformerPlugin: Plugin<Project> {
     override fun apply(project: Project) {
         val android = project.extensions.getByName("android") as BaseExtension
-        android.registerTransform(TwitterTextTransformer())
+        android.registerTransform(TwitterTextTransformer(project))
     }
 
 }
