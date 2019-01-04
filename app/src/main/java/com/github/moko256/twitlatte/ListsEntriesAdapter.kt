@@ -24,6 +24,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.github.moko256.latte.client.base.entity.ListEntry
 import com.github.moko256.twitlatte.text.TwitterStringUtils.plusUserMarks
+import io.reactivex.subjects.PublishSubject
 
 /**
  * Created by moko256 on 2019/01/02.
@@ -36,6 +37,8 @@ class ListsEntriesAdapter(private val context: Context, private val data: List<L
     init {
         setHasStableIds(true)
     }
+
+    val onClickObservable = PublishSubject.create<ListEntry>()
 
     override fun getItemId(position: Int): Long {
         return data[position].listId
@@ -63,7 +66,7 @@ class ListsEntriesAdapter(private val context: Context, private val data: List<L
         viewHolder.title.text = plusUserMarks(entry.title, viewHolder.title, !entry.isPublic, false)
         viewHolder.description?.text = entry.description
         viewHolder.itemView.setOnClickListener {
-            context.startActivity(ListsTimelineActivity.getIntent(context, entry))
+            onClickObservable.onNext(entry)
         }
 
     }

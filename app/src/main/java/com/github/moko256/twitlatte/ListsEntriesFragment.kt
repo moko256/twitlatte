@@ -81,6 +81,13 @@ class ListsEntriesFragment: BaseListFragment(), ToolbarTitleInterface {
         })
 
         adapter = ListsEntriesAdapter(requireContext(), list)
+        disposable.add(
+                adapter.onClickObservable.subscribe {
+                    context?.let{ context ->
+                        context.startActivity(ListsTimelineActivity.getIntent(context, it))
+                    }
+                }
+        )
         recyclerView.adapter = adapter
 
         if (!isInitializedList) {
