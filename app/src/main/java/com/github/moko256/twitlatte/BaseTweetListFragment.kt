@@ -109,20 +109,21 @@ abstract class BaseTweetListFragment : BaseListFragment(), ListServerRepository<
                 preferenceRepository,
                 context,
                 listViewModel.listModel.getIdsList()
-        )
-        adapter!!.setOnLoadMoreClick { position -> listViewModel.listModel.loadOnGap(position) }
-        adapter!!.setOnFavoriteClick { _, id, hasFavorited ->
-            if (hasFavorited) {
-                listViewModel.statusActionModel.removeFavorite(id)
-            } else {
-                listViewModel.statusActionModel.createFavorite(id)
+        ).also {
+            it.setOnLoadMoreClick { position -> listViewModel.listModel.loadOnGap(position) }
+            it.setOnFavoriteClick { _, id, hasFavorited ->
+                if (hasFavorited) {
+                    listViewModel.statusActionModel.removeFavorite(id)
+                } else {
+                    listViewModel.statusActionModel.createFavorite(id)
+                }
             }
-        }
-        adapter!!.setOnRepeatClick { _, id, hasRepeated ->
-            if (hasRepeated) {
-                listViewModel.statusActionModel.removeRepeat(id)
-            } else {
-                listViewModel.statusActionModel.createRepeat(id)
+            it.setOnRepeatClick { _, id, hasRepeated ->
+                if (hasRepeated) {
+                    listViewModel.statusActionModel.removeRepeat(id)
+                } else {
+                    listViewModel.statusActionModel.createRepeat(id)
+                }
             }
         }
 
