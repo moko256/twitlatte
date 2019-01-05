@@ -23,7 +23,8 @@
     <ImageView
         android:id="@+id/layout_images_adapter_image_child_image"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"/>
     <ImageButton
         android:id="@+id/action_delete"
         android:layout_width="48dp"
