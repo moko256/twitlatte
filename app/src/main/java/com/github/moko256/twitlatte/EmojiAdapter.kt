@@ -38,8 +38,11 @@ class EmojiAdapter(
 ): RecyclerView.Adapter<EmojiViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EmojiViewHolder {
+        val imageView = ImageView(context)
+        val dp32 = Math.round(context.resources.displayMetrics.density * 32)
+        imageView.layoutParams = ViewGroup.LayoutParams(dp32, dp32)
         return EmojiViewHolder(
-                imageView = ImageView(context),
+                imageView = imageView,
                 glideRequests = glideRequests
         )
     }
@@ -50,9 +53,16 @@ class EmojiAdapter(
 
     override fun onBindViewHolder(holder: EmojiViewHolder, position: Int) {
         if (position != list.size) {
-            holder.setImage(list[position].url)
+            val emoji = list[position]
+            holder.setImage(emoji.url)
+            holder.itemView.setOnClickListener {
+                onEmojiClick(emoji)
+            }
         } else {
             holder.setImage(R.drawable.list_add_icon)
+            holder.itemView.setOnClickListener {
+                onLoadClick()
+            }
         }
     }
 

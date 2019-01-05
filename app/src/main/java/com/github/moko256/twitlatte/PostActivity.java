@@ -41,6 +41,7 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.github.moko256.latte.client.base.entity.Emoji;
 import com.github.moko256.twitlatte.entity.Client;
 import com.github.moko256.twitlatte.glide.GlideApp;
 import com.github.moko256.twitlatte.model.base.PostStatusModel;
@@ -51,6 +52,7 @@ import com.github.moko256.twitlatte.widget.ImageKeyboardEditText;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import androidx.annotation.NonNull;
@@ -67,6 +69,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import kotlin.Pair;
+import kotlin.Unit;
 
 import static com.github.moko256.latte.client.mastodon.MastodonApiClientImplKt.CLIENT_TYPE_MASTODON;
 import static com.github.moko256.latte.client.twitter.TwitterApiClientImplKt.CLIENT_TYPE_TWITTER;
@@ -105,6 +108,7 @@ public class PostActivity extends AppCompatActivity {
     private AddedImagesAdapter addedImagesAdapter;
     private RecyclerView emojiInputRecyclerView;
     private EmojiAdapter emojiAdapter;
+    private List<Emoji> emojiList = new ArrayList<>();
     private CheckBox isPossiblySensitive;
     private Spinner postVisibility;
     private CheckBox addLocation;
@@ -231,6 +235,8 @@ public class PostActivity extends AppCompatActivity {
         };
         imagesRecyclerView.setAdapter(addedImagesAdapter);
 
+        emojiInputRecyclerView = findViewById(R.id.suggestions_of_emoji);
+
         isPossiblySensitive = findViewById(R.id.activity_tweet_is_possibly_sensitive);
         isPossiblySensitive.setEnabled(addedImagesAdapter.getImagesList().size() > 0);
         isPossiblySensitive.setOnCheckedChangeListener(
@@ -241,6 +247,43 @@ public class PostActivity extends AppCompatActivity {
         contentWarningText = findViewById(R.id.tweet_text_warning);
         contentWarningEnabled = findViewById(R.id.activity_tweet_add_content_warning);
         if (client.getAccessToken().getClientType() == CLIENT_TYPE_MASTODON) {
+            emojiAdapter = new EmojiAdapter(
+                    emojiList,
+                    this,
+                    GlideApp.with(this),
+                    emoji -> {
+                        int selectionEnd = editText.getSelectionEnd();
+                        String shortCode = emoji.getShortCode();
+                        editText.setText(
+                                new StringBuilder(model.getStatusText())
+                                        .insert(selectionEnd, ":")
+                                        .insert(selectionEnd + 1, shortCode)
+                                        .insert(selectionEnd + 1 + shortCode.length(), ": ")
+
+                        );
+                        editText.setSelection(selectionEnd + shortCode.length() + 3);
+                        return Unit.INSTANCE;
+                    },
+                    () -> {
+                        disposable.add(
+                                model.requestCustomEmojis()
+                                        .subscribeOn(Schedulers.io())
+                                        .observeOn(AndroidSchedulers.mainThread())
+                                        .subscribe(
+                                                emojis -> {
+                                                    emojiList.clear();
+                                                    emojiList.addAll(emojis);
+                                                    emojiAdapter.notifyDataSetChanged();
+                                                },
+                                                this::errorNotify
+                                        )
+                        );
+                        return Unit.INSTANCE;
+                    }
+            );
+            emojiInputRecyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.HORIZONTAL, false));
+            emojiInputRecyclerView.setAdapter(emojiAdapter);
+
             contentWarningText.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -278,6 +321,7 @@ public class PostActivity extends AppCompatActivity {
             });
             postVisibility.setSelection(0);
         } else {
+            emojiInputRecyclerView.setVisibility(View.GONE);
             contentWarningEnabled.setVisibility(View.GONE);
             postVisibility.setVisibility(View.GONE);
             findViewById(R.id.activity_tweet_visibility_description).setVisibility(View.GONE);
@@ -500,6 +544,9 @@ public class PostActivity extends AppCompatActivity {
         addLocation = null;
         postVisibility = null;
         isPossiblySensitive = null;
+        emojiList = null;
+        emojiInputRecyclerView = null;
+        emojiAdapter = null;
         addedImagesAdapter.clearImages();
         addedImagesAdapter = null;
         imagesRecyclerView = null;
