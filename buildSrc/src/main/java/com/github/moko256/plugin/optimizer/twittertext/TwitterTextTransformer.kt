@@ -26,6 +26,8 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.Copy
 import java.io.File
+import java.util.jar.JarEntry
+import java.util.jar.JarOutputStream
 import kotlin.reflect.jvm.jvmName
 
 /**
@@ -56,6 +58,7 @@ class TwitterTextTransformer(private val project: Project): Transform() {
     )
 
     override fun transform(transformInvocation: TransformInvocation) {
+        val isDebug = transformInvocation.context.variantName == "debug"
         val outputDir = transformInvocation
                 .outputProvider
                 .getContentLocation(name, inputTypes, scopes, Format.DIRECTORY)
@@ -102,14 +105,14 @@ class TwitterTextTransformer(private val project: Project): Transform() {
                     }
                     val matches = jarInput.key.name.matches(twitterTextJarNameRegex)
                     if (matches) {
-                        twitterTextJarsTransform(buildStatus, jarInput, "0", outputDir)
+                        twitterTextJarsTransform(isDebug, buildStatus, jarInput, "0", outputDir)
                     } else {
-                        otherJarsTransform(buildStatus, jarInput, (index + 1).toString(), outputDir)
+                        otherJarsTransform(isDebug, buildStatus, jarInput, (index + 1).toString(), outputDir)
                     }
                 }
     }
 
-    private fun twitterTextJarsTransform(buildStatus: BuildStatus, twitterTextJar: Map.Entry<File, Status>, jarName: String, outputDir: File) {
+    private fun twitterTextJarsTransform(isDebug: Boolean, buildStatus: BuildStatus, twitterTextJar: Map.Entry<File, Status>, jarName: String, outputDir: File) {
         when (buildStatus) {
             BuildStatus.CREATE -> {
                 val tempJarOutput = outputDir.resolve(jarName)
@@ -135,6 +138,11 @@ class TwitterTextTransformer(private val project: Project): Transform() {
 
                             writeFile(tempJarOutput.absolutePath)
                         }
+
+                if (!isDebug) {
+                    createJar(tempJarOutput, outputDir.resolve("$jarName.jar"))
+                    tempJarOutput.deleteRecursively()
+                }
             }
             BuildStatus.DELETE -> {
                 TODO()
@@ -143,14 +151,18 @@ class TwitterTextTransformer(private val project: Project): Transform() {
         }
     }
 
-    private fun otherJarsTransform(buildStatus: BuildStatus, input: Map.Entry<File, Status>, jarName: String, outputDir: File) {
+    private fun otherJarsTransform(isDebug: Boolean, buildStatus: BuildStatus, input: Map.Entry<File, Status>, jarName: String, outputDir: File) {
         when (buildStatus) {
             BuildStatus.CREATE -> {
-                extractJar(
-                        "other${jarName}JarExtract",
-                        input.key,
-                        outputDir.resolve(jarName)
-                )
+                if (isDebug) {
+                    extractJar(
+                            "other${jarName}JarExtract",
+                            input.key,
+                            outputDir.resolve(jarName)
+                    )
+                } else {
+                    input.key.copyTo(outputDir.resolve("$jarName.jar"))
+                }
             }
             BuildStatus.DELETE -> {
                 TODO()
@@ -195,6 +207,26 @@ class TwitterTextTransformer(private val project: Project): Transform() {
             it.from(project.zipTree(file.path))
             it.into(outputDir.path)
         }.execute()
+    }
+
+    private fun createJar(input: File, outputDir: File) {
+        JarOutputStream(outputDir.outputStream()).use { jarOut ->
+            input
+                    .walk()
+                    .filter { !it.isDirectory }
+                    .forEach {
+                        jarOut.putNextEntry(
+                                JarEntry(
+                                        it.absolutePath
+                                                .removePrefix(input.absolutePath)
+                                                .removePrefix(File.separator)
+                                )
+                        )
+                        it.inputStream().use { fileIn ->
+                            fileIn.copyTo(jarOut)
+                        }
+                    }
+        }
     }
 }
 
