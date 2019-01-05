@@ -16,13 +16,12 @@
 
 package com.github.moko256.twitlatte;
 
-import android.graphics.Rect;
 import android.os.Bundle;
-import android.view.View;
 
 import com.github.moko256.latte.client.base.entity.PageableResponse;
 import com.github.moko256.latte.client.base.entity.User;
 import com.github.moko256.twitlatte.entity.Client;
+import com.github.moko256.twitlatte.widget.MaterialListTopMarginDecoration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,15 +72,7 @@ public abstract class BaseUsersFragment extends BaseListFragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        recyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
-            @Override
-            public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
-                super.getItemOffsets(outRect, view, parent, state);
-                if (parent.getChildAdapterPosition(view)==0){
-                    outRect.top=Math.round(getResources().getDisplayMetrics().density*8f);
-                }
-            }
-        });
+        recyclerView.addItemDecoration(new MaterialListTopMarginDecoration(getResources()));
 
         if (getActivity() instanceof BaseTweetListFragment.GetRecyclerViewPool) {
             recyclerView.setRecycledViewPool(((GetRecyclerViewPool) getActivity()).getUserListViewPool());

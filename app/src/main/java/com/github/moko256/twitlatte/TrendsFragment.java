@@ -16,24 +16,21 @@
 
 package com.github.moko256.twitlatte;
 
-import android.graphics.Rect;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
-import android.view.View;
 
 import com.github.moko256.latte.client.base.entity.Trend;
 import com.github.moko256.twitlatte.database.CachedTrendsSQLiteOpenHelper;
 import com.github.moko256.twitlatte.entity.Client;
+import com.github.moko256.twitlatte.widget.MaterialListTopMarginDecoration;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.RecyclerView;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -77,15 +74,7 @@ public class TrendsFragment extends BaseListFragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        recyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
-            @Override
-            public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
-                super.getItemOffsets(outRect, view, parent, state);
-                if (parent.getChildAdapterPosition(view)==0){
-                    outRect.top=Math.round(getResources().getDisplayMetrics().density*8f);
-                }
-            }
-        });
+        recyclerView.addItemDecoration(new MaterialListTopMarginDecoration(getResources()));
 
         adapter=new TrendsAdapter(getContext(), list);
         recyclerView.setAdapter(adapter);

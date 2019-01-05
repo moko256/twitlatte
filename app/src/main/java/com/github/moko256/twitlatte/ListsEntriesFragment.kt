@@ -16,13 +16,11 @@
 
 package com.github.moko256.twitlatte
 
-import android.graphics.Rect
 import android.os.Bundle
-import android.view.View
-import androidx.recyclerview.widget.RecyclerView
 import com.github.moko256.latte.client.base.entity.ListEntry
 import com.github.moko256.twitlatte.database.CachedListEntriesSQLiteOpenHelper
 import com.github.moko256.twitlatte.entity.Client
+import com.github.moko256.twitlatte.widget.MaterialListTopMarginDecoration
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -71,14 +69,7 @@ class ListsEntriesFragment: BaseListFragment(), ToolbarTitleInterface {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        recyclerView.addItemDecoration(object : RecyclerView.ItemDecoration() {
-            override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
-                super.getItemOffsets(outRect, view, parent, state)
-                if (parent.getChildAdapterPosition(view) == 0) {
-                    outRect.top = Math.round(resources.displayMetrics.density * 8f)
-                }
-            }
-        })
+        recyclerView.addItemDecoration(MaterialListTopMarginDecoration(resources))
 
         adapter = ListsEntriesAdapter(requireContext(), list)
         disposable.add(
