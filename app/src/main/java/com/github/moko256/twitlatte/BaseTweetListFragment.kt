@@ -62,9 +62,7 @@ abstract class BaseTweetListFragment : BaseListFragment(), ListServerRepository<
 
     protected abstract val cachedIdsDatabaseName: String
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
         client = requireActivity().getClient()!!
         listViewModel = ViewModelProviders.of(this).get(ListViewModel::class.java)
         if (!listViewModel.initilized) {
@@ -203,6 +201,8 @@ abstract class BaseTweetListFragment : BaseListFragment(), ListServerRepository<
                             adapter!!.notifyItemChanged(listViewModel.listModel.getIdsList().indexOf(it.first))
                         }
         )
+
+        super.onActivityCreated(savedInstanceState)
     }
 
     override fun onDestroyView() {

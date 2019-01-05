@@ -17,7 +17,6 @@
 package com.github.moko256.twitlatte
 
 import android.os.Bundle
-import androidx.annotation.Nullable
 import com.github.moko256.latte.client.base.entity.Paging
 import com.github.moko256.latte.client.base.entity.Post
 
@@ -39,7 +38,7 @@ class MediaTimelineFragment : BaseTweetListFragment(), ToolbarTitleInterface {
         super.onCreate(savedInstanceState)
     }
 
-    override fun onActivityCreated(@Nullable savedInstanceState: Bundle?) {
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
         adapter!!.shouldShowMediaOnly = true
