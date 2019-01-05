@@ -56,7 +56,7 @@ class ListsEntriesAdapter(private val context: Context, private val data: List<L
         return ListsEntriesAdapter.ViewHolder(
                 LayoutInflater
                         .from(context)
-                        .inflate(R.layout.layout_material_list_item_two_line, viewGroup, false)
+                        .inflate(i, viewGroup, false)
         )
     }
 
