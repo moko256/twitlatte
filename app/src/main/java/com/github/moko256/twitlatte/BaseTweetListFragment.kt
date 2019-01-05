@@ -16,7 +16,6 @@
 
 package com.github.moko256.twitlatte
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Point
 import android.graphics.Rect
@@ -26,7 +25,6 @@ import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
-import androidx.annotation.Nullable
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -82,11 +80,6 @@ abstract class BaseTweetListFragment : BaseListFragment(), ListServerRepository<
             )
             listViewModel.start()
         }
-    }
-
-    @SuppressLint("WrongConstant")
-    override fun onActivityCreated(@Nullable savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
 
         val dp4 = Math.round(4f * resources.displayMetrics.density)
 

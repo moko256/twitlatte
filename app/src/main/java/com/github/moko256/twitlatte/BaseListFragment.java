@@ -59,7 +59,26 @@ public abstract class BaseListFragment extends Fragment implements MovableTopInt
         View view=inflater.inflate(R.layout.fragment_base_list, container ,false);
 
         recyclerView= view.findViewById(R.id.TLlistView);
+        recyclerView.setLayoutManager(initializeRecyclerViewLayoutManager());
+        recyclerView.addOnScrollListener(new LoadScrollListener(recyclerView.getLayoutManager()) {
+            @Override
+            protected void load() {
+                if(isInitializedList()){
+                    onLoadMoreList();
+                }
+            }
+        });
+
         swipeRefreshLayout= view.findViewById(R.id.srl);
+        swipeRefreshLayout.setColorSchemeResources(R.color.color_primary);
+        swipeRefreshLayout.setRefreshing(isProgressCircleLoading);
+        swipeRefreshLayout.setOnRefreshListener(()->{
+            if (isInitializedList()){
+                onUpdateList();
+            } else {
+                onInitializeList();
+            }
+        });
 
         return view;
     }
@@ -72,26 +91,6 @@ public abstract class BaseListFragment extends Fragment implements MovableTopInt
         if (activity instanceof GetViewForSnackBar) {
             viewForSnackBar = ((GetViewForSnackBar) activity).getViewForSnackBar();
         }
-
-        recyclerView.setLayoutManager(initializeRecyclerViewLayoutManager());
-        recyclerView.addOnScrollListener(new LoadScrollListener(recyclerView.getLayoutManager()) {
-            @Override
-            protected void load() {
-                if(isInitializedList()){
-                    onLoadMoreList();
-                }
-            }
-        });
-
-        swipeRefreshLayout.setColorSchemeResources(R.color.color_primary);
-        swipeRefreshLayout.setRefreshing(isProgressCircleLoading);
-        swipeRefreshLayout.setOnRefreshListener(()->{
-            if (isInitializedList()){
-                onUpdateList();
-            } else {
-                onInitializeList();
-            }
-        });
 
         if (getUserVisibleHint() && !isInitializedList()){
             onInitializeList();
