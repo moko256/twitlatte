@@ -86,8 +86,14 @@ abstract class BaseTweetListFragment : BaseListFragment(), ListServerRepository<
         recyclerView.setPadding(dp4, 0, dp4, 0)
         recyclerView.addItemDecoration(object : RecyclerView.ItemDecoration() {
             override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
-                outRect.left = dp4
-                outRect.right = dp4
+                if (parent.getChildAdapterPosition(view) == 0) {
+                    outRect.top = dp4 * 2 - view.paddingTop
+                } else {
+                    outRect.top = dp4 - view.paddingTop
+                }
+                outRect.bottom = dp4 - view.paddingBottom
+                outRect.left = dp4 - view.paddingLeft
+                outRect.right = dp4 - view.paddingRight
             }
         })
 
