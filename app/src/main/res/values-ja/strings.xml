@@ -138,6 +138,8 @@
     <string name="did_block">ブロックしました</string>
     <string name="did_unblock">ブロック解除しました</string>
     <string name="did_destroy_ff">FF解除しました</string>
+    <string name="did_report_as_spam">スパムとして報告しました</string>
+    <string name="did_add_to_list">リストに追加しました</string>
 
     <string name="did_copy">クリップボードにコピーしました</string>
 

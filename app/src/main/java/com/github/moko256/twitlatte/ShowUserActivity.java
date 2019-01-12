@@ -271,7 +271,7 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
 
             case R.id.action_spam_report:
                 throwableFunc=()->apiClient.reportSpam(user.getId());
-                didAction = R.string.spam_report;
+                didAction = R.string.did_report_as_spam;
                 break;
         }
 
@@ -297,7 +297,7 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
                                             data.getLongExtra("listId", -1),
                                             userId
                                     ),
-                            R.string.add_to_list
+                            R.string.did_add_to_list
                     )
             );
         } else {
