@@ -208,11 +208,11 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
         switch (item.getItemId()){
             case R.id.action_share:
                 startActivity(Intent.createChooser(
-                                new Intent()
-                                        .setAction(Intent.ACTION_SEND)
-                                        .setType("text/plain")
-                                        .putExtra(Intent.EXTRA_TEXT, getShareUrl()),
-                                getString(R.string.share)
+                        new Intent()
+                                .setAction(Intent.ACTION_SEND)
+                                .setType("text/plain")
+                                .putExtra(Intent.EXTRA_TEXT, getShareUrl()),
+                        getString(R.string.share)
                 ));
                 break;
 
@@ -322,7 +322,7 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
                                 () -> Toast.makeText(this, didAction, Toast.LENGTH_SHORT).show(),
                                 throwable -> {
                                     throwable.printStackTrace();
-                                    Toast.makeText(this, R.string.error_occurred, Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(this, throwable.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
                         )
         );
