@@ -254,13 +254,10 @@ public class PostActivity extends AppCompatActivity {
                     emoji -> {
                         int selectionEnd = editText.getSelectionEnd();
                         String shortCode = emoji.getShortCode();
-                        editText.setText(
-                                new StringBuilder(model.getStatusText())
-                                        .insert(selectionEnd, ":")
-                                        .insert(selectionEnd + 1, shortCode)
-                                        .insert(selectionEnd + 1 + shortCode.length(), ": ")
-
-                        );
+                        editText.getText()
+                                .insert(selectionEnd, ":")
+                                .insert(selectionEnd + 1, shortCode)
+                                .insert(selectionEnd + 1 + shortCode.length(), ": ");
                         editText.setSelection(selectionEnd + shortCode.length() + 3);
                         return Unit.INSTANCE;
                     },
