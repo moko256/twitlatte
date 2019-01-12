@@ -67,7 +67,7 @@ class LocationSingleBuilder(
         this.emitter = emitter
     }.doOnDispose {
         locationManager.removeUpdates(this)
-    }!!
+    }
 
     override fun onLocationChanged(location: Location?) {
         if (location != null) {
