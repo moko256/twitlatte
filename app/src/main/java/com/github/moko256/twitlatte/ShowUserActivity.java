@@ -223,7 +223,10 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
             case R.id.action_add_to_list:
                 startActivityForResult(
                         new Intent(this, SelectListEntriesActivity.class)
-                                .putExtra("userId", userId),
+                                .putExtra(
+                                        "userId",
+                                        client.getAccessToken().getUserId()
+                                ),
                         200
                 );
                 break;

@@ -25,8 +25,8 @@ import com.github.moko256.latte.client.base.entity.ListEntry
 class SelectListsEntriesFragment: AbstractListsEntriesFragment() {
     override fun onClickList(listEntry: ListEntry) {
 
-        context?.let{ context ->
-            context.startActivity(ListsTimelineActivity.getIntent(context, listEntry))
+        activity?.let {
+            (activity as ListEntrySelectionListener).onSelected(listEntry)
         }
     }
 
