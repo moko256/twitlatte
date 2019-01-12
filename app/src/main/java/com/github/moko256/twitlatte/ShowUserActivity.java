@@ -286,7 +286,7 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if (requestCode == 1 && resultCode == RESULT_OK && data != null) {
+        if (requestCode == 200 && resultCode == RESULT_OK && data != null) {
             confirmDialog(
                     getString(R.string.add_to_list),
                     getString(R.string.confirm_message),
