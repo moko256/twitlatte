@@ -157,6 +157,9 @@
             android:name=".TrendsActivity"
             android:label="@string/trends" />
         <activity
+            android:name=".SelectListEntriesActivity"
+            android:label="@string/add_to_list" />
+        <activity
             android:name=".SearchResultActivity"
             android:label="@string/action_search"/>
         <activity

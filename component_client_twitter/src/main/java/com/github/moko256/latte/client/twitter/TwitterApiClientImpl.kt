@@ -181,6 +181,10 @@ class TwitterApiClientImpl(
                 }
     }
 
+    override fun addToLists(listId: Long, userId: Long) {
+        client.createUserListMember(listId, userId)
+    }
+
     override fun getListTimeline(listId: Long, paging: Paging): List<Post> {
         return client.getUserListStatuses(listId, paging.convertToTwitterPaging())
                 .map { it.convertToPost() }

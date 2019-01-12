@@ -36,6 +36,7 @@ import com.google.android.material.tabs.TabLayout;
 import java.util.Objects;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
@@ -200,7 +201,7 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        ThrowableFunc throwableFunc=null;
+        ThrowableFunc throwableFunc = null;
         @StringRes int didAction = -1;
         ApiClient apiClient = client.getApiClient();
 
@@ -214,33 +215,49 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
                                 getString(R.string.share)
                 ));
                 break;
+
             case R.id.action_open_in_browser:
                 AppCustomTabsKt.launchChromeCustomTabs(this, getShareUrl(), true);
                 break;
+
+            case R.id.action_add_to_list:
+                startActivityForResult(
+                        new Intent(this, SelectListEntriesActivity.class)
+                                .putExtra("userId", userId),
+                        200
+                );
+                break;
+
             case R.id.action_create_follow:
                 throwableFunc=()->apiClient.createFriendship(user.getId());
                 didAction = R.string.did_follow;
                 break;
+
             case R.id.action_destroy_follow:
                 throwableFunc=()->apiClient.destroyFriendship(user.getId());
                 didAction = R.string.did_unfollow;
                 break;
+
             case R.id.action_create_mute:
                 throwableFunc=()->apiClient.createMute(user.getId());
                 didAction = R.string.did_mute;
                 break;
+
             case R.id.action_destroy_mute:
                 throwableFunc=()->apiClient.destroyMute(user.getId());
                 didAction = R.string.did_unmute;
                 break;
+
             case R.id.action_create_block:
                 throwableFunc=()->apiClient.createBlock(user.getId());
                 didAction = R.string.did_block;
                 break;
+
             case R.id.action_destroy_block:
                 throwableFunc=()->apiClient.destroyBlock(user.getId());
                 didAction = R.string.did_unblock;
                 break;
+
             case R.id.action_destroy_follow_follower:
                 throwableFunc=()->{
                     apiClient.createBlock(user.getId());
@@ -248,8 +265,10 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
                 };
                 didAction = R.string.did_destroy_ff;
                 break;
+
             case R.id.action_spam_report:
                 throwableFunc=()->apiClient.reportSpam(user.getId());
+                didAction = R.string.spam_report;
                 break;
         }
 
@@ -260,6 +279,27 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (requestCode == 1 && resultCode == RESULT_OK && data != null) {
+            confirmDialog(
+                    getString(R.string.add_to_list),
+                    getString(R.string.confirm_message),
+                    () -> runAsWorkerThread(
+                            () -> client
+                                    .getApiClient()
+                                    .addToLists(
+                                            data.getLongExtra("listId", -1),
+                                            userId
+                                    ),
+                            R.string.add_to_list
+                    )
+            );
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     private void runAsWorkerThread(ThrowableFunc func, @StringRes int didAction){

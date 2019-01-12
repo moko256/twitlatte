@@ -201,6 +201,10 @@ class MastodonApiClientImpl(okHttpClient: OkHttpClient, url: String, token: Stri
                 .map { ListEntry(it.id, it.title, null, false) }
     }
 
+    override fun addToLists(listId: Long, userId: Long) {
+        Lists(client).addAccountsToList(listId, listOf(userId)).executeAndConvertError()
+    }
+
     override fun getListTimeline(listId: Long, paging: Paging): List<Post> {
         return Timelines(client).getListTimeline(listId, paging.convertToMastodonRange())
                 .executeAndConvertError()
