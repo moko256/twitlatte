@@ -5,8 +5,8 @@ This application is the SNS client for Android\.
 
 <img src="app/src/main/ic_launcher-web.png"
       alt="Icon of this app"
-      width="150"
-      height="150">
+      width="60"
+      height="60">
 
 * Supported Android version is Android 4\.4~9\.0
 * Using REST API
@@ -23,10 +23,10 @@ This application is the SNS client for Android\.
 
 [<img src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png"
       alt="Get it on Google Play"
-      height="100">](https://play.google.com/store/apps/details?id=com.github.moko256.twitlatte)
+      height="80">](https://play.google.com/store/apps/details?id=com.github.moko256.twitlatte)
 [<img src="https://f-droid.org/badge/get-it-on.png"
       alt="Get it on F-Droid"
-      height="100">](https://f-droid.org/packages/com.github.moko256.twitlatte/)
+      height="80">](https://f-droid.org/packages/com.github.moko256.twitlatte/)
 
 ## How to build
 
@@ -85,6 +85,7 @@ and, built using these tools\:
 * Kotlin
 * Gradle
 * Proguard
+* Javassist
 
 ## License of this project
 
