@@ -83,6 +83,7 @@ abstract class BaseTweetListFragment : BaseListFragment(), ListServerRepository<
 
         val dp4 = Math.round(4f * resources.displayMetrics.density)
 
+        recyclerView.clipToPadding = false
         recyclerView.setPadding(dp4, 0, dp4, 0)
         recyclerView.addItemDecoration(object : RecyclerView.ItemDecoration() {
             override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
