@@ -24,9 +24,9 @@ import javassist.ClassClassPath
 import javassist.ClassPool
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.tasks.Copy
 import java.io.File
 import java.util.jar.JarEntry
+import java.util.jar.JarInputStream
 import java.util.jar.JarOutputStream
 import kotlin.reflect.jvm.jvmName
 
@@ -43,7 +43,7 @@ private enum class BuildStatus {
     DELETE
 }
 
-class TwitterTextTransformer(private val project: Project): Transform() {
+class TwitterTextTransformer: Transform() {
     override fun getName(): String = "TwitterTextTransformer"
 
     override fun isIncremental(): Boolean = true
@@ -118,7 +118,6 @@ class TwitterTextTransformer(private val project: Project): Transform() {
                 val tempJarOutput = outputDir.resolve(jarName)
 
                 extractJar(
-                        "twitterTextJarExtract",
                         twitterTextJar.key,
                         tempJarOutput
                 )
@@ -156,7 +155,6 @@ class TwitterTextTransformer(private val project: Project): Transform() {
             BuildStatus.CREATE -> {
                 if (isDebug) {
                     extractJar(
-                            "other${jarName}JarExtract",
                             input.key,
                             outputDir.resolve(jarName)
                     )
@@ -202,11 +200,20 @@ class TwitterTextTransformer(private val project: Project): Transform() {
                 .append("} else ")
     }
 
-    private fun extractJar(name: String, file: File, outputDir: File) {
-        project.tasks.create(name, Copy::class.java) {
-            it.from(project.zipTree(file.path))
-            it.into(outputDir.path)
-        }.execute()
+    private fun extractJar(file: File, outputDir: File) {
+        JarInputStream(file.inputStream()).use {
+            var entry = it.nextEntry
+            while (entry != null) {
+                if (!entry.isDirectory) {
+                    val dst = outputDir.resolve(entry.name)
+                    dst.parentFile.mkdirs()
+                    dst.outputStream().use { out ->
+                        it.copyTo(out)
+                    }
+                }
+                entry = it.nextEntry
+            }
+        }
     }
 
     private fun createJar(input: File, outputDir: File) {
@@ -234,7 +241,7 @@ class TwitterTextTransformer(private val project: Project): Transform() {
 class TwitterTextTransformerPlugin: Plugin<Project> {
     override fun apply(project: Project) {
         val android = project.extensions.getByName("android") as BaseExtension
-        android.registerTransform(TwitterTextTransformer(project))
+        android.registerTransform(TwitterTextTransformer())
     }
 
 }
