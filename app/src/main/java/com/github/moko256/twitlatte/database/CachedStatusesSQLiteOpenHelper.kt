@@ -320,7 +320,7 @@ class CachedStatusesSQLiteOpenHelper(
                         thumbnailUrls[i] = entity.thumbnailUrl
                         originalUrls[i] = entity.originalUrl
                         downloadVideoUrls[i] = entity.downloadVideoUrl
-                        types[i] = entity.imageType
+                        types[i] = entity.mediaType
                     }
                     contentValues.put(TABLE_COLUMNS[21], thumbnailUrls.joinToString(","))
                     contentValues.put(TABLE_COLUMNS[22], originalUrls.joinToString(","))
@@ -428,7 +428,7 @@ class CachedStatusesSQLiteOpenHelper(
                     thumbnailUrl = thumbnailUrls[it],
                     originalUrl = originalUrls[it],
                     downloadVideoUrl = downloadVideoUrls[it],
-                    imageType = imageTypes[it]
+                    mediaType = imageTypes[it]
             )
         }
     } else {

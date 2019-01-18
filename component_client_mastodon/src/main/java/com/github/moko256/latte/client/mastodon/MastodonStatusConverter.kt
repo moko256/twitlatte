@@ -83,27 +83,31 @@ private fun com.sys1yagi.mastodon4j.api.entity.Status.convertToStatus(): Status 
             medias = mediaAttachments.takeIf { it.isNotEmpty() }?.map {
                 val resultUrl = it.url
                 val thumbnailUrl: String?
-                val type: Media.ImageType
+                val type: Media.MediaType
 
                 when (it.type) {
                     Attachment.Type.Video.value -> {
                         thumbnailUrl = it.previewUrl
-                        type = Media.ImageType.VIDEO_ONE
+                        type = Media.MediaType.VIDEO_ONE
                     }
                     Attachment.Type.Gifv.value -> {
                         thumbnailUrl = it.previewUrl
-                        type = Media.ImageType.GIF
+                        type = Media.MediaType.GIF
                     }
-                    else -> {
+                    Attachment.Type.Image.value -> {
                         thumbnailUrl = null
-                        type = Media.ImageType.PICTURE
+                        type = Media.MediaType.PICTURE
+                    }
+                    else -> { //It must be Attachment.Type.Unknown.value or undefined type
+                        thumbnailUrl = null
+                        type = Media.MediaType.UNKNOWN
                     }
                 }
 
                 Media(
                         thumbnailUrl = thumbnailUrl,
                         originalUrl = resultUrl,
-                        imageType = type.value
+                        mediaType = type.value
                 )
             }?.toTypedArray(),
             urls = urls.second,

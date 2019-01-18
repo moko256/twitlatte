@@ -125,7 +125,7 @@ private fun twitter4j.Status.convertToStatus(): Status {
                         for (variant in it.videoVariants) {
                             if (variant.contentType == "application/x-mpegURL") {
                                 originalUrl = variant.url
-                                type = Media.ImageType.VIDEO_MULTI.value
+                                type = Media.MediaType.VIDEO_MULTI.value
                             } else if (variant.contentType == "video/mp4") {
                                 downloadVideoUrl = variant.url
                             }
@@ -133,16 +133,16 @@ private fun twitter4j.Status.convertToStatus(): Status {
 
                         if (downloadVideoUrl == null) {
                             originalUrl = it.videoVariants[0].url
-                            type = Media.ImageType.VIDEO_ONE.value
+                            type = Media.MediaType.VIDEO_ONE.value
                         }
                     }
                     "animated_gif" -> {
                         originalUrl = it.videoVariants[0].url
-                        type = Media.ImageType.GIF.value
+                        type = Media.MediaType.GIF.value
                     }
                     else -> {
                         originalUrl = null
-                        type = Media.ImageType.PICTURE.value
+                        type = Media.MediaType.PICTURE.value
                     }
                 }
 
@@ -154,8 +154,8 @@ private fun twitter4j.Status.convertToStatus(): Status {
                         },
                         downloadVideoUrl = downloadVideoUrl,
                         originalUrl = originalUrl ?: it.mediaURLHttps,
-                        imageType = type
-                                ?: Media.ImageType.PICTURE.value
+                        mediaType = type
+                                ?: Media.MediaType.PICTURE.value
                 )
             }?.toTypedArray(),
             urls = urls?.second,

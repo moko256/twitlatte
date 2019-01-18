@@ -27,12 +27,13 @@ data class Media (
         val thumbnailUrl: String? = null,
         val originalUrl: String,
         val downloadVideoUrl: String? = null,
-        val imageType: String
+        val mediaType: String
 ): Serializable {
-    enum class ImageType(val value: String) {
+    enum class MediaType(val value: String) {
         PICTURE("picture"),
         GIF("gif"),
         VIDEO_ONE("video_one"),
         VIDEO_MULTI("video_multi"),
+        UNKNOWN("unknown")
     }
 }

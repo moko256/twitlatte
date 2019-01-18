@@ -39,12 +39,12 @@ class MediasAdapter(
     override fun getItem(position: Int): Fragment {
         val media = medias[position]
 
-        return when (media.imageType) {
+        return when (media.mediaType) {
             "video_multi" -> MultiVideoFragment()
             "video_one" -> OneVideoFragment()
             "gif" -> GifFragment()
             "photo" -> ImageFragment()
-            else -> ImageFragment()
+            else -> TODO("Unknown media")
         }.apply {
             setMediaToArg(media, type)
         }

@@ -230,7 +230,7 @@ public class TweetImageTableView extends GridLayout {
                         )
                         .transition(DrawableTransitionOptions.withCrossFade())
                         .into(imageView);
-                switch (medias[ii].getImageType()) {
+                switch (medias[ii].getMediaType()) {
                     case "video_one":
                     case "video_multi":
                         foregrounds[ii].setVisibility(VISIBLE);
