@@ -53,6 +53,9 @@ git submodule update --init --recursive
 ```
 
 2. Open in Android Studio\.
+
+Note: Please turn off Instant Run in the settings. It cause app's crash in debug build.
+
 3. Build\.
 
 ## Dependencies
