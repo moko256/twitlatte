@@ -29,7 +29,11 @@ import com.github.moko256.latte.client.base.CLIENT_TYPE_NOTHING
 import com.github.moko256.latte.client.base.entity.Media
 import com.github.moko256.latte.client.twitter.CLIENT_TYPE_TWITTER
 import com.github.moko256.twitlatte.R
+import com.github.moko256.twitlatte.ShowMediasActivity
 import com.github.moko256.twitlatte.glide.GlideApp
+import com.github.moko256.twitlatte.preferenceRepository
+import com.github.moko256.twitlatte.repository.KEY_HIDE_SENSITIVE_MEDIA
+import com.github.moko256.twitlatte.repository.KEY_TIMELINE_IMAGE_LOAD_MODE
 import com.github.moko256.twitlatte.text.TwitterStringUtils
 
 /**
@@ -61,7 +65,7 @@ class TweetImageTableView2 @JvmOverloads constructor(
     private var isOpen = true
 
     private var medias : Array<Media>? = null
-    private var containerViews : Array<ImageView> = Array(4) {
+    private var containerViews : Array<ImageView> = Array(4) { index ->
         val imageView = ImageView(context).apply {
             layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
             visibility = View.GONE
@@ -95,21 +99,27 @@ class TweetImageTableView2 @JvmOverloads constructor(
         container.addView(markImage)
         container.setOnLongClickListener({ v -> TODO() })
 
-        /*
         container.setOnClickListener {
-            if (isOpen){
-                getContext().startActivity(ShowMediasActivity.getIntent(getContext(), medias, clientType, it))
-            } else {
-                isOpen = true
-                setMediaToView(medias[it], imageView)
+            medias?.let { medias ->
+                val media = medias[index]
+                if (isOpen){
+                    getContext().startActivity(ShowMediasActivity.getIntent(getContext(), medias, clientType, index))
+                } else {
+                    isOpen = true
+                    setMediaToView(media, imageView)
+                }
             }
-        }*/
+        }
 
         return@Array imageView
     }
 
-    fun setMedias(newMedias: Array<Media>) {
+    fun setMedias(newMedias: Array<Media>, clientType: Int, sensitive: Boolean) {
         if (newMedias !== medias) {
+            this.clientType = clientType
+            isOpen = preferenceRepository.getString(KEY_TIMELINE_IMAGE_LOAD_MODE, "normal") != "none"
+                    && !(sensitive && preferenceRepository.getBoolean(KEY_HIDE_SENSITIVE_MEDIA, true))
+
             val oldSize = medias?.size?:0
             val newSize = newMedias.size
 
