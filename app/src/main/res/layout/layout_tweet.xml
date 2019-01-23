@@ -114,11 +114,20 @@
         android:layout_marginLeft="-16dp"
         android:layout_marginRight="-16dp"/>
 
+    <com.github.moko256.twitlatte.widget.TweetImageTableView2
+        android:id="@+id/tweet_image_container_v2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tweet_image_container"
+        android:layout_marginTop="16dp"
+        android:layout_marginLeft="-16dp"
+        android:layout_marginRight="-16dp"/>
+
     <com.github.moko256.twitlatte.widget.CheckableImageView
         android:id="@+id/tweet_spoiler_opener"
         android:layout_width="36dp"
         android:layout_height="36dp"
-        android:layout_below="@id/tweet_image_container"
+        android:layout_below="@id/tweet_image_container_v2"
         android:layout_alignParentStart="true"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="12dp"
@@ -133,7 +142,7 @@
         android:id="@+id/tweet_spoiler"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/tweet_image_container"
+        android:layout_below="@id/tweet_image_container_v2"
         android:layout_toEndOf="@id/tweet_spoiler_opener"
         android:layout_marginTop="16dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"

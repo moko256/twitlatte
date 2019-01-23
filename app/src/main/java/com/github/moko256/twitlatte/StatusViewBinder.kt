@@ -36,6 +36,7 @@ import com.github.moko256.twitlatte.text.TwitterStringUtils
 import com.github.moko256.twitlatte.view.EmojiToTextViewSetter
 import com.github.moko256.twitlatte.widget.CheckableImageView
 import com.github.moko256.twitlatte.widget.TweetImageTableView
+import com.github.moko256.twitlatte.widget.TweetImageTableView2
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 
@@ -73,6 +74,7 @@ class StatusViewBinder(
     val quoteTweetUserId: TextView = viewGroup.findViewById(R.id.tweet_quote_tweet_user_id)
     val quoteTweetContext: TextView = viewGroup.findViewById(R.id.tweet_quote_tweet_content)
     val imageTableView: TweetImageTableView = viewGroup.findViewById(R.id.tweet_image_container)
+    val imageTableViewV2: TweetImageTableView2 = viewGroup.findViewById(R.id.tweet_image_container_v2)
     val likeButton: CheckableImageView = viewGroup.findViewById(R.id.tweet_content_like_button)
     val repeatButton: CheckableImageView = viewGroup.findViewById(R.id.tweet_content_retweet_button)
     val replyButton: ImageButton = viewGroup.findViewById(R.id.tweet_content_reply_button)
@@ -292,8 +294,11 @@ class StatusViewBinder(
                     imageTableView.clearImages()
                 }
             })
+            imageTableViewV2.visibility = View.VISIBLE
+            imageTableViewV2.setMedias(medias)
         } else {
             imageTableView.visibility = View.GONE
+            imageTableViewV2.visibility = View.GONE
         }
 
         likeButton.isChecked = status.isFavorited
