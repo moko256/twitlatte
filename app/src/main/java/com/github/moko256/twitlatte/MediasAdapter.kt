@@ -43,7 +43,7 @@ class MediasAdapter(
             "video_multi" -> MultiVideoFragment()
             "video_one" -> OneVideoFragment()
             "gif" -> GifFragment()
-            "photo" -> ImageFragment()
+            "picture" -> ImageFragment()
             else -> TODO("Unknown media")
         }.apply {
             setMediaToArg(media, type)
