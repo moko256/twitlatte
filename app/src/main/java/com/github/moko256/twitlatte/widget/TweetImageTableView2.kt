@@ -18,12 +18,17 @@ package com.github.moko256.twitlatte.widget
 
 import android.content.Context
 import android.util.AttributeSet
+import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.ImageView
+import androidx.appcompat.content.res.AppCompatResources
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.github.moko256.latte.client.base.CLIENT_TYPE_NOTHING
 import com.github.moko256.latte.client.base.entity.Media
 import com.github.moko256.latte.client.twitter.CLIENT_TYPE_TWITTER
+import com.github.moko256.twitlatte.R
 import com.github.moko256.twitlatte.glide.GlideApp
 import com.github.moko256.twitlatte.text.TwitterStringUtils
 
@@ -42,9 +47,18 @@ private val params = arrayOf(
 class TweetImageTableView2 @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : ViewGroup(context, attrs, defStyleAttr) {
+    private val drawable = AppCompatResources.getDrawable(context, R.drawable.ic_play_arrow_white_24dp)
+    private val gifMark = AppCompatResources.getDrawable(context, R.drawable.ic_gif_white_24dp)
 
-    private val dividerSize = Math.round(context.resources.displayMetrics.density * 4)
+    private val dp = context.resources.displayMetrics.density
+    private val dividerSize = Math.round(4 * dp)
+    private val markSize = Math.round(48 * dp)
+
     private val glideRequest = GlideApp.with(this)
+
+    private var clientType = CLIENT_TYPE_NOTHING
+
+    private var isOpen = true
 
     private var medias : Array<Media>? = null
     private var containerViews : Array<ImageView> = Array(4) {
@@ -54,6 +68,43 @@ class TweetImageTableView2 @JvmOverloads constructor(
             scaleType = ImageView.ScaleType.CENTER_CROP
         }
         addView(imageView)
+
+        val foreground = View(context)
+        foreground.layoutParams = FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.MATCH_PARENT,
+                FrameLayout.LayoutParams.MATCH_PARENT
+        )
+        foreground.setBackgroundColor(0x33000000)
+
+        val playButton = ImageView(context)
+        val playButtonParams = FrameLayout.LayoutParams(markSize, markSize)
+        playButtonParams.gravity = Gravity.CENTER
+        playButton.layoutParams = playButtonParams
+        playButton.setImageDrawable(drawable)
+
+        val markImage = ImageView(context)
+        val markImageParams = FrameLayout.LayoutParams(markSize, markSize)
+        markImageParams.gravity = Gravity.BOTTOM or Gravity.START
+        markImage.layoutParams = markImageParams
+        markImage.setImageDrawable(gifMark)
+
+        val container = FrameLayout(context)
+        container.addView(imageView)
+        container.addView(foreground)
+        container.addView(playButton)
+        container.addView(markImage)
+        container.setOnLongClickListener({ v -> TODO() })
+
+        /*
+        container.setOnClickListener {
+            if (isOpen){
+                getContext().startActivity(ShowMediasActivity.getIntent(getContext(), medias, clientType, it))
+            } else {
+                isOpen = true
+                setMediaToView(medias[it], imageView)
+            }
+        }*/
+
         return@Array imageView
     }
 
