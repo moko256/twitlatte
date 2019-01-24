@@ -27,13 +27,11 @@ import androidx.appcompat.content.res.AppCompatResources
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.github.moko256.latte.client.base.CLIENT_TYPE_NOTHING
 import com.github.moko256.latte.client.base.entity.Media
-import com.github.moko256.latte.client.twitter.CLIENT_TYPE_TWITTER
 import com.github.moko256.twitlatte.R
 import com.github.moko256.twitlatte.ShowMediasActivity
 import com.github.moko256.twitlatte.glide.GlideApp
 import com.github.moko256.twitlatte.preferenceRepository
 import com.github.moko256.twitlatte.repository.KEY_HIDE_SENSITIVE_MEDIA
-import com.github.moko256.twitlatte.repository.KEY_TIMELINE_IMAGE_LOAD_MODE
 import com.github.moko256.twitlatte.text.TwitterStringUtils
 import jp.wasabeef.glide.transformations.BlurTransformation
 
@@ -65,11 +63,12 @@ class TweetImageTableView2 @JvmOverloads constructor(
 
     private var isOpen = true
 
+    private lateinit var imageLoadMode: String
+
     private var medias : Array<Media>? = null
     private var containerViews : Array<FrameLayout> = Array(4) { index ->
         val imageView = ImageView(context).apply {
             layoutParams = FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
-            visibility = View.GONE
             scaleType = ImageView.ScaleType.CENTER_CROP
         }
 
@@ -93,6 +92,7 @@ class TweetImageTableView2 @JvmOverloads constructor(
         markImage.setImageDrawable(gifMark)
 
         val container = FrameLayout(context)
+        container.visibility = View.GONE
         container.addView(imageView)
         container.addView(foreground)
         container.addView(playButton)
@@ -110,13 +110,16 @@ class TweetImageTableView2 @JvmOverloads constructor(
             }
         }
 
+        addView(container)
+
         return@Array container
     }
 
-    fun setMedias(newMedias: Array<Media>, clientType: Int, sensitive: Boolean) {
+    fun setMedias(newMedias: Array<Media>, clientType: Int, sensitive: Boolean, imageLoadMode: String) {
+        this.imageLoadMode = imageLoadMode
         if (newMedias !== medias) {
             this.clientType = clientType
-            isOpen = preferenceRepository.getString(KEY_TIMELINE_IMAGE_LOAD_MODE, "normal") != "none"
+            isOpen = imageLoadMode != "none"
                     && !(sensitive && preferenceRepository.getBoolean(KEY_HIDE_SENSITIVE_MEDIA, true))
 
             val oldSize = medias?.size?:0
@@ -157,7 +160,7 @@ class TweetImageTableView2 @JvmOverloads constructor(
         if (isOpen) {
             glideRequest
                     .load(
-                            if (preferenceRepository.getString(KEY_TIMELINE_IMAGE_LOAD_MODE, "normal") == "normal")
+                            if (imageLoadMode == "normal")
                                 TwitterStringUtils.convertSmallImageUrl(clientType, url)
                             else
                                 TwitterStringUtils.convertThumbImageUrl(clientType, url)
@@ -182,7 +185,7 @@ class TweetImageTableView2 @JvmOverloads constructor(
                 }
             }
         } else {
-            val timelineImageLoadMode = preferenceRepository.getString(KEY_TIMELINE_IMAGE_LOAD_MODE, "normal")
+            val timelineImageLoadMode = imageLoadMode
             if (timelineImageLoadMode != "none") {
                 glideRequest
                         .load(

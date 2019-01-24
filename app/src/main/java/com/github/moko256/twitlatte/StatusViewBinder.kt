@@ -289,7 +289,7 @@ class StatusViewBinder(
             imageTableView.setMedias(medias, accessToken.clientType, status.isSensitive)
 
             imageTableViewV2.visibility = View.VISIBLE
-            imageTableViewV2.setMedias(medias, accessToken.clientType, status.isSensitive)
+            imageTableViewV2.setMedias(medias, accessToken.clientType, status.isSensitive, timelineImageLoadMode)
             disposable.add(object: Disposable {
                 override fun isDisposed() = false
 
