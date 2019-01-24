@@ -47,7 +47,7 @@ private val params = arrayOf(
         arrayOf(intArrayOf(0, 0, 1, 1), intArrayOf(0, 1, 1, 1), intArrayOf(1, 0, 1, 1), intArrayOf(1, 1, 1, 1))
 )
 
-class TweetImageTableView2 @JvmOverloads constructor(
+class TweetImageTableView @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : ViewGroup(context, attrs, defStyleAttr) {
     private val drawable = AppCompatResources.getDrawable(context, R.drawable.ic_play_arrow_white_24dp)
@@ -97,7 +97,7 @@ class TweetImageTableView2 @JvmOverloads constructor(
         container.addView(foreground)
         container.addView(playButton)
         container.addView(markImage)
-        container.setOnLongClickListener { this@TweetImageTableView2.performLongClick() }
+        container.setOnLongClickListener { this@TweetImageTableView.performLongClick() }
 
         container.setOnClickListener {
             medias?.let { medias ->
@@ -208,8 +208,8 @@ class TweetImageTableView2 @JvmOverloads constructor(
     }
 
     fun clearImages() {
-        containerViews.forEach {
-            glideRequest.clear(it.getChildAt(0) as ImageView)
+        repeat(medias?.size?:0) {
+            glideRequest.clear(containerViews[it].getChildAt(0) as ImageView)
         }
     }
 

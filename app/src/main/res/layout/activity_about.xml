@@ -57,18 +57,12 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:layout_centerHorizontal="true"/>
 
-        <com.github.moko256.twitlatte.widget.TweetImageTableView2
-            android:id="@+id/tv"
-            android:layout_below="@id/copyright"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="64dp"
             android:layout_marginRight="64dp"
-            android:layout_below="@id/tv"
+            android:layout_below="@id/copyright"
             android:adjustViewBounds="true"
             android:onClick="onPictureClick"
             app:srcCompat="@drawable/ee_picture_1_0_0"/>

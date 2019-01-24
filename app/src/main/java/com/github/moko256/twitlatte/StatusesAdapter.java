@@ -43,11 +43,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import kotlin.Unit;
 
+import static com.github.moko256.twitlatte.GlobalApplicationKt.preferenceRepository;
 import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY_IS_PATTERN_TWEET_MUTE;
 import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY_IS_PATTERN_TWEET_MUTE_SHOW_ONLY_IMAGE;
 import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY_IS_PATTERN_TWEET_SOURCE_MUTE;
 import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY_IS_PATTERN_USER_NAME_MUTE;
 import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY_IS_PATTERN_USER_SCREEN_NAME_MUTE;
+import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY_TIMELINE_IMAGE_LOAD_MODE;
 import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY_TWEET_MUTE_PATTERN;
 import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY_TWEET_MUTE_SHOW_ONLY_IMAGE_PATTERN;
 import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY_TWEET_SOURCE_MUTE_PATTERN;
@@ -317,7 +319,8 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 tweetImageTableView.setMedias(
                         status.getMedias(),
                         client.getAccessToken().getClientType(),
-                        status.isSensitive()
+                        status.isSensitive(),
+                        preferenceRepository.getString(KEY_TIMELINE_IMAGE_LOAD_MODE, "normal")
                 );
                 tweetImageTableView.setOnLongClickListener(v -> {
                     context.startActivity(ShowTweetActivity.getIntent(context, status.getId()));
