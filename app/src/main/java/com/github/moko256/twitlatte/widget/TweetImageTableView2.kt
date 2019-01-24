@@ -35,6 +35,7 @@ import com.github.moko256.twitlatte.preferenceRepository
 import com.github.moko256.twitlatte.repository.KEY_HIDE_SENSITIVE_MEDIA
 import com.github.moko256.twitlatte.repository.KEY_TIMELINE_IMAGE_LOAD_MODE
 import com.github.moko256.twitlatte.text.TwitterStringUtils
+import jp.wasabeef.glide.transformations.BlurTransformation
 
 /**
  * Created by moko256 on 2019/01/21.
@@ -65,13 +66,12 @@ class TweetImageTableView2 @JvmOverloads constructor(
     private var isOpen = true
 
     private var medias : Array<Media>? = null
-    private var containerViews : Array<ImageView> = Array(4) { index ->
+    private var containerViews : Array<FrameLayout> = Array(4) { index ->
         val imageView = ImageView(context).apply {
-            layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
+            layoutParams = FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
             visibility = View.GONE
             scaleType = ImageView.ScaleType.CENTER_CROP
         }
-        addView(imageView)
 
         val foreground = View(context)
         foreground.layoutParams = FrameLayout.LayoutParams(
@@ -97,21 +97,20 @@ class TweetImageTableView2 @JvmOverloads constructor(
         container.addView(foreground)
         container.addView(playButton)
         container.addView(markImage)
-        container.setOnLongClickListener({ v -> TODO() })
+        container.setOnLongClickListener { this@TweetImageTableView2.performLongClick() }
 
         container.setOnClickListener {
             medias?.let { medias ->
-                val media = medias[index]
                 if (isOpen){
                     getContext().startActivity(ShowMediasActivity.getIntent(getContext(), medias, clientType, index))
                 } else {
                     isOpen = true
-                    setMediaToView(media, imageView)
+                    updateImages(medias)
                 }
             }
         }
 
-        return@Array imageView
+        return@Array container
     }
 
     fun setMedias(newMedias: Array<Media>, clientType: Int, sensitive: Boolean) {
@@ -135,20 +134,80 @@ class TweetImageTableView2 @JvmOverloads constructor(
 
             medias = newMedias
             invalidate()
-            newMedias.forEachIndexed { index, media ->
-                setMediaToView(media, containerViews[index])
-            }
+            updateImages(newMedias)
         }
     }
 
-    private fun setMediaToView(media: Media, view: ImageView) {
-        val url = if (media.thumbnailUrl == null) media.originalUrl else media.thumbnailUrl
-        glideRequest
-                .load(
-                        TwitterStringUtils.convertSmallImageUrl(CLIENT_TYPE_TWITTER, url)
-                )
-                .transition(DrawableTransitionOptions.withCrossFade())
-                .into(view)
+    private fun updateImages(medias: Array<Media>) {
+        medias.forEachIndexed { index, media ->
+            setMediaToView(media, containerViews[index])
+        }
+    }
+
+    private fun setMediaToView(media: Media, view: FrameLayout) {
+        val thumbnailUrl = media.thumbnailUrl
+        val originalUrl = media.originalUrl
+
+        val url = thumbnailUrl ?: originalUrl
+        val imageView = view.getChildAt(0) as ImageView
+        val foreground = view.getChildAt(1)
+        val playButton = view.getChildAt(2)
+        val markImage = view.getChildAt(3)
+
+        if (isOpen) {
+            glideRequest
+                    .load(
+                            if (preferenceRepository.getString(KEY_TIMELINE_IMAGE_LOAD_MODE, "normal") == "normal")
+                                TwitterStringUtils.convertSmallImageUrl(clientType, url)
+                            else
+                                TwitterStringUtils.convertThumbImageUrl(clientType, url)
+                    )
+                    .transition(DrawableTransitionOptions.withCrossFade())
+                    .into(imageView)
+            when (media.mediaType) {
+                "video_one", "video_multi" -> {
+                    foreground.visibility = View.VISIBLE
+                    playButton.visibility = View.VISIBLE
+                    markImage.visibility = View.GONE
+                }
+                "gif" -> {
+                    foreground.visibility = View.VISIBLE
+                    playButton.visibility = View.VISIBLE
+                    markImage.visibility = View.VISIBLE
+                }
+                else -> {
+                    foreground.visibility = View.GONE
+                    playButton.visibility = View.GONE
+                    markImage.visibility = View.GONE
+                }
+            }
+        } else {
+            val timelineImageLoadMode = preferenceRepository.getString(KEY_TIMELINE_IMAGE_LOAD_MODE, "normal")
+            if (timelineImageLoadMode != "none") {
+                glideRequest
+                        .load(
+                                if (timelineImageLoadMode == "normal")
+                                    TwitterStringUtils.convertSmallImageUrl(clientType, url)
+                                else
+                                    TwitterStringUtils.convertThumbImageUrl(clientType, url)
+                        )
+                        .transform(BlurTransformation())
+                        .transition(DrawableTransitionOptions.withCrossFade())
+                        .into(imageView)
+            } else {
+                imageView.setImageResource(R.drawable.border_frame)
+            }
+
+            foreground.visibility = View.GONE
+            playButton.visibility = View.GONE
+            markImage.visibility = View.GONE
+        }
+    }
+
+    fun clearImages() {
+        containerViews.forEach {
+            glideRequest.clear(it.getChildAt(0) as ImageView)
+        }
     }
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {

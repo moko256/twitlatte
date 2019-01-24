@@ -195,7 +195,7 @@ public class TweetImageTableView extends GridLayout {
         return params;
     }
 
-    public void setMediaEntities(
+    public void setMedias(
             Media[] mediaEntities,
             int clientType,
             boolean sensitive

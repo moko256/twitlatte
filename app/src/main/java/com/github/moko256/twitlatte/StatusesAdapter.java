@@ -314,7 +314,7 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         void setStatus(Status status) {
             if (status != null) {
-                tweetImageTableView.setMediaEntities(
+                tweetImageTableView.setMedias(
                         status.getMedias(),
                         client.getAccessToken().getClientType(),
                         status.isSensitive()

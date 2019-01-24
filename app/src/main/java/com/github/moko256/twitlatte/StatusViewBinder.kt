@@ -265,7 +265,7 @@ class StatusViewBinder(
             )
             if (quotedStatus.medias?.isNotEmpty() == true) {
                 quoteTweetImages.visibility = View.VISIBLE
-                quoteTweetImages.setMediaEntities(quotedStatus.medias, accessToken.clientType, quotedStatus.isSensitive)
+                quoteTweetImages.setMedias(quotedStatus.medias, accessToken.clientType, quotedStatus.isSensitive)
                 disposable.add(object: Disposable {
                     override fun isDisposed() = false
 
@@ -286,16 +286,18 @@ class StatusViewBinder(
 
         if (medias?.isNotEmpty() == true) {
             imageTableView.visibility = View.VISIBLE
-            imageTableView.setMediaEntities(medias, accessToken.clientType, status.isSensitive)
+            imageTableView.setMedias(medias, accessToken.clientType, status.isSensitive)
+
+            imageTableViewV2.visibility = View.VISIBLE
+            imageTableViewV2.setMedias(medias, accessToken.clientType, status.isSensitive)
             disposable.add(object: Disposable {
                 override fun isDisposed() = false
 
                 override fun dispose() {
                     imageTableView.clearImages()
+                    imageTableViewV2.clearImages()
                 }
             })
-            imageTableViewV2.visibility = View.VISIBLE
-            imageTableViewV2.setMedias(medias)
         } else {
             imageTableView.visibility = View.GONE
             imageTableViewV2.visibility = View.GONE
