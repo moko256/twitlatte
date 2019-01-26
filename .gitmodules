@@ -1,6 +1,12 @@
 [submodule "japng-android"]
 	path = japng-android
 	url = https://github.com/moko256/Japng-Android.git
+	branch = origin/master
 [submodule "mastodon4j"]
 	path = mastodon4j
 	url = https://github.com/moko256/mastodon4j.git
+	branch = origin/master
+[submodule "twitter-text"]
+	path = twitter-text
+	url = https://github.com/moko256/twitter-text.git
+	branch = origin/faster
