@@ -117,28 +117,26 @@ class TweetImageTableView @JvmOverloads constructor(
 
     fun setMedias(newMedias: Array<Media>, clientType: Int, sensitive: Boolean, imageLoadMode: String) {
         this.imageLoadMode = imageLoadMode
-        if (newMedias !== medias) {
-            this.clientType = clientType
-            isOpen = imageLoadMode != "none"
-                    && !(sensitive && preferenceRepository.getBoolean(KEY_HIDE_SENSITIVE_MEDIA, true))
+        this.clientType = clientType
+        isOpen = imageLoadMode != "none"
+                && !(sensitive && preferenceRepository.getBoolean(KEY_HIDE_SENSITIVE_MEDIA, true))
 
-            val oldSize = medias?.size?:0
-            val newSize = newMedias.size
+        val oldSize = medias?.size?:0
+        val newSize = newMedias.size
 
-            if (oldSize < newSize) {
-                for (i in oldSize until newSize) {
-                    containerViews[i].visibility = View.VISIBLE
-                }
-            } else if (newSize < oldSize) {
-                for (i in newSize until oldSize) {
-                    containerViews[i].visibility = View.GONE
-                }
+        if (oldSize < newSize) {
+            for (i in oldSize until newSize) {
+                containerViews[i].visibility = View.VISIBLE
             }
-
-            medias = newMedias
-            invalidate()
-            updateImages(newMedias)
+        } else if (newSize < oldSize) {
+            for (i in newSize until oldSize) {
+                containerViews[i].visibility = View.GONE
+            }
         }
+
+        medias = newMedias
+        invalidate()
+        updateImages(newMedias)
     }
 
     private fun updateImages(medias: Array<Media>) {

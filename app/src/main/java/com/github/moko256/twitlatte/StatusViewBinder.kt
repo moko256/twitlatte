@@ -181,6 +181,13 @@ class StatusViewBinder(
                     .circleCrop()
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .into(userImage)
+            disposable.add(object: Disposable {
+                override fun isDisposed() = false
+
+                override fun dispose() {
+                    glideRequests.clear(userName)
+                }
+            })
         } else {
             userImage.setImageResource(R.drawable.border_frame_round)
         }

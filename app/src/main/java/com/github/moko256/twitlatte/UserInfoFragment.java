@@ -184,6 +184,17 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
                     .load(headerUrl)
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .into(header);
+            disposable.add(new Disposable() {
+                @Override
+                public void dispose() {
+                    glideRequests.clear(header);
+                }
+
+                @Override
+                public boolean isDisposed() {
+                    return false;
+                }
+            });
         } else {
             String colorStr = user.getProfileBackgroundColor();
             if (!TextUtils.isEmpty(colorStr)){
@@ -195,6 +206,17 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
                 .circleCrop()
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .into(icon);
+        disposable.add(new Disposable() {
+            @Override
+            public void dispose() {
+                glideRequests.clear(icon);
+            }
+
+            @Override
+            public boolean isDisposed() {
+                return false;
+            }
+        });
 
         CharSequence userName = TwitterStringUtils.plusUserMarks(
                 user.getName(),
