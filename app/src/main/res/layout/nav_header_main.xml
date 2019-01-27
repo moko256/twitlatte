@@ -26,7 +26,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/user_bg_image"
-        android:foreground="#33000000" />
+        android:tint="#33000000"
+        tools:src="#FFFFFF"/>
 
     <com.github.moko256.twitlatte.widget.WideRatioRelativeLayout
         android:layout_width="match_parent"

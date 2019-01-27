@@ -17,6 +17,8 @@
 package com.github.moko256.twitlatte.widget
 
 import android.content.Context
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffColorFilter
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.View
@@ -57,6 +59,7 @@ class TweetImageTableView @JvmOverloads constructor(
     private val dividerSize = Math.round(4 * dp)
     private val markSize = Math.round(48 * dp)
 
+    private val imageFilter = PorterDuffColorFilter(0x33000000, PorterDuff.Mode.SRC_ATOP)
     private val maxMediaSize = 4
 
     private val glideRequest = GlideApp.with(this)
@@ -76,13 +79,6 @@ class TweetImageTableView @JvmOverloads constructor(
             scaleType = ImageView.ScaleType.CENTER_CROP
         }
 
-        val foreground = View(context)
-        foreground.layoutParams = FrameLayout.LayoutParams(
-                FrameLayout.LayoutParams.MATCH_PARENT,
-                FrameLayout.LayoutParams.MATCH_PARENT
-        )
-        foreground.setBackgroundColor(0x33000000)
-
         val playButton = ImageView(context)
         val playButtonParams = FrameLayout.LayoutParams(markSize, markSize)
         playButtonParams.gravity = Gravity.CENTER
@@ -98,7 +94,6 @@ class TweetImageTableView @JvmOverloads constructor(
         val container = FrameLayout(context)
         container.visibility = View.GONE
         container.addView(imageView)
-        container.addView(foreground)
         container.addView(playButton)
         container.addView(markImage)
         container.setOnLongClickListener { this@TweetImageTableView.performLongClick() }
@@ -156,9 +151,8 @@ class TweetImageTableView @JvmOverloads constructor(
 
         val url = thumbnailUrl ?: originalUrl
         val imageView = view.getChildAt(0) as ImageView
-        val foreground = view.getChildAt(1)
-        val playButton = view.getChildAt(2)
-        val markImage = view.getChildAt(3)
+        val playButton = view.getChildAt(1)
+        val markImage = view.getChildAt(2)
 
         if (isOpen) {
             glideRequest
@@ -172,17 +166,17 @@ class TweetImageTableView @JvmOverloads constructor(
                     .into(imageView)
             when (media.mediaType) {
                 "video_one", "video_multi" -> {
-                    foreground.visibility = View.VISIBLE
+                    imageView.setFilterIfNotExist()
                     playButton.visibility = View.VISIBLE
                     markImage.visibility = View.GONE
                 }
                 "gif" -> {
-                    foreground.visibility = View.VISIBLE
+                    imageView.setFilterIfNotExist()
                     playButton.visibility = View.VISIBLE
                     markImage.visibility = View.VISIBLE
                 }
                 else -> {
-                    foreground.visibility = View.GONE
+                    imageView.removeFilterIfExist()
                     playButton.visibility = View.GONE
                     markImage.visibility = View.GONE
                 }
@@ -204,9 +198,21 @@ class TweetImageTableView @JvmOverloads constructor(
                 imageView.setImageResource(R.drawable.border_frame)
             }
 
-            foreground.visibility = View.GONE
+            imageView.removeFilterIfExist()
             playButton.visibility = View.GONE
             markImage.visibility = View.GONE
+        }
+    }
+
+    private fun ImageView.setFilterIfNotExist() {
+        if (colorFilter == null) {
+            colorFilter = imageFilter
+        }
+    }
+
+    private fun ImageView.removeFilterIfExist() {
+        if (colorFilter != null) {
+            colorFilter = null
         }
     }
 

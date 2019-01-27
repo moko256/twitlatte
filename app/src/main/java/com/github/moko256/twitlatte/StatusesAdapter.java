@@ -29,7 +29,6 @@ import com.github.moko256.latte.client.base.entity.Repeat;
 import com.github.moko256.latte.client.base.entity.Status;
 import com.github.moko256.latte.client.base.entity.User;
 import com.github.moko256.twitlatte.entity.Client;
-import com.github.moko256.twitlatte.glide.GlideApp;
 import com.github.moko256.twitlatte.glide.GlideRequests;
 import com.github.moko256.twitlatte.repository.PreferenceRepository;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
@@ -67,6 +66,7 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private final Context context;
     private final Client client;
     private final PreferenceRepository conf;
+    private final GlideRequests glideRequests;
 
     public OnLoadMoreClickListener onLoadMoreClick;
 
@@ -75,11 +75,12 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     public boolean shouldShowMediaOnly = false;
 
-    StatusesAdapter(Client client, PreferenceRepository preferenceRepository, Context context, List<Long> data) {
+    StatusesAdapter(Client client, PreferenceRepository preferenceRepository, Context context, List<Long> data, GlideRequests glideRequests) {
         this.client = client;
         this.conf = preferenceRepository;
         this.context = context;
         this.data = data;
+        this.glideRequests = glideRequests;
         setHasStableIds(true);
     }
 
@@ -148,7 +149,7 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             case R.layout.layout_list_tweet_only_image:
                 return new ImagesOnlyTweetViewHolder(child);
             case R.layout.layout_post_card:
-                return new StatusViewHolder(GlideApp.with(context), child);
+                return new StatusViewHolder(glideRequests, child);
             default:
                 throw new RuntimeException("Invalid id");
         }
@@ -180,7 +181,7 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                             post.getQuotedRepeatingStatus()
                     );
                 } else if (viewHolder instanceof ImagesOnlyTweetViewHolder){
-                    ((ImagesOnlyTweetViewHolder) viewHolder).setStatus(post.getStatus());
+                    ((ImagesOnlyTweetViewHolder) viewHolder).setStatus(post.getStatus(), glideRequests);
                 }
             }
         }
@@ -191,7 +192,7 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         if (holder instanceof StatusViewHolder){
             ((StatusViewHolder) holder).clear();
         } else if (holder instanceof ImagesOnlyTweetViewHolder) {
-            ((ImagesOnlyTweetViewHolder) holder).setStatus(null);
+            ((ImagesOnlyTweetViewHolder) holder).setStatus(null, glideRequests);
         }
     }
 
@@ -314,7 +315,7 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             tweetImageTableView = itemView.findViewById(R.id.list_tweet_image_container);
         }
 
-        void setStatus(Status status) {
+        void setStatus(Status status, GlideRequests glideRequests) {
             if (status != null) {
                 tweetImageTableView.setMedias(
                         status.getMedias(),
