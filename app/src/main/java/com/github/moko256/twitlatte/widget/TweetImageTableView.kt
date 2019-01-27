@@ -57,6 +57,8 @@ class TweetImageTableView @JvmOverloads constructor(
     private val dividerSize = Math.round(4 * dp)
     private val markSize = Math.round(48 * dp)
 
+    private val maxMediaSize = 4
+
     private val glideRequest = GlideApp.with(this)
 
     private var clientType = CLIENT_TYPE_NOTHING
@@ -66,7 +68,9 @@ class TweetImageTableView @JvmOverloads constructor(
     private lateinit var imageLoadMode: String
 
     private var medias : Array<Media>? = null
-    private var containerViews : Array<FrameLayout> = Array(4) { index ->
+    private var mediaSize = 0
+
+    private var containerViews : Array<FrameLayout> = Array(maxMediaSize) { index ->
         val imageView = ImageView(context).apply {
             layoutParams = FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
             scaleType = ImageView.ScaleType.CENTER_CROP
@@ -121,7 +125,7 @@ class TweetImageTableView @JvmOverloads constructor(
         isOpen = imageLoadMode != "none"
                 && !(sensitive && preferenceRepository.getBoolean(KEY_HIDE_SENSITIVE_MEDIA, true))
 
-        val oldSize = medias?.size?:0
+        val oldSize = mediaSize
         val newSize = newMedias.size
 
         if (oldSize < newSize) {
@@ -135,6 +139,7 @@ class TweetImageTableView @JvmOverloads constructor(
         }
 
         medias = newMedias
+        mediaSize = Math.min(newSize, maxMediaSize)
         invalidate()
         updateImages(newMedias)
     }
@@ -206,14 +211,14 @@ class TweetImageTableView @JvmOverloads constructor(
     }
 
     fun clearImages() {
-        repeat(medias?.size?:0) {
+        repeat(mediaSize) {
             glideRequest.clear(containerViews[it].getChildAt(0) as ImageView)
         }
     }
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
         medias?.let { medias ->
-            for (i in 0 until medias.size) {
+            for (i in 0 until mediaSize) {
                 val view = containerViews[i]
                 val param = params[medias.size - 1][i]
 
@@ -258,7 +263,7 @@ class TweetImageTableView @JvmOverloads constructor(
         )
 
         medias?.let { medias ->
-            for (i in 0 until medias.size) {
+            for (i in 0 until mediaSize) {
                 val param = params[medias.size - 1][i]
                 val view = containerViews[i]
                 view.measure(generateChildSpec(widthSize, param[3]), generateChildSpec(heightSize, param[2]))
