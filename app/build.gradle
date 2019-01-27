@@ -14,12 +14,9 @@
  * limitations under the License.
  */
 
-import com.github.moko256.plugin.optimizer.twittertext.TwitterTextTransformerPlugin
-
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
-apply plugin: TwitterTextTransformerPlugin
 
 android {
     compileSdkVersion 28
@@ -69,8 +66,6 @@ android {
         exclude '/META-INF/*.version'
         exclude '/META-INF/**.kotlin_module'
         exclude '/META-INF/proguard/**'
-        exclude '/META-INF/services/com.fasterxml.jackson.core.**'
-        exclude '/v*.json'
         setMerges(Collections.EMPTY_SET)
     }
 }
