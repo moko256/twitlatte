@@ -31,7 +31,7 @@ import com.github.moko256.latte.client.base.CLIENT_TYPE_NOTHING
 import com.github.moko256.latte.client.base.entity.Media
 import com.github.moko256.twitlatte.R
 import com.github.moko256.twitlatte.ShowMediasActivity
-import com.github.moko256.twitlatte.glide.GlideApp
+import com.github.moko256.twitlatte.glide.GlideRequests
 import com.github.moko256.twitlatte.preferenceRepository
 import com.github.moko256.twitlatte.repository.KEY_HIDE_SENSITIVE_MEDIA
 import com.github.moko256.twitlatte.text.TwitterStringUtils
@@ -62,7 +62,7 @@ class TweetImageTableView @JvmOverloads constructor(
     private val imageFilter = PorterDuffColorFilter(0x33000000, PorterDuff.Mode.SRC_ATOP)
     private val maxMediaSize = 4
 
-    private val glideRequest = GlideApp.with(this)
+    lateinit var glideRequests: GlideRequests
 
     private var clientType = CLIENT_TYPE_NOTHING
 
@@ -155,7 +155,7 @@ class TweetImageTableView @JvmOverloads constructor(
         val markImage = view.getChildAt(2)
 
         if (isOpen) {
-            glideRequest
+            glideRequests
                     .load(
                             if (imageLoadMode == "normal")
                                 TwitterStringUtils.convertSmallImageUrl(clientType, url)
@@ -184,7 +184,7 @@ class TweetImageTableView @JvmOverloads constructor(
         } else {
             val timelineImageLoadMode = imageLoadMode
             if (timelineImageLoadMode != "none") {
-                glideRequest
+                glideRequests
                         .load(
                                 if (timelineImageLoadMode == "normal")
                                     TwitterStringUtils.convertSmallImageUrl(clientType, url)
@@ -218,7 +218,7 @@ class TweetImageTableView @JvmOverloads constructor(
 
     fun clearImages() {
         repeat(mediaSize) {
-            glideRequest.clear(containerViews[it].getChildAt(0) as ImageView)
+            glideRequests.clear(containerViews[it].getChildAt(0) as ImageView)
         }
     }
 

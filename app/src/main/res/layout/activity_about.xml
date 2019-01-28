@@ -65,6 +65,6 @@
             android:layout_below="@id/copyright"
             android:adjustViewBounds="true"
             android:onClick="onPictureClick"
-            app:srcCompat="@drawable/ee_picture_1_0_0"/>
+            app:srcCompat="@drawable/vector_ee_picture_1_0_0"/>
     </RelativeLayout>
 </ScrollView>

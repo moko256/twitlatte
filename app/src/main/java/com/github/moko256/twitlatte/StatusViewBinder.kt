@@ -319,24 +319,24 @@ class StatusViewBinder(
             when {
                 status.visibility == Visibility.Private.value -> {
                     isRepeatEnabled = false
-                    repeatIconResourceId = R.drawable.lock_button_stateful
+                    repeatIconResourceId = R.drawable.stateful_lock_button
                 }
                 status.visibility == Visibility.Direct.value -> {
                     isRepeatEnabled = false
-                    repeatIconResourceId = R.drawable.dm_button_stateful
+                    repeatIconResourceId = R.drawable.stateful_dm_button
                 }
                 else -> {
                     isRepeatEnabled = true
-                    repeatIconResourceId = R.drawable.repeat_button_stateful
+                    repeatIconResourceId = R.drawable.stateful_repeat_button
                 }
             }
         } else {
             if (user != null && (!user.isProtected || user.id == accessToken.userId)) {
                 isRepeatEnabled = true
-                repeatIconResourceId = R.drawable.repeat_button_stateful
+                repeatIconResourceId = R.drawable.stateful_repeat_button
             } else {
                 isRepeatEnabled = false
-                repeatIconResourceId = R.drawable.lock_button_stateful
+                repeatIconResourceId = R.drawable.stateful_lock_button
             }
         }
         repeatButton.isEnabled = isRepeatEnabled

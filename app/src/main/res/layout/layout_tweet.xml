@@ -124,8 +124,8 @@
         android:layout_marginEnd="12dp"
         android:padding="6dp"
         android:background="?attr/controlBackground"
-        app:srcCompat="@drawable/opener_button_stateful"
-        app:tint="@color/image_button_color_stateful"
+        app:srcCompat="@drawable/stateful_opener_button"
+        app:tint="@color/stateful_image_button_color"
         tools:ignore="PrivateResource"
         android:theme="@style/ExpandAndCloseToggleBackgroundColor"/>
 
@@ -215,7 +215,7 @@
         android:layout_marginStart="36dp"
         android:layout_marginEnd="4dp"
         android:background="?attr/controlBackground"
-        app:tint="@color/image_button_color_stateful"
+        app:tint="@color/stateful_image_button_color"
         app:srcCompat="@drawable/ic_reply_white_24dp"
         tools:ignore="PrivateResource" />
 
@@ -243,8 +243,8 @@
         android:layout_marginEnd="4dp"
         android:background="?attr/controlBackground"
         android:padding="6dp"
-        tools:srcCompat="@drawable/repeat_button_stateful"
-        app:tint="@color/toggle_button_color_stateful"
+        tools:srcCompat="@drawable/stateful_repeat_button"
+        app:tint="@color/stateful_toggle_button_color"
         tools:ignore="PrivateResource" />
 
     <TextView
@@ -271,8 +271,8 @@
         android:layout_marginEnd="4dp"
         android:background="?attr/controlBackground"
         android:padding="6dp"
-        app:srcCompat="@drawable/like_button_stateful"
-        app:tint="@color/toggle_button_color_stateful"
+        app:srcCompat="@drawable/stateful_like_button"
+        app:tint="@color/stateful_toggle_button_color"
         tools:ignore="PrivateResource"/>
 
     <TextView
