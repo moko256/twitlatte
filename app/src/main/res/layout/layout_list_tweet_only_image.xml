@@ -26,7 +26,7 @@
     app:cardCornerRadius="2dp"
     app:cardElevation="2dp"
     app:cardUseCompatPadding="true">
-    <com.github.moko256.twitlatte.widget.TweetImageTableView
+    <com.github.moko256.twitlatte.widget.ImagesTableView
         android:id="@+id/list_tweet_image_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>

@@ -49,7 +49,7 @@ private val params = arrayOf(
         arrayOf(intArrayOf(0, 0, 1, 1), intArrayOf(0, 1, 1, 1), intArrayOf(1, 0, 1, 1), intArrayOf(1, 1, 1, 1))
 )
 
-class TweetImageTableView @JvmOverloads constructor(
+class ImagesTableView @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : ViewGroup(context, attrs, defStyleAttr) {
     private val drawable = AppCompatResources.getDrawable(context, R.drawable.ic_play_arrow_white_24dp)
@@ -96,7 +96,7 @@ class TweetImageTableView @JvmOverloads constructor(
         container.addView(imageView)
         container.addView(playButton)
         container.addView(markImage)
-        container.setOnLongClickListener { this@TweetImageTableView.performLongClick() }
+        container.setOnLongClickListener { this@ImagesTableView.performLongClick() }
 
         container.setOnClickListener {
             medias?.let { medias ->

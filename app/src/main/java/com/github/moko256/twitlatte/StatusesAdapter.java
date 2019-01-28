@@ -32,7 +32,7 @@ import com.github.moko256.twitlatte.entity.Client;
 import com.github.moko256.twitlatte.glide.GlideRequests;
 import com.github.moko256.twitlatte.repository.PreferenceRepository;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
-import com.github.moko256.twitlatte.widget.TweetImageTableView;
+import com.github.moko256.twitlatte.widget.ImagesTableView;
 
 import java.util.List;
 
@@ -308,28 +308,28 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     private class ImagesOnlyTweetViewHolder extends RecyclerView.ViewHolder {
-        final TweetImageTableView tweetImageTableView;
+        final ImagesTableView imagesTableView;
 
         ImagesOnlyTweetViewHolder(ViewGroup viewGroup, GlideRequests glideRequests) {
             super(viewGroup);
-            tweetImageTableView = itemView.findViewById(R.id.list_tweet_image_container);
-            tweetImageTableView.glideRequests = glideRequests;
+            imagesTableView = itemView.findViewById(R.id.list_tweet_image_container);
+            imagesTableView.glideRequests = glideRequests;
         }
 
         void setStatus(Status status) {
             if (status != null) {
-                tweetImageTableView.setMedias(
+                imagesTableView.setMedias(
                         status.getMedias(),
                         client.getAccessToken().getClientType(),
                         status.isSensitive(),
                         preferenceRepository.getString(KEY_TIMELINE_IMAGE_LOAD_MODE, "normal")
                 );
-                tweetImageTableView.setOnLongClickListener(v -> {
+                imagesTableView.setOnLongClickListener(v -> {
                     context.startActivity(ShowTweetActivity.getIntent(context, status.getId()));
                     return true;
                 });
             } else {
-                tweetImageTableView.clearImages();
+                imagesTableView.clearImages();
             }
         }
     }

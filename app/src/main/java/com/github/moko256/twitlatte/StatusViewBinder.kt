@@ -35,7 +35,7 @@ import com.github.moko256.twitlatte.repository.KEY_TIMELINE_IMAGE_LOAD_MODE
 import com.github.moko256.twitlatte.text.TwitterStringUtils
 import com.github.moko256.twitlatte.view.EmojiToTextViewSetter
 import com.github.moko256.twitlatte.widget.CheckableImageView
-import com.github.moko256.twitlatte.widget.TweetImageTableView
+import com.github.moko256.twitlatte.widget.ImagesTableView
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 
@@ -68,11 +68,11 @@ class StatusViewBinder(
     val tweetContext: TextView = viewGroup.findViewById(R.id.tweet_content)
     val timeStampText: TextView = viewGroup.findViewById(R.id.tweet_time_stamp_text)
     val quoteTweetLayout: RelativeLayout = viewGroup.findViewById(R.id.tweet_quote_tweet)
-    val quoteTweetImages: TweetImageTableView = viewGroup.findViewById(R.id.tweet_quote_images)
+    val quoteTweetImages: ImagesTableView = viewGroup.findViewById(R.id.tweet_quote_images)
     val quoteTweetUserName: TextView = viewGroup.findViewById(R.id.tweet_quote_tweet_user_name)
     val quoteTweetUserId: TextView = viewGroup.findViewById(R.id.tweet_quote_tweet_user_id)
     val quoteTweetContext: TextView = viewGroup.findViewById(R.id.tweet_quote_tweet_content)
-    val imageTableView: TweetImageTableView = viewGroup.findViewById(R.id.tweet_image_container)
+    val imageTableView: ImagesTableView = viewGroup.findViewById(R.id.tweet_image_container)
     val likeButton: CheckableImageView = viewGroup.findViewById(R.id.tweet_content_like_button)
     val repeatButton: CheckableImageView = viewGroup.findViewById(R.id.tweet_content_retweet_button)
     val replyButton: ImageButton = viewGroup.findViewById(R.id.tweet_content_reply_button)
