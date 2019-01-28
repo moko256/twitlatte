@@ -34,6 +34,7 @@ import com.github.moko256.twitlatte.database.CachedIdListSQLiteOpenHelper
 import com.github.moko256.twitlatte.entity.Client
 import com.github.moko256.twitlatte.entity.EventType
 import com.github.moko256.twitlatte.entity.UpdateEvent
+import com.github.moko256.twitlatte.glide.GlideApp
 import com.github.moko256.twitlatte.model.impl.ListModelImpl
 import com.github.moko256.twitlatte.model.impl.StatusActionModelImpl
 import com.github.moko256.twitlatte.repository.server.base.ListServerRepository
@@ -106,7 +107,8 @@ abstract class BaseTweetListFragment : BaseListFragment(), ListServerRepository<
                 client,
                 preferenceRepository,
                 context,
-                listViewModel.listModel.getIdsList()
+                listViewModel.listModel.getIdsList(),
+                GlideApp.with(this)
         ).also {
             it.setOnLoadMoreClick { position -> listViewModel.listModel.loadOnGap(position) }
             it.setOnFavoriteClick { _, id, hasFavorited ->

@@ -147,9 +147,9 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             case R.layout.layout_list_muted_text:
                 return new MutedTweetViewHolder(child);
             case R.layout.layout_list_tweet_only_image:
-                return new ImagesOnlyTweetViewHolder(child);
+                return new ImagesOnlyTweetViewHolder(child, glideRequests);
             case R.layout.layout_post_card:
-                return new StatusViewHolder(glideRequests, child);
+                return new StatusViewHolder(child, glideRequests);
             default:
                 throw new RuntimeException("Invalid id");
         }
@@ -181,7 +181,7 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                             post.getQuotedRepeatingStatus()
                     );
                 } else if (viewHolder instanceof ImagesOnlyTweetViewHolder){
-                    ((ImagesOnlyTweetViewHolder) viewHolder).setStatus(post.getStatus(), glideRequests);
+                    ((ImagesOnlyTweetViewHolder) viewHolder).setStatus(post.getStatus());
                 }
             }
         }
@@ -192,7 +192,7 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         if (holder instanceof StatusViewHolder){
             ((StatusViewHolder) holder).clear();
         } else if (holder instanceof ImagesOnlyTweetViewHolder) {
-            ((ImagesOnlyTweetViewHolder) holder).setStatus(null, glideRequests);
+            ((ImagesOnlyTweetViewHolder) holder).setStatus(null);
         }
     }
 
@@ -208,7 +208,7 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private class StatusViewHolder extends RecyclerView.ViewHolder {
         final StatusViewBinder statusViewBinder;
 
-        StatusViewHolder(GlideRequests glideRequests, ViewGroup itemView) {
+        StatusViewHolder(ViewGroup itemView, GlideRequests glideRequests) {
             super(itemView);
             statusViewBinder = new StatusViewBinder(client.getAccessToken(), glideRequests, itemView);
         }
@@ -310,12 +310,13 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private class ImagesOnlyTweetViewHolder extends RecyclerView.ViewHolder {
         final TweetImageTableView tweetImageTableView;
 
-        ImagesOnlyTweetViewHolder(ViewGroup viewGroup) {
+        ImagesOnlyTweetViewHolder(ViewGroup viewGroup, GlideRequests glideRequests) {
             super(viewGroup);
             tweetImageTableView = itemView.findViewById(R.id.list_tweet_image_container);
+            tweetImageTableView.glideRequests = glideRequests;
         }
 
-        void setStatus(Status status, GlideRequests glideRequests) {
+        void setStatus(Status status) {
             if (status != null) {
                 tweetImageTableView.setMedias(
                         status.getMedias(),

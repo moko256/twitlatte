@@ -95,6 +95,9 @@ class StatusViewBinder(
             tweetContext.breakStrategy = Layout.BREAK_STRATEGY_SIMPLE
             quoteTweetContext.breakStrategy = Layout.BREAK_STRATEGY_SIMPLE
         }
+
+        quoteTweetImages.glideRequests = glideRequests
+        imageTableView.glideRequests = glideRequests
     }
 
     fun setStatus(
