@@ -222,7 +222,7 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                                 "icon_image"
                         );
                 context.startActivity(
-                        ShowTweetActivity.getIntent(context, status.getId()),
+                        GlobalApplicationKt.setAccountKeyForActivity(ShowTweetActivity.getIntent(context, status.getId()), ((Activity) context)),
                         animation.toBundle()
                 );
             };
@@ -238,13 +238,19 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                                 "icon_image"
                         );
                 context.startActivity(
-                        ShowUserActivity.getIntent(context, user.getId()),
+                        GlobalApplicationKt.setAccountKeyForActivity(
+                                ShowUserActivity.getIntent(context, user.getId()),
+                                ((Activity) context)
+                        ),
                         animation.toBundle()
                 );
             });
 
             statusViewBinder.getQuoteTweetLayout().setOnClickListener(v -> context.startActivity(
-                    ShowTweetActivity.getIntent(context, quotedStatus.getId())
+                    GlobalApplicationKt.setAccountKeyForActivity(
+                            ShowTweetActivity.getIntent(context, quotedStatus.getId()),
+                            ((Activity) context)
+                    )
             ));
 
             statusViewBinder.getLikeButton().setOnCheckedChangeListener((compoundButton, b) -> {
@@ -325,7 +331,12 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                         preferenceRepository.getString(KEY_TIMELINE_IMAGE_LOAD_MODE, "normal")
                 );
                 imagesTableView.setOnLongClickListener(v -> {
-                    context.startActivity(ShowTweetActivity.getIntent(context, status.getId()));
+                    context.startActivity(
+                            GlobalApplicationKt.setAccountKeyForActivity(
+                                    ShowTweetActivity.getIntent(context, status.getId()),
+                                    ((Activity) context)
+                            )
+                    );
                     return true;
                 });
             } else {

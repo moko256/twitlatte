@@ -25,7 +25,8 @@ import com.github.moko256.latte.client.base.entity.ListEntry
 class ListsEntriesFragment: AbstractListsEntriesFragment() {
     override fun onClickList(listEntry: ListEntry) {
         context?.let{ context ->
-            context.startActivity(ListsTimelineActivity.getIntent(context, listEntry))
+            context.startActivity(ListsTimelineActivity.getIntent(context, listEntry)
+                    .setAccountKeyForActivity(requireActivity()))
         }
     }
 

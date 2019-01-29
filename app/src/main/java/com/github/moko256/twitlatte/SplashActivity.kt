@@ -19,8 +19,11 @@ package com.github.moko256.twitlatte
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.github.moko256.latte.client.base.entity.AccessToken
 import com.github.moko256.latte.client.twitter.CLIENT_TYPE_TWITTER
+import com.github.moko256.twitlatte.text.TwitterStringUtils
 import java.util.*
 
 /**
@@ -34,7 +37,15 @@ class SplashActivity : AppCompatActivity() {
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        startActivity(switchIntent())
+        val switchIntent = switchIntent()
+        val toName = switchIntent.component?.className
+        if (ShowUserActivity::class.java.name != toName && ShowTweetActivity::class.java.name != toName) {
+            startActivity(switchIntent)
+        } else {
+            showDialog {
+                startActivity(switchIntent.setAccountKey(it))
+            }
+        }
     }
 
     private fun switchIntent(): Intent {
@@ -74,16 +85,16 @@ class SplashActivity : AppCompatActivity() {
                             "https" -> {
                                 val pathSegments = data.pathSegments
 
+                                if (pathSegments.size > 0 && pathSegments[1] == "i") {
+                                    TODO()
+                                }
+
                                 when (pathSegments.size) {
                                     1 -> return when (pathSegments[0]) {
                                         "share" -> generatePostIntent(data)
                                         "search" -> SearchResultActivity.getIntent(this, data.getQueryParameter("q"))
                                         else -> ShowUserActivity
                                                 .getIntent(this, pathSegments[0])
-                                                .setAccountKey(
-                                                        getAccountsModel()
-                                                                .selectFirstByType(CLIENT_TYPE_TWITTER)!!
-                                                )
                                     }
                                     2 -> if (pathSegments[0] == "intent" && pathSegments[1] == "tweet") {
                                         return generatePostIntent(data)
@@ -95,10 +106,6 @@ class SplashActivity : AppCompatActivity() {
                                         if (pathSegments[1] == "status" || pathSegments[1] == "statuses") {
                                             return ShowTweetActivity
                                                     .getIntent(this, pathSegments[2].toLong())
-                                                    .setAccountKey(
-                                                            getAccountsModel()
-                                                                    .selectFirstByType(CLIENT_TYPE_TWITTER)!!
-                                                    )
 
                                         }
                                     }
@@ -200,5 +207,32 @@ class SplashActivity : AppCompatActivity() {
                 data.getQueryParameter("in-reply-to")?.toLong()?:-1,
                 tweet.toString()
         )
+    }
+
+    private fun showDialog(callback: (AccessToken) -> Unit) {
+        val accessTokens = getAccountsModel()
+                .getAccessTokensByType(CLIENT_TYPE_TWITTER)
+        when {
+            accessTokens.isEmpty() -> getAccountsModel().createGuestAccessToken(CLIENT_TYPE_TWITTER, "twitter.com")
+
+            accessTokens.size == 1 -> callback(accessTokens[0])
+
+            else -> AlertDialog.Builder(this)
+                    .setTitle("Open with...")
+                    .setItems(
+                            accessTokens
+                                    .map {
+                                        TwitterStringUtils.plusAtMark(it.screenName, it.url).apply {
+                                            if (it == getCurrentClient()?.accessToken) {
+                                                insert(0, "* ")
+                                            }
+                                        }
+                                    }
+                                    .toTypedArray()
+                    ) { _, which ->
+                        callback(accessTokens[which])
+                    }
+                    .show()
+        }
     }
 }

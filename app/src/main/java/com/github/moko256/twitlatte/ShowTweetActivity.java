@@ -259,7 +259,12 @@ public class ShowTweetActivity extends AppCompatActivity {
         long replyTweetId = item.getStatus().getInReplyToStatusId();
         if (replyTweetId != -1){
             tweetIsReply.setVisibility(VISIBLE);
-            tweetIsReply.setOnClickListener(v -> startActivity(getIntent(this, replyTweetId)));
+            tweetIsReply.setOnClickListener(v -> startActivity(
+                    GlobalApplicationKt.setAccountKeyForActivity(
+                            getIntent(this, replyTweetId),
+                            this
+                    )
+            ));
         } else {
             tweetIsReply.setVisibility(GONE);
         }
@@ -286,13 +291,19 @@ public class ShowTweetActivity extends AppCompatActivity {
                             "icon_image"
                     );
             startActivity(
-                    ShowUserActivity.getIntent(this, item.getUser().getId()),
+                    GlobalApplicationKt.setAccountKeyForActivity(
+                            ShowUserActivity.getIntent(this, item.getUser().getId()),
+                            this
+                    ),
                     animation.toBundle()
             );
         });
 
         statusViewBinder.getQuoteTweetLayout().setOnClickListener(v -> startActivity(
-                ShowTweetActivity.getIntent(this, item.getQuotedRepeatingStatus().getId())
+                GlobalApplicationKt.setAccountKeyForActivity(
+                        ShowTweetActivity.getIntent(this, item.getQuotedRepeatingStatus().getId()),
+                        this
+                )
         ));
 
         statusViewBinder.getLikeButton().setOnCheckedChangeListener((compoundButton, b) -> {

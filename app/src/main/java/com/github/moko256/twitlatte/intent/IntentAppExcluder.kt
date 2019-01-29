@@ -16,11 +16,10 @@
 
 package com.github.moko256.twitlatte.intent
 
-import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Build
-import com.github.moko256.twitlatte.BuildConfig
-import com.github.moko256.twitlatte.SplashActivity
 
 /**
  * Created by moko256 on 2018/12/14.
@@ -28,11 +27,33 @@ import com.github.moko256.twitlatte.SplashActivity
  * @author moko256
  */
 
-fun Intent.excludeOwnApp(): Intent = run {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-        Intent.createChooser(this, "Open")
-                .putExtra(Intent.EXTRA_EXCLUDE_COMPONENTS, arrayOf(ComponentName(BuildConfig.APPLICATION_ID, SplashActivity::class.java.name)))
-    } else {
-        Intent.createChooser(this, "Open")
+fun Intent.excludeOwnApp(context: Context, packageManager: PackageManager): Intent = run {
+    val intents = packageManager
+            .queryIntentActivities(
+                    this,
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        PackageManager.MATCH_ALL
+                    } else {
+                        PackageManager.MATCH_DEFAULT_ONLY
+                    }
+            )
+            .map { it.activityInfo.packageName }
+            .filter {
+                it != context.packageName
+            }.map {
+                Intent(this).setPackage(it)
+            }.toMutableList()
+
+    when {
+        intents.isEmpty() -> {
+            Intent.createChooser(Intent(), "Open")
+        }
+        intents.size == 1 -> {
+            intents[0]
+        }
+        else -> {
+            Intent.createChooser(intents.removeAt(0), "Open")
+                    .putExtra(Intent.EXTRA_INITIAL_INTENTS, intents.toTypedArray())
+        }
     }
 }

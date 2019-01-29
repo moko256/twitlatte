@@ -40,13 +40,17 @@ class TwitterApiClientImpl(
 ): ApiClient {
 
     private val client = ConfigurationBuilder()
-        .setTweetModeExtended(true)
-        .setOAuthConsumerKey(consumerKey)
-        .setOAuthConsumerSecret(consumerSecret)
-        .setOAuthAccessToken(token)
-        .setOAuthAccessTokenSecret(tokenSecret)
-        .build()
-        .createTwitterInstance()
+            .setTweetModeExtended(true)
+            .setOAuthConsumerKey(consumerKey)
+            .setOAuthConsumerSecret(consumerSecret)
+            .apply {
+                if (token != "guest") {
+                    setOAuthAccessToken(token)
+                    setOAuthAccessTokenSecret(tokenSecret)
+                }
+            }
+            .build()
+            .createTwitterInstance()
 
     @Suppress("UNCHECKED_CAST")
     override fun <T> getBaseClient(): T = client as T

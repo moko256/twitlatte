@@ -40,9 +40,8 @@ class AccountsModel(private val context: Context) {
     fun get(key: String): AccessToken?
             = tokens.find { accessToken -> accessToken.getKeyString() == key }
 
-    //TODO Replace more correctly method
-    fun selectFirstByType(clientType: Int): AccessToken?
-            = tokens.find { accessToken -> accessToken.clientType == clientType }
+    fun getAccessTokensByType(clientType: Int): List<AccessToken>
+            = tokens.filter { accessToken -> accessToken.clientType == clientType }
 
     fun add(accessToken: AccessToken) {
         val helper = TokenSQLiteOpenHelper(context)
@@ -66,4 +65,14 @@ class AccountsModel(private val context: Context) {
 
     fun size(): Int = tokens.size
 
+    fun createGuestAccessToken(clientType: Int, url: String): AccessToken {
+        return AccessToken(
+                clientType,
+                url,
+                -1L,
+                "",
+                "guest",
+                ""
+        )
+    }
 }

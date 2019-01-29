@@ -110,7 +110,10 @@ class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> {
                                     "icon_image"
                             );
                     context.startActivity(
-                            ShowUserActivity.getIntent(context, item.getId()),
+                            GlobalApplicationKt.setAccountKeyForActivity(
+                                    ShowUserActivity.getIntent(context, item.getId()),
+                                    ((Activity) context)
+                            ),
                             animation.toBundle()
                     );
                 }

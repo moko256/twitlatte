@@ -61,7 +61,7 @@ fun launchChromeCustomTabs(context: Context, url: Uri, excludeOwn: Boolean = fal
                 ContextCompat.startActivity(
                         context,
                         if (excludeOwn) {
-                            it.intent.setData(url).excludeOwnApp()
+                            it.intent.setData(url).excludeOwnApp(context, context.packageManager)
                         } else {
                             it.intent.setData(url)
                         },
@@ -73,7 +73,7 @@ fun launchChromeCustomTabs(context: Context, url: Uri, excludeOwn: Boolean = fal
                     Intent(Intent.ACTION_VIEW, url)
                             .let {
                                 if (excludeOwn) {
-                                    it.excludeOwnApp()
+                                    it.excludeOwnApp(context, context.packageManager)
                                 } else {
                                     it
                                 }

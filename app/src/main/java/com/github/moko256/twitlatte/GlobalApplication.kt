@@ -155,6 +155,13 @@ fun Intent.setAccountKey(accessToken: AccessToken) = apply {
     putExtra(INTENT_CLIENT_KEY, accessToken.getKeyString())
 }
 
+fun Intent.setAccountKeyForActivity(activity: Activity): Intent {
+    activity.intent.getStringExtra(INTENT_CLIENT_KEY)?.let {
+        putExtra(INTENT_CLIENT_KEY, it)
+    }
+    return this
+}
+
 fun Activity.getCurrentClient() = (application as GlobalApplication).currentClient
 
 fun Activity.getAccountsModel() = (application as GlobalApplication).accountsModel
