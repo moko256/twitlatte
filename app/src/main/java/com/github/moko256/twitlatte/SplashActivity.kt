@@ -23,6 +23,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.github.moko256.latte.client.base.entity.AccessToken
 import com.github.moko256.latte.client.twitter.CLIENT_TYPE_TWITTER
+import com.github.moko256.twitlatte.intent.excludeOwnApp
 import com.github.moko256.twitlatte.text.TwitterStringUtils
 import java.util.*
 
@@ -80,13 +81,13 @@ class SplashActivity : AppCompatActivity() {
                                         ShowUserActivity.getIntent(this, data.getQueryParameter("screen_name"))
                                     }
                                 }
-                                else -> return Intent.createChooser(Intent(Intent.ACTION_VIEW, data), "")
+                                else -> return generateAlterIntent(data)
                             }
                             "https" -> {
                                 val pathSegments = data.pathSegments
 
                                 if (pathSegments.size > 0 && pathSegments[1] == "i") {
-                                    TODO()
+                                    return generateAlterIntent(data)
                                 }
 
                                 when (pathSegments.size) {
@@ -114,7 +115,7 @@ class SplashActivity : AppCompatActivity() {
                                 return if (data.getQueryParameter("status") != null) {
                                     PostActivity.getIntent(this, data.getQueryParameter("status"))
                                 } else {
-                                    Intent.createChooser(Intent(Intent.ACTION_VIEW, data), "")
+                                    generateAlterIntent(data)
                                 }
 
                             }
@@ -234,5 +235,9 @@ class SplashActivity : AppCompatActivity() {
                     }
                     .show()
         }
+    }
+
+    private fun generateAlterIntent(uri: Uri): Intent {
+        return Intent(Intent.ACTION_VIEW, uri).excludeOwnApp(this, packageManager)
     }
 }
