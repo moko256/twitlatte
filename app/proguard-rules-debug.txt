@@ -1,6 +1,7 @@
 # ProGuard rules for debug build
 
 -ignorewarnings
+-dontobfuscate
 
 -keep class com.github.moko256.twitlatte.** { *; }
 
