@@ -52,8 +52,14 @@ fun Intent.excludeOwnApp(context: Context, packageManager: PackageManager): Inte
             intents[0]
         }
         else -> {
-            Intent.createChooser(intents.removeAt(0), "Open")
-                    .putExtra(Intent.EXTRA_INITIAL_INTENTS, intents.toTypedArray())
+            Intent.createChooser(
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        Intent()
+                    } else {
+                        intents.removeAt(0)
+                    },
+                    "Open"
+            ).putExtra(Intent.EXTRA_INITIAL_INTENTS, intents.toTypedArray())
         }
     }
 }
