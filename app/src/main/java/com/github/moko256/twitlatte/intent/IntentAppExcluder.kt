@@ -46,7 +46,7 @@ fun Intent.excludeOwnApp(context: Context, packageManager: PackageManager): Inte
 
     when {
         intents.isEmpty() -> {
-            Intent.createChooser(Intent(), "Open")
+            Intent.createChooser(Intent(), "Open with...")
         }
         intents.size == 1 -> {
             intents[0]
@@ -58,7 +58,7 @@ fun Intent.excludeOwnApp(context: Context, packageManager: PackageManager): Inte
                     } else {
                         intents.removeAt(0)
                     },
-                    "Open"
+                    "Open with..."
             ).putExtra(Intent.EXTRA_INITIAL_INTENTS, intents.toTypedArray())
         }
     }

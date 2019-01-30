@@ -58,8 +58,7 @@ fun launchChromeCustomTabs(context: Context, url: Uri, excludeOwn: Boolean = fal
     try {
         if (preferenceRepository.getBoolean(KEY_USE_CHROME_CUSTOM_TAB, true)) {
             builder().build().let {
-                ContextCompat.startActivity(
-                        context,
+                context.startActivity(
                         if (excludeOwn) {
                             it.intent.setData(url).excludeOwnApp(context, context.packageManager)
                         } else {
