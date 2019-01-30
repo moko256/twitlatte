@@ -31,7 +31,7 @@ data class AccessToken(
         val tokenSecret: String? = null
 ) {
     fun getKeyString(): String {
-        return url + "@" + userId.toString()
+        return "$url@$userId"
     }
 
     override fun equals(other: Any?): Boolean {

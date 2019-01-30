@@ -43,12 +43,8 @@ class TwitterApiClientImpl(
             .setTweetModeExtended(true)
             .setOAuthConsumerKey(consumerKey)
             .setOAuthConsumerSecret(consumerSecret)
-            .apply {
-                if (token != "guest") {
-                    setOAuthAccessToken(token)
-                    setOAuthAccessTokenSecret(tokenSecret)
-                }
-            }
+            .setOAuthAccessToken(token)
+            .setOAuthAccessTokenSecret(tokenSecret)
             .build()
             .createTwitterInstance()
 

@@ -214,7 +214,10 @@ class SplashActivity : AppCompatActivity() {
         val accessTokens = getAccountsModel()
                 .getAccessTokensByType(CLIENT_TYPE_TWITTER)
         when {
-            accessTokens.isEmpty() -> getAccountsModel().createGuestAccessToken(CLIENT_TYPE_TWITTER, "twitter.com")
+            accessTokens.isEmpty() -> {
+                startActivity(generateAlterIntent(intent.data!!))
+                finish()
+            }
 
             accessTokens.size == 1 -> callback(accessTokens[0])
 

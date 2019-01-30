@@ -64,15 +64,4 @@ class AccountsModel(private val context: Context) {
     }
 
     fun size(): Int = tokens.size
-
-    fun createGuestAccessToken(clientType: Int, url: String): AccessToken {
-        return AccessToken(
-                clientType,
-                url,
-                -1L,
-                "",
-                "guest",
-                ""
-        )
-    }
 }
