@@ -19,6 +19,7 @@ package com.github.moko256.twitlatte.intent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 
 /**
@@ -37,7 +38,24 @@ fun Intent.excludeOwnApp(context: Context, packageManager: PackageManager): Inte
                         PackageManager.MATCH_DEFAULT_ONLY
                     }
             )
+            .also {
+                if (it.size == 1) {
+                    it.addAll(
+                            packageManager
+                                    .queryIntentActivities(
+                                            Intent(Intent.ACTION_VIEW, Uri.parse("https://")),
+                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                                PackageManager.MATCH_ALL
+                                            } else {
+                                                PackageManager.MATCH_DEFAULT_ONLY
+                                            }
+                                    )
+                    )
+                }
+            }
+            .asSequence()
             .map { it.activityInfo.packageName }
+            .distinct()
             .filter {
                 it != context.packageName
             }.map {
