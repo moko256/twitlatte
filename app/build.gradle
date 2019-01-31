@@ -27,8 +27,8 @@ android {
         targetSdkVersion 28
 
         applicationId 'com.github.moko256.twitlatte'
-        versionCode 21
-        versionName '1.6.4'
+        versionCode 22
+        versionName '1.6.5'
 
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
 
@@ -66,7 +66,6 @@ android {
         exclude '/META-INF/*.version'
         exclude '/META-INF/**.kotlin_module'
         exclude '/META-INF/proguard/**'
-        setMerges(Collections.EMPTY_SET)
     }
 }
 

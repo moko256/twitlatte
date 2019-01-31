@@ -1,0 +1,3 @@
+Enable to select account when you open Twitter's link.
+Enable to input Mastodon's custom emoji.
+Fixed some bugs and improved some points.
