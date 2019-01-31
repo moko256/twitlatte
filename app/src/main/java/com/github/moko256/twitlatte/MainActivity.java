@@ -388,7 +388,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
         } else if (event.isShiftPressed() && keyCode == KeyEvent.KEYCODE_SLASH){
             new AlertDialog.Builder(this)
                     .setTitle("KeyBoard Shortcuts")
-                    .setMessage("? : This Dialog\nn : New Post\nCtrl + Tab : Open Drawer\nCtrl+Enter : Post")
+                    .setMessage("? : This Dialog\nn : New Post\nCtrl + Tab : Open Drawer\nCtrl + Enter : Post")
                     .show();
         } else if (drawer != null && event.isCtrlPressed() && keyCode == KeyEvent.KEYCODE_TAB){
             if (drawer.isDrawerOpen(GravityCompat.START)) {
