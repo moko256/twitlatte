@@ -19,8 +19,10 @@ package com.github.moko256.twitlatte
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.widget.TextViewCompat
 import com.github.moko256.latte.client.base.entity.AccessToken
 import com.github.moko256.latte.client.twitter.CLIENT_TYPE_TWITTER
 import com.github.moko256.twitlatte.intent.excludeOwnApp
@@ -227,15 +229,23 @@ class LinkOpenWithActivity : AppCompatActivity() {
                             accessTokens.single { it.getKeyString() == this }
                         }
                 if (accountsLinkOpenWith == null) {
+                    val dp= resources.displayMetrics.density
+                    val dp16 = Math.round(dp * 16)
+                    val dp24 = Math.round(dp * 24)
                     AlertDialog.Builder(this)
                             .setTitle(R.string.open_with_accounts)
-                            .setMessage(R.string.settable_account_always_use_in_settings)
+                            .setView(TextView(this).apply {
+                                setText(R.string.settable_account_always_use_in_settings)
+                                TextViewCompat.setTextAppearance(this, R.style.TextAppearance_MaterialComponents_Subtitle1)
+                                setPadding(dp24, dp16, dp24, dp16)
+                            })
+                            .setOnCancelListener { finish() }
                             .setItems(
                                     accessTokens
                                             .map {
                                                 TwitterStringUtils.plusAtMark(it.screenName, it.url).apply {
                                                     if (it == getCurrentClient()?.accessToken) {
-                                                        insert(0, "* ")
+                                                        insert(0, "Now: ")
                                                     }
                                                 }
                                             }
