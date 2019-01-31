@@ -158,7 +158,7 @@ abstract class AbstractMediaFragment: Fragment() {
 
         val uri = Uri.parse(path)
         val request = DownloadManager.Request(uri)
-        val lastPathSegment = uri.lastPathSegment
+        val lastPathSegment = uri.lastPathSegment?.split(":")?.first()
         request.setDestinationInExternalPublicDir(
                 DIRECTORY_DOWNLOADS,
                 "/" + getString(R.string.app_name) + "/" + lastPathSegment
