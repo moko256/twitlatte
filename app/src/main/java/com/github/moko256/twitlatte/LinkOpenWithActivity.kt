@@ -24,6 +24,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.github.moko256.latte.client.base.entity.AccessToken
 import com.github.moko256.latte.client.twitter.CLIENT_TYPE_TWITTER
 import com.github.moko256.twitlatte.intent.excludeOwnApp
+import com.github.moko256.twitlatte.repository.KEY_ACCOUNT_KEY_LINK_OPEN
 import com.github.moko256.twitlatte.text.TwitterStringUtils
 import java.util.*
 
@@ -218,22 +219,35 @@ class LinkOpenWithActivity : AppCompatActivity() {
 
             accessTokens.size == 1 -> callback(accessTokens[0])
 
-            else -> AlertDialog.Builder(this)
-                    .setTitle("Open with...")
-                    .setItems(
-                            accessTokens
-                                    .map {
-                                        TwitterStringUtils.plusAtMark(it.screenName, it.url).apply {
-                                            if (it == getCurrentClient()?.accessToken) {
-                                                insert(0, "* ")
+            else -> {
+                val accountsLinkOpenWith = preferenceRepository
+                        .getString(KEY_ACCOUNT_KEY_LINK_OPEN, "-1")
+                        .takeIf { it != "-1" }
+                        ?.run {
+                            accessTokens.single { it.getKeyString() == this }
+                        }
+                if (accountsLinkOpenWith == null) {
+                    AlertDialog.Builder(this)
+                            .setTitle(R.string.open_with_accounts)
+                            .setMessage(R.string.settable_account_always_use_in_settings)
+                            .setItems(
+                                    accessTokens
+                                            .map {
+                                                TwitterStringUtils.plusAtMark(it.screenName, it.url).apply {
+                                                    if (it == getCurrentClient()?.accessToken) {
+                                                        insert(0, "* ")
+                                                    }
+                                                }
                                             }
-                                        }
-                                    }
-                                    .toTypedArray()
-                    ) { _, which ->
-                        callback(accessTokens[which])
-                    }
-                    .show()
+                                            .toTypedArray()
+                            ) { _, which ->
+                                callback(accessTokens[which])
+                            }
+                            .show()
+                } else {
+                    callback(accountsLinkOpenWith)
+                }
+            }
         }
     }
 

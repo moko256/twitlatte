@@ -21,6 +21,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
+import com.github.moko256.twitlatte.R
 
 /**
  * Created by moko256 on 2018/12/14.
@@ -62,9 +63,11 @@ fun Intent.excludeOwnApp(context: Context, packageManager: PackageManager): Inte
                 Intent(this).setPackage(it)
             }.toMutableList()
 
+    val openWithText = context.getString(R.string.open_with_app)
+
     when {
         intents.isEmpty() -> {
-            Intent.createChooser(Intent(), "Open with...")
+            Intent.createChooser(Intent(), openWithText)
         }
         intents.size == 1 -> {
             intents[0]
@@ -76,7 +79,7 @@ fun Intent.excludeOwnApp(context: Context, packageManager: PackageManager): Inte
                     } else {
                         intents.removeAt(0)
                     },
-                    "Open with..."
+                    openWithText
             ).putExtra(Intent.EXTRA_INITIAL_INTENTS, intents.toTypedArray())
         }
     }

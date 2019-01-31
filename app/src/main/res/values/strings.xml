@@ -86,6 +86,10 @@
     <string name="apache_license_2_0" translatable="false">Apache License, Version 2.0</string>
     <string name="open_source_license">Open source license</string>
     <string name="contributors">Contributors</string>
+    <string name="open_with_app">Open with…</string>
+    <string name="open_with_accounts">Open with…</string>
+    <string name="settable_account_always_use_in_settings">You can set the default in the settings</string>
+    <string name="account_to_use_opening_link">Account to open Twitter link in app</string>
     <string name="open_web_page_in_the_app">Open web pages in the app</string>
     <string name="viewing_web_page_in_app">Viewing web pages in app</string>
     <string name="viewing_web_page_in_external_browser">Viewing web pages in external browser</string>

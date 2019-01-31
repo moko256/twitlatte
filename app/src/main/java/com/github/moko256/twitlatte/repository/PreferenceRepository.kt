@@ -26,6 +26,7 @@ import java.util.regex.PatternSyntaxException
  * @author moko256
  */
 const val KEY_ACCOUNT_KEY = "AccountKey"
+const val KEY_ACCOUNT_KEY_LINK_OPEN = "linkOpenAccountKey"
 const val KEY_NIGHT_MODE = "nightModeType"
 const val KEY_USE_CHROME_CUSTOM_TAB = "useChromeCustomTab"
 const val KEY_HIDE_SENSITIVE_MEDIA = "hideSensitiveMedia"

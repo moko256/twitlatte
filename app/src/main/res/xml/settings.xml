@@ -45,6 +45,11 @@
             app:dialogTitle="@string/load_timeline_image_mode"
             app:entries="@array/choose_timeline_image_load_entries"
             app:entryValues="@array/choose_timeline_image_load_entries_value"/>
+        <ListPreference
+            app:key="linkOpenAccountKey"
+            app:title="@string/account_to_use_opening_link"
+            app:useSimpleSummaryProvider="true"
+            app:dialogTitle="@string/account_to_use_opening_link"/>
         <SwitchPreferenceCompat
             app:key="useChromeCustomTab"
             app:defaultValue="true"

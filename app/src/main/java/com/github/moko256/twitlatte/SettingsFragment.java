@@ -37,7 +37,9 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceScreen;
 
+import static com.github.moko256.latte.client.twitter.TwitterApiClientImplKt.CLIENT_TYPE_TWITTER;
 import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY_ACCOUNT_KEY;
+import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY_ACCOUNT_KEY_LINK_OPEN;
 import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY_NIGHT_MODE;
 
 /**
@@ -57,21 +59,21 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             AccountsModel accountsModel = GlobalApplicationKt.getAccountsModel(requireActivity());
             List<AccessToken> accessTokens = accountsModel.getAccessTokens();
 
-            CharSequence[] entries = new CharSequence[accessTokens.size() + 1];
+            CharSequence[] entriesAccountList = new CharSequence[accessTokens.size() + 1];
             CharSequence[] entryValues = new CharSequence[accessTokens.size() + 1];
 
             for (int i = 0; i < accessTokens.size(); i++) {
                 AccessToken accessToken = accessTokens.get(i);
 
-                entries[i] = TwitterStringUtils.plusAtMark(accessToken.getScreenName(), accessToken.getUrl());
+                entriesAccountList[i] = TwitterStringUtils.plusAtMark(accessToken.getScreenName(), accessToken.getUrl());
                 entryValues[i] = accessToken.getKeyString();
             }
 
-            entries[entries.length-1]=getString(R.string.login_with_another_account);
+            entriesAccountList[entriesAccountList.length-1]=getString(R.string.login_with_another_account);
             entryValues[entryValues.length-1]="-1";
 
-            ListPreference nowAccountList=(ListPreference) findPreference(KEY_ACCOUNT_KEY);
-            nowAccountList.setEntries(entries);
+            ListPreference nowAccountList = findPreference(KEY_ACCOUNT_KEY);
+            nowAccountList.setEntries(entriesAccountList);
             nowAccountList.setEntryValues(entryValues);
             nowAccountList.setDefaultValue(GlobalApplicationKt.preferenceRepository.getString(KEY_ACCOUNT_KEY,"-1"));
             nowAccountList.setOnPreferenceChangeListener(
@@ -90,6 +92,26 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                         }
                     }
             );
+
+            List<AccessToken> accessTokensTwitter = accountsModel.getAccessTokensByType(CLIENT_TYPE_TWITTER);
+
+            CharSequence[] entriesLinkOpen = new CharSequence[accessTokensTwitter.size() + 1];
+            CharSequence[] entriesLinkOpenValue = new CharSequence[accessTokensTwitter.size() + 1];
+
+            for (int i = 0; i < accessTokensTwitter.size(); i++) {
+                AccessToken accessToken = accessTokensTwitter.get(i);
+
+                entriesLinkOpen[i] = TwitterStringUtils.plusAtMark(accessToken.getScreenName(), accessToken.getUrl());
+                entriesLinkOpenValue[i] = accessToken.getKeyString();
+            }
+
+            entriesLinkOpen[entriesLinkOpen.length-1]=getString(R.string.not_set);
+            entriesLinkOpenValue[entriesLinkOpenValue.length-1]="-1";
+
+            ListPreference linkOpenAccountList = findPreference(KEY_ACCOUNT_KEY_LINK_OPEN);
+            linkOpenAccountList.setEntries(entriesLinkOpen);
+            linkOpenAccountList.setEntryValues(entriesLinkOpenValue);
+            linkOpenAccountList.setDefaultValue("-1");
 
             findPreference("logout").setOnPreferenceClickListener(preference -> {
                 new AlertDialog.Builder(requireContext())
@@ -131,7 +153,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 return false;
             });
 
-            ListPreference nowThemeMode=(ListPreference) findPreference(KEY_NIGHT_MODE);
+            ListPreference nowThemeMode = findPreference(KEY_NIGHT_MODE);
             nowThemeMode.setOnPreferenceChangeListener(
                     (preference, newValue) -> {
                         AppCompatDelegate.setDefaultNightMode(
