@@ -31,7 +31,7 @@
         android:layout_marginBottom="32dp"
         android:text="@string/login"
         android:textColor="?android:attr/textColorPrimary"
-        android:textAppearance="@style/Base.TextAppearance.AppCompat.Display1" />
+        android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
 
     <TextView
         android:id="@+id/description_text"
@@ -41,7 +41,7 @@
         android:layout_marginBottom="16dp"
         android:text="@string/login_description"
         android:textColor="?android:attr/textColorPrimary"
-        android:textAppearance="@style/Base.TextAppearance.AppCompat.Subhead" />
+        android:textAppearance="@style/TextAppearance.AppCompat.Subhead" />
 
     <Button
         android:id="@+id/start_twitter_auth_button"
