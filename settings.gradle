@@ -19,8 +19,8 @@ include ':mastodon4j:mastodon4j'
 include ':alternative_twitter4j'
 
 include ':japng-android:android_api'
-include ':api'
-project(':api').projectDir = new File('japng-android/japng/api')
+include ':japng:api'
+project(':japng:api').projectDir = new File('japng-android/japng/api')
 
 include ':twitter-text'
 project(':twitter-text').projectDir = new File('twitter-text/java')
