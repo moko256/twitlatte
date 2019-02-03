@@ -57,6 +57,10 @@ class StatusViewBinder(
     private var spoilerTextEmojiSetter: EmojiToTextViewSetter? = null
     private var userNameEmojiSetter: EmojiToTextViewSetter? = null
 
+    private val units = viewGroup.resources.getString(R.string.num_units).toCharArray()
+    private val unitsExponent = viewGroup.resources.getInteger(R.integer.num_unit_exponent)
+    private val unitsBack = viewGroup.resources.getInteger(R.integer.num_unit_back)
+
     val repeatUserName: TextView = viewGroup.findViewById(R.id.tweet_retweet_user_name)
     val repeatTimeStamp: TextView = viewGroup.findViewById(R.id.tweet_retweet_time_stamp_text)
     val userImage: ImageView = viewGroup.findViewById(R.id.tweet_icon)
@@ -127,7 +131,7 @@ class StatusViewBinder(
 
         if (repeatedUser != null) {
             repeatUserName.visibility = View.VISIBLE
-            repeatUserName.text = viewGroup.context.getString(
+            repeatUserName.text = viewGroup.resources.getString(
                     TwitterStringUtils.getRepeatedByStringRes(accessToken.clientType),
                     repeatedUser.name,
                     TwitterStringUtils.plusAtMark(repeatedUser.screenName)
@@ -151,7 +155,7 @@ class StatusViewBinder(
         if (isReply) {
             replyUserName.visibility = View.VISIBLE
             replyUserName.text= if (status.inReplyToScreenName?.isEmpty() == true) {
-                viewGroup.context.getString(
+                viewGroup.resources.getString(
                         if (status.inReplyToStatusId != -1L) {
                             R.string.reply
                         } else {
@@ -159,7 +163,7 @@ class StatusViewBinder(
                         }
                 )
             } else {
-                viewGroup.context.getString(
+                viewGroup.resources.getString(
                         if (status.inReplyToStatusId != -1L) {
                             R.string.reply_to
                         } else {
@@ -342,9 +346,9 @@ class StatusViewBinder(
         repeatButton.isEnabled = isRepeatEnabled
         repeatButton.setImageDrawable(ContextCompat.getDrawable(viewGroup.context, repeatIconResourceId))
 
-        likeCount.text = if (status.favoriteCount != 0) TwitterStringUtils.convertToSIUnitString(status.favoriteCount) else ""
-        repeatCount.text = if (status.repeatCount != 0) TwitterStringUtils.convertToSIUnitString(status.repeatCount) else ""
-        repliesCount.text = if (status.repliesCount != 0) TwitterStringUtils.convertToSIUnitString(status.repliesCount) else ""
+        likeCount.text = if (status.favoriteCount != 0) TwitterStringUtils.convertToSIUnitString(status.favoriteCount, unitsExponent, unitsBack, units) else ""
+        repeatCount.text = if (status.repeatCount != 0) TwitterStringUtils.convertToSIUnitString(status.repeatCount, unitsExponent, unitsBack, units) else ""
+        repliesCount.text = if (status.repliesCount != 0) TwitterStringUtils.convertToSIUnitString(status.repliesCount, unitsExponent, unitsBack, units) else ""
     }
 
     fun clear() {

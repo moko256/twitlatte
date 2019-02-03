@@ -163,4 +163,5 @@
     <string name="mode_visibility_private">フォロワー限定</string>
     <string name="mode_visibility_direct">ダイレクト</string>
 
+    <string name="num_units">万億</string>
 </resources>

@@ -213,7 +213,7 @@
         android:layout_marginTop="24dp"
         android:layout_marginBottom="-8dp"
         android:layout_marginStart="36dp"
-        android:layout_marginEnd="4dp"
+        android:layout_marginEnd="2dp"
         android:background="?attr/controlBackground"
         app:tint="@color/stateful_image_button_color"
         app:srcCompat="@drawable/ic_reply_white_24dp"
@@ -221,7 +221,7 @@
 
     <TextView
         android:id="@+id/tweet_content_replies_count"
-        android:layout_width="30sp"
+        android:layout_width="36sp"
         android:layout_height="24dp"
         android:layout_marginTop="30dp"
         android:layout_below="@id/tweet_quote_tweet"
@@ -239,8 +239,8 @@
         android:layout_toEndOf="@id/tweet_content_replies_count"
         android:layout_marginTop="24dp"
         android:layout_marginBottom="-8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="4dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="2dp"
         android:background="?attr/controlBackground"
         android:padding="6dp"
         tools:srcCompat="@drawable/stateful_repeat_button"
@@ -249,7 +249,7 @@
 
     <TextView
         android:id="@+id/tweet_content_retweet_count"
-        android:layout_width="30sp"
+        android:layout_width="36sp"
         android:layout_height="24dp"
         android:layout_marginTop="30dp"
         android:layout_below="@id/tweet_quote_tweet"
@@ -267,8 +267,8 @@
         android:layout_toEndOf="@id/tweet_content_retweet_count"
         android:layout_marginTop="24dp"
         android:layout_marginBottom="-8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="4dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="2dp"
         android:background="?attr/controlBackground"
         android:padding="6dp"
         app:srcCompat="@drawable/stateful_like_button"
@@ -277,7 +277,7 @@
 
     <TextView
         android:id="@+id/tweet_content_like_count"
-        android:layout_width="30sp"
+        android:layout_width="36sp"
         android:layout_height="24dp"
         android:layout_marginTop="30dp"
         android:layout_below="@id/tweet_quote_tweet"

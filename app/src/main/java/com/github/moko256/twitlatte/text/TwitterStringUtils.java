@@ -63,24 +63,28 @@ public class TwitterStringUtils {
         return stringBuilder;
     }
 
-    public static CharSequence convertToSIUnitString(int num){
+    public static CharSequence convertToSIUnitString(int num, int unitExponent, int back, char[] units){
         if (num == 0) return "0";
-        StringBuilder builder = new StringBuilder(5);
+        StringBuilder builder = new StringBuilder(unitExponent + 2);
         if (num < 0) {
             num *= -1;
             builder.append('-');
         }
-
-        float k = num / 1000;
-        if (k < 1) return builder.append(String.valueOf(num));
-
-        float m = k / 1000;
-        if (m < 1) return builder.append(String.valueOf(Math.round(k))).append('K');
-
-        float g = m / 1000;
-        if (g < 1) return builder.append(String.valueOf(Math.round(m))).append('M');
-
-        return builder.append(String.valueOf(Math.round(g))).append('G');
+        int exponent = (int) Math.floor(Math.log10(num));
+        int e = (int) Math.floor((double) (exponent + back) / unitExponent);
+        if (exponent < unitExponent) {
+            builder.append(num);
+        } else {
+            double m = Math.pow(10, e * unitExponent);
+            if (num < m) {
+                double v = Math.pow(10, back + 1);
+                builder.append(Math.round((double) num / m * v) / v);
+            } else {
+                builder.append(Math.round(num / m));
+            }
+            builder.append(units[e - 1]);
+        }
+        return builder;
     }
 
     @NonNull

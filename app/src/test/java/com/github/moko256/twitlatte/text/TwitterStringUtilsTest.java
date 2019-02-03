@@ -27,18 +27,76 @@ import static org.junit.Assert.assertEquals;
  */
 
 public class TwitterStringUtilsTest {
-    @Test
-    public void convertToSIUnitStringTest() {
-        assertEquals(TwitterStringUtils.convertToSIUnitString(0).toString(), "0");
-        assertEquals(TwitterStringUtils.convertToSIUnitString(100).toString(), "100");
-        assertEquals(TwitterStringUtils.convertToSIUnitString(10000).toString(), "10K");
-        assertEquals(TwitterStringUtils.convertToSIUnitString(10000000).toString(), "10M");
-        assertEquals(TwitterStringUtils.convertToSIUnitString(1000000000).toString(), "1G");
 
-        assertEquals(TwitterStringUtils.convertToSIUnitString(-0).toString(), "0");
-        assertEquals(TwitterStringUtils.convertToSIUnitString(-100).toString(), "-100");
-        assertEquals(TwitterStringUtils.convertToSIUnitString(-10000).toString(), "-10K");
-        assertEquals(TwitterStringUtils.convertToSIUnitString(-10000000).toString(), "-10M");
-        assertEquals(TwitterStringUtils.convertToSIUnitString(-1000000000).toString(), "-1G");
+    private final char[] unitsEn = {'K', 'M', 'G'};
+
+    private String testEn(int num) {
+        return TwitterStringUtils.convertToSIUnitString(num, 3, 0, unitsEn).toString();
+    }
+
+    @Test
+    public void convertToSIUnitStringTestEn() {
+        assertEquals(testEn(0), "0");
+        assertEquals(testEn(10), "10");
+        assertEquals(testEn(100), "100");
+
+        assertEquals(testEn(1000), "1K");
+        assertEquals(testEn(10000), "10K");
+        assertEquals(testEn(100000), "100K");
+
+        assertEquals(testEn(1000000), "1M");
+        assertEquals(testEn(10000000), "10M");
+        assertEquals(testEn(100000000), "100M");
+
+        assertEquals(testEn(1000000000), "1G");
+
+
+        assertEquals(testEn(-10), "-10");
+        assertEquals(testEn(-100), "-100");
+
+        assertEquals(testEn(-1000), "-1K");
+        assertEquals(testEn(-10000), "-10K");
+        assertEquals(testEn(-100000), "-100K");
+
+        assertEquals(testEn(-1000000), "-1M");
+        assertEquals(testEn(-10000000), "-10M");
+        assertEquals(testEn(-100000000), "-100M");
+
+        assertEquals(testEn(-1000000000), "-1G");
+    }
+
+    private final char[] unitsJa = {'万', '億'};
+
+    private String testJa(int num) {
+        return TwitterStringUtils.convertToSIUnitString(num, 4, 1, unitsJa).toString();
+    }
+
+    @Test
+    public void convertToSIUnitStringTestJa() {
+        assertEquals(testJa(0), "0");
+        assertEquals(testJa(10), "10");
+        assertEquals(testJa(100), "100");
+        assertEquals(testJa(1000), "1000");
+
+        assertEquals(testJa(10000), "1万");
+        assertEquals(testJa(100000), "10万");
+        assertEquals(testJa(1000000), "100万");
+
+        assertEquals(testJa(10000000), "0.1億");
+        assertEquals(testJa(100000000), "1億");
+        assertEquals(testJa(1000000000), "10億");
+
+
+        assertEquals(testJa(-10), "-10");
+        assertEquals(testJa(-100), "-100");
+        assertEquals(testJa(-1000), "-1000");
+
+        assertEquals(testJa(-10000), "-1万");
+        assertEquals(testJa(-100000), "-10万");
+        assertEquals(testJa(-1000000), "-100万");
+
+        assertEquals(testJa(-10000000), "-0.1億");
+        assertEquals(testJa(-100000000), "-1億");
+        assertEquals(testJa(-1000000000), "-10億");
     }
 }
