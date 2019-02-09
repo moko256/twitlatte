@@ -22,8 +22,9 @@ dependencies {
 
     api project(':component_html_parse')
 
+    //noinspection GradleDependency
     api 'com.squareup.okhttp3:okhttp:3.12.1'
-    api 'com.squareup.okio:okio:2.1.0'
+    api 'com.squareup.okio:okio:2.2.2'
 }
 
 repositories {
