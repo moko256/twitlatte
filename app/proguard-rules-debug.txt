@@ -1,9 +1,10 @@
 # ProGuard rules for debug build
 
--ignorewarnings
 -dontobfuscate
 
 -keep class com.github.moko256.twitlatte.** { *; }
+
+-keep class com.sys1yagi.mastodon4j.api.entity.** { *; }
 
 -keep class twitter4j.AlternativeHttpClientImpl {
     public <init>(twitter4j.HttpClientConfiguration);
