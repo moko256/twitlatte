@@ -16,8 +16,9 @@
 
 package com.github.moko256.latte.client.mastodon.date
 
+import com.google.gson.internal.bind.util.ISO8601Utils
 import java.text.ParseException
-import java.text.SimpleDateFormat
+import java.text.ParsePosition
 import java.util.*
 
 /**
@@ -26,19 +27,12 @@ import java.util.*
  * @author moko256
  */
 
-@SuppressWarnings("SimpleDateFormat")
-private val dateParser = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").apply {
-    timeZone = TimeZone.getTimeZone("GMT")
-}
-
 internal fun String.toISO8601Date(): Date {
-    try {
-        synchronized(dateParser) {
-            return dateParser.parse(this)
-        }
+    return try {
+        ISO8601Utils.parse(this, ParsePosition(0))
     } catch (e: ParseException) {
         e.printStackTrace()
-        return Date(0)
+        Date(0)
     }
 
 }
