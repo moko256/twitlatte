@@ -202,15 +202,16 @@ class TwitterApiClientImpl(
         }.mediaId
     }
 
-    override fun postStatus(inReplyToStatusId: Long, contentWarning: String?, context: String, imageIdList: List<Long>?, isPossiblySensitive: Boolean, location: Pair<Double, Double>?, visibility: String?) {
-        val statusUpdate = StatusUpdate(context)
-        imageIdList?.takeIf { it.isNotEmpty() }?.let {
+    override fun postStatus(updateStatus: UpdateStatus) {
+        val statusUpdate = StatusUpdate(updateStatus.context)
+        updateStatus.imageIdList?.takeIf { it.isNotEmpty() }?.let {
             statusUpdate.setMediaIds(*it.toLongArray())
-            statusUpdate.isPossiblySensitive = isPossiblySensitive
+            statusUpdate.isPossiblySensitive = updateStatus.isPossiblySensitive
         }
-        if (inReplyToStatusId > 0) {
-            statusUpdate.inReplyToStatusId = inReplyToStatusId
+        if (updateStatus.inReplyToStatusId > 0) {
+            statusUpdate.inReplyToStatusId = updateStatus.inReplyToStatusId
         }
+        val location = updateStatus.location
         if (location != null) {
             statusUpdate.location = GeoLocation(location.first, location.second)
         }

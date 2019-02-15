@@ -20,6 +20,7 @@ import android.content.ContentResolver
 import android.net.Uri
 import com.github.moko256.latte.client.base.ApiClient
 import com.github.moko256.latte.client.base.entity.Emoji
+import com.github.moko256.latte.client.base.entity.UpdateStatus
 import com.github.moko256.twitlatte.model.base.PostStatusModel
 import io.reactivex.Completable
 import io.reactivex.Single
@@ -36,43 +37,33 @@ class PostStatusModelImpl(
 ): PostStatusModel {
     private val counter = apiClient.generateCounter()
 
-    override var inReplyToStatusId: Long = -1
-    override var isPossiblySensitive: Boolean = false
-    override var statusText: String = ""
-    override var contentWarning: String? = null
+    override val updateStatus: UpdateStatus = UpdateStatus(
+            inReplyToStatusId = -1,
+            isPossiblySensitive = false,
+            context = "",
+            contentWarning = null,
+            location = null,
+            visibility = null,
+            imageIdList = null
+    )
 
     override val statusTextLimit: Int = counter.limit
     override val uriListSizeLimit: Int = 4
 
     override val uriList: List<Uri> = ArrayList(uriListSizeLimit)
-    override var location: Pair<Double, Double>? = null
-    override var visibility: String? = null
 
     override fun isReply(): Boolean {
-        return inReplyToStatusId > 0
+        return updateStatus.inReplyToStatusId > 0
     }
 
     override fun getTweetLength(): Int {
-        return counter.getLength(
-                if (contentWarning != null) {
-                    contentWarning + statusText
-                } else {
-                    statusText
-                }
-        )
+        counter.setUpdateStatus(updateStatus, uriList.size)
+        return counter.getContextLength()
     }
 
     override fun isValid(): Boolean {
-        val text = if (contentWarning != null) {
-            contentWarning + statusText
-        } else {
-            statusText
-        }
-        return if (text.isEmpty()) {
-            uriList.isNotEmpty()
-        } else {
-            counter.isValid(text)
-        }
+        counter.setUpdateStatus(updateStatus, uriList.size)
+        return counter.isValidStatus()
     }
 
     override fun post(): Completable {
@@ -88,16 +79,10 @@ class PostStatusModelImpl(
                 } else {
                     null
                 }
-                apiClient.postStatus(
-                        inReplyToStatusId,
-                        contentWarning,
-                        statusText,
-                        ids,
-                        isPossiblySensitive,
-                        location,
-                        visibility
-                )
+                updateStatus.imageIdList = ids
+                apiClient.postStatus(updateStatus)
                 subscriber.onComplete()
+                updateStatus.imageIdList = null
             } catch (e: Throwable) {
                 subscriber.tryOnError(e)
             }

@@ -73,13 +73,5 @@ interface ApiClient {
     fun getCustomEmojis(): List<Emoji>
 
     fun uploadMedia(inputStream: InputStream, name: String, type: String): Long
-    fun postStatus(
-            inReplyToStatusId: Long,
-            contentWarning: String?,
-            context: String,
-            imageIdList: List<Long>?,
-            isPossiblySensitive: Boolean,
-            location: Pair<Double, Double>?,
-            visibility: String?
-    )
+    fun postStatus(updateStatus: UpdateStatus)
 }

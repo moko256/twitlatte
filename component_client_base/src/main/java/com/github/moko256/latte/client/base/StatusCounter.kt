@@ -16,14 +16,18 @@
 
 package com.github.moko256.latte.client.base
 
+import com.github.moko256.latte.client.base.entity.UpdateStatus
+
 /**
  * Created by moko256 on 2018/12/06.
  *
  * @author moko256
  */
 interface StatusCounter {
-    fun getLength(text: String): Int
-    fun isValid(text: String): Boolean
+    fun setUpdateStatus(updateStatus: UpdateStatus, imageSize: Int)
+
+    fun getContextLength(): Int
+    fun isValidStatus(): Boolean
 
     val limit: Int
 }

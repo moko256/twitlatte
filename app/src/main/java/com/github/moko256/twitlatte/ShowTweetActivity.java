@@ -33,6 +33,7 @@ import android.widget.Toast;
 
 import com.github.moko256.latte.client.base.entity.Post;
 import com.github.moko256.latte.client.base.entity.Status;
+import com.github.moko256.latte.client.base.entity.UpdateStatus;
 import com.github.moko256.latte.client.base.entity.User;
 import com.github.moko256.twitlatte.entity.Client;
 import com.github.moko256.twitlatte.glide.GlideApp;
@@ -364,7 +365,7 @@ public class ShowTweetActivity extends AppCompatActivity {
             disposables.add(
                     Completable.create(emitter -> {
                         try {
-                            client.getApiClient().postStatus(
+                            client.getApiClient().postStatus(new UpdateStatus(
                                     item.getStatus().getId(),
                                     null,
                                     replyText.getText().toString(),
@@ -372,7 +373,7 @@ public class ShowTweetActivity extends AppCompatActivity {
                                     false,
                                     null,
                                     null
-                            );
+                            ));
                             emitter.onComplete();
                         } catch (Throwable e) {
                             e.printStackTrace();

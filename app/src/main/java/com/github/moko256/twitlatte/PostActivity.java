@@ -162,7 +162,7 @@ public class PostActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                model.setStatusText(s.toString());
+                model.getUpdateStatus().setContext(s.toString());
                 updateCounter();
             }
 
@@ -240,7 +240,7 @@ public class PostActivity extends AppCompatActivity {
         isPossiblySensitive = findViewById(R.id.activity_tweet_is_possibly_sensitive);
         isPossiblySensitive.setEnabled(addedImagesAdapter.getImagesList().size() > 0);
         isPossiblySensitive.setOnCheckedChangeListener(
-                (buttonView, isChecked) -> model.setPossiblySensitive(isChecked)
+                (buttonView, isChecked) -> model.getUpdateStatus().setPossiblySensitive(isChecked)
         );
 
         postVisibility = findViewById(R.id.activity_tweet_visibility_spinner);
@@ -287,7 +287,7 @@ public class PostActivity extends AppCompatActivity {
 
                 @Override
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    model.setContentWarning(s.toString());
+                    model.getUpdateStatus().setContentWarning(s.toString());
                     updateCounter();
                 }
 
@@ -301,14 +301,14 @@ public class PostActivity extends AppCompatActivity {
                             contentWarningText.requestFocus();
                         } else {
                             contentWarningText.setVisibility(View.GONE);
-                            model.setContentWarning("");
+                            model.getUpdateStatus().setContentWarning("");
                         }
                     }
             );
             postVisibility.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    model.setVisibility(POST_VISIBILITY[position]);
+                    model.getUpdateStatus().setVisibility(POST_VISIBILITY[position]);
                 }
 
                 @Override
@@ -336,7 +336,7 @@ public class PostActivity extends AppCompatActivity {
                         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE_PERMISSION_LOCATION);
                     }
                 } else {
-                    model.setLocation(null);
+                    model.getUpdateStatus().setLocation(null);
                     locationText.setVisibility(View.GONE);
                     locationText.setText("");
                 }
@@ -350,7 +350,7 @@ public class PostActivity extends AppCompatActivity {
         locationText.setVisibility(View.GONE);
 
         if (getIntent() != null){
-            model.setInReplyToStatusId(getIntent().getLongExtra(
+            model.getUpdateStatus().setInReplyToStatusId(getIntent().getLongExtra(
                     INTENT_EXTRA_IN_REPLY_TO_STATUS_ID, -1
             ));
 
@@ -582,7 +582,7 @@ public class PostActivity extends AppCompatActivity {
                         .getSingle()
                         .subscribe(
                                 it -> {
-                                    model.setLocation(new Pair<>(it.getLatitude(), it.getLongitude()));
+                                    model.getUpdateStatus().setLocation(new Pair<>(it.getLatitude(), it.getLongitude()));
                                     locationText.setText(getString(R.string.lat_and_lon, it.getLatitude(), it.getLongitude()));
                                 },
                                 this::errorNotify

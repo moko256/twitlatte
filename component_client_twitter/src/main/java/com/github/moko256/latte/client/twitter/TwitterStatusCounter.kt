@@ -17,6 +17,7 @@
 package com.github.moko256.latte.client.twitter
 
 import com.github.moko256.latte.client.base.StatusCounter
+import com.github.moko256.latte.client.base.entity.UpdateStatus
 import com.twitter.twittertext.TwitterTextParseResults
 import com.twitter.twittertext.TwitterTextParser
 
@@ -26,24 +27,27 @@ import com.twitter.twittertext.TwitterTextParser
  * @author moko256
  */
 internal class TwitterStatusCounter: StatusCounter {
-    private var resultCacheString: String? = null
+    private var imageSize: Int = 0
+
     private var resultCache: TwitterTextParseResults? = null
 
-    override fun getLength(text: String): Int {
-        updateCounter(text)
+    override fun setUpdateStatus(updateStatus: UpdateStatus, imageSize: Int) {
+        val context = updateStatus.context
+        resultCache = TwitterTextParser.parseTweet(context, TwitterTextParser.TWITTER_TEXT_EMOJI_CHAR_COUNT_CONFIG)
+        this.imageSize = imageSize
+    }
+
+    override fun getContextLength(): Int {
         return resultCache?.weightedLength ?: 0
     }
 
-    override fun isValid(text: String): Boolean {
-        updateCounter(text)
-        return resultCache?.isValid ?: false
-    }
-
-    private fun updateCounter(text: String) {
-        if (text != resultCacheString) {
-            resultCacheString = text
-            resultCache = TwitterTextParser.parseTweet(text, TwitterTextParser.TWITTER_TEXT_EMOJI_CHAR_COUNT_CONFIG)
+    override fun isValidStatus(): Boolean {
+        return if (resultCache?.weightedLength == 0) {
+            imageSize > 0
+        } else {
+            resultCache?.isValid?:false
         }
     }
+
     override val limit: Int = TwitterTextParser.TWITTER_TEXT_EMOJI_CHAR_COUNT_CONFIG.maxWeightedTweetLength
 }

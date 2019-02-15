@@ -230,14 +230,14 @@ class MastodonApiClientImpl(okHttpClient: OkHttpClient, url: String, token: Stri
                 .id
     }
 
-    override fun postStatus(inReplyToStatusId: Long, contentWarning: String?, context: String, imageIdList: List<Long>?, isPossiblySensitive: Boolean, location: Pair<Double, Double>?, visibility: String?) {
+    override fun postStatus(updateStatus: UpdateStatus) {
         Statuses(client).postStatus(
-                context,
-                inReplyToStatusId.takeIf { it > 0 },
-                imageIdList,
-                isPossiblySensitive.takeIf { it },
-                contentWarning?.takeIf { it.isNotEmpty() },
-                visibility?.let {
+                updateStatus.context,
+                updateStatus.inReplyToStatusId.takeIf { it > 0 },
+                updateStatus.imageIdList,
+                updateStatus.isPossiblySensitive.takeIf { it },
+                updateStatus.contentWarning?.takeIf { it.isNotEmpty() },
+                updateStatus.visibility?.let {
                     com.sys1yagi.mastodon4j.api.entity.Status.Visibility.valueOf(it)
                 }, null
         ).executeAndConvertError()

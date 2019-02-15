@@ -14,35 +14,20 @@
  * limitations under the License.
  */
 
-package com.github.moko256.twitlatte.model.base
-
-import android.net.Uri
-import com.github.moko256.latte.client.base.entity.Emoji
-import com.github.moko256.latte.client.base.entity.UpdateStatus
-import io.reactivex.Completable
-import io.reactivex.Single
+package com.github.moko256.latte.client.base.entity
 
 /**
- * Created by moko256 on 2017/07/22.
+ * Created by moko256 on 2019/02/15.
  *
  * @author moko256
  */
 
-interface PostStatusModel {
-
-    val updateStatus: UpdateStatus
-
-    val statusTextLimit: Int
-
-    val uriList: List<Uri>
-    val uriListSizeLimit: Int
-
-    fun isReply(): Boolean
-
-    fun getTweetLength(): Int
-    fun isValid(): Boolean
-
-    fun post(): Completable
-
-    fun requestCustomEmojis(): Single<List<Emoji>>
-}
+data class UpdateStatus(
+        var inReplyToStatusId: Long,
+        var contentWarning: String?,
+        var context: String,
+        var imageIdList: List<Long>?,
+        var isPossiblySensitive: Boolean,
+        var location: Pair<Double, Double>?,
+        var visibility: String?
+)

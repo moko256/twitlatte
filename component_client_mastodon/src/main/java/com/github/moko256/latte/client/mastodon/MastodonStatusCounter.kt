@@ -17,6 +17,9 @@
 package com.github.moko256.latte.client.mastodon
 
 import com.github.moko256.latte.client.base.StatusCounter
+import com.github.moko256.latte.client.base.entity.UpdateStatus
+import com.twitter.twittertext.TwitterTextParseResults
+import com.twitter.twittertext.TwitterTextParser
 
 /**
  * Created by moko256 on 2018/12/06.
@@ -24,12 +27,36 @@ import com.github.moko256.latte.client.base.StatusCounter
  * @author moko256
  */
 internal class MastodonStatusCounter: StatusCounter {
-    override fun getLength(text: String): Int {
-        return text.codePointCount(0, text.length)
+    private var imageSize: Int = 0
+
+    private var resultCache: TwitterTextParseResults? = null
+
+    override fun setUpdateStatus(updateStatus: UpdateStatus, imageSize: Int) {
+        val context = updateStatus.context
+        val contentWarning = updateStatus.contentWarning
+
+        resultCache = TwitterTextParser.parseTweet(
+                if (contentWarning == null) {
+                    context
+                } else {
+                    context + contentWarning
+                },
+                TwitterTextParser.TWITTER_TEXT_CODE_POINT_COUNT_CONFIG
+        )
+
+        this.imageSize = imageSize
     }
 
-    override fun isValid(text: String): Boolean {
-        return getLength(text) <= limit
+    override fun getContextLength(): Int {
+        return resultCache?.weightedLength ?: 0
+    }
+
+    override fun isValidStatus(): Boolean {
+        return if (resultCache?.weightedLength == 0) {
+            imageSize > 0
+        } else {
+            resultCache?.weightedLength?:0 <= limit
+        }
     }
 
     override val limit: Int = 500
