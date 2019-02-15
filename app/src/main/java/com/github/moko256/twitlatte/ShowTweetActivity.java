@@ -39,6 +39,7 @@ import com.github.moko256.twitlatte.entity.Client;
 import com.github.moko256.twitlatte.glide.GlideApp;
 import com.github.moko256.twitlatte.intent.AppCustomTabsKt;
 import com.github.moko256.twitlatte.model.impl.StatusActionModelImpl;
+import com.github.moko256.twitlatte.text.NoSpanInputFilterKt;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
 
 import java.text.DateFormat;
@@ -105,6 +106,7 @@ public class ShowTweetActivity extends AppCompatActivity {
         timestampText = findViewById(R.id.tweet_show_timestamp);
         viaText = findViewById(R.id.tweet_show_via);
         replyText= findViewById(R.id.tweet_show_tweet_reply_text);
+        replyText.setFilters(NoSpanInputFilterKt.getNoSpanInputFilter());
         replyButton= findViewById(R.id.tweet_show_tweet_reply_button);
 
         SwipeRefreshLayout swipeRefreshLayout = findViewById(R.id.tweet_show_swipe_refresh);
