@@ -28,6 +28,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.text.Editable;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -70,6 +72,8 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import kotlin.Pair;
 import kotlin.Unit;
+import kotlin.collections.ArraysKt;
+import kotlin.sequences.SequencesKt;
 
 import static com.github.moko256.latte.client.mastodon.MastodonApiClientImplKt.CLIENT_TYPE_MASTODON;
 import static com.github.moko256.latte.client.twitter.TwitterApiClientImplKt.CLIENT_TYPE_TWITTER;
@@ -168,6 +172,20 @@ public class PostActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {}
+        });
+        editText.setFilters(new InputFilter[]{
+                (source, start, end, dest, dstart, dend) -> {
+                    if (source instanceof Spanned &&
+                            !SequencesKt.filter(
+                                    ArraysKt.asSequence(((Spanned) source).getSpans(0, source.length() - 1, Object.class)),
+                                    it -> (((Spanned) source).getSpanFlags(it) & Spanned.SPAN_COMPOSING) == Spanned.SPAN_COMPOSING
+                            ).iterator().hasNext()
+                    ) {
+                        return source.toString();
+                    } else {
+                        return source;
+                    }
+                }
         });
         editText.setImageAddedListener(imageUri -> {
             if (model.getUriList().size() < model.getUriListSizeLimit()) {
