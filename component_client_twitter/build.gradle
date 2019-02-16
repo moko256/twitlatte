@@ -23,7 +23,7 @@ dependencies {
     api project(':component_client_base')
 
     implementation project(':alternative_twitter4j')
-    implementation project(':twitter-text')
+    implementation project(':twitter-text:java')
 }
 
 repositories {

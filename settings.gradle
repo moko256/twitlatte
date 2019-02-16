@@ -22,5 +22,4 @@ include ':japng-android:android_api'
 include ':japng:api'
 project(':japng:api').projectDir = new File('japng-android/japng/api')
 
-include ':twitter-text'
-project(':twitter-text').projectDir = new File('twitter-text/java')
+include ':twitter-text:java'
