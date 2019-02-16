@@ -246,7 +246,7 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 );
             });
 
-            statusViewBinder.getQuoteTweetLayout().setOnClickListener(v -> context.startActivity(
+            statusViewBinder.getAdditionalContentLayout().setOnClickListener(v -> context.startActivity(
                     GlobalApplicationKt.setAccountKeyForActivity(
                             ShowTweetActivity.getIntent(context, quotedStatus.getId()),
                             ((Activity) context)

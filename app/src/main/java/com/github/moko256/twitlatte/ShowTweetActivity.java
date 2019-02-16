@@ -302,7 +302,7 @@ public class ShowTweetActivity extends AppCompatActivity {
             );
         });
 
-        statusViewBinder.getQuoteTweetLayout().setOnClickListener(v -> startActivity(
+        statusViewBinder.getAdditionalContentLayout().setOnClickListener(v -> startActivity(
                 GlobalApplicationKt.setAccountKeyForActivity(
                         ShowTweetActivity.getIntent(this, item.getQuotedRepeatingStatus().getId()),
                         this

@@ -71,11 +71,11 @@ class StatusViewBinder(
     val contentOpenerToggle: CheckableImageView = viewGroup.findViewById(R.id.tweet_spoiler_opener)
     val tweetContext: TextView = viewGroup.findViewById(R.id.tweet_content)
     val timeStampText: TextView = viewGroup.findViewById(R.id.tweet_time_stamp_text)
-    val quoteTweetLayout: RelativeLayout = viewGroup.findViewById(R.id.additional_content)
-    val quoteTweetImages: ImagesTableView = viewGroup.findViewById(R.id.additional_content_images)
-    val quoteTweetUserName: TextView = viewGroup.findViewById(R.id.additional_content_primary_text)
-    val quoteTweetUserId: TextView = viewGroup.findViewById(R.id.additional_content_secondary_text)
-    val quoteTweetContext: TextView = viewGroup.findViewById(R.id.additional_content_context)
+    val additionalContentLayout: RelativeLayout = viewGroup.findViewById(R.id.additional_content)
+    val additionalContentImages: ImagesTableView = viewGroup.findViewById(R.id.additional_content_images)
+    val additionalContentPrimaryText: TextView = viewGroup.findViewById(R.id.additional_content_primary_text)
+    val additionalContentSecondaryText: TextView = viewGroup.findViewById(R.id.additional_content_secondary_text)
+    val additionalContentContext: TextView = viewGroup.findViewById(R.id.additional_content_context)
     val imageTableView: ImagesTableView = viewGroup.findViewById(R.id.tweet_image_container)
     val likeButton: CheckableImageView = viewGroup.findViewById(R.id.tweet_content_like_button)
     val repeatButton: CheckableImageView = viewGroup.findViewById(R.id.tweet_content_retweet_button)
@@ -97,10 +97,10 @@ class StatusViewBinder(
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             tweetContext.breakStrategy = Layout.BREAK_STRATEGY_SIMPLE
-            quoteTweetContext.breakStrategy = Layout.BREAK_STRATEGY_SIMPLE
+            additionalContentContext.breakStrategy = Layout.BREAK_STRATEGY_SIMPLE
         }
 
-        quoteTweetImages.glideRequests = glideRequests
+        additionalContentImages.glideRequests = glideRequests
         imageTableView.glideRequests = glideRequests
     }
 
@@ -268,31 +268,31 @@ class StatusViewBinder(
         )
 
         if (quotedStatus != null && quotedStatusUser != null) {
-            quoteTweetLayout.visibility = View.VISIBLE
-            quoteTweetUserName.text = TwitterStringUtils.plusUserMarks(
+            additionalContentLayout.visibility = View.VISIBLE
+            additionalContentPrimaryText.text = TwitterStringUtils.plusUserMarks(
                     quotedStatusUser.name,
-                    quoteTweetUserName,
+                    additionalContentPrimaryText,
                     quotedStatusUser.isProtected,
                     quotedStatusUser.isVerified
             )
             val qsMedias = quotedStatus.medias
             if (qsMedias?.isNotEmpty() == true) {
-                quoteTweetImages.visibility = View.VISIBLE
-                quoteTweetImages.setMedias(qsMedias, accessToken.clientType, quotedStatus.isSensitive, timelineImageLoadMode)
+                additionalContentImages.visibility = View.VISIBLE
+                additionalContentImages.setMedias(qsMedias, accessToken.clientType, quotedStatus.isSensitive, timelineImageLoadMode)
                 disposable.add(object: Disposable {
                     override fun isDisposed() = false
 
                     override fun dispose() {
-                        quoteTweetImages.clearImages()
+                        additionalContentImages.clearImages()
                     }
                 })
             } else {
-                quoteTweetImages.visibility = View.GONE
+                additionalContentImages.visibility = View.GONE
             }
-            quoteTweetUserId.text = TwitterStringUtils.plusAtMark(quotedStatusUser.screenName)
-            quoteTweetContext.text = quotedStatus.text
+            additionalContentSecondaryText.text = TwitterStringUtils.plusAtMark(quotedStatusUser.screenName)
+            additionalContentContext.text = quotedStatus.text
         } else {
-            quoteTweetLayout.visibility = View.GONE
+            additionalContentLayout.visibility = View.GONE
         }
 
         val medias = status.medias
