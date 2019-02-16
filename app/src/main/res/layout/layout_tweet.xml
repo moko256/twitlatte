@@ -149,31 +149,31 @@
         tools:text="Tweet context"/>
 
     <RelativeLayout
-        android:id="@+id/tweet_quote_tweet"
+        android:id="@+id/additional_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:layout_below="@id/tweet_content">
         <ImageView
-            android:id="@+id/tweet_divider"
+            android:id="@+id/additional_content_divider"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginBottom="16dp"
             android:src="@color/divider_color"/>
 
         <com.github.moko256.twitlatte.widget.ImagesTableView
-            android:id="@+id/tweet_quote_images"
+            android:id="@+id/additional_content_images"
             android:layout_marginEnd="8dp"
-            android:layout_below="@id/tweet_divider"
-            android:layout_width="108sp"
-            android:layout_height="108sp" />
+            android:layout_below="@id/additional_content_divider"
+            android:layout_width="90sp"
+            android:layout_height="90sp" />
 
         <TextView
-            android:id="@+id/tweet_quote_tweet_user_name"
+            android:id="@+id/additional_content_primary_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/tweet_divider"
-            android:layout_toEndOf="@id/tweet_quote_images"
+            android:layout_below="@id/additional_content_divider"
+            android:layout_toEndOf="@id/additional_content_images"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="2dp"
             android:ellipsize="end"
@@ -182,11 +182,11 @@
             tools:text="Use name"/>
 
         <TextView
-            android:id="@+id/tweet_quote_tweet_user_id"
+            android:id="@+id/additional_content_secondary_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/tweet_divider"
-            android:layout_toEndOf="@id/tweet_quote_tweet_user_name"
+            android:layout_below="@id/additional_content_divider"
+            android:layout_toEndOf="@id/additional_content_primary_text"
             android:lines="1"
             android:ellipsize="end"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
@@ -194,12 +194,12 @@
             tools:text="\@user_id"/>
 
         <TextView
-            android:id="@+id/tweet_quote_tweet_content"
+            android:id="@+id/additional_content_context"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/tweet_quote_tweet_user_name"
-            android:layout_toEndOf="@id/tweet_quote_images"
-            android:maxLines="5"
+            android:layout_below="@id/additional_content_primary_text"
+            android:layout_toEndOf="@id/additional_content_images"
+            android:maxLines="4"
             android:ellipsize="end"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             tools:text="Quoted tweet context"/>
@@ -209,7 +209,7 @@
         android:id="@+id/tweet_content_reply_button"
         android:layout_width="36dp"
         android:layout_height="36dp"
-        android:layout_below="@id/tweet_quote_tweet"
+        android:layout_below="@id/additional_content"
         android:layout_marginTop="24dp"
         android:layout_marginBottom="-8dp"
         android:layout_marginStart="36dp"
@@ -224,7 +224,7 @@
         android:layout_width="36sp"
         android:layout_height="24dp"
         android:layout_marginTop="30dp"
-        android:layout_below="@id/tweet_quote_tweet"
+        android:layout_below="@id/additional_content"
         android:layout_toEndOf="@id/tweet_content_reply_button"
         android:gravity="start|center_vertical"
         android:textAppearance="@style/TextAppearance.AppCompat.Caption"
@@ -235,7 +235,7 @@
         android:id="@+id/tweet_content_retweet_button"
         android:layout_width="36dp"
         android:layout_height="36dp"
-        android:layout_below="@id/tweet_quote_tweet"
+        android:layout_below="@id/additional_content"
         android:layout_toEndOf="@id/tweet_content_replies_count"
         android:layout_marginTop="24dp"
         android:layout_marginBottom="-8dp"
@@ -252,7 +252,7 @@
         android:layout_width="36sp"
         android:layout_height="24dp"
         android:layout_marginTop="30dp"
-        android:layout_below="@id/tweet_quote_tweet"
+        android:layout_below="@id/additional_content"
         android:layout_toEndOf="@id/tweet_content_retweet_button"
         android:gravity="start|center_vertical"
         android:textAppearance="@style/TextAppearance.AppCompat.Caption"
@@ -263,7 +263,7 @@
         android:id="@+id/tweet_content_like_button"
         android:layout_width="36dp"
         android:layout_height="36dp"
-        android:layout_below="@id/tweet_quote_tweet"
+        android:layout_below="@id/additional_content"
         android:layout_toEndOf="@id/tweet_content_retweet_count"
         android:layout_marginTop="24dp"
         android:layout_marginBottom="-8dp"
@@ -280,7 +280,7 @@
         android:layout_width="36sp"
         android:layout_height="24dp"
         android:layout_marginTop="30dp"
-        android:layout_below="@id/tweet_quote_tweet"
+        android:layout_below="@id/additional_content"
         android:layout_toEndOf="@id/tweet_content_like_button"
         android:gravity="start|center_vertical"
         android:textAppearance="@style/TextAppearance.AppCompat.Caption"
