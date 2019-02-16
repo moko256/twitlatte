@@ -141,7 +141,7 @@ abstract class BaseTweetListFragment : BaseListFragment(), ListServerRepository<
                         .listModel
                         .getListEventObservable()
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe { it ->
+                        .subscribe {
                             if (it.type == EventType.ADD_TOP && it.size > 0) {
                                 val value = TypedValue()
                                 Toast.makeText(context, R.string.new_posts, Toast.LENGTH_SHORT).apply {
@@ -162,7 +162,7 @@ abstract class BaseTweetListFragment : BaseListFragment(), ListServerRepository<
                         .listModel
                         .getListEventObservable()
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe { it ->
+                        .subscribe {
                             adapterObservableBinder!!.invoke(it)
 
                             if (swipeRefreshLayout.isRefreshing) {
@@ -174,7 +174,7 @@ abstract class BaseTweetListFragment : BaseListFragment(), ListServerRepository<
                         .listModel
                         .getErrorEventObservable()
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe { it ->
+                        .subscribe {
                             notifyErrorBySnackBar(it).show()
 
                             if (swipeRefreshLayout.isRefreshing) {

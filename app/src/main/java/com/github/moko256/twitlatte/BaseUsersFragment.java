@@ -29,11 +29,11 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
-import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
+import kotlin.collections.CollectionsKt;
 
 /**
  * Created by moko256 on 2016/03/29.
@@ -124,10 +124,10 @@ public abstract class BaseUsersFragment extends BaseListFragment {
                                     int size = list.size();
                                     list.clear();
                                     list.addAll(
-                                            Observable
-                                                    .fromIterable(result.getList())
-                                                    .map(User::getId)
-                                                    .toList().blockingGet()
+                                            CollectionsKt.map(
+                                                    result.getList(),
+                                                    User::getId
+                                            )
                                     );
                                     if (adapter != null) {
                                         adapter.notifyItemRangeRemoved(0, size);
@@ -159,10 +159,10 @@ public abstract class BaseUsersFragment extends BaseListFragment {
                                     if (size > 0) {
                                         int l = list.size();
                                         list.addAll(
-                                                Observable
-                                                        .fromIterable(result.getList())
-                                                        .map(User::getId)
-                                                        .toList().blockingGet()
+                                                CollectionsKt.map(
+                                                        result.getList(),
+                                                        User::getId
+                                                )
                                         );
                                         if (adapter != null) {
                                             adapter.notifyItemRangeInserted(l, size);

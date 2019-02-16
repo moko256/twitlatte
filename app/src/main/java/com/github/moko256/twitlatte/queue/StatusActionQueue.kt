@@ -33,8 +33,8 @@ import java.util.concurrent.TimeUnit
 // TODO support multi accounts
 class StatusActionQueue(
         private val queueCount: Int = 20,
-        private val delay: Long = 2L,
-        private val unit: TimeUnit = TimeUnit.MINUTES,
+        private val delay: Long = 10L,
+        private val unit: TimeUnit = TimeUnit.SECONDS,
         private val doImmediateFirst: Boolean = true
 ) {
     private val queue = ArrayBlockingQueue<QueueEntity>(queueCount, true)
