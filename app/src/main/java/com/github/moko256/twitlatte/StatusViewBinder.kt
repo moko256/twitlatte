@@ -84,6 +84,9 @@ class StatusViewBinder(
     val repeatCount: TextView = viewGroup.findViewById(R.id.tweet_content_retweet_count)
     val repliesCount: TextView = viewGroup.findViewById(R.id.tweet_content_replies_count)
 
+    var onQuotedStatusClicked: View.OnClickListener? = null
+    var onCardClicked: View.OnClickListener? = null
+
     init {
         contentOpenerToggle.onCheckedChangeListener = { _, isChecked ->
             tweetContext.visibility = if (isChecked) {
@@ -267,8 +270,11 @@ class StatusViewBinder(
                 0
         )
 
+        val card = status.card
+
         if (quotedStatus != null && quotedStatusUser != null) {
             additionalContentLayout.visibility = View.VISIBLE
+            additionalContentLayout.setOnClickListener(onQuotedStatusClicked)
             additionalContentPrimaryText.text = TwitterStringUtils.plusUserMarks(
                     quotedStatusUser.name,
                     additionalContentPrimaryText,
@@ -291,8 +297,17 @@ class StatusViewBinder(
             }
             additionalContentSecondaryText.text = TwitterStringUtils.plusAtMark(quotedStatusUser.screenName)
             additionalContentContext.text = quotedStatus.text
+        } else if (card != null) {
+            additionalContentLayout.visibility = View.VISIBLE
+            additionalContentImages.visibility = View.GONE
+            additionalContentLayout.setOnClickListener(onCardClicked)
+
+            additionalContentPrimaryText.text = card.title
+            additionalContentSecondaryText.text = ""
+            additionalContentContext.text = card.url
         } else {
             additionalContentLayout.visibility = View.GONE
+            additionalContentLayout.setOnClickListener(null)
         }
 
         val medias = status.medias

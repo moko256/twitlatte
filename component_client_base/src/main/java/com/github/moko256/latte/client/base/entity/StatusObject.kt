@@ -59,7 +59,9 @@ data class Status(
         val url: String,
         val spoilerText: String?,
         val emojis: Array<Emoji>?,
-        val visibility: String?
+        val visibility: String?,
+
+        val card: Card?
 ): StatusObject() {
     override fun equals(other: Any?): Boolean {
         return other !== null && (this === other || other is Status && other.id == this.id)

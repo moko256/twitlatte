@@ -65,7 +65,9 @@ private val TABLE_COLUMNS = arrayOf(
         "emojis_shortcodes",
         "emojis_urls",
         "contentWarning",
-        "visibility"
+        "visibility",
+        "card_title",
+        "card_url"
 )
 
 private const val COUNTS_TABLE_NAME = "Counts"
@@ -80,7 +82,7 @@ class CachedStatusesSQLiteOpenHelper(
         } else {
             null
         },
-        null, 4
+        null, 5
 ) {
 
     override fun onCreate(db: SQLiteDatabase) {
@@ -97,8 +99,12 @@ class CachedStatusesSQLiteOpenHelper(
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
         if (oldVersion < 4) {
-            db.execSQL("drop table CachedStatuses")
+            db.execSQL("drop table $TABLE_NAME")
             onCreate(db)
+        }
+        if (oldVersion < 5) {
+            db.execSQL("alter table $TABLE_NAME add column card_title")
+            db.execSQL("alter table $TABLE_NAME add column card_url")
         }
     }
 
@@ -110,7 +116,7 @@ class CachedStatusesSQLiteOpenHelper(
             val c = database.query(
                     TABLE_NAME,
                     TABLE_COLUMNS,
-                    "id=" + id.toString(), null, null, null, null, "1"
+                    "id=$id", null, null, null, null, "1"
             )
             if (c.moveToLast()) {
                 val createdAt = Date(c.getLong(0))
@@ -154,7 +160,16 @@ class CachedStatusesSQLiteOpenHelper(
                                     c.getString(28).splitWithComma()
                             ),
                             spoilerText = c.getString(29),
-                            visibility = c.getString(30)
+                            visibility = c.getString(30),
+                            card = c.let {
+                                val title = it.getString(31)
+                                val url = it.getString(32)
+                                if (title != null && url != null) {
+                                    Card(title = title, url = url)
+                                } else {
+                                    null
+                                }
+                            }
                     )
                 } else {
                     status = Repeat(
@@ -183,7 +198,7 @@ class CachedStatusesSQLiteOpenHelper(
                 val c = database.query(
                         TABLE_NAME,
                         arrayOf(TABLE_COLUMNS[1], TABLE_COLUMNS[3], TABLE_COLUMNS[25]),
-                        "id=" + id.toString(), null, null, null, null
+                        "id=$id", null, null, null, null
                 )
 
                 while (c.moveToNext()) {
@@ -291,14 +306,13 @@ class CachedStatusesSQLiteOpenHelper(
                     contentValues.put(TABLE_COLUMNS[17], mentions.joinToString(","))
                 }
 
-                val urlEntities = status.urls
-                if (urlEntities != null) {
-                    val size = urlEntities.size
+                status.urls?.let {
+                    val size = it.size
                     val urls = arrayOfNulls<String>(size)
                     val starts = arrayOfNulls<String>(size)
                     val ends = arrayOfNulls<String>(size)
 
-                    urlEntities.forEachIndexed { i, entity ->
+                    it.forEachIndexed { i, entity ->
                         urls[i] = entity.url
                         starts[i] = entity.start.toString()
                         ends[i] = entity.end.toString()
@@ -308,15 +322,14 @@ class CachedStatusesSQLiteOpenHelper(
                     contentValues.put(TABLE_COLUMNS[20], ends.joinToString(","))
                 }
 
-                val medias = status.medias
-                if (medias != null) {
-                    val size = medias.size
+                status.medias?.let {
+                    val size = it.size
                     val thumbnailUrls = arrayOfNulls<String>(size)
                     val originalUrls = arrayOfNulls<String>(size)
                     val downloadVideoUrls = arrayOfNulls<String>(size)
                     val types = arrayOfNulls<String>(size)
 
-                    medias.forEachIndexed { i, entity ->
+                    it.forEachIndexed { i, entity ->
                         thumbnailUrls[i] = entity.thumbnailUrl
                         originalUrls[i] = entity.originalUrl
                         downloadVideoUrls[i] = entity.downloadVideoUrl
@@ -332,21 +345,26 @@ class CachedStatusesSQLiteOpenHelper(
 
                 contentValues.put(TABLE_COLUMNS[26], status.url)
 
-                val emojis = status.emojis
-                if (emojis != null) {
-                    val size = emojis.size
+                status.emojis?.let {
+                    val size = it.size
                     val shortCodes = arrayOfNulls<String>(size)
                     val urls = arrayOfNulls<String>(size)
 
-                    emojis.forEachIndexed { i, emoji ->
+                    it.forEachIndexed { i, emoji ->
                         shortCodes[i] = emoji.shortCode
                         urls[i] = emoji.url
                     }
                     contentValues.put(TABLE_COLUMNS[27], shortCodes.joinToString(","))
                     contentValues.put(TABLE_COLUMNS[28], urls.joinToString(","))
                 }
+
                 contentValues.put(TABLE_COLUMNS[29], status.spoilerText)
                 contentValues.put(TABLE_COLUMNS[30], status.visibility)
+
+                status.card?.let {
+                    contentValues.put(TABLE_COLUMNS[31], it.title)
+                    contentValues.put(TABLE_COLUMNS[32], it.url)
+                }
             }
 
             is Repeat -> {

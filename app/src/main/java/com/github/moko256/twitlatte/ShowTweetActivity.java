@@ -302,12 +302,20 @@ public class ShowTweetActivity extends AppCompatActivity {
             );
         });
 
-        statusViewBinder.getAdditionalContentLayout().setOnClickListener(v -> startActivity(
+        statusViewBinder.setOnQuotedStatusClicked(v -> startActivity(
                 GlobalApplicationKt.setAccountKeyForActivity(
                         ShowTweetActivity.getIntent(this, item.getQuotedRepeatingStatus().getId()),
                         this
                 )
         ));
+
+        statusViewBinder.setOnCardClicked(
+                v -> AppCustomTabsKt.launchChromeCustomTabs(
+                        this,
+                        item.getStatus().getCard().getUrl(),
+                        false
+                )
+        );
 
         statusViewBinder.getLikeButton().setOnCheckedChangeListener((compoundButton, b) -> {
             if (b) {

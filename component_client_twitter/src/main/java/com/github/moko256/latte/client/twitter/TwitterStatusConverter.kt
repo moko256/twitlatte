@@ -164,7 +164,8 @@ private fun twitter4j.Status.convertToStatus(): Status {
             url = "https://twitter.com/" + user.screenName + "/status/" + id.toString(),
             spoilerText = null,
             quotedStatusId = quotedStatusId,
-            visibility = null
+            visibility = null,
+            card = null
     )
 }
 

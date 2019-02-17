@@ -118,7 +118,13 @@ private fun com.sys1yagi.mastodon4j.api.entity.Status.convertToStatus(): Status 
             url = url,
             spoilerText = spoilerText.takeIf { it.isNotEmpty() },
             quotedStatusId = -1,
-            visibility = visibility
+            visibility = visibility,
+            card = card?.let {
+                Card(
+                        title = it.title,
+                        url = it.url
+                )
+            }
     )
 }
 

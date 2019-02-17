@@ -30,6 +30,7 @@ import com.github.moko256.latte.client.base.entity.Status;
 import com.github.moko256.latte.client.base.entity.User;
 import com.github.moko256.twitlatte.entity.Client;
 import com.github.moko256.twitlatte.glide.GlideRequests;
+import com.github.moko256.twitlatte.intent.AppCustomTabsKt;
 import com.github.moko256.twitlatte.repository.PreferenceRepository;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
 import com.github.moko256.twitlatte.widget.ImagesTableView;
@@ -246,12 +247,20 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 );
             });
 
-            statusViewBinder.getAdditionalContentLayout().setOnClickListener(v -> context.startActivity(
+            statusViewBinder.setOnQuotedStatusClicked(v -> context.startActivity(
                     GlobalApplicationKt.setAccountKeyForActivity(
                             ShowTweetActivity.getIntent(context, quotedStatus.getId()),
                             ((Activity) context)
                     )
             ));
+
+            statusViewBinder.setOnCardClicked(
+                    v -> AppCustomTabsKt.launchChromeCustomTabs(
+                            context,
+                            status.getCard().getUrl(),
+                            false
+                    )
+            );
 
             statusViewBinder.getLikeButton().setOnCheckedChangeListener((compoundButton, b) -> {
                 onFavoriteClick.onClick(getLayoutPosition(), status.getId(), !b);
