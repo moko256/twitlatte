@@ -1,7 +1,6 @@
 # ProGuard rules for release build
 
 # see https://www.guardsquare.com/en/products/proguard/manual/usage/optimizations
--optimizations field/*,code/*,class/*,method/*
 
 -keepattributes SourceFile,LineNumberTable
 
@@ -18,8 +17,8 @@
 -keepclassmembers class twitter4j.AlternativeHttpClientImpl {
     public <init>(twitter4j.HttpClientConfiguration);
 }
--adaptclassstrings twitter4j.conf.*
--assumevalues class * implements twitter4j.Logger {
+-keep class twitter4j.conf.PropertyConfigurationFactory
+-assumevalues class * extends twitter4j.Logger {
     boolean isDebugEnabled() return false;
 }
 ##---------------End: proguard configuration for twitter4j  ----------
