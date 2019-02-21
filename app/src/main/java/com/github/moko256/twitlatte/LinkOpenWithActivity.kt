@@ -20,6 +20,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.TextViewCompat
@@ -49,6 +50,15 @@ class LinkOpenWithActivity : AppCompatActivity() {
             } else {
                 showDialog {
                     startActivity(switchIntent.setAccountKey(it))
+
+                    Toast.makeText(
+                            this@LinkOpenWithActivity,
+                            TwitterStringUtils.plusAtMark(
+                                    it.screenName,
+                                    it.url
+                            ),
+                            Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
         } else {

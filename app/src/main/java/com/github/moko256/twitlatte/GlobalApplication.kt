@@ -20,7 +20,6 @@ import android.app.Activity
 import android.app.Application
 import android.content.Intent
 import android.preference.PreferenceManager
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.collection.LruCache
 import com.github.moko256.latte.client.base.ApiClient
@@ -38,7 +37,6 @@ import com.github.moko256.twitlatte.queue.StatusActionQueue
 import com.github.moko256.twitlatte.repository.KEY_ACCOUNT_KEY
 import com.github.moko256.twitlatte.repository.KEY_NIGHT_MODE
 import com.github.moko256.twitlatte.repository.PreferenceRepository
-import com.github.moko256.twitlatte.text.TwitterStringUtils
 import com.github.moko256.twitlatte.text.convertToAppCompatNightThemeMode
 
 /**
@@ -129,26 +127,16 @@ class GlobalApplication : Application() {
 fun Activity.getClient(): Client? {
     val application = application as GlobalApplication
 
-    return intent.getStringExtra(INTENT_CLIENT_KEY)?.let { key ->
-        val accessToken = getAccountsModel().get(key)
-        Client(
-                accessToken!!,
-                application.createTwitterInstance(accessToken),
-                StatusCacheMap(),
-                UserCacheMap()
-        ).apply {
-            userCache.prepare(this@getClient, accessToken)
-            statusCache.prepare(this@getClient, accessToken, userCache)
-            Toast.makeText(
-                    this@getClient,
-                    TwitterStringUtils.plusAtMark(
-                            accessToken.screenName,
-                            accessToken.url
-                    ),
-                    Toast.LENGTH_SHORT
-            ).show()
-        }
-    }?:application.currentClient
+    return intent
+            .getStringExtra(INTENT_CLIENT_KEY)
+            ?.let { getAccountsModel().get(it) }
+            ?.let {
+                Client(it, application.createTwitterInstance(it), StatusCacheMap(), UserCacheMap())
+                        .apply {
+                            userCache.prepare(this@getClient, it)
+                            statusCache.prepare(this@getClient, it, userCache)
+                        }
+            }?:application.currentClient
 }
 
 fun Intent.setAccountKey(accessToken: AccessToken) = apply {
