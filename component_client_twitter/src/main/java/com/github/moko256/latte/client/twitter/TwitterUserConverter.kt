@@ -63,7 +63,7 @@ internal fun twitter4j.User.convertToCommonUser(): User {
             utcOffset = utcOffset,
             timeZone = timeZone,
             profileBackgroundImageURLHttps = profileBackgroundImageUrlHttps,
-            profileBannerImageUrl = if (profileBannerURL != null) profileBannerURL!!.replace("/web$".toRegex(), "") else null,
+            profileBannerImageUrl = profileBannerURL?.removeSuffix("/web"),
             isProfileBackgroundTiled = isProfileBackgroundTiled,
             lang = lang,
             statusesCount = statusesCount,

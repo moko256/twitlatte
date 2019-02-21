@@ -63,6 +63,26 @@ public class TwitterStringUtils {
         return stringBuilder;
     }
 
+    private static int[] maxTable = new int[]{
+            9, 99, 999, 9999, 99999, 999999, 9999999, 99999999, 999999999, Integer.MAX_VALUE
+    };
+
+    private static int uLog10(int x) {
+        for (int i = 0; ; i++) {
+            if (x <= maxTable[i]) {
+                return i;
+            }
+        }
+    }
+
+    private static int uPow10(int x) {
+        if (x < 1) {
+            return 1;
+        } else {
+            return maxTable[x - 1] + 1;
+        }
+    }
+
     public static CharSequence convertToSIUnitString(int num, int unitExponent, int back, char[] units){
         if (num == 0) return "0";
         StringBuilder builder = new StringBuilder(unitExponent + 2);
@@ -70,14 +90,14 @@ public class TwitterStringUtils {
             num *= -1;
             builder.append('-');
         }
-        int exponent = (int) Math.floor(Math.log10(num));
-        int e = (int) Math.floor((double) (exponent + back) / unitExponent);
+        int exponent = uLog10(num);
+        int e = (exponent + back) / unitExponent;
         if (exponent < unitExponent) {
             builder.append(num);
         } else {
-            double m = Math.pow(10, e * unitExponent);
+            double m = uPow10(e * unitExponent);
             if (num < m) {
-                double v = Math.pow(10, back + 1);
+                double v = uPow10(back + 1);
                 builder.append(Math.round((double) num / m * v) / v);
             } else {
                 builder.append(Math.round(num / m));
