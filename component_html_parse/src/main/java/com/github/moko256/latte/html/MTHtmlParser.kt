@@ -82,7 +82,7 @@ private class MastodonHtmlHandler: DefaultHandler() {
                     classValue?.contains("mention")?:false -> {
                         type = TYPE_OTHER
                         val list = linkHref.split("/")
-                        val name = list[list.size - 1].replaceFirst("@", "")
+                        val name = list[list.size - 1].removePrefix("@")
                         val domain = list[list.size - 2]
                         contentUrl = "twitlatte://user/$name@$domain"
                     }

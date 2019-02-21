@@ -100,7 +100,7 @@ class CachedUsersSQLiteOpenHelper(context: Context, accessToken: AccessToken?) :
             val c = database.query(
                     TABLE_NAME,
                     TABLE_COLUMNS,
-                    "id=" + id.toString(), null, null, null, null, "1"
+                    "id=$id", null, null, null, null, "1"
             )
             if (c.moveToLast()) {
                 user = User(
@@ -250,7 +250,7 @@ class CachedUsersSQLiteOpenHelper(context: Context, accessToken: AccessToken?) :
     fun deleteCachedUser(id: Long) {
         synchronized(this) {
             val database = writableDatabase
-            database.delete(TABLE_NAME, "id=" + id.toString(), null)
+            database.delete(TABLE_NAME, "id=$id", null)
             database.close()
         }
     }
