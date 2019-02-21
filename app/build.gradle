@@ -34,7 +34,7 @@ android {
 
         Base64.Decoder e = Base64.decoder
 
-        buildConfigField 'byte[]', 'p', "${e.decode(e.decode(d+a+c+b+"=")).toString().replace("[", "{").replace("]", "}")}"
+        buildConfigField 'byte[]', 'p', "{${e.decode(e.decode(d+a+c+b+"=")).join(",")}}"
         vectorDrawables.useSupportLibrary = true
         resConfigs 'en', 'ja', 'ldltr'
     }
