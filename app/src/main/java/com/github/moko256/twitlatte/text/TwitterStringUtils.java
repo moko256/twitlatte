@@ -64,23 +64,19 @@ public class TwitterStringUtils {
     }
 
     private static int[] maxTable = new int[]{
-            9, 99, 999, 9999, 99999, 999999, 9999999, 99999999, 999999999, Integer.MAX_VALUE
+            1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000, Integer.MAX_VALUE
     };
 
     private static int uLog10(int x) {
         for (int i = 0; ; i++) {
-            if (x <= maxTable[i]) {
-                return i;
+            if (x < maxTable[i]) {
+                return i - 1;
             }
         }
     }
 
     private static int uPow10(int x) {
-        if (x < 1) {
-            return 1;
-        } else {
-            return maxTable[x - 1] + 1;
-        }
+        return maxTable[x];
     }
 
     public static CharSequence convertToSIUnitString(int num, int unitExponent, int back, char[] units){
