@@ -201,7 +201,7 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        ThrowableFunc throwableFunc = null;
+        Func throwableFunc = null;
         @StringRes int didAction = -1;
         ApiClient apiClient = client.getApiClient();
 
@@ -279,7 +279,7 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
         }
 
         if (throwableFunc != null && didAction != -1) {
-            ThrowableFunc finalThrowableFunc = throwableFunc;
+            Func finalThrowableFunc = throwableFunc;
             int finalDidAction = didAction;
             confirmDialog(item.getTitle(), getString(R.string.confirm_message),()->runAsWorkerThread(finalThrowableFunc, finalDidAction));
         }
@@ -308,7 +308,7 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
         }
     }
 
-    private void runAsWorkerThread(ThrowableFunc func, @StringRes int didAction){
+    private void runAsWorkerThread(Func func, @StringRes int didAction){
         disposable.add(
                 Completable.create(
                         subscriber -> {
@@ -332,7 +332,7 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
 
     }
 
-    private void confirmDialog(CharSequence title, CharSequence message,Func func){
+    private void confirmDialog(CharSequence title, CharSequence message, Func func){
         new AlertDialog.Builder(this)
                 .setTitle(title)
                 .setMessage(message)
@@ -345,10 +345,6 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
                 .show();
     }
 
-    private interface ThrowableFunc<E extends Throwable>{
-        void call() throws E;
-
-    }
     private interface Func{
         void call();
     }
