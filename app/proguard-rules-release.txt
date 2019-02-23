@@ -21,6 +21,20 @@
 -assumevalues class * extends twitter4j.Logger {
     boolean isDebugEnabled() return false;
 }
+-assumevalues class * implements twitter4j.conf.PropertyConfiguration {
+    boolean notNull(java.util.Properties, java.lang.String, java.lang.String) return false;
+}
+-assumevalues class * implements twitter4j.conf.Configuration {
+    boolean isDebugEnabled() return false;
+    boolean isJSONStoreEnabled() return false;
+    boolean isMBeanEnabled() return false;
+    boolean isIncludeEmailEnabled() return false;
+
+    boolean isTweetModeExtended() return true;
+    boolean isIncludeExtAltTextEnabled() return true;
+    boolean isIncludeMyRetweetEnabled() return true;
+}
+
 ##---------------End: proguard configuration for twitter4j  ----------
 
 ##---------------Begin: proguard configuration for Gson  ----------
