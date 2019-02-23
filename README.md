@@ -88,7 +88,6 @@ and, built using these tools\:
 * Kotlin
 * Gradle
 * Proguard
-* Javassist
 
 ## License of this project
 
