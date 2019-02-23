@@ -250,11 +250,11 @@ abstract class BaseTweetListFragment : BaseListFragment(), ListServerRepository<
         val size = Point()
         display.getSize(size)
 
-        val count = Math.ceil(
-                //Calculated as:
-                //Picture area: (16 : 9) + Other content: (16 : 3)
-                (size.x * 12).toDouble() / (size.y * 16)
-        ).toInt()
+        //Calculated as:
+        // Picture area: (16 : 9) + Other content: (16 : 3)
+        // ((size.x * 12) / (size.y * 16)) + 1
+        val count = (0.75f * size.x / size.y).toInt() + 1
+
         return if (count == 1) {
             val layoutManager = LinearLayoutManager(context)
             layoutManager.recycleChildrenOnDetach = true
