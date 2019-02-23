@@ -19,7 +19,11 @@
 }
 -keep class twitter4j.conf.PropertyConfigurationFactory
 -assumevalues class * extends twitter4j.Logger {
+    private static twitter4j.LoggerFactory getLoggerFactoryIfAvailable(java.lang.String, java.lang.String) return null;
     boolean isDebugEnabled() return false;
+}
+-assumenosideeffects class * extends twitter4j.Logger {
+    private static twitter4j.LoggerFactory getLoggerFactoryIfAvailable(java.lang.String, java.lang.String);
 }
 -assumevalues class * implements twitter4j.conf.PropertyConfiguration {
     boolean notNull(java.util.Properties, java.lang.String, java.lang.String) return false;
@@ -33,6 +37,10 @@
     boolean isTweetModeExtended() return true;
     boolean isIncludeExtAltTextEnabled() return true;
     boolean isIncludeMyRetweetEnabled() return true;
+}
+-assumenosideeffects class twitter4j.TwitterAPIMonitor {
+    public static twitter4j.TwitterAPIMonitor getInstance();
+    void methodCalled(java.lang.String, long, boolean);
 }
 
 ##---------------End: proguard configuration for twitter4j  ----------
