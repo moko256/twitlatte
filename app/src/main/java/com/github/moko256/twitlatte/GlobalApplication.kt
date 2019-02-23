@@ -33,7 +33,6 @@ import com.github.moko256.twitlatte.cacheMap.UserCacheMap
 import com.github.moko256.twitlatte.entity.Client
 import com.github.moko256.twitlatte.model.AccountsModel
 import com.github.moko256.twitlatte.net.appOkHttpClientInstance
-import com.github.moko256.twitlatte.queue.StatusActionQueue
 import com.github.moko256.twitlatte.repository.KEY_ACCOUNT_KEY
 import com.github.moko256.twitlatte.repository.KEY_NIGHT_MODE
 import com.github.moko256.twitlatte.repository.PreferenceRepository
@@ -47,8 +46,6 @@ import com.github.moko256.twitlatte.text.convertToAppCompatNightThemeMode
 
 private const val INTENT_CLIENT_KEY = "intent_client_key"
 const val LIMIT_OF_SIZE_OF_STATUSES_LIST = 1000
-
-@JvmField val statusActionQueue = StatusActionQueue()
 
 lateinit var preferenceRepository: PreferenceRepository
 

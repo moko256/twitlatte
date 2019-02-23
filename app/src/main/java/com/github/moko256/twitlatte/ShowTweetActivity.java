@@ -92,7 +92,6 @@ public class ShowTweetActivity extends AppCompatActivity {
         client = GlobalApplicationKt.getClient(this);
         statusActionModel = new StatusActionModelImpl(
                 client.getApiClient(),
-                GlobalApplicationKt.statusActionQueue,
                 client.getStatusCache()
         );
 
