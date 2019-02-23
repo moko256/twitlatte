@@ -50,7 +50,7 @@ class AboutActivity : AppCompatActivity() {
                         birthday
                 ) + "\n\n" + getString(
                         R.string.age_of_this_app_is,
-                        Math.floor(((Date().time - birthday.time) / 31557600000L).toDouble()).toInt()
+                        (Date().time - birthday.time) / 31557600000L
                 ),
                 Toast.LENGTH_LONG
         ).show()
