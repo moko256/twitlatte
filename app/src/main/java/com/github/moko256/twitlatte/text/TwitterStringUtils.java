@@ -63,7 +63,7 @@ public class TwitterStringUtils {
         return stringBuilder;
     }
 
-    private static int[] maxTable = new int[]{
+    private static final int[] maxTable = new int[]{
             1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000, Integer.MAX_VALUE
     };
 
@@ -91,12 +91,12 @@ public class TwitterStringUtils {
         if (exponent < unitExponent) {
             builder.append(num);
         } else {
-            double m = uPow10(e * unitExponent);
+            int m = uPow10(e * unitExponent);
             if (num < m) {
-                double v = uPow10(back + 1);
-                builder.append(Math.round((double) num / m * v) / v);
+                float v = uPow10(back + 1);
+                builder.append(Math.round((float) num / m * v) / v);
             } else {
-                builder.append(Math.round(num / m));
+                builder.append(Math.round((float) num / m));
             }
             builder.append(units[e - 1]);
         }
@@ -282,32 +282,22 @@ public class TwitterStringUtils {
         return result;
     }
 
+    private static final int[] TWITTER_ACTION_ID = new int[]{
+            R.string.did_like, R.string.did_unlike, R.string.did_retweet, R.string.did_unretweet
+    };
+
+    private static final int[] MASTODON_ACTION_ID = new int[]{
+            R.string.did_favorite, R.string.did_unfavorite, R.string.did_boost, R.string.did_unboost
+    };
+
     @StringRes
     public static int getDidActionStringRes(int clientType, StatusAction action){
         switch (clientType){
             case CLIENT_TYPE_TWITTER:
-                switch (action){
-                    case FAVORITE:
-                        return R.string.did_like;
-                    case UNFAVORITE:
-                        return R.string.did_unlike;
-                    case REPEAT:
-                        return R.string.did_retweet;
-                    case UNREPEAT:
-                        return R.string.did_unretweet;
-                }
+                return TWITTER_ACTION_ID[action.ordinal()];
 
             case CLIENT_TYPE_MASTODON:
-                switch (action){
-                    case FAVORITE:
-                        return R.string.did_favorite;
-                    case UNFAVORITE:
-                        return R.string.did_unfavorite;
-                    case REPEAT:
-                        return R.string.did_boost;
-                    case UNREPEAT:
-                        return R.string.did_unboost;
-                }
+                return MASTODON_ACTION_ID[action.ordinal()];
 
             default:
                 return 0;
