@@ -213,13 +213,13 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
 
         SelectAccountsAdapter adapter = new SelectAccountsAdapter(this);
         adapter.onImageButtonClickListener = accessToken -> {
-            if (drawer != null) {
-                drawer.closeDrawer(GravityCompat.START);
-            } else {
-                changeIsDrawerAccountsSelection();
-            }
-
             if (accessToken.getUserId() != client.getAccessToken().getUserId()) {
+                if (drawer != null) {
+                    drawer.closeDrawer(GravityCompat.START);
+                } else {
+                    changeIsDrawerAccountsSelection();
+                }
+
                 GlobalApplicationKt.preferenceRepository.putString(
                         KEY_ACCOUNT_KEY, accessToken.getKeyString()
                 );
