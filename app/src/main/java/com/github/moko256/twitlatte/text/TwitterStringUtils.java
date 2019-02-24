@@ -26,12 +26,14 @@ import android.text.style.ImageSpan;
 import android.view.View;
 import android.widget.TextView;
 
+import com.github.moko256.latte.client.base.entity.AccessToken;
 import com.github.moko256.latte.client.base.entity.StatusAction;
 import com.github.moko256.latte.html.entity.Link;
 import com.github.moko256.twitlatte.R;
 import com.github.moko256.twitlatte.SearchResultActivity;
 import com.github.moko256.twitlatte.ShowUserActivity;
 import com.github.moko256.twitlatte.intent.AppCustomTabsKt;
+import com.github.moko256.twitlatte.text.style.ClickableBoldSpan;
 import com.github.moko256.twitlatte.text.style.ClickableNoLineSpan;
 
 import java.util.Objects;
@@ -123,7 +125,7 @@ public class TwitterStringUtils {
         return userIdsStr;
     }
 
-    public static CharSequence getLinkedSequence(Context context, String text, Link[] links){
+    public static CharSequence getLinkedSequence(Context context, AccessToken accessToken, String text, Link[] links){
         if (links == null) {
             return text;
         }
@@ -158,14 +160,26 @@ public class TwitterStringUtils {
                         };
                         break;
                     case "user":
-                        span = new ClickableNoLineSpan() {
-                            @Override
-                            public void onClick(@NonNull View view) {
-                                context.startActivity(
-                                        ShowUserActivity.getIntent(context, uri.getLastPathSegment())
-                                );
-                            }
-                        };
+                        String name = uri.getLastPathSegment();
+                        if (name.split("@")[0].equals(accessToken.getScreenName())) {
+                            span = new ClickableBoldSpan() {
+                                @Override
+                                public void onClick(@NonNull View view) {
+                                    context.startActivity(
+                                            ShowUserActivity.getIntent(context, uri.getLastPathSegment())
+                                    );
+                                }
+                            };
+                        } else {
+                            span = new ClickableNoLineSpan() {
+                                @Override
+                                public void onClick(@NonNull View view) {
+                                    context.startActivity(
+                                            ShowUserActivity.getIntent(context, uri.getLastPathSegment())
+                                    );
+                                }
+                            };
+                        }
                         break;
                     default:
                         span = new ClickableNoLineSpan() {

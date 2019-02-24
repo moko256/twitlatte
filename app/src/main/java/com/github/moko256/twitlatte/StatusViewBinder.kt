@@ -16,6 +16,7 @@
 
 package com.github.moko256.twitlatte
 
+import android.graphics.Typeface
 import android.os.Build
 import android.text.Layout
 import android.text.TextUtils
@@ -140,6 +141,11 @@ class StatusViewBinder(
                     repeatedUser.name,
                     TwitterStringUtils.plusAtMark(repeatedUser.screenName)
             )
+            if (user?.id == accessToken.userId) {
+                repeatUserName.typeface = Typeface.DEFAULT_BOLD
+            } else {
+                repeatUserName.typeface = Typeface.DEFAULT
+            }
         } else {
             repeatUserName.visibility = View.GONE
         }
@@ -222,7 +228,7 @@ class StatusViewBinder(
         }
         userId.text = TwitterStringUtils.plusAtMark(user?.screenName)
 
-        val linkedSequence = TwitterStringUtils.getLinkedSequence(viewGroup.context, status.text, status.urls)
+        val linkedSequence = TwitterStringUtils.getLinkedSequence(viewGroup.context, accessToken, status.text, status.urls)
 
         tweetContext.text = linkedSequence
 

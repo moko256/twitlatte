@@ -258,6 +258,7 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
         );
         CharSequence userBio = TwitterStringUtils.getLinkedSequence(
                 getContext(),
+                client.getAccessToken(),
                 user.getDescription(),
                 user.getDescriptionLinks()
         );

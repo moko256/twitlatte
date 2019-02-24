@@ -24,11 +24,12 @@ import android.text.style.ClickableSpan
  *
  * @author moko256
  */
-abstract class ClickableNoLineSpan: ClickableSpan() {
+abstract class ClickableBoldSpan: ClickableSpan() {
 
     override fun updateDrawState(ds: TextPaint) {
         ds.color = ds.linkColor
-        ds.isUnderlineText = false
+        ds.isFakeBoldText = true
+        ds.isUnderlineText = true
     }
 
 }
