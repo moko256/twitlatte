@@ -38,15 +38,13 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-                <TextView
+                <Button
                     android:id="@+id/tweet_show_is_reply_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/reply"
-                    android:layout_marginTop="@dimen/activity_vertical_margin"
-                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                    android:layout_marginRight="@dimen/activity_horizontal_margin"
+                    android:text="@string/do_view_reply_to"
                     android:visibility="gone"
+                    style="@style/Widget.AppCompat.Button.Borderless.Colored"
                     tools:visibility="visible"/>
 
                 <include
@@ -54,6 +52,7 @@
                     android:layout_below="@id/tweet_show_is_reply_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="-10dp"
                     layout="@layout/layout_tweet"/>
 
                 <TextView

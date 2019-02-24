@@ -73,7 +73,7 @@ public class ShowTweetActivity extends AppCompatActivity {
 
     private StatusViewBinder statusViewBinder;
 
-    private TextView tweetIsReply;
+    private Button tweetIsReply;
     private TextView timestampText;
     private TextView viaText;
     private EditText replyText;
