@@ -30,6 +30,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.github.moko256.latte.client.base.entity.Emoji;
+import com.github.moko256.latte.client.base.entity.Media;
 import com.github.moko256.latte.client.base.entity.User;
 import com.github.moko256.twitlatte.entity.Client;
 import com.github.moko256.twitlatte.glide.GlideApp;
@@ -54,6 +55,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
+import static com.github.moko256.latte.client.base.ApiClientKt.CLIENT_TYPE_NOTHING;
 import static com.github.moko256.latte.client.twitter.TwitterApiClientImplKt.CLIENT_TYPE_TWITTER;
 
 /**
@@ -195,6 +197,21 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
                     return false;
                 }
             });
+            header.setOnClickListener(v -> startActivity(
+                    ShowMediasActivity.getIntent(
+                            getContext(),
+                            new Media[]{
+                                    new Media(
+                                            null,
+                                            headerUrl,
+                                            null,
+                                            Media.MediaType.PICTURE.getValue()
+                                    )
+                            },
+                            CLIENT_TYPE_NOTHING,
+                            0
+                    )
+            ));
         } else {
             String colorStr = user.getProfileBackgroundColor();
             if (!TextUtils.isEmpty(colorStr)){
@@ -217,6 +234,21 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
                 return false;
             }
         });
+        icon.setOnClickListener(v -> startActivity(
+                ShowMediasActivity.getIntent(
+                        getContext(),
+                        new Media[]{
+                                new Media(
+                                        null,
+                                        user.getOriginalProfileImageURLHttps(),
+                                        null,
+                                        Media.MediaType.PICTURE.getValue()
+                                )
+                        },
+                        CLIENT_TYPE_NOTHING,
+                        0
+                )
+        ));
 
         CharSequence userName = TwitterStringUtils.plusUserMarks(
                 user.getName(),
