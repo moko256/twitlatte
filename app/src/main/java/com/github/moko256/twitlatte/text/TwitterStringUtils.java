@@ -211,15 +211,25 @@ public class TwitterStringUtils {
     }
 
     public static String convertThumbImageUrl(int clientType, String baseUrl){
-        return (clientType == CLIENT_TYPE_TWITTER)?
-                baseUrl + ":thumb":
-                baseUrl.replace("original", "small");
+        switch (clientType) {
+            case CLIENT_TYPE_TWITTER:
+                return baseUrl + ":thumb";
+            case CLIENT_TYPE_MASTODON:
+                return baseUrl.replace("original", "small");
+            default:
+                return baseUrl;
+        }
     }
 
     public static String convertSmallImageUrl(int clientType, String baseUrl){
-        return (clientType == CLIENT_TYPE_TWITTER)?
-                baseUrl + ":small":
-                baseUrl.replace("original", "small");
+        switch (clientType) {
+            case CLIENT_TYPE_TWITTER:
+                return baseUrl + ":small";
+            case CLIENT_TYPE_MASTODON:
+                return baseUrl.replace("original", "small");
+            default:
+                return baseUrl;
+        }
     }
 
     public static String convertOriginalImageUrl(int clientType, String baseUrl){

@@ -23,5 +23,7 @@ package com.github.moko256.latte.client.base.entity
  */
 data class Card(
         val title: String,
-        val url: String
+        val description: String,
+        val url: String,
+        val imageUrl: String?
 )

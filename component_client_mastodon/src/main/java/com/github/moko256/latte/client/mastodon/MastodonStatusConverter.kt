@@ -122,7 +122,9 @@ private fun com.sys1yagi.mastodon4j.api.entity.Status.convertToStatus(): Status 
             card = card?.let {
                 Card(
                         title = it.title,
-                        url = it.url
+                        description = it.description,
+                        url = it.url,
+                        imageUrl = it.image
                 )
             }
     )

@@ -67,7 +67,9 @@ private val TABLE_COLUMNS = arrayOf(
         "contentWarning",
         "visibility",
         "card_title",
-        "card_url"
+        "card_description",
+        "card_url",
+        "card_image_url"
 )
 
 private const val COUNTS_TABLE_NAME = "Counts"
@@ -82,7 +84,7 @@ class CachedStatusesSQLiteOpenHelper(
         } else {
             null
         },
-        null, 5
+        null, 6
 ) {
 
     override fun onCreate(db: SQLiteDatabase) {
@@ -105,6 +107,11 @@ class CachedStatusesSQLiteOpenHelper(
         if (oldVersion < 5) {
             db.execSQL("alter table $TABLE_NAME add column card_title")
             db.execSQL("alter table $TABLE_NAME add column card_url")
+        }
+        if (oldVersion < 6) {
+            db.execSQL("alter table $TABLE_NAME add column card_description")
+            db.execSQL("update $TABLE_NAME set card_description=\"description\"")
+            db.execSQL("alter table $TABLE_NAME add column card_image_url")
         }
     }
 
@@ -163,9 +170,17 @@ class CachedStatusesSQLiteOpenHelper(
                             visibility = c.getString(30),
                             card = c.let {
                                 val title = it.getString(31)
-                                val url = it.getString(32)
-                                if (title != null && url != null) {
-                                    Card(title = title, url = url)
+                                val description = it.getString(32)
+                                val url = it.getString(33)
+                                val imageUrl = it.getString(34)
+
+                                if (title != null && description != null && url != null) {
+                                    Card(
+                                            title = title,
+                                            description = description,
+                                            url = url,
+                                            imageUrl = imageUrl
+                                    )
                                 } else {
                                     null
                                 }
@@ -363,7 +378,9 @@ class CachedStatusesSQLiteOpenHelper(
 
                 status.card?.let {
                     contentValues.put(TABLE_COLUMNS[31], it.title)
-                    contentValues.put(TABLE_COLUMNS[32], it.url)
+                    contentValues.put(TABLE_COLUMNS[32], it.description)
+                    contentValues.put(TABLE_COLUMNS[33], it.url)
+                    contentValues.put(TABLE_COLUMNS[34], it.imageUrl)
                 }
             }
 

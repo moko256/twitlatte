@@ -29,6 +29,7 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.github.moko256.latte.client.base.CLIENT_TYPE_NOTHING
 import com.github.moko256.latte.client.base.entity.*
 import com.github.moko256.twitlatte.glide.GlideRequests
 import com.github.moko256.twitlatte.repository.KEY_TIMELINE_IMAGE_LOAD_MODE
@@ -299,12 +300,35 @@ class StatusViewBinder(
             additionalContentContext.text = quotedStatus.text
         } else if (card != null) {
             additionalContentLayout.visibility = View.VISIBLE
-            additionalContentImages.visibility = View.GONE
             additionalContentLayout.setOnClickListener(onCardClicked)
 
             additionalContentPrimaryText.text = card.title
-            additionalContentSecondaryText.text = ""
-            additionalContentContext.text = card.url
+            additionalContentSecondaryText.text = card.url.split('/').getOrNull(2)?:""
+            additionalContentContext.text = card.description
+            val imageUrl = card.imageUrl
+            if (imageUrl != null) {
+                additionalContentImages.visibility = View.VISIBLE
+                additionalContentImages.setMedias(
+                        arrayOf(
+                                Media(
+                                        originalUrl = imageUrl,
+                                        mediaType = Media.MediaType.PICTURE.value
+                                )
+                        ),
+                        CLIENT_TYPE_NOTHING,
+                        false,
+                        timelineImageLoadMode
+                )
+                disposable.add(object: Disposable {
+                    override fun isDisposed() = false
+
+                    override fun dispose() {
+                        additionalContentImages.clearImages()
+                    }
+                })
+            } else {
+                additionalContentImages.visibility = View.GONE
+            }
         } else {
             additionalContentLayout.visibility = View.GONE
             additionalContentLayout.setOnClickListener(null)
