@@ -57,7 +57,7 @@ import static com.github.moko256.latte.client.mastodon.MastodonApiClientImplKt.C
  *
  * @author moko256
  */
-public class ShowUserActivity extends AppCompatActivity implements BaseListFragment.GetViewForSnackBar, BaseTweetListFragment.GetRecyclerViewPool, BaseUsersFragment.GetRecyclerViewPool {
+public class ShowUserActivity extends AppCompatActivity implements TabLayout.OnTabSelectedListener, BaseListFragment.GetViewForSnackBar, BaseTweetListFragment.GetRecyclerViewPool, BaseUsersFragment.GetRecyclerViewPool {
 
     private CompositeDisposable disposable;
     private Client client;
@@ -93,21 +93,7 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
         tabLayout= findViewById(R.id.tab_show_user);
         tabLayout.setupWithViewPager(viewPager);
         tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {}
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {}
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-                Fragment fragment = Objects.requireNonNull((FragmentPagerAdapter) viewPager.getAdapter()).getFragment(tab.getPosition());
-                if (fragment instanceof MovableTopInterface){
-                    ((MovableTopInterface) fragment).moveToTop();
-                }
-            }
-        });
+        tabLayout.addOnTabSelectedListener(this);
 
         tweetListViewPool = new RecyclerView.RecycledViewPool();
         userListViewPool = new RecyclerView.RecycledViewPool();
@@ -145,6 +131,20 @@ public class ShowUserActivity extends AppCompatActivity implements BaseListFragm
                                     ).show()
                             )
             );
+        }
+    }
+
+    @Override
+    public void onTabSelected(TabLayout.Tab tab) {}
+
+    @Override
+    public void onTabUnselected(TabLayout.Tab tab) {}
+
+    @Override
+    public void onTabReselected(TabLayout.Tab tab) {
+        Fragment fragment = Objects.requireNonNull((FragmentPagerAdapter) viewPager.getAdapter()).getFragment(tab.getPosition());
+        if (fragment instanceof MovableTopInterface){
+            ((MovableTopInterface) fragment).moveToTop();
         }
     }
 

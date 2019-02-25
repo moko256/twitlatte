@@ -77,7 +77,7 @@ import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY
  *
  * @author moko256
  */
-public class MainActivity extends AppCompatActivity implements BaseListFragment.GetViewForSnackBar, BaseTweetListFragment.GetRecyclerViewPool, BaseUsersFragment.GetRecyclerViewPool {
+public class MainActivity extends AppCompatActivity implements DrawerLayout.DrawerListener, TabLayout.OnTabSelectedListener, BaseListFragment.GetViewForSnackBar, BaseTweetListFragment.GetRecyclerViewPool, BaseUsersFragment.GetRecyclerViewPool {
 
     private CompositeDisposable disposable;
     private Client client;
@@ -133,23 +133,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
             drawer.addDrawerListener(toggle);
             toggle.syncState();
 
-            drawer.addDrawerListener(new DrawerLayout.DrawerListener() {
-                @Override
-                public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {}
-
-                @Override
-                public void onDrawerOpened(@NonNull View drawerView) {}
-
-                @Override
-                public void onDrawerClosed(@NonNull View drawerView) {
-                    if (isDrawerAccountsSelection){
-                        changeIsDrawerAccountsSelection();
-                    }
-                }
-
-                @Override
-                public void onDrawerStateChanged(int newState) {}
-            });
+            drawer.addDrawerListener(this);
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.color_primary_dark));
         }
@@ -313,26 +297,7 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
         findViewById(R.id.fab).setOnClickListener(v -> startActivity(new Intent(this, PostActivity.class)));
 
         tabLayout= findViewById(R.id.toolbar_tab);
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {}
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {}
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-                Fragment fragment = Objects.requireNonNull(
-                        (FragmentPagerAdapter)
-                                ((UseTabsInterface) getMainFragment())
-                                        .getTabsViewPager()
-                                        .getAdapter()
-                ).getFragment(tab.getPosition());
-                if (fragment instanceof MovableTopInterface){
-                    ((MovableTopInterface) fragment).moveToTop();
-                }
-            }
-        });
+        tabLayout.addOnTabSelectedListener(this);
 
         tweetListViewPool = new RecyclerView.RecycledViewPool();
         userListViewPool = new RecyclerView.RecycledViewPool();
@@ -343,6 +308,25 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
             prepareFragment();
         }
 
+    }
+
+    @Override
+    public void onTabSelected(TabLayout.Tab tab) {}
+
+    @Override
+    public void onTabUnselected(TabLayout.Tab tab) {}
+
+    @Override
+    public void onTabReselected(TabLayout.Tab tab) {
+        Fragment fragment = Objects.requireNonNull(
+                (FragmentPagerAdapter)
+                        ((UseTabsInterface) getMainFragment())
+                                .getTabsViewPager()
+                                .getAdapter()
+        ).getFragment(tab.getPosition());
+        if (fragment instanceof MovableTopInterface){
+            ((MovableTopInterface) fragment).moveToTop();
+        }
     }
 
     @Override
@@ -400,6 +384,22 @@ public class MainActivity extends AppCompatActivity implements BaseListFragment.
         }
         return super.onKeyDown(keyCode, event);
     }
+
+    @Override
+    public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {}
+
+    @Override
+    public void onDrawerOpened(@NonNull View drawerView) {}
+
+    @Override
+    public void onDrawerClosed(@NonNull View drawerView) {
+        if (isDrawerAccountsSelection){
+            changeIsDrawerAccountsSelection();
+        }
+    }
+
+    @Override
+    public void onDrawerStateChanged(int newState) {}
 
     private void changeIsDrawerAccountsSelection() {
         isDrawerAccountsSelection = !isDrawerAccountsSelection;
