@@ -37,7 +37,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
  *
  * @author moko256
  */
-public abstract class BaseListFragment extends Fragment implements MovableTopInterface {
+public abstract class BaseListFragment extends Fragment implements LoadScrollListener.OnLoadListener, MovableTopInterface {
 
     protected RecyclerView recyclerView;
     protected SwipeRefreshLayout swipeRefreshLayout;
@@ -60,14 +60,7 @@ public abstract class BaseListFragment extends Fragment implements MovableTopInt
 
         recyclerView= view.findViewById(R.id.TLlistView);
         recyclerView.setLayoutManager(initializeRecyclerViewLayoutManager());
-        recyclerView.addOnScrollListener(new LoadScrollListener(recyclerView.getLayoutManager()) {
-            @Override
-            protected void load() {
-                if(isInitializedList()){
-                    onLoadMoreList();
-                }
-            }
-        });
+        recyclerView.addOnScrollListener(new LoadScrollListener(recyclerView.getLayoutManager(), this));
 
         swipeRefreshLayout= view.findViewById(R.id.srl);
         swipeRefreshLayout.setColorSchemeResources(R.color.color_primary);
@@ -120,6 +113,13 @@ public abstract class BaseListFragment extends Fragment implements MovableTopInt
 
         swipeRefreshLayout=null;
         recyclerView=null;
+    }
+
+    @Override
+    public void onBottomLoad() {
+        if(isInitializedList()){
+            onLoadMoreList();
+        }
     }
 
     protected abstract void onInitializeList();

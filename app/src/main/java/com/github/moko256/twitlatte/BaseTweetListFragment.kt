@@ -62,6 +62,13 @@ abstract class BaseTweetListFragment : BaseListFragment(), ListServerRepository<
     protected abstract val cachedIdsDatabaseName: String
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
+        val value = TypedValue()
+        val toastTopPosition = if (requireContext().theme.resolveAttribute(R.attr.actionBarSize, value, true)) {
+            TypedValue.complexToDimensionPixelOffset(value.data, resources.displayMetrics)
+        } else {
+            0
+        }
+
         client = requireActivity().getClient()!!
         listViewModel = ViewModelProviders.of(this).get(ListViewModel::class.java)
         if (!listViewModel.initilized) {
@@ -142,16 +149,11 @@ abstract class BaseTweetListFragment : BaseListFragment(), ListServerRepository<
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe {
                             if (it.type == EventType.ADD_TOP && it.size > 0) {
-                                val value = TypedValue()
                                 Toast.makeText(context, R.string.new_posts, Toast.LENGTH_SHORT).apply {
                                     setGravity(
                                             Gravity.TOP or Gravity.CENTER,
                                             0,
-                                            if (requireContext().theme.resolveAttribute(R.attr.actionBarSize, value, true)) {
-                                                TypedValue.complexToDimensionPixelOffset(value.data, resources.displayMetrics)
-                                            } else {
-                                                0
-                                            }
+                                            toastTopPosition
                                     )
                                 }.show()
                             }

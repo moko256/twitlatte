@@ -26,15 +26,17 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
  *
  * @author moko256
  */
-public abstract class LoadScrollListener extends RecyclerView.OnScrollListener{
+public class LoadScrollListener extends RecyclerView.OnScrollListener{
 
     private int previousTotal = 0;
     private boolean loading = true;
 
     private final RecyclerView.LayoutManager layoutManager;
+    private final OnLoadListener onLoadListener;
 
-    public LoadScrollListener(RecyclerView.LayoutManager layoutManager) {
+    public LoadScrollListener(RecyclerView.LayoutManager layoutManager, OnLoadListener onLoadListener) {
         this.layoutManager = layoutManager;
+        this.onLoadListener = onLoadListener;
     }
 
     @Override
@@ -56,12 +58,13 @@ public abstract class LoadScrollListener extends RecyclerView.OnScrollListener{
         }
 
         if (!loading && (totalItemCount - visibleItemCount) <= (firstVisibleItem + 1)) {
-            load();
+            onLoadListener.onBottomLoad();
             loading = true;
         }
 
     }
 
-    protected abstract void load();
-
+    interface OnLoadListener {
+        void onBottomLoad();
+    }
 }
