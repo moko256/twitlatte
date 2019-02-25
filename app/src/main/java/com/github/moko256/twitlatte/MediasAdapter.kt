@@ -20,10 +20,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import com.github.moko256.latte.client.base.entity.Media
-import com.github.moko256.twitlatte.mediaview.GifFragment
-import com.github.moko256.twitlatte.mediaview.ImageFragment
-import com.github.moko256.twitlatte.mediaview.MultiVideoFragment
-import com.github.moko256.twitlatte.mediaview.OneVideoFragment
+import com.github.moko256.twitlatte.mediaview.*
 
 /**
  * Created by moko256 on 2016/10/29.
@@ -44,7 +41,7 @@ class MediasAdapter(
             "video_one" -> OneVideoFragment()
             "gif" -> GifFragment()
             "picture" -> ImageFragment()
-            else -> TODO("Unknown media")
+            else -> UnknownMediaFragment()
         }.apply {
             setMediaToArg(media, type)
         }
