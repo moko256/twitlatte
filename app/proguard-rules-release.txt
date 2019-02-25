@@ -18,17 +18,17 @@
     public <init>(twitter4j.HttpClientConfiguration);
 }
 -keep class twitter4j.conf.PropertyConfigurationFactory
--assumevalues class * extends twitter4j.Logger {
+-assumenosideeffects class * extends twitter4j.Logger {
     private static twitter4j.LoggerFactory getLoggerFactoryIfAvailable(java.lang.String, java.lang.String) return null;
     boolean isDebugEnabled() return false;
 }
--assumenosideeffects class * extends twitter4j.Logger {
-    private static twitter4j.LoggerFactory getLoggerFactoryIfAvailable(java.lang.String, java.lang.String);
-}
--assumevalues class * implements twitter4j.conf.PropertyConfiguration {
+-assumenosideeffects class * implements twitter4j.conf.PropertyConfiguration {
     boolean notNull(java.util.Properties, java.lang.String, java.lang.String) return false;
 }
--assumevalues class * implements twitter4j.conf.Configuration {
+-assumenosideeffects class java.lang.System {
+    public static java.lang.String getenv(java.lang.String) return null;
+}
+-assumenosideeffects class * implements twitter4j.conf.Configuration {
     boolean isDebugEnabled() return false;
     boolean isJSONStoreEnabled() return false;
     boolean isMBeanEnabled() return false;
