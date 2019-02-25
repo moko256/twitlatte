@@ -198,10 +198,9 @@ public class MainActivity extends AppCompatActivity implements DrawerLayout.Draw
         SelectAccountsAdapter adapter = new SelectAccountsAdapter(this);
         adapter.onImageButtonClickListener = accessToken -> {
             if (accessToken.getUserId() != client.getAccessToken().getUserId()) {
+                changeIsDrawerAccountsSelection();
                 if (drawer != null) {
                     drawer.closeDrawer(GravityCompat.START);
-                } else {
-                    changeIsDrawerAccountsSelection();
                 }
 
                 GlobalApplicationKt.preferenceRepository.putString(
