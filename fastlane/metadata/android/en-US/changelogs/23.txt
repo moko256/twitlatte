@@ -1,0 +1,3 @@
+Emphasize @ reply to you.
+Enable to preview link at Mastodon.
+Fixed some bugs.
