@@ -284,7 +284,7 @@ class ListModelImpl(
     }
 
     override fun removeOldCache(position: Int) {
-        if (list.size - position > LIMIT_OF_SIZE_OF_STATUSES_LIST) {
+        if (list.size - position > LIMIT_OF_SIZE_OF_STATUSES_LIST * 11 / 10) {
             val subList = list.subList(position + LIMIT_OF_SIZE_OF_STATUSES_LIST, list.size)
             database.deleteIds(subList)
 
