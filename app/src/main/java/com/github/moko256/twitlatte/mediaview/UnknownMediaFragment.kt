@@ -42,14 +42,6 @@ class UnknownMediaFragment: AbstractMediaFragment() {
             }
         }
 
-        view.setOnClickListener {
-            if (isShowingSystemUI()) {
-                hideSystemUI()
-            } else {
-                showSystemUI()
-            }
-        }
-
         textView = view.findViewById(R.id.fragment_unknown_image_link)
         textView.text = media.originalUrl
         textView.paintFlags = textView.paintFlags and Paint.UNDERLINE_TEXT_FLAG
