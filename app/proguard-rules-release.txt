@@ -49,3 +49,15 @@
 -keepattributes Signature
 -dontwarn sun.misc.**
 ##---------------End: proguard configuration for Gson  ----------
+
+##---------------Begin: proguard configuration for OkHttp  ----------
+-assumenosideeffects class okhttp3.internal.platform.ConscryptPlatform {
+    public static okhttp3.internal.platform.ConscryptPlatform buildIfSupported() return null;
+}
+-assumenosideeffects class okhttp3.internal.platform.Jdk9Platform {
+    public static okhttp3.internal.platform.Jdk9Platform buildIfSupported() return null;
+}
+-assumenosideeffects class okhttp3.internal.platform.JdkWithJettyBootPlatform {
+    public static okhttp3.internal.platform.Platform buildIfSupported() return null;
+}
+##---------------End: proguard configuration for OkHttp  ----------
