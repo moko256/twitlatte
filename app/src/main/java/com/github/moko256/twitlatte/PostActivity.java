@@ -21,7 +21,6 @@ import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.Rect;
 import android.location.LocationManager;
 import android.net.Uri;
@@ -29,6 +28,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -62,6 +62,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.PermissionChecker;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -115,12 +116,23 @@ public class PostActivity extends AppCompatActivity {
     private CheckBox addLocation;
     private TextView locationText;
 
+    private int COLOR_STABLE;
+    private int COLOR_ERROR;
+
     private CompositeDisposable disposable;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post);
+
+        TypedValue value = new TypedValue();
+
+        getTheme().resolveAttribute(android.R.attr.textColorTertiary, value, true);
+        COLOR_STABLE = ContextCompat.getColor(this, value.resourceId);
+
+        getTheme().resolveAttribute(R.attr.colorError, value, true);
+        COLOR_ERROR = ContextCompat.getColor(this, value.resourceId);
 
         client = GlobalApplicationKt.getClient(this);
         model = new PostStatusModelImpl(
@@ -418,8 +430,8 @@ public class PostActivity extends AppCompatActivity {
         ));
         counterTextView.setTextColor(
                 model.isValid()?
-                        Color.GRAY:
-                        Color.RED
+                        COLOR_STABLE:
+                        COLOR_ERROR
         );
     }
 
