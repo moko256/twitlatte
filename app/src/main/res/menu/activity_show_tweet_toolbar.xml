@@ -21,13 +21,19 @@
     <item
         android:id="@+id/action_quote"
         android:title="@string/do_quote"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/action_share"
-        android:title="@string/share"
-        app:showAsAction="never" />
+        android:icon="@drawable/ic_format_quote_black_24dp"
+        app:iconTint="@android:color/white"
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_open_in_browser"
         android:title="@string/open_in_browser"
-        app:showAsAction="never" />
+        android:icon="@drawable/ic_open_in_browser_black_24dp"
+        app:iconTint="@android:color/white"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_share"
+        android:title="@string/share"
+        android:icon="@drawable/ic_share_black_24dp"
+        app:iconTint="@android:color/white"
+        app:showAsAction="ifRoom" />
 </menu>
