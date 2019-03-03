@@ -125,7 +125,7 @@ abstract class AbstractMediaFragment: Fragment() {
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         if (requestCode == REQUEST_CODE_PERMISSION_STORAGE) {
             if (grantResults.firstOrNull() == PERMISSION_GRANTED) {
-                contentDownload()
+                startDownload()
             } else {
                 Toast.makeText(context, R.string.permission_denied, LENGTH_LONG).show()
             }
@@ -142,7 +142,7 @@ abstract class AbstractMediaFragment: Fragment() {
                 if (ContextCompat.checkSelfPermission(it, WRITE_EXTERNAL_STORAGE) != PERMISSION_GRANTED) {
                     requestPermissions(arrayOf(WRITE_EXTERNAL_STORAGE), REQUEST_CODE_PERMISSION_STORAGE)
                 } else {
-                    contentDownload()
+                    startDownload()
                 }
             }
             true
@@ -151,7 +151,7 @@ abstract class AbstractMediaFragment: Fragment() {
         }
     }
 
-    private fun contentDownload() {
+    private fun startDownload() {
         val path = media.downloadVideoUrl ?: TwitterStringUtils.convertOriginalImageUrl(clientType, media.originalUrl)
 
         val manager: DownloadManager = activity?.getSystemService(DOWNLOAD_SERVICE) as DownloadManager
