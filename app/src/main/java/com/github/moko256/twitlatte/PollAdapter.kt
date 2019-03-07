@@ -18,10 +18,13 @@ package com.github.moko256.twitlatte
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.PorterDuff
+import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.CompoundButton
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.github.moko256.latte.client.base.entity.Poll
 
@@ -33,10 +36,14 @@ import com.github.moko256.latte.client.base.entity.Poll
 class PollAdapter(private val context: Context): RecyclerView.Adapter<Holder>() {
 
     private var poll: Poll? = null
+    private var topValue: Int = 0
+
+    private val drawable = ContextCompat.getDrawable(context, R.drawable.background_poll)!!
 
     fun setPoll(poll: Poll) {
         selections.clear()
         this.poll = poll
+        topValue = poll.optionCounts.max()?:0
         notifyDataSetChanged()
     }
 
@@ -44,7 +51,7 @@ class PollAdapter(private val context: Context): RecyclerView.Adapter<Holder>() 
 
     override fun getItemViewType(position: Int): Int {
         return poll?.let { poll ->
-            if (poll.expired) {
+            if (poll.expired || poll.voted) {
                 R.layout.layout_material_list_item_single_line
             } else {
                 if (poll.multiple) {
@@ -57,8 +64,11 @@ class PollAdapter(private val context: Context): RecyclerView.Adapter<Holder>() 
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
-        val holder = Holder(LayoutInflater.from(context)
-                .inflate(viewType, parent, false) as ViewGroup
+        val holder = Holder(
+                LayoutInflater
+                        .from(context)
+                        .inflate(viewType, parent, false) as ViewGroup,
+                drawable
         )
 
         val poll = poll
@@ -93,22 +103,28 @@ class PollAdapter(private val context: Context): RecyclerView.Adapter<Holder>() 
 
     override fun onBindViewHolder(holder: Holder, position: Int) {
         poll?.let { poll ->
+            val count = poll.optionCounts[position]
             holder.bind(
                     poll.optionTitles[position],
-                    ((1000 * poll.optionCounts[position] / poll.votesCount) / 10f).toString(),
-                    selections.contains(position)
+                    count,
+                    poll.votesCount,
+                    selections.contains(position),
+                    count == topValue
             )
         }
     }
 }
 
-class Holder(itemView: ViewGroup): RecyclerView.ViewHolder(itemView) {
+class Holder(itemView: ViewGroup, private val drawable: Drawable): RecyclerView.ViewHolder(itemView) {
     private val textView = itemView.findViewById<TextView>(R.id.primary_text)!!
     private val selection = itemView.findViewById<CompoundButton>(R.id.selection)
 
     @SuppressLint("SetTextI18n")
-    fun bind(text: String, percentage: String, isSelected: Boolean) {
-        textView.text = "$percentage%  $text"
+    fun bind(text: String, count: Int, allCount: Int, isSelected: Boolean, isTop: Boolean) {
+        textView.text = "${(1000 * count / allCount) / 10f}%  $text"
         selection?.isChecked = isSelected
+        val convertedDrawable = drawable.mutate()
+        convertedDrawable.setColorFilter(if (isTop) { 0x20000000 } else { 0x50000000 }, PorterDuff.Mode.DST_OUT)
+        itemView.background = convertedDrawable
     }
 }
