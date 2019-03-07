@@ -20,34 +20,30 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="64dp"
+    android:layout_height="56dp"
     android:foreground="?android:attr/selectableItemBackground"
     android:focusable="true"
     android:clickable="true"
     android:paddingLeft="16dp"
     android:paddingRight="16dp">
 
+    <RadioButton
+        android:id="@+id/selection"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:focusable="false"
+        android:clickable="false" />
+
     <TextView
         android:id="@+id/primary_text"
         android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:gravity="bottom"
+        android:layout_height="match_parent"
+        android:layout_marginStart="56dp"
+        android:gravity="center_vertical"
         android:ellipsize="end"
         android:lines="1"
         android:textSize="16sp"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-        tools:text="Two-line item"/>
-
-    <TextView
-        android:id="@+id/secondary_text"
-        android:layout_width="match_parent"
-        android:layout_height="52dp"
-        android:gravity="bottom"
-        android:ellipsize="end"
-        android:lines="1"
-        android:textSize="16sp"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-        android:textColor="?android:textColorSecondary"
-        tools:text="Secondary text" />
+        tools:text="One-line item"/>
 
 </FrameLayout>

@@ -24,11 +24,10 @@ import android.text.format.DateUtils
 import android.text.method.LinkMovementMethod
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.RelativeLayout
-import android.widget.TextView
+import android.widget.*
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.github.moko256.latte.client.base.CLIENT_TYPE_NOTHING
 import com.github.moko256.latte.client.base.entity.*
@@ -86,6 +85,11 @@ class StatusViewBinder(
     val repeatCount: TextView = viewGroup.findViewById(R.id.tweet_content_retweet_count)
     val repliesCount: TextView = viewGroup.findViewById(R.id.tweet_content_replies_count)
 
+    val pollList: RecyclerView = viewGroup.findViewById(R.id.poll_list)
+    val pollAdapter = PollAdapter(viewGroup.context)
+    val sendVote: ImageButton = viewGroup.findViewById(R.id.vote_button)
+    val pollStatus: TextView = viewGroup.findViewById(R.id.poll_voted_count)
+
     var onQuotedStatusClicked: View.OnClickListener? = null
     var onCardClicked: View.OnClickListener? = null
 
@@ -107,6 +111,9 @@ class StatusViewBinder(
 
         additionalContentImages.glideRequests = glideRequests
         imageTableView.glideRequests = glideRequests
+
+        pollList.adapter = pollAdapter
+        pollList.layoutManager = LinearLayoutManager(viewGroup.context)
     }
 
     fun setStatus(
@@ -276,6 +283,25 @@ class StatusViewBinder(
                 System.currentTimeMillis(),
                 0
         )
+
+        val poll = status.poll
+
+        if (poll != null) {
+            pollList.visibility = View.VISIBLE
+            pollStatus.visibility = View.VISIBLE
+            pollAdapter.setPoll(poll)
+            if (poll.expired) {
+                sendVote.visibility = View.GONE
+                pollStatus.text = "${poll.votesCount} votes - closed"
+            } else {
+                sendVote.visibility = View.VISIBLE
+                pollStatus.text = "${poll.votesCount} votes - ${poll.expiresAt?.let { DateUtils.getRelativeTimeSpanString(it.time) }}"
+            }
+        } else {
+            pollList.visibility = View.GONE
+            pollStatus.visibility = View.GONE
+            sendVote.visibility = View.GONE
+        }
 
         val card = status.card
 

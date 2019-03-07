@@ -218,4 +218,7 @@ class TwitterApiClientImpl(
         client.updateStatus(statusUpdate)
     }
 
+    override fun votePoll(id: Long, indexes: List<Int>) {
+        throw UnsupportedOperationException()
+    }
 }

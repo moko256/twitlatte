@@ -355,6 +355,30 @@ public class ShowTweetActivity extends AppCompatActivity {
                 item.getQuotedRepeatingStatus()
         );
 
+        statusViewBinder.getSendVote().setOnClickListener(v -> {
+            disposables.add(
+                    Completable.create(emitter -> {
+                        try {
+                            client.getApiClient().votePoll(item.getStatus().getPoll().getId(), statusViewBinder.getPollAdapter().getSelections());
+                            emitter.onComplete();
+                        } catch (Throwable e) {
+                            e.printStackTrace();
+                            emitter.tryOnError(e);
+                        }
+                    }).subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(
+                                    () -> {
+                                        Toast.makeText(ShowTweetActivity.this,"Did vote",Toast.LENGTH_SHORT).show();
+                                    },
+                                    e->{
+                                        e.printStackTrace();
+                                        Toast.makeText(ShowTweetActivity.this,e.getMessage(),Toast.LENGTH_SHORT).show();
+                                    }
+                            )
+            );
+        });
+
         timestampText.setText(
                 DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.FULL)
                         .format(item.getStatus().getCreatedAt())

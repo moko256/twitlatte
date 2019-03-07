@@ -165,7 +165,8 @@ private fun twitter4j.Status.convertToStatus(): Status {
             spoilerText = null,
             quotedStatusId = quotedStatusId,
             visibility = null,
-            card = null
+            card = null,
+            poll = null
     )
 }
 

@@ -15,7 +15,7 @@
   ~ limitations under the License.
   -->
 
-<RelativeLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
@@ -38,4 +38,4 @@
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
         tools:text="Single-line item longer text"/>
 
-</RelativeLayout>
+</FrameLayout>

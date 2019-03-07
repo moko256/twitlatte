@@ -126,6 +126,18 @@ private fun com.sys1yagi.mastodon4j.api.entity.Status.convertToStatus(): Status 
                         url = it.url,
                         imageUrl = it.image
                 )
+            },
+            poll = poll?.let { poll ->
+                Poll(
+                        poll.id,
+                        poll.expiresAt?.toISO8601Date(),
+                        poll.expired,
+                        poll.multiple,
+                        poll.votesCount,
+                        poll.options.map { it.title },
+                        poll.options.map { it.votesCount ?: -1 },
+                        poll.voted?:false
+                )
             }
     )
 }

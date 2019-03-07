@@ -23,6 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.moko256.latte.client.base.entity.Post;
 import com.github.moko256.latte.client.base.entity.Repeat;
@@ -41,6 +42,9 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
+import io.reactivex.Completable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import kotlin.Unit;
 
 import static com.github.moko256.twitlatte.GlobalApplicationKt.preferenceRepository;
@@ -283,6 +287,28 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                             ).toString()
                     ))
             );
+
+            statusViewBinder.getSendVote().setOnClickListener(v -> {
+                Completable.create(emitter -> {
+                    try {
+                        client.getApiClient().votePoll(status.getPoll().getId(), statusViewBinder.getPollAdapter().getSelections());
+                        emitter.onComplete();
+                    } catch (Throwable e) {
+                        e.printStackTrace();
+                        emitter.tryOnError(e);
+                    }
+                }).subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                                () -> {
+                                    Toast.makeText(context,"Did vote",Toast.LENGTH_SHORT).show();
+                                },
+                                e->{
+                                    e.printStackTrace();
+                                    Toast.makeText(context, e.getMessage(),Toast.LENGTH_SHORT).show();
+                                }
+                        );
+            });
 
             statusViewBinder.setStatus(repeatedUser, repeat, user, status, quotedStatusUser, quotedStatus);
         }

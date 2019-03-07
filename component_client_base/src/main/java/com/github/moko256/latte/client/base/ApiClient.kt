@@ -74,4 +74,6 @@ interface ApiClient {
 
     fun uploadMedia(inputStream: InputStream, name: String, type: String): Long
     fun postStatus(updateStatus: UpdateStatus)
+
+    fun votePoll(id: Long, indexes: List<Int>)
 }

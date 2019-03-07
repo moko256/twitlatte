@@ -148,12 +148,43 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         tools:text="Tweet context"/>
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/poll_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tweet_content"
+        android:layout_marginTop="16dp"
+        tools:layout_height="32dp" />
+
+    <ImageButton
+        android:id="@+id/vote_button"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_below="@+id/poll_list"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        app:srcCompat="@drawable/ic_send_white_24dp"
+        app:tint="@color/stateful_toggle_button_color"
+        android:background="?attr/controlBackground"
+        tools:ignore="PrivateResource" />
+
+    <TextView
+        android:id="@+id/poll_voted_count"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/vote_button"
+        android:layout_below="@id/poll_list"
+        android:layout_marginTop="8dp"
+        android:textColor="?android:textColorSecondary"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        tools:text="32 votes - 1 hours left" />
+
     <RelativeLayout
         android:id="@+id/additional_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:layout_below="@id/tweet_content">
+        android:layout_below="@id/vote_button">
         <ImageView
             android:id="@+id/additional_content_divider"
             android:layout_width="match_parent"

@@ -25,6 +25,8 @@ import com.github.moko256.latte.client.base.entity.*
 import com.github.moko256.latte.html.entity.Link
 import com.github.moko256.twitlatte.text.splitWithComma
 import java.io.File
+import java.net.URLDecoder
+import java.net.URLEncoder
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -69,7 +71,15 @@ private val TABLE_COLUMNS = arrayOf(
         "card_title",
         "card_description",
         "card_url",
-        "card_image_url"
+        "card_image_url",
+        "poll_id",
+        "poll_expiresAt",
+        "poll_expired",
+        "poll_multiple",
+        "poll_votesCount",
+        "poll_optionTitles",
+        "poll_optionCounts",
+        "poll_voted"
 )
 
 private const val COUNTS_TABLE_NAME = "Counts"
@@ -84,7 +94,7 @@ class CachedStatusesSQLiteOpenHelper(
         } else {
             null
         },
-        null, 6
+        null, 7
 ) {
 
     override fun onCreate(db: SQLiteDatabase) {
@@ -112,6 +122,20 @@ class CachedStatusesSQLiteOpenHelper(
             db.execSQL("alter table $TABLE_NAME add column card_description")
             db.execSQL("update $TABLE_NAME set card_description=\"description\"")
             db.execSQL("alter table $TABLE_NAME add column card_image_url")
+        }
+        if (oldVersion < 7) {
+            arrayOf(
+                    "poll_expiresAt",
+                    "poll_expired",
+                    "poll_multiple",
+                    "poll_votesCount",
+                    "poll_optionTitles",
+                    "poll_optionCounts",
+                    "poll_voted"
+            ).forEach {
+                db.addColumn(TABLE_NAME, it)
+            }
+            db.addColumn(TABLE_NAME, "poll_id", "-1")
         }
     }
 
@@ -180,6 +204,23 @@ class CachedStatusesSQLiteOpenHelper(
                                             description = description,
                                             url = url,
                                             imageUrl = imageUrl
+                                    )
+                                } else {
+                                    null
+                                }
+                            },
+                            poll = let {
+                                val pollId = c.getLong(35)
+                                if (pollId != -1L) {
+                                    Poll(
+                                            pollId,
+                                            Date(c.getLong(36)),
+                                            c.getInt(37) == 1,
+                                            c.getInt(38) == 1,
+                                            c.getInt(39),
+                                            c.getString(40).splitWithComma()?.map { URLDecoder.decode(it, "utf-8") }?: emptyList(),
+                                            c.getString(41).splitWithComma()?.map { it.toInt() }?: emptyList(),
+                                            c.getInt(42) == 1
                                     )
                                 } else {
                                     null
@@ -381,6 +422,20 @@ class CachedStatusesSQLiteOpenHelper(
                     contentValues.put(TABLE_COLUMNS[32], it.description)
                     contentValues.put(TABLE_COLUMNS[33], it.url)
                     contentValues.put(TABLE_COLUMNS[34], it.imageUrl)
+                }
+
+                val poll = status.poll
+                if (poll != null) {
+                    contentValues.put(TABLE_COLUMNS[35], poll.id)
+                    contentValues.put(TABLE_COLUMNS[36], poll.expiresAt?.time)
+                    contentValues.put(TABLE_COLUMNS[37], poll.expired)
+                    contentValues.put(TABLE_COLUMNS[38], poll.multiple)
+                    contentValues.put(TABLE_COLUMNS[39], poll.votesCount)
+                    contentValues.put(TABLE_COLUMNS[40], poll.optionTitles.joinToString(",") { URLEncoder.encode(it, "utf-8") })
+                    contentValues.put(TABLE_COLUMNS[41], poll.optionCounts.joinToString(","))
+                    contentValues.put(TABLE_COLUMNS[42], poll.voted)
+                } else {
+                    contentValues.put(TABLE_COLUMNS[35], -1L)
                 }
             }
 

@@ -235,6 +235,7 @@ class MastodonApiClientImpl(okHttpClient: OkHttpClient, url: String, token: Stri
                 updateStatus.context,
                 updateStatus.inReplyToStatusId.takeIf { it > 0 },
                 updateStatus.imageIdList,
+                null,
                 updateStatus.isPossiblySensitive.takeIf { it },
                 updateStatus.contentWarning?.takeIf { it.isNotEmpty() },
                 updateStatus.visibility?.let {
@@ -243,4 +244,7 @@ class MastodonApiClientImpl(okHttpClient: OkHttpClient, url: String, token: Stri
         ).executeAndConvertError()
     }
 
+    override fun votePoll(id: Long, indexes: List<Int>) {
+        Polls(client).postVote(id, indexes)
+    }
 }
