@@ -32,7 +32,7 @@ import com.github.moko256.twitlatte.drawable.PercentBarBackgroundDrawable
  *
  * @author moko256
  */
-class PollAdapter(private val context: Context): RecyclerView.Adapter<Holder>() {
+class PollAdapter(private val context: Context): RecyclerView.Adapter<PollAdapter.Holder>() {
 
     private var poll: Poll? = null
     private var topValue: Int = 0
@@ -113,21 +113,21 @@ class PollAdapter(private val context: Context): RecyclerView.Adapter<Holder>() 
             )
         }
     }
-}
 
-class Holder(itemView: ViewGroup): RecyclerView.ViewHolder(itemView) {
-    private val textView = itemView.findViewById<TextView>(R.id.primary_text)!!
-    private val selection = itemView.findViewById<CompoundButton>(R.id.selection)
+    class Holder(itemView: ViewGroup): RecyclerView.ViewHolder(itemView) {
+        private val textView = itemView.findViewById<TextView>(R.id.primary_text)!!
+        private val selection = itemView.findViewById<CompoundButton>(R.id.selection)
 
-    @SuppressLint("SetTextI18n")
-    fun bind(text: String, count: Int, allCount: Int, isSelected: Boolean, isTop: Boolean) {
-        val percent = (1000 * count / allCount) / 10f
-        textView.text = "$percent%  $text"
-        selection?.isChecked = isSelected
+        @SuppressLint("SetTextI18n")
+        fun bind(text: String, count: Int, allCount: Int, isSelected: Boolean, isTop: Boolean) {
+            val percent = (1000 * count / allCount) / 10f
+            textView.text = "$percent%  $text"
+            selection?.isChecked = isSelected
 
-        val convertedDrawable = itemView.background as PercentBarBackgroundDrawable
-        convertedDrawable.percent = percent
-        //TODO Set color whether top or not
-        convertedDrawable.invalidateSelf()
+            val convertedDrawable = itemView.background as PercentBarBackgroundDrawable
+            convertedDrawable.percent = percent
+            //TODO Set color whether top or not
+            convertedDrawable.invalidateSelf()
+        }
     }
 }
