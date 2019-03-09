@@ -405,7 +405,11 @@ public class ShowTweetActivity extends AppCompatActivity {
                                     null,
                                     false,
                                     null,
-                                    null
+                                    null,
+                                    null,
+                                    false,
+                                    false,
+                                    0
                             ));
                             emitter.onComplete();
                         } catch (Throwable e) {

@@ -44,7 +44,11 @@ class PostStatusModelImpl(
             contentWarning = null,
             location = null,
             visibility = null,
-            imageIdList = null
+            imageIdList = null,
+            pollList = null,
+            isPollSelectableMultiple = false,
+            isPollHideTotalsUntilExpired = false,
+            pollExpiredSecond = 0
     )
 
     override val statusTextLimit: Int = counter.limit

@@ -29,5 +29,9 @@ data class UpdateStatus(
         var imageIdList: List<Long>?,
         var isPossiblySensitive: Boolean,
         var location: Pair<Double, Double>?,
-        var visibility: String?
+        var visibility: String?,
+        var pollList: List<String>?,
+        var isPollSelectableMultiple: Boolean,
+        var isPollHideTotalsUntilExpired: Boolean,
+        var pollExpiredSecond: Long
 )

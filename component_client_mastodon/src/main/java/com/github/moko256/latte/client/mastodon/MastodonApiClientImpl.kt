@@ -235,7 +235,17 @@ class MastodonApiClientImpl(okHttpClient: OkHttpClient, url: String, token: Stri
                 updateStatus.context,
                 updateStatus.inReplyToStatusId.takeIf { it > 0 },
                 updateStatus.imageIdList,
-                null,
+                updateStatus.pollList
+                        ?.filter { it.isNotEmpty() }
+                        ?.takeIf { it.isNotEmpty() }
+                        ?.let {
+                            Statuses.UpdatePolls(
+                                    it,
+                                    updateStatus.pollExpiredSecond,
+                                    updateStatus.isPollSelectableMultiple,
+                                    updateStatus.isPollHideTotalsUntilExpired
+                            )
+                        },
                 updateStatus.isPossiblySensitive.takeIf { it },
                 updateStatus.contentWarning?.takeIf { it.isNotEmpty() },
                 updateStatus.visibility?.let {

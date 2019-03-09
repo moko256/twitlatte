@@ -72,6 +72,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import kotlin.Pair;
 import kotlin.Unit;
+import kotlin.collections.ArraysKt;
 
 import static com.github.moko256.latte.client.mastodon.MastodonApiClientImplKt.CLIENT_TYPE_MASTODON;
 import static com.github.moko256.latte.client.twitter.TwitterApiClientImplKt.CLIENT_TYPE_TWITTER;
@@ -115,6 +116,8 @@ public class PostActivity extends AppCompatActivity {
     private Spinner postVisibility;
     private CheckBox addLocation;
     private TextView locationText;
+    private EditText[] pollsText;
+    private EditText pollsExpiredAt;
 
     private int COLOR_STABLE;
     private int COLOR_ERROR;
@@ -260,6 +263,14 @@ public class PostActivity extends AppCompatActivity {
         postVisibility = findViewById(R.id.activity_tweet_visibility_spinner);
         contentWarningText = findViewById(R.id.tweet_text_warning);
         contentWarningEnabled = findViewById(R.id.activity_tweet_add_content_warning);
+        pollsText = new EditText[]{
+                findViewById(R.id.edit_poll_0),
+                findViewById(R.id.edit_poll_1),
+                findViewById(R.id.edit_poll_2),
+                findViewById(R.id.edit_poll_3)
+        };
+        pollsExpiredAt = findViewById(R.id.edit_poll_expired_at);
+
         if (client.getAccessToken().getClientType() == CLIENT_TYPE_MASTODON) {
             emojiAdapter = new EmojiAdapter(
                     emojiList,
@@ -332,11 +343,47 @@ public class PostActivity extends AppCompatActivity {
                 }
             });
             postVisibility.setSelection(0);
+
+            ArrayList<String> options = new ArrayList<>(4);
+            ArraysKt.forEachIndexed(pollsText, (i, editText) -> {
+                options.add("");
+                editText.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                        options.set(i, s.toString());
+                        model.getUpdateStatus().setPollList(options);
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {}
+                });
+                return Unit.INSTANCE;
+            });
+            pollsExpiredAt.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    model.getUpdateStatus().setPollExpiredSecond(Integer.parseInt(s.toString(), 10) * 60 * 60);
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {}
+            });
         } else {
             emojiInputRecyclerView.setVisibility(View.GONE);
             contentWarningEnabled.setVisibility(View.GONE);
             postVisibility.setVisibility(View.GONE);
             findViewById(R.id.activity_tweet_visibility_description).setVisibility(View.GONE);
+            ArraysKt.forEach(pollsText, editText -> {
+                editText.setVisibility(View.GONE);
+                return Unit.INSTANCE;
+            });
+            pollsExpiredAt.setVisibility(View.GONE);
         }
 
         addLocation = findViewById(R.id.activity_tweet_add_location);
@@ -439,7 +486,7 @@ public class PostActivity extends AppCompatActivity {
         Snackbar.make(
                 rootViewGroup,
                 e.getMessage(),
-                Snackbar.LENGTH_INDEFINITE
+                Snackbar.LENGTH_LONG
         ).show();
     }
 
@@ -552,6 +599,8 @@ public class PostActivity extends AppCompatActivity {
         disposable.dispose();
         super.onDestroy();
         disposable = null;
+        pollsExpiredAt = null;
+        pollsText = null;
         locationText = null;
         addLocation = null;
         postVisibility = null;
