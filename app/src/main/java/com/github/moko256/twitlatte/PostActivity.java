@@ -368,7 +368,11 @@ public class PostActivity extends AppCompatActivity {
 
                 @Override
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    model.getUpdateStatus().setPollExpiredSecond(Integer.parseInt(s.toString(), 10) * 60 * 60);
+                    if (s.length() > 0) {
+                        model.getUpdateStatus().setPollExpiredSecond(Integer.parseInt(s.toString(), 10) * 60 * 60);
+                    } else {
+                        model.getUpdateStatus().setPollExpiredSecond(0);
+                    }
                 }
 
                 @Override

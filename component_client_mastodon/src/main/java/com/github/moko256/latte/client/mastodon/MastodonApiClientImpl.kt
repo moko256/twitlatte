@@ -255,6 +255,6 @@ class MastodonApiClientImpl(okHttpClient: OkHttpClient, url: String, token: Stri
     }
 
     override fun votePoll(id: Long, indexes: List<Int>) {
-        Polls(client).postVote(id, indexes)
+        Polls(client).postVote(id, indexes).executeAndConvertError()
     }
 }

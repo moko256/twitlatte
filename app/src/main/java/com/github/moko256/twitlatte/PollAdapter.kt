@@ -21,6 +21,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.CompoundButton
+import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
@@ -67,12 +68,12 @@ class PollAdapter(private val context: Context): RecyclerView.Adapter<PollAdapte
                         .inflate(viewType, parent, false) as ViewGroup
         )
         holder.itemView.background = PercentBarBackgroundDrawable().also {
-            it.lineSize = 4 * context.resources.displayMetrics.density
+            it.lineSize = 2 * context.resources.displayMetrics.density
             it.color = ContextCompat.getColor(context, R.color.color_accent)
         }
 
         val poll = poll
-        if(poll != null && !poll.expired) {
+        if(poll != null && viewType != R.layout.layout_material_list_item_single_line) {
             holder.itemView.setOnClickListener {
                 val position = holder.layoutPosition
 
@@ -120,9 +121,17 @@ class PollAdapter(private val context: Context): RecyclerView.Adapter<PollAdapte
 
         @SuppressLint("SetTextI18n")
         fun bind(text: String, count: Int, allCount: Int, isSelected: Boolean, isTop: Boolean) {
-            val percent = (1000 * count / allCount) / 10f
+            val percent = if (allCount == 0) {
+                0f
+            } else {
+                (1000 * count / allCount) / 10f
+            }
             textView.text = "$percent%  $text"
-            selection?.isChecked = isSelected
+            if (selection != null) {
+                selection.isChecked = isSelected
+            } else {
+                (itemView as FrameLayout).foreground = null
+            }
 
             val convertedDrawable = itemView.background as PercentBarBackgroundDrawable
             convertedDrawable.percent = percent
