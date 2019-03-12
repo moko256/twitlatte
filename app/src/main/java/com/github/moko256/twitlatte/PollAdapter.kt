@@ -104,7 +104,7 @@ class PollAdapter(private val context: Context): RecyclerView.Adapter<PollAdapte
 
     override fun onBindViewHolder(holder: Holder, position: Int) {
         poll?.let { poll ->
-            val count = poll.optionCounts[position]
+            val count = poll.optionCounts[position].takeIf { it != -1 }?:0
             holder.bind(
                     poll.optionTitles[position],
                     count,
