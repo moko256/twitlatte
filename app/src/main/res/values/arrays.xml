@@ -46,4 +46,14 @@
         <item>@string/mode_visibility_private</item>
         <item>@string/mode_visibility_direct</item>
     </string-array>
+
+    <string-array name="choose_poll_expired_at_entries">
+        <item>@string/mode_poll_expired_at_5_minutes</item>
+        <item>@string/mode_poll_expired_at_30_minutes</item>
+        <item>@string/mode_poll_expired_at_1_hour</item>
+        <item>@string/mode_poll_expired_at_6_hours</item>
+        <item>@string/mode_poll_expired_at_1_day</item>
+        <item>@string/mode_poll_expired_at_3_days</item>
+        <item>@string/mode_poll_expired_at_7_days</item>
+    </string-array>
 </resources>

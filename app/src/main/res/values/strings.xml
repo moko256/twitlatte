@@ -181,5 +181,13 @@
     <string name="mode_visibility_private">Followers only</string>
     <string name="mode_visibility_direct">Direct</string>
 
+    <string name="mode_poll_expired_at_5_minutes">5 minutes</string>
+    <string name="mode_poll_expired_at_30_minutes">30 minutes</string>
+    <string name="mode_poll_expired_at_1_hour">1 hour</string>
+    <string name="mode_poll_expired_at_6_hours">6 hours</string>
+    <string name="mode_poll_expired_at_1_day">1 day</string>
+    <string name="mode_poll_expired_at_3_days">3 days</string>
+    <string name="mode_poll_expired_at_7_days">7 days</string>
+
     <string name="num_units">KMG</string>
 </resources>

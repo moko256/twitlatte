@@ -91,6 +91,15 @@ public class PostActivity extends AppCompatActivity {
     private static final int REQUEST_GET_IMAGE = 10;
     private static final int REQUEST_CODE_PERMISSION_LOCATION = 400;
     private static final String[] POST_VISIBILITY = {"Public", "Unlisted", "Private", "Direct"};
+    private static final long[] POLL_EXPIRED_AT = {
+            5 * 60,
+            30 * 60,
+            60 * 60,
+            6 * 60 * 60,
+            24 * 60 * 60,
+            3 * 24 * 60 * 60,
+            7 * 24 * 60 * 60
+    };
 
     private Client client;
     private PostStatusModel model;
@@ -117,7 +126,7 @@ public class PostActivity extends AppCompatActivity {
     private CheckBox addLocation;
     private TextView locationText;
     private EditText[] pollsText;
-    private EditText pollsExpiredAt;
+    private Spinner pollsExpiredAt;
 
     private int COLOR_STABLE;
     private int COLOR_ERROR;
@@ -342,7 +351,6 @@ public class PostActivity extends AppCompatActivity {
 
                 }
             });
-            postVisibility.setSelection(0);
 
             ArrayList<String> options = new ArrayList<>(4);
             ArraysKt.forEachIndexed(pollsText, (i, editText) -> {
@@ -362,21 +370,15 @@ public class PostActivity extends AppCompatActivity {
                 });
                 return Unit.INSTANCE;
             });
-            pollsExpiredAt.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
+            pollsExpiredAt.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    if (s.length() > 0) {
-                        model.getUpdateStatus().setPollExpiredSecond(Integer.parseInt(s.toString(), 10) * 60 * 60);
-                    } else {
-                        model.getUpdateStatus().setPollExpiredSecond(0);
-                    }
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    model.getUpdateStatus().setPollExpiredSecond(POLL_EXPIRED_AT[position]);
                 }
 
                 @Override
-                public void afterTextChanged(Editable s) {}
+                public void onNothingSelected(AdapterView<?> parent) {}
             });
         } else {
             emojiInputRecyclerView.setVisibility(View.GONE);
