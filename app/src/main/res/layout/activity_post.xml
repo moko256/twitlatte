@@ -209,6 +209,21 @@
                 android:layout_alignParentEnd="true"
                 android:entries="@array/choose_poll_expired_at_entries"/>
 
+            <CheckBox
+                android:id="@+id/poll_multiple"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/edit_poll_expired_at_description"
+                android:text="Able to choice multiple"
+                android:layout_marginBottom="8dp"/>
+
+            <CheckBox
+                android:id="@+id/hide_totals"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/poll_multiple"
+                android:text="Hide totals until the poll ends"
+                android:layout_marginBottom="16dp"/>
         </RelativeLayout>
     </ScrollView>
 </LinearLayout>

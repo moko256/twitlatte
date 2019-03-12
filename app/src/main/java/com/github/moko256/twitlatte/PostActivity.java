@@ -127,6 +127,8 @@ public class PostActivity extends AppCompatActivity {
     private TextView locationText;
     private EditText[] pollsText;
     private Spinner pollsExpiredAt;
+    private CheckBox pollsMultiple;
+    private CheckBox pollsHideTotals;
 
     private int COLOR_STABLE;
     private int COLOR_ERROR;
@@ -279,6 +281,8 @@ public class PostActivity extends AppCompatActivity {
                 findViewById(R.id.edit_poll_3)
         };
         pollsExpiredAt = findViewById(R.id.edit_poll_expired_at);
+        pollsMultiple = findViewById(R.id.poll_multiple);
+        pollsHideTotals = findViewById(R.id.hide_totals);
 
         if (client.getAccessToken().getClientType() == CLIENT_TYPE_MASTODON) {
             emojiAdapter = new EmojiAdapter(
@@ -380,6 +384,10 @@ public class PostActivity extends AppCompatActivity {
                 @Override
                 public void onNothingSelected(AdapterView<?> parent) {}
             });
+            pollsMultiple.setOnCheckedChangeListener((buttonView, isChecked)
+                    -> model.getUpdateStatus().setPollSelectableMultiple(isChecked));
+            pollsHideTotals.setOnCheckedChangeListener((buttonView, isChecked)
+                    -> model.getUpdateStatus().setPollHideTotalsUntilExpired(isChecked));
         } else {
             emojiInputRecyclerView.setVisibility(View.GONE);
             contentWarningEnabled.setVisibility(View.GONE);
@@ -390,6 +398,9 @@ public class PostActivity extends AppCompatActivity {
                 return Unit.INSTANCE;
             });
             pollsExpiredAt.setVisibility(View.GONE);
+            pollsMultiple.setVisibility(View.GONE);
+            pollsHideTotals.setVisibility(View.GONE);
+            findViewById(R.id.edit_poll_expired_at_description).setVisibility(View.GONE);
         }
 
         addLocation = findViewById(R.id.activity_tweet_add_location);
@@ -605,6 +616,8 @@ public class PostActivity extends AppCompatActivity {
         disposable.dispose();
         super.onDestroy();
         disposable = null;
+        pollsHideTotals = null;
+        pollsMultiple = null;
         pollsExpiredAt = null;
         pollsText = null;
         locationText = null;
