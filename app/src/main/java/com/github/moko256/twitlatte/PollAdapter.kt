@@ -105,13 +105,19 @@ class PollAdapter(private val context: Context): RecyclerView.Adapter<PollAdapte
     override fun onBindViewHolder(holder: Holder, position: Int) {
         poll?.let { poll ->
             val count = poll.optionCounts[position].takeIf { it != -1 }?:0
-            holder.bind(
-                    poll.optionTitles[position],
-                    count,
-                    poll.votesCount,
-                    selections.contains(position),
-                    count == topValue
-            )
+            if (poll.expired || poll.voted) {
+                holder.bindResult(
+                        poll.optionTitles[position],
+                        count,
+                        poll.votesCount,
+                        count == topValue
+                )
+            } else {
+                holder.bindSelection(
+                        poll.optionTitles[position],
+                        selections.contains(position)
+                )
+            }
         }
     }
 
@@ -120,18 +126,24 @@ class PollAdapter(private val context: Context): RecyclerView.Adapter<PollAdapte
         private val selection = itemView.findViewById<CompoundButton>(R.id.selection)
 
         @SuppressLint("SetTextI18n")
-        fun bind(text: String, count: Int, allCount: Int, isSelected: Boolean, isTop: Boolean) {
+        fun bindSelection(text: String, isSelected: Boolean) {
+            textView.text = text
+            selection.isChecked = isSelected
+
+            val convertedDrawable = itemView.background as PercentBarBackgroundDrawable
+            convertedDrawable.percent = 0
+            convertedDrawable.invalidateSelf()
+        }
+
+        @SuppressLint("SetTextI18n")
+        fun bindResult(text: String, count: Int, allCount: Int, isTop: Boolean) {
             val percent = if (allCount == 0) {
                 0
             } else {
                 100 * count / allCount
             }
             textView.text = "$percent%  $text"
-            if (selection != null) {
-                selection.isChecked = isSelected
-            } else {
-                (itemView as FrameLayout).foreground = null
-            }
+            (itemView as FrameLayout).foreground = null
 
             val convertedDrawable = itemView.background as PercentBarBackgroundDrawable
             convertedDrawable.percent = percent
