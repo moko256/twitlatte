@@ -31,7 +31,6 @@ class SelectListEntriesActivity: AppCompatActivity(), SelectListsEntriesFragment
         super.onCreate(savedInstanceState)
 
         supportActionBar?.let {
-            it.setTitle(R.string.add_to_list)
             it.setDisplayHomeAsUpEnabled(true)
             it.setHomeAsUpIndicator(R.drawable.ic_clear_white_24dp)
         }
