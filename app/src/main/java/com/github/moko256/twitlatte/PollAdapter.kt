@@ -122,9 +122,9 @@ class PollAdapter(private val context: Context): RecyclerView.Adapter<PollAdapte
         @SuppressLint("SetTextI18n")
         fun bind(text: String, count: Int, allCount: Int, isSelected: Boolean, isTop: Boolean) {
             val percent = if (allCount == 0) {
-                0f
+                0
             } else {
-                (1000 * count / allCount) / 10f
+                100 * count / allCount
             }
             textView.text = "$percent%  $text"
             if (selection != null) {
