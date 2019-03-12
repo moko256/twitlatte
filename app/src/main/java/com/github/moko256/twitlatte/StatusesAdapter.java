@@ -23,7 +23,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.github.moko256.latte.client.base.entity.Post;
 import com.github.moko256.latte.client.base.entity.Repeat;
@@ -32,6 +31,7 @@ import com.github.moko256.latte.client.base.entity.User;
 import com.github.moko256.twitlatte.entity.Client;
 import com.github.moko256.twitlatte.glide.GlideRequests;
 import com.github.moko256.twitlatte.intent.AppCustomTabsKt;
+import com.github.moko256.twitlatte.model.base.StatusActionModel;
 import com.github.moko256.twitlatte.repository.PreferenceRepository;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
 import com.github.moko256.twitlatte.widget.ImagesTableView;
@@ -42,9 +42,6 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
-import io.reactivex.Completable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 import kotlin.Unit;
 
 import static com.github.moko256.twitlatte.GlobalApplicationKt.preferenceRepository;
@@ -69,19 +66,18 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     private final List<Long> data;
     private final Context context;
+    private final StatusActionModel statusActionModel;
     private final Client client;
     private final PreferenceRepository conf;
     private final GlideRequests glideRequests;
 
     public OnLoadMoreClickListener onLoadMoreClick;
 
-    public OnFavoriteClickListener onFavoriteClick;
-    public OnRepeatClickListener onRepeatClick;
-
     public boolean shouldShowMediaOnly = false;
 
-    StatusesAdapter(Client client, PreferenceRepository preferenceRepository, Context context, List<Long> data, GlideRequests glideRequests) {
+    StatusesAdapter(Client client, StatusActionModel statusActionModel, PreferenceRepository preferenceRepository, Context context, List<Long> data, GlideRequests glideRequests) {
         this.client = client;
+        this.statusActionModel = statusActionModel;
         this.conf = preferenceRepository;
         this.context = context;
         this.data = data;
@@ -92,14 +88,6 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     public void setOnLoadMoreClick(OnLoadMoreClickListener onLoadMoreClick) {
         this.onLoadMoreClick = onLoadMoreClick;
-    }
-
-    public void setOnFavoriteClick(OnFavoriteClickListener onFavoriteClick) {
-        this.onFavoriteClick = onFavoriteClick;
-    }
-
-    public void setOnRepeatClick(OnRepeatClickListener onRepeatClick) {
-        this.onRepeatClick = onRepeatClick;
     }
 
     @Override
@@ -267,12 +255,20 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             );
 
             statusViewBinder.getLikeButton().setOnCheckedChangeListener((compoundButton, b) -> {
-                onFavoriteClick.onClick(getLayoutPosition(), status.getId(), !b);
+                if (b) {
+                    statusActionModel.createFavorite(status.getId());
+                } else {
+                    statusActionModel.removeFavorite(status.getId());
+                }
                 return Unit.INSTANCE;
             });
 
             statusViewBinder.getRepeatButton().setOnCheckedChangeListener((compoundButton, b) -> {
-                onRepeatClick.onClick(getLayoutPosition(), status.getId(), !b);
+                if (b) {
+                    statusActionModel.createRepeat(status.getId());
+                } else {
+                    statusActionModel.removeRepeat(status.getId());
+                }
                 return Unit.INSTANCE;
             });
 
@@ -288,27 +284,14 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     ))
             );
 
-            statusViewBinder.getSendVote().setOnClickListener(v -> {
-                Completable.create(emitter -> {
-                    try {
-                        client.getApiClient().votePoll(status.getPoll().getId(), statusViewBinder.getPollAdapter().getSelections());
-                        emitter.onComplete();
-                    } catch (Throwable e) {
-                        e.printStackTrace();
-                        emitter.tryOnError(e);
-                    }
-                }).subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(
-                                () -> {
-                                    Toast.makeText(context,"Did vote",Toast.LENGTH_SHORT).show();
-                                },
-                                e->{
-                                    e.printStackTrace();
-                                    Toast.makeText(context, e.getMessage(),Toast.LENGTH_SHORT).show();
-                                }
-                        );
-            });
+            statusViewBinder.getSendVote().setOnClickListener(v ->
+                    statusActionModel
+                            .sendVote(
+                                    status.getId(),
+                                    status.getPoll().getId(),
+                                    statusViewBinder.getPollAdapter().getSelections()
+                            )
+            );
 
             statusViewBinder.setStatus(repeatedUser, repeat, user, status, quotedStatusUser, quotedStatus);
         }
@@ -384,11 +367,4 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         void onClick(int position);
     }
 
-    interface OnFavoriteClickListener {
-        void onClick(int position, long id, boolean hasFavorited);
-    }
-
-    interface OnRepeatClickListener {
-        void onClick(int position, long id, boolean hasRepeated);
-    }
 }

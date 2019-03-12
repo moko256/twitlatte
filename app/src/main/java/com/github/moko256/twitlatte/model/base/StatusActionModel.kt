@@ -16,8 +16,8 @@
 
 package com.github.moko256.twitlatte.model.base
 
+import androidx.lifecycle.LiveData
 import com.github.moko256.latte.client.base.entity.StatusAction
-import io.reactivex.Observable
 
 /**
  * Created by moko256 on 2018/10/20.
@@ -25,11 +25,15 @@ import io.reactivex.Observable
  * @author moko256
  */
 interface StatusActionModel {
-    fun getUpdateObservable(): Observable<Pair<Long, StatusAction>>
-    fun getErrorObservable(): Observable<Pair<Long, Throwable>>
+    fun getDidActionObservable(): LiveData<StatusAction>
+    fun getStatusObservable(): LiveData<Long>
+    fun getErrorObservable(): LiveData<Throwable>
 
+    fun updateStatus(targetStatusId: Long)
     fun createFavorite(targetStatusId: Long)
     fun removeFavorite(targetStatusId: Long)
     fun createRepeat(targetStatusId: Long)
     fun removeRepeat(targetStatusId: Long)
+
+    fun sendVote(targetStatusId: Long, targetPollId: Long, options: List<Int>)
 }

@@ -25,11 +25,13 @@ import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.github.moko256.latte.client.base.entity.Post
+import com.github.moko256.latte.client.base.entity.StatusAction
 import com.github.moko256.twitlatte.database.CachedIdListSQLiteOpenHelper
 import com.github.moko256.twitlatte.entity.Client
 import com.github.moko256.twitlatte.entity.EventType
@@ -111,26 +113,13 @@ abstract class BaseTweetListFragment : BaseListFragment(), ListServerRepository<
 
         adapter = StatusesAdapter(
                 client,
+                listViewModel.statusActionModel,
                 preferenceRepository,
                 context,
                 listViewModel.listModel.getIdsList(),
                 GlideApp.with(this)
         ).also {
             it.setOnLoadMoreClick { position -> listViewModel.listModel.loadOnGap(position) }
-            it.setOnFavoriteClick { _, id, hasFavorited ->
-                if (hasFavorited) {
-                    listViewModel.statusActionModel.removeFavorite(id)
-                } else {
-                    listViewModel.statusActionModel.createFavorite(id)
-                }
-            }
-            it.setOnRepeatClick { _, id, hasRepeated ->
-                if (hasRepeated) {
-                    listViewModel.statusActionModel.removeRepeat(id)
-                } else {
-                    listViewModel.statusActionModel.createRepeat(id)
-                }
-            }
         }
 
         recyclerView.adapter = adapter
@@ -181,29 +170,25 @@ abstract class BaseTweetListFragment : BaseListFragment(), ListServerRepository<
                             if (swipeRefreshLayout.isRefreshing) {
                                 setRefreshing(false)
                             }
-                        },
-
-                listViewModel.statusActionModel.getUpdateObservable()
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe {
-                            adapter!!.notifyItemChanged(listViewModel.listModel.getIdsList().indexOf(it.first))
-
-                            notifyBySnackBar(
-                                    TwitterStringUtils.getDidActionStringRes(
-                                            client.accessToken.clientType,
-                                            it.second
-                                    )
-                            ).show()
-                        },
-
-                listViewModel.statusActionModel.getErrorObservable()
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe {
-                            it.second.printStackTrace()
-                            notifyErrorBySnackBar(it.second).show()
-                            adapter!!.notifyItemChanged(listViewModel.listModel.getIdsList().indexOf(it.first))
                         }
         )
+        listViewModel.statusActionModel.getStatusObservable().observe(this, Observer<Long> {
+            adapter!!.notifyItemChanged(listViewModel.listModel.getIdsList().indexOf(it))
+        })
+
+        listViewModel.statusActionModel.getDidActionObservable().observe(this, Observer<StatusAction> {
+            notifyBySnackBar(
+                    TwitterStringUtils.getDidActionStringRes(
+                            client.accessToken.clientType,
+                            it
+                    )
+            ).show()
+        })
+
+        listViewModel.statusActionModel.getErrorObservable().observe(this,Observer<Throwable> {
+            it.printStackTrace()
+            notifyErrorBySnackBar(it).show()
+        })
 
         super.onActivityCreated(savedInstanceState)
     }

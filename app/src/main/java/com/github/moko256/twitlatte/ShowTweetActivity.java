@@ -38,6 +38,7 @@ import com.github.moko256.latte.client.base.entity.User;
 import com.github.moko256.twitlatte.entity.Client;
 import com.github.moko256.twitlatte.glide.GlideApp;
 import com.github.moko256.twitlatte.intent.AppCustomTabsKt;
+import com.github.moko256.twitlatte.model.base.StatusActionModel;
 import com.github.moko256.twitlatte.model.impl.StatusActionModelImpl;
 import com.github.moko256.twitlatte.text.NoSpanInputFilterKt;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
@@ -49,7 +50,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import io.reactivex.Completable;
-import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
@@ -67,7 +67,7 @@ import static android.view.View.VISIBLE;
 public class ShowTweetActivity extends AppCompatActivity {
 
     private CompositeDisposable disposables = new CompositeDisposable();
-    private StatusActionModelImpl statusActionModel;
+    private StatusActionModel statusActionModel;
     private long statusId;
     private String shareUrl = "";
 
@@ -110,59 +110,45 @@ public class ShowTweetActivity extends AppCompatActivity {
 
         SwipeRefreshLayout swipeRefreshLayout = findViewById(R.id.tweet_show_swipe_refresh);
         swipeRefreshLayout.setColorSchemeResources(R.color.color_primary);
-        swipeRefreshLayout.setOnRefreshListener(() -> disposables.add(
-                updateStatus()
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(
-                                result -> {
-                                    if (result == null) {
-                                        finish();
-                                    } else {
-                                        updateView(result);
-                                        swipeRefreshLayout.setRefreshing(false);
-                                    }
-                                },
-                                e->{
-                                    e.printStackTrace();
-                                    Toast.makeText(this, R.string.error_occurred, Toast.LENGTH_SHORT).show();
-                                    swipeRefreshLayout.setRefreshing(false);
-                                })
-        ));
+        swipeRefreshLayout.setOnRefreshListener(() -> statusActionModel.updateStatus(statusId));
 
-        disposables.addAll(
-
-                statusActionModel.getUpdateObservable()
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(it -> {
-                            prepareStatus();
-
-                            Toast.makeText(
-                                    this,
-                                    TwitterStringUtils.getDidActionStringRes(
-                                            client.getAccessToken().getClientType(),
-                                            it.getSecond()
-                                    ),
-                                    Toast.LENGTH_SHORT
-                            ).show();
-                        }),
-
-                statusActionModel.getErrorObservable()
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(it -> {
-                            prepareStatus();
-
-                            it.getSecond().printStackTrace();
-                            Toast.makeText(
-                                    this,
-                                    it.getSecond().getMessage(),
-                                    Toast.LENGTH_LONG
-                            ).show();
-                        })
-
+        statusActionModel.getStatusObservable().observe(this, id -> {
+            Post post = client.getPostCache().getPost(statusId);
+            if (post != null) {
+                updateView(post);
+            }
+            swipeRefreshLayout.setRefreshing(false);
+        });
+        statusActionModel.getDidActionObservable().observe(
+                this,
+                it -> Toast.makeText(
+                        this,
+                        TwitterStringUtils.getDidActionStringRes(
+                                client.getAccessToken().getClientType(), it
+                        ),
+                Toast.LENGTH_SHORT
+                ).show()
         );
+        statusActionModel.getErrorObservable().observe(this, error ->{
+            error.printStackTrace();
+            Toast.makeText(
+                    this,
+                    error.getMessage(),
+                    Toast.LENGTH_LONG
+            ).show();
+            swipeRefreshLayout.setRefreshing(false);
+            if (client.getPostCache().getPost(statusId) == null) {
+                finish();
+            }
+        });
 
-        prepareStatus();
+        Post status = client.getPostCache().getPost(statusId);
+
+        if (status != null) {
+            updateView(status);
+        } else {
+            statusActionModel.updateStatus(statusId);
+        }
     }
 
     @Override
@@ -215,45 +201,6 @@ public class ShowTweetActivity extends AppCompatActivity {
 
     public static Intent getIntent(Context context, long statusId){
         return new Intent(context, ShowTweetActivity.class).putExtra("statusId", statusId);
-    }
-
-    private void prepareStatus() {
-        Post status = client.getPostCache().getPost(statusId);
-
-        if (status != null) {
-            updateView(status);
-        } else {
-            disposables.add(
-                    updateStatus()
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(
-                                    result->{
-                                        if (result == null) {
-                                            finish();
-                                            return;
-                                        }
-                                        updateView(result);
-                                    },
-                                    e->{
-                                        e.printStackTrace();
-                                        finish();
-                                    })
-            );
-        }
-    }
-
-    private Single<Post> updateStatus(){
-        return Single.create(
-                subscriber -> {
-                    try {
-                        Post result = client.getApiClient().showPost(statusId);
-                        client.getStatusCache().add(result, false);
-                        subscriber.onSuccess(client.getPostCache().getPost(statusId));
-                    } catch (Throwable e) {
-                        subscriber.tryOnError(e);
-                    }
-                });
     }
 
     private void updateView(Post item){
@@ -355,29 +302,14 @@ public class ShowTweetActivity extends AppCompatActivity {
                 item.getQuotedRepeatingStatus()
         );
 
-        statusViewBinder.getSendVote().setOnClickListener(v -> {
-            disposables.add(
-                    Completable.create(emitter -> {
-                        try {
-                            client.getApiClient().votePoll(item.getStatus().getPoll().getId(), statusViewBinder.getPollAdapter().getSelections());
-                            emitter.onComplete();
-                        } catch (Throwable e) {
-                            e.printStackTrace();
-                            emitter.tryOnError(e);
-                        }
-                    }).subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(
-                                    () -> {
-                                        Toast.makeText(ShowTweetActivity.this,"Did vote",Toast.LENGTH_SHORT).show();
-                                    },
-                                    e->{
-                                        e.printStackTrace();
-                                        Toast.makeText(ShowTweetActivity.this,e.getMessage(),Toast.LENGTH_SHORT).show();
-                                    }
-                            )
-            );
-        });
+        statusViewBinder.getSendVote().setOnClickListener(v ->
+                statusActionModel
+                        .sendVote(
+                                statusId,
+                                item.getStatus().getPoll().getId(),
+                                statusViewBinder.getPollAdapter().getSelections()
+                        )
+        );
 
         timestampText.setText(
                 DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.FULL)

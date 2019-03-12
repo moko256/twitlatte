@@ -17,6 +17,7 @@
 package com.github.moko256.twitlatte.model.impl
 
 import android.annotation.SuppressLint
+import androidx.lifecycle.MutableLiveData
 import com.github.moko256.latte.client.base.ApiClient
 import com.github.moko256.latte.client.base.entity.Post
 import com.github.moko256.latte.client.base.entity.StatusAction
@@ -24,7 +25,6 @@ import com.github.moko256.twitlatte.cacheMap.StatusCacheMap
 import com.github.moko256.twitlatte.model.base.StatusActionModel
 import io.reactivex.Completable
 import io.reactivex.schedulers.Schedulers
-import io.reactivex.subjects.PublishSubject
 
 /**
  * Created by moko256 on 2018/10/20.
@@ -36,12 +36,19 @@ class StatusActionModelImpl(
         private val database: StatusCacheMap
 ): StatusActionModel {
 
-    private val updateObservable = PublishSubject.create<Pair<Long, StatusAction>>()
-    private val errorObservable = PublishSubject.create<Pair<Long, Throwable>>()
+    private val actionObservable = MutableLiveData<StatusAction>()
+    private val statusObservable = MutableLiveData<Long>()
+    private val errorObservable = MutableLiveData<Throwable>()
 
-    override fun getUpdateObservable() = updateObservable
-
+    override fun getDidActionObservable() = actionObservable
+    override fun getStatusObservable() = statusObservable
     override fun getErrorObservable() = errorObservable
+
+    override fun updateStatus(targetStatusId: Long) {
+        doAction(targetStatusId) {
+            apiClient.showPost(targetStatusId)
+        }
+    }
 
     override fun createFavorite(targetStatusId: Long) {
         doAction(targetStatusId, StatusAction.FAVORITE) {
@@ -67,6 +74,13 @@ class StatusActionModelImpl(
         }
     }
 
+    override fun sendVote(targetStatusId: Long, targetPollId: Long, options: List<Int>) {
+        doAction(targetStatusId) {
+            apiClient.votePoll(targetPollId, options)
+            apiClient.showPost(targetStatusId)
+        }
+    }
+
     @SuppressLint("CheckResult")
     private fun doAction(targetId: Long, actionType: StatusAction, action: () -> Post) {
         Completable
@@ -81,12 +95,36 @@ class StatusActionModelImpl(
                 .subscribeOn(Schedulers.io())
                 .subscribe(
                         {
-                            updateObservable.onNext(targetId to actionType)
+                            statusObservable.postValue(targetId)
+                            actionObservable.postValue(actionType)
                         },
                         {
-                            errorObservable.onNext(targetId to it)
+                            statusObservable.postValue(targetId)
+                            errorObservable.postValue(it)
                         }
                 )
     }
 
+    @SuppressLint("CheckResult")
+    private fun doAction(targetId: Long, action: () -> Post) {
+        Completable
+                .create {
+                    try {
+                        database.add(action(), false)
+                        it.onComplete()
+                    } catch (e: Throwable) {
+                        it.tryOnError(e)
+                    }
+                }
+                .subscribeOn(Schedulers.io())
+                .subscribe(
+                        {
+                            statusObservable.postValue(targetId)
+                        },
+                        {
+                            statusObservable.postValue(targetId)
+                            errorObservable.postValue(it)
+                        }
+                )
+    }
 }
