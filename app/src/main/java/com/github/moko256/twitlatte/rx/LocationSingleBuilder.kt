@@ -23,7 +23,6 @@ import android.location.LocationManager
 import android.os.Bundle
 import io.reactivex.Single
 import io.reactivex.SingleEmitter
-import java.util.*
 
 /**
  * Created by moko256 on 2018/06/07.
@@ -46,7 +45,7 @@ class LocationSingleBuilder(
                 locationManager
                         .getLastKnownLocation(provider)
                         .takeIf {
-                            it != null && it.time < Date().time + 10 * 60 * 1000
+                            it != null && it.time < System.currentTimeMillis() + 10 * 60 * 1000
                         }.also {
                             if (it == null) {
                                 locationManager.requestSingleUpdate(
