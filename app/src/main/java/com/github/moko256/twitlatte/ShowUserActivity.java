@@ -119,32 +119,28 @@ public class ShowUserActivity extends AppCompatActivity implements TabLayout.OnT
         userScreenName = getIntent().getStringExtra("userScreenName");
         userId = getIntent().getLongExtra("userId", -1);
 
-        if (savedInstanceState == null) {
-            viewModel.readCacheRepo = () -> {
-                if (userId != -1) {
-                    return client.getUserCache().get(userId);
-                } else {
-                    return null;
-                }
-            };
+        viewModel.readCacheRepo = () -> {
+            if (userId != -1) {
+                return client.getUserCache().get(userId);
+            } else {
+                return null;
+            }
+        };
 
-            viewModel.writeCacheRepo = user -> {
-                client.getUserCache().add(user);
-                return Unit.INSTANCE;
-            };
+        viewModel.writeCacheRepo = user -> {
+            client.getUserCache().add(user);
+            return Unit.INSTANCE;
+        };
 
-            viewModel.remoteRepo = () -> {
-                if (userId != -1) {
-                    return client.getApiClient().showUser(userId);
-                } else if (userScreenName != null) {
-                    return client.getApiClient().showUser(userScreenName);
-                } else {
-                    throw new IllegalStateException("Unreachable");
-                }
-            };
-
-            viewModel.loadUser();
-        }
+        viewModel.remoteRepo = () -> {
+            if (userId != -1) {
+                return client.getApiClient().showUser(userId);
+            } else if (userScreenName != null) {
+                return client.getApiClient().showUser(userScreenName);
+            } else {
+                throw new IllegalStateException("Unreachable");
+            }
+        };
 
         viewModel.getUser().observe(this, user -> adapter.setUserId(user.getId()));
         viewModel.getError().observe(
@@ -155,6 +151,10 @@ public class ShowUserActivity extends AppCompatActivity implements TabLayout.OnT
                         Snackbar.LENGTH_LONG
                 ).show()
         );
+
+        if (savedInstanceState == null) {
+            viewModel.loadUser();
+        }
     }
 
     @Override
