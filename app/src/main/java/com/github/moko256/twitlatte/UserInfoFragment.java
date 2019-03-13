@@ -39,6 +39,8 @@ import com.github.moko256.twitlatte.intent.AppCustomTabsKt;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
 import com.github.moko256.twitlatte.text.style.ClickableNoLineSpan;
 import com.github.moko256.twitlatte.view.EmojiToTextViewSetter;
+import com.github.moko256.twitlatte.view.EmojiToTextViewSetterKt;
+import com.github.moko256.twitlatte.viewmodel.UserInfoViewModel;
 import com.github.moko256.twitlatte.widget.UserHeaderImageView;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -48,12 +50,11 @@ import java.util.Objects;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import io.reactivex.Single;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
+import kotlin.Unit;
 
 import static com.github.moko256.latte.client.base.ApiClientKt.CLIENT_TYPE_NOTHING;
 import static com.github.moko256.latte.client.twitter.TwitterApiClientImplKt.CLIENT_TYPE_TWITTER;
@@ -66,7 +67,7 @@ import static com.github.moko256.latte.client.twitter.TwitterApiClientImplKt.CLI
 
 public class UserInfoFragment extends Fragment implements ToolbarTitleInterface {
 
-    private CompositeDisposable disposable;
+    private UserInfoViewModel viewModel;
     private Client client;
 
     private GlideRequests glideRequests;
@@ -101,22 +102,42 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        disposable = new CompositeDisposable();
-        client = GlobalApplicationKt.getClient(requireActivity());
+
         userId = Objects.requireNonNull(getArguments()).getLong("userId");
 
-        User cachedUser = client.getUserCache().get(userId);
-        if (cachedUser==null){
-            disposable.add(
-                    updateUser()
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(
-                                    this::setShowUserInfo,
-                                    Throwable::printStackTrace
-                            )
-            );
+        client = GlobalApplicationKt.getClient(requireActivity());
+
+        viewModel = ViewModelProviders.of(this).get(UserInfoViewModel.class);
+
+        if (savedInstanceState == null) {
+            viewModel.readCacheRepo = () -> client.getUserCache().get(userId);
+
+            viewModel.writeCacheRepo = user -> {
+                client.getUserCache().add(user);
+                return Unit.INSTANCE;
+            };
+
+            viewModel.remoteRepo = () -> client.getApiClient().showUser(userId);
+
+            viewModel.loadUser();
         }
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        FragmentActivity activity = requireActivity();
+
+        viewModel.getError().observe(activity, throwable -> {
+            throwable.printStackTrace();
+            Snackbar.make(
+                    ((BaseListFragment.GetViewForSnackBar) activity).getViewForSnackBar(),
+                    throwable.getMessage(),
+                    Snackbar.LENGTH_LONG
+            ).show();
+            swipeRefreshLayout.setRefreshing(false);
+        });
     }
 
     @Nullable
@@ -128,21 +149,7 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
 
         swipeRefreshLayout = view.findViewById(R.id.show_user_swipe_refresh);
         swipeRefreshLayout.setColorSchemeResources(R.color.color_primary);
-        swipeRefreshLayout.setOnRefreshListener(() -> disposable.add(updateUser()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doFinally(() -> swipeRefreshLayout.setRefreshing(false))
-                .subscribe(
-                        this::setShowUserInfo,
-                        throwable -> {
-                            throwable.printStackTrace();
-                            Snackbar.make(
-                                    ((BaseListFragment.GetViewForSnackBar) requireActivity()).getViewForSnackBar(),
-                                    throwable.getMessage(),
-                                    Snackbar.LENGTH_LONG
-                            );
-                        }
-                )));
+        swipeRefreshLayout.setOnRefreshListener(() -> viewModel.updateUser());
 
         header= view.findViewById(R.id.show_user_bgimage);
         header.setWidthPerHeight((client.getAccessToken().getClientType() == CLIENT_TYPE_TWITTER)? 3: 2);
@@ -168,10 +175,19 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
     }
 
     @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        viewModel.getUser().observe(this, user -> {
+            setShowUserInfo(user);
+            swipeRefreshLayout.setRefreshing(false);
+        });
+    }
+
+    @Override
     public void onDestroy() {
-        disposable.dispose();
+        glideRequests.clear(icon);
+        glideRequests.clear(header);
         super.onDestroy();
-        disposable = null;
     }
 
     @Override
@@ -186,17 +202,7 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
                     .load(headerUrl)
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .into(header);
-            disposable.add(new Disposable() {
-                @Override
-                public void dispose() {
-                    glideRequests.clear(header);
-                }
 
-                @Override
-                public boolean isDisposed() {
-                    return false;
-                }
-            });
             header.setOnClickListener(v -> startActivity(
                     ShowMediasActivity.getIntent(
                             getContext(),
@@ -223,17 +229,7 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
                 .circleCrop()
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .into(icon);
-        disposable.add(new Disposable() {
-            @Override
-            public void dispose() {
-                glideRequests.clear(icon);
-            }
 
-            @Override
-            public boolean isDisposed() {
-                return false;
-            }
-        });
         icon.setOnClickListener(v -> startActivity(
                 ShowMediasActivity.getIntent(
                         getContext(),
@@ -271,14 +267,14 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
             }
             Disposable[] setOfName = userNameEmojiSetter.set(userName, userNameEmojis);
             if (setOfName != null) {
-                disposable.addAll(setOfName);
+                EmojiToTextViewSetterKt.bindToLifecycle(setOfName, this);
             } else {
                 if (userBioEmojiSetter == null) {
                     userBioEmojiSetter = new EmojiToTextViewSetter(glideRequests, userBioText);
                 }
                 Disposable[] setOfBio = userBioEmojiSetter.set(userBio, userNameEmojis);
                 if (setOfBio != null) {
-                    disposable.addAll(setOfBio);
+                    EmojiToTextViewSetterKt.bindToLifecycle(setOfBio, this);
                 }
             }
         }
@@ -313,18 +309,5 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
         userTweetsCount.setText(getString(R.string.posts_counts_is, user.getStatusesCount()));
         userFollowCount.setText(getString(R.string.following_counts_is, user.getFriendsCount()));
         userFollowerCount.setText(getString(R.string.followers_counts_is, user.getFollowersCount()));
-    }
-
-    private Single<User> updateUser(){
-        return Single.create(
-                subscriber -> {
-                    try {
-                        User user = client.getApiClient().showUser(userId);
-                        client.getUserCache().add(user);
-                        subscriber.onSuccess(client.getUserCache().get(userId));
-                    } catch (Throwable e) {
-                        subscriber.tryOnError(e);
-                    }
-                });
     }
 }
