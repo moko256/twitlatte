@@ -29,6 +29,7 @@ import com.github.moko256.latte.client.base.entity.User;
 import com.github.moko256.twitlatte.entity.Client;
 import com.github.moko256.twitlatte.intent.AppCustomTabsKt;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
+import com.github.moko256.twitlatte.viewmodel.UserInfoViewModel;
 import com.github.moko256.twitlatte.widget.FragmentPagerAdapter;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
@@ -42,13 +43,14 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 import io.reactivex.Completable;
-import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
+import kotlin.Unit;
 
 import static com.github.moko256.latte.client.mastodon.MastodonApiClientImplKt.CLIENT_TYPE_MASTODON;
 
@@ -60,15 +62,15 @@ import static com.github.moko256.latte.client.mastodon.MastodonApiClientImplKt.C
 public class ShowUserActivity extends AppCompatActivity implements TabLayout.OnTabSelectedListener, BaseListFragment.GetViewForSnackBar, BaseTweetListFragment.GetRecyclerViewPool, BaseUsersFragment.GetRecyclerViewPool {
 
     private CompositeDisposable disposable;
+    private UserInfoViewModel viewModel;
     private Client client;
 
     private String userScreenName;
     private long userId;
 
-    private User user;
-
     private ActionBar actionBar;
     private ViewPager viewPager;
+    private ShowUserFragmentsPagerAdapter adapter;
     private TabLayout tabLayout;
 
     private RecyclerView.RecycledViewPool tweetListViewPool;
@@ -82,6 +84,8 @@ public class ShowUserActivity extends AppCompatActivity implements TabLayout.OnT
         disposable = new CompositeDisposable();
         client = GlobalApplicationKt.getClient(this);
 
+        viewModel = ViewModelProviders.of(this).get(UserInfoViewModel.class);
+
         setSupportActionBar(findViewById(R.id.toolbar_show_user));
 
         actionBar = Objects.requireNonNull(getSupportActionBar());
@@ -89,6 +93,12 @@ public class ShowUserActivity extends AppCompatActivity implements TabLayout.OnT
         actionBar.setHomeAsUpIndicator(R.drawable.ic_back_white_24dp);
 
         viewPager= findViewById(R.id.show_user_view_pager);
+        adapter = new ShowUserFragmentsPagerAdapter(
+                client.getAccessToken(),
+                getSupportFragmentManager(),
+                this
+        );
+        adapter.initAdapter(viewPager);
 
         tabLayout= findViewById(R.id.tab_show_user);
         tabLayout.setupWithViewPager(viewPager);
@@ -99,6 +109,7 @@ public class ShowUserActivity extends AppCompatActivity implements TabLayout.OnT
         userListViewPool = new RecyclerView.RecycledViewPool();
 
         findViewById(R.id.activity_show_user_fab).setOnClickListener(v -> {
+            User user = viewModel.getUser().getValue();
             if (user != null){
                 startActivity(PostActivity.getIntent(this, TwitterStringUtils.plusAtMark(user.getScreenName())+" "));
             }
@@ -108,30 +119,42 @@ public class ShowUserActivity extends AppCompatActivity implements TabLayout.OnT
         userScreenName = getIntent().getStringExtra("userScreenName");
         userId = getIntent().getLongExtra("userId", -1);
 
-        if (userId != -1){
-            user = client.getUserCache().get(userId);
+        if (savedInstanceState == null) {
+            viewModel.readCacheRepo = () -> {
+                if (userId != -1) {
+                    return client.getUserCache().get(userId);
+                } else {
+                    return null;
+                }
+            };
+
+            viewModel.writeCacheRepo = user -> {
+                client.getUserCache().add(user);
+                return Unit.INSTANCE;
+            };
+
+            viewModel.remoteRepo = () -> {
+                if (userId != -1) {
+                    return client.getApiClient().showUser(userId);
+                } else if (userScreenName != null) {
+                    return client.getApiClient().showUser(userScreenName);
+                } else {
+                    throw new IllegalStateException("Unreachable");
+                }
+            };
+
+            viewModel.loadUser();
         }
 
-        if (user != null) {
-            new ShowUserFragmentsPagerAdapter(client, getSupportFragmentManager(),this, user.getId()).initAdapter(viewPager);
-        } else {
-            disposable.add(
-                    getUserSingle()
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(
-                                    it -> {
-                                        user = it;
-                                        new ShowUserFragmentsPagerAdapter(client, getSupportFragmentManager(),this,it.getId()).initAdapter(viewPager);
-                                    },
-                                    e -> Snackbar.make(
-                                            getViewForSnackBar(),
-                                            e.getMessage(),
-                                            Snackbar.LENGTH_LONG
-                                    ).show()
-                            )
-            );
-        }
+        viewModel.getUser().observe(this, user -> adapter.setUserId(user.getId()));
+        viewModel.getError().observe(
+                this,
+                throwable -> Snackbar.make(
+                        getViewForSnackBar(),
+                        throwable.getMessage(),
+                        Snackbar.LENGTH_LONG
+                ).show()
+        );
     }
 
     @Override
@@ -159,7 +182,6 @@ public class ShowUserActivity extends AppCompatActivity implements TabLayout.OnT
         viewPager=null;
         actionBar=null;
 
-        user=null;
     }
 
     @Override
@@ -176,6 +198,12 @@ public class ShowUserActivity extends AppCompatActivity implements TabLayout.OnT
 
     private String getShareUrl(){
         String url;
+        User user = viewModel.getUser().getValue();
+
+        if (user == null) {
+            return "";
+        }
+
         if (client.getAccessToken().getClientType() == CLIENT_TYPE_MASTODON){
             String baseUrl;
             String userName;
@@ -204,7 +232,11 @@ public class ShowUserActivity extends AppCompatActivity implements TabLayout.OnT
         Func throwableFunc = null;
         @StringRes int didAction = -1;
         ApiClient apiClient = client.getApiClient();
+        User user = viewModel.getUser().getValue();
 
+        if (user == null) {
+            return false;
+        }
         switch (item.getItemId()){
             case R.id.action_share:
                 startActivity(Intent.createChooser(
@@ -347,30 +379,6 @@ public class ShowUserActivity extends AppCompatActivity implements TabLayout.OnT
 
     private interface Func{
         void call();
-    }
-
-
-    private Single<User> getUserSingle(){
-        return Single
-                .create(
-                        subscriber-> {
-                            try {
-                                User user = null;
-                                if (userId != -1) {
-                                    user = client.getApiClient().showUser(userId);
-                                } else if (userScreenName != null) {
-                                    user = client.getApiClient().showUser(userScreenName);
-                                    userId = user.getId();
-                                }
-                                if (user != null) {
-                                    client.getUserCache().add(user);
-                                }
-                                subscriber.onSuccess(client.getUserCache().get(userId));
-                            } catch (Throwable e) {
-                                subscriber.tryOnError(e);
-                            }
-                        }
-                );
     }
 
     @Override

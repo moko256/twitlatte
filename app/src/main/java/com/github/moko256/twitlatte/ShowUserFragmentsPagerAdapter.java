@@ -19,7 +19,6 @@ package com.github.moko256.twitlatte;
 import android.content.Context;
 
 import com.github.moko256.latte.client.base.entity.AccessToken;
-import com.github.moko256.twitlatte.entity.Client;
 import com.github.moko256.twitlatte.widget.FragmentPagerAdapter;
 
 import java.util.ArrayList;
@@ -50,28 +49,39 @@ public class ShowUserFragmentsPagerAdapter extends FragmentPagerAdapter {
 
     final private List<Integer> list;
 
+    final private int type;
+    final private long accountUserId;
     final private Context context;
-    final private long userId;
+    private long userId = -1;
 
-    ShowUserFragmentsPagerAdapter(Client client, FragmentManager fm, Context context, long userId) {
+    ShowUserFragmentsPagerAdapter(AccessToken accessToken, FragmentManager fm, Context context) {
         super(fm);
 
-        AccessToken accessToken = client.getAccessToken();
         list = new ArrayList<>(5);
         list.add(FRAGMENT_INFO);
-        list.add(FRAGMENT_TIMELINE);
-        if (accessToken.getClientType() == CLIENT_TYPE_MASTODON){
-            list.add(FRAGMENT_MEDIA);
-        }
-        list.add(FRAGMENT_FOLLOW);
-        list.add(FRAGMENT_FOLLOWER);
-        if (!(accessToken.getClientType() == CLIENT_TYPE_MASTODON && userId != accessToken.getUserId())){
-            list.add(list.size() - 2, FRAGMENT_LIKE);
-            list.add(FRAGMENT_LIST);
-        }
 
+        this.type = accessToken.getClientType();
+        this.accountUserId = accessToken.getUserId();
         this.context = context;
-        this.userId = userId;
+    }
+
+    public void setUserId(long userId) {
+        if (this.userId == -1) {
+            this.userId = userId;
+
+            list.add(FRAGMENT_TIMELINE);
+            if (type == CLIENT_TYPE_MASTODON){
+                list.add(FRAGMENT_MEDIA);
+            }
+            list.add(FRAGMENT_FOLLOW);
+            list.add(FRAGMENT_FOLLOWER);
+            if (!(type == CLIENT_TYPE_MASTODON && userId != accountUserId)){
+                list.add(list.size() - 2, FRAGMENT_LIKE);
+                list.add(FRAGMENT_LIST);
+            }
+
+            notifyDataSetChanged();
+        }
     }
 
     @NonNull
@@ -79,7 +89,7 @@ public class ShowUserFragmentsPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch (list.get(position)){
             case FRAGMENT_INFO:
-                return UserInfoFragment.newInstance(userId);
+                return new UserInfoFragment();
             case FRAGMENT_TIMELINE:
                 return UserTimelineFragment.Companion.newInstance(userId);
             case FRAGMENT_LIKE:

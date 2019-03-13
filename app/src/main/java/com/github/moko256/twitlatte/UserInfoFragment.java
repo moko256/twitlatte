@@ -42,19 +42,15 @@ import com.github.moko256.twitlatte.view.EmojiToTextViewSetter;
 import com.github.moko256.twitlatte.view.EmojiToTextViewSetterKt;
 import com.github.moko256.twitlatte.viewmodel.UserInfoViewModel;
 import com.github.moko256.twitlatte.widget.UserHeaderImageView;
-import com.google.android.material.snackbar.Snackbar;
 
 import java.text.DateFormat;
-import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import io.reactivex.disposables.Disposable;
-import kotlin.Unit;
 
 import static com.github.moko256.latte.client.base.ApiClientKt.CLIENT_TYPE_NOTHING;
 import static com.github.moko256.latte.client.twitter.TwitterApiClientImplKt.CLIENT_TYPE_TWITTER;
@@ -89,55 +85,11 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
     private TextView userFollowCount;
     private TextView userFollowerCount;
 
-    private long userId = -1;
-
-    public static UserInfoFragment newInstance(long userId){
-        UserInfoFragment result = new UserInfoFragment();
-        Bundle args = new Bundle();
-        args.putLong("userId", userId);
-        result.setArguments(args);
-        return result;
-    }
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        userId = Objects.requireNonNull(getArguments()).getLong("userId");
-
         client = GlobalApplicationKt.getClient(requireActivity());
-
-        viewModel = ViewModelProviders.of(this).get(UserInfoViewModel.class);
-
-        if (savedInstanceState == null) {
-            viewModel.readCacheRepo = () -> client.getUserCache().get(userId);
-
-            viewModel.writeCacheRepo = user -> {
-                client.getUserCache().add(user);
-                return Unit.INSTANCE;
-            };
-
-            viewModel.remoteRepo = () -> client.getApiClient().showUser(userId);
-
-            viewModel.loadUser();
-        }
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        FragmentActivity activity = requireActivity();
-
-        viewModel.getError().observe(activity, throwable -> {
-            throwable.printStackTrace();
-            Snackbar.make(
-                    ((BaseListFragment.GetViewForSnackBar) activity).getViewForSnackBar(),
-                    throwable.getMessage(),
-                    Snackbar.LENGTH_LONG
-            ).show();
-            swipeRefreshLayout.setRefreshing(false);
-        });
+        viewModel = ViewModelProviders.of(requireActivity()).get(UserInfoViewModel.class);
     }
 
     @Nullable
@@ -176,6 +128,10 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
             setShowUserInfo(user);
             swipeRefreshLayout.setRefreshing(false);
         });
+        viewModel.getError().observe(
+                this,
+                throwable -> swipeRefreshLayout.setRefreshing(false)
+        );
     }
 
     @Override
