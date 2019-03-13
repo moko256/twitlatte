@@ -73,7 +73,7 @@ abstract class BaseTweetListFragment : BaseListFragment(), ListServerRepository<
 
         client = requireActivity().getClient()!!
         listViewModel = ViewModelProviders.of(this).get(ListViewModel::class.java)
-        if (!listViewModel.initilized) {
+        if (!listViewModel.initialized) {
             listViewModel.listModel = ListModelImpl(
                     this,
                     client,

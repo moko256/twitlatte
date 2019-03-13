@@ -26,13 +26,13 @@ import com.github.moko256.twitlatte.model.base.StatusActionModel
  * @author moko256
  */
 class ListViewModel: ViewModel() {
-    var initilized: Boolean = false
+    var initialized: Boolean = false
 
     lateinit var listModel: ListModel
     lateinit var statusActionModel: StatusActionModel
 
     fun start() {
-        initilized = true
+        initialized = true
     }
 
     override fun onCleared() {
