@@ -19,6 +19,7 @@ package com.github.moko256.twitlatte.viewmodel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.github.moko256.latte.client.base.entity.User
+import io.reactivex.Completable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -38,6 +39,7 @@ class UserInfoViewModel: ViewModel() {
     lateinit var remoteRepo: () -> User
 
     val user: MutableLiveData<User> = MutableLiveData()
+    val action: MutableLiveData<String> = MutableLiveData()
     val error: MutableLiveData<Throwable> = MutableLiveData()
 
     fun loadUser() {
@@ -78,6 +80,24 @@ class UserInfoViewModel: ViewModel() {
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
                                 { user.postValue(it) },
+                                { error.postValue(it) }
+                        )
+        )
+    }
+
+    fun doAction(actionFunc: () -> Unit, name: String) {
+        disposable.add(
+                Completable.create {
+                    try {
+                        actionFunc()
+                        it.onComplete()
+                    } catch (e: Throwable) {
+                        it.onError(e)
+                    }
+                }.subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                                { action.postValue(name) },
                                 { error.postValue(it) }
                         )
         )

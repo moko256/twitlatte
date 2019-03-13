@@ -22,7 +22,6 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import com.github.moko256.latte.client.base.ApiClient;
 import com.github.moko256.latte.client.base.entity.User;
@@ -46,10 +45,6 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
-import io.reactivex.Completable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.schedulers.Schedulers;
 import kotlin.Unit;
 
 import static com.github.moko256.latte.client.mastodon.MastodonApiClientImplKt.CLIENT_TYPE_MASTODON;
@@ -61,7 +56,6 @@ import static com.github.moko256.latte.client.mastodon.MastodonApiClientImplKt.C
  */
 public class ShowUserActivity extends AppCompatActivity implements TabLayout.OnTabSelectedListener, BaseListFragment.GetViewForSnackBar, BaseTweetListFragment.GetRecyclerViewPool, BaseUsersFragment.GetRecyclerViewPool {
 
-    private CompositeDisposable disposable;
     private UserInfoViewModel viewModel;
     private Client client;
 
@@ -81,7 +75,6 @@ public class ShowUserActivity extends AppCompatActivity implements TabLayout.OnT
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_user);
 
-        disposable = new CompositeDisposable();
         client = GlobalApplicationKt.getClient(this);
 
         viewModel = ViewModelProviders.of(this).get(UserInfoViewModel.class);
@@ -143,13 +136,24 @@ public class ShowUserActivity extends AppCompatActivity implements TabLayout.OnT
         };
 
         viewModel.getUser().observe(this, user -> adapter.setUserId(user.getId()));
-        viewModel.getError().observe(
+        viewModel.getAction().observe(
                 this,
-                throwable -> Snackbar.make(
+                message -> Snackbar.make(
                         getViewForSnackBar(),
-                        throwable.getMessage(),
+                        message,
                         Snackbar.LENGTH_LONG
                 ).show()
+        );
+        viewModel.getError().observe(
+                this,
+                throwable -> {
+                    throwable.printStackTrace();
+                    Snackbar.make(
+                            getViewForSnackBar(),
+                            throwable.getMessage(),
+                            Snackbar.LENGTH_LONG
+                    ).show();
+                }
         );
 
         if (savedInstanceState == null) {
@@ -173,9 +177,7 @@ public class ShowUserActivity extends AppCompatActivity implements TabLayout.OnT
 
     @Override
     protected void onDestroy() {
-        disposable.dispose();
         super.onDestroy();
-        disposable = null;
         client = null;
 
         tabLayout=null;
@@ -341,27 +343,13 @@ public class ShowUserActivity extends AppCompatActivity implements TabLayout.OnT
     }
 
     private void runAsWorkerThread(Func func, @StringRes int didAction){
-        disposable.add(
-                Completable.create(
-                        subscriber -> {
-                            try{
-                                func.call();
-                                subscriber.onComplete();
-                            } catch (Throwable throwable) {
-                                subscriber.tryOnError(throwable);
-                            }
-                        })
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(
-                                () -> Toast.makeText(this, didAction, Toast.LENGTH_SHORT).show(),
-                                throwable -> {
-                                    throwable.printStackTrace();
-                                    Toast.makeText(this, throwable.getMessage(), Toast.LENGTH_SHORT).show();
-                                }
-                        )
+        viewModel.doAction(
+                () -> {
+                    func.call();
+                    return Unit.INSTANCE;
+                },
+                getString(didAction)
         );
-
     }
 
     private void confirmDialog(CharSequence title, CharSequence message, Func func){
