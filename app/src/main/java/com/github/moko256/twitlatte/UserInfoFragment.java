@@ -166,11 +166,6 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
         userFollowCount = view.findViewById(R.id.show_user_follow_count);
         userFollowerCount = view.findViewById(R.id.show_user_follower_count);
 
-        User cachedUser = client.getUserCache().get(userId);
-        if (cachedUser!=null){
-            setShowUserInfo(cachedUser);
-        }
-
         return view;
     }
 
