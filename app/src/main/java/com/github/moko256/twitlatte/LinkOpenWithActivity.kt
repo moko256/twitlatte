@@ -16,13 +16,13 @@
 
 package com.github.moko256.twitlatte
 
+import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.TextViewCompat
 import com.github.moko256.latte.client.base.entity.AccessToken
 import com.github.moko256.latte.client.twitter.CLIENT_TYPE_TWITTER
@@ -37,7 +37,7 @@ import java.util.*
  * @author moko256
  */
 
-class LinkOpenWithActivity : AppCompatActivity() {
+class LinkOpenWithActivity : Activity() {
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,9 +61,9 @@ class LinkOpenWithActivity : AppCompatActivity() {
                     ).show()
                 }
             }
-        } else {
-            finish()
         }
+
+        finish()
     }
 
     private fun switchIntent(): Intent? {

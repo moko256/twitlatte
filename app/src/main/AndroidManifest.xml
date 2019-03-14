@@ -45,7 +45,7 @@
 
         <activity
             android:name=".LinkOpenWithActivity"
-            android:theme="@style/SplashTheme"
+            android:theme="@android:style/Theme.NoDisplay"
             android:noHistory="true"
             android:stateNotNeeded="true">
 
