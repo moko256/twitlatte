@@ -25,8 +25,8 @@ import android.text.Spanned
 import android.text.style.ImageSpan
 import android.widget.TextView
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.GenericLifecycleObserver
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import com.github.moko256.latte.client.base.entity.Emoji
 import com.github.moko256.twitlatte.R
@@ -202,7 +202,7 @@ class EmojiToTextViewSetter(private val glideRequests: GlideRequests, private va
 
 fun Array<Disposable>.bindToLifecycle(owner: LifecycleOwner) {
     owner.lifecycle.addObserver(
-            GenericLifecycleObserver { _, event ->
+            LifecycleEventObserver { _, event ->
                 if (event == Lifecycle.Event.ON_DESTROY) {
                     forEach { it.dispose() }
                 }

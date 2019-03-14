@@ -27,7 +27,7 @@ import androidx.appcompat.app.AppCompatDelegate
 @AppCompatDelegate.NightMode
 fun String.convertToAppCompatNightThemeMode(): Int = when (this) {
     "mode_night_no" -> AppCompatDelegate.MODE_NIGHT_NO
-    "mode_night_auto" -> AppCompatDelegate.MODE_NIGHT_AUTO
+    "mode_night_auto" -> AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY
     "mode_night_follow_system" -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
     "mode_night_yes" -> AppCompatDelegate.MODE_NIGHT_YES
     else -> AppCompatDelegate.MODE_NIGHT_NO
