@@ -81,6 +81,8 @@ public class ShowTweetActivity extends AppCompatActivity {
 
     private Client client;
 
+    private boolean isVisible = true;
+
     @SuppressLint("WrongConstant")
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -115,6 +117,10 @@ public class ShowTweetActivity extends AppCompatActivity {
         statusActionModel.getStatusObservable().observe(this, id -> {
             Post post = client.getPostCache().getPost(statusId);
             if (post != null) {
+                if (!isVisible) {
+                    isVisible = true;
+                    swipeRefreshLayout.getChildAt(0).setVisibility(VISIBLE);
+                }
                 updateView(post);
             }
             swipeRefreshLayout.setRefreshing(false);
@@ -147,6 +153,9 @@ public class ShowTweetActivity extends AppCompatActivity {
         if (status != null) {
             updateView(status);
         } else {
+            swipeRefreshLayout.setRefreshing(true);
+            isVisible = false;
+            swipeRefreshLayout.getChildAt(0).setVisibility(GONE);
             statusActionModel.updateStatus(statusId);
         }
     }
