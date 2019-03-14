@@ -79,6 +79,8 @@ import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY
  */
 public class MainActivity extends AppCompatActivity implements DrawerLayout.DrawerListener, TabLayout.OnTabSelectedListener, BaseListFragment.GetViewForSnackBar, BaseTweetListFragment.GetRecyclerViewPool, BaseUsersFragment.GetRecyclerViewPool {
 
+    private static int REQUEST_OAUTH = 2;
+
     private CompositeDisposable disposable;
     private Client client;
     private AccountsModel accountsModel;
@@ -94,6 +96,7 @@ public class MainActivity extends AppCompatActivity implements DrawerLayout.Draw
     private ImageView userBackgroundImage;
     private ImageView userToggleImage;
     private RecyclerView accountListView;
+    private SelectAccountsAdapter adapter;
 
     private TabLayout tabLayout;
 
@@ -104,6 +107,7 @@ public class MainActivity extends AppCompatActivity implements DrawerLayout.Draw
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        setTheme(R.style.MainActivityTheme);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -111,10 +115,6 @@ public class MainActivity extends AppCompatActivity implements DrawerLayout.Draw
         disposable = new CompositeDisposable();
         client = GlobalApplicationKt.getClient(this);
         accountsModel = GlobalApplicationKt.getAccountsModel(this);
-
-        if (client.getAccessToken().getToken().isEmpty()) {
-            Toast.makeText(this, R.string.please_re_login, Toast.LENGTH_LONG).show();
-        }
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -184,8 +184,6 @@ public class MainActivity extends AppCompatActivity implements DrawerLayout.Draw
         userBackgroundImage = headerView.findViewById(R.id.user_bg_image);
         userBackgroundImage.setOnClickListener(v -> changeIsDrawerAccountsSelection());
 
-        updateDrawerImage();
-
         accountListView = new RecyclerView(this);
         accountListView.setLayoutParams(new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT
@@ -195,7 +193,7 @@ public class MainActivity extends AppCompatActivity implements DrawerLayout.Draw
         accountListView.setVisibility(View.GONE);
         navigationView.addHeaderView(accountListView);
 
-        SelectAccountsAdapter adapter = new SelectAccountsAdapter(this);
+        adapter = new SelectAccountsAdapter(this);
         adapter.onImageButtonClickListener = accessToken -> {
             if (accessToken.getUserId() != client.getAccessToken().getUserId()) {
                 changeIsDrawerAccountsSelection();
@@ -213,7 +211,7 @@ public class MainActivity extends AppCompatActivity implements DrawerLayout.Draw
                 clearAndPrepareFragment();
             }
         };
-        adapter.onAddButtonClickListener = v -> startActivity(new Intent(this, OAuthActivity.class));
+        adapter.onAddButtonClickListener = v -> startActivityForResult(new Intent(this, OAuthActivity.class), REQUEST_OAUTH);
         adapter.onRemoveButtonClickListener = v -> new AlertDialog.Builder(this)
                 .setMessage(R.string.confirm_logout)
                 .setCancelable(true)
@@ -235,63 +233,20 @@ public class MainActivity extends AppCompatActivity implements DrawerLayout.Draw
                                 client = GlobalApplicationKt.getClient(this);
                                 adapter.updateSelectedPosition(accessToken);
                                 updateDrawerImage();
+                                updateAccountsList();
                                 clearAndPrepareFragment();
                             } else {
                                 GlobalApplicationKt.preferenceRepository.putString(
                                         KEY_ACCOUNT_KEY, "-1"
                                 );
                                 ((GlobalApplication) getApplication()).clearTwitter();
-                                startActivity(
-                                        new Intent(this, OAuthActivity.class)
-                                                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
-                                );
+                                startActivityForResult(new Intent(this, OAuthActivity.class), REQUEST_OAUTH);
                             }
                         }
                 )
                 .setNegativeButton(android.R.string.cancel, null)
                 .show();
         accountListView.setAdapter(adapter);
-
-        disposable.add(
-                Single.create(
-                        singleSubscriber -> {
-                            try {
-                                List<AccessToken> accessTokens = accountsModel.getAccessTokens();
-
-                                ArrayList<User> users = new ArrayList<>(accessTokens.size());
-                                for (AccessToken accessToken : accessTokens){
-                                    long id = accessToken.getUserId();
-                                    CachedUsersSQLiteOpenHelper userHelper = new CachedUsersSQLiteOpenHelper(getApplicationContext(), accessToken);
-                                    User user = userHelper.getCachedUser(id);
-                                    if (user == null){
-                                        try {
-                                            user = ((GlobalApplication) getApplication()).createTwitterInstance(accessToken).verifyCredentials();
-                                            userHelper.addCachedUser(user);
-                                        } catch (Throwable e) {
-                                            e.printStackTrace();
-                                        } finally {
-                                            userHelper.close();
-                                        }
-                                    }
-                                    users.add(user);
-                                }
-                                singleSubscriber.onSuccess(new Pair<>(users, accessTokens));
-                            } catch (Throwable e) {
-                                singleSubscriber.tryOnError(e);
-                            }
-                        })
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(
-                                o -> {
-                                    Pair<ArrayList<User>, ArrayList<AccessToken>> pairs = (Pair<ArrayList<User>, ArrayList<AccessToken>>) o;
-                                    adapter.addAndUpdate(pairs.first, pairs.second);
-                                    adapter.setSelectedPosition(client.getAccessToken());
-                                    adapter.notifyDataSetChanged();
-                                },
-                                Throwable::printStackTrace
-                        )
-        );
 
         findViewById(R.id.fab).setOnClickListener(v -> startActivity(new Intent(this, PostActivity.class)));
 
@@ -303,8 +258,19 @@ public class MainActivity extends AppCompatActivity implements DrawerLayout.Draw
 
         getSupportFragmentManager().addOnBackStackChangedListener(() -> attachFragment(getMainFragment()));
 
-        if(savedInstanceState==null){
-            prepareFragment();
+        if (client == null) {
+            startActivityForResult(new Intent(this, OAuthActivity.class), REQUEST_OAUTH);
+        } else {
+            updateDrawerImage();
+            updateAccountsList();
+
+            if(savedInstanceState==null){
+                prepareFragment();
+            }
+
+            if (client.getAccessToken().getToken().isEmpty()) {
+                Toast.makeText(this, R.string.please_re_login, Toast.LENGTH_LONG).show();
+            }
         }
 
     }
@@ -339,6 +305,23 @@ public class MainActivity extends AppCompatActivity implements DrawerLayout.Draw
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         attachFragment(getMainFragment());
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_OAUTH) {
+            client = GlobalApplicationKt.getClient(this);
+
+            if (resultCode == RESULT_OK) {
+                updateDrawerImage();
+                updateAccountsList();
+                clearAndPrepareFragment();
+            } else if (client == null) {
+                finish();
+            }
+        }
     }
 
     @Override
@@ -508,6 +491,50 @@ public class MainActivity extends AppCompatActivity implements DrawerLayout.Draw
                         )
         );
 
+    }
+
+    private void updateAccountsList() {
+        disposable.add(
+                Single.create(
+                        singleSubscriber -> {
+                            try {
+                                List<AccessToken> accessTokens = accountsModel.getAccessTokens();
+
+                                ArrayList<User> users = new ArrayList<>(accessTokens.size());
+                                for (AccessToken accessToken : accessTokens){
+                                    long id = accessToken.getUserId();
+                                    CachedUsersSQLiteOpenHelper userHelper = new CachedUsersSQLiteOpenHelper(getApplicationContext(), accessToken);
+                                    User user = userHelper.getCachedUser(id);
+                                    if (user == null){
+                                        try {
+                                            user = ((GlobalApplication) getApplication()).createTwitterInstance(accessToken).verifyCredentials();
+                                            userHelper.addCachedUser(user);
+                                        } catch (Throwable e) {
+                                            e.printStackTrace();
+                                        } finally {
+                                            userHelper.close();
+                                        }
+                                    }
+                                    users.add(user);
+                                }
+                                singleSubscriber.onSuccess(new Pair<>(users, accessTokens));
+                            } catch (Throwable e) {
+                                singleSubscriber.tryOnError(e);
+                            }
+                        })
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                                o -> {
+                                    Pair<ArrayList<User>, ArrayList<AccessToken>> pairs = (Pair<ArrayList<User>, ArrayList<AccessToken>>) o;
+                                    adapter.clearImages();
+                                    adapter.addAndUpdate(pairs.first, pairs.second);
+                                    adapter.setSelectedPosition(client.getAccessToken());
+                                    adapter.notifyDataSetChanged();
+                                },
+                                Throwable::printStackTrace
+                        )
+        );
     }
 
     private void prepareFragment(){

@@ -29,6 +29,7 @@ import com.github.moko256.twitlatte.text.TwitterStringUtils;
 import java.util.List;
 import java.util.regex.PatternSyntaxException;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -38,6 +39,7 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceScreen;
 
+import static android.app.Activity.RESULT_OK;
 import static com.github.moko256.latte.client.twitter.TwitterApiClientImplKt.CLIENT_TYPE_TWITTER;
 import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY_ACCOUNT_KEY;
 import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY_ACCOUNT_KEY_LINK_OPEN;
@@ -49,6 +51,8 @@ import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY
  * @author moko256
  */
 public class SettingsFragment extends PreferenceFragmentCompat {
+
+    private static final int REQUEST_OAUTH_OR_CANCEL = 2;
 
     private int eggCount = 3;
 
@@ -80,7 +84,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             nowAccountList.setOnPreferenceChangeListener(
                     (preference, newValue) -> {
                         if (newValue.equals("-1")){
-                            startActivity(new Intent(getContext(),OAuthActivity.class));
+                            startActivityForResult(new Intent(getContext(),OAuthActivity.class), REQUEST_OAUTH_OR_CANCEL);
                             return false;
                         } else {
                             AccessToken accessToken = GlobalApplicationKt.getAccountsModel(requireActivity()).get((String) newValue);
@@ -142,10 +146,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                                         );
 
                                         ((GlobalApplication) requireActivity().getApplication()).clearTwitter();
-                                        startActivity(
-                                                new Intent(getContext(), OAuthActivity.class)
-                                                        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
-                                        );
+                                        startActivity(new Intent(getContext(), MainActivity.class)
+                                                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
                                     }
                                 }
                         )
@@ -234,4 +236,14 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         }
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_OAUTH_OR_CANCEL) {
+            if (resultCode == RESULT_OK) {
+                startActivity(new Intent(getContext(), MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
+            }
+        }
+    }
 }

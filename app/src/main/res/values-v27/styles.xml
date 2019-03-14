@@ -23,7 +23,7 @@
     </style>
     <style name="BaseTheme" parent="BaseAppThemeV27" />
 
-    <style name="BaseSplashThemeV27" parent="BaseSplashThemeV21">
+    <style name="BaseSplashThemeV27" parent="BaseSplashTheme">
         <item name="android:navigationBarColor">@color/color_primary_dark</item>
         <item name="android:windowLightNavigationBar">false</item>
     </style>

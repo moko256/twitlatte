@@ -211,7 +211,7 @@ public class OAuthActivity extends AppCompatActivity {
 
         ((GlobalApplication) getApplication()).initTwitter(accessToken);
 
-        startActivity(new Intent(this,MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
+        setResult(RESULT_OK);
         finish();
         initType(CLIENT_TYPE_NOTHING);
     }

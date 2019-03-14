@@ -44,22 +44,6 @@
             tools:node="remove"/>
 
         <activity
-            android:name=".SplashActivity"
-            android:theme="@style/SplashTheme"
-            android:noHistory="true"
-            android:stateNotNeeded="true">
-
-            <meta-data
-                android:name="android.app.shortcuts"
-                android:resource="@xml/static_shortcuts" />
-
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-
-        <activity
             android:name=".LinkOpenWithActivity"
             android:theme="@style/SplashTheme"
             android:noHistory="true"
@@ -126,7 +110,16 @@
 
         <activity
             android:name=".MainActivity"
-            android:theme="@style/MainActivityTheme"/>
+            android:theme="@style/SplashTheme">
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/static_shortcuts" />
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
         <activity
             android:name=".PostActivity"
