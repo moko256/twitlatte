@@ -201,7 +201,7 @@ public class TwitterStringUtils {
             int nowLength = text.length();
             int start = link.getStart();
             int end = link.getEnd();
-            if (end <= nowLength) {
+            if (start < end && end <= nowLength) {
                 spannableString.setSpan(span, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
         }
