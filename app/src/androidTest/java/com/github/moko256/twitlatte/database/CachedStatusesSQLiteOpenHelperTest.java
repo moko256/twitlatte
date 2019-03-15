@@ -126,6 +126,7 @@ public class CachedStatusesSQLiteOpenHelperTest {
                 "",
                 null,
                 "",
+                null,
                 null
         );
     }
