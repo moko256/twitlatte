@@ -79,7 +79,7 @@ import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY
  */
 public class MainActivity extends AppCompatActivity implements DrawerLayout.DrawerListener, TabLayout.OnTabSelectedListener, BaseListFragment.GetViewForSnackBar, BaseTweetListFragment.GetRecyclerViewPool, BaseUsersFragment.GetRecyclerViewPool {
 
-    private static int REQUEST_OAUTH = 2;
+    private static final int REQUEST_OAUTH = 2;
 
     private CompositeDisposable disposable;
     private Client client;
