@@ -12,6 +12,30 @@
     int SDK_INT return 19..2147483647;
 }
 
+-assumenosideeffects public class android.util.Log {
+    public static *** v(...);
+    public static *** d(...);
+    public static *** i(...);
+    public static *** w(...);
+    public static *** e(...);
+    public static *** wtf(...);
+    public static boolean isLoggable(...) return false;
+}
+
+-assumenoexternalreturnvalues public final class java.lang.StringBuilder {
+    public java.lang.StringBuilder append(java.lang.Object);
+    public java.lang.StringBuilder append(java.lang.String);
+    public java.lang.StringBuilder append(java.lang.StringBuffer);
+    public java.lang.StringBuilder append(char[]);
+    public java.lang.StringBuilder append(char[], int, int);
+    public java.lang.StringBuilder append(boolean);
+    public java.lang.StringBuilder append(char);
+    public java.lang.StringBuilder append(int);
+    public java.lang.StringBuilder append(long);
+    public java.lang.StringBuilder append(float);
+    public java.lang.StringBuilder append(double);
+}
+
 ##---------------Begin: proguard configuration for twitter4j  ----------
 -dontwarn twitter4j.**
 -keepclassmembers class twitter4j.AlternativeHttpClientImpl {
@@ -20,7 +44,14 @@
 -keep class twitter4j.conf.PropertyConfigurationFactory
 -assumenosideeffects class * extends twitter4j.Logger {
     private static twitter4j.LoggerFactory getLoggerFactoryIfAvailable(java.lang.String, java.lang.String) return null;
-    boolean isDebugEnabled() return false;
+    public boolean isDebugEnabled() return false;
+    public boolean isInfoEnabled();
+    public boolean isWarnEnabled();
+    public boolean isErrorEnabled();
+    public void debug(...);
+    public void info(...);
+    public void warn(...);
+    public void error(...);
 }
 -assumenosideeffects class * implements twitter4j.conf.PropertyConfiguration {
     boolean notNull(java.util.Properties, java.lang.String, java.lang.String) return false;
