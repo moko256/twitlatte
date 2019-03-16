@@ -15,7 +15,7 @@
   ~ limitations under the License.
   -->
 
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <color name="orange_a400">#FF9100</color>
 
     <color name="brown_500">#795548</color>
@@ -25,8 +25,6 @@
     <color name="color_primary">@color/brown_500</color>
     <color name="color_primary_dark">@color/brown_700</color>
     <color name="color_accent">@color/orange_a400</color>
-
-    <color name="preference_fallback_accent_color" tools:override="true">@color/color_accent</color>
 
     <color name="image_toggle_enable">#8A000000</color>
     <color name="image_toggle_disable">#42000000</color>
