@@ -40,6 +40,7 @@ import com.github.moko256.twitlatte.glide.GlideApp;
 import com.github.moko256.twitlatte.intent.AppCustomTabsKt;
 import com.github.moko256.twitlatte.model.base.StatusActionModel;
 import com.github.moko256.twitlatte.model.impl.StatusActionModelImpl;
+import com.github.moko256.twitlatte.rx.LifecycleDisposableContainer;
 import com.github.moko256.twitlatte.text.NoSpanInputFilterKt;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
 
@@ -51,7 +52,6 @@ import androidx.core.app.ActivityOptionsCompat;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import kotlin.Unit;
 
@@ -66,7 +66,7 @@ import static android.view.View.VISIBLE;
  */
 public class ShowTweetActivity extends AppCompatActivity {
 
-    private CompositeDisposable disposables = new CompositeDisposable();
+    private LifecycleDisposableContainer disposables = new LifecycleDisposableContainer(this);
     private StatusActionModel statusActionModel;
     private long statusId;
     private String shareUrl = "";
@@ -162,7 +162,6 @@ public class ShowTweetActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        disposables.dispose();
         super.onDestroy();
         disposables=null;
         if (statusViewBinder != null){

@@ -21,6 +21,7 @@ import android.os.Bundle;
 import com.github.moko256.latte.client.base.entity.PageableResponse;
 import com.github.moko256.latte.client.base.entity.User;
 import com.github.moko256.twitlatte.entity.Client;
+import com.github.moko256.twitlatte.rx.LifecycleDisposableContainer;
 import com.github.moko256.twitlatte.widget.MaterialListTopMarginDecoration;
 
 import java.util.ArrayList;
@@ -31,7 +32,6 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import kotlin.collections.CollectionsKt;
 
@@ -47,7 +47,7 @@ public abstract class BaseUsersFragment extends BaseListFragment {
     private List<Long> list;
     private long next_cursor;
 
-    private CompositeDisposable disposable;
+    private LifecycleDisposableContainer disposable;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -55,7 +55,7 @@ public abstract class BaseUsersFragment extends BaseListFragment {
 
         client = GlobalApplicationKt.getClient(requireActivity());
         list=new ArrayList<>();
-        disposable = new CompositeDisposable();
+        disposable = new LifecycleDisposableContainer(this);
 
         if (savedInstanceState != null) {
             long[] l = savedInstanceState.getLongArray("list");
@@ -106,7 +106,6 @@ public abstract class BaseUsersFragment extends BaseListFragment {
 
     @Override
     public void onDestroy() {
-        disposable.dispose();
         super.onDestroy();
         list=null;
     }

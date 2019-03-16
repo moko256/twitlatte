@@ -20,10 +20,10 @@ import android.os.Bundle
 import com.github.moko256.latte.client.base.entity.ListEntry
 import com.github.moko256.twitlatte.database.CachedListEntriesSQLiteOpenHelper
 import com.github.moko256.twitlatte.entity.Client
+import com.github.moko256.twitlatte.rx.LifecycleDisposableContainer
 import com.github.moko256.twitlatte.widget.MaterialListTopMarginDecoration
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 
 /**
@@ -38,7 +38,7 @@ abstract class AbstractListsEntriesFragment: BaseListFragment(), ToolbarTitleInt
     private lateinit var adapter: ListsEntriesAdapter
     private var list = ArrayList<ListEntry>(20)
 
-    private lateinit var disposable: CompositeDisposable
+    private lateinit var disposable: LifecycleDisposableContainer
 
     private lateinit var client: Client
     private lateinit var helper: CachedListEntriesSQLiteOpenHelper
@@ -52,7 +52,7 @@ abstract class AbstractListsEntriesFragment: BaseListFragment(), ToolbarTitleInt
 
         super.onCreate(savedInstanceState)
 
-        disposable = CompositeDisposable()
+        disposable = LifecycleDisposableContainer(this)
         client = requireActivity().getClient()!!
         helper = CachedListEntriesSQLiteOpenHelper(
                 requireContext().applicationContext,
@@ -91,7 +91,6 @@ abstract class AbstractListsEntriesFragment: BaseListFragment(), ToolbarTitleInt
     }
 
     override fun onDestroy() {
-        disposable.dispose()
         helper.close()
         super.onDestroy()
     }
