@@ -24,8 +24,8 @@ import com.github.moko256.latte.client.base.entity.AccessToken;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import androidx.test.InstrumentationRegistry;
-import androidx.test.runner.AndroidJUnit4;
+import androidx.test.core.app.ApplicationProvider;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import static org.junit.Assert.assertEquals;
 
@@ -38,7 +38,7 @@ import static org.junit.Assert.assertEquals;
 public class TokenSQLiteOpenHelperTest {
 
     private TokenSQLiteOpenHelper helper = new TokenSQLiteOpenHelper(
-            InstrumentationRegistry.getTargetContext(),
+            ApplicationProvider.getApplicationContext(),
             "TestAccessTokenList.db"
     );
 

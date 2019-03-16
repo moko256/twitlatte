@@ -25,8 +25,8 @@ import org.junit.runner.RunWith;
 import java.util.Arrays;
 import java.util.Date;
 
-import androidx.test.InstrumentationRegistry;
-import androidx.test.runner.AndroidJUnit4;
+import androidx.test.core.app.ApplicationProvider;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -40,7 +40,7 @@ import static org.junit.Assert.assertNull;
 public class CachedUsersSQLiteOpenHelperTest {
 
     private CachedUsersSQLiteOpenHelper helper = new CachedUsersSQLiteOpenHelper(
-            InstrumentationRegistry.getTargetContext(),
+            ApplicationProvider.getApplicationContext(),
             new AccessToken(
                     -2,
                     "example.com",
