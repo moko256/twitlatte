@@ -36,6 +36,7 @@ import com.github.moko256.twitlatte.intent.AppCustomTabsKt;
 import com.github.moko256.twitlatte.text.style.ClickableBoldSpan;
 import com.github.moko256.twitlatte.text.style.ClickableNoLineSpan;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 import androidx.annotation.NonNull;
@@ -95,8 +96,11 @@ public class TwitterStringUtils {
         } else {
             int m = uPow10(e * unitExponent);
             if (num < m) {
-                float v = uPow10(back + 1);
-                builder.append(Math.round((float) num / m * v) / v);
+                char[] zeros = new char[back + 1];
+                Arrays.fill(zeros, '0');
+                zeros[back] = '.';
+                builder.append(zeros)
+                        .append(Math.round((float) uPow10(back) * num / m));
             } else {
                 builder.append(Math.round((float) num / m));
             }
