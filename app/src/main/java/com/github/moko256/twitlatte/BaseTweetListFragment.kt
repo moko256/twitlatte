@@ -40,11 +40,11 @@ import com.github.moko256.twitlatte.glide.GlideApp
 import com.github.moko256.twitlatte.model.impl.ListModelImpl
 import com.github.moko256.twitlatte.model.impl.StatusActionModelImpl
 import com.github.moko256.twitlatte.repository.server.base.ListServerRepository
-import com.github.moko256.twitlatte.rx.LifecycleDisposableContainer
 import com.github.moko256.twitlatte.text.TwitterStringUtils
 import com.github.moko256.twitlatte.viewmodel.ListViewModel
 import com.github.moko256.twitlatte.widget.convertObservableConsumer
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 
 /**
  * Created by moko256 on 2016/03/27.
@@ -56,7 +56,7 @@ abstract class BaseTweetListFragment : BaseListFragment(), ListServerRepository<
     protected var adapter: StatusesAdapter? = null
     protected lateinit var client: Client
 
-    private lateinit var disposable: LifecycleDisposableContainer
+    private lateinit var disposable: CompositeDisposable
     private lateinit var listViewModel: ListViewModel
 
     private var adapterObservableBinder: ((UpdateEvent) -> Unit)? = null
@@ -131,8 +131,7 @@ abstract class BaseTweetListFragment : BaseListFragment(), ListServerRepository<
 
         adapterObservableBinder = recyclerView.convertObservableConsumer()
 
-        disposable = LifecycleDisposableContainer(
-                this,
+        disposable = CompositeDisposable(
                 listViewModel
                         .listModel
                         .getListEventObservable()
@@ -195,6 +194,7 @@ abstract class BaseTweetListFragment : BaseListFragment(), ListServerRepository<
     }
 
     override fun onDestroyView() {
+        disposable.dispose()
         adapterObservableBinder = null
         val layoutManager = recyclerView.layoutManager
         val position = getFirstVisibleItemPosition(layoutManager)

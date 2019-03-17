@@ -23,7 +23,6 @@ import android.os.Bundle;
 import com.github.moko256.latte.client.base.entity.Trend;
 import com.github.moko256.twitlatte.database.CachedTrendsSQLiteOpenHelper;
 import com.github.moko256.twitlatte.entity.Client;
-import com.github.moko256.twitlatte.rx.LifecycleDisposableContainer;
 import com.github.moko256.twitlatte.widget.MaterialListTopMarginDecoration;
 
 import java.io.IOException;
@@ -34,6 +33,7 @@ import java.util.Locale;
 import androidx.annotation.Nullable;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -46,7 +46,7 @@ public class TrendsFragment extends BaseListFragment {
     private TrendsAdapter adapter;
     private List<Trend> list;
 
-    private LifecycleDisposableContainer disposable;
+    private CompositeDisposable disposable;
 
     private Client client;
     private CachedTrendsSQLiteOpenHelper helper;
@@ -55,7 +55,7 @@ public class TrendsFragment extends BaseListFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        disposable = new LifecycleDisposableContainer(this);
+        disposable = new CompositeDisposable();
         client = GlobalApplicationKt.getClient(requireActivity());
         helper = new CachedTrendsSQLiteOpenHelper(
                 requireContext().getApplicationContext(),
@@ -93,6 +93,7 @@ public class TrendsFragment extends BaseListFragment {
 
     @Override
     public void onDestroy() {
+        disposable.dispose();
         super.onDestroy();
         disposable = null;
         helper.close();

@@ -39,7 +39,6 @@ import com.github.moko256.twitlatte.entity.Client;
 import com.github.moko256.twitlatte.glide.GlideApp;
 import com.github.moko256.twitlatte.glide.GlideRequests;
 import com.github.moko256.twitlatte.model.AccountsModel;
-import com.github.moko256.twitlatte.rx.LifecycleDisposableContainer;
 import com.github.moko256.twitlatte.rx.VerifyCredentialOnSubscribe;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
 import com.github.moko256.twitlatte.view.EmojiToTextViewSetter;
@@ -67,6 +66,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity implements DrawerLayout.Draw
 
     private static final int REQUEST_OAUTH = 2;
 
-    private LifecycleDisposableContainer disposable;
+    private CompositeDisposable disposable;
     private Client client;
     private AccountsModel accountsModel;
 
@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity implements DrawerLayout.Draw
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        disposable = new LifecycleDisposableContainer(this);
+        disposable = new CompositeDisposable();
         client = GlobalApplicationKt.getClient(this);
         accountsModel = GlobalApplicationKt.getAccountsModel(this);
 
@@ -292,6 +292,13 @@ public class MainActivity extends AppCompatActivity implements DrawerLayout.Draw
         if (fragment instanceof MovableTopInterface){
             ((MovableTopInterface) fragment).moveToTop();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        disposable.dispose();
+        super.onDestroy();
+        disposable = null;
     }
 
     @Override

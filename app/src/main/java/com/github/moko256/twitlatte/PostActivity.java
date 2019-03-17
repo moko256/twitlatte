@@ -46,7 +46,6 @@ import com.github.moko256.twitlatte.entity.Client;
 import com.github.moko256.twitlatte.glide.GlideApp;
 import com.github.moko256.twitlatte.model.base.PostStatusModel;
 import com.github.moko256.twitlatte.model.impl.PostStatusModelImpl;
-import com.github.moko256.twitlatte.rx.LifecycleDisposableContainer;
 import com.github.moko256.twitlatte.rx.LocationSingleBuilder;
 import com.github.moko256.twitlatte.rx.VerifyCredentialOnSubscribe;
 import com.github.moko256.twitlatte.text.NoSpanInputFilterKt;
@@ -69,6 +68,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import kotlin.Pair;
 import kotlin.Unit;
@@ -133,7 +133,7 @@ public class PostActivity extends AppCompatActivity {
     private int COLOR_STABLE;
     private int COLOR_ERROR;
 
-    private LifecycleDisposableContainer disposable;
+    private CompositeDisposable disposable;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -153,7 +153,7 @@ public class PostActivity extends AppCompatActivity {
                 getContentResolver(),
                 client.getApiClient()
         );
-        disposable = new LifecycleDisposableContainer(this);
+        disposable = new CompositeDisposable();
 
         rootViewGroup= findViewById(R.id.activity_tweet_send_layout_root);
 
@@ -613,6 +613,7 @@ public class PostActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
+        disposable.dispose();
         super.onDestroy();
         disposable = null;
         pollsHideTotals = null;

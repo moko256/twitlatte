@@ -36,7 +36,6 @@ import com.github.moko256.twitlatte.intent.AppCustomTabsKt;
 import com.github.moko256.twitlatte.model.base.OAuthModel;
 import com.github.moko256.twitlatte.model.impl.OAuthModelImpl;
 import com.github.moko256.twitlatte.net.OkHttpHolderKt;
-import com.github.moko256.twitlatte.rx.LifecycleDisposableContainer;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -44,6 +43,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.core.content.ContextCompat;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.internal.disposables.CancellableDisposable;
 import io.reactivex.schedulers.Schedulers;
 
@@ -73,7 +73,7 @@ public class OAuthActivity extends AppCompatActivity {
 
     private AlertDialog pinDialog;
 
-    private LifecycleDisposableContainer disposable;
+    private CompositeDisposable compositeDisposable;
 
     private boolean isUrlEnterDialogShown = false;
 
@@ -88,7 +88,7 @@ public class OAuthActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_oauth);
 
-        disposable = new LifecycleDisposableContainer(this);
+        compositeDisposable = new CompositeDisposable();
 
         if (savedInstanceState != null) {
             lastUrl = savedInstanceState.getString(STATE_LAST_URL, "");
@@ -138,6 +138,7 @@ public class OAuthActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         closePinDialog();
+        compositeDisposable.dispose();
         super.onDestroy();
     }
 
@@ -192,7 +193,7 @@ public class OAuthActivity extends AppCompatActivity {
     }
 
     private void initToken(String verifier){
-        disposable.add(
+        compositeDisposable.add(
                 model.initToken(verifier)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
@@ -260,7 +261,7 @@ public class OAuthActivity extends AppCompatActivity {
         editText.setText(lastUrl);
         editText.setSelection(lastUrl.length());
 
-        disposable.add(new CancellableDisposable(domainConfirm::dismiss));
+        compositeDisposable.add(new CancellableDisposable(domainConfirm::dismiss));
     }
 
     private void startAuthAndOpenDialogIfNeeded(@NonNull String url) {
@@ -272,7 +273,7 @@ public class OAuthActivity extends AppCompatActivity {
             callbackUrl = getString(R.string.app_name) + "://OAuthActivity";
         }
 
-        disposable.add(model
+        compositeDisposable.add(model
                 .getAuthUrl(url, callbackUrl)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
