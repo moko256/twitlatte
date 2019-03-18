@@ -30,8 +30,6 @@ import java.util.*
  *
  * @author moko256
  */
-private const val TABLE_NAME = "ListEntries"
-private val TABLE_COLUMNS = arrayOf("listId", "title", "description", "isPublic")
 
 class CachedListEntriesSQLiteOpenHelper(
         context: Context,
@@ -47,6 +45,11 @@ class CachedListEntriesSQLiteOpenHelper(
         null,
         1
 ) {
+    private companion object {
+        private const val TABLE_NAME = "ListEntries"
+        private val TABLE_COLUMNS = arrayOf("listId", "title", "description", "isPublic")
+    }
+
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL("create table $TABLE_NAME(${TABLE_COLUMNS.joinToString(",")})")
     }

@@ -41,17 +41,24 @@ import jp.wasabeef.glide.transformations.BlurTransformation
  * Created by moko256 on 2019/01/21.
  */
 
-/* {row,column,rowSpan,colSpan} */
-private val params = arrayOf(
-        arrayOf(intArrayOf(0, 0, 2, 2), intArrayOf(0, 0, 0, 0), intArrayOf(0, 0, 0, 0), intArrayOf(0, 0, 0, 0)),
-        arrayOf(intArrayOf(0, 0, 2, 1), intArrayOf(0, 1, 2, 1), intArrayOf(0, 0, 0, 0), intArrayOf(0, 0, 0, 0)),
-        arrayOf(intArrayOf(0, 0, 2, 1), intArrayOf(0, 1, 1, 1), intArrayOf(1, 1, 1, 1), intArrayOf(0, 0, 0, 0)),
-        arrayOf(intArrayOf(0, 0, 1, 1), intArrayOf(0, 1, 1, 1), intArrayOf(1, 0, 1, 1), intArrayOf(1, 1, 1, 1))
-)
-
 class ImagesTableView @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : ViewGroup(context, attrs, defStyleAttr) {
+    private companion object {
+        /* {row,column,rowSpan,colSpan} */
+        private val a0000 = intArrayOf(0, 0, 0, 0)
+        private val a0111 = intArrayOf(0, 1, 1, 1)
+        private val a1111 = intArrayOf(1, 1, 1, 1)
+        private val a0021 = intArrayOf(0, 0, 2, 1)
+
+        private val params = arrayOf(
+                arrayOf(intArrayOf(0, 0, 2, 2), a0000,                  a0000,                  a0000),
+                arrayOf(a0021,                  intArrayOf(0, 1, 2, 1), a0000,                  a0000),
+                arrayOf(a0021,                  a0111,                  a1111,                  a0000),
+                arrayOf(intArrayOf(0, 0, 1, 1), a0111,                  intArrayOf(1, 0, 1, 1), a1111)
+        )
+    }
+
     private val drawable = AppCompatResources.getDrawable(context, R.drawable.ic_play_arrow_white_24dp)
     private val gifMark = AppCompatResources.getDrawable(context, R.drawable.ic_gif_white_24dp)
 

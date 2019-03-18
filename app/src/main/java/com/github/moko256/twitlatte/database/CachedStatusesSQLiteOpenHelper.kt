@@ -35,54 +35,6 @@ import kotlin.collections.ArrayList
  *
  * @author moko256
  */
-private const val TABLE_NAME = "CachedStatuses"
-private val TABLE_COLUMNS = arrayOf(
-        "createdAt",
-        "id",
-        "userId",
-        "repeatedStatusId",
-        "text",
-        "sourceName",
-        "sourceWebsite",
-        "inReplyToStatusId",
-        "inReplyToUserId",
-        "isFavorited",
-        "isRepeated",
-        "favoriteCount",
-        "repeatCount",
-        "repliesCount",
-        "inReplyToScreenName",
-        "isSensitive",
-        "lang",
-        "mentions",
-        "urls_urls",
-        "urls_starts",
-        "urls_ends",
-        "medias_thumbnail_urls",
-        "medias_original_urls",
-        "medias_download_video_urls",
-        "medias_types",
-        "quotedStatusId",
-        "url",
-        "emojis_shortcodes",
-        "emojis_urls",
-        "contentWarning",
-        "visibility",
-        "card_title",
-        "card_description",
-        "card_url",
-        "card_image_url",
-        "poll_id",
-        "poll_expiresAt",
-        "poll_expired",
-        "poll_multiple",
-        "poll_votesCount",
-        "poll_optionTitles",
-        "poll_optionCounts",
-        "poll_voted"
-)
-
-private const val COUNTS_TABLE_NAME = "Counts"
 
 class CachedStatusesSQLiteOpenHelper(
         context: Context,
@@ -96,6 +48,57 @@ class CachedStatusesSQLiteOpenHelper(
         },
         null, 7
 ) {
+
+    private companion object {
+        private const val TABLE_NAME = "CachedStatuses"
+        private val TABLE_COLUMNS = arrayOf(
+                "createdAt",
+                "id",
+                "userId",
+                "repeatedStatusId",
+                "text",
+                "sourceName",
+                "sourceWebsite",
+                "inReplyToStatusId",
+                "inReplyToUserId",
+                "isFavorited",
+                "isRepeated",
+                "favoriteCount",
+                "repeatCount",
+                "repliesCount",
+                "inReplyToScreenName",
+                "isSensitive",
+                "lang",
+                "mentions",
+                "urls_urls",
+                "urls_starts",
+                "urls_ends",
+                "medias_thumbnail_urls",
+                "medias_original_urls",
+                "medias_download_video_urls",
+                "medias_types",
+                "quotedStatusId",
+                "url",
+                "emojis_shortcodes",
+                "emojis_urls",
+                "contentWarning",
+                "visibility",
+                "card_title",
+                "card_description",
+                "card_url",
+                "card_image_url",
+                "poll_id",
+                "poll_expiresAt",
+                "poll_expired",
+                "poll_multiple",
+                "poll_votesCount",
+                "poll_optionTitles",
+                "poll_optionCounts",
+                "poll_voted"
+        )
+
+        private const val COUNTS_TABLE_NAME = "Counts"
+    }
 
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL(

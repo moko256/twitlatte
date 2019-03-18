@@ -34,47 +34,50 @@ import java.util.*
  *
  * @author moko256
  */
-private const val TABLE_NAME = "CachedUsers"
-private val TABLE_COLUMNS = arrayOf(
-        "id",
-        "name",
-        "screenName",
-        "location",
-        "description",
-        "isContributorsEnabled",
-        "profileImageURLHttps",
-        "isDefaultProfileImage",
-        "url",
-        "isProtected",
-        "followersCount",
-        "profileBackgroundColor",
-        "profileTextColor",
-        "profileLinkColor",
-        "profileSidebarFillColor",
-        "profileSidebarBorderColor",
-        "isProfileUseBackgroundImage",
-        "isDefaultProfile",
-        "friendsCount",
-        "createdAt",
-        "favoritesCount",
-        "utcOffset",
-        "timeZone",
-        "profileBackgroundImageURLHttps",
-        "profileBannerImageUrl",
-        "isProfileBackgroundTiled",
-        "lang",
-        "statusesCount",
-        "isVerified",
-        "isTranslator",
-        "isFollowRequestSent",
-        "urls_urls",
-        "urls_starts",
-        "urls_ends",
-        "Emoji_shortcodes",
-        "Emoji_urls"
-)
 
 class CachedUsersSQLiteOpenHelper(context: Context, accessToken: AccessToken?) : SQLiteOpenHelper(context, if (accessToken != null) File(context.cacheDir, accessToken.getKeyString() + "/" + "CachedUsers.db").absolutePath else null, null, 3) {
+
+    private companion object {
+        private const val TABLE_NAME = "CachedUsers"
+        private val TABLE_COLUMNS = arrayOf(
+                "id",
+                "name",
+                "screenName",
+                "location",
+                "description",
+                "isContributorsEnabled",
+                "profileImageURLHttps",
+                "isDefaultProfileImage",
+                "url",
+                "isProtected",
+                "followersCount",
+                "profileBackgroundColor",
+                "profileTextColor",
+                "profileLinkColor",
+                "profileSidebarFillColor",
+                "profileSidebarBorderColor",
+                "isProfileUseBackgroundImage",
+                "isDefaultProfile",
+                "friendsCount",
+                "createdAt",
+                "favoritesCount",
+                "utcOffset",
+                "timeZone",
+                "profileBackgroundImageURLHttps",
+                "profileBannerImageUrl",
+                "isProfileBackgroundTiled",
+                "lang",
+                "statusesCount",
+                "isVerified",
+                "isTranslator",
+                "isFollowRequestSent",
+                "urls_urls",
+                "urls_starts",
+                "urls_ends",
+                "Emoji_shortcodes",
+                "Emoji_urls"
+        )
+    }
 
     private val isTwitter = accessToken?.clientType == CLIENT_TYPE_TWITTER
 
