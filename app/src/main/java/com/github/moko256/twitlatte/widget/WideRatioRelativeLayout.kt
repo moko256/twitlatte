@@ -34,13 +34,18 @@ class WideRatioRelativeLayout @JvmOverloads constructor(
 ): RelativeLayout(context, attrs, defStyle) {
 
     override fun onMeasure(widthSpec: Int, heightSpec: Int) {
-        var widthSize = View.MeasureSpec.getSize(widthSpec)
-        var heightSize = View.MeasureSpec.getSize(heightSpec)
+        val heightSize: Int
+        val widthSize: Int
 
-        if (View.MeasureSpec.getMode(widthSpec) != View.MeasureSpec.EXACTLY) {
-            widthSize = heightSize / 9 * 16
-        } else if (View.MeasureSpec.getMode(heightSpec) != View.MeasureSpec.EXACTLY) {
+        if (View.MeasureSpec.getMode(heightSpec) != View.MeasureSpec.EXACTLY) {
+            widthSize = View.MeasureSpec.getSize(widthSpec)
             heightSize = widthSize / 16 * 9
+        } else if (View.MeasureSpec.getMode(widthSpec) != View.MeasureSpec.EXACTLY) {
+            heightSize = View.MeasureSpec.getSize(heightSpec)
+            widthSize = heightSize / 9 * 16
+        } else {
+            widthSize = View.MeasureSpec.getSize(widthSpec)
+            heightSize = View.MeasureSpec.getSize(heightSpec)
         }
 
         super.onMeasure(
