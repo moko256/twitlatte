@@ -37,12 +37,9 @@ class WideRatioRelativeLayout @JvmOverloads constructor(
         var widthSize = View.MeasureSpec.getSize(widthSpec)
         var heightSize = View.MeasureSpec.getSize(heightSpec)
 
-        val widthMode = View.MeasureSpec.getMode(widthSpec)
-        val heightMode = View.MeasureSpec.getMode(heightSpec)
-
-        if (widthMode != View.MeasureSpec.EXACTLY) {
+        if (View.MeasureSpec.getMode(widthSpec) != View.MeasureSpec.EXACTLY) {
             widthSize = heightSize / 9 * 16
-        } else if (heightMode != View.MeasureSpec.EXACTLY) {
+        } else if (View.MeasureSpec.getMode(heightSpec) != View.MeasureSpec.EXACTLY) {
             heightSize = widthSize / 16 * 9
         }
 
