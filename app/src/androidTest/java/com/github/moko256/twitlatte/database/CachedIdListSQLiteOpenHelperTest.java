@@ -90,10 +90,10 @@ public class CachedIdListSQLiteOpenHelperTest {
     }
 
     private void setListViewPositionTest(){
-        helper.setSeeingId(100);
+        helper.setSeeingId(100L);
         assertEquals(helper.getSeeingId(), 100);
 
-        helper.setSeeingId(50);
+        helper.setSeeingId(50L);
         assertEquals(helper.getSeeingId(), 50);
     }
 }
