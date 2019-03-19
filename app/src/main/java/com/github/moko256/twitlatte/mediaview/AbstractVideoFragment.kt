@@ -43,7 +43,7 @@ import com.google.android.exoplayer2.upstream.DataSource
  *
  * @author moko256
  */
-abstract class AbstractVideoFragment: AbstractMediaFragment() {
+abstract class AbstractVideoFragment: AbstractMediaFragment(), Player.EventListener {
 
     private lateinit var videoPlayView: PlayerView
     private lateinit var player: SimpleExoPlayer
@@ -65,8 +65,8 @@ abstract class AbstractVideoFragment: AbstractMediaFragment() {
                 context,
                 AudioAndVideoRenderer(requireContext()),
                 trackSelector
-        ).apply {
-            prepare(generateMediaSource(
+        ).also {
+            it.prepare(generateMediaSource(
                     OkHttpDataSourceFactory(
                             appOkHttpClientInstance,
                             null
@@ -74,17 +74,16 @@ abstract class AbstractVideoFragment: AbstractMediaFragment() {
             ))
 
             if (isLoop) {
-                repeatMode = REPEAT_MODE_ALL
+                it.repeatMode = REPEAT_MODE_ALL
             } else {
-                addListener(object: Player.EventListener{
-                    override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
-                        activity?.window?.decorView?.keepScreenOn =
-                                playWhenReady && playbackState == STATE_READY
-                    }
-                })
+                it.addListener(this)
             }
         }
         canPlayerUse = true
+    }
+
+    override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
+        activity?.window?.decorView?.keepScreenOn = playWhenReady && playbackState == STATE_READY
     }
 
     override fun onDestroy() {
