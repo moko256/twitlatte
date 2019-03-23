@@ -95,7 +95,7 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view=inflater.inflate(R.layout.fragment_show_user_info,container,false);
+        View view = inflater.inflate(R.layout.fragment_show_user_info, container, false);
 
         glideRequests = GlideApp.with(this);
 
@@ -103,9 +103,9 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
         swipeRefreshLayout.setColorSchemeResources(R.color.color_primary);
         swipeRefreshLayout.setOnRefreshListener(() -> viewModel.updateUser());
 
-        header= view.findViewById(R.id.show_user_bgimage);
-        header.setWidthPerHeight((client.getAccessToken().getClientType() == CLIENT_TYPE_TWITTER)? 3: 2);
-        icon= view.findViewById(R.id.show_user_image);
+        header = view.findViewById(R.id.show_user_bgimage);
+        header.setWidthPerHeight((client.getAccessToken().getClientType() == CLIENT_TYPE_TWITTER) ? 3 : 2);
+        icon = view.findViewById(R.id.show_user_image);
 
         userNameText = view.findViewById(R.id.show_user_name);
         userIdText = view.findViewById(R.id.show_user_id);
@@ -155,7 +155,7 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
                     .into(header);
 
             header.setOnClickListener(v -> startActivity(
-                    ShowMediasActivity.getIntent(
+                    ShowMediasActivity.Companion.getIntent(
                             getContext(),
                             new Media[]{
                                     new Media(
@@ -171,7 +171,7 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
             ));
         } else {
             String colorStr = user.getProfileBackgroundColor();
-            if (!TextUtils.isEmpty(colorStr)){
+            if (!TextUtils.isEmpty(colorStr)) {
                 header.setBackgroundColor(Color.parseColor("#" + colorStr));
             }
         }
@@ -182,7 +182,7 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
                 .into(icon);
 
         icon.setOnClickListener(v -> startActivity(
-                ShowMediasActivity.getIntent(
+                ShowMediasActivity.Companion.getIntent(
                         getContext(),
                         new Media[]{
                                 new Media(
@@ -233,14 +233,14 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
         userIdText.setText(TwitterStringUtils.plusAtMark(user.getScreenName()));
         requireActivity().setTitle(user.getName());
 
-        if (!TextUtils.isEmpty(user.getLocation())){
+        if (!TextUtils.isEmpty(user.getLocation())) {
             userLocation.setText(getString(R.string.location_is, user.getLocation()));
         } else {
             userLocation.setVisibility(View.GONE);
         }
 
         final String url = user.getUrl();
-        if (!TextUtils.isEmpty(url)){
+        if (!TextUtils.isEmpty(url)) {
             String text = getString(R.string.url_is, url);
             SpannableString spannableString = new SpannableString(text);
             int start = text.indexOf(url);
