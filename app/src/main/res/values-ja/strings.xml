@@ -143,6 +143,7 @@
     <string name="did_unfavorite">お気に入り解除しました</string>
     <string name="did_boost">ブーストしました</string>
     <string name="did_unboost">ブースト解除しました</string>
+    <string name="did_vote">投票しました</string>
 
     <string name="did_follow">フォローしました</string>
     <string name="did_unfollow">フォロー解除しました</string>

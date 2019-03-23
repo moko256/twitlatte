@@ -315,7 +315,7 @@ public class TwitterStringUtils {
     };
 
     private static final int[] MASTODON_ACTION_ID = new int[]{
-            R.string.did_favorite, R.string.did_unfavorite, R.string.did_boost, R.string.did_unboost
+            R.string.did_favorite, R.string.did_unfavorite, R.string.did_boost, R.string.did_unboost, R.string.did_vote
     };
 
     @StringRes

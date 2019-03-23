@@ -148,6 +148,7 @@
     <string name="did_unfavorite">Unfavorited</string>
     <string name="did_boost">Boosted</string>
     <string name="did_unboost">Unboosted</string>
+    <string name="did_vote">Voted</string>
 
     <string name="did_follow">Followed</string>
     <string name="did_unfollow">Unfollowed</string>

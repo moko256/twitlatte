@@ -75,7 +75,7 @@ class StatusActionModelImpl(
     }
 
     override fun sendVote(targetStatusId: Long, targetPollId: Long, options: List<Int>) {
-        doAction(targetStatusId) {
+        doAction(targetStatusId, StatusAction.VOTE) {
             apiClient.votePoll(targetPollId, options)
             apiClient.showPost(targetStatusId)
         }
