@@ -125,8 +125,10 @@ public class PostActivity extends AppCompatActivity {
     private Spinner postVisibility;
     private CheckBox addLocation;
     private TextView locationText;
+    private CheckBox addPoll;
     private EditText[] pollsText;
     private Spinner pollsExpiredAt;
+    private TextView pollsExpireAtLabel;
     private CheckBox pollsMultiple;
     private CheckBox pollsHideTotals;
 
@@ -281,8 +283,23 @@ public class PostActivity extends AppCompatActivity {
                 findViewById(R.id.edit_poll_3)
         };
         pollsExpiredAt = findViewById(R.id.edit_poll_expired_at);
+        pollsExpireAtLabel = findViewById(R.id.edit_poll_expired_at_description);
         pollsMultiple = findViewById(R.id.poll_multiple);
         pollsHideTotals = findViewById(R.id.hide_totals);
+        addPoll = findViewById(R.id.activity_add_poll);
+
+        emojiInputRecyclerView.setVisibility(View.GONE);
+        contentWarningEnabled.setVisibility(View.GONE);
+        postVisibility.setVisibility(View.GONE);
+        findViewById(R.id.activity_tweet_visibility_description).setVisibility(View.GONE);
+        ArraysKt.forEach(pollsText, editText -> {
+            editText.setVisibility(View.GONE);
+            return Unit.INSTANCE;
+        });
+        pollsExpiredAt.setVisibility(View.GONE);
+        pollsMultiple.setVisibility(View.GONE);
+        pollsHideTotals.setVisibility(View.GONE);
+        pollsExpireAtLabel.setVisibility(View.GONE);
 
         if (client.getAccessToken().getClientType() == CLIENT_TYPE_MASTODON) {
             emojiAdapter = new EmojiAdapter(
@@ -358,6 +375,11 @@ public class PostActivity extends AppCompatActivity {
 
             ArrayList<String> options = new ArrayList<>(4);
             ArraysKt.forEachIndexed(pollsText, (i, editText) -> {
+                if (i < 2) {
+                    editText.setText(getString(R.string.poll_n, i + 1));
+                } else {
+                    editText.setText(getString(R.string.poll_n_optional, i + 1));
+                }
                 options.add("");
                 editText.addTextChangedListener(new TextWatcher() {
                     @Override
@@ -388,19 +410,40 @@ public class PostActivity extends AppCompatActivity {
                     -> model.getUpdateStatus().setPollSelectableMultiple(isChecked));
             pollsHideTotals.setOnCheckedChangeListener((buttonView, isChecked)
                     -> model.getUpdateStatus().setPollHideTotalsUntilExpired(isChecked));
-        } else {
-            emojiInputRecyclerView.setVisibility(View.GONE);
-            contentWarningEnabled.setVisibility(View.GONE);
-            postVisibility.setVisibility(View.GONE);
-            findViewById(R.id.activity_tweet_visibility_description).setVisibility(View.GONE);
-            ArraysKt.forEach(pollsText, editText -> {
-                editText.setVisibility(View.GONE);
-                return Unit.INSTANCE;
+
+            addPoll.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                if (isChecked) {
+                    emojiInputRecyclerView.setVisibility(View.VISIBLE);
+                    contentWarningEnabled.setVisibility(View.VISIBLE);
+                    postVisibility.setVisibility(View.VISIBLE);
+                    findViewById(R.id.activity_tweet_visibility_description).setVisibility(View.VISIBLE);
+                    ArraysKt.forEach(pollsText, editText -> {
+                        editText.setVisibility(View.VISIBLE);
+                        return Unit.INSTANCE;
+                    });
+                    pollsExpiredAt.setVisibility(View.VISIBLE);
+                    pollsMultiple.setVisibility(View.VISIBLE);
+                    pollsHideTotals.setVisibility(View.VISIBLE);
+                    pollsExpireAtLabel.setVisibility(View.VISIBLE);
+                } else {
+                    model.getUpdateStatus().setPollList(null);
+                    emojiInputRecyclerView.setVisibility(View.GONE);
+                    contentWarningEnabled.setVisibility(View.GONE);
+                    postVisibility.setVisibility(View.GONE);
+                    findViewById(R.id.activity_tweet_visibility_description).setVisibility(View.GONE);
+                    ArraysKt.forEach(pollsText, editText -> {
+                        editText.setVisibility(View.GONE);
+                        editText.setText("");
+                        return Unit.INSTANCE;
+                    });
+                    pollsExpiredAt.setVisibility(View.GONE);
+                    pollsMultiple.setVisibility(View.GONE);
+                    pollsHideTotals.setVisibility(View.GONE);
+                    pollsExpireAtLabel.setVisibility(View.GONE);
+                }
             });
-            pollsExpiredAt.setVisibility(View.GONE);
-            pollsMultiple.setVisibility(View.GONE);
-            pollsHideTotals.setVisibility(View.GONE);
-            findViewById(R.id.edit_poll_expired_at_description).setVisibility(View.GONE);
+        } else {
+            addPoll.setVisibility(View.GONE);
         }
 
         addLocation = findViewById(R.id.activity_tweet_add_location);
@@ -561,7 +604,7 @@ public class PostActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
 
         int size = model.getUriList().size();
@@ -616,9 +659,11 @@ public class PostActivity extends AppCompatActivity {
         disposable.dispose();
         super.onDestroy();
         disposable = null;
+        addPoll = null;
         pollsHideTotals = null;
         pollsMultiple = null;
         pollsExpiredAt = null;
+        pollsExpireAtLabel = null;
         pollsText = null;
         locationText = null;
         addLocation = null;

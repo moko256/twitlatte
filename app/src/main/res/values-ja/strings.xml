@@ -113,6 +113,14 @@
     <string name="do_see_source_code">このアプリのソースコードを見る</string>
     <string name="description_see_source_code">GitHubで公開されています</string>
     <string name="please_re_login">twitlatteはいくつかのAPIキーをアップデートしました\nこのアカウントで再度ログインしてください</string>
+    <string name="add_poll">投票を追加</string>
+    <string name="vote_opening_status">%1$d票 - %2$s</string>
+    <string name="vote_closed_status">%d票 - 終了しました</string>
+    <string name="poll_n">選択肢%d</string>
+    <string name="poll_n_optional">選択肢%d (任意)</string>
+    <string name="vote_expired_at">期限切れまで:</string>
+    <string name="poll_able_to_choice_multiple">複数選択可</string>
+    <string name="poll_hide_totals_until_the_poll_ends">投票が終わるまで結果を非表示にする</string>
 
     <string name="do_quote">引用する</string>
     <string name="do_logout">ログアウトする</string>

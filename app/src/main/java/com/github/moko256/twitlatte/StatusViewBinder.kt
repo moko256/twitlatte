@@ -294,9 +294,9 @@ class StatusViewBinder(
             pollStatus.visibility = View.VISIBLE
             pollAdapter.setPoll(poll)
             if (poll.expired) {
-                pollStatus.text = "${poll.votesCount} votes - closed"
+                pollStatus.text = viewGroup.resources.getString(R.string.vote_closed_status)
             } else {
-                pollStatus.text = "${poll.votesCount} votes - ${poll.expiresAt?.let { DateUtils.getRelativeTimeSpanString(it.time) }}"
+                pollStatus.text = viewGroup.resources.getString(R.string.vote_opening_status, poll.votesCount, poll.expiresAt?.let { DateUtils.getRelativeTimeSpanString(it.time) })
             }
             if (poll.expired || poll.voted) {
                 sendVote.visibility = View.GONE

@@ -178,7 +178,7 @@
         android:layout_marginBottom="16dp"
         android:textColor="?android:textColorSecondary"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        tools:text="32 votes - 1 hours left" />
+        tools:text="@string/vote_opening_status" />
 
     <RelativeLayout
         android:id="@+id/additional_content"

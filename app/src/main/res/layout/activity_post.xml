@@ -156,13 +156,22 @@
                 android:layout_marginBottom="16dp"
                 tools:text="Latitude: 30, Longitude: 100"/>
 
+
+            <CheckBox
+                android:id="@+id/activity_add_poll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/activity_tweet_location_result"
+                android:text="@string/add_poll"
+                android:layout_marginBottom="8dp"/>
+
             <EditText
                 android:id="@+id/edit_poll_0"
-                android:layout_below="@id/activity_tweet_location_result"
+                android:layout_below="@id/activity_add_poll"
                 android:layout_marginBottom="8dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Poll 1" />
+                tools:hint="Poll 1" />
 
             <EditText
                 android:id="@+id/edit_poll_1"
@@ -170,7 +179,7 @@
                 android:layout_marginBottom="8dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Poll 2" />
+                tools:hint="Poll 2" />
 
             <EditText
                 android:id="@+id/edit_poll_2"
@@ -178,7 +187,7 @@
                 android:layout_marginBottom="8dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Poll 3 (Optional)" />
+                tools:hint="Poll 3 (Optional)" />
 
             <EditText
                 android:id="@+id/edit_poll_3"
@@ -186,7 +195,7 @@
                 android:layout_marginBottom="8dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Poll 4 (Optional)" />
+                tools:hint="Poll 4 (Optional)" />
 
             <TextView
                 android:id="@+id/edit_poll_expired_at_description"
@@ -197,7 +206,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginBottom="8dp"
-                android:text="Expired at:"/>
+                android:text="@string/vote_expired_at"/>
 
             <Spinner
                 android:id="@+id/edit_poll_expired_at"
@@ -214,7 +223,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/edit_poll_expired_at_description"
-                android:text="Able to choice multiple"
+                android:text="@string/poll_able_to_choice_multiple"
                 android:layout_marginBottom="8dp"/>
 
             <CheckBox
@@ -222,7 +231,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/poll_multiple"
-                android:text="Hide totals until the poll ends"
+                android:text="@string/poll_hide_totals_until_the_poll_ends"
                 android:layout_marginBottom="16dp"/>
         </RelativeLayout>
     </ScrollView>

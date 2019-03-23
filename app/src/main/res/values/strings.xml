@@ -118,6 +118,14 @@
     <string name="do_see_source_code">See source codes of this app</string>
     <string name="description_see_source_code">Hosted on GitHub</string>
     <string name="please_re_login">twitlatte updated some API keys\nPlease login with this account again</string>
+    <string name="add_poll">Add poll</string>
+    <string name="vote_opening_status">%1$d votes - %2$s</string>
+    <string name="vote_closed_status">%d votes - closed</string>
+    <string name="poll_n">Poll %d</string>
+    <string name="poll_n_optional">Poll %d (Optional)</string>
+    <string name="vote_expired_at">Expired at:</string>
+    <string name="poll_able_to_choice_multiple">Able to choice multiple</string>
+    <string name="poll_hide_totals_until_the_poll_ends">Hide totals until the poll ends</string>
 
     <string name="do_quote">Quote</string>
     <string name="do_logout">Logout</string>
