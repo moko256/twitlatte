@@ -32,6 +32,7 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.github.moko256.latte.client.base.CLIENT_TYPE_NOTHING
 import com.github.moko256.latte.client.base.entity.*
 import com.github.moko256.twitlatte.glide.GlideRequests
+import com.github.moko256.twitlatte.repository.KEY_HIDE_SENSITIVE_MEDIA
 import com.github.moko256.twitlatte.repository.KEY_TIMELINE_IMAGE_LOAD_MODE
 import com.github.moko256.twitlatte.text.TwitterStringUtils
 import com.github.moko256.twitlatte.view.EmojiToTextViewSetter
@@ -61,6 +62,9 @@ class StatusViewBinder(
     private val units = viewGroup.resources.getString(R.string.num_units).toCharArray()
     private val unitsExponent = viewGroup.resources.getInteger(R.integer.num_unit_exponent)
     private val unitsBack = viewGroup.resources.getInteger(R.integer.num_unit_back)
+
+    private val timelineImageLoadMode = preferenceRepository.getString(KEY_TIMELINE_IMAGE_LOAD_MODE, "normal")
+    private val isHideSensitiveMedia = preferenceRepository.getBoolean(KEY_HIDE_SENSITIVE_MEDIA, true)
 
     val repeatUserName: TextView = viewGroup.findViewById(R.id.tweet_retweet_user_name)
     val repeatTimeStamp: TextView = viewGroup.findViewById(R.id.tweet_retweet_time_stamp_text)
@@ -193,7 +197,6 @@ class StatusViewBinder(
             replyUserName.visibility = View.GONE
         }
 
-        val timelineImageLoadMode = preferenceRepository.getString(KEY_TIMELINE_IMAGE_LOAD_MODE, "normal")
         if (timelineImageLoadMode != "none") {
             glideRequests
                     .load(
@@ -320,7 +323,7 @@ class StatusViewBinder(
             val qsMedias = quotedStatus.medias
             if (qsMedias?.isNotEmpty() == true) {
                 additionalContentImages.visibility = View.VISIBLE
-                additionalContentImages.setMedias(qsMedias, accessToken.clientType, quotedStatus.isSensitive, timelineImageLoadMode)
+                additionalContentImages.setMedias(qsMedias, accessToken.clientType, quotedStatus.isSensitive, timelineImageLoadMode, isHideSensitiveMedia)
                 disposable.add(object: Disposable {
                     override fun isDisposed() = false
 
@@ -352,7 +355,8 @@ class StatusViewBinder(
                         ),
                         CLIENT_TYPE_NOTHING,
                         false,
-                        timelineImageLoadMode
+                        timelineImageLoadMode,
+                        isHideSensitiveMedia
                 )
                 disposable.add(object: Disposable {
                     override fun isDisposed() = false
@@ -373,7 +377,7 @@ class StatusViewBinder(
 
         if (medias?.isNotEmpty() == true) {
             imageTableView.visibility = View.VISIBLE
-            imageTableView.setMedias(medias, accessToken.clientType, status.isSensitive, timelineImageLoadMode)
+            imageTableView.setMedias(medias, accessToken.clientType, status.isSensitive, timelineImageLoadMode, isHideSensitiveMedia)
 
             disposable.add(object: Disposable {
                 override fun isDisposed() = false

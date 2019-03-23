@@ -45,6 +45,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import kotlin.Unit;
 
 import static com.github.moko256.twitlatte.GlobalApplicationKt.preferenceRepository;
+import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY_HIDE_SENSITIVE_MEDIA;
 import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY_IS_PATTERN_TWEET_MUTE;
 import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY_IS_PATTERN_TWEET_MUTE_SHOW_ONLY_IMAGE;
 import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY_IS_PATTERN_TWEET_SOURCE_MUTE;
@@ -333,6 +334,8 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     private class ImagesOnlyTweetViewHolder extends RecyclerView.ViewHolder {
         final ImagesTableView imagesTableView;
+        final String imageLoadMode = preferenceRepository.getString(KEY_TIMELINE_IMAGE_LOAD_MODE, "normal");
+        final boolean isHideSensitiveMedia = preferenceRepository.getBoolean(KEY_HIDE_SENSITIVE_MEDIA, true);
 
         ImagesOnlyTweetViewHolder(ViewGroup viewGroup, GlideRequests glideRequests) {
             super(viewGroup);
@@ -346,7 +349,8 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                         status.getMedias(),
                         client.getAccessToken().getClientType(),
                         status.isSensitive(),
-                        preferenceRepository.getString(KEY_TIMELINE_IMAGE_LOAD_MODE, "normal")
+                        imageLoadMode,
+                        isHideSensitiveMedia
                 );
                 imagesTableView.setOnLongClickListener(v -> {
                     context.startActivity(

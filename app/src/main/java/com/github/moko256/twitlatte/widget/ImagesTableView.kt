@@ -32,8 +32,6 @@ import com.github.moko256.latte.client.base.entity.Media
 import com.github.moko256.twitlatte.R
 import com.github.moko256.twitlatte.ShowMediasActivity
 import com.github.moko256.twitlatte.glide.GlideRequests
-import com.github.moko256.twitlatte.preferenceRepository
-import com.github.moko256.twitlatte.repository.KEY_HIDE_SENSITIVE_MEDIA
 import com.github.moko256.twitlatte.text.TwitterStringUtils
 import jp.wasabeef.glide.transformations.BlurTransformation
 
@@ -45,17 +43,22 @@ class ImagesTableView @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : ViewGroup(context, attrs, defStyleAttr) {
     private companion object {
-        /* {row,column,rowSpan,colSpan} */
         private val a0000 = intArrayOf(0, 0, 0, 0)
         private val a0111 = intArrayOf(0, 1, 1, 1)
         private val a1111 = intArrayOf(1, 1, 1, 1)
         private val a0021 = intArrayOf(0, 0, 2, 1)
 
+        private val a0022 = intArrayOf(0, 0, 2, 2)
+        private val a0121 = intArrayOf(0, 1, 2, 1)
+        private val a0011 = intArrayOf(0, 0, 1, 1)
+        private val a1011 = intArrayOf(1, 0, 1, 1)
+
+        /* {row,column,rowSpan,colSpan} */
         private val params = arrayOf(
-                arrayOf(intArrayOf(0, 0, 2, 2), a0000,                  a0000,                  a0000),
-                arrayOf(a0021,                  intArrayOf(0, 1, 2, 1), a0000,                  a0000),
-                arrayOf(a0021,                  a0111,                  a1111,                  a0000),
-                arrayOf(intArrayOf(0, 0, 1, 1), a0111,                  intArrayOf(1, 0, 1, 1), a1111)
+                arrayOf(a0022, a0000, a0000, a0000),
+                arrayOf(a0021, a0121, a0000, a0000),
+                arrayOf(a0021, a0111, a1111, a0000),
+                arrayOf(a0011, a0111, a1011, a1111)
         )
     }
 
@@ -77,10 +80,21 @@ class ImagesTableView @JvmOverloads constructor(
 
     private lateinit var imageLoadMode: String
 
-    private var medias : Array<Media>? = null
+    private var medias: Array<Media>? = null
     private var mediaSize = 0
 
-    private var containerViews : Array<FrameLayout> = Array(maxMediaSize) { index ->
+    private var containerViews = arrayOfNulls<FrameLayout>(maxMediaSize)
+
+    private fun getContainer(index: Int): FrameLayout {
+        return containerViews[index]
+                ?: generateChild(index)
+                        .also {
+                            containerViews[index] = it
+                            addView(it, index)
+                        }
+    }
+
+    private fun generateChild(index: Int): FrameLayout {
         val imageView = ImageView(context).apply {
             layoutParams = FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
             scaleType = ImageView.ScaleType.CENTER_CROP
@@ -107,8 +121,8 @@ class ImagesTableView @JvmOverloads constructor(
 
         container.setOnClickListener {
             medias?.let { medias ->
-                if (isOpen){
-                    getContext().startActivity(ShowMediasActivity.getIntent(getContext(), medias, clientType, index))
+                if (isOpen) {
+                    context.startActivity(ShowMediasActivity.getIntent(context, medias, clientType, index))
                 } else {
                     isOpen = true
                     updateImages(medias)
@@ -116,27 +130,24 @@ class ImagesTableView @JvmOverloads constructor(
             }
         }
 
-        addView(container)
-
-        return@Array container
+        return container
     }
 
-    fun setMedias(newMedias: Array<Media>, clientType: Int, sensitive: Boolean, imageLoadMode: String) {
+    fun setMedias(newMedias: Array<Media>, clientType: Int, sensitive: Boolean, imageLoadMode: String, isHideSensitiveMedia: Boolean) {
         this.imageLoadMode = imageLoadMode
         this.clientType = clientType
-        isOpen = imageLoadMode != "none"
-                && !(sensitive && preferenceRepository.getBoolean(KEY_HIDE_SENSITIVE_MEDIA, true))
+        isOpen = imageLoadMode != "none" && !(sensitive && isHideSensitiveMedia)
 
         val oldSize = mediaSize
         val newSize = newMedias.size
 
         if (oldSize < newSize) {
             for (i in oldSize until newSize) {
-                containerViews[i].visibility = View.VISIBLE
+                getContainer(i).visibility = View.VISIBLE
             }
         } else if (newSize < oldSize) {
             for (i in newSize until oldSize) {
-                containerViews[i].visibility = View.GONE
+                getContainer(i).visibility = View.GONE
             }
         }
 
@@ -148,7 +159,7 @@ class ImagesTableView @JvmOverloads constructor(
 
     private fun updateImages(medias: Array<Media>) {
         medias.forEachIndexed { index, media ->
-            setMediaToView(media, containerViews[index])
+            setMediaToView(media, getContainer(index))
         }
     }
 
@@ -225,14 +236,14 @@ class ImagesTableView @JvmOverloads constructor(
 
     fun clearImages() {
         repeat(mediaSize) {
-            glideRequests.clear(containerViews[it].getChildAt(0) as ImageView)
+            glideRequests.clear(getContainer(it).getChildAt(0) as ImageView)
         }
     }
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
         medias?.let { medias ->
             for (i in 0 until mediaSize) {
-                val view = containerViews[i]
+                val view = getContainer(i)
                 val param = params[medias.size - 1][i]
 
                 val width = measuredWidth
@@ -278,7 +289,7 @@ class ImagesTableView @JvmOverloads constructor(
         medias?.let { medias ->
             for (i in 0 until mediaSize) {
                 val param = params[medias.size - 1][i]
-                val view = containerViews[i]
+                val view = getContainer(i)
                 view.measure(generateChildSpec(widthSize, param[3]), generateChildSpec(heightSize, param[2]))
             }
         }
