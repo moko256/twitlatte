@@ -44,15 +44,16 @@ class MastodonAuthApiClient(okHttpClient: OkHttpClient): AuthApiClient {
         )
 
         val callbackUrlNonNull = callbackUrl ?: "urn:ietf:wg:oauth:2.0:oob"
+        val scopes = Scope(Scope.Name.READ, Scope.Name.WRITE, Scope.Name.FOLLOW)
         return apps.createApp(
                 "twitlatte",
                 callbackUrlNonNull,
-                Scope(Scope.Name.ALL),
+                scopes,
                 "https://github.com/moko256/twitlatte"
         ).executeAndConvertError().let {
             RequestToken(
                     serverUrl,
-                    apps.getOAuthUrl(it.clientId, Scope(Scope.Name.ALL), callbackUrlNonNull),
+                    apps.getOAuthUrl(it.clientId, scopes, callbackUrlNonNull),
                     callbackUrlNonNull,
                     it.clientId,
                     it.clientSecret
