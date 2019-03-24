@@ -288,10 +288,6 @@ public class PostActivity extends AppCompatActivity {
         pollsHideTotals = findViewById(R.id.hide_totals);
         addPoll = findViewById(R.id.activity_add_poll);
 
-        emojiInputRecyclerView.setVisibility(View.GONE);
-        contentWarningEnabled.setVisibility(View.GONE);
-        postVisibility.setVisibility(View.GONE);
-        findViewById(R.id.activity_tweet_visibility_description).setVisibility(View.GONE);
         ArraysKt.forEach(pollsText, editText -> {
             editText.setVisibility(View.GONE);
             return Unit.INSTANCE;
@@ -413,10 +409,6 @@ public class PostActivity extends AppCompatActivity {
 
             addPoll.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 if (isChecked) {
-                    emojiInputRecyclerView.setVisibility(View.VISIBLE);
-                    contentWarningEnabled.setVisibility(View.VISIBLE);
-                    postVisibility.setVisibility(View.VISIBLE);
-                    findViewById(R.id.activity_tweet_visibility_description).setVisibility(View.VISIBLE);
                     ArraysKt.forEach(pollsText, editText -> {
                         editText.setVisibility(View.VISIBLE);
                         return Unit.INSTANCE;
@@ -427,10 +419,6 @@ public class PostActivity extends AppCompatActivity {
                     pollsExpireAtLabel.setVisibility(View.VISIBLE);
                 } else {
                     model.getUpdateStatus().setPollList(null);
-                    emojiInputRecyclerView.setVisibility(View.GONE);
-                    contentWarningEnabled.setVisibility(View.GONE);
-                    postVisibility.setVisibility(View.GONE);
-                    findViewById(R.id.activity_tweet_visibility_description).setVisibility(View.GONE);
                     ArraysKt.forEach(pollsText, editText -> {
                         editText.setVisibility(View.GONE);
                         editText.setText("");
@@ -443,6 +431,10 @@ public class PostActivity extends AppCompatActivity {
                 }
             });
         } else {
+            emojiInputRecyclerView.setVisibility(View.GONE);
+            contentWarningEnabled.setVisibility(View.GONE);
+            postVisibility.setVisibility(View.GONE);
+            findViewById(R.id.activity_tweet_visibility_description).setVisibility(View.GONE);
             addPoll.setVisibility(View.GONE);
         }
 
