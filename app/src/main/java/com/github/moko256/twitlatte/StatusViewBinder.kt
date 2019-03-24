@@ -49,7 +49,7 @@ import io.reactivex.disposables.Disposable
 class StatusViewBinder(
         private val accessToken: AccessToken,
         private val glideRequests: GlideRequests,
-        private val viewGroup: ViewGroup
+        viewGroup: ViewGroup
 ) {
     private val disposable = CompositeDisposable()
 
@@ -96,6 +96,9 @@ class StatusViewBinder(
 
     var onQuotedStatusClicked: View.OnClickListener? = null
     var onCardClicked: View.OnClickListener? = null
+
+    private val context = viewGroup.context
+    private val resources = viewGroup.resources
 
     init {
         contentOpenerToggle.onCheckedChangeListener = { _, isChecked ->
@@ -147,7 +150,7 @@ class StatusViewBinder(
 
         if (repeatedUser != null) {
             repeatUserName.visibility = View.VISIBLE
-            repeatUserName.text = viewGroup.resources.getString(
+            repeatUserName.text = resources.getString(
                     TwitterStringUtils.getRepeatedByStringRes(accessToken.clientType),
                     repeatedUser.name,
                     TwitterStringUtils.plusAtMark(repeatedUser.screenName)
@@ -175,8 +178,8 @@ class StatusViewBinder(
         val isReply = status.inReplyToScreenName != null
         if (isReply) {
             replyUserName.visibility = View.VISIBLE
-            replyUserName.text= if (status.inReplyToScreenName?.isEmpty() == true) {
-                viewGroup.resources.getString(
+            replyUserName.text = if (status.inReplyToScreenName?.isEmpty() == true) {
+                resources.getString(
                         if (status.inReplyToStatusId != -1L) {
                             R.string.reply
                         } else {
@@ -184,7 +187,7 @@ class StatusViewBinder(
                         }
                 )
             } else {
-                viewGroup.resources.getString(
+                resources.getString(
                         if (status.inReplyToStatusId != -1L) {
                             R.string.reply_to
                         } else {
@@ -208,7 +211,7 @@ class StatusViewBinder(
                     .circleCrop()
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .into(userImage)
-            disposable.add(object: Disposable {
+            disposable.add(object : Disposable {
                 override fun isDisposed() = false
 
                 override fun dispose() {
@@ -238,7 +241,7 @@ class StatusViewBinder(
         }
         userId.text = TwitterStringUtils.plusAtMark(user?.screenName)
 
-        val linkedSequence = TwitterStringUtils.getLinkedSequence(viewGroup.context, accessToken, status.text, status.urls)
+        val linkedSequence = TwitterStringUtils.getLinkedSequence(context, accessToken, status.text, status.urls)
 
         tweetContext.text = linkedSequence
 
@@ -294,9 +297,9 @@ class StatusViewBinder(
             pollStatus.visibility = View.VISIBLE
             pollAdapter.setPoll(poll)
             if (poll.expired) {
-                pollStatus.text = viewGroup.resources.getString(R.string.vote_closed_status)
+                pollStatus.text = resources.getString(R.string.vote_closed_status, poll.votesCount)
             } else {
-                pollStatus.text = viewGroup.resources.getString(R.string.vote_opening_status, poll.votesCount, poll.expiresAt?.let { DateUtils.getRelativeTimeSpanString(it.time) })
+                pollStatus.text = resources.getString(R.string.vote_opening_status, poll.votesCount, poll.expiresAt?.let { DateUtils.getRelativeTimeSpanString(it.time) })
             }
             if (poll.expired || poll.voted) {
                 sendVote.visibility = View.GONE
@@ -324,7 +327,7 @@ class StatusViewBinder(
             if (qsMedias?.isNotEmpty() == true) {
                 additionalContentImages.visibility = View.VISIBLE
                 additionalContentImages.setMedias(qsMedias, accessToken.clientType, quotedStatus.isSensitive, timelineImageLoadMode, isHideSensitiveMedia)
-                disposable.add(object: Disposable {
+                disposable.add(object : Disposable {
                     override fun isDisposed() = false
 
                     override fun dispose() {
@@ -341,7 +344,7 @@ class StatusViewBinder(
             additionalContentLayout.setOnClickListener(onCardClicked)
 
             additionalContentPrimaryText.text = card.title
-            additionalContentSecondaryText.text = card.url.split('/').getOrNull(2)?:""
+            additionalContentSecondaryText.text = card.url.split('/').getOrNull(2) ?: ""
             additionalContentContext.text = card.description
             val imageUrl = card.imageUrl
             if (imageUrl != null) {
@@ -358,7 +361,7 @@ class StatusViewBinder(
                         timelineImageLoadMode,
                         isHideSensitiveMedia
                 )
-                disposable.add(object: Disposable {
+                disposable.add(object : Disposable {
                     override fun isDisposed() = false
 
                     override fun dispose() {
@@ -379,7 +382,7 @@ class StatusViewBinder(
             imageTableView.visibility = View.VISIBLE
             imageTableView.setMedias(medias, accessToken.clientType, status.isSensitive, timelineImageLoadMode, isHideSensitiveMedia)
 
-            disposable.add(object: Disposable {
+            disposable.add(object : Disposable {
                 override fun isDisposed() = false
 
                 override fun dispose() {
@@ -422,7 +425,7 @@ class StatusViewBinder(
             }
         }
         repeatButton.isEnabled = isRepeatEnabled
-        repeatButton.setImageDrawable(ContextCompat.getDrawable(viewGroup.context, repeatIconResourceId))
+        repeatButton.setImageDrawable(ContextCompat.getDrawable(context, repeatIconResourceId))
 
         likeCount.text = if (status.favoriteCount != 0) TwitterStringUtils.convertToSIUnitString(status.favoriteCount, unitsExponent, unitsBack, units) else ""
         repeatCount.text = if (status.repeatCount != 0) TwitterStringUtils.convertToSIUnitString(status.repeatCount, unitsExponent, unitsBack, units) else ""
