@@ -376,9 +376,9 @@ public class PostActivity extends AppCompatActivity {
             ArrayList<String> options = new ArrayList<>(4);
             ArraysKt.forEachIndexed(pollsText, (i, editText) -> {
                 if (i < 2) {
-                    editText.setText(getString(R.string.poll_n, i + 1));
+                    editText.setHint(getString(R.string.poll_n, i + 1));
                 } else {
-                    editText.setText(getString(R.string.poll_n_optional, i + 1));
+                    editText.setHint(getString(R.string.poll_n_optional, i + 1));
                 }
                 options.add("");
                 editText.addTextChangedListener(new TextWatcher() {
