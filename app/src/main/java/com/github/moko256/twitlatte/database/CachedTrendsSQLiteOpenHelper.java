@@ -52,8 +52,7 @@ public class CachedTrendsSQLiteOpenHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         if (oldVersion == 1) {
-            db.execSQL("alter table " + TABLE_NAME + " add column volume");
-            db.execSQL("update " + TABLE_NAME + " set volume=-1");
+            DBUtilKt.addColumn(db, TABLE_NAME, "volume", "-1");
         }
     }
 

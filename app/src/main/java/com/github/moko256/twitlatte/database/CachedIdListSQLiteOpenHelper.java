@@ -54,27 +54,12 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        if (oldVersion == 1) {
-            Cursor ids = db.query(ID_LIST_TABLE_NAME, COLUMNS, null, null, null, null, null);
-            Cursor positions = db.query("ListViewPosition", new String[]{"position"}, null, null, null, null, null);
-            db.execSQL("create table " + SEEING_ID_TABLE_NAME + "(id)");
-            if (positions.moveToNext()) {
-                boolean hasId = ids.moveToPosition(positions.getInt(0));
-                positions.close();
-                if (hasId) {
-                    int i = ids.getInt(0);
-                    int count = ids.getColumnCount();
-
-                    ContentValues contentValues = new ContentValues(1);
-                    contentValues.put("id", count - i - 1);
-                    db.insert(SEEING_ID_TABLE_NAME, null, contentValues);
-                }
-                ids.close();
-            }
+        if (oldVersion < 2) {
+            db.execSQL("drop table IdList");
             db.execSQL("drop table ListViewPosition");
+            onCreate(db);
         }
-
-        // else (oldVersion <= 2) ...
+        // else (oldVersion < 3) ...
     }
 
     public List<Long> getIds() {

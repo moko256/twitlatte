@@ -118,13 +118,12 @@ class CachedStatusesSQLiteOpenHelper(
             onCreate(db)
         }
         if (oldVersion < 5) {
-            db.execSQL("alter table $TABLE_NAME add column card_title")
-            db.execSQL("alter table $TABLE_NAME add column card_url")
+            db.addColumn(TABLE_NAME, "card_title")
+            db.addColumn(TABLE_NAME, "card_url")
         }
         if (oldVersion < 6) {
-            db.execSQL("alter table $TABLE_NAME add column card_description")
-            db.execSQL("update $TABLE_NAME set card_description=\"description\"")
-            db.execSQL("alter table $TABLE_NAME add column card_image_url")
+            db.addColumn(TABLE_NAME, "card_description", "")
+            db.addColumn(TABLE_NAME, "card_image_url")
         }
         if (oldVersion < 7) {
             arrayOf(
