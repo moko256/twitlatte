@@ -22,20 +22,6 @@
     public static boolean isLoggable(...) return false;
 }
 
--assumenoexternalreturnvalues public final class java.lang.StringBuilder {
-    public java.lang.StringBuilder append(java.lang.Object);
-    public java.lang.StringBuilder append(java.lang.String);
-    public java.lang.StringBuilder append(java.lang.StringBuffer);
-    public java.lang.StringBuilder append(char[]);
-    public java.lang.StringBuilder append(char[], int, int);
-    public java.lang.StringBuilder append(boolean);
-    public java.lang.StringBuilder append(char);
-    public java.lang.StringBuilder append(int);
-    public java.lang.StringBuilder append(long);
-    public java.lang.StringBuilder append(float);
-    public java.lang.StringBuilder append(double);
-}
-
 ##---------------Begin: proguard configuration for twitter4j  ----------
 -dontwarn twitter4j.**
 -keepclassmembers class twitter4j.AlternativeHttpClientImpl {
