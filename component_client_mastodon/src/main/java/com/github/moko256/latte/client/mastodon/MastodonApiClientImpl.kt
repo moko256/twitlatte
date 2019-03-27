@@ -120,7 +120,7 @@ class MastodonApiClientImpl(okHttpClient: OkHttpClient, url: String, token: Stri
 
     override fun getFriendsList(userId: Long, cursor: Long): PageableResponse<User> {
         return Accounts(client)
-                .getFollowing(userId, Range(cursor.takeIf { it == -1L }))
+                .getFollowing(userId, Range(cursor.takeIf { it > 0 }))
                 .executeAndConvertError()
                 .let { pageable ->
                     PageableResponse(
@@ -133,7 +133,7 @@ class MastodonApiClientImpl(okHttpClient: OkHttpClient, url: String, token: Stri
 
     override fun getFollowersList(userId: Long, cursor: Long): PageableResponse<User> {
         return Accounts(client)
-                .getFollowers(userId, Range(cursor.takeIf { it == -1L }))
+                .getFollowers(userId, Range(cursor.takeIf { it > 0 }))
                 .executeAndConvertError()
                 .let { pageable ->
                     PageableResponse(
