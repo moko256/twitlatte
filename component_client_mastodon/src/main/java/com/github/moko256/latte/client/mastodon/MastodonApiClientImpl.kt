@@ -37,7 +37,7 @@ import java.io.InputStream
  */
 const val CLIENT_TYPE_MASTODON = 1
 
-class MastodonApiClientImpl(okHttpClient: OkHttpClient, url: String, token: String): ApiClient {
+class MastodonApiClientImpl(okHttpClient: OkHttpClient, url: String, token: String) : ApiClient {
 
     private val client: MastodonClient = MastodonClient
             .Builder(url, okHttpClient.newBuilder(), gson)
@@ -120,7 +120,7 @@ class MastodonApiClientImpl(okHttpClient: OkHttpClient, url: String, token: Stri
 
     override fun getFriendsList(userId: Long, cursor: Long): PageableResponse<User> {
         return Accounts(client)
-                .getFollowing(userId, Range(cursor))
+                .getFollowing(userId, Range(cursor.takeIf { it == -1L }))
                 .executeAndConvertError()
                 .let { pageable ->
                     PageableResponse(
@@ -133,7 +133,7 @@ class MastodonApiClientImpl(okHttpClient: OkHttpClient, url: String, token: Stri
 
     override fun getFollowersList(userId: Long, cursor: Long): PageableResponse<User> {
         return Accounts(client)
-                .getFollowers(userId, Range(cursor))
+                .getFollowers(userId, Range(cursor.takeIf { it == -1L }))
                 .executeAndConvertError()
                 .let { pageable ->
                     PageableResponse(
