@@ -81,24 +81,28 @@ private fun com.sys1yagi.mastodon4j.api.entity.Status.convertToStatus(): Status 
             isSensitive = isSensitive,
             lang = language,
             medias = mediaAttachments.takeIf { it.isNotEmpty() }?.map {
-                val resultUrl = it.url
+                val resultUrl: String
                 val thumbnailUrl: String?
                 val type: Media.MediaType
 
                 when (it.type) {
                     Attachment.Type.Video.value -> {
+                        resultUrl = it.url
                         thumbnailUrl = it.previewUrl
                         type = Media.MediaType.VIDEO_ONE
                     }
                     Attachment.Type.Gifv.value -> {
+                        resultUrl = it.url
                         thumbnailUrl = it.previewUrl
                         type = Media.MediaType.GIF
                     }
                     Attachment.Type.Image.value -> {
+                        resultUrl = it.url
                         thumbnailUrl = null
                         type = Media.MediaType.PICTURE
                     }
                     else -> { //It must be Attachment.Type.Unknown.value or undefined type
+                        resultUrl = it.remoteUrl
                         thumbnailUrl = null
                         type = Media.MediaType.UNKNOWN
                     }
@@ -136,7 +140,7 @@ private fun com.sys1yagi.mastodon4j.api.entity.Status.convertToStatus(): Status 
                         poll.votesCount,
                         poll.options.map { it.title },
                         poll.options.map { it.votesCount ?: -1 },
-                        poll.voted?:false
+                        poll.voted ?: false
                 )
             }
     )
@@ -151,7 +155,7 @@ private fun com.sys1yagi.mastodon4j.api.entity.Status.convertToRepeat(): Repeat 
     )
 }
 
-private fun Long.convertIfZero() = if (this == 0L){
+private fun Long.convertIfZero() = if (this == 0L) {
     -1
 } else {
     this
