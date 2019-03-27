@@ -23,6 +23,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
 import android.view.Menu;
@@ -83,6 +84,7 @@ public class ShowTweetActivity extends AppCompatActivity implements TextWatcher 
 
     private Client client;
 
+    private CharSequence defaultReplyText = "";
     private boolean isVisible = true;
 
     @SuppressLint("WrongConstant")
@@ -381,11 +383,12 @@ public class ShowTweetActivity extends AppCompatActivity implements TextWatcher 
     private void resetReplyText(User postedUser, Status status){
         User user = client.getUserCache().get(client.getAccessToken().getUserId());
 
-        replyText.setText(TwitterStringUtils.convertToReplyTopString(
+        defaultReplyText = TwitterStringUtils.convertToReplyTopString(
                 user != null ? user.getScreenName() : client.getAccessToken().getScreenName(),
                 postedUser.getScreenName(),
                 status.getMentions()
-        ));
+        );
+        replyText.setText(defaultReplyText);
     }
 
     @Override
@@ -393,7 +396,7 @@ public class ShowTweetActivity extends AppCompatActivity implements TextWatcher 
 
     @Override
     public void onTextChanged(CharSequence s, int start, int before, int count) {
-        replyButton.setEnabled(count > 0);
+        replyButton.setEnabled(!TextUtils.equals(defaultReplyText, s));
     }
 
     @Override
