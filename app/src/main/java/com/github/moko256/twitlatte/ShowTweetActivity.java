@@ -22,6 +22,8 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -64,7 +66,7 @@ import static android.view.View.VISIBLE;
  *
  * @author moko256
  */
-public class ShowTweetActivity extends AppCompatActivity {
+public class ShowTweetActivity extends AppCompatActivity implements TextWatcher {
 
     private CompositeDisposable disposables = new CompositeDisposable();
     private StatusActionModel statusActionModel;
@@ -108,6 +110,7 @@ public class ShowTweetActivity extends AppCompatActivity {
         viaText = findViewById(R.id.tweet_show_via);
         replyText= findViewById(R.id.tweet_show_tweet_reply_text);
         replyText.setFilters(NoSpanInputFilterKt.getNoSpanInputFilter());
+        replyText.addTextChangedListener(this);
         replyButton= findViewById(R.id.tweet_show_tweet_reply_button);
 
         SwipeRefreshLayout swipeRefreshLayout = findViewById(R.id.tweet_show_swipe_refresh);
@@ -384,4 +387,15 @@ public class ShowTweetActivity extends AppCompatActivity {
                 status.getMentions()
         ));
     }
+
+    @Override
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+    @Override
+    public void onTextChanged(CharSequence s, int start, int before, int count) {
+        replyButton.setEnabled(count > 0);
+    }
+
+    @Override
+    public void afterTextChanged(Editable s) {}
 }
