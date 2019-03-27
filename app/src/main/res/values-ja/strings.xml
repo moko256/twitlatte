@@ -20,7 +20,6 @@
     <string name="login_description">ログインするサービスを選んでください</string>
     <string name="instance_domain">インスタントのドメイン</string>
     <string name="action_settings">設定</string>
-    <string name="action_search">検索</string>
     <string name="action_change_quality">画質を変更</string>
     <string name="use_only_movie_loaded">動画がロードされた後にしか使えません</string>
     <string name="trends">トレンド</string>
@@ -82,7 +81,6 @@
     <string name="license_at_this_app">このアプリケーションのライセンス</string>
     <string name="open_source_license">オープンソースライセンス</string>
     <string name="contributors">コントリビューター</string>
-    <string name="open_with_app">開くアプリの選択</string>
     <string name="open_with_accounts">開くアカウントの選択</string>
     <string name="settable_account_always_use_in_settings">設定でデフォルトを設定できます</string>
     <string name="account_to_use_opening_link">Twitterリンクを開く時のアカウント</string>

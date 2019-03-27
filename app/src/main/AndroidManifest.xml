@@ -162,7 +162,7 @@
             android:label="@string/add_to_list" />
         <activity
             android:name=".SearchResultActivity"
-            android:label="@string/action_search"/>
+            android:label="@string/search_menu_title"/>
         <activity
             android:name=".SettingsActivity"
             android:label="@string/action_settings" />

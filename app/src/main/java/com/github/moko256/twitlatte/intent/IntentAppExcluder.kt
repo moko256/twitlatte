@@ -16,6 +16,7 @@
 
 package com.github.moko256.twitlatte.intent
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -29,6 +30,7 @@ import com.github.moko256.twitlatte.R
  * @author moko256
  */
 
+@SuppressLint("PrivateResource")
 fun Intent.excludeOwnApp(context: Context, packageManager: PackageManager): Intent = run {
     val intents = packageManager
             .queryIntentActivities(
@@ -63,7 +65,7 @@ fun Intent.excludeOwnApp(context: Context, packageManager: PackageManager): Inte
                 Intent(this).setPackage(it)
             }.toMutableList()
 
-    val openWithText = context.getString(R.string.open_with_app)
+    val openWithText = context.getString(R.string.abc_activitychooserview_choose_application)
 
     when {
         intents.isEmpty() -> {
