@@ -17,14 +17,15 @@
 package com.github.moko256.twitlatte.model.impl
 
 import android.annotation.SuppressLint
-import androidx.lifecycle.MutableLiveData
 import com.github.moko256.latte.client.base.ApiClient
 import com.github.moko256.latte.client.base.entity.Post
 import com.github.moko256.latte.client.base.entity.StatusAction
 import com.github.moko256.twitlatte.cacheMap.StatusCacheMap
 import com.github.moko256.twitlatte.model.base.StatusActionModel
 import io.reactivex.Completable
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import io.reactivex.subjects.PublishSubject
 
 /**
  * Created by moko256 on 2018/10/20.
@@ -34,11 +35,11 @@ import io.reactivex.schedulers.Schedulers
 class StatusActionModelImpl(
         private val apiClient: ApiClient,
         private val database: StatusCacheMap
-): StatusActionModel {
+) : StatusActionModel {
 
-    private val actionObservable = MutableLiveData<StatusAction>()
-    private val statusObservable = MutableLiveData<Long>()
-    private val errorObservable = MutableLiveData<Throwable>()
+    private val actionObservable = PublishSubject.create<StatusAction>()
+    private val statusObservable = PublishSubject.create<Long>()
+    private val errorObservable = PublishSubject.create<Throwable>()
 
     override fun getDidActionObservable() = actionObservable
     override fun getStatusObservable() = statusObservable
@@ -93,14 +94,15 @@ class StatusActionModelImpl(
                     }
                 }
                 .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         {
-                            statusObservable.postValue(targetId)
-                            actionObservable.postValue(actionType)
+                            statusObservable.onNext(targetId)
+                            actionObservable.onNext(actionType)
                         },
                         {
-                            statusObservable.postValue(targetId)
-                            errorObservable.postValue(it)
+                            statusObservable.onNext(targetId)
+                            errorObservable.onNext(it)
                         }
                 )
     }
@@ -117,13 +119,14 @@ class StatusActionModelImpl(
                     }
                 }
                 .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         {
-                            statusObservable.postValue(targetId)
+                            statusObservable.onNext(targetId)
                         },
                         {
-                            statusObservable.postValue(targetId)
-                            errorObservable.postValue(it)
+                            statusObservable.onNext(targetId)
+                            errorObservable.onNext(it)
                         }
                 )
     }

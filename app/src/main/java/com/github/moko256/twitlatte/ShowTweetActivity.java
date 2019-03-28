@@ -119,39 +119,42 @@ public class ShowTweetActivity extends AppCompatActivity implements TextWatcher 
         swipeRefreshLayout.setColorSchemeResources(R.color.color_primary);
         swipeRefreshLayout.setOnRefreshListener(() -> statusActionModel.updateStatus(statusId));
 
-        statusActionModel.getStatusObservable().observe(this, id -> {
-            Post post = client.getPostCache().getPost(statusId);
-            if (post != null) {
-                if (!isVisible) {
-                    isVisible = true;
-                    swipeRefreshLayout.getChildAt(0).setVisibility(VISIBLE);
-                }
-                updateView(post);
-            }
-            swipeRefreshLayout.setRefreshing(false);
-        });
-        statusActionModel.getDidActionObservable().observe(
-                this,
-                it -> Toast.makeText(
-                        this,
-                        TwitterStringUtils.getDidActionStringRes(
-                                client.getAccessToken().getClientType(), it
-                        ),
-                Toast.LENGTH_SHORT
-                ).show()
+        disposables.addAll(
+                statusActionModel.getStatusObservable().subscribe(id -> {
+                    Post post = client.getPostCache().getPost(statusId);
+                    if (post != null) {
+                        if (!isVisible) {
+                            isVisible = true;
+                            swipeRefreshLayout.getChildAt(0).setVisibility(VISIBLE);
+                        }
+                        updateView(post);
+                    }
+                    swipeRefreshLayout.setRefreshing(false);
+                }),
+
+                statusActionModel.getDidActionObservable().subscribe(
+                        it -> Toast.makeText(
+                                this,
+                                TwitterStringUtils.getDidActionStringRes(
+                                        client.getAccessToken().getClientType(), it
+                                ),
+                                Toast.LENGTH_SHORT
+                        ).show()
+                ),
+
+                statusActionModel.getErrorObservable().subscribe(error ->{
+                    error.printStackTrace();
+                    Toast.makeText(
+                            this,
+                            error.getMessage(),
+                            Toast.LENGTH_LONG
+                    ).show();
+                    swipeRefreshLayout.setRefreshing(false);
+                    if (client.getPostCache().getPost(statusId) == null) {
+                        finish();
+                    }
+                })
         );
-        statusActionModel.getErrorObservable().observe(this, error ->{
-            error.printStackTrace();
-            Toast.makeText(
-                    this,
-                    error.getMessage(),
-                    Toast.LENGTH_LONG
-            ).show();
-            swipeRefreshLayout.setRefreshing(false);
-            if (client.getPostCache().getPost(statusId) == null) {
-                finish();
-            }
-        });
 
         Post status = client.getPostCache().getPost(statusId);
 

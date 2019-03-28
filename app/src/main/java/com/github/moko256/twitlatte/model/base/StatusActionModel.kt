@@ -16,8 +16,8 @@
 
 package com.github.moko256.twitlatte.model.base
 
-import androidx.lifecycle.LiveData
 import com.github.moko256.latte.client.base.entity.StatusAction
+import io.reactivex.Observable
 
 /**
  * Created by moko256 on 2018/10/20.
@@ -25,9 +25,9 @@ import com.github.moko256.latte.client.base.entity.StatusAction
  * @author moko256
  */
 interface StatusActionModel {
-    fun getDidActionObservable(): LiveData<StatusAction>
-    fun getStatusObservable(): LiveData<Long>
-    fun getErrorObservable(): LiveData<Throwable>
+    fun getDidActionObservable(): Observable<StatusAction>
+    fun getStatusObservable(): Observable<Long>
+    fun getErrorObservable(): Observable<Throwable>
 
     fun updateStatus(targetStatusId: Long)
     fun createFavorite(targetStatusId: Long)

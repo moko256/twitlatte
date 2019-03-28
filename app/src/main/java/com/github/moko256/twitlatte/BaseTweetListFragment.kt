@@ -25,13 +25,11 @@ import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.github.moko256.latte.client.base.entity.Post
-import com.github.moko256.latte.client.base.entity.StatusAction
 import com.github.moko256.twitlatte.database.CachedIdListSQLiteOpenHelper
 import com.github.moko256.twitlatte.entity.Client
 import com.github.moko256.twitlatte.entity.EventType
@@ -170,25 +168,27 @@ abstract class BaseTweetListFragment : BaseListFragment(), ListServerRepository<
                             if (swipeRefreshLayout.isRefreshing) {
                                 setRefreshing(false)
                             }
-                        }
+                        },
+
+                listViewModel.statusActionModel.getStatusObservable().subscribe {
+                    adapter!!.notifyItemChanged(listViewModel.listModel.getIdsList().indexOf(it))
+                },
+
+                listViewModel.statusActionModel.getDidActionObservable().subscribe {
+                    notifyBySnackBar(
+                            TwitterStringUtils.getDidActionStringRes(
+                                    client.accessToken.clientType,
+                                    it
+                            )
+                    ).show()
+                },
+
+                listViewModel.statusActionModel.getErrorObservable().subscribe {
+                    it.printStackTrace()
+                    notifyErrorBySnackBar(it).show()
+                }
+
         )
-        listViewModel.statusActionModel.getStatusObservable().observe(this, Observer<Long> {
-            adapter!!.notifyItemChanged(listViewModel.listModel.getIdsList().indexOf(it))
-        })
-
-        listViewModel.statusActionModel.getDidActionObservable().observe(this, Observer<StatusAction> {
-            notifyBySnackBar(
-                    TwitterStringUtils.getDidActionStringRes(
-                            client.accessToken.clientType,
-                            it
-                    )
-            ).show()
-        })
-
-        listViewModel.statusActionModel.getErrorObservable().observe(this,Observer<Throwable> {
-            it.printStackTrace()
-            notifyErrorBySnackBar(it).show()
-        })
 
         super.onActivityCreated(savedInstanceState)
     }
@@ -239,7 +239,7 @@ abstract class BaseTweetListFragment : BaseListFragment(), ListServerRepository<
         //Calculated as:
         // Picture area: (16 : 9) + Other content: (16 : 3)
         // ((size.x * 12) / (size.y * 16)) + 1
-        val count = (3 * size.x / size.y  / 4) + 1
+        val count = (3 * size.x / size.y / 4) + 1
 
         return if (count == 1) {
             val layoutManager = LinearLayoutManager(context)
