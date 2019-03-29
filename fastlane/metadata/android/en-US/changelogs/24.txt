@@ -1,0 +1,4 @@
+Note: twitlatte's app icon will lost from your home screen. Please re-add it to home if you want.
+
+Move "Open in browser" to out of menu.
+Support polls in Mastodon v2.8.
