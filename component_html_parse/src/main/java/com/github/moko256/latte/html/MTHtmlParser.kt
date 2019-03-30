@@ -55,7 +55,7 @@ private class MastodonHtmlHandler: DefaultHandler() {
     private var type = 0
 
     private var isDisplayable = true
-    private var isNextDots = false
+    private var spanCount = 0
 
     private lateinit var contentUrl : String
 
@@ -95,6 +95,7 @@ private class MastodonHtmlHandler: DefaultHandler() {
             }
             "span" -> {
                 isDisplayable = attributes.getValue("class") != "invisible"
+                spanCount++
             }
             "p" -> {
                 if (noBr){
@@ -113,18 +114,16 @@ private class MastodonHtmlHandler: DefaultHandler() {
         if (type == TYPE_NOTHING || type != TYPE_URL || isDisplayable) {
             stringBuilder.append(ch, start, length)
         } else {
-            isNextDots = if (isNextDots) {
+            if (spanCount > 2) {
+                spanCount = 0
                 stringBuilder.append('…')
-                false
-            } else {
-                true
             }
         }
     }
 
     override fun endElement(uri: String, localName: String, qName: String) {
         if (localName == "a") {
-            isNextDots = false
+            spanCount = 0
             type = TYPE_NOTHING
             this.linkList.add(Link(contentUrl, linkStart, stringBuilder.length))
         }
