@@ -105,7 +105,7 @@ private class MastodonHtmlHandler: DefaultHandler() {
                 }
             }
             "br" -> {
-                stringBuilder.append("\n")
+                stringBuilder.append('\n')
             }
         }
     }
