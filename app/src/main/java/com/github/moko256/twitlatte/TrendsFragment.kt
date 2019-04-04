@@ -47,8 +47,8 @@ class TrendsFragment : BaseListFragment() {
                 requireContext().applicationContext,
                 client!!.accessToken
         )
-        viewModel.dbRepo = helper
-        viewModel.netRepo = client.apiClient
+        viewModel.database = helper
+        viewModel.apiClient = client.apiClient
         viewModel.geocoder = Geocoder(context)
 
         viewModel.trends.observe(this, Observer {

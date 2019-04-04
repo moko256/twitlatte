@@ -32,8 +32,8 @@ import java.util.*
 class TrendsViewModel : ViewModel() {
     private val disposables = CompositeDisposable()
 
-    lateinit var dbRepo: CachedTrendsSQLiteOpenHelper
-    lateinit var netRepo: ApiClient
+    lateinit var database: CachedTrendsSQLiteOpenHelper
+    lateinit var apiClient: ApiClient
     lateinit var geocoder: Geocoder
 
     val trends = MutableLiveData<List<Trend>>()
@@ -44,14 +44,14 @@ class TrendsViewModel : ViewModel() {
                 Single.create<List<Trend>> {
                     try {
                         if (!withoutCache) {
-                            val fromDb = dbRepo.trends
+                            val fromDb = database.trends
                             if (fromDb.isNotEmpty()) {
                                 it.onSuccess(fromDb)
                                 return@create
                             }
                         }
 
-                        it.onSuccess(getTrendsFromNet())
+                        it.onSuccess(getTrendsFromApi())
 
                     } catch (e: Throwable) {
                         it.tryOnError(e)
@@ -70,11 +70,11 @@ class TrendsViewModel : ViewModel() {
         )
     }
 
-    private fun getTrendsFromNet(): List<Trend> {
+    private fun getTrendsFromApi(): List<Trend> {
         val address = getGeoLocation()
-        val trends = netRepo.getClosestTrends(address.latitude, address.longitude)
+        val trends = apiClient.getClosestTrends(address.latitude, address.longitude)
 
-        dbRepo.trends = trends
+        database.trends = trends
 
         return trends
     }
