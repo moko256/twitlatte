@@ -30,7 +30,9 @@ import com.github.moko256.latte.client.base.entity.Trend
  * @author moko256
  */
 
-class TrendsAdapter(private val context: Context, private val data: List<Trend>) : RecyclerView.Adapter<TrendsAdapter.ViewHolder>() {
+class TrendsAdapter(private val context: Context) : RecyclerView.Adapter<TrendsAdapter.ViewHolder>() {
+
+    var data: List<Trend> = emptyList()
 
     init {
         setHasStableIds(true)
@@ -41,7 +43,7 @@ class TrendsAdapter(private val context: Context, private val data: List<Trend>)
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if(data[position].volume == -1) {
+        return if (data[position].volume == -1) {
             R.layout.layout_material_list_item_single_line
         } else {
             R.layout.layout_material_list_item_two_line
