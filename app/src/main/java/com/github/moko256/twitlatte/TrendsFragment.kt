@@ -56,7 +56,10 @@ class TrendsFragment : BaseListFragment() {
             adapter.notifyDataSetChanged()
             setRefreshing(false)
         })
-        viewModel.errors.observe(this, Observer { notifyErrorBySnackBar(it).show() })
+        viewModel.errors.observe(this, Observer {
+            notifyErrorBySnackBar(it).show()
+            setRefreshing(false)
+        })
         viewModel.load(withoutCache = false)
     }
 
