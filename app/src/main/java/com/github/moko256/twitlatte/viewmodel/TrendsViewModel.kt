@@ -59,6 +59,7 @@ class TrendsViewModel : ViewModel() {
                 }.subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
+                                //TODO: Consider to use whether post/setValues method in MutableLiveData. It is different about using thread
                                 {
                                     trends.value = it
                                 },

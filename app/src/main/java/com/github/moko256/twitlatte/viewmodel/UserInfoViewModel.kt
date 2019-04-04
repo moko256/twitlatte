@@ -30,7 +30,10 @@ import io.reactivex.schedulers.Schedulers
  *
  * @author moko256
  */
-class UserInfoViewModel: ViewModel() {
+
+//TODO: Consider to use whether post/setValues method in MutableLiveData. It is different about using thread
+
+class UserInfoViewModel : ViewModel() {
 
     private val disposable = CompositeDisposable()
 
@@ -60,8 +63,8 @@ class UserInfoViewModel: ViewModel() {
                 }.subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
-                                { user.postValue(it) },
-                                { error.postValue(it) }
+                                { user.setValue(it) },
+                                { error.setValue(it) }
                         )
         )
     }
@@ -79,8 +82,8 @@ class UserInfoViewModel: ViewModel() {
                 }.subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
-                                { user.postValue(it) },
-                                { error.postValue(it) }
+                                { user.setValue(it) },
+                                { error.setValue(it) }
                         )
         )
     }
@@ -97,8 +100,8 @@ class UserInfoViewModel: ViewModel() {
                 }.subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
-                                { action.postValue(name) },
-                                { error.postValue(it) }
+                                { action.setValue(name) },
+                                { error.setValue(it) }
                         )
         )
     }
