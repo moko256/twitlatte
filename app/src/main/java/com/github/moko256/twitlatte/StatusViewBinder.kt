@@ -24,7 +24,10 @@ import android.text.format.DateUtils
 import android.text.method.LinkMovementMethod
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.ImageButton
+import android.widget.ImageView
+import android.widget.RelativeLayout
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -54,10 +57,6 @@ class StatusViewBinder(
     private val disposable = CompositeDisposable()
 
     private var hasStatus = false
-
-    private var contextEmojiSetter: EmojiToTextViewSetter? = null
-    private var spoilerTextEmojiSetter: EmojiToTextViewSetter? = null
-    private var userNameEmojiSetter: EmojiToTextViewSetter? = null
 
     private val units = viewGroup.resources.getString(R.string.num_units).toCharArray()
     private val unitsExponent = viewGroup.resources.getInteger(R.integer.num_unit_exponent)
@@ -231,13 +230,7 @@ class StatusViewBinder(
         userName.text = userNameText
         val userNameEmojis = user?.emojis
         if (userNameEmojis != null) {
-            if (userNameEmojiSetter == null) {
-                userNameEmojiSetter = EmojiToTextViewSetter(glideRequests, userName)
-            }
-            val set = userNameEmojiSetter!!.set(userNameText, userNameEmojis)
-            if (set != null) {
-                disposable.addAll(*set)
-            }
+            disposable.add(EmojiToTextViewSetter(glideRequests, userName, userNameText, userNameEmojis))
         }
         userId.text = TwitterStringUtils.plusAtMark(user?.screenName)
 
@@ -250,13 +243,7 @@ class StatusViewBinder(
             tweetContext.visibility = View.VISIBLE
 
             if (emojis != null) {
-                if (contextEmojiSetter == null) {
-                    contextEmojiSetter = EmojiToTextViewSetter(glideRequests, tweetContext)
-                }
-                val set = contextEmojiSetter!!.set(linkedSequence, emojis)
-                if (set != null) {
-                    disposable.addAll(*set)
-                }
+                disposable.add(EmojiToTextViewSetter(glideRequests, tweetContext, linkedSequence, emojis))
             }
         } else {
             tweetContext.visibility = View.GONE
@@ -274,13 +261,7 @@ class StatusViewBinder(
             contentOpenerToggle.visibility = View.VISIBLE
 
             if (emojis != null) {
-                if (spoilerTextEmojiSetter == null) {
-                    spoilerTextEmojiSetter = EmojiToTextViewSetter(glideRequests, tweetSpoilerText)
-                }
-                val set = spoilerTextEmojiSetter!!.set(text, emojis)
-                if (set != null) {
-                    disposable.addAll(*set)
-                }
+                disposable.add(EmojiToTextViewSetter(glideRequests, tweetSpoilerText, text, emojis))
             }
         }
 

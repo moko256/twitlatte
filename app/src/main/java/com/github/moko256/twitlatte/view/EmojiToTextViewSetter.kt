@@ -19,6 +19,7 @@ package com.github.moko256.twitlatte.view
 import android.graphics.drawable.Animatable
 import android.graphics.drawable.Drawable
 import android.os.Handler
+import android.os.Looper
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.Spanned
@@ -39,6 +40,9 @@ import io.reactivex.internal.disposables.CancellableDisposable
 import io.reactivex.schedulers.Schedulers
 import net.ellerton.japng.android.api.PngAndroid
 import java.io.InputStream
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 /**
  * Created by moko256 on 2018/07/20.
@@ -46,61 +50,63 @@ import java.io.InputStream
  * @author moko256
  */
 
-private val containsEmoji = ":([a-zA-Z0-9_]{2,}):".toPattern()
+class EmojiToTextViewSetter(
+        glideRequests: GlideRequests,
+        private val textView: TextView,
+        text: CharSequence,
+        emojis: Array<Emoji>
+) : Disposable, LifecycleEventObserver, Drawable.Callback {
 
-class EmojiToTextViewSetter(private val glideRequests: GlideRequests, private val textView: TextView) {
+    private companion object {
+        private val containsEmoji = ":([a-zA-Z0-9_]{2,}):".toPattern()
+    }
 
-    fun set(text: CharSequence, emojis: Array<Emoji>): Array<Disposable>? {
-        val disposable = ArrayList<Disposable>(2)
+    private var disposable: List<Disposable>?
+
+    init {
 
         val matcher = containsEmoji.matcher(text)
         val matches = matcher.matches()
 
         val imageSize = if (matches) {
-            textView.lineHeight.toFloat() * 2
+            textView.lineHeight * 2
         } else {
-            textView.lineHeight.toFloat()
-        }
+            textView.lineHeight
+        }.toFloat()
 
-        val map: HashMap<String, ArrayList<Int>>
-
-        if (matches) {
-            map = HashMap(1)
-
-            map[matcher.group(1)] = ArrayList<Int>(1).also {
-                it.add(matcher.start())
-            }
+        val map: Map<String, List<Int>> = if (matches) {
+            Collections.singletonMap(matcher.group(1), listOf(matcher.start()))
         } else {
             var find = matcher.find()
             if (find) {
-                map = HashMap(emojis.size * 2)
+                HashMap<String, ArrayList<Int>>(emojis.size * 2).also { map ->
+                    while (find) {
+                        val shortCode = matcher.group(1)
 
-                while (find) {
-                    val shortCode = matcher.group(1)
-                    if (map[shortCode] == null) {
-                        map[shortCode] = ArrayList()
+                        map[shortCode].let {
+                            it ?: ArrayList<Int>().also { newList ->
+                                map[shortCode] = newList
+                            }
+                        }.add(matcher.start())
+
+                        find = matcher.find()
                     }
-
-                    map[shortCode]!!.add(matcher.start())
-
-                    find = matcher.find()
                 }
             } else {
-                map = HashMap(0)
+                emptyMap()
             }
         }
 
         val containedEmoji = emojis.filter { map.containsKey(it.shortCode) }
 
-        if (containedEmoji.isNotEmpty()) {
+        disposable = if (containedEmoji.isNotEmpty()) {
+            val disposable = ArrayList<Disposable>(2)
 
             val builder = if (text is Spannable) {
                 text
             } else {
                 SpannableString(text)
             }
-
-            val handler = Handler()
 
             disposable.add(Observable
                     .create<Pair<Emoji, Drawable>> {
@@ -117,24 +123,21 @@ class EmojiToTextViewSetter(private val glideRequests: GlideRequests, private va
                                 inputStream.close()
                             } catch (e: Throwable) {
                                 inputStream?.close()
-                                try {
-                                    it.onNext(
-                                            emoji to
+                                it.onNext(
+                                        emoji to
+                                                try {
                                                     glideRequests
                                                             .load(emoji.url)
                                                             .submit()
                                                             .get()
-                                    )
-                                } catch (e: Throwable) {
-                                    e.printStackTrace()
-                                    it.onNext(
-                                            emoji to
+                                                } catch (e: Throwable) {
+                                                    e.printStackTrace()
                                                     ContextCompat.getDrawable(
                                                             textView.context,
                                                             R.drawable.ic_cloud_off_black_24dp
                                                     )!!
-                                    )
-                                }
+                                                }
+                                )
                             }
                         }
                         it.onComplete()
@@ -145,13 +148,11 @@ class EmojiToTextViewSetter(private val glideRequests: GlideRequests, private va
                         val emoji = pair.first
                         val drawable = pair.second.mutate()
 
-                        val w = drawable.intrinsicWidth.toFloat()
-                        val h = drawable.intrinsicHeight.toFloat()
-                        val aspect = w / h
+                        val aspect = drawable.intrinsicWidth / drawable.intrinsicHeight
                         drawable.setBounds(
                                 0, 0,
                                 Math.round(
-                                        if (aspect == 1f) {
+                                        if (aspect == 1) {
                                             imageSize
                                         } else {
                                             imageSize * aspect
@@ -170,42 +171,57 @@ class EmojiToTextViewSetter(private val glideRequests: GlideRequests, private va
                         }
 
                         if (drawable is Animatable) {
-                            drawable.callback = object : Drawable.Callback {
-
-                                override fun invalidateDrawable(who: Drawable) {
-                                    textView.invalidate()
-                                }
-
-                                override fun scheduleDrawable(who: Drawable, what: Runnable, `when`: Long) {
-                                    handler.postAtTime(what, `when`)
-                                }
-
-                                override fun unscheduleDrawable(who: Drawable, what: Runnable) {
-                                    handler.removeCallbacks(what)
-                                }
-                            }
+                            drawable.callback = this
                             disposable.add(CancellableDisposable(Cancellable {
                                 drawable.stop()
+                                drawable.callback = null
                             }))
                             drawable.start()
                         }
 
                         textView.text = builder
                     })
-
-            return disposable.toTypedArray()
+            disposable
         } else {
-            return null
+            null
         }
     }
-}
 
-fun Array<Disposable>.bindToLifecycle(owner: LifecycleOwner) {
-    owner.lifecycle.addObserver(
-            LifecycleEventObserver { _, event ->
-                if (event == Lifecycle.Event.ON_DESTROY) {
-                    forEach { it.dispose() }
-                }
+
+    private val handler = Handler(Looper.getMainLooper())
+
+    override fun invalidateDrawable(who: Drawable) {
+        textView.invalidate()
+    }
+
+    override fun scheduleDrawable(who: Drawable, what: Runnable, `when`: Long) {
+        handler.postAtTime(what, `when`)
+    }
+
+    override fun unscheduleDrawable(who: Drawable, what: Runnable) {
+        handler.removeCallbacks(what)
+    }
+
+
+    override fun isDisposed() = disposable == null
+
+    override fun dispose() {
+        disposable?.let { disposable ->
+            disposable.forEach {
+                it.dispose()
             }
-    )
+            this.disposable = null
+        }
+        handler.removeCallbacksAndMessages(null)
+    }
+
+    override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
+        if (event == Lifecycle.Event.ON_DESTROY) {
+            dispose()
+        }
+    }
+
+    fun bindToLifecycle(owner: LifecycleOwner) {
+        owner.lifecycle.addObserver(this)
+    }
 }

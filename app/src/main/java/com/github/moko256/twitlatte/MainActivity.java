@@ -67,7 +67,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY_ACCOUNT_KEY;
@@ -90,7 +89,6 @@ public class MainActivity extends AppCompatActivity implements DrawerLayout.Draw
     private NavigationView navigationView;
 
     private TextView userNameText;
-    private EmojiToTextViewSetter userNameEmojiSetter;
     private TextView userIdText;
     private ImageView userImage;
     private ImageView userBackgroundImage;
@@ -466,13 +464,7 @@ public class MainActivity extends AppCompatActivity implements DrawerLayout.Draw
                                     userNameText.setText(userName);
                                     Emoji[] userNameEmojis = user.getEmojis();
                                     if (userNameEmojis != null) {
-                                        if (userNameEmojiSetter == null) {
-                                            userNameEmojiSetter = new EmojiToTextViewSetter(requests, userNameText);
-                                        }
-                                        Disposable[] set = userNameEmojiSetter.set(userName, userNameEmojis);
-                                        if (set != null) {
-                                            disposable.addAll(set);
-                                        }
+                                        disposable.add(new EmojiToTextViewSetter(requests, userNameText, userName, userNameEmojis));
                                     }
                                     userIdText.setText(TwitterStringUtils.plusAtMark(user.getScreenName(), client.getAccessToken().getUrl()));
 

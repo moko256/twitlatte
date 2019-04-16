@@ -39,7 +39,6 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
 
 /**
  * Created by moko256 on 2016/03/29.
@@ -91,13 +90,14 @@ class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> {
         viewHolder.userUserName.setText(userNameText);
         Emoji[] userNameEmojis = item.getEmojis();
         if (userNameEmojis != null) {
-            if (viewHolder.userNameEmojiSetter == null) {
-                viewHolder.userNameEmojiSetter = new EmojiToTextViewSetter(viewHolder.request, viewHolder.userUserName);
-            }
-            Disposable[] set = viewHolder.userNameEmojiSetter.set(userNameText, userNameEmojis);
-            if (set != null) {
-                viewHolder.disposable.addAll(set);
-            }
+            viewHolder.disposable.add(
+                    new EmojiToTextViewSetter(
+                            viewHolder.request,
+                            viewHolder.userUserName,
+                            userNameText,
+                            userNameEmojis
+                    )
+            );
         }
 
         viewHolder.userUserId.setText(TwitterStringUtils.plusAtMark(item.getScreenName()));
@@ -144,8 +144,6 @@ class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> {
 
         final GlideRequests request;
         final CompositeDisposable disposable;
-
-        EmojiToTextViewSetter userNameEmojiSetter;
 
         ViewHolder(final View itemView) {
             super(itemView);

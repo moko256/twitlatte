@@ -39,7 +39,6 @@ import com.github.moko256.twitlatte.intent.AppCustomTabsKt;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
 import com.github.moko256.twitlatte.text.style.ClickableNoLineSpan;
 import com.github.moko256.twitlatte.view.EmojiToTextViewSetter;
-import com.github.moko256.twitlatte.view.EmojiToTextViewSetterKt;
 import com.github.moko256.twitlatte.viewmodel.UserInfoViewModel;
 import com.github.moko256.twitlatte.widget.UserHeaderImageView;
 
@@ -50,7 +49,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import io.reactivex.disposables.Disposable;
 
 import static com.github.moko256.latte.client.base.ApiClientKt.CLIENT_TYPE_NOTHING;
 import static com.github.moko256.latte.client.twitter.TwitterApiClientImplKt.CLIENT_TYPE_TWITTER;
@@ -74,10 +72,8 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
     private ImageView icon;
 
     private TextView userNameText;
-    private EmojiToTextViewSetter userNameEmojiSetter;
     private TextView userIdText;
     private TextView userBioText;
-    private EmojiToTextViewSetter userBioEmojiSetter;
     private TextView userLocation;
     private TextView userUrl;
     private TextView userCreatedAt;
@@ -213,21 +209,11 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
         userBioText.setText(userBio);
         Emoji[] userNameEmojis = user.getEmojis();
         if (userNameEmojis != null) {
-            if (userNameEmojiSetter == null) {
-                userNameEmojiSetter = new EmojiToTextViewSetter(glideRequests, userNameText);
-            }
-            Disposable[] setOfName = userNameEmojiSetter.set(userName, userNameEmojis);
-            if (setOfName != null) {
-                EmojiToTextViewSetterKt.bindToLifecycle(setOfName, this);
-            } else {
-                if (userBioEmojiSetter == null) {
-                    userBioEmojiSetter = new EmojiToTextViewSetter(glideRequests, userBioText);
-                }
-                Disposable[] setOfBio = userBioEmojiSetter.set(userBio, userNameEmojis);
-                if (setOfBio != null) {
-                    EmojiToTextViewSetterKt.bindToLifecycle(setOfBio, this);
-                }
-            }
+            new EmojiToTextViewSetter(glideRequests, userNameText, userName, userNameEmojis)
+                    .bindToLifecycle(this);
+
+            new EmojiToTextViewSetter(glideRequests, userBioText, userBio, userNameEmojis)
+                    .bindToLifecycle(this);
         }
 
         userIdText.setText(TwitterStringUtils.plusAtMark(user.getScreenName()));
