@@ -26,6 +26,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.github.moko256.latte.client.base.MediaUrlConverter;
 import com.github.moko256.latte.client.base.entity.AccessToken;
 import com.github.moko256.latte.client.base.entity.User;
 import com.github.moko256.twitlatte.glide.GlideApp;
@@ -51,6 +52,7 @@ public class SelectAccountsAdapter extends RecyclerView.Adapter<SelectAccountsAd
     private static final int VIEW_TYPE_REMOVE = 3;
 
     private final Context context;
+    private final MediaUrlConverter converter;
 
     private final ArrayList<User> users = new ArrayList<>();
     private final ArrayList<AccessToken> accessTokens = new ArrayList<>();
@@ -62,8 +64,9 @@ public class SelectAccountsAdapter extends RecyclerView.Adapter<SelectAccountsAd
     private int selectionPosition = -1;
     private final int selectionColor;
 
-    public SelectAccountsAdapter(Context context){
+    public SelectAccountsAdapter(Context context, MediaUrlConverter converter){
         this.context = context;
+        this.converter = converter;
 
         TypedValue typedValue = new TypedValue();
         context.getTheme().resolveAttribute(R.attr.colorControlHighlight, typedValue, true);
@@ -101,7 +104,7 @@ public class SelectAccountsAdapter extends RecyclerView.Adapter<SelectAccountsAd
 
                 if (user != null) {
 
-                    Uri image = Uri.parse(user.get400x400ProfileImageURLHttps());
+                    Uri image = Uri.parse(converter.convertProfileIconLargeUrl(user));
                     holder.title.setText(TwitterStringUtils.plusAtMark(user.getScreenName(), accessToken.getUrl()));
                     GlideApp
                             .with(holder.itemView)

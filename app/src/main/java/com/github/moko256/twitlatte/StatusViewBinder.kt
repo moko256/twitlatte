@@ -33,6 +33,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.github.moko256.latte.client.base.CLIENT_TYPE_NOTHING
+import com.github.moko256.latte.client.base.MediaUrlConverter
 import com.github.moko256.latte.client.base.entity.*
 import com.github.moko256.twitlatte.glide.GlideRequests
 import com.github.moko256.twitlatte.repository.KEY_HIDE_SENSITIVE_MEDIA
@@ -52,6 +53,7 @@ import io.reactivex.disposables.Disposable
 class StatusViewBinder(
         private val accessToken: AccessToken,
         private val glideRequests: GlideRequests,
+        private val mediaUrlConverter: MediaUrlConverter,
         viewGroup: ViewGroup
 ) {
     private val disposable = CompositeDisposable()
@@ -202,10 +204,12 @@ class StatusViewBinder(
         if (timelineImageLoadMode != "none") {
             glideRequests
                     .load(
-                            if (timelineImageLoadMode == "normal")
-                                user?.get400x400ProfileImageURLHttps()
-                            else
-                                user?.getMiniProfileImageURLHttps()
+                            user?.let {
+                                if (timelineImageLoadMode == "normal")
+                                    mediaUrlConverter.convertProfileIconLargeUrl(it)
+                                else
+                                    mediaUrlConverter.convertProfileIconSmallUrl(it)
+                            }
                     )
                     .circleCrop()
                     .transition(DrawableTransitionOptions.withCrossFade())

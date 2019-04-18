@@ -78,7 +78,7 @@ public abstract class BaseUsersFragment extends BaseListFragment {
             recyclerView.setRecycledViewPool(((GetRecyclerViewPool) getActivity()).getUserListViewPool());
         }
 
-        adapter=new UsersAdapter(client.getUserCache(), getContext(), list);
+        adapter=new UsersAdapter(client.getUserCache(), getContext(), list, client.getMediaUrlConverter());
         recyclerView.setAdapter(adapter);
         if(!isInitializedList()){
             adapter.notifyDataSetChanged();

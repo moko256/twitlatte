@@ -28,7 +28,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.github.moko256.latte.client.base.MediaUrlConverter;
 import com.github.moko256.latte.client.base.entity.Emoji;
 import com.github.moko256.latte.client.base.entity.Media;
 import com.github.moko256.latte.client.base.entity.User;
@@ -43,12 +50,6 @@ import com.github.moko256.twitlatte.viewmodel.UserInfoViewModel;
 import com.github.moko256.twitlatte.widget.UserHeaderImageView;
 
 import java.text.DateFormat;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProviders;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import static com.github.moko256.latte.client.base.ApiClientKt.CLIENT_TYPE_NOTHING;
 import static com.github.moko256.latte.client.twitter.TwitterApiClientImplKt.CLIENT_TYPE_TWITTER;
@@ -143,7 +144,9 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
     }
 
     private void setShowUserInfo(User user) {
-        String headerUrl = user.getProfileBanner1500x500URL();
+        MediaUrlConverter mediaUrlConverter = client.getMediaUrlConverter();
+
+        String headerUrl = mediaUrlConverter.convertProfileBannerLargeUrl(user);
         if (headerUrl != null) {
             glideRequests
                     .load(headerUrl)
@@ -172,7 +175,7 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
             }
         }
         glideRequests
-                .load(user.get400x400ProfileImageURLHttps())
+                .load(mediaUrlConverter.convertProfileIconLargeUrl(user))
                 .circleCrop()
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .into(icon);
@@ -183,7 +186,7 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
                         new Media[]{
                                 new Media(
                                         null,
-                                        user.getOriginalProfileImageURLHttps(),
+                                        mediaUrlConverter.convertProfileIconOriginalUrl(user),
                                         null,
                                         Media.MediaType.PICTURE.getValue()
                                 )

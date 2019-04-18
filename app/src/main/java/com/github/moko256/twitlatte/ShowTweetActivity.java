@@ -34,6 +34,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityOptionsCompat;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import com.github.moko256.latte.client.base.entity.Post;
 import com.github.moko256.latte.client.base.entity.Status;
 import com.github.moko256.latte.client.base.entity.UpdateStatus;
@@ -48,10 +53,6 @@ import com.github.moko256.twitlatte.text.TwitterStringUtils;
 
 import java.text.DateFormat;
 
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityOptionsCompat;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -107,7 +108,7 @@ public class ShowTweetActivity extends AppCompatActivity implements TextWatcher 
 
         tweetIsReply = findViewById(R.id.tweet_show_is_reply_text);
         ViewGroup statusViewFrame = findViewById(R.id.tweet_show_tweet);
-        statusViewBinder = new StatusViewBinder(client.getAccessToken(), GlideApp.with(this), statusViewFrame);
+        statusViewBinder = new StatusViewBinder(client.getAccessToken(), GlideApp.with(this), client.getMediaUrlConverter(), statusViewFrame);
         timestampText = findViewById(R.id.tweet_show_timestamp);
         viaText = findViewById(R.id.tweet_show_via);
         replyText= findViewById(R.id.tweet_show_tweet_reply_text);

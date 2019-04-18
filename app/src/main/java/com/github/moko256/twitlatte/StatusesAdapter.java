@@ -24,6 +24,11 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityOptionsCompat;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
+
 import com.github.moko256.latte.client.base.entity.Post;
 import com.github.moko256.latte.client.base.entity.Repeat;
 import com.github.moko256.latte.client.base.entity.Status;
@@ -38,10 +43,6 @@ import com.github.moko256.twitlatte.widget.ImagesTableView;
 
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.core.app.ActivityOptionsCompat;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import kotlin.Unit;
 
 import static com.github.moko256.twitlatte.GlobalApplicationKt.preferenceRepository;
@@ -204,7 +205,7 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         StatusViewHolder(ViewGroup itemView, GlideRequests glideRequests) {
             super(itemView);
-            statusViewBinder = new StatusViewBinder(client.getAccessToken(), glideRequests, itemView);
+            statusViewBinder = new StatusViewBinder(client.getAccessToken(), glideRequests, client.getMediaUrlConverter(), itemView);
         }
 
         void setStatus(User repeatedUser, Repeat repeat, User user, Status status, User quotedStatusUser, Status quotedStatus) {

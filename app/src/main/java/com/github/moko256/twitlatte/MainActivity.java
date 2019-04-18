@@ -31,6 +31,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.github.moko256.latte.client.base.MediaUrlConverter;
 import com.github.moko256.latte.client.base.entity.AccessToken;
 import com.github.moko256.latte.client.base.entity.Emoji;
 import com.github.moko256.latte.client.base.entity.User;
@@ -191,7 +192,7 @@ public class MainActivity extends AppCompatActivity implements DrawerLayout.Draw
         accountListView.setVisibility(View.GONE);
         navigationView.addHeaderView(accountListView);
 
-        adapter = new SelectAccountsAdapter(this);
+        adapter = new SelectAccountsAdapter(this, client.getMediaUrlConverter());
         adapter.onImageButtonClickListener = accessToken -> {
             if (accessToken.getUserId() != client.getAccessToken().getUserId()) {
                 changeIsDrawerAccountsSelection();
@@ -470,11 +471,12 @@ public class MainActivity extends AppCompatActivity implements DrawerLayout.Draw
 
                                     userImage.setOnClickListener(v -> startMyUserActivity());
 
-                                    requests.load(user.get400x400ProfileImageURLHttps())
+                                    MediaUrlConverter mediaUrlConverter = client.getMediaUrlConverter();
+                                    requests.load(mediaUrlConverter.convertProfileIconLargeUrl(user))
                                             .circleCrop()
                                             .transition(DrawableTransitionOptions.withCrossFade())
                                             .into(userImage);
-                                    requests.load(user.getProfileBannerRetinaURL())
+                                    requests.load(mediaUrlConverter.convertProfileBannerSmallUrl(user))
                                             .centerCrop()
                                             .transition(DrawableTransitionOptions.withCrossFade())
                                             .into(userBackgroundImage);

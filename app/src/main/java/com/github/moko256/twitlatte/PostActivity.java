@@ -175,7 +175,7 @@ public class PostActivity extends AppCompatActivity {
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
                                 user -> GlideApp.with(this)
-                                        .load(user.get400x400ProfileImageURLHttps())
+                                        .load(client.getMediaUrlConverter().convertProfileIconLargeUrl(user))
                                         .circleCrop()
                                         .into(userIcon),
                                 Throwable::printStackTrace

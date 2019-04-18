@@ -25,6 +25,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.github.moko256.latte.client.base.MediaUrlConverter;
 import com.github.moko256.latte.client.base.entity.Emoji;
 import com.github.moko256.latte.client.base.entity.User;
 import com.github.moko256.twitlatte.cacheMap.UserCacheMap;
@@ -50,11 +51,13 @@ class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> {
     private final UserCacheMap userCache;
     private final List<Long> data;
     private final Context context;
+    private final MediaUrlConverter converter;
 
-    UsersAdapter(UserCacheMap userCache, Context context, List<Long> data) {
+    UsersAdapter(UserCacheMap userCache, Context context, List<Long> data, MediaUrlConverter converter) {
         this.userCache = userCache;
         this.context = context;
         this.data = data;
+        this.converter = converter;
 
         setHasStableIds(true);
     }
@@ -75,7 +78,7 @@ class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> {
         User item = userCache.get(data.get(i));
 
         viewHolder.request
-                .load(item.get400x400ProfileImageURLHttps())
+                .load(converter.convertProfileIconLargeUrl(item))
                 .circleCrop()
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .into(viewHolder.userUserImage);

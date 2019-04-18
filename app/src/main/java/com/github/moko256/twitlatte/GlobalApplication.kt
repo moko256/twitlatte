@@ -27,6 +27,7 @@ import com.github.moko256.latte.client.base.entity.AccessToken
 import com.github.moko256.latte.client.twitter.CLIENT_TYPE_TWITTER
 import com.github.moko256.latte.client.twitter.okhttp.replaceOkHttpClient
 import com.github.moko256.twitlatte.api.generateMastodonApiClient
+import com.github.moko256.twitlatte.api.generateMediaUrlConverter
 import com.github.moko256.twitlatte.api.generateTwitterApiClient
 import com.github.moko256.twitlatte.cacheMap.StatusCacheMap
 import com.github.moko256.twitlatte.cacheMap.UserCacheMap
@@ -93,6 +94,7 @@ class GlobalApplication : Application() {
         currentClient = Client(
                 accessToken,
                 createTwitterInstance(accessToken),
+                generateMediaUrlConverter(accessToken.clientType),
                 statusCache,
                 userCache
         )
@@ -128,12 +130,13 @@ fun Activity.getClient(): Client? {
             .getStringExtra(INTENT_CLIENT_KEY)
             ?.let { getAccountsModel().get(it) }
             ?.let {
-                Client(it, application.createTwitterInstance(it), StatusCacheMap(), UserCacheMap())
+                Client(it, application.createTwitterInstance(it), generateMediaUrlConverter(it.clientType),
+                        StatusCacheMap(), UserCacheMap())
                         .apply {
                             userCache.prepare(this@getClient, it)
                             statusCache.prepare(this@getClient, it, userCache)
                         }
-            }?:application.currentClient
+            } ?: application.currentClient
 }
 
 fun Intent.setAccountKey(accessToken: AccessToken) = apply {

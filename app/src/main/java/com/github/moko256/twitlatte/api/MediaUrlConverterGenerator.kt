@@ -14,30 +14,24 @@
  * limitations under the License.
  */
 
-package com.github.moko256.twitlatte.entity
+package com.github.moko256.twitlatte.api
 
-import com.github.moko256.latte.client.base.ApiClient
 import com.github.moko256.latte.client.base.MediaUrlConverter
-import com.github.moko256.latte.client.base.entity.AccessToken
+import com.github.moko256.latte.client.mastodon.CLIENT_TYPE_MASTODON
+import com.github.moko256.latte.client.mastodon.MastodonMediaUrlConverterImpl
 import com.github.moko256.latte.client.twitter.CLIENT_TYPE_TWITTER
-import com.github.moko256.twitlatte.cacheMap.PostCache
-import com.github.moko256.twitlatte.cacheMap.StatusCacheMap
-import com.github.moko256.twitlatte.cacheMap.UserCacheMap
+import com.github.moko256.latte.client.twitter.TwitterMediaUrlConverterImpl
 
 /**
- * Created by moko256 on 2018/11/28.
+ * Created by moko256 on 2019/04/07.
  *
  * @author moko256
  */
-data class Client(
-        val accessToken: AccessToken,
-        val apiClient: ApiClient,
-        val mediaUrlConverter: MediaUrlConverter,
-        val statusCache: StatusCacheMap,
-        val userCache: UserCacheMap
-) {
-    val postCache: PostCache = PostCache(statusCache, userCache)
 
-    val statusLimit: Int = if (accessToken.clientType == CLIENT_TYPE_TWITTER) 200 else 40
-
+fun generateMediaUrlConverter(clientType: Int): MediaUrlConverter {
+    return when (clientType) {
+        CLIENT_TYPE_TWITTER -> TwitterMediaUrlConverterImpl()
+        CLIENT_TYPE_MASTODON -> MastodonMediaUrlConverterImpl()
+        else -> error("Invalid clientType: $clientType")
+    }
 }
