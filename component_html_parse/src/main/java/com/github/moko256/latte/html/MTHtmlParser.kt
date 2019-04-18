@@ -28,15 +28,14 @@ import org.xml.sax.helpers.DefaultHandler
  * @author moko256
  */
 
-private val handler = MastodonHtmlHandler()
 private val parser = Parser().apply {
-    contentHandler = handler
+    contentHandler = MHandler
 }
 
 fun String.convertHtmlToContentAndLinks(): Pair<String, Array<Link>?> = try {
     parser.parse(InputSource(reader()))
 
-    handler.stringBuilder.toString() to handler.linkList.takeIf { it.isNotEmpty() }?.toTypedArray()
+    MHandler.stringBuilder.toString() to MHandler.linkList.takeIf { it.isNotEmpty() }?.toTypedArray()
 } catch (e: Throwable) {
     e.printStackTrace()
     this to null
@@ -46,7 +45,7 @@ private const val TYPE_NOTHING = 0
 private const val TYPE_URL = 1
 private const val TYPE_OTHER = 2
 
-private class MastodonHtmlHandler: DefaultHandler() {
+private object MHandler : DefaultHandler() {
     lateinit var stringBuilder: StringBuilder
     val linkList = ArrayList<Link>(6)
 
@@ -57,9 +56,9 @@ private class MastodonHtmlHandler: DefaultHandler() {
     private var isDisplayable = true
     private var spanCount = 0
 
-    private lateinit var contentUrl : String
+    private lateinit var contentUrl: String
 
-    private var linkStart : Int = -1
+    private var linkStart: Int = -1
 
     override fun startDocument() {
         stringBuilder = StringBuilder(500)
@@ -69,17 +68,17 @@ private class MastodonHtmlHandler: DefaultHandler() {
     }
 
     override fun startElement(uri: String, localName: String, qName: String, attributes: Attributes) {
-        when (localName){
+        when (localName) {
             "a" -> {
                 val classValue: String? = attributes.getValue("class")
-                val linkHref = attributes.getValue("href")?:""
+                val linkHref = attributes.getValue("href") ?: ""
                 when {
-                    classValue?.contains("hashtag")?:false -> {
+                    classValue?.contains("hashtag") ?: false -> {
                         type = TYPE_OTHER
                         val tag = linkHref.substringAfterLast('/')
                         contentUrl = "twitlatte://tag/$tag"
                     }
-                    classValue?.contains("mention")?:false -> {
+                    classValue?.contains("mention") ?: false -> {
                         type = TYPE_OTHER
                         val list = linkHref.split("/")
                         val name = list[list.size - 1].removePrefix("@")
@@ -98,7 +97,7 @@ private class MastodonHtmlHandler: DefaultHandler() {
                 spanCount++
             }
             "p" -> {
-                if (noBr){
+                if (noBr) {
                     stringBuilder.append("\n\n")
                 } else {
                     noBr = true
