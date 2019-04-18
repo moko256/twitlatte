@@ -36,12 +36,10 @@ import com.github.moko256.twitlatte.drawable.PercentBarBackgroundDrawable
 class PollAdapter(private val context: Context): RecyclerView.Adapter<PollAdapter.Holder>() {
 
     private var poll: Poll? = null
-    private var topValue: Int = 0
 
     fun setPoll(poll: Poll) {
         selections.clear()
         this.poll = poll
-        topValue = poll.optionCounts.max()?:0
         notifyDataSetChanged()
     }
 
@@ -109,8 +107,7 @@ class PollAdapter(private val context: Context): RecyclerView.Adapter<PollAdapte
                 holder.bindResult(
                         poll.optionTitles[position],
                         count,
-                        poll.votesCount,
-                        count == topValue
+                        poll.votesCount
                 )
             } else {
                 holder.bindSelection(
@@ -136,7 +133,7 @@ class PollAdapter(private val context: Context): RecyclerView.Adapter<PollAdapte
         }
 
         @SuppressLint("SetTextI18n")
-        fun bindResult(text: String, count: Int, allCount: Int, isTop: Boolean) {
+        fun bindResult(text: String, count: Int, allCount: Int) {
             val percent = if (allCount == 0) {
                 0
             } else {

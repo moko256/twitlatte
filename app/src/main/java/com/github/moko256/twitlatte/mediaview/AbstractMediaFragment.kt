@@ -68,8 +68,10 @@ abstract class AbstractMediaFragment: Fragment() {
 
         setHasOptionsMenu(true)
         showSystemUI()
-        media = arguments!!.getSerializable(FRAG_MEDIA_ENTITY) as Media
-        clientType = arguments!!.getInt(FRAG_CLIENT_TYPE)
+        arguments?.let { arguments ->
+            media = arguments.getSerializable(FRAG_MEDIA_ENTITY) as Media
+            clientType = arguments.getInt(FRAG_CLIENT_TYPE)
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
