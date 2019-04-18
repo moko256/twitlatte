@@ -30,8 +30,8 @@ import com.github.moko256.latte.client.twitter.TwitterMediaUrlConverterImpl
 
 fun generateMediaUrlConverter(clientType: Int): MediaUrlConverter {
     return when (clientType) {
-        CLIENT_TYPE_TWITTER -> TwitterMediaUrlConverterImpl()
-        CLIENT_TYPE_MASTODON -> MastodonMediaUrlConverterImpl()
+        CLIENT_TYPE_TWITTER -> TwitterMediaUrlConverterImpl
+        CLIENT_TYPE_MASTODON -> MastodonMediaUrlConverterImpl
         else -> error("Invalid clientType: $clientType")
     }
 }

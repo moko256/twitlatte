@@ -32,7 +32,7 @@ class UserLikeFragment : BaseTweetListFragment(), ToolbarTitleInterface {
     override val titleResourceId = R.string.like
 
     override val cachedIdsDatabaseName: String
-        get() = "UserLike_" + userId.toString()
+        get() = "UserLike_$userId"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         if (userId == -1L) {

@@ -19,7 +19,7 @@ package com.github.moko256.latte.client.twitter
 import com.github.moko256.latte.client.base.MediaUrlConverter
 import com.github.moko256.latte.client.base.entity.User
 
-class TwitterMediaUrlConverterImpl : MediaUrlConverter {
+object TwitterMediaUrlConverterImpl : MediaUrlConverter {
 
     override fun convertProfileIconSmallUrl(user: User) = user.profileImageURLHttps.toResizedURL("_mini")
     override fun convertProfileIconLargeUrl(user: User) = user.profileImageURLHttps.toResizedURL("_400x400")

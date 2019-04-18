@@ -41,6 +41,17 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.PermissionChecker;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.github.moko256.latte.client.base.entity.Emoji;
 import com.github.moko256.twitlatte.entity.Client;
 import com.github.moko256.twitlatte.glide.GlideApp;
@@ -56,16 +67,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.core.content.PermissionChecker;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -524,9 +525,7 @@ public class PostActivity extends AppCompatActivity {
 
     @SuppressLint("SetTextI18n")
     private void updateCounter() {
-        counterTextView.setText(String.valueOf(
-                model.getTweetLength())+" / "+String.valueOf(model.getStatusTextLimit()
-        ));
+        counterTextView.setText(model.getTweetLength() + " / " + model.getStatusTextLimit());
         counterTextView.setTextColor(
                 model.isValid()?
                         COLOR_STABLE:

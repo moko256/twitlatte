@@ -32,7 +32,7 @@ class UserTimelineFragment : BaseTweetListFragment(), ToolbarTitleInterface {
     override val titleResourceId = R.string.post
 
     override val cachedIdsDatabaseName: String
-        get() = "UserTimeline_" + userId.toString()
+        get() = "UserTimeline_$userId"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         if (userId == -1L) {

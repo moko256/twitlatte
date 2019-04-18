@@ -30,7 +30,7 @@ class MediaTimelineFragment : BaseTweetListFragment(), ToolbarTitleInterface {
     private var userId = -1L
 
     override val cachedIdsDatabaseName: String
-        get() = "MediaTimeline_" + userId.toString()
+        get() = "MediaTimeline_$userId"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         userId = arguments!!.getLong("userId", -1)
