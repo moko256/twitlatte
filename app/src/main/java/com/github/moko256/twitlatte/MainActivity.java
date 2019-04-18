@@ -192,7 +192,7 @@ public class MainActivity extends AppCompatActivity implements DrawerLayout.Draw
         accountListView.setVisibility(View.GONE);
         navigationView.addHeaderView(accountListView);
 
-        adapter = new SelectAccountsAdapter(this, client.getMediaUrlConverter());
+        adapter = new SelectAccountsAdapter(this);
         adapter.onImageButtonClickListener = accessToken -> {
             if (accessToken.getUserId() != client.getAccessToken().getUserId()) {
                 changeIsDrawerAccountsSelection();

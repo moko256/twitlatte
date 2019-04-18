@@ -24,6 +24,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityOptionsCompat;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.github.moko256.latte.client.base.MediaUrlConverter;
 import com.github.moko256.latte.client.base.entity.Emoji;
@@ -36,9 +40,6 @@ import com.github.moko256.twitlatte.view.EmojiToTextViewSetter;
 
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.core.app.ActivityOptionsCompat;
-import androidx.recyclerview.widget.RecyclerView;
 import io.reactivex.disposables.CompositeDisposable;
 
 /**
@@ -77,51 +78,52 @@ class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, final int i) {
         User item = userCache.get(data.get(i));
 
-        viewHolder.request
-                .load(converter.convertProfileIconLargeUrl(item))
-                .circleCrop()
-                .transition(DrawableTransitionOptions.withCrossFade())
-                .into(viewHolder.userUserImage);
+        if (item != null) {
+            viewHolder.request
+                    .load(converter.convertProfileIconLargeUrl(item))
+                    .circleCrop()
+                    .transition(DrawableTransitionOptions.withCrossFade())
+                    .into(viewHolder.userUserImage);
 
-        CharSequence userNameText = TwitterStringUtils.plusUserMarks(
-                item.getName(),
-                viewHolder.userUserName,
-                item.isProtected(),
-                item.isVerified()
-        );
+            CharSequence userNameText = TwitterStringUtils.plusUserMarks(
+                    item.getName(),
+                    viewHolder.userUserName,
+                    item.isProtected(),
+                    item.isVerified()
+            );
 
-        viewHolder.userUserName.setText(userNameText);
-        Emoji[] userNameEmojis = item.getEmojis();
-        if (userNameEmojis != null) {
-            viewHolder.disposable.add(
-                    new EmojiToTextViewSetter(
-                            viewHolder.request,
-                            viewHolder.userUserName,
-                            userNameText,
-                            userNameEmojis
-                    )
+            viewHolder.userUserName.setText(userNameText);
+            Emoji[] userNameEmojis = item.getEmojis();
+            if (userNameEmojis != null) {
+                viewHolder.disposable.add(
+                        new EmojiToTextViewSetter(
+                                viewHolder.request,
+                                viewHolder.userUserName,
+                                userNameText,
+                                userNameEmojis
+                        )
+                );
+            }
+
+            viewHolder.userUserId.setText(TwitterStringUtils.plusAtMark(item.getScreenName()));
+            viewHolder.itemView.setOnClickListener(
+                    v -> {
+                        ActivityOptionsCompat animation = ActivityOptionsCompat
+                                .makeSceneTransitionAnimation(
+                                        ((Activity) context),
+                                        viewHolder.userUserImage,
+                                        "icon_image"
+                                );
+                        context.startActivity(
+                                GlobalApplicationKt.setAccountKeyForActivity(
+                                        ShowUserActivity.getIntent(context, item.getId()),
+                                        ((Activity) context)
+                                ),
+                                animation.toBundle()
+                        );
+                    }
             );
         }
-
-        viewHolder.userUserId.setText(TwitterStringUtils.plusAtMark(item.getScreenName()));
-        viewHolder.itemView.setOnClickListener(
-                v -> {
-                    ActivityOptionsCompat animation = ActivityOptionsCompat
-                            .makeSceneTransitionAnimation(
-                                    ((Activity) context),
-                                    viewHolder.userUserImage,
-                                    "icon_image"
-                            );
-                    context.startActivity(
-                            GlobalApplicationKt.setAccountKeyForActivity(
-                                    ShowUserActivity.getIntent(context, item.getId()),
-                                    ((Activity) context)
-                            ),
-                            animation.toBundle()
-                    );
-                }
-        );
-
     }
 
     @Override

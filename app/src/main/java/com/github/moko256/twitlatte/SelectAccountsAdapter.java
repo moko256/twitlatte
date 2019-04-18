@@ -25,18 +25,18 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
-import com.github.moko256.latte.client.base.MediaUrlConverter;
 import com.github.moko256.latte.client.base.entity.AccessToken;
 import com.github.moko256.latte.client.base.entity.User;
+import com.github.moko256.twitlatte.api.MediaUrlConverterGeneratorKt;
 import com.github.moko256.twitlatte.glide.GlideApp;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * Created by moko256 on 2017/10/26.
@@ -52,7 +52,6 @@ public class SelectAccountsAdapter extends RecyclerView.Adapter<SelectAccountsAd
     private static final int VIEW_TYPE_REMOVE = 3;
 
     private final Context context;
-    private final MediaUrlConverter converter;
 
     private final ArrayList<User> users = new ArrayList<>();
     private final ArrayList<AccessToken> accessTokens = new ArrayList<>();
@@ -64,9 +63,8 @@ public class SelectAccountsAdapter extends RecyclerView.Adapter<SelectAccountsAd
     private int selectionPosition = -1;
     private final int selectionColor;
 
-    public SelectAccountsAdapter(Context context, MediaUrlConverter converter){
+    public SelectAccountsAdapter(Context context){
         this.context = context;
-        this.converter = converter;
 
         TypedValue typedValue = new TypedValue();
         context.getTheme().resolveAttribute(R.attr.colorControlHighlight, typedValue, true);
@@ -104,7 +102,7 @@ public class SelectAccountsAdapter extends RecyclerView.Adapter<SelectAccountsAd
 
                 if (user != null) {
 
-                    Uri image = Uri.parse(converter.convertProfileIconLargeUrl(user));
+                    Uri image = Uri.parse(MediaUrlConverterGeneratorKt.generateMediaUrlConverter(accessToken.getClientType()).convertProfileIconLargeUrl(user));
                     holder.title.setText(TwitterStringUtils.plusAtMark(user.getScreenName(), accessToken.getUrl()));
                     GlideApp
                             .with(holder.itemView)
