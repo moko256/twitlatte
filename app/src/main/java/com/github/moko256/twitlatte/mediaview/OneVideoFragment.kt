@@ -33,7 +33,7 @@ open class OneVideoFragment: AbstractVideoFragment() {
         return ExtractorMediaSource(
                 Uri.parse(media.originalUrl),
                 factory,
-                Mp4OrWebPExtractorFactory(),
+                Mp4OrWebPExtractorFactory,
                 null, null
         )
     }
