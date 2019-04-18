@@ -72,7 +72,6 @@ internal fun Account.convertToCommonUser(): User {
                 null
             } else {
                 emojis.map { Emoji(it.shortcode, it.url) }.toTypedArray()
-            },
-            isTwitter = false
+            }
     )
 }

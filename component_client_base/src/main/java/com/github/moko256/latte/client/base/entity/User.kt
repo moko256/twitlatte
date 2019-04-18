@@ -57,8 +57,7 @@ data class User(
         val isTranslator: Boolean,
         val isFollowRequestSent: Boolean,
         val descriptionLinks: Array<Link>?,
-        val emojis: Array<Emoji>?,
-        val isTwitter: Boolean
+        val emojis: Array<Emoji>?
 ) {
 
     override fun hashCode(): Int {

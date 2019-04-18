@@ -23,7 +23,6 @@ import android.database.sqlite.SQLiteOpenHelper
 import com.github.moko256.latte.client.base.entity.AccessToken
 import com.github.moko256.latte.client.base.entity.Emoji
 import com.github.moko256.latte.client.base.entity.User
-import com.github.moko256.latte.client.twitter.CLIENT_TYPE_TWITTER
 import com.github.moko256.latte.html.entity.Link
 import com.github.moko256.twitlatte.text.splitWithComma
 import java.io.File
@@ -78,8 +77,6 @@ class CachedUsersSQLiteOpenHelper(context: Context, accessToken: AccessToken?) :
                 "Emoji_urls"
         )
     }
-
-    private val isTwitter = accessToken?.clientType == CLIENT_TYPE_TWITTER
 
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL(
@@ -146,8 +143,7 @@ class CachedUsersSQLiteOpenHelper(context: Context, accessToken: AccessToken?) :
                         emojis = restoreEmojis(
                                 c.getString(34).splitWithComma(),
                                 c.getString(35).splitWithComma()
-                        ),
-                        isTwitter = isTwitter
+                        )
                 )
             }
 

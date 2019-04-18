@@ -71,7 +71,6 @@ internal fun twitter4j.User.convertToCommonUser(): User {
             isTranslator = isTranslator,
             isFollowRequestSent = isFollowRequestSent,
             descriptionLinks = urls?.second,
-            emojis = null,
-            isTwitter = true
+            emojis = null
     )
 }
