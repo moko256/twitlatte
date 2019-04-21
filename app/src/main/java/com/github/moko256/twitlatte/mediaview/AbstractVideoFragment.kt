@@ -35,7 +35,7 @@ import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSourceFactory
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.ui.PlayerView
-import com.google.android.exoplayer2.ui.TrackSelectionView
+import com.google.android.exoplayer2.ui.TrackSelectionDialogBuilder
 import com.google.android.exoplayer2.upstream.DataSource
 
 /**
@@ -159,12 +159,12 @@ abstract class AbstractVideoFragment: AbstractMediaFragment(), Player.EventListe
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return if (item.itemId == R.id.action_change_selection) {
             if (trackSelector.currentMappedTrackInfo != null) {
-                TrackSelectionView.getDialog(
+                TrackSelectionDialogBuilder(
                         activity,
                         getString(R.string.action_change_quality),
                         trackSelector,
                         0
-                ).first.show()
+                ).build().show()
             } else {
                 Toast.makeText(
                         context,
