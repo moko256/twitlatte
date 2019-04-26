@@ -12,6 +12,10 @@
     int SDK_INT return 19..2147483647;
 }
 
+-assumevalues class com.google.android.exoplayer2.util.Util {
+    int SDK_INT return 19..2147483647;
+}
+
 -assumenosideeffects public class android.util.Log {
     public static *** v(...);
     public static *** d(...);
