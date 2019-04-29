@@ -68,6 +68,6 @@ private fun systemDefaultTrustManager() =
                     if (it != null) {
                         it as X509TrustManager
                     } else {
-                        throw IllegalStateException("Unexpected default trust managers")
+                        throw error("Unexpected default trust managers")
                     }
                 }
