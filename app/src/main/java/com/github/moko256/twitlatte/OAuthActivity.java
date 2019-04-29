@@ -209,7 +209,7 @@ public class OAuthActivity extends AppCompatActivity {
 
         GlobalApplicationKt.preferenceRepository.putString(KEY_ACCOUNT_KEY, accessToken.getKeyString());
 
-        ((GlobalApplication) getApplication()).initTwitter(accessToken);
+        ((GlobalApplication) getApplication()).initCurrentClient(accessToken);
 
         setResult(RESULT_OK);
         finish();

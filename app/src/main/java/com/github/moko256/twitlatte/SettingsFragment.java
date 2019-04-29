@@ -89,7 +89,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                         } else {
                             AccessToken accessToken = GlobalApplicationKt.getAccountsModel(requireActivity()).get((String) newValue);
 
-                            ((GlobalApplication) requireActivity().getApplication()).initTwitter(accessToken);
+                            ((GlobalApplication) requireActivity().getApplication()).initCurrentClient(accessToken);
                             startActivity(
                                     new Intent(getContext(),MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
                             );
@@ -136,7 +136,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                                                 KEY_ACCOUNT_KEY, accessToken.getKeyString()
                                         );
 
-                                        ((GlobalApplication) requireActivity().getApplication()).initTwitter(accessToken);
+                                        ((GlobalApplication) requireActivity().getApplication()).initCurrentClient(accessToken);
                                         startActivity(
                                                 new Intent(getContext(), MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
                                         );
@@ -145,7 +145,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                                                 KEY_ACCOUNT_KEY, "-1"
                                         );
 
-                                        ((GlobalApplication) requireActivity().getApplication()).clearTwitter();
+                                        ((GlobalApplication) requireActivity().getApplication()).clearCurrentClient();
                                         startActivity(new Intent(getContext(), MainActivity.class)
                                                 .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
                                     }

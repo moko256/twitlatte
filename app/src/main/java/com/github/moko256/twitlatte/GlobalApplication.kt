@@ -24,11 +24,9 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.collection.LruCache
 import com.github.moko256.latte.client.base.ApiClient
 import com.github.moko256.latte.client.base.entity.AccessToken
-import com.github.moko256.latte.client.twitter.CLIENT_TYPE_TWITTER
 import com.github.moko256.latte.client.twitter.okhttp.replaceOkHttpClient
-import com.github.moko256.twitlatte.api.generateMastodonApiClient
+import com.github.moko256.twitlatte.api.generateApiClient
 import com.github.moko256.twitlatte.api.generateMediaUrlConverter
-import com.github.moko256.twitlatte.api.generateTwitterApiClient
 import com.github.moko256.twitlatte.cacheMap.StatusCacheMap
 import com.github.moko256.twitlatte.cacheMap.UserCacheMap
 import com.github.moko256.twitlatte.entity.Client
@@ -82,44 +80,35 @@ class GlobalApplication : Application() {
                     accountsModel.get(it)
                 }
                 ?.let {
-                    initTwitter(it)
+                    initCurrentClient(it)
                 }
 
         super.onCreate()
     }
 
-    fun initTwitter(accessToken: AccessToken) {
+    fun initCurrentClient(accessToken: AccessToken) {
         userCache.prepare(this, accessToken)
         statusCache.prepare(this, accessToken, userCache)
         currentClient = Client(
                 accessToken,
-                createTwitterInstance(accessToken),
+                createApiClientInstance(accessToken),
                 generateMediaUrlConverter(accessToken.clientType),
                 statusCache,
                 userCache
         )
     }
 
-    fun clearTwitter() {
+    fun clearCurrentClient() {
         currentClient = null
         userCache.close()
         statusCache.close()
     }
 
-    fun createTwitterInstance(accessToken: AccessToken): ApiClient {
-        var apiClient = apiClientCache.get(accessToken.getKeyString())
-
-        if (apiClient == null) {
-            apiClient = if (accessToken.clientType == CLIENT_TYPE_TWITTER) {
-                generateTwitterApiClient(accessToken)
-            } else {
-                generateMastodonApiClient(appOkHttpClientInstance, accessToken)
-            }
-
-            apiClientCache.put(accessToken.getKeyString(), apiClient)
-        }
-
-        return apiClient
+    fun createApiClientInstance(accessToken: AccessToken): ApiClient {
+        return apiClientCache.get(accessToken.getKeyString())
+                ?: generateApiClient(accessToken).also {
+                    apiClientCache.put(accessToken.getKeyString(), it)
+                }
     }
 }
 
@@ -130,13 +119,18 @@ fun Activity.getClient(): Client? {
             .getStringExtra(INTENT_CLIENT_KEY)
             ?.let { getAccountsModel().get(it) }
             ?.let {
-                Client(it, application.createTwitterInstance(it), generateMediaUrlConverter(it.clientType),
-                        StatusCacheMap(), UserCacheMap())
-                        .apply {
-                            userCache.prepare(this@getClient, it)
-                            statusCache.prepare(this@getClient, it, userCache)
-                        }
-            } ?: application.currentClient
+                Client(
+                        it,
+                        application.createApiClientInstance(it),
+                        generateMediaUrlConverter(it.clientType),
+                        StatusCacheMap(),
+                        UserCacheMap()
+                ).apply {
+                    userCache.prepare(this@getClient, it)
+                    statusCache.prepare(this@getClient, it, userCache)
+                }
+            }
+            ?: application.currentClient
 }
 
 fun Intent.setAccountKey(accessToken: AccessToken) = apply {

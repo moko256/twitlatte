@@ -204,7 +204,7 @@ public class MainActivity extends AppCompatActivity implements DrawerLayout.Draw
                 GlobalApplicationKt.preferenceRepository.putString(
                         KEY_ACCOUNT_KEY, accessToken.getKeyString()
                 );
-                ((GlobalApplication) getApplication()).initTwitter(accessToken);
+                ((GlobalApplication) getApplication()).initCurrentClient(accessToken);
                 client = GlobalApplicationKt.getClient(this);
                 adapter.updateSelectedPosition(accessToken);
                 updateDrawerImage();
@@ -229,7 +229,7 @@ public class MainActivity extends AppCompatActivity implements DrawerLayout.Draw
                                 GlobalApplicationKt.preferenceRepository.putString(
                                         KEY_ACCOUNT_KEY, accessToken.getKeyString()
                                 );
-                                ((GlobalApplication) getApplication()).initTwitter(accessToken);
+                                ((GlobalApplication) getApplication()).initCurrentClient(accessToken);
                                 client = GlobalApplicationKt.getClient(this);
                                 adapter.updateSelectedPosition(accessToken);
                                 updateDrawerImage();
@@ -239,7 +239,7 @@ public class MainActivity extends AppCompatActivity implements DrawerLayout.Draw
                                 GlobalApplicationKt.preferenceRepository.putString(
                                         KEY_ACCOUNT_KEY, "-1"
                                 );
-                                ((GlobalApplication) getApplication()).clearTwitter();
+                                ((GlobalApplication) getApplication()).clearCurrentClient();
                                 startActivityForResult(new Intent(this, OAuthActivity.class), REQUEST_OAUTH);
                             }
                         }
@@ -502,7 +502,7 @@ public class MainActivity extends AppCompatActivity implements DrawerLayout.Draw
                                     User user = userHelper.getCachedUser(id);
                                     if (user == null){
                                         try {
-                                            user = ((GlobalApplication) getApplication()).createTwitterInstance(accessToken).verifyCredentials();
+                                            user = ((GlobalApplication) getApplication()).createApiClientInstance(accessToken).verifyCredentials();
                                             userHelper.addCachedUser(user);
                                         } catch (Throwable e) {
                                             e.printStackTrace();
