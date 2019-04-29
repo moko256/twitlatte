@@ -35,7 +35,7 @@ internal fun <T: Any> MastodonRequest<T>.executeAndConvertError(): T {
         throw Exception(
                 e.response?.use {
                     try {
-                        gson.fromJson(it.body().charStream(), Error::class.java).error
+                        gson.fromJson(it.body()!!.charStream(), Error::class.java).error
                     } catch (e: JsonParseException) {
                         it.message() ?: it.toString()
                     }
