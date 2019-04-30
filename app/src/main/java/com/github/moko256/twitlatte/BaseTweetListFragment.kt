@@ -39,6 +39,7 @@ import com.github.moko256.twitlatte.model.impl.ListModelImpl
 import com.github.moko256.twitlatte.model.impl.StatusActionModelImpl
 import com.github.moko256.twitlatte.repository.server.base.ListServerRepository
 import com.github.moko256.twitlatte.text.TwitterStringUtils
+import com.github.moko256.twitlatte.view.dpToPx
 import com.github.moko256.twitlatte.viewmodel.ListViewModel
 import com.github.moko256.twitlatte.widget.convertObservableConsumer
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -88,7 +89,7 @@ abstract class BaseTweetListFragment : BaseListFragment(), ListServerRepository<
             listViewModel.start()
         }
 
-        val dp4 = Math.round(4f * resources.displayMetrics.density)
+        val dp4 = dpToPx(4)
 
         recyclerView.clipToPadding = false
         recyclerView.setPadding(dp4, 0, dp4, 0)

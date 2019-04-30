@@ -30,6 +30,7 @@ import com.bumptech.glide.module.AppGlideModule
 import com.bumptech.glide.request.RequestOptions
 import com.github.moko256.twitlatte.R
 import com.github.moko256.twitlatte.net.appOkHttpClientInstance
+import com.github.moko256.twitlatte.view.dpToPx
 import java.io.InputStream
 
 /**
@@ -44,7 +45,7 @@ class GlideModule : AppGlideModule() {
     override fun applyOptions(context: Context, builder: GlideBuilder) {
         var error = AppCompatResources.getDrawable(context, R.drawable.ic_cloud_off_black_24dp)
         if (error != null) {
-            val padding = Math.round(8 * context.resources.displayMetrics.density)
+            val padding = context.dpToPx(8)
             DrawableCompat.setTint(error, ContextCompat.getColor(context, R.color.color_accent))
             error = InsetDrawable(error, padding)
             builder.setDefaultRequestOptions(RequestOptions()

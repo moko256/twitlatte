@@ -20,6 +20,7 @@ import android.content.res.Resources
 import android.graphics.Rect
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
+import com.github.moko256.twitlatte.view.dpToPx
 
 /**
  * Created by moko256 on 2019/01/05.
@@ -27,7 +28,7 @@ import androidx.recyclerview.widget.RecyclerView
  * @author moko256
  */
 class MaterialListTopMarginDecoration(resource: Resources): RecyclerView.ItemDecoration() {
-    private val dp8 = Math.round(resource.displayMetrics.density * 8f)
+    private val dp8 = resource.dpToPx(8)
 
     override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
         if (parent.getChildAdapterPosition(view) == 0) {

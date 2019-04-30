@@ -26,6 +26,14 @@ import android.text.style.ImageSpan;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.annotation.FloatRange;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
+import androidx.appcompat.content.res.AppCompatResources;
+import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
+
 import com.github.moko256.latte.client.base.entity.AccessToken;
 import com.github.moko256.latte.client.base.entity.StatusAction;
 import com.github.moko256.latte.html.entity.Link;
@@ -35,16 +43,10 @@ import com.github.moko256.twitlatte.ShowUserActivity;
 import com.github.moko256.twitlatte.intent.AppCustomTabsKt;
 import com.github.moko256.twitlatte.text.style.ClickableBoldSpan;
 import com.github.moko256.twitlatte.text.style.ClickableNoLineSpan;
+import com.github.moko256.twitlatte.view.DpToPxKt;
 
 import java.util.Arrays;
 import java.util.Objects;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
-import androidx.appcompat.content.res.AppCompatResources;
-import androidx.core.content.ContextCompat;
-import androidx.core.graphics.drawable.DrawableCompat;
 
 import static com.github.moko256.latte.client.mastodon.MastodonApiClientImplKt.CLIENT_TYPE_MASTODON;
 import static com.github.moko256.latte.client.twitter.TwitterApiClientImplKt.CLIENT_TYPE_TWITTER;
@@ -82,6 +84,9 @@ public class TwitterStringUtils {
         return maxTable[x];
     }
 
+    private static int uRound(@FloatRange(from = 0f) float value) {
+        return (int) (value + 0.5);
+    }
     public static CharSequence convertToSIUnitString(int num, int unitExponent, int back, char[] units){
         if (num == 0) return "0";
         StringBuilder builder = new StringBuilder(unitExponent + 2);
@@ -100,9 +105,9 @@ public class TwitterStringUtils {
                 Arrays.fill(zeros, '0');
                 zeros[back] = '.';
                 builder.append(zeros)
-                        .append(Math.round((float) uPow10(back) * num / m));
+                        .append(uRound((float) (uPow10(back) * num) / m));
             } else {
-                builder.append(Math.round((float) num / m));
+                builder.append(uRound((float) num / m));
             }
             builder.append(units[e - 1]);
         }
@@ -271,8 +276,8 @@ public class TwitterStringUtils {
 
         Context context = textView.getContext();
 
-        int textSize = Math.round(textView.getLineHeight());
-        int left = Math.round(4 * context.getResources().getDisplayMetrics().density);
+        int textSize = uRound(textView.getLineHeight());
+        int left = DpToPxKt.dpToPx(context, 4);
 
         if (isLocked){
             int length = result.length();

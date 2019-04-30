@@ -33,6 +33,7 @@ import com.github.moko256.twitlatte.R
 import com.github.moko256.twitlatte.ShowMediasActivity
 import com.github.moko256.twitlatte.glide.GlideRequests
 import com.github.moko256.twitlatte.text.TwitterStringUtils
+import com.github.moko256.twitlatte.view.dpToPx
 import jp.wasabeef.glide.transformations.BlurTransformation
 
 /**
@@ -66,8 +67,8 @@ class ImagesTableView @JvmOverloads constructor(
     private val gifMark = AppCompatResources.getDrawable(context, R.drawable.ic_gif_white_24dp)
 
     private val dp = context.resources.displayMetrics.density
-    private val dividerSize = Math.round(4 * dp)
-    private val markSize = Math.round(48 * dp)
+    private val dividerSize = dpToPx(4, dp)
+    private val markSize = dpToPx(48, dp)
 
     private val imageFilter = PorterDuffColorFilter(0x33000000, PorterDuff.Mode.SRC_ATOP)
     private val maxMediaSize = 4

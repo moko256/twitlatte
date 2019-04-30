@@ -29,6 +29,7 @@ import com.github.moko256.latte.client.twitter.CLIENT_TYPE_TWITTER
 import com.github.moko256.twitlatte.intent.excludeOwnApp
 import com.github.moko256.twitlatte.repository.KEY_ACCOUNT_KEY_LINK_OPEN
 import com.github.moko256.twitlatte.text.TwitterStringUtils
+import com.github.moko256.twitlatte.view.dpToPx
 import java.util.*
 
 /**
@@ -240,8 +241,8 @@ class LinkOpenWithActivity : Activity() {
                         }
                 if (accountsLinkOpenWith == null) {
                     val dp= resources.displayMetrics.density
-                    val dp16 = Math.round(dp * 16)
-                    val dp24 = Math.round(dp * 24)
+                    val dp16 = dpToPx(16, dp)
+                    val dp24 = dpToPx(24, dp)
                     AlertDialog.Builder(this)
                             .setTitle(R.string.open_with_accounts)
                             .setView(TextView(this).apply {

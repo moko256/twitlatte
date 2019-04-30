@@ -60,6 +60,7 @@ import com.github.moko256.twitlatte.model.impl.PostStatusModelImpl;
 import com.github.moko256.twitlatte.rx.LocationSingleBuilder;
 import com.github.moko256.twitlatte.rx.VerifyCredentialOnSubscribe;
 import com.github.moko256.twitlatte.text.NoSpanInputFilterKt;
+import com.github.moko256.twitlatte.view.DpToPxKt;
 import com.github.moko256.twitlatte.widget.ImageKeyboardEditText;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -231,7 +232,7 @@ public class PostActivity extends AppCompatActivity {
                     @NonNull RecyclerView parent,
                     @NonNull RecyclerView.State state
             ) {
-                outRect.right = Math.round(getResources().getDisplayMetrics().density);
+                outRect.right = DpToPxKt.oneDpToPx(getResources().getDisplayMetrics().density);
             }
         });
 

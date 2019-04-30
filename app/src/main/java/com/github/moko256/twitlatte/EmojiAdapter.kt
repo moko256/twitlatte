@@ -23,6 +23,7 @@ import androidx.annotation.DrawableRes
 import androidx.recyclerview.widget.RecyclerView
 import com.github.moko256.latte.client.base.entity.Emoji
 import com.github.moko256.twitlatte.glide.GlideRequests
+import com.github.moko256.twitlatte.view.dpToPx
 
 /**
  * Created by moko256 on 2018/12/11.
@@ -39,7 +40,7 @@ class EmojiAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EmojiViewHolder {
         val imageView = ImageView(context)
-        val dp32 = Math.round(context.resources.displayMetrics.density * 32)
+        val dp32 = context.dpToPx(32)
         imageView.layoutParams = ViewGroup.LayoutParams(dp32, dp32)
         return EmojiViewHolder(
                 imageView = imageView,

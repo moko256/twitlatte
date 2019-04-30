@@ -36,7 +36,7 @@ class PercentBarBackgroundDrawable: Drawable() {
                     Rect(
                             halfLineSize.toInt(),
                             lineSize.toInt(),
-                            Math.round(percent * bounds.width() / 100 - halfLineSize),
+                            ((percent * bounds.width() / 100 - halfLineSize) + 0.5f).toInt(),
                             bounds.height() - lineSize.toInt()
                     ),
                     Paint().also {
