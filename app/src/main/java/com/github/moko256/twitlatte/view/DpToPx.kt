@@ -18,20 +18,19 @@ package com.github.moko256.twitlatte.view
 
 import android.content.Context
 import android.content.res.Resources
+import androidx.annotation.FloatRange
 import androidx.annotation.IntRange
 import androidx.fragment.app.Fragment
 
-fun oneDpToPx(density: Float): Int {
+fun oneDpToPx(@FloatRange(from = 1.0) density: Float): Int {
     val res = (density + 0.5f).toInt()
     if (res != 0) return res
-    if (density == 0f) return 0
     return 1
 }
 
-fun dpToPx(@IntRange(from = 0) dp: Int, density: Float): Int {
+fun dpToPx(@IntRange(from = 1) dp: Int, density: Float): Int {
     val res = (dp * density + 0.5f).toInt()
     if (res != 0) return res
-    if (dp == 0) return 0
     return 1
 }
 
