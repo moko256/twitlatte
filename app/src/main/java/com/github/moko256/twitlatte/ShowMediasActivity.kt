@@ -31,6 +31,7 @@ import java.util.*
  *
  * @author moko256
  */
+@Suppress("UNCHECKED_CAST")
 class ShowMediasActivity : AppCompatActivity() {
 
     public override fun onCreate(savedInstanceState: Bundle?) {

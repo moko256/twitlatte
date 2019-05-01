@@ -34,6 +34,6 @@ fun dpToPx(@IntRange(from = 1) dp: Int, density: Float): Int {
     return 1
 }
 
-inline fun Context.dpToPx(dp: Int) = dpToPx(dp, resources.displayMetrics.density)
-inline fun Fragment.dpToPx(dp: Int) = dpToPx(dp, resources.displayMetrics.density)
-inline fun Resources.dpToPx(dp: Int) = dpToPx(dp, displayMetrics.density)
+fun Context.dpToPx(dp: Int) = dpToPx(dp, resources.displayMetrics.density)
+fun Fragment.dpToPx(dp: Int) = dpToPx(dp, resources.displayMetrics.density)
+fun Resources.dpToPx(dp: Int) = dpToPx(dp, displayMetrics.density)
