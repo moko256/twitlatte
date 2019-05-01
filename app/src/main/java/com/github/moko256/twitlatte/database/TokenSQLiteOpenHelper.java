@@ -96,7 +96,7 @@ public class TokenSQLiteOpenHelper extends SQLiteOpenHelper {
             Cursor c = database.query(
                     TABLE_NAME,
                     TABLE_COLUMNS,
-                    "url = '" + pair.getFirst() + "' AND " + "userId = " + String.valueOf(pair.getSecond()),
+                    "url = '" + pair.getFirst() + "' AND " + "userId = " + pair.getSecond(),
                     null, null, null, null, "1");
 
 
@@ -144,7 +144,7 @@ public class TokenSQLiteOpenHelper extends SQLiteOpenHelper {
     public void deleteAccessToken(AccessToken accessToken){
         synchronized (this) {
             SQLiteDatabase database = getWritableDatabase();
-            database.delete(TABLE_NAME, "url = '" + accessToken.getUrl() + "' AND " + "userId = " + String.valueOf(accessToken.getUserId()), null);
+            database.delete(TABLE_NAME, "url = '" + accessToken.getUrl() + "' AND " + "userId = " + accessToken.getUserId(), null);
             database.close();
         }
     }

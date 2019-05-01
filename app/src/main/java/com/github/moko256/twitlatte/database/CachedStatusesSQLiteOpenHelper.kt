@@ -166,13 +166,13 @@ class CachedStatusesSQLiteOpenHelper(
                             sourceWebsite = c.getString(6),
                             inReplyToStatusId = c.getLong(7),
                             inReplyToUserId = c.getLong(8),
-                            isFavorited = c.getInt(9) != 0,
-                            isRepeated = c.getInt(10) != 0,
+                            isFavorited = c.getBoolean(9),
+                            isRepeated = c.getBoolean(10),
                             favoriteCount = c.getInt(11),
                             repeatCount = c.getInt(12),
                             repliesCount = c.getInt(13),
                             inReplyToScreenName = c.getString(14),
-                            isSensitive = c.getInt(15) != 0,
+                            isSensitive = c.getBoolean(15),
                             lang = c.getString(16),
                             mentions = c.getString(17).splitWithComma()?.toTypedArray(),
                             urls = restoreLinks(
@@ -217,12 +217,12 @@ class CachedStatusesSQLiteOpenHelper(
                                     Poll(
                                             pollId,
                                             Date(c.getLong(36)),
-                                            c.getInt(37) == 1,
-                                            c.getInt(38) == 1,
+                                            c.getBoolean(37),
+                                            c.getBoolean(38),
                                             c.getInt(39),
                                             c.getString(40).splitWithComma()?.map { URLDecoder.decode(it, "utf-8") }?: emptyList(),
                                             c.getString(41).splitWithComma()?.map { it.toInt() }?: emptyList(),
-                                            c.getInt(42) == 1
+                                            c.getBoolean(42)
                                     )
                                 } else {
                                     null

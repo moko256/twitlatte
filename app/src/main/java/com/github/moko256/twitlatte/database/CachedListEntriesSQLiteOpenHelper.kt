@@ -75,7 +75,7 @@ class CachedListEntriesSQLiteOpenHelper(
                                 c.getLong(0),
                                 c.getString(1),
                                 c.getString(2),
-                                c.getInt(3) == 1
+                                c.getBoolean(3)
                         ))
                     }
                 } catch (e: Throwable) {

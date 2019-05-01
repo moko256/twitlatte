@@ -16,6 +16,7 @@
 
 package com.github.moko256.twitlatte.database
 
+import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 
 /**
@@ -30,3 +31,5 @@ fun SQLiteDatabase.addColumn(tableName: String, columnName: String, defaultValue
         execSQL("update $tableName set $columnName=$defaultValue")
     }
 }
+
+fun Cursor.getBoolean(index: Int) = getInt(index) == 1
