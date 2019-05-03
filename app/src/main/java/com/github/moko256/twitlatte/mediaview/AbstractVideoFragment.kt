@@ -16,6 +16,7 @@
 
 package com.github.moko256.twitlatte.mediaview
 
+import android.net.Uri
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -32,18 +33,24 @@ import com.google.android.exoplayer2.Player.REPEAT_MODE_ALL
 import com.google.android.exoplayer2.Player.STATE_READY
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSourceFactory
-import com.google.android.exoplayer2.source.MediaSource
+import com.google.android.exoplayer2.source.ads.AdsMediaSource
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.ui.PlayerView
 import com.google.android.exoplayer2.ui.TrackSelectionDialogBuilder
-import com.google.android.exoplayer2.upstream.DataSource
 
 /**
  * Created by moko256 on 2018/10/07.
  *
  * @author moko256
  */
-abstract class AbstractVideoFragment: AbstractMediaFragment(), Player.EventListener {
+abstract class AbstractVideoFragment : AbstractMediaFragment(), Player.EventListener {
+
+    companion object {
+        val dataSourceFactory = OkHttpDataSourceFactory(
+                appOkHttpClientInstance,
+                null
+        )
+    }
 
     private lateinit var videoPlayView: PlayerView
     private lateinit var player: SimpleExoPlayer
@@ -66,12 +73,12 @@ abstract class AbstractVideoFragment: AbstractMediaFragment(), Player.EventListe
                 AudioAndVideoRenderer(requireContext()),
                 trackSelector
         ).also {
-            it.prepare(generateMediaSource(
-                    OkHttpDataSourceFactory(
-                            appOkHttpClientInstance,
-                            null
-                    )
-            ))
+            it.prepare(
+                    getMediaSourceFactory()
+                            .createMediaSource(
+                                    Uri.parse(media.originalUrl)
+                            )
+            )
 
             if (isLoop) {
                 it.repeatMode = REPEAT_MODE_ALL
@@ -181,5 +188,5 @@ abstract class AbstractVideoFragment: AbstractMediaFragment(), Player.EventListe
     override fun returnLayoutId() = R.layout.fragment_video
     override fun returnMenuId() = R.menu.fragment_video_toolbar
 
-    protected abstract fun generateMediaSource(factory: DataSource.Factory): MediaSource
+    protected abstract fun getMediaSourceFactory(): AdsMediaSource.MediaSourceFactory
 }

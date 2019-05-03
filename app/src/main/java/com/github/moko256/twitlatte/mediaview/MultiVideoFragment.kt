@@ -16,20 +16,19 @@
 
 package com.github.moko256.twitlatte.mediaview
 
-import android.net.Uri
-import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.hls.HlsMediaSource
-import com.google.android.exoplayer2.upstream.DataSource
 
 /**
  * Created by moko256 on 2018/10/07.
  *
  * @author moko256
  */
-class MultiVideoFragment: AbstractVideoFragment() {
-    override fun generateMediaSource(factory: DataSource.Factory): MediaSource {
-        return HlsMediaSource.Factory(factory)
-                .setAllowChunklessPreparation(true)
-                .createMediaSource(Uri.parse(media.originalUrl))
+class MultiVideoFragment : AbstractVideoFragment() {
+    private companion object {
+        val factory = HlsMediaSource.Factory(dataSourceFactory).apply {
+            setAllowChunklessPreparation(true)
+        }
     }
+
+    override fun getMediaSourceFactory() = factory
 }
