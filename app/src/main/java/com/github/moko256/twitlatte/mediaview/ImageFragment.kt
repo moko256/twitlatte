@@ -56,7 +56,7 @@ class ImageFragment: AbstractMediaFragment() {
             }
         }
         imageView.setOnScaleChangeListener { scaleFactor: Float, _: Float, _: Float ->
-            (view as FlingLayout).isDragEnabled = scaleFactor <= 1f
+            (view as FlingLayout).isDragEnabled = scaleFactor <= 1.1f
         }
         val requests = GlideApp.with(this)
         val url = media.originalUrl
