@@ -521,7 +521,9 @@ public class MainActivity extends AppCompatActivity implements DrawerLayout.Draw
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
                                 o -> {
+                                    @SuppressWarnings("unchecked")
                                     Pair<ArrayList<User>, ArrayList<AccessToken>> pairs = (Pair<ArrayList<User>, ArrayList<AccessToken>>) o;
+
                                     adapter.clearImages();
                                     adapter.addAndUpdate(pairs.first, pairs.second);
                                     adapter.setSelectedPosition(client.getAccessToken());
