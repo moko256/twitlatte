@@ -23,14 +23,17 @@ import com.github.moko256.twitlatte.cacheMap.StatusCacheMap
 import com.github.moko256.twitlatte.intent.launchChromeCustomTabs
 import com.github.moko256.twitlatte.model.base.StatusActionModel
 import io.reactivex.Observable
+import io.reactivex.subjects.PublishSubject
 
 class OpenInBrowserStatusActionModelImpl(
         private val statusCacheMap: StatusCacheMap,
         private val context: Context
 ) : StatusActionModel {
+    private val observable = PublishSubject.create<Long>()
+
     override fun getDidActionObservable(): Observable<StatusAction> = Observable.empty()
 
-    override fun getStatusObservable(): Observable<Long> = Observable.empty()
+    override fun getStatusObservable(): Observable<Long> = observable
 
     override fun getErrorObservable(): Observable<Throwable> = Observable.empty()
 
@@ -59,6 +62,7 @@ class OpenInBrowserStatusActionModelImpl(
     }
 
     private fun openInBrowser(targetStatusId: Long) {
+        observable.onNext(targetStatusId)
         (statusCacheMap.get(targetStatusId) as Status?)?.url?.let {
             launchChromeCustomTabs(context, it, true)
         }
