@@ -35,8 +35,8 @@ import com.github.moko256.twitlatte.entity.Client
 import com.github.moko256.twitlatte.entity.EventType
 import com.github.moko256.twitlatte.entity.UpdateEvent
 import com.github.moko256.twitlatte.glide.GlideApp
+import com.github.moko256.twitlatte.model.createStatusActionModel
 import com.github.moko256.twitlatte.model.impl.ListModelImpl
-import com.github.moko256.twitlatte.model.impl.StatusActionModelImpl
 import com.github.moko256.twitlatte.repository.server.base.ListServerRepository
 import com.github.moko256.twitlatte.text.TwitterStringUtils
 import com.github.moko256.twitlatte.view.dpToPx
@@ -64,7 +64,8 @@ abstract class BaseTweetListFragment : BaseListFragment(), ListServerRepository<
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         val value = TypedValue()
-        val toastTopPosition = if (requireContext().theme.resolveAttribute(R.attr.actionBarSize, value, true)) {
+        val context = requireContext()
+        val toastTopPosition = if (context.theme.resolveAttribute(R.attr.actionBarSize, value, true)) {
             TypedValue.complexToDimensionPixelOffset(value.data, resources.displayMetrics)
         } else {
             0
@@ -77,15 +78,12 @@ abstract class BaseTweetListFragment : BaseListFragment(), ListServerRepository<
                     this,
                     client,
                     CachedIdListSQLiteOpenHelper(
-                            requireContext().applicationContext,
+                            context.applicationContext,
                             client.accessToken,
                             cachedIdsDatabaseName
                     )
             )
-            listViewModel.statusActionModel = StatusActionModelImpl(
-                    client.apiClient,
-                    client.statusCache
-            )
+            listViewModel.statusActionModel = createStatusActionModel(context, client)
             listViewModel.start()
         }
 

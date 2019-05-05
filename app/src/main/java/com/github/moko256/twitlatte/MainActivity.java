@@ -54,6 +54,7 @@ import com.github.moko256.twitlatte.database.CachedUsersSQLiteOpenHelper;
 import com.github.moko256.twitlatte.entity.Client;
 import com.github.moko256.twitlatte.glide.GlideApp;
 import com.github.moko256.twitlatte.glide.GlideRequests;
+import com.github.moko256.twitlatte.intent.AppCustomTabsKt;
 import com.github.moko256.twitlatte.model.AccountsModel;
 import com.github.moko256.twitlatte.rx.VerifyCredentialOnSubscribe;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
@@ -71,7 +72,9 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 
+import static com.github.moko256.latte.client.twitter.TwitterApiClientImplKt.CLIENT_TYPE_TWITTER;
 import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY_ACCOUNT_KEY;
+import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY_OPEN_IN_BROWSER_IN_TWITTER;
 
 /**
  * Created by moko256 on 2015/11/08.
@@ -248,7 +251,7 @@ public class MainActivity extends AppCompatActivity implements DrawerLayout.Draw
                 .show();
         accountListView.setAdapter(adapter);
 
-        findViewById(R.id.fab).setOnClickListener(v -> startActivity(new Intent(this, PostActivity.class)));
+        findViewById(R.id.fab).setOnClickListener(v -> openPostActivity());
 
         tabLayout= findViewById(R.id.toolbar_tab);
         tabLayout.addOnTabSelectedListener(this);
@@ -350,7 +353,7 @@ public class MainActivity extends AppCompatActivity implements DrawerLayout.Draw
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_N){
-            startActivity(new Intent(this, PostActivity.class));
+            openPostActivity();
         } else if (event.isShiftPressed() && keyCode == KeyEvent.KEYCODE_SLASH){
             new AlertDialog.Builder(this)
                     .setTitle("KeyBoard Shortcuts")
@@ -365,6 +368,17 @@ public class MainActivity extends AppCompatActivity implements DrawerLayout.Draw
             return true;
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    public void openPostActivity() {
+        if (GlobalApplicationKt.preferenceRepository.getBoolean(KEY_OPEN_IN_BROWSER_IN_TWITTER, true)
+                && client != null
+                && client.getAccessToken().getClientType() == CLIENT_TYPE_TWITTER
+        ) {
+            AppCustomTabsKt.launchChromeCustomTabs(this, "https://twitter.com/intent/tweet", true);
+        } else {
+            startActivity(new Intent(this, PostActivity.class));
+        }
     }
 
     @Override

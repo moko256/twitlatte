@@ -46,8 +46,8 @@ import com.github.moko256.latte.client.base.entity.User;
 import com.github.moko256.twitlatte.entity.Client;
 import com.github.moko256.twitlatte.glide.GlideApp;
 import com.github.moko256.twitlatte.intent.AppCustomTabsKt;
+import com.github.moko256.twitlatte.model.StatusActionModelCreatorKt;
 import com.github.moko256.twitlatte.model.base.StatusActionModel;
-import com.github.moko256.twitlatte.model.impl.StatusActionModelImpl;
 import com.github.moko256.twitlatte.text.NoSpanInputFilterKt;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
 
@@ -97,10 +97,7 @@ public class ShowTweetActivity extends AppCompatActivity implements TextWatcher 
         statusId = getIntent().getLongExtra("statusId", -1);
 
         client = GlobalApplicationKt.getClient(this);
-        statusActionModel = new StatusActionModelImpl(
-                client.getApiClient(),
-                client.getStatusCache()
-        );
+        statusActionModel = StatusActionModelCreatorKt.createStatusActionModel(this, client);
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
