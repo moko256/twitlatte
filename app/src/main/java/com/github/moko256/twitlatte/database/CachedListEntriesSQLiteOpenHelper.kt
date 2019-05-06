@@ -35,7 +35,7 @@ class CachedListEntriesSQLiteOpenHelper(
         context: Context,
         accessToken: AccessToken?,
         userId: Long
-): SQLiteOpenHelper(
+) : SQLiteOpenHelper(
         context,
         if (accessToken != null) {
             File(context.cacheDir, "${accessToken.getKeyString()}/$userId/ListEntries.db").absolutePath
@@ -58,59 +58,59 @@ class CachedListEntriesSQLiteOpenHelper(
     }
 
     fun getListEntries(): List<ListEntry> {
-            var listEntries: MutableList<ListEntry>
+        var listEntries: MutableList<ListEntry>
 
-            synchronized(this) {
-                val database = readableDatabase
-                val c = database.query(
-                        TABLE_NAME,
-                        TABLE_COLUMNS,
-                        null, null, null, null, null)
+        synchronized(this) {
+            val database = readableDatabase
+            val c = database.query(
+                    TABLE_NAME,
+                    TABLE_COLUMNS,
+                    null, null, null, null, null)
 
-                try {
-                    listEntries = ArrayList(c.count)
+            try {
+                listEntries = ArrayList(c.count)
 
-                    while (c.moveToNext()) {
-                        listEntries.add(ListEntry(
-                                c.getLong(0),
-                                c.getString(1),
-                                c.getString(2),
-                                c.getBoolean(3)
-                        ))
-                    }
-                } catch (e: Throwable) {
-                    listEntries = mutableListOf()
-                    val writableDatabase = writableDatabase
-                    writableDatabase.delete(TABLE_NAME, null, null)
-                    writableDatabase.close()
+                while (c.moveToNext()) {
+                    listEntries.add(ListEntry(
+                            c.getLong(0),
+                            c.getString(1),
+                            c.getString(2),
+                            c.getBoolean(3)
+                    ))
                 }
-
-                c.close()
-                database.close()
+            } catch (e: Throwable) {
+                listEntries = mutableListOf()
+                val writableDatabase = writableDatabase
+                writableDatabase.delete(TABLE_NAME, null, null)
+                writableDatabase.close()
             }
 
-            return listEntries
+            c.close()
+            database.close()
         }
 
-        fun setListEntries(listEntries: List<ListEntry>) {
-            synchronized(this) {
-                val database = writableDatabase
-                database.beginTransaction()
-                database.delete(TABLE_NAME, null, null)
+        return listEntries
+    }
 
-                listEntries.forEach {
-                    val contentValues = ContentValues(4)
-                    contentValues.put(TABLE_COLUMNS[0], it.listId)
-                    contentValues.put(TABLE_COLUMNS[1], it.title)
-                    contentValues.put(TABLE_COLUMNS[2], it.description)
-                    contentValues.put(TABLE_COLUMNS[3], it.isPublic)
+    fun setListEntries(listEntries: List<ListEntry>) {
+        synchronized(this) {
+            val database = writableDatabase
+            database.beginTransaction()
+            database.delete(TABLE_NAME, null, null)
 
-                    database.insert(TABLE_NAME, null, contentValues)
-                }
+            listEntries.forEach {
+                val contentValues = ContentValues(4)
+                contentValues.put(TABLE_COLUMNS[0], it.listId)
+                contentValues.put(TABLE_COLUMNS[1], it.title)
+                contentValues.put(TABLE_COLUMNS[2], it.description)
+                contentValues.put(TABLE_COLUMNS[3], it.isPublic)
 
-                database.setTransactionSuccessful()
-                database.endTransaction()
-                database.close()
+                database.insert(TABLE_NAME, null, contentValues)
             }
+
+            database.setTransactionSuccessful()
+            database.endTransaction()
+            database.close()
         }
+    }
 }
