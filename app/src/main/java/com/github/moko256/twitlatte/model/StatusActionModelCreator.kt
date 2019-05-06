@@ -26,12 +26,14 @@ import com.github.moko256.twitlatte.preferenceRepository
 import com.github.moko256.twitlatte.repository.KEY_OPEN_IN_BROWSER_IN_TWITTER
 
 fun createStatusActionModel(context: Context, client: Client): StatusActionModel {
+    val statusActionModelImpl = StatusActionModelImpl(client.apiClient, client.statusCache)
+
     return if (
             preferenceRepository.getBoolean(KEY_OPEN_IN_BROWSER_IN_TWITTER, true) &&
             client.accessToken.clientType == CLIENT_TYPE_TWITTER
     ) {
-        OpenInBrowserStatusActionModelImpl(client.statusCache, context)
+        OpenInBrowserStatusActionModelImpl(statusActionModelImpl, client.statusCache, context)
     } else {
-        StatusActionModelImpl(client.apiClient, client.statusCache)
+        statusActionModelImpl
     }
 }

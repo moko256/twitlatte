@@ -18,7 +18,6 @@ package com.github.moko256.twitlatte.model.impl
 
 import android.content.Context
 import com.github.moko256.latte.client.base.entity.Status
-import com.github.moko256.latte.client.base.entity.StatusAction
 import com.github.moko256.twitlatte.cacheMap.StatusCacheMap
 import com.github.moko256.twitlatte.intent.launchChromeCustomTabs
 import com.github.moko256.twitlatte.model.base.StatusActionModel
@@ -26,20 +25,13 @@ import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 
 class OpenInBrowserStatusActionModelImpl(
+        private val statusActionModel: StatusActionModel,
         private val statusCacheMap: StatusCacheMap,
         private val context: Context
-) : StatusActionModel {
+) : StatusActionModel by statusActionModel {
     private val observable = PublishSubject.create<Long>()
 
-    override fun getDidActionObservable(): Observable<StatusAction> = Observable.empty()
-
-    override fun getStatusObservable(): Observable<Long> = observable
-
-    override fun getErrorObservable(): Observable<Throwable> = Observable.empty()
-
-    override fun updateStatus(targetStatusId: Long) {
-        openInBrowser(targetStatusId)
-    }
+    override fun getStatusObservable(): Observable<Long> = observable.mergeWith(statusActionModel.getStatusObservable())
 
     override fun createFavorite(targetStatusId: Long) {
         openInBrowser(targetStatusId)
