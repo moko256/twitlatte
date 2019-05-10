@@ -20,7 +20,7 @@ apply plugin: 'kotlin'
 dependencies {
     api 'org.twitter4j:twitter4j-core:4.0.7'
     api 'org.twitter4j:twitter4j-http2-support:4.0.7'
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
 }
 
 repositories {

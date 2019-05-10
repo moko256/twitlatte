@@ -15,11 +15,14 @@
  */
 
 include ':app', ':component_client_base', ':component_html_parse', ':component_client_twitter', ':component_client_mastodon'
-include ':mastodon4j:mastodon4j'
 include ':alternative_twitter4j'
+
+include ':mastodon4j'
+project(':mastodon4j').projectDir = new File('mastodon4j/mastodon4j')
 
 include ':japng-android:android_api'
 include ':japng:api'
 project(':japng:api').projectDir = new File('japng-android/japng/api')
 
-include ':twitter-text:java'
+include ':twitter-text'
+project(':twitter-text').projectDir = new File('twitter-text/java')

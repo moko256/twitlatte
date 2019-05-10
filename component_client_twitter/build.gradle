@@ -18,12 +18,12 @@ apply plugin: 'java-library'
 apply plugin: 'kotlin'
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
 
     api project(':component_client_base')
 
     implementation project(':alternative_twitter4j')
-    implementation project(':twitter-text:java')
+    implementation project(':twitter-text')
 }
 
 repositories {

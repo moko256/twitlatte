@@ -18,12 +18,12 @@ apply plugin: 'java-library'
 apply plugin: 'kotlin'
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
 
     api project(':component_html_parse')
 
     //noinspection GradleDependency
-    api 'com.squareup.okhttp3:okhttp:3.12.2'
+    api "com.squareup.okhttp3:okhttp:$okhttpVersion"
     api 'com.squareup.okio:okio:2.2.2'
 }
 
