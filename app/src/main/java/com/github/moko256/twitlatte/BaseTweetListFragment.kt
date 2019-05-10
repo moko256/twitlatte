@@ -35,8 +35,8 @@ import com.github.moko256.twitlatte.entity.Client
 import com.github.moko256.twitlatte.entity.EventType
 import com.github.moko256.twitlatte.entity.UpdateEvent
 import com.github.moko256.twitlatte.glide.GlideApp
-import com.github.moko256.twitlatte.model.createStatusActionModel
 import com.github.moko256.twitlatte.model.impl.ListModelImpl
+import com.github.moko256.twitlatte.model.impl.StatusActionModelImpl
 import com.github.moko256.twitlatte.repository.server.base.ListServerRepository
 import com.github.moko256.twitlatte.text.TwitterStringUtils
 import com.github.moko256.twitlatte.view.dpToPx
@@ -83,7 +83,10 @@ abstract class BaseTweetListFragment : BaseListFragment(), ListServerRepository<
                             cachedIdsDatabaseName
                     )
             )
-            listViewModel.statusActionModel = createStatusActionModel(context, client)
+            listViewModel.statusActionModel = StatusActionModelImpl(
+                    client.apiClient,
+                    client.statusCache
+            )
             listViewModel.start()
         }
 

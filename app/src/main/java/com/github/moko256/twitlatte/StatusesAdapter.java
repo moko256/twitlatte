@@ -18,7 +18,6 @@ package com.github.moko256.twitlatte;
 
 import android.app.Activity;
 import android.content.Context;
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,7 +38,6 @@ import com.github.moko256.twitlatte.glide.GlideRequests;
 import com.github.moko256.twitlatte.intent.AppCustomTabsKt;
 import com.github.moko256.twitlatte.model.base.StatusActionModel;
 import com.github.moko256.twitlatte.repository.PreferenceRepository;
-import com.github.moko256.twitlatte.repository.PreferenceRepositoryKt;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
 import com.github.moko256.twitlatte.widget.ImagesTableView;
 
@@ -47,7 +45,6 @@ import java.util.List;
 
 import kotlin.Unit;
 
-import static com.github.moko256.latte.client.twitter.TwitterApiClientImplKt.CLIENT_TYPE_TWITTER;
 import static com.github.moko256.twitlatte.GlobalApplicationKt.preferenceRepository;
 import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY_HIDE_SENSITIVE_MEDIA;
 import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY_IS_PATTERN_TWEET_MUTE;
@@ -211,26 +208,6 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             statusViewBinder = new StatusViewBinder(client.getAccessToken(), glideRequests, client.getMediaUrlConverter(), itemView);
         }
 
-        private void showPost(Long id, Bundle bundle) {
-            if (GlobalApplicationKt.preferenceRepository.getBoolean(PreferenceRepositoryKt.KEY_OPEN_IN_BROWSER_IN_TWITTER, true)
-                    && client.getAccessToken().getClientType() == CLIENT_TYPE_TWITTER
-            ) {
-                AppCustomTabsKt.launchChromeCustomTabs(
-                        context,
-                        ((Status) client.getStatusCache().get(id)).getUrl(),
-                        true
-                );
-            } else {
-                context.startActivity(
-                        GlobalApplicationKt.setAccountKeyForActivity(
-                                ShowTweetActivity.getIntent(context, id),
-                                (Activity) context
-                        ),
-                        bundle
-                );
-            }
-        }
-
         void setStatus(User repeatedUser, Repeat repeat, User user, Status status, User quotedStatusUser, Status quotedStatus) {
             View.OnClickListener onContentClick = v -> {
                 ActivityOptionsCompat animation = ActivityOptionsCompat
@@ -239,7 +216,10 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                                 statusViewBinder.getUserImage(),
                                 "icon_image"
                         );
-                showPost(status.getId(), animation.toBundle());
+                context.startActivity(
+                        GlobalApplicationKt.setAccountKeyForActivity(ShowTweetActivity.getIntent(context, status.getId()), ((Activity) context)),
+                        animation.toBundle()
+                );
             };
 
             itemView.setOnClickListener(onContentClick);
@@ -261,7 +241,12 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 );
             });
 
-            statusViewBinder.setOnQuotedStatusClicked(v -> showPost(status.getId(), null));
+            statusViewBinder.setOnQuotedStatusClicked(v -> context.startActivity(
+                    GlobalApplicationKt.setAccountKeyForActivity(
+                            ShowTweetActivity.getIntent(context, quotedStatus.getId()),
+                            ((Activity) context)
+                    )
+            ));
 
             statusViewBinder.setOnCardClicked(
                     v -> AppCustomTabsKt.launchChromeCustomTabs(

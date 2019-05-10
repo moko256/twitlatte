@@ -85,7 +85,7 @@ public class StatusCacheMap {
     }
 
     @Nullable
-    public StatusObject get(Long id){
+    StatusObject get(Long id){
         StatusObject memoryCache = cache.get(id);
         if (memoryCache == null){
             try {
