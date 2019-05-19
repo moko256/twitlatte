@@ -39,6 +39,7 @@ dependencies {
 repositories {
     mavenCentral()
     google()
+    jcenter()
 }
 
 sourceCompatibility = '8'
