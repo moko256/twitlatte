@@ -26,6 +26,16 @@
     public static boolean isLoggable(...) return false;
 }
 
+-assumenosideeffects class com.bumptech.glide.Glide {
+    private static void checkAndInitializeGlide(android.context.Context);
+    public static void init(android.context.Context, com.bumptech.glide.GlideBuilder);
+    public static void tearDown();
+    private static void initializeGlide(android.context.Context);
+    private static void initializeGlide(android.context.Context, com.bumptech.glide.GlideBuilder);
+    private static com.bumptech.glide.GeneratedAppGlideModule getAnnotationGeneratedGlideModules() return null;
+    private static void throwIncorrectGlideModule(java.lang.Exception);
+}
+
 ##---------------Begin: proguard configuration for twitter4j  ----------
 -dontwarn twitter4j.**
 -keepclassmembers class twitter4j.AlternativeHttpClientImpl {
