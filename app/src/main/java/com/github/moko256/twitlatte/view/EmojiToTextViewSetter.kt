@@ -29,9 +29,9 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
+import com.bumptech.glide.RequestManager
 import com.github.moko256.latte.client.base.entity.Emoji
 import com.github.moko256.twitlatte.R
-import com.github.moko256.twitlatte.glide.GlideRequests
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
@@ -51,7 +51,7 @@ import kotlin.collections.HashMap
  */
 
 class EmojiToTextViewSetter(
-        glideRequests: GlideRequests,
+        glideRequests: RequestManager,
         private val textView: TextView,
         text: CharSequence,
         emojis: Array<Emoji>

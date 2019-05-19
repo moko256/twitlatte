@@ -26,12 +26,12 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.appcompat.content.res.AppCompatResources
+import com.bumptech.glide.RequestManager
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.github.moko256.latte.client.base.CLIENT_TYPE_NOTHING
 import com.github.moko256.latte.client.base.entity.Media
 import com.github.moko256.twitlatte.R
 import com.github.moko256.twitlatte.ShowMediasActivity
-import com.github.moko256.twitlatte.glide.GlideRequests
 import com.github.moko256.twitlatte.text.TwitterStringUtils
 import com.github.moko256.twitlatte.view.dpToPx
 import jp.wasabeef.glide.transformations.BlurTransformation
@@ -73,7 +73,7 @@ class ImagesTableView @JvmOverloads constructor(
     private val imageFilter = PorterDuffColorFilter(0x33000000, PorterDuff.Mode.SRC_ATOP)
     private val maxMediaSize = 4
 
-    lateinit var glideRequests: GlideRequests
+    lateinit var glideRequests: RequestManager
 
     private var clientType = CLIENT_TYPE_NOTHING
 

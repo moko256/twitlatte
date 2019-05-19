@@ -39,12 +39,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.bumptech.glide.Glide;
 import com.github.moko256.latte.client.base.entity.Post;
 import com.github.moko256.latte.client.base.entity.Status;
 import com.github.moko256.latte.client.base.entity.UpdateStatus;
 import com.github.moko256.latte.client.base.entity.User;
 import com.github.moko256.twitlatte.entity.Client;
-import com.github.moko256.twitlatte.glide.GlideApp;
 import com.github.moko256.twitlatte.intent.AppCustomTabsKt;
 import com.github.moko256.twitlatte.model.base.StatusActionModel;
 import com.github.moko256.twitlatte.model.impl.StatusActionModelImpl;
@@ -108,7 +108,7 @@ public class ShowTweetActivity extends AppCompatActivity implements TextWatcher 
 
         tweetIsReply = findViewById(R.id.tweet_show_is_reply_text);
         ViewGroup statusViewFrame = findViewById(R.id.tweet_show_tweet);
-        statusViewBinder = new StatusViewBinder(client.getAccessToken(), GlideApp.with(this), client.getMediaUrlConverter(), statusViewFrame);
+        statusViewBinder = new StatusViewBinder(client.getAccessToken(), Glide.with(this), client.getMediaUrlConverter(), statusViewFrame);
         timestampText = findViewById(R.id.tweet_show_timestamp);
         viaText = findViewById(R.id.tweet_show_via);
         replyText= findViewById(R.id.tweet_show_tweet_reply_text);

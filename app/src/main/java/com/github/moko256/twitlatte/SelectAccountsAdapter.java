@@ -28,11 +28,11 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.github.moko256.latte.client.base.entity.AccessToken;
 import com.github.moko256.latte.client.base.entity.User;
 import com.github.moko256.twitlatte.api.MediaUrlConverterGeneratorKt;
-import com.github.moko256.twitlatte.glide.GlideApp;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
 
 import java.util.ArrayList;
@@ -104,7 +104,7 @@ public class SelectAccountsAdapter extends RecyclerView.Adapter<SelectAccountsAd
 
                     Uri image = Uri.parse(MediaUrlConverterGeneratorKt.generateMediaUrlConverter(accessToken.getClientType()).convertProfileIconLargeUrl(user));
                     holder.title.setText(TwitterStringUtils.plusAtMark(user.getScreenName(), accessToken.getUrl()));
-                    GlideApp
+                    Glide
                             .with(holder.itemView)
                             .load(image)
                             .circleCrop()

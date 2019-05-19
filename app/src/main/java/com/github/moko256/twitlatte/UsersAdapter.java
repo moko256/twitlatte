@@ -28,13 +28,14 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.github.moko256.latte.client.base.MediaUrlConverter;
 import com.github.moko256.latte.client.base.entity.Emoji;
 import com.github.moko256.latte.client.base.entity.User;
 import com.github.moko256.twitlatte.cacheMap.UserCacheMap;
-import com.github.moko256.twitlatte.glide.GlideApp;
-import com.github.moko256.twitlatte.glide.GlideRequests;
+
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
 import com.github.moko256.twitlatte.view.EmojiToTextViewSetter;
 
@@ -147,7 +148,7 @@ class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> {
         final TextView userUserName;
         final TextView userUserId;
 
-        final GlideRequests request;
+        final RequestManager request;
         final CompositeDisposable disposable;
 
         ViewHolder(final View itemView) {
@@ -155,7 +156,7 @@ class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> {
             userUserImage = itemView.findViewById(R.id.user_user_image);
             userUserId = itemView.findViewById(R.id.user_user_id);
             userUserName = itemView.findViewById(R.id.user_user_name);
-            request = GlideApp.with(itemView);
+            request = Glide.with(itemView);
             disposable = new CompositeDisposable();
         }
     }

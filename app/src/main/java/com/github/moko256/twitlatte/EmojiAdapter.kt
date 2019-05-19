@@ -21,8 +21,8 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.annotation.DrawableRes
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.RequestManager
 import com.github.moko256.latte.client.base.entity.Emoji
-import com.github.moko256.twitlatte.glide.GlideRequests
 import com.github.moko256.twitlatte.view.dpToPx
 
 /**
@@ -33,7 +33,7 @@ import com.github.moko256.twitlatte.view.dpToPx
 class EmojiAdapter(
         private val list: List<Emoji>,
         private val context: Context,
-        private val glideRequests: GlideRequests,
+        private val glideRequests: RequestManager,
         private val onEmojiClick: (Emoji) -> Unit,
         private val onLoadClick: () -> Unit
 ): RecyclerView.Adapter<EmojiViewHolder>() {
@@ -69,7 +69,7 @@ class EmojiAdapter(
 
 }
 
-class EmojiViewHolder(private val imageView: ImageView, private val glideRequests: GlideRequests): RecyclerView.ViewHolder(imageView) {
+class EmojiViewHolder(private val imageView: ImageView, private val glideRequests: RequestManager): RecyclerView.ViewHolder(imageView) {
     fun setImage(url: String) {
         glideRequests.load(url).into(imageView)
     }

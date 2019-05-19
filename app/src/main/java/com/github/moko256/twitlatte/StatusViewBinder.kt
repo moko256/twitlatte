@@ -31,11 +31,11 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.RequestManager
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.github.moko256.latte.client.base.CLIENT_TYPE_NOTHING
 import com.github.moko256.latte.client.base.MediaUrlConverter
 import com.github.moko256.latte.client.base.entity.*
-import com.github.moko256.twitlatte.glide.GlideRequests
 import com.github.moko256.twitlatte.repository.KEY_HIDE_SENSITIVE_MEDIA
 import com.github.moko256.twitlatte.repository.KEY_TIMELINE_IMAGE_LOAD_MODE
 import com.github.moko256.twitlatte.text.TwitterStringUtils
@@ -52,7 +52,7 @@ import io.reactivex.disposables.Disposable
  */
 class StatusViewBinder(
         private val accessToken: AccessToken,
-        private val glideRequests: GlideRequests,
+        private val glideRequests: RequestManager,
         private val mediaUrlConverter: MediaUrlConverter,
         viewGroup: ViewGroup
 ) {

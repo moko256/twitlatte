@@ -52,9 +52,9 @@ import androidx.core.content.PermissionChecker;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.github.moko256.latte.client.base.entity.Emoji;
 import com.github.moko256.twitlatte.entity.Client;
-import com.github.moko256.twitlatte.glide.GlideApp;
 import com.github.moko256.twitlatte.model.base.PostStatusModel;
 import com.github.moko256.twitlatte.model.impl.PostStatusModelImpl;
 import com.github.moko256.twitlatte.rx.LocationSingleBuilder;
@@ -176,7 +176,7 @@ public class PostActivity extends AppCompatActivity {
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
-                                user -> GlideApp.with(this)
+                                user -> Glide.with(this)
                                         .load(client.getMediaUrlConverter().convertProfileIconLargeUrl(user))
                                         .circleCrop()
                                         .into(userIcon),
@@ -303,7 +303,7 @@ public class PostActivity extends AppCompatActivity {
             emojiAdapter = new EmojiAdapter(
                     emojiList,
                     this,
-                    GlideApp.with(this),
+                    Glide.with(this),
                     emoji -> {
                         int selectionEnd = editText.getSelectionEnd();
                         String shortCode = emoji.getShortCode();

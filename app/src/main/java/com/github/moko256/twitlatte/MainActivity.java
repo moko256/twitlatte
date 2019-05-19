@@ -45,6 +45,8 @@ import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.github.moko256.latte.client.base.MediaUrlConverter;
 import com.github.moko256.latte.client.base.entity.AccessToken;
@@ -52,8 +54,6 @@ import com.github.moko256.latte.client.base.entity.Emoji;
 import com.github.moko256.latte.client.base.entity.User;
 import com.github.moko256.twitlatte.database.CachedUsersSQLiteOpenHelper;
 import com.github.moko256.twitlatte.entity.Client;
-import com.github.moko256.twitlatte.glide.GlideApp;
-import com.github.moko256.twitlatte.glide.GlideRequests;
 import com.github.moko256.twitlatte.model.AccountsModel;
 import com.github.moko256.twitlatte.rx.VerifyCredentialOnSubscribe;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
@@ -454,7 +454,7 @@ public class MainActivity extends AppCompatActivity implements DrawerLayout.Draw
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
                                 user -> {
-                                    GlideRequests requests= GlideApp.with(this);
+                                    RequestManager requests= Glide.with(this);
 
                                     CharSequence userName = TwitterStringUtils.plusUserMarks(
                                             user.getName(),

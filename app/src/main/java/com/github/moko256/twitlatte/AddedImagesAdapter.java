@@ -24,14 +24,14 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
-import com.github.moko256.twitlatte.glide.GlideApp;
-import com.github.moko256.twitlatte.glide.GlideRequests;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestManager;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * Created by moko256 on 2017/03/11.
@@ -147,13 +147,13 @@ public class AddedImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         final ImageView image;
         final ImageButton deleteButton;
 
-        final GlideRequests requests;
+        final RequestManager requests;
 
         ImageChildViewHolder(View itemView) {
             super(itemView);
             image = itemView.findViewById(R.id.layout_images_adapter_image_child_image);
             deleteButton = itemView.findViewById(R.id.action_delete);
-            requests = GlideApp.with(itemView);
+            requests = Glide.with(itemView);
         }
     }
 

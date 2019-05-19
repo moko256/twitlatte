@@ -39,6 +39,7 @@ import java.io.InputStream
  * @author moko256
  */
 
+@Suppress("unused")
 @com.bumptech.glide.annotation.GlideModule
 class GlideModule : AppGlideModule() {
 
@@ -48,8 +49,7 @@ class GlideModule : AppGlideModule() {
             val padding = context.dpToPx(8)
             DrawableCompat.setTint(error, ContextCompat.getColor(context, R.color.color_accent))
             error = InsetDrawable(error, padding)
-            builder.setDefaultRequestOptions(RequestOptions()
-                    .error(error)
+            builder.setDefaultRequestOptions(RequestOptions().error(error)
             )
         }
     }

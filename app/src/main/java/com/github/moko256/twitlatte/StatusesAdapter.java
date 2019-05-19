@@ -29,12 +29,12 @@ import androidx.core.app.ActivityOptionsCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
+import com.bumptech.glide.RequestManager;
 import com.github.moko256.latte.client.base.entity.Post;
 import com.github.moko256.latte.client.base.entity.Repeat;
 import com.github.moko256.latte.client.base.entity.Status;
 import com.github.moko256.latte.client.base.entity.User;
 import com.github.moko256.twitlatte.entity.Client;
-import com.github.moko256.twitlatte.glide.GlideRequests;
 import com.github.moko256.twitlatte.intent.AppCustomTabsKt;
 import com.github.moko256.twitlatte.model.base.StatusActionModel;
 import com.github.moko256.twitlatte.repository.PreferenceRepository;
@@ -71,13 +71,13 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private final StatusActionModel statusActionModel;
     private final Client client;
     private final PreferenceRepository conf;
-    private final GlideRequests glideRequests;
+    private final RequestManager glideRequests;
 
     public OnLoadMoreClickListener onLoadMoreClick;
 
     public boolean shouldShowMediaOnly = false;
 
-    StatusesAdapter(Client client, StatusActionModel statusActionModel, PreferenceRepository preferenceRepository, Context context, List<Long> data, GlideRequests glideRequests) {
+    StatusesAdapter(Client client, StatusActionModel statusActionModel, PreferenceRepository preferenceRepository, Context context, List<Long> data, RequestManager glideRequests) {
         this.client = client;
         this.statusActionModel = statusActionModel;
         this.conf = preferenceRepository;
@@ -203,7 +203,7 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private class StatusViewHolder extends RecyclerView.ViewHolder {
         final StatusViewBinder statusViewBinder;
 
-        StatusViewHolder(ViewGroup itemView, GlideRequests glideRequests) {
+        StatusViewHolder(ViewGroup itemView, RequestManager glideRequests) {
             super(itemView);
             statusViewBinder = new StatusViewBinder(client.getAccessToken(), glideRequests, client.getMediaUrlConverter(), itemView);
         }
@@ -338,7 +338,7 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         final String imageLoadMode = preferenceRepository.getString(KEY_TIMELINE_IMAGE_LOAD_MODE, "normal");
         final boolean isHideSensitiveMedia = preferenceRepository.getBoolean(KEY_HIDE_SENSITIVE_MEDIA, true);
 
-        ImagesOnlyTweetViewHolder(ViewGroup viewGroup, GlideRequests glideRequests) {
+        ImagesOnlyTweetViewHolder(ViewGroup viewGroup, RequestManager glideRequests) {
             super(viewGroup);
             imagesTableView = itemView.findViewById(R.id.list_tweet_image_container);
             imagesTableView.glideRequests = glideRequests;

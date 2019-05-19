@@ -14,15 +14,32 @@
  * limitations under the License.
  */
 
-include ':app', ':component_client_base', ':component_html_parse', ':component_client_twitter', ':component_client_mastodon'
-include ':alternative_twitter4j', ':alternative_glide'
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
 
-include ':mastodon4j'
-project(':mastodon4j').projectDir = new File('mastodon4j/mastodon4j')
+android {
+    compileSdkVersion 28
+    buildToolsVersion '28.0.3'
 
-include ':japng-android:android_api'
-include ':japng:api'
-project(':japng:api').projectDir = new File('japng-android/japng/api')
+    defaultConfig {
+        minSdkVersion 19
+        targetSdkVersion 28
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
 
-include ':twitter-text'
-project(':twitter-text').projectDir = new File('twitter-text/java')
+dependencies {
+    api "com.github.bumptech.glide:glide:$glideVersion"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+}
+
+repositories {
+    mavenCentral()
+    google()
+}
+
+sourceCompatibility = '8'
+targetCompatibility = '8'

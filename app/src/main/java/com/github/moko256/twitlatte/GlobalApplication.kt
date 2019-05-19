@@ -22,6 +22,7 @@ import android.content.Intent
 import android.preference.PreferenceManager
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.collection.LruCache
+import com.bumptech.glide.setGlideModule
 import com.github.moko256.latte.client.base.ApiClient
 import com.github.moko256.latte.client.base.entity.AccessToken
 import com.github.moko256.latte.client.twitter.okhttp.replaceOkHttpClient
@@ -30,6 +31,7 @@ import com.github.moko256.twitlatte.api.generateMediaUrlConverter
 import com.github.moko256.twitlatte.cacheMap.StatusCacheMap
 import com.github.moko256.twitlatte.cacheMap.UserCacheMap
 import com.github.moko256.twitlatte.entity.Client
+import com.github.moko256.twitlatte.glide.GlideModule
 import com.github.moko256.twitlatte.model.AccountsModel
 import com.github.moko256.twitlatte.net.appOkHttpClientInstance
 import com.github.moko256.twitlatte.repository.KEY_ACCOUNT_KEY
@@ -82,6 +84,8 @@ class GlobalApplication : Application() {
                 ?.let {
                     initCurrentClient(it)
                 }
+
+        setGlideModule(GlideModule())
 
         super.onCreate()
     }

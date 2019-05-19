@@ -34,14 +34,14 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.github.moko256.latte.client.base.MediaUrlConverter;
 import com.github.moko256.latte.client.base.entity.Emoji;
 import com.github.moko256.latte.client.base.entity.Media;
 import com.github.moko256.latte.client.base.entity.User;
 import com.github.moko256.twitlatte.entity.Client;
-import com.github.moko256.twitlatte.glide.GlideApp;
-import com.github.moko256.twitlatte.glide.GlideRequests;
 import com.github.moko256.twitlatte.intent.AppCustomTabsKt;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
 import com.github.moko256.twitlatte.text.style.ClickableNoLineSpan;
@@ -65,7 +65,7 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
     private UserInfoViewModel viewModel;
     private Client client;
 
-    private GlideRequests glideRequests;
+    private RequestManager glideRequests;
 
     private SwipeRefreshLayout swipeRefreshLayout;
 
@@ -94,7 +94,7 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_show_user_info, container, false);
 
-        glideRequests = GlideApp.with(this);
+        glideRequests = Glide.with(this);
 
         swipeRefreshLayout = view.findViewById(R.id.show_user_swipe_refresh);
         swipeRefreshLayout.setColorSchemeResources(R.color.color_primary);

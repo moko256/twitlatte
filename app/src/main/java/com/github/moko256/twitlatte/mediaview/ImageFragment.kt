@@ -19,12 +19,12 @@ package com.github.moko256.twitlatte.mediaview
 import android.os.Bundle
 import android.view.View
 import android.view.View.SYSTEM_UI_FLAG_FULLSCREEN
+import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.target.Target.SIZE_ORIGINAL
 import com.github.chrisbanes.photoview.PhotoView
 import com.github.chuross.flinglayout.FlingLayout
 import com.github.moko256.twitlatte.R
-import com.github.moko256.twitlatte.glide.GlideApp
 import com.github.moko256.twitlatte.preferenceRepository
 import com.github.moko256.twitlatte.repository.KEY_TIMELINE_IMAGE_LOAD_MODE
 import com.github.moko256.twitlatte.text.TwitterStringUtils
@@ -58,7 +58,7 @@ class ImageFragment: AbstractMediaFragment() {
         imageView.setOnScaleChangeListener { scaleFactor: Float, _: Float, _: Float ->
             (view as FlingLayout).isDragEnabled = scaleFactor <= 1.1f
         }
-        val requests = GlideApp.with(this)
+        val requests = Glide.with(this)
         val url = media.originalUrl
 
         requests
