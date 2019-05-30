@@ -63,7 +63,7 @@ public abstract class BaseListFragment extends Fragment implements LoadScrollLis
         recyclerView.addOnScrollListener(new LoadScrollListener(recyclerView.getLayoutManager(), this));
 
         swipeRefreshLayout= view.findViewById(R.id.srl);
-        swipeRefreshLayout.setColorSchemeResources(R.color.color_primary);
+        swipeRefreshLayout.setColorSchemeResources(R.color.color_primary_dark);
         swipeRefreshLayout.setRefreshing(isProgressCircleLoading);
         swipeRefreshLayout.setOnRefreshListener(()->{
             if (isInitializedList()){
