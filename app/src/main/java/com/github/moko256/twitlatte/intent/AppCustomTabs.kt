@@ -46,8 +46,8 @@ fun launchChromeCustomTabs(context: Context, uri: String, excludeOwn: Boolean = 
 fun launchChromeCustomTabs(context: Context, url: Uri, excludeOwn: Boolean = false){
     launchChromeCustomTabs(context, url, excludeOwn) {
         CustomTabsIntent.Builder()
-                .setToolbarColor(ContextCompat.getColor(context, R.color.color_primary))
-                .setSecondaryToolbarColor(ContextCompat.getColor(context, R.color.color_primary_dark))
+                .setToolbarColor(ContextCompat.getColor(context, R.color.color_status_bar))
+                .setSecondaryToolbarColor(ContextCompat.getColor(context, R.color.color_status_bar))
                 .setStartAnimations(context, R.anim.slide_in_right, R.anim.slide_out_left)
                 .setExitAnimations(context, R.anim.slide_in_left, R.anim.slide_out_right)
                 .addDefaultShareMenuItem()
