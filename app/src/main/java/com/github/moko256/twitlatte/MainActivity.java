@@ -134,8 +134,9 @@ public class MainActivity extends AppCompatActivity implements DrawerLayout.Draw
             toggle.syncState();
 
             drawer.addDrawerListener(this);
+            drawer.setStatusBarBackground(R.color.color_status_bar);
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.color_primary_dark));
+            getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.color_status_bar));
         }
 
         navigationView = findViewById(R.id.nav_view);

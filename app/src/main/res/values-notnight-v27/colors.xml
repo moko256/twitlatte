@@ -16,9 +16,5 @@
   -->
 
 <resources>
-
-    <style name="AppThemeActionbarTabTheme" parent="Widget.MaterialComponents.TabLayout">
-        <item name="android:background">@android:color/transparent</item>
-    </style>
-
+    <color name="color_nav_bar">#FAFAFA</color>
 </resources>

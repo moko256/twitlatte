@@ -16,14 +16,13 @@
 
 <resources>
 
-    <style name="BaseAppTheme" parent="Theme.AppCompat.DayNight">
+    <style name="BaseAppTheme" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
 
         <item name="colorPrimary">@color/color_primary</item>
         <item name="colorPrimaryDark">@color/color_primary_dark</item>
-        <item name="colorAccent">@color/color_accent</item>
-
-        <item name="actionBarTheme">@style/AppTheme.AppBarOverlay</item>
-        <item name="popupTheme">@style/AppTheme.PopupOverlay</item>
+        <item name="colorSecondary">@color/color_secondary</item>
+        <item name="colorOnSecondary">@color/color_on_secondary</item>
+        <item name="tabStyle">@style/AppThemeActionbarTabTheme</item>
 
     </style>
 
@@ -47,6 +46,8 @@
         <item name="background">@null</item>
     </style>
 
+    <style name="AppThemeActionbarTabTheme" parent="Widget.MaterialComponents.TabLayout.Colored" />
+
     <style name="ShowTweetImageActivityTheme" parent="AppTheme">
         <item name="actionBarStyle">@style/ShowTweetImageActivityActionBarTheme</item>
         <item name="windowActionBarOverlay">true</item>
@@ -56,9 +57,6 @@
         <item name="android:windowBackground">@android:color/black</item>
         <item name="android:colorBackground">@android:color/black</item>
     </style>
-
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
     <style name="ExpandAndCloseToggleBackgroundColor">
         <item name="colorControlActivated">?attr/colorControlNormal</item>

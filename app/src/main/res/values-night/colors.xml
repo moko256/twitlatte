@@ -16,8 +16,11 @@
   -->
 
 <resources>
-    <color name="color_primary">@color/brown_700</color>
-    <color name="color_primary_dark">@color/brown_800</color>
+    <color name="color_primary">@color/brown_50</color>
+    <color name="color_primary_dark">@color/brown_200</color>
+    <color name="color_status_bar">@android:color/black</color>
+    <color name="color_on_secondary">@android:color/black</color>
+    <color name="color_nav_bar">@android:color/black</color>
 
     <color name="image_toggle_enable">#FFFFFF</color>
     <color name="image_toggle_disable">#4DFFFFFF</color>

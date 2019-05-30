@@ -30,7 +30,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <androidx.cardview.widget.CardView
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/show_user_top_card"
@@ -109,9 +109,9 @@
                         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                         tools:text="User\'s description"/>
                 </RelativeLayout>
-            </androidx.cardview.widget.CardView>
+            </com.google.android.material.card.MaterialCardView>
 
-            <androidx.cardview.widget.CardView
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/show_user_data_card"
@@ -176,7 +176,7 @@
                         android:textIsSelectable="true"
                         tools:text="@string/posts_counts_is"/>
                 </RelativeLayout>
-            </androidx.cardview.widget.CardView>
+            </com.google.android.material.card.MaterialCardView>
 
         </RelativeLayout>
     </androidx.core.widget.NestedScrollView>

@@ -67,7 +67,7 @@ class PollAdapter(private val context: Context): RecyclerView.Adapter<PollAdapte
         )
         holder.itemView.background = PercentBarBackgroundDrawable().also {
             it.lineSize = 2 * context.resources.displayMetrics.density
-            it.color = ContextCompat.getColor(context, R.color.color_accent)
+            it.color = ContextCompat.getColor(context, R.color.color_secondary)
         }
 
         val poll = poll

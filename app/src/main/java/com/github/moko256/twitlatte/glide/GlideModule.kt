@@ -47,7 +47,7 @@ class GlideModule : AppGlideModule() {
         var error = AppCompatResources.getDrawable(context, R.drawable.ic_cloud_off_black_24dp)
         if (error != null) {
             val padding = context.dpToPx(8)
-            DrawableCompat.setTint(error, ContextCompat.getColor(context, R.color.color_accent))
+            DrawableCompat.setTint(error, ContextCompat.getColor(context, R.color.color_secondary))
             error = InsetDrawable(error, padding)
             builder.setDefaultRequestOptions(RequestOptions().error(error)
             )

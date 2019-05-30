@@ -305,7 +305,7 @@ public class TwitterStringUtils {
                     .mutate();
             drawable.setBounds(left, 0, textSize + left, textSize);
 
-            DrawableCompat.setTint(drawable, ContextCompat.getColor(context, R.color.color_accent));
+            DrawableCompat.setTint(drawable, ContextCompat.getColor(context, R.color.color_secondary));
 
             result.setSpan(new ImageSpan(
                     drawable

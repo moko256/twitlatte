@@ -15,7 +15,7 @@
   ~ limitations under the License.
   -->
 
-<androidx.cardview.widget.CardView
+<com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -26,4 +26,4 @@
     app:cardElevation="2dp"
     app:cardUseCompatPadding="true">
     <include layout="@layout/layout_tweet" />
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>

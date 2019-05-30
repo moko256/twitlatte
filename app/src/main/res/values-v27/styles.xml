@@ -18,7 +18,6 @@
 <resources>
 
     <style name="BaseAppThemeV27" parent="BaseAppThemeV21">
-        <item name="android:navigationBarColor">?android:windowBackgroundFallback</item>
         <item name="android:windowLightNavigationBar">@bool/is_navigation_bar_light</item>
     </style>
     <style name="BaseTheme" parent="BaseAppThemeV27" />
