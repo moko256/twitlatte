@@ -30,5 +30,6 @@
     <drawable name="exo_icon_previous">#000</drawable>
     <drawable name="exo_icon_rewind">#000</drawable>
     <drawable name="exo_icon_stop">#000</drawable>
+    <drawable name="exo_icon_vr">#000</drawable>
     <drawable name="exo_notification_small_icon">#000</drawable>
 </resources>
