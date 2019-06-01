@@ -55,9 +55,6 @@ abstract class AbstractVideoFragment : AbstractMediaFragment(), Player.EventList
     private lateinit var videoPlayView: PlayerView
     private lateinit var player: SimpleExoPlayer
 
-    private var canPlayerUse = false
-    private var isFragmentStarting = false
-    private var isFragmentVisible = false
     private var wasFragmentShowing = false
     private var canPlayNext = true
 
@@ -86,7 +83,6 @@ abstract class AbstractVideoFragment : AbstractMediaFragment(), Player.EventList
                 it.addListener(this)
             }
         }
-        canPlayerUse = true
     }
 
     override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
@@ -94,9 +90,7 @@ abstract class AbstractVideoFragment : AbstractMediaFragment(), Player.EventList
     }
 
     override fun onDestroy() {
-        canPlayerUse = false
         player.release()
-
         super.onDestroy()
     }
 
@@ -128,39 +122,25 @@ abstract class AbstractVideoFragment : AbstractMediaFragment(), Player.EventList
         }
     }
 
-    private fun updatePlayingStatus() {
-        if (canPlayerUse) {
-            val isFragmentShowing = isFragmentStarting && isFragmentVisible
-            val wasPlaying = player.playWhenReady
+    private fun updatePlayingStatus(isFragmentShowing: Boolean) {
+        val wasPlaying = player.playWhenReady
 
-            player.playWhenReady = isFragmentShowing && canPlayNext
+        player.playWhenReady = isFragmentShowing && canPlayNext
 
-            if (wasFragmentShowing != isFragmentShowing) {
-                canPlayNext = wasPlaying
-                wasFragmentShowing = isFragmentShowing
-            }
+        if (wasFragmentShowing != isFragmentShowing) {
+            canPlayNext = wasPlaying
+            wasFragmentShowing = isFragmentShowing
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-
-        isFragmentStarting = true
-        updatePlayingStatus()
+    override fun onResume() {
+        super.onResume()
+        updatePlayingStatus(true)
     }
 
-    override fun onStop() {
-        isFragmentStarting = false
-        updatePlayingStatus()
-
-        super.onStop()
-    }
-
-    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
-        super.setUserVisibleHint(isVisibleToUser)
-
-        isFragmentVisible = isVisibleToUser
-        updatePlayingStatus()
+    override fun onPause() {
+        updatePlayingStatus(false)
+        super.onPause()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

@@ -24,7 +24,9 @@ import android.view.ViewGroup
  * @author moko256
  */
 
-abstract class FragmentPagerAdapter(fm: androidx.fragment.app.FragmentManager) : androidx.fragment.app.FragmentPagerAdapter(fm) {
+abstract class FragmentPagerAdapter(
+        fm: androidx.fragment.app.FragmentManager
+) : androidx.fragment.app.FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
     private lateinit var viewGroup: ViewGroup
 

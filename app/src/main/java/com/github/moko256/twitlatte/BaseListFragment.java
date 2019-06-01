@@ -42,17 +42,9 @@ public abstract class BaseListFragment extends Fragment implements LoadScrollLis
     protected RecyclerView recyclerView;
     protected SwipeRefreshLayout swipeRefreshLayout;
 
-    private boolean isShowed = false;
     private boolean isProgressCircleLoading = false;
 
     private View viewForSnackBar;
-
-    @Override
-    public void onCreate(Bundle savedInstanceState){
-        super.onCreate(savedInstanceState);
-
-        isShowed = true;
-    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
@@ -84,16 +76,12 @@ public abstract class BaseListFragment extends Fragment implements LoadScrollLis
         if (activity instanceof GetViewForSnackBar) {
             viewForSnackBar = ((GetViewForSnackBar) activity).getViewForSnackBar();
         }
-
-        if (getUserVisibleHint() && !isInitializedList()){
-            onInitializeList();
-        }
     }
 
     @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if (isShowed && isVisibleToUser && !isInitializedList()) {
+    public void onResume() {
+        super.onResume();
+        if (!isInitializedList()) {
             onInitializeList();
         }
     }
