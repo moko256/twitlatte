@@ -22,7 +22,7 @@ import android.content.Intent
 import android.preference.PreferenceManager
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.collection.LruCache
-import com.bumptech.glide.setGlideModule
+import com.bumptech.glide.GlideInitializer
 import com.github.moko256.latte.client.base.ApiClient
 import com.github.moko256.latte.client.base.entity.AccessToken
 import com.github.moko256.latte.client.twitter.okhttp.replaceOkHttpClient
@@ -85,7 +85,7 @@ class GlobalApplication : Application() {
                     initCurrentClient(it)
                 }
 
-        setGlideModule(GlideModule())
+        GlideInitializer.setGlideModule(this, GlideModule())
 
         super.onCreate()
     }
