@@ -22,40 +22,32 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.github.moko256.latte.client.base.entity.Post;
-import com.github.moko256.latte.client.base.entity.Status;
-import com.github.moko256.latte.client.base.entity.UpdateStatus;
-import com.github.moko256.latte.client.base.entity.User;
-import com.github.moko256.twitlatte.entity.Client;
-import com.github.moko256.twitlatte.glide.GlideApp;
-import com.github.moko256.twitlatte.intent.AppCustomTabsKt;
-import com.github.moko256.twitlatte.model.base.StatusActionModel;
-import com.github.moko256.twitlatte.model.impl.StatusActionModelImpl;
-import com.github.moko256.twitlatte.text.NoSpanInputFilterKt;
-import com.github.moko256.twitlatte.text.TwitterStringUtils;
-
-import java.text.DateFormat;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import io.reactivex.Completable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
+
+import com.github.moko256.latte.client.base.entity.Post;
+import com.github.moko256.twitlatte.entity.Client;
+import com.github.moko256.twitlatte.glide.GlideApp;
+import com.github.moko256.twitlatte.intent.AppCustomTabsKt;
+import com.github.moko256.twitlatte.model.base.StatusActionModel;
+import com.github.moko256.twitlatte.model.impl.StatusActionModelImpl;
+import com.github.moko256.twitlatte.text.TwitterStringUtils;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.text.DateFormat;
+
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.schedulers.Schedulers;
 import kotlin.Unit;
 
 import static android.view.View.GONE;
@@ -67,7 +59,7 @@ import static android.view.View.VISIBLE;
  *
  * @author moko256
  */
-public class ShowTweetActivity extends AppCompatActivity implements TextWatcher {
+public class ShowTweetActivity extends AppCompatActivity {
 
     private CompositeDisposable disposables = new CompositeDisposable();
     private StatusActionModel statusActionModel;
@@ -79,12 +71,10 @@ public class ShowTweetActivity extends AppCompatActivity implements TextWatcher 
     private Button tweetIsReply;
     private TextView timestampText;
     private TextView viaText;
-    private EditText replyText;
-    private Button replyButton;
+    private FloatingActionButton replyFab;
 
     private Client client;
 
-    private CharSequence defaultReplyText = "";
     private boolean isVisible = true;
 
     @SuppressLint("WrongConstant")
@@ -110,10 +100,7 @@ public class ShowTweetActivity extends AppCompatActivity implements TextWatcher 
         statusViewBinder = new StatusViewBinder(client.getAccessToken(), GlideApp.with(this), statusViewFrame);
         timestampText = findViewById(R.id.tweet_show_timestamp);
         viaText = findViewById(R.id.tweet_show_via);
-        replyText= findViewById(R.id.tweet_show_tweet_reply_text);
-        replyText.setFilters(NoSpanInputFilterKt.getNoSpanInputFilter());
-        replyText.addTextChangedListener(this);
-        replyButton= findViewById(R.id.tweet_show_tweet_reply_button);
+        replyFab = findViewById(R.id.tweet_show_fab);
 
         SwipeRefreshLayout swipeRefreshLayout = findViewById(R.id.tweet_show_swipe_refresh);
         swipeRefreshLayout.setColorSchemeResources(R.color.color_primary);
@@ -298,17 +285,17 @@ public class ShowTweetActivity extends AppCompatActivity implements TextWatcher 
             return Unit.INSTANCE;
         });
 
-        statusViewBinder.getReplyButton().setOnClickListener(
-                v -> startActivity(PostActivity.getIntent(
-                        this,
-                        item.getStatus().getId(),
-                        TwitterStringUtils.convertToReplyTopString(
-                                client.getUserCache().get(client.getAccessToken().getUserId()).getScreenName(),
-                                item.getUser().getScreenName(),
-                                item.getStatus().getMentions()
-                        ).toString()
-                ))
-        );
+        View.OnClickListener replyOnClickListener = v -> startActivity(PostActivity.getIntent(
+                this,
+                item.getStatus().getId(),
+                TwitterStringUtils.convertToReplyTopString(
+                        client.getUserCache().get(client.getAccessToken().getUserId()).getScreenName(),
+                        item.getUser().getScreenName(),
+                        item.getStatus().getMentions()
+                ).toString()
+        ));
+        statusViewBinder.getReplyButton().setOnClickListener(replyOnClickListener);
+        replyFab.setOnClickListener(replyOnClickListener);
 
         statusViewBinder.setStatus(
                 item.getRepeatedUser(),
@@ -339,69 +326,5 @@ public class ShowTweetActivity extends AppCompatActivity implements TextWatcher 
         } else {
             viaText.setVisibility(GONE);
         }
-
-        resetReplyText(item.getUser(), item.getStatus());
-
-        replyButton.setOnClickListener(v -> {
-            replyButton.setEnabled(false);
-            disposables.add(
-                    Completable.create(emitter -> {
-                        try {
-                            client.getApiClient().postStatus(new UpdateStatus(
-                                    item.getStatus().getId(),
-                                    null,
-                                    replyText.getText().toString(),
-                                    null,
-                                    false,
-                                    null,
-                                    null,
-                                    null,
-                                    false,
-                                    false,
-                                    0
-                            ));
-                            emitter.onComplete();
-                        } catch (Throwable e) {
-                            e.printStackTrace();
-                            emitter.tryOnError(e);
-                        }
-                    }).subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(
-                                    () -> {
-                                        resetReplyText(item.getUser(), item.getStatus());
-                                        replyButton.setEnabled(true);
-                                        Toast.makeText(ShowTweetActivity.this,R.string.did_post,Toast.LENGTH_SHORT).show();
-                                    },
-                                    e->{
-                                        e.printStackTrace();
-                                        Toast.makeText(ShowTweetActivity.this,R.string.error_occurred,Toast.LENGTH_SHORT).show();
-                                        replyButton.setEnabled(true);
-                                    }
-                            )
-            );
-        });
     }
-
-    private void resetReplyText(User postedUser, Status status){
-        User user = client.getUserCache().get(client.getAccessToken().getUserId());
-
-        defaultReplyText = TwitterStringUtils.convertToReplyTopString(
-                user != null ? user.getScreenName() : client.getAccessToken().getScreenName(),
-                postedUser.getScreenName(),
-                status.getMentions()
-        );
-        replyText.setText(defaultReplyText);
-    }
-
-    @Override
-    public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-    @Override
-    public void onTextChanged(CharSequence s, int start, int before, int count) {
-        replyButton.setEnabled(!TextUtils.equals(defaultReplyText, s));
-    }
-
-    @Override
-    public void afterTextChanged(Editable s) {}
 }
