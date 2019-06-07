@@ -1,0 +1,2 @@
+Add confirmation when sending reply.
+Note: twitlatte's app icon will lost from your home screen. Please re-add it to home if you want.

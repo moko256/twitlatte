@@ -18,7 +18,6 @@ package com.github.moko256.twitlatte.widget
 
 import android.content.Context
 import android.util.AttributeSet
-import android.view.View
 import android.widget.RelativeLayout
 
 /**
@@ -31,26 +30,30 @@ class WideRatioRelativeLayout @JvmOverloads constructor(
         context: Context,
         attrs: AttributeSet? = null,
         defStyle: Int = 0
-): RelativeLayout(context, attrs, defStyle) {
+) : RelativeLayout(context, attrs, defStyle) {
 
     override fun onMeasure(widthSpec: Int, heightSpec: Int) {
         val heightSize: Int
         val widthSize: Int
 
-        if (View.MeasureSpec.getMode(heightSpec) != View.MeasureSpec.EXACTLY) {
-            widthSize = View.MeasureSpec.getSize(widthSpec)
-            heightSize = widthSize / 16 * 9
-        } else if (View.MeasureSpec.getMode(widthSpec) != View.MeasureSpec.EXACTLY) {
-            heightSize = View.MeasureSpec.getSize(heightSpec)
-            widthSize = heightSize / 9 * 16
-        } else {
-            widthSize = View.MeasureSpec.getSize(widthSpec)
-            heightSize = View.MeasureSpec.getSize(heightSpec)
+        when {
+            MeasureSpec.getMode(heightSpec) != MeasureSpec.EXACTLY -> {
+                widthSize = MeasureSpec.getSize(widthSpec)
+                heightSize = widthSize / 16 * 9
+            }
+            MeasureSpec.getMode(widthSpec) != MeasureSpec.EXACTLY -> {
+                heightSize = MeasureSpec.getSize(heightSpec)
+                widthSize = heightSize / 9 * 16
+            }
+            else -> {
+                widthSize = MeasureSpec.getSize(widthSpec)
+                heightSize = MeasureSpec.getSize(heightSpec)
+            }
         }
 
         super.onMeasure(
-                View.MeasureSpec.makeMeasureSpec(widthSize + paddingLeft + paddingRight, View.MeasureSpec.EXACTLY),
-                View.MeasureSpec.makeMeasureSpec(heightSize + paddingTop + paddingBottom, View.MeasureSpec.EXACTLY)
+                MeasureSpec.makeMeasureSpec(widthSize + paddingLeft + paddingRight, MeasureSpec.EXACTLY),
+                MeasureSpec.makeMeasureSpec(heightSize + paddingTop + paddingBottom, MeasureSpec.EXACTLY)
         )
     }
 

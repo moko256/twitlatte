@@ -214,7 +214,7 @@ public class PostActivity extends AppCompatActivity {
         });
         editText.setOnKeyListener((v, keyCode, event) -> {
             if (!isPosting && event.getAction() == KeyEvent.ACTION_DOWN && event.isCtrlPressed() && keyCode == KeyEvent.KEYCODE_ENTER){
-                doSend();
+                postOrConfirmIfValid();
                 return true;
             }
             return false;
@@ -492,16 +492,29 @@ public class PostActivity extends AppCompatActivity {
         editText.setHint(model.isReply()? R.string.reply: R.string.post);
     }
 
-    private void doSend() {
+    private void postOrConfirmIfValid() {
         if (model.isValid()) {
-            doReallySend();
+            postOrConfirmIfReply();
         } else {
             new AlertDialog
                     .Builder(this)
                     .setMessage(R.string.confirm_send_invalid_post)
+                    .setPositiveButton(R.string.post, (dialog, which) -> postOrConfirmIfReply())
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .show();
+        }
+    }
+
+    private void postOrConfirmIfReply() {
+        if (model.isReply()) {
+            new AlertDialog
+                    .Builder(this)
+                    .setMessage(R.string.confirm_post_reply)
                     .setPositiveButton(R.string.post, (dialog, which) -> doReallySend())
                     .setNegativeButton(android.R.string.cancel, null)
                     .show();
+        } else {
+            doReallySend();
         }
     }
 
@@ -557,7 +570,7 @@ public class PostActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (!isPosting && item.getItemId() == R.id.action_send) {
-            doSend();
+            postOrConfirmIfValid();
             return true;
         } else {
             return super.onOptionsItemSelected(item);

@@ -17,9 +17,7 @@
 package com.github.moko256.twitlatte
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
 
@@ -28,22 +26,20 @@ import androidx.viewpager.widget.ViewPager
  *
  * @author moko256
  */
-class MyFollowFollowerFragment : Fragment(), ToolbarTitleInterface, NavigationPositionInterface, UseTabsInterface {
+class MyFollowFollowerFragment : Fragment(R.layout.fragment_follow_follower), ToolbarTitleInterface, NavigationPositionInterface, UseTabsInterface {
     override lateinit var tabsViewPager: ViewPager
 
     override val titleResourceId = R.string.following_and_followers
 
     override val navigationPosition = R.id.nav_follow_and_follower
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_follow_follower, container, false).also { view ->
-            tabsViewPager = view.findViewById(R.id.follow_follower_pager)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        tabsViewPager = view.findViewById(R.id.follow_follower_pager)
 
-            FollowFollowerTabsPagerAdapter(
-                    childFragmentManager,
-                    context,
-                    requireActivity().getClient()!!.accessToken.userId
-            ).initAdapter(tabsViewPager)
-        }
+        FollowFollowerTabsPagerAdapter(
+                childFragmentManager,
+                context,
+                requireActivity().getClient()!!.accessToken.userId
+        ).initAdapter(tabsViewPager)
     }
 }

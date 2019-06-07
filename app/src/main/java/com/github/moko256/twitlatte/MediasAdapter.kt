@@ -31,7 +31,7 @@ class MediasAdapter(
         fm: FragmentManager,
         private val medias: List<Media>,
         private val type: Int
-) : FragmentPagerAdapter(fm) {
+) : FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
     override fun getItem(position: Int): Fragment {
         val media = medias[position]

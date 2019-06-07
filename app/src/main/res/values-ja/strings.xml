@@ -126,6 +126,7 @@
     <string name="do_reply">返信する</string>
 
     <string name="confirm_logout">ログアウトしますか？</string>
+    <string name="confirm_post_reply">この返信を投稿しますか？</string>
     <string name="confirm_discard_post">投稿を破棄しますか？</string>
     <string name="confirm_send_invalid_post">投稿しますか?\n\n本文が多すぎるか空なので失敗するかもしれません</string>
     <string name="confirm_message">実行しますか？</string>
