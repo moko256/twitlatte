@@ -504,12 +504,16 @@ public class PostActivity extends AppCompatActivity {
     }
 
     private void postOrConfirmIfReply() {
-        new AlertDialog
-                .Builder(this)
-                .setMessage(R.string.confirm_post_reply)
-                .setPositiveButton(R.string.post, (dialog, which) -> doReallySend())
-                .setNegativeButton(android.R.string.cancel, null)
-                .show();
+        if (model.isReply()) {
+            new AlertDialog
+                    .Builder(this)
+                    .setMessage(R.string.confirm_post_reply)
+                    .setPositiveButton(R.string.post, (dialog, which) -> doReallySend())
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .show();
+        } else {
+            doReallySend();
+        }
     }
 
     private void doReallySend() {
