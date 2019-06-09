@@ -18,6 +18,7 @@ package com.github.moko256.twitlatte;
 
 import android.os.Bundle;
 
+import com.bumptech.glide.Glide;
 import com.github.moko256.latte.client.base.entity.PageableResponse;
 import com.github.moko256.latte.client.base.entity.User;
 import com.github.moko256.twitlatte.entity.Client;
@@ -78,7 +79,13 @@ public abstract class BaseUsersFragment extends BaseListFragment {
             recyclerView.setRecycledViewPool(((GetRecyclerViewPool) getActivity()).getUserListViewPool());
         }
 
-        adapter=new UsersAdapter(client.getUserCache(), getContext(), list, client.getMediaUrlConverter());
+        adapter = new UsersAdapter(
+                client.getUserCache(),
+                getContext(),
+                Glide.with(this),
+                list,
+                client.getMediaUrlConverter()
+        );
         recyclerView.setAdapter(adapter);
         if(!isInitializedList()){
             adapter.notifyDataSetChanged();

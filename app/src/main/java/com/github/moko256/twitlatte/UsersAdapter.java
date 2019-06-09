@@ -28,14 +28,12 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.github.moko256.latte.client.base.MediaUrlConverter;
 import com.github.moko256.latte.client.base.entity.Emoji;
 import com.github.moko256.latte.client.base.entity.User;
 import com.github.moko256.twitlatte.cacheMap.UserCacheMap;
-
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
 import com.github.moko256.twitlatte.view.EmojiToTextViewSetter;
 
@@ -53,11 +51,19 @@ class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> {
     private final UserCacheMap userCache;
     private final List<Long> data;
     private final Context context;
+    private final RequestManager requestManager;
     private final MediaUrlConverter converter;
 
-    UsersAdapter(UserCacheMap userCache, Context context, List<Long> data, MediaUrlConverter converter) {
+    UsersAdapter(
+            UserCacheMap userCache,
+            Context context,
+            RequestManager requestManager,
+            List<Long> data,
+            MediaUrlConverter converter
+    ) {
         this.userCache = userCache;
         this.context = context;
+        this.requestManager = requestManager;
         this.data = data;
         this.converter = converter;
 
@@ -80,7 +86,7 @@ class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> {
         User item = userCache.get(data.get(i));
 
         if (item != null) {
-            viewHolder.request
+            requestManager
                     .load(converter.convertProfileIconLargeUrl(item))
                     .circleCrop()
                     .transition(DrawableTransitionOptions.withCrossFade())
@@ -98,7 +104,7 @@ class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> {
             if (userNameEmojis != null) {
                 viewHolder.disposable.add(
                         new EmojiToTextViewSetter(
-                                viewHolder.request,
+                                requestManager,
                                 viewHolder.userUserName,
                                 userNameText,
                                 userNameEmojis
@@ -129,7 +135,7 @@ class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> {
 
     @Override
     public void onViewRecycled(@NonNull ViewHolder holder) {
-        holder.request.clear(holder.userUserImage);
+        requestManager.clear(holder.userUserImage);
         holder.disposable.clear();
     }
 
@@ -148,7 +154,6 @@ class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> {
         final TextView userUserName;
         final TextView userUserId;
 
-        final RequestManager request;
         final CompositeDisposable disposable;
 
         ViewHolder(final View itemView) {
@@ -156,7 +161,6 @@ class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> {
             userUserImage = itemView.findViewById(R.id.user_user_image);
             userUserId = itemView.findViewById(R.id.user_user_id);
             userUserName = itemView.findViewById(R.id.user_user_name);
-            request = Glide.with(itemView);
             disposable = new CompositeDisposable();
         }
     }

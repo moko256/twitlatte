@@ -53,6 +53,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestManager;
 import com.github.moko256.latte.client.base.entity.Emoji;
 import com.github.moko256.twitlatte.entity.Client;
 import com.github.moko256.twitlatte.model.base.PostStatusModel;
@@ -152,6 +153,8 @@ public class PostActivity extends AppCompatActivity {
         getTheme().resolveAttribute(R.attr.colorError, value, true);
         COLOR_ERROR = ContextCompat.getColor(this, value.resourceId);
 
+        RequestManager requestManager = Glide.with(this);
+
         client = GlobalApplicationKt.getClient(this);
         model = new PostStatusModelImpl(
                 getContentResolver(),
@@ -176,7 +179,7 @@ public class PostActivity extends AppCompatActivity {
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
-                                user -> Glide.with(this)
+                                user -> requestManager
                                         .load(client.getMediaUrlConverter().convertProfileIconLargeUrl(user))
                                         .circleCrop()
                                         .into(userIcon),
@@ -221,7 +224,7 @@ public class PostActivity extends AppCompatActivity {
         });
 
         imagesRecyclerView = findViewById(R.id.activity_tweet_send_images_recycler_view);
-        addedImagesAdapter = new AddedImagesAdapter(this);
+        addedImagesAdapter = new AddedImagesAdapter(this, requestManager);
 
         imagesRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         imagesRecyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
@@ -303,7 +306,7 @@ public class PostActivity extends AppCompatActivity {
             emojiAdapter = new EmojiAdapter(
                     emojiList,
                     this,
-                    Glide.with(this),
+                    requestManager,
                     emoji -> {
                         int selectionEnd = editText.getSelectionEnd();
                         String shortCode = emoji.getShortCode();
