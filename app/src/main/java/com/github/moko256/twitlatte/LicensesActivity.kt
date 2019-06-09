@@ -39,7 +39,7 @@ class LicensesActivity : AppCompatActivity() {
 
         val licenseTextView = findViewById<TextView>(R.id.license_text)
 
-        intent?.also {
+        intent?.also { intent ->
             intent.getStringExtra("title")?.let {
                 actionBar.title = it
             }
