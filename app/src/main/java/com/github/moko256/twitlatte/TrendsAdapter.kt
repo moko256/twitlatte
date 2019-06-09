@@ -50,15 +50,15 @@ class TrendsAdapter(private val context: Context) : RecyclerView.Adapter<TrendsA
         }
     }
 
-    override fun onCreateViewHolder(viewGroup: ViewGroup, i: Int): TrendsAdapter.ViewHolder {
-        return TrendsAdapter.ViewHolder(
+    override fun onCreateViewHolder(viewGroup: ViewGroup, i: Int): ViewHolder {
+        return ViewHolder(
                 LayoutInflater
                         .from(context)
                         .inflate(i, viewGroup, false)
         )
     }
 
-    override fun onBindViewHolder(viewHolder: TrendsAdapter.ViewHolder, i: Int) {
+    override fun onBindViewHolder(viewHolder: ViewHolder, i: Int) {
         val (name, volume) = data[i]
 
         viewHolder.text.text = name
