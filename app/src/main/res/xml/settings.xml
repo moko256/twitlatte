@@ -131,20 +131,11 @@
             app:key="license"
             app:title="@string/open_source_license">
             <Preference
-                app:key="license_lib_support_v4"
-                app:title="Android Compatibility Library v4"/>
+                app:key="license_lib_androidx"
+                app:title="AndroidX"/>
             <Preference
-                app:key="license_lib_support_v7"
-                app:title="Android Compatibility Library v7"/>
-            <Preference
-                app:key="license_lib_support_design"
-                app:title="Android Design Support Library"/>
-            <Preference
-                app:key="license_lib_support_custom_tabs"
-                app:title="Android Custom Tabs Support Library"/>
-            <Preference
-                app:key="license_lib_support_arch"
-                app:title="Android Architecture Components"/>
+                app:key="license_lib_material_components"
+                app:title="Material Components"/>
             <Preference
                 app:key="license_lib_exo_player"
                 app:title="ExoPlayer"/>

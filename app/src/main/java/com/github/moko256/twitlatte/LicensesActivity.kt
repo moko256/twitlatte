@@ -39,39 +39,16 @@ class LicensesActivity : AppCompatActivity() {
 
         val licenseTextView = findViewById<TextView>(R.id.license_text)
 
-        if (intent != null) {
-            val title = intent.getStringExtra("title")
-            if (title != null) {
-                actionBar.title = title
+        intent?.also {
+            intent.getStringExtra("title")?.let {
+                actionBar.title = it
             }
 
-            val libName = intent.getStringExtra("library_name")
-            if (libName != null) {
-                val path: String = when (libName) {
-                    "support_v4",
-                    "support_v7",
-                    "support_design",
-                    "support_custom_tabs",
-                    "support_arch" -> {
-                        "licenses/android_support.txt"
-                    }
-
-                    else -> {
-                        "licenses/$libName.txt"
-                    }
-                }
-
-                val builder = StringBuilder()
-
-                assets.open(path)
+            intent.getStringExtra("library_name")?.let {
+                licenseTextView.text = assets
+                        .open("licenses/$it.txt")
                         .reader()
-                        .useLines { sequence ->
-                            sequence.forEach {
-                                builder.append(it).append("\n")
-                            }
-                        }
-
-                licenseTextView.text = builder
+                        .readText()
             }
         }
     }
