@@ -67,6 +67,9 @@ class EmojiAdapter(
         }
     }
 
+    override fun onViewRecycled(holder: EmojiViewHolder) {
+        holder.clearImage()
+    }
 }
 
 class EmojiViewHolder(private val imageView: ImageView, private val glideRequests: RequestManager): RecyclerView.ViewHolder(imageView) {
@@ -76,5 +79,9 @@ class EmojiViewHolder(private val imageView: ImageView, private val glideRequest
 
     fun setImage(@DrawableRes resId: Int) {
         glideRequests.load(resId).into(imageView)
+    }
+
+    fun clearImage() {
+        glideRequests.clear(imageView)
     }
 }
