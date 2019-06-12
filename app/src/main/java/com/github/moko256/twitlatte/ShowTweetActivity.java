@@ -37,6 +37,7 @@ import androidx.core.app.ActivityOptionsCompat;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestManager;
 import com.github.moko256.latte.client.base.entity.Post;
 import com.github.moko256.twitlatte.entity.Client;
 import com.github.moko256.twitlatte.intent.AppCustomTabsKt;
@@ -66,6 +67,7 @@ public class ShowTweetActivity extends AppCompatActivity {
     private long statusId;
     private String shareUrl = "";
 
+    private RequestManager requestManager;
     private StatusViewBinder statusViewBinder;
 
     private Button tweetIsReply;
@@ -86,6 +88,7 @@ public class ShowTweetActivity extends AppCompatActivity {
         statusId = getIntent().getLongExtra("statusId", -1);
 
         client = GlobalApplicationKt.getClient(this);
+        requestManager = Glide.with(this);
         statusActionModel = new StatusActionModelImpl(
                 client.getApiClient(),
                 client.getStatusCache()
@@ -97,7 +100,7 @@ public class ShowTweetActivity extends AppCompatActivity {
 
         tweetIsReply = findViewById(R.id.tweet_show_is_reply_text);
         ViewGroup statusViewFrame = findViewById(R.id.tweet_show_tweet);
-        statusViewBinder = new StatusViewBinder(client.getAccessToken(), Glide.with(this), client.getMediaUrlConverter(), statusViewFrame);
+        statusViewBinder = new StatusViewBinder(statusViewFrame);
         timestampText = findViewById(R.id.tweet_show_timestamp);
         viaText = findViewById(R.id.tweet_show_via);
         replyFab = findViewById(R.id.tweet_show_fab);
@@ -298,6 +301,8 @@ public class ShowTweetActivity extends AppCompatActivity {
         replyFab.setOnClickListener(replyOnClickListener);
 
         statusViewBinder.setStatus(
+                client,
+                requestManager,
                 item.getRepeatedUser(),
                 item.getRepeat(),
                 item.getUser(),
