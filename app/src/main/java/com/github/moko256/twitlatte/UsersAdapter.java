@@ -148,7 +148,7 @@ class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> {
         }
     }
 
-    static class ViewHolder extends RecyclerView.ViewHolder {
+    static final class ViewHolder extends RecyclerView.ViewHolder {
 
         final ImageView userUserImage;
         final TextView userUserName;
