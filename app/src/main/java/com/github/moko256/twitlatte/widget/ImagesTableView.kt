@@ -252,7 +252,7 @@ class ImagesTableView @JvmOverloads constructor(
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
         imageTableData?.medias?.let { medias ->
-            for (i in 0 until displayingMediaSize) {
+            repeat(displayingMediaSize) { i ->
                 val view = getContainer(i)
                 val param = params[medias.size - 1][i]
 
@@ -298,7 +298,7 @@ class ImagesTableView @JvmOverloads constructor(
 
         imageTableData?.medias?.let { medias ->
             val mediasSizesParams = params[medias.size - 1]
-            for (i in 0 until displayingMediaSize) {
+            repeat(displayingMediaSize) { i ->
                 val param = mediasSizesParams[i]
                 val view = getContainer(i)
                 view.measure(generateChildSpec(widthSize, param[3]), generateChildSpec(heightSize, param[2]))
