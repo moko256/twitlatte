@@ -26,7 +26,7 @@ class SelectListsEntriesFragment: AbstractListsEntriesFragment() {
     override fun onClickList(listEntry: ListEntry) {
 
         activity?.let {
-            (activity as ListEntrySelectionListener).onSelected(listEntry)
+            (activity as ListEntrySelectionListener).onListItemSelected(listEntry)
         }
     }
 
@@ -41,6 +41,6 @@ class SelectListsEntriesFragment: AbstractListsEntriesFragment() {
     }
 
     interface ListEntrySelectionListener {
-        fun onSelected(listEntry: ListEntry)
+        fun onListItemSelected(listEntry: ListEntry)
     }
 }
