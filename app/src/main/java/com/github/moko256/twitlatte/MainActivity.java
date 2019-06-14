@@ -286,7 +286,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onListItemSelected(@NotNull ListEntry listEntry) {
-        replaceFragment(ListsTimelineFragment.Companion.newInstance(listEntry.getListId()));
+        replaceFragment(ListsTimelineFragment.Companion.newInstance(listEntry));
     }
 
     @Override
@@ -446,6 +446,8 @@ public class MainActivity extends AppCompatActivity implements
         if (fragment != null) {
             if(fragment instanceof ToolbarTitleInterface){
                 setTitle(((ToolbarTitleInterface)fragment).getTitleResourceId());
+            } else if (fragment instanceof ToolbarStringTitleInterface) {
+                setTitle(((ToolbarStringTitleInterface) fragment).getTitleString());
             }
 
             if(fragment instanceof NavigationPositionInterface){

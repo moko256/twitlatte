@@ -48,7 +48,7 @@ class ListsTimelineActivity : AppCompatActivity(), BaseListFragment.GetViewForSn
 
         supportFragmentManager
                 .beginTransaction()
-                .add(android.R.id.content, ListsTimelineFragment.newInstance(listId))
+                .add(android.R.id.content, ListsTimelineFragment().apply { arguments = intent.extras })
                 .commit()
     }
 
