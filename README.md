@@ -30,7 +30,7 @@ This application is the SNS client for Android\.
 
 ## How to build
 
-It require Java8 and Android Studio 3\.2 to build this project\.
+It require Java8 and Android Studio 3\.4 to build this project\.
 
 1. Clone this project\.
 
@@ -54,7 +54,7 @@ git submodule update --init --recursive
 
 2. Open in Android Studio\.
 
-Note: Please turn off Instant Run in the settings. It cause app's crash in debug build.
+Note: Please turn off Instant Run in the settings. It may cause app's crash in debug build.
 
 3. Build\.
 
@@ -62,10 +62,8 @@ Note: Please turn off Instant Run in the settings. It cause app's crash in debug
 
 This application is built using these libraries\:
 
-* Android Compatibility Library v4
-* Android Compatibility Library v7
-* Android Design Support Library
-* Android Custom Tabs Support Library
+* AndroidX
+* Material Components
 * Glide
 * Glide Transformations
 * google-gson
@@ -84,10 +82,9 @@ and, built using these tools\:
 
 * Android SDK
 * Android Studio
+* Gradle
 * Open JDK
 * Kotlin
-* Gradle
-* Proguard
 
 ## License of this project
 
