@@ -333,7 +333,7 @@ public class MainActivity extends AppCompatActivity implements
                 updateAccountsList();
                 clearAndPrepareFragment();
             } else if (client == null) {
-                finish();
+                super.finish();
             }
         }
     }
@@ -358,6 +358,14 @@ public class MainActivity extends AppCompatActivity implements
             drawer.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
+        }
+    }
+
+    @Override
+    public void finish() {
+        boolean result = moveTaskToBack(false);
+        if (!result) {
+            super.finish();
         }
     }
 
