@@ -51,6 +51,7 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.github.moko256.latte.client.base.MediaUrlConverter;
 import com.github.moko256.latte.client.base.entity.AccessToken;
 import com.github.moko256.latte.client.base.entity.Emoji;
+import com.github.moko256.latte.client.base.entity.ListEntry;
 import com.github.moko256.latte.client.base.entity.User;
 import com.github.moko256.twitlatte.database.CachedUsersSQLiteOpenHelper;
 import com.github.moko256.twitlatte.entity.Client;
@@ -61,6 +62,8 @@ import com.github.moko256.twitlatte.view.EmojiToTextViewSetter;
 import com.github.moko256.twitlatte.widget.FragmentPagerAdapter;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,7 +81,13 @@ import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY
  *
  * @author moko256
  */
-public class MainActivity extends AppCompatActivity implements DrawerLayout.DrawerListener, TabLayout.OnTabSelectedListener, BaseListFragment.GetViewForSnackBar, BaseTweetListFragment.GetRecyclerViewPool, BaseUsersFragment.GetRecyclerViewPool {
+public class MainActivity extends AppCompatActivity implements
+        DrawerLayout.DrawerListener,
+        TabLayout.OnTabSelectedListener,
+        BaseListFragment.GetViewForSnackBar,
+        BaseTweetListFragment.GetRecyclerViewPool,
+        BaseUsersFragment.GetRecyclerViewPool,
+        SelectListsEntriesFragment.ListEntrySelectionListener {
 
     private static final int REQUEST_OAUTH = 2;
 
@@ -160,7 +169,7 @@ public class MainActivity extends AppCompatActivity implements DrawerLayout.Draw
                         replaceFragment(UserLikeFragment.Companion.newInstance(client.getAccessToken().getUserId()));
                         break;
                     case R.id.nav_lists:
-                        replaceFragment(ListsEntriesFragment.Companion.newInstance(client.getAccessToken().getUserId()));
+                        replaceFragment(SelectListsEntriesFragment.Companion.newInstance(client.getAccessToken().getUserId()));
                         break;
                     case R.id.nav_settings:
                         startActivity(new Intent(this,SettingsActivity.class));
@@ -273,6 +282,11 @@ public class MainActivity extends AppCompatActivity implements DrawerLayout.Draw
             }
         }
 
+    }
+
+    @Override
+    public void onListItemSelected(@NotNull ListEntry listEntry) {
+        replaceFragment(ListsTimelineFragment.Companion.newInstance(listEntry.getListId()));
     }
 
     @Override
