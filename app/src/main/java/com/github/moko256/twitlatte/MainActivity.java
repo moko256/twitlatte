@@ -111,8 +111,7 @@ public class MainActivity extends AppCompatActivity implements
 
     private boolean isDrawerAccountsSelection = false;
 
-    private RecyclerView.RecycledViewPool tweetListViewPool;
-    private RecyclerView.RecycledViewPool userListViewPool;
+    private RecyclerView.RecycledViewPool recycledViewPool;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -262,8 +261,8 @@ public class MainActivity extends AppCompatActivity implements
         tabLayout= findViewById(R.id.toolbar_tab);
         tabLayout.addOnTabSelectedListener(this);
 
-        tweetListViewPool = new RecyclerView.RecycledViewPool();
-        userListViewPool = new RecyclerView.RecycledViewPool();
+        recycledViewPool = new RecyclerView.RecycledViewPool();
+        recycledViewPool.setMaxRecycledViews(R.layout.layout_post_card, 16);
 
         getSupportFragmentManager().addOnBackStackChangedListener(() -> attachFragment(getMainFragment()));
 
@@ -580,11 +579,11 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     @NonNull
     public RecyclerView.RecycledViewPool getTweetListViewPool() {
-        return tweetListViewPool;
+        return recycledViewPool;
     }
 
     @Override
     public RecyclerView.RecycledViewPool getUserListViewPool() {
-        return userListViewPool;
+        return recycledViewPool;
     }
 }

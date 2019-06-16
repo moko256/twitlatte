@@ -67,8 +67,7 @@ public class ShowUserActivity extends AppCompatActivity implements TabLayout.OnT
     private ShowUserFragmentsPagerAdapter adapter;
     private TabLayout tabLayout;
 
-    private RecyclerView.RecycledViewPool tweetListViewPool;
-    private RecyclerView.RecycledViewPool userListViewPool;
+    private RecyclerView.RecycledViewPool recycledViewPool;
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -98,8 +97,7 @@ public class ShowUserActivity extends AppCompatActivity implements TabLayout.OnT
         tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
         tabLayout.addOnTabSelectedListener(this);
 
-        tweetListViewPool = new RecyclerView.RecycledViewPool();
-        userListViewPool = new RecyclerView.RecycledViewPool();
+        recycledViewPool = new RecyclerView.RecycledViewPool();
 
         findViewById(R.id.activity_show_user_fab).setOnClickListener(v -> {
             User user = viewModel.getUser().getValue();
@@ -376,13 +374,13 @@ public class ShowUserActivity extends AppCompatActivity implements TabLayout.OnT
 
     @Override
     public RecyclerView.RecycledViewPool getUserListViewPool() {
-        return userListViewPool;
+        return recycledViewPool;
     }
 
     @Override
     @NonNull
     public RecyclerView.RecycledViewPool getTweetListViewPool() {
-        return tweetListViewPool;
+        return recycledViewPool;
     }
 
     public static Intent getIntent(Context context, long userId){
