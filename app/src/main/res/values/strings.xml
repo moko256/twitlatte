@@ -95,6 +95,9 @@
     <string name="hide_sensitive_media">Blur sensitive medias</string>
     <string name="hiding_sensitive_media">Blurring sensitive medias on the timeline</string>
     <string name="showing_sensitive_media">Not blurring all medias on the timeline</string>
+    <string name="back_button_behavior">Behavior of back button</string>
+    <string name="always_close_app">Closing this app when back button pressed</string>
+    <string name="keep_open_app">Keeping this app opening</string>
     <string name="regex_mute">Regex mute</string>
     <string name="edit_pattern">Edit Regex pattern</string>
     <string name="use_post_regex_mute">Use for the context and hide post</string>

@@ -90,6 +90,9 @@
     <string name="hide_sensitive_media">過激な表現を含むメディアをぼかす</string>
     <string name="hiding_sensitive_media">過激な表現を含むメディアをタイムライン上でぼかします</string>
     <string name="showing_sensitive_media">すべてのメディアをタイムライン上でぼかさず表示します</string>
+    <string name="back_button_behavior">戻るボタンの挙動</string>
+    <string name="always_close_app">戻るボタンでアプリを閉じる</string>
+    <string name="keep_open_app">アプリを開いたままにする</string>
     <string name="regex_mute">正規表現でのミュート</string>
     <string name="edit_pattern">正規表現パターンの編集</string>
     <string name="use_post_regex_mute">本文へ使用して非表示にする</string>

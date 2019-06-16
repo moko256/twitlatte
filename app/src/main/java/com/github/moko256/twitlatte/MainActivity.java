@@ -75,6 +75,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 
 import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY_ACCOUNT_KEY;
+import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY_ALWAYS_CLOSE_APP;
 
 /**
  * Created by moko256 on 2015/11/08.
@@ -362,9 +363,13 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void finish() {
-        boolean result = moveTaskToBack(false);
-        if (!result) {
+        if (GlobalApplicationKt.preferenceRepository.getBoolean(KEY_ALWAYS_CLOSE_APP, true)) {
             super.finish();
+        } else {
+            boolean result = moveTaskToBack(false);
+            if (!result) {
+                super.finish();
+            }
         }
     }
 
