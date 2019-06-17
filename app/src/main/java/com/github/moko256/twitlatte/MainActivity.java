@@ -111,6 +111,7 @@ public class MainActivity extends AppCompatActivity implements
     private TabLayout tabLayout;
 
     private boolean isDrawerAccountsSelection = false;
+    private boolean alwaysCloseApp;
 
     private RecyclerView.RecycledViewPool recycledViewPool;
 
@@ -262,6 +263,8 @@ public class MainActivity extends AppCompatActivity implements
         tabLayout= findViewById(R.id.toolbar_tab);
         tabLayout.addOnTabSelectedListener(this);
 
+        alwaysCloseApp = GlobalApplicationKt.preferenceRepository.getBoolean(KEY_ALWAYS_CLOSE_APP, true);
+
         recycledViewPool = new RecyclerView.RecycledViewPool();
         recycledViewPool.setMaxRecycledViews(R.layout.layout_post_card, 16);
 
@@ -363,7 +366,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void finish() {
-        if (GlobalApplicationKt.preferenceRepository.getBoolean(KEY_ALWAYS_CLOSE_APP, true)) {
+        if (alwaysCloseApp) {
             super.finish();
         } else {
             boolean result = moveTaskToBack(false);
@@ -470,6 +473,7 @@ public class MainActivity extends AppCompatActivity implements
                 tabLayout.setVisibility(View.VISIBLE);
                 tabLayout.setupWithViewPager(((UseTabsInterface)fragment).getTabsViewPager());
             } else{
+                tabLayout.setupWithViewPager(null);
                 tabLayout.setVisibility(View.GONE);
             }
         }
