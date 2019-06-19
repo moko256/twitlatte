@@ -27,44 +27,66 @@ import twitter4j.conf.ConfigurationBuilder
  *
  * @author moko256
  */
-class TwitterAuthApiClient(consumerKey: String, consumerSecret: String): AuthApiClient {
-    private val oauth = OAuthAuthorization(
+class TwitterAuthApiClient(consumerKey: String, consumerSecret: String) : AuthApiClient {
+    private val oauth = generateOAuth(consumerKey, consumerSecret)
+
+    override fun getOAuthRequestToken(
+            optionalConsumerKey: String?,
+            optionalConsumerSecret: String?,
+            serverUrl: String,
+            callbackUrl: String?
+    ): RequestToken {
+        val redirectUrl = callbackUrl ?: "oob"
+
+        return getCustomOAuthOrDefault(optionalConsumerKey, optionalConsumerSecret)
+                .getOAuthRequestToken(redirectUrl).let {
+                    RequestToken(
+                            serverUrl,
+                            it.authorizationURL,
+                            redirectUrl,
+                            optionalConsumerKey,
+                            optionalConsumerSecret,
+                            it.token,
+                            it.tokenSecret
+                    )
+                }
+    }
+
+    override fun initializeToken(requestToken: RequestToken, key: String): AccessToken {
+        return getCustomOAuthOrDefault(requestToken.consumerKey, requestToken.consumerSecret)
+                .getOAuthAccessToken(
+                        twitter4j.auth.RequestToken(
+                                requestToken.token,
+                                requestToken.tokenSecret
+                        ),
+                        key
+                ).let {
+                    AccessToken(
+                            CLIENT_TYPE_TWITTER,
+                            requestToken.serverUrl,
+                            it.userId,
+                            it.screenName,
+                            requestToken.consumerKey,
+                            requestToken.consumerSecret,
+                            it.token,
+                            it.tokenSecret
+                    )
+                }
+    }
+
+    private fun generateOAuth(consumerKey: String, consumerSecret: String) = OAuthAuthorization(
             ConfigurationBuilder()
                     .setOAuthConsumerKey(consumerKey)
                     .setOAuthConsumerSecret(consumerSecret)
                     .build()
     )
 
-    override fun getOAuthRequestToken(serverUrl: String, callbackUrl: String?): RequestToken {
-        val redirectUrl = callbackUrl ?: "oob"
-
-        return oauth.getOAuthRequestToken(redirectUrl).let {
-            RequestToken(
-                    serverUrl,
-                    it.authorizationURL,
-                    redirectUrl,
-                    it.token,
-                    it.tokenSecret
-            )
-        }
-    }
-
-    override fun initializeToken(requestToken: RequestToken, key: String): AccessToken {
-        return oauth.getOAuthAccessToken(
-                twitter4j.auth.RequestToken(
-                        requestToken.token,
-                        requestToken.tokenSecret
-                ),
-                key
-        ).let {
-            AccessToken(
-                    CLIENT_TYPE_TWITTER,
-                    requestToken.serverUrl,
-                    it.userId,
-                    it.screenName,
-                    it.token,
-                    it.tokenSecret
-            )
-        }
+    private fun getCustomOAuthOrDefault(
+            optionalConsumerKey: String?,
+            optionalConsumerSecret: String?
+    ) = if (optionalConsumerKey != null && optionalConsumerSecret != null) {
+        generateOAuth(optionalConsumerKey, optionalConsumerSecret)
+    } else {
+        oauth
     }
 }

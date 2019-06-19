@@ -25,7 +25,12 @@ import com.github.moko256.latte.client.base.entity.RequestToken
  * @author moko256
  */
 interface AuthApiClient {
-    fun getOAuthRequestToken(serverUrl: String, callbackUrl: String?): RequestToken
+    fun getOAuthRequestToken(
+            optionalConsumerKey: String?,
+            optionalConsumerSecret: String?,
+            serverUrl: String,
+            callbackUrl: String?
+    ): RequestToken
 
     fun initializeToken(requestToken: RequestToken, key: String): AccessToken
 }

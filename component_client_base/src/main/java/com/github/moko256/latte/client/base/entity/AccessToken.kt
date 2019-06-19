@@ -27,8 +27,10 @@ data class AccessToken(
         val url: String,
         val userId: Long,
         val screenName: String,
+        val consumerKey: String?,
+        val consumerSecret: String?,
         val token: String,
-        val tokenSecret: String? = null
+        val tokenSecret: String?
 ) {
     fun getKeyString(): String {
         return "$url@$userId"

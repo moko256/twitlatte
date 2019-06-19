@@ -36,6 +36,8 @@ import com.github.moko256.twitlatte.intent.AppCustomTabsKt;
 import com.github.moko256.twitlatte.model.base.OAuthModel;
 import com.github.moko256.twitlatte.model.impl.OAuthModelImpl;
 import com.github.moko256.twitlatte.net.OkHttpHolderKt;
+import com.github.moko256.twitlatte.view.Content;
+import com.github.moko256.twitlatte.view.EditTextsDialogShowerKt;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -44,8 +46,9 @@ import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.core.content.ContextCompat;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.internal.disposables.CancellableDisposable;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import kotlin.Unit;
 
 import static com.github.moko256.latte.client.base.ApiClientKt.CLIENT_TYPE_NOTHING;
 import static com.github.moko256.latte.client.mastodon.MastodonApiClientImplKt.CLIENT_TYPE_MASTODON;
@@ -61,17 +64,21 @@ public class OAuthActivity extends AppCompatActivity {
 
     private static final String STATE_CLIENT_TYPE = "state_client_type";
     private static final String STATE_REQUIRE_PIN = "state_require_pin";
+    private static final String STATE_REQUIRE_USE_ANOTHER_CONSUMER_TOKEN = "state_use_another_token";
     private static final String STATE_URL_ENTER_DIALOG_SHOWN = "state_url_enter_dialog_shown";
     private static final String STATE_LAST_URL = "state_last_url";
     private static final String STATE_ENTERING_PIN = "state_entering_pin";
+    private static final String STATE_ENTERING_CONSUMER_KEY = "state_entering_ck";
+    private static final String STATE_ENTERING_CONSUMER_SECRET = "state_entering_cs";
 
     private int authClientType = CLIENT_TYPE_NOTHING;
 
     private OAuthModel model;
 
     private boolean requirePin=false;
+    private boolean useAnotherConsumerToken =false;
 
-    private AlertDialog pinDialog;
+    private Disposable pinDialog;
 
     private CompositeDisposable compositeDisposable;
 
@@ -82,6 +89,12 @@ public class OAuthActivity extends AppCompatActivity {
 
     @NonNull
     private String enteringPin = "";
+
+    @NonNull
+    private String enteringConsumerKey = "";
+
+    @NonNull
+    private String enteringConsumerSecret = "";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -95,7 +108,11 @@ public class OAuthActivity extends AppCompatActivity {
 
             enteringPin = savedInstanceState.getString(STATE_ENTERING_PIN, "");
 
+            enteringConsumerKey = savedInstanceState.getString(STATE_ENTERING_CONSUMER_KEY, "");
+            enteringConsumerSecret = savedInstanceState.getString(STATE_ENTERING_CONSUMER_SECRET, "");
+
             requirePin = savedInstanceState.getBoolean(STATE_REQUIRE_PIN, false);
+            useAnotherConsumerToken = savedInstanceState.getBoolean(STATE_REQUIRE_USE_ANOTHER_CONSUMER_TOKEN, false);
 
             int type = savedInstanceState.getInt(STATE_CLIENT_TYPE, -1);
 
@@ -120,6 +137,9 @@ public class OAuthActivity extends AppCompatActivity {
         if (requirePin) {
             outState.putBoolean(STATE_REQUIRE_PIN, true);
         }
+        if (useAnotherConsumerToken) {
+            outState.putBoolean(STATE_REQUIRE_USE_ANOTHER_CONSUMER_TOKEN, true);
+        }
         if (model != null && model.isRestartable()) {
             outState.putInt(STATE_CLIENT_TYPE, authClientType);
             model.saveInstanceState(outState);
@@ -129,6 +149,12 @@ public class OAuthActivity extends AppCompatActivity {
         }
         if (!enteringPin.isEmpty()) {
             outState.putString(STATE_ENTERING_PIN, enteringPin);
+        }
+        if (!enteringConsumerKey.isEmpty()) {
+            outState.putString(STATE_ENTERING_CONSUMER_KEY, enteringConsumerKey);
+        }
+        if (!enteringConsumerSecret.isEmpty()) {
+            outState.putString(STATE_ENTERING_CONSUMER_SECRET, enteringConsumerSecret);
         }
         if (!lastUrl.isEmpty()) {
             outState.putString(STATE_LAST_URL, lastUrl);
@@ -261,7 +287,25 @@ public class OAuthActivity extends AppCompatActivity {
         editText.setText(lastUrl);
         editText.setSelection(lastUrl.length());
 
-        compositeDisposable.add(new CancellableDisposable(domainConfirm::dismiss));
+        compositeDisposable.add(
+                EditTextsDialogShowerKt.createEditTextsDialog(
+                        this,
+                        getString(R.string.instance_domain),
+                        false,
+                        new Content(
+                                "e.g. mastodon.social",
+                                lastUrl,
+                                EditorInfo.TYPE_TEXT_VARIATION_URI,
+                                url -> {
+                                    lastUrl = url;
+                                    return Unit.INSTANCE;
+                                }
+                        )
+                ).subscribe(() -> {
+                    isUrlEnterDialogShown = false;
+                    startAuthAndOpenDialogIfNeeded(lastUrl);
+                })
+        );
     }
 
     private void startAuthAndOpenDialogIfNeeded(@NonNull String url) {
@@ -273,48 +317,78 @@ public class OAuthActivity extends AppCompatActivity {
             callbackUrl = getString(R.string.app_name) + "://OAuthActivity";
         }
 
-        compositeDisposable.add(model
-                .getAuthUrl(url, callbackUrl)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        this::startBrowser,
-                        throwable -> {
-                            closePinDialog();
-                            onError(throwable);
-                        }
-                )
+        if (useAnotherConsumerToken && authClientType == CLIENT_TYPE_TWITTER) {
+            compositeDisposable.add(
+                    EditTextsDialogShowerKt.createEditTextsDialog(
+                            this,
+                            "Consumer key/token",
+                            true,
+                            new Content(
+                                   "consumer key",
+                                   enteringConsumerKey,
+                                    EditorInfo.TYPE_CLASS_TEXT,
+                                    ck -> {
+                                       enteringConsumerKey = ck;
+                                       return Unit.INSTANCE;
+                                    }
+                            ),
+                            new Content(
+                                    "consumer secret",
+                                    enteringConsumerSecret,
+                                    EditorInfo.TYPE_CLASS_TEXT,
+                                    cs -> {
+                                        enteringConsumerSecret = cs;
+                                        return Unit.INSTANCE;
+                                    }
+                            )
+                    ).subscribe(() -> startAuth(url, callbackUrl, enteringConsumerKey, enteringConsumerSecret))
+            );
+        } else {
+            startAuth(url, callbackUrl, null, null);
+        }
+    }
+
+    private void startAuth(
+            String url,
+            String callbackUrl,
+            String consumerKey,
+            String consumerSecret
+    ) {
+        compositeDisposable.add(
+                model
+                        .getAuthUrl(consumerKey, consumerSecret, url, callbackUrl)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                                this::startBrowser,
+                                throwable -> {
+                                    closePinDialog();
+                                    onError(throwable);
+                                }
+                        )
         );
     }
 
     private void showPinDialog(){
-        EditText editText=new EditText(this);
-        editText.setHint("Code");
-        editText.setInputType(EditorInfo.TYPE_NUMBER_FLAG_DECIMAL);
-        pinDialog = new AlertDialog.Builder(this)
-                .setView(editText)
-                .setPositiveButton(android.R.string.ok,(dialog, which) -> initToken(enteringPin))
-                .setCancelable(false)
-                .show();
-        editText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                enteringPin = s.toString();
-                pinDialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(s.length() > 0);
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {}
-        });
-        editText.setText(enteringPin);
+        pinDialog = EditTextsDialogShowerKt.createEditTextsDialog(
+                this,
+                null,
+                false,
+                new Content(
+                        "Code",
+                        enteringPin,
+                        EditorInfo.TYPE_NUMBER_FLAG_DECIMAL,
+                        pin -> {
+                            enteringPin = pin;
+                            return Unit.INSTANCE;
+                        }
+                )
+        ).subscribe(() -> initToken(enteringPin));
     }
 
     private void closePinDialog(){
         if (pinDialog != null){
-            pinDialog.dismiss();
+            pinDialog.dispose();
         }
     }
 
@@ -352,6 +426,9 @@ public class OAuthActivity extends AppCompatActivity {
         if (requirePin) {
             menu.findItem(R.id.action_use_auth_code).setChecked(true);
         }
+        if (useAnotherConsumerToken) {
+            menu.findItem(R.id.action_use_another_consumer_token).setChecked(true);
+        }
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -360,6 +437,11 @@ public class OAuthActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.action_settings:
                 startActivity(new Intent(this, SettingsActivity.class));
+                break;
+
+            case R.id.action_use_another_consumer_token:
+                useAnotherConsumerToken = !item.isChecked();
+                item.setChecked(useAnotherConsumerToken);
                 break;
 
             case R.id.action_use_auth_code:
