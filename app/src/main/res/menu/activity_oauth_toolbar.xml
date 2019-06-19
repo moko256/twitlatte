@@ -25,7 +25,7 @@
         app:showAsAction="never"/>
     <item
         android:id="@+id/action_use_another_consumer_token"
-        android:title="Use another token"
+        android:title="@string/use_another_consumer_token"
         android:checkable="true"
         android:checked="false"
         app:showAsAction="never"/>

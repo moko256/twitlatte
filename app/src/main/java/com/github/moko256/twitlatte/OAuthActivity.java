@@ -283,7 +283,7 @@ public class OAuthActivity extends AppCompatActivity {
             compositeDisposable.add(
                     EditTextsDialogShowerKt.createEditTextsDialog(
                             this,
-                            "Consumer key/token",
+                            "Consumer key/secret",
                             true,
                             new DialogContent(
                                    "consumer key",

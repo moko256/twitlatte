@@ -167,7 +167,8 @@
     <string name="twitter" translatable="false">Twitter</string>
     <string name="mastodon" translatable="false">Mastodon</string>
 
-    <string name="use_auth_code">Enter auth code</string>
+    <string name="use_auth_code">Use OAuth auth code</string>
+    <string name="use_another_consumer_token">Use another consumer token</string>
 
     <string name="mode_image_level_normal">Standard</string>
     <string name="mode_image_level_lowest">Lowest</string>

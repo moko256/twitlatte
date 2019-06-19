@@ -159,7 +159,8 @@
 
     <string name="did_copy">クリップボードにコピーしました</string>
 
-    <string name="use_auth_code">認可コードを入力する</string>
+    <string name="use_auth_code">OAuth認可コードを使用する</string>
+    <string name="use_another_consumer_token">他のコンシューマートークンを使用する</string>
 
     <string name="mode_image_level_normal">標準</string>
     <string name="mode_image_level_lowest">最低画質</string>
