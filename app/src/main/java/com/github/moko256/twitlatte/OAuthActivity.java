@@ -16,18 +16,19 @@
 
 package com.github.moko256.twitlatte;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.browser.customtabs.CustomTabsIntent;
+import androidx.core.content.ContextCompat;
 
 import com.github.moko256.latte.client.base.entity.AccessToken;
 import com.github.moko256.twitlatte.api.OAuthApiClientGeneratorKt;
@@ -39,11 +40,6 @@ import com.github.moko256.twitlatte.net.OkHttpHolderKt;
 import com.github.moko256.twitlatte.view.Content;
 import com.github.moko256.twitlatte.view.EditTextsDialogShowerKt;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.browser.customtabs.CustomTabsIntent;
-import androidx.core.content.ContextCompat;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -253,45 +249,11 @@ public class OAuthActivity extends AppCompatActivity {
 
         isUrlEnterDialogShown = true;
 
-        EditText editText=new EditText(this);
-        editText.setHint("e.g. mastodon.social");
-        editText.setInputType(EditorInfo.TYPE_TEXT_VARIATION_URI);
-
-        AlertDialog domainConfirm = new AlertDialog.Builder(this)
-                .setTitle(R.string.instance_domain)
-                .setView(editText)
-                .setPositiveButton(
-                        android.R.string.ok,
-                        (dialog, which) -> {
-                            isUrlEnterDialogShown = false;
-                            startAuthAndOpenDialogIfNeeded(lastUrl);
-                        }
-                )
-                .setNegativeButton(android.R.string.cancel, null)
-                .show();
-
-        editText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                lastUrl = s.toString();
-                domainConfirm.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(s.length() > 0);
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {}
-        });
-
-        editText.setText(lastUrl);
-        editText.setSelection(lastUrl.length());
-
         compositeDisposable.add(
                 EditTextsDialogShowerKt.createEditTextsDialog(
                         this,
                         getString(R.string.instance_domain),
-                        false,
+                        true,
                         new Content(
                                 "e.g. mastodon.social",
                                 lastUrl,

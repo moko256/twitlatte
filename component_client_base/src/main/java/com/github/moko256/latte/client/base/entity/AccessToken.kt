@@ -43,6 +43,18 @@ data class AccessToken(
     override fun hashCode(): Int {
         return getKeyString().hashCode()
     }
+
+    fun getHash(): Int {
+        var result = clientType
+        result = 31 * result + url.hashCode()
+        result = 31 * result + userId.hashCode()
+        result = 31 * result + screenName.hashCode()
+        result = 31 * result + (consumerKey?.hashCode() ?: 0)
+        result = 31 * result + (consumerSecret?.hashCode() ?: 0)
+        result = 31 * result + token.hashCode()
+        result = 31 * result + (tokenSecret?.hashCode() ?: 0)
+        return result
+    }
 }
 
 fun splitAccessTokenKey(accessTokenKey: String): Pair<String, Long> {
