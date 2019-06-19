@@ -37,7 +37,7 @@ import com.github.moko256.twitlatte.intent.AppCustomTabsKt;
 import com.github.moko256.twitlatte.model.base.OAuthModel;
 import com.github.moko256.twitlatte.model.impl.OAuthModelImpl;
 import com.github.moko256.twitlatte.net.OkHttpHolderKt;
-import com.github.moko256.twitlatte.view.Content;
+import com.github.moko256.twitlatte.view.DialogContent;
 import com.github.moko256.twitlatte.view.EditTextsDialogShowerKt;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -254,7 +254,7 @@ public class OAuthActivity extends AppCompatActivity {
                         this,
                         getString(R.string.instance_domain),
                         true,
-                        new Content(
+                        new DialogContent(
                                 "e.g. mastodon.social",
                                 lastUrl,
                                 EditorInfo.TYPE_TEXT_VARIATION_URI,
@@ -285,7 +285,7 @@ public class OAuthActivity extends AppCompatActivity {
                             this,
                             "Consumer key/token",
                             true,
-                            new Content(
+                            new DialogContent(
                                    "consumer key",
                                    enteringConsumerKey,
                                     EditorInfo.TYPE_CLASS_TEXT,
@@ -294,7 +294,7 @@ public class OAuthActivity extends AppCompatActivity {
                                        return Unit.INSTANCE;
                                     }
                             ),
-                            new Content(
+                            new DialogContent(
                                     "consumer secret",
                                     enteringConsumerSecret,
                                     EditorInfo.TYPE_CLASS_TEXT,
@@ -336,7 +336,7 @@ public class OAuthActivity extends AppCompatActivity {
                 this,
                 null,
                 false,
-                new Content(
+                new DialogContent(
                         "Code",
                         enteringPin,
                         EditorInfo.TYPE_NUMBER_FLAG_DECIMAL,

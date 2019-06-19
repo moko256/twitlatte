@@ -31,7 +31,7 @@ fun createEditTextsDialog(
         context: Context,
         title: String?,
         cancellable: Boolean,
-        vararg contents: Content
+        vararg contents: DialogContent
 ): Completable {
 
     val result = CompletableSubject.create()
@@ -82,7 +82,7 @@ fun createEditTextsDialog(
     }
 }
 
-class Content(
+class DialogContent(
         val hint: String,
         val initValue: String,
         val type: Int,
