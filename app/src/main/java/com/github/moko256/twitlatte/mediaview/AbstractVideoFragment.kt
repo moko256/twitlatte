@@ -100,7 +100,7 @@ abstract class AbstractVideoFragment : AbstractMediaFragment(), Player.EventList
         videoPlayView.also {
 
             it.controllerShowTimeoutMs = 3000
-
+            it.useArtwork = true
             it.setControllerVisibilityListener { visibility ->
                 if (visibility != VISIBLE) {
                     hideSystemUI()

@@ -27,6 +27,10 @@
 
         <!-- Video surface will be inserted as the first child of the content frame. -->
 
+        <ImageView android:id="@id/exo_artwork"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitXY"/>
     </com.google.android.exoplayer2.ui.AspectRatioFrameLayout>
 
     <ProgressBar

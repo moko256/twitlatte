@@ -39,6 +39,7 @@ class MediasAdapter(
         return when (media.mediaType) {
             "video_multi" -> MultiVideoFragment()
             "video_one" -> OneVideoFragment()
+            "audio" -> AudioFragment()
             "gif" -> GifFragment()
             "picture" -> ImageFragment()
             else -> UnknownMediaFragment()
