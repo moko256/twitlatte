@@ -21,6 +21,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.text.TextUtils;
 
 import com.github.moko256.latte.client.base.entity.AccessToken;
 import com.github.moko256.latte.client.base.entity.AccessTokenKt;
@@ -64,7 +65,7 @@ public class TokenSQLiteOpenHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL(
-                "create table " + TABLE_NAME + "(type string , url string , userId integer , userName string , token string , tokenSecret string , primary key(url , userId))"
+                "create table " + TABLE_NAME + "(" + TextUtils.join(",", TABLE_COLUMNS) + ", primary key(url , userId))"
         );
         sqLiteDatabase.execSQL("create unique index idindex on " + TABLE_NAME + "(url , userId)");
     }
