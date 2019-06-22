@@ -34,6 +34,7 @@ data class Media (
         GIF("gif"),
         VIDEO_ONE("video_one"),
         VIDEO_MULTI("video_multi"),
+        AUDIO("audio"),
         UNKNOWN("unknown")
     }
 }
