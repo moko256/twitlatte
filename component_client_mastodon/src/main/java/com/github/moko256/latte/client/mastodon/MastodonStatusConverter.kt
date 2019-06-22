@@ -103,7 +103,7 @@ private fun com.sys1yagi.mastodon4j.api.entity.Status.convertToStatus(): Status 
                     }
                     Attachment.Type.Audio.value -> {
                         resultUrl = it.url
-                        thumbnailUrl = null
+                        thumbnailUrl = it.previewUrl
                         type = Media.MediaType.AUDIO
                     }
                     else -> { //It must be Attachment.Type.Unknown.value or undefined type

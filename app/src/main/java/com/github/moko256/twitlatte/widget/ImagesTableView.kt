@@ -190,7 +190,7 @@ class ImagesTableView @JvmOverloads constructor(
                     ?.transition(DrawableTransitionOptions.withCrossFade())
                     ?.into(imageView)
             when (media.mediaType) {
-                "video_one", "video_multi" -> {
+                "audio", "video_one", "video_multi" -> {
                     imageView.setFilterIfNotExist()
                     playButton.visibility = View.VISIBLE
                     markImage.visibility = View.GONE
