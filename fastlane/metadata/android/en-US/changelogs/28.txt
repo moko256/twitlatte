@@ -1,0 +1,10 @@
+v1.9.2
+Enable to play audio attachments in Mastodon v2.9.1.
+
+v1.9.1
+Fixed crash bug
+
+v1.9.0
+Enable to use your consumer key when Twitter
+Step : "Log in" screen -> Open ⋮ menu in top bar -> ☑ Check "Use another consumer token" -> Authorize
+Note: Please get consumer key yourself, and don't make it public
