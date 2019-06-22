@@ -31,6 +31,7 @@ fun createEditTextsDialog(
         context: Context,
         title: String?,
         cancellable: Boolean,
+        cancelCallback: DialogInterface.OnCancelListener?,
         vararg contents: DialogContent
 ): Completable {
 
@@ -41,9 +42,12 @@ fun createEditTextsDialog(
             .setPositiveButton(android.R.string.ok) { _, _ -> result.onComplete() }
             .apply {
                 if (cancellable) {
-                    setNegativeButton(android.R.string.cancel, null)
+                    setNegativeButton(android.R.string.cancel) { dialog, _ ->
+                        cancelCallback?.onCancel(dialog)
+                    }
                 }
                 setCancelable(cancellable)
+                setOnCancelListener(cancelCallback)
             }
             .create()
 
@@ -60,7 +64,6 @@ fun createEditTextsDialog(
 
                     override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                         it.callback(s.toString())
-                        dialog.getButton(DialogInterface.BUTTON_POSITIVE).isEnabled = s.isNotEmpty()
                     }
 
                     override fun afterTextChanged(s: Editable) {}
@@ -68,13 +71,45 @@ fun createEditTextsDialog(
                 editText
             }
 
+    var firstEnabled = false
+
     dialog.setView(
-            views.singleOrNull() ?: LinearLayout(context).apply {
+            views.singleOrNull()?.also {
+                firstEnabled = it.text.isNotEmpty()
+
+                it.addTextChangedListener(object : TextWatcher {
+                    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+                    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                        dialog.getButton(DialogInterface.BUTTON_POSITIVE).isEnabled = s?.isNotEmpty() == true
+                    }
+
+                    override fun afterTextChanged(s: Editable?) {}
+                })
+            } ?: LinearLayout(context).apply {
                 orientation = VERTICAL
-                views.forEach { addView(it) } }
+                firstEnabled = views.map { it.text.isNotEmpty() }.all { it }
+                val listener = object : TextWatcher {
+                    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+                    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                        dialog.getButton(DialogInterface.BUTTON_POSITIVE).isEnabled =
+                                views.map { it.text.isNotEmpty() }.all { it }
+
+                    }
+
+                    override fun afterTextChanged(s: Editable?) {}
+                }
+                views.forEach { editText ->
+                    editText.addTextChangedListener(listener)
+                    addView(editText)
+                }
+            }
     )
 
     dialog.show()
+
+    dialog.getButton(DialogInterface.BUTTON_POSITIVE).isEnabled = firstEnabled
 
     return result.doOnDispose {
         dialog.setOnDismissListener(null)

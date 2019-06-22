@@ -254,6 +254,7 @@ public class OAuthActivity extends AppCompatActivity {
                         this,
                         getString(R.string.instance_domain),
                         true,
+                        (dialog) -> isUrlEnterDialogShown = false,
                         new DialogContent(
                                 "e.g. mastodon.social",
                                 lastUrl,
@@ -285,6 +286,7 @@ public class OAuthActivity extends AppCompatActivity {
                             this,
                             "Consumer key/secret",
                             true,
+                            null,
                             new DialogContent(
                                    "consumer key",
                                    enteringConsumerKey,
@@ -336,6 +338,7 @@ public class OAuthActivity extends AppCompatActivity {
                 this,
                 null,
                 false,
+                null,
                 new DialogContent(
                         "Code",
                         enteringPin,
