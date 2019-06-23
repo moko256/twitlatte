@@ -23,10 +23,11 @@ import org.jetbrains.annotations.TestOnly
  *
  * @author moko256
  */
-class LruCache<K, V>(private val capacity: Int) {
-    private val map = LinkedHashMap<K, V>(capacity + 1, 1f, true)
+class LruCache<K, V>(capacity: Int) {
+    private val map = LimitedLinkedHashMap<K, V>(capacity)
 
-    @TestOnly fun valueIterable() = map.values.asIterable()
+    @TestOnly
+    fun valueIterable() = map.values.asIterable()
 
     fun get(key: K): V? {
         synchronized(this) {
@@ -36,9 +37,6 @@ class LruCache<K, V>(private val capacity: Int) {
 
     fun put(key: K, value: V) {
         synchronized(this) {
-            if (map.size >= capacity) {
-                map.remove(map.keys.first())
-            }
             map.put(key, value)
         }
     }
@@ -59,5 +57,12 @@ class LruCache<K, V>(private val capacity: Int) {
                 map.clear()
             }
         }
+    }
+}
+
+private class LimitedLinkedHashMap<K, V>(private val capacity: Int)
+    : LinkedHashMap<K, V>(capacity + 2, 1f, true) {
+    override fun removeEldestEntry(eldest: MutableMap.MutableEntry<K, V>?): Boolean {
+        return size > capacity
     }
 }
