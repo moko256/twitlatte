@@ -18,6 +18,8 @@ package com.github.moko256.twitlatte.cacheMap;
 
 import android.content.Context;
 
+import androidx.annotation.Nullable;
+
 import com.github.moko256.latte.client.base.entity.AccessToken;
 import com.github.moko256.latte.client.base.entity.Post;
 import com.github.moko256.latte.client.base.entity.Repeat;
@@ -26,6 +28,7 @@ import com.github.moko256.latte.client.base.entity.StatusObject;
 import com.github.moko256.latte.client.base.entity.StatusObjectKt;
 import com.github.moko256.latte.client.base.entity.User;
 import com.github.moko256.twitlatte.GlobalApplicationKt;
+import com.github.moko256.twitlatte.collections.LruCache;
 import com.github.moko256.twitlatte.database.CachedStatusesSQLiteOpenHelper;
 
 import java.util.ArrayList;
@@ -33,9 +36,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-
-import androidx.annotation.Nullable;
-import androidx.collection.LruCache;
 
 /**
  * Created by moko256 on 2016/12/22.
@@ -54,7 +54,7 @@ public class StatusCacheMap {
             diskCache.close();
         }
         if (cache.size() > 0){
-            cache.evictAll();
+            cache.clear();
         }
         diskCache = new CachedStatusesSQLiteOpenHelper(context, accessToken);
         this.userCache = userCache;
@@ -66,7 +66,7 @@ public class StatusCacheMap {
             diskCache = null;
         }
         if (cache.size() > 0) {
-            cache.evictAll();
+            cache.clear();
         }
     }
 

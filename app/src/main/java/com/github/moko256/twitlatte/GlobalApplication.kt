@@ -21,7 +21,6 @@ import android.app.Application
 import android.content.Intent
 import android.preference.PreferenceManager
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.collection.LruCache
 import com.bumptech.glide.GlideInitializer
 import com.github.moko256.latte.client.base.ApiClient
 import com.github.moko256.latte.client.base.entity.AccessToken
@@ -30,6 +29,7 @@ import com.github.moko256.twitlatte.api.generateApiClient
 import com.github.moko256.twitlatte.api.generateMediaUrlConverter
 import com.github.moko256.twitlatte.cacheMap.StatusCacheMap
 import com.github.moko256.twitlatte.cacheMap.UserCacheMap
+import com.github.moko256.twitlatte.collections.LruCache
 import com.github.moko256.twitlatte.entity.Client
 import com.github.moko256.twitlatte.glide.GlideModule
 import com.github.moko256.twitlatte.model.AccountsModel
@@ -109,9 +109,10 @@ class GlobalApplication : Application() {
     }
 
     fun createApiClientInstance(accessToken: AccessToken): ApiClient {
-        return apiClientCache.get(accessToken.getHash())
+        val hash = accessToken.getHash()
+        return apiClientCache.get(hash)
                 ?: generateApiClient(accessToken).also {
-                    apiClientCache.put(accessToken.getHash(), it)
+                    apiClientCache.put(hash, it)
                 }
     }
 }
