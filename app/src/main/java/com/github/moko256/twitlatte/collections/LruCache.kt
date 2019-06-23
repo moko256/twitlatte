@@ -16,6 +16,8 @@
 
 package com.github.moko256.twitlatte.collections
 
+import org.jetbrains.annotations.TestOnly
+
 /**
  * Created by moko256 on 2019/06/23.
  *
@@ -24,7 +26,7 @@ package com.github.moko256.twitlatte.collections
 class LruCache<K, V>(private val capacity: Int) {
     private val map = LinkedHashMap<K, V>(capacity + 1, 1f, true)
 
-    fun valueIterable() = map.values.asIterable()
+    @TestOnly fun valueIterable() = map.values.asIterable()
 
     fun get(key: K): V? {
         synchronized(this) {
