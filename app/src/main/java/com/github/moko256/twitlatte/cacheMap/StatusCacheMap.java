@@ -53,9 +53,7 @@ public class StatusCacheMap {
         if (diskCache != null){
             diskCache.close();
         }
-        if (cache.size() > 0){
-            cache.clear();
-        }
+        cache.clearIfNotEmpty();
         diskCache = new CachedStatusesSQLiteOpenHelper(context, accessToken);
         this.userCache = userCache;
     }
@@ -65,9 +63,7 @@ public class StatusCacheMap {
             diskCache.close();
             diskCache = null;
         }
-        if (cache.size() > 0) {
-            cache.clear();
-        }
+        cache.clearIfNotEmpty();
     }
 
     public int size() {

@@ -52,4 +52,12 @@ class LruCache<K, V>(private val capacity: Int) {
             map.clear()
         }
     }
+
+    fun clearIfNotEmpty() {
+        if (map.isNotEmpty()) {
+            synchronized(this) {
+                map.clear()
+            }
+        }
+    }
 }

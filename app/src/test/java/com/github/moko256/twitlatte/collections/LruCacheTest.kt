@@ -33,6 +33,8 @@ class LruCacheTest {
         testMap(lruCache)
         lruCache.clear()
         testMap(lruCache)
+        lruCache.clearIfNotEmpty()
+        testMap(lruCache)
     }
 
 
