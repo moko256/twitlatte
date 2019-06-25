@@ -26,6 +26,3 @@ dependencies {
 repositories {
     mavenCentral()
 }
-
-sourceCompatibility = '8'
-targetCompatibility = '8'
