@@ -41,6 +41,8 @@ class ImageFragment: AbstractMediaFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val flingLayout = view as FlingLayout
+
         setSystemUIVisibilityListener { visibility ->
             if (visibility and SYSTEM_UI_FLAG_FULLSCREEN == 0) {
                 showActionbar()
@@ -55,8 +57,8 @@ class ImageFragment: AbstractMediaFragment() {
                 showSystemUI()
             }
         }
-        imageView.setOnScaleChangeListener { scaleFactor: Float, _: Float, _: Float ->
-            (view as FlingLayout).isDragEnabled = scaleFactor <= 1.1f
+        imageView.setOnScaleChangeListener { _: Float, _: Float, _: Float ->
+            flingLayout.isDragEnabled = imageView.scale <= 1.1f
         }
         val requests = Glide.with(this)
         val url = media.originalUrl
