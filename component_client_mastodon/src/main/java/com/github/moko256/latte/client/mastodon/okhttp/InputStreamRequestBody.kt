@@ -20,7 +20,7 @@ import okhttp3.MediaType
 import okhttp3.RequestBody
 import okhttp3.internal.Util
 import okio.BufferedSink
-import okio.source
+import okio.Okio
 import java.io.IOException
 import java.io.InputStream
 
@@ -43,7 +43,7 @@ internal class InputStreamRequestBody(private val mediaType: MediaType?, private
     }
 
     override fun writeTo(sink: BufferedSink) {
-        val source = inputStream.source()
+        val source = Okio.source(inputStream)
         try {
             sink.writeAll(source)
         } finally {
