@@ -46,7 +46,7 @@
 
         <activity
             android:name=".LinkOpenWithActivity"
-            android:theme="@android:style/Theme.NoDisplay"
+            android:theme="@style/LinkOpenWithActivityTheme"
             android:noHistory="true"
             android:stateNotNeeded="true">
 
