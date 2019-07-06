@@ -85,7 +85,7 @@ abstract class BaseTweetListFragment : BaseListFragment(), ListServerRepository<
             )
             listViewModel.statusActionModel = StatusActionModelImpl(
                     client.apiClient,
-                    client.statusCache
+                    client.postCache
             )
             listViewModel.start()
         }

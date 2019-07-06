@@ -31,7 +31,7 @@ class VerifyCredentialOnSubscribe(
 ): SingleOnSubscribe<User> {
     override fun subscribe(emitter: SingleEmitter<User>) {
         try {
-            var me = client.userCache[client.accessToken.userId]
+            var me = client.userCache.get(client.accessToken.userId)
             if (me == null) {
                 me = client.apiClient.verifyCredentials()
                 client.userCache.add(me)

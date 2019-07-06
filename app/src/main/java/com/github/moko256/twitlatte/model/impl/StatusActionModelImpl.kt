@@ -20,7 +20,7 @@ import android.annotation.SuppressLint
 import com.github.moko256.latte.client.base.ApiClient
 import com.github.moko256.latte.client.base.entity.Post
 import com.github.moko256.latte.client.base.entity.StatusAction
-import com.github.moko256.twitlatte.cacheMap.StatusCacheMap
+import com.github.moko256.twitlatte.cacheMap.PostCache
 import com.github.moko256.twitlatte.model.base.StatusActionModel
 import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -34,7 +34,7 @@ import io.reactivex.subjects.PublishSubject
  */
 class StatusActionModelImpl(
         private val apiClient: ApiClient,
-        private val database: StatusCacheMap
+        private val database: PostCache
 ) : StatusActionModel {
 
     private val actionObservable = PublishSubject.create<StatusAction>()

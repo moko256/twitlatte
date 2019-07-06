@@ -92,7 +92,7 @@ class GlobalApplication : Application() {
 
     fun initCurrentClient(accessToken: AccessToken) {
         userCache.prepare(this, accessToken)
-        statusCache.prepare(this, accessToken, userCache)
+        statusCache.prepare(this, accessToken)
         currentClient = Client(
                 accessToken,
                 createApiClientInstance(accessToken),
@@ -132,7 +132,7 @@ fun Activity.getClient(): Client? {
                         UserCacheMap()
                 ).apply {
                     userCache.prepare(this@getClient, it)
-                    statusCache.prepare(this@getClient, it, userCache)
+                    statusCache.prepare(this@getClient, it)
                 }
             }
             ?: application.currentClient

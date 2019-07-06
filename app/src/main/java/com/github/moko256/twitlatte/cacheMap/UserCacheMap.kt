@@ -42,16 +42,13 @@ class UserCacheMap {
 
     fun close() {
         diskCache?.close()
+        diskCache = null
         cache.clearIfNotEmpty()
-    }
-
-    fun size(): Int {
-        return cache.size()
     }
 
     fun add(user: User) {
         cache.put(user.id, user)
-        diskCache!!.addCachedUser(user)
+        diskCache?.addCachedUser(user)
     }
 
     fun addAll(c: Collection<User>) {
@@ -59,14 +56,14 @@ class UserCacheMap {
             c.forEach {
                 cache.put(it.id, it)
             }
-            diskCache!!.addCachedUsers(c)
+            diskCache?.addCachedUsers(c)
         }
     }
 
-    operator fun get(id: Long): User? {
+    fun get(id: Long): User? {
         val memoryCache = cache.get(id)
         return if (memoryCache == null) {
-            val storageCache = diskCache!!.getCachedUser(id)
+            val storageCache = diskCache?.getCachedUser(id)
             if (storageCache != null) {
                 cache.put(storageCache.id, storageCache)
             }
