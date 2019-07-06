@@ -17,6 +17,7 @@
 package com.github.moko256.twitlatte.cacheMap
 
 import android.content.Context
+import androidx.collection.ArraySet
 import com.github.moko256.latte.client.base.entity.AccessToken
 import com.github.moko256.latte.client.base.entity.Status
 import com.github.moko256.latte.client.base.entity.StatusObject
@@ -24,7 +25,6 @@ import com.github.moko256.latte.client.base.entity.getId
 import com.github.moko256.twitlatte.LIMIT_OF_SIZE_OF_STATUSES_LIST
 import com.github.moko256.twitlatte.collections.LruCache
 import com.github.moko256.twitlatte.database.CachedStatusesSQLiteOpenHelper
-import java.util.*
 
 /**
  * Created by moko256 on 2016/12/22.
@@ -77,7 +77,7 @@ class StatusCacheMap {
     }
 
     fun delete(ids: List<Long>) {
-        val list = ArrayList<Long>(ids.size)
+        val list = ArraySet<Long>(ids.size * 6)
         for (id in ids) {
             if (id != -1L) {
                 list.add(id)
@@ -85,12 +85,10 @@ class StatusCacheMap {
         }
         val use = diskCache?.getIdsInUse(list)
 
-        val remove = HashSet<Long>(list.size + (use?.size ?: 0))
-        remove.addAll(list)
-        if (use != null) {
-            remove.addAll(use)
+        if (use != null && use.isNotEmpty()) {
+            list.addAll(use)
         }
-        diskCache?.deleteCachedStatuses(remove)
+        diskCache?.deleteCachedStatuses(list)
     }
 
 }

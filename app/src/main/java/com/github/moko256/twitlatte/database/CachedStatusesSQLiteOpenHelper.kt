@@ -21,6 +21,7 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.database.sqlite.SQLiteStatement
+import androidx.collection.ArraySet
 import com.github.moko256.latte.client.base.entity.*
 import com.github.moko256.latte.html.entity.Link
 import com.github.moko256.twitlatte.text.splitWithComma
@@ -246,8 +247,8 @@ class CachedStatusesSQLiteOpenHelper(
         return status
     }
 
-    fun getIdsInUse(ids: List<Long>): List<Long> {
-        val result = ArrayList<Long>(ids.size * 5)
+    fun getIdsInUse(ids: Collection<Long>): Collection<Long> {
+        val result = ArraySet<Long>(ids.size * 5)
 
         synchronized(this) {
             val database = readableDatabase
@@ -263,11 +264,11 @@ class CachedStatusesSQLiteOpenHelper(
                     val repeatId = c.getLong(1)
                     val quotedId = c.getLong(2)
                     if (repeatId != -1L) {
-                        if (!result.contains(repeatId) && !ids.contains(repeatId)) {
+                        if (!ids.contains(repeatId)) {
                             result.add(repeatId)
                         }
                     } else if (quotedId != -1L) {
-                        if (!result.contains(quotedId) && !ids.contains(quotedId)) {
+                        if (!ids.contains(quotedId)) {
                             result.add(quotedId)
                         }
                     }
