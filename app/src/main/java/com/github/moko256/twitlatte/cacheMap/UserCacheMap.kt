@@ -16,7 +16,11 @@
 
 package com.github.moko256.twitlatte.cacheMap
 
+import android.annotation.SuppressLint
 import android.content.Context
+import androidx.arch.core.executor.ArchTaskExecutor
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.github.moko256.latte.client.base.entity.AccessToken
 import com.github.moko256.latte.client.base.entity.User
 import com.github.moko256.twitlatte.LIMIT_OF_SIZE_OF_STATUSES_LIST
@@ -58,6 +62,15 @@ class UserCacheMap {
             }
             diskCache?.addCachedUsers(c)
         }
+    }
+
+    @SuppressLint("RestrictedApi")
+    fun getAsLiveData(id: Long): LiveData<User> {
+        val liveData = MutableLiveData<User>()
+        ArchTaskExecutor.getInstance().executeOnDiskIO {
+            liveData.postValue(get(id))
+        }
+        return liveData
     }
 
     fun get(id: Long): User? {
