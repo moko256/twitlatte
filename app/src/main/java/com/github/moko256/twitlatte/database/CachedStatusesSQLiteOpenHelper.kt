@@ -40,7 +40,7 @@ import kotlin.collections.ArrayList
 class CachedStatusesSQLiteOpenHelper(
         context: Context,
         val accessToken: AccessToken?
-): SQLiteOpenHelper(
+) : SQLiteOpenHelper(
         context,
         if (accessToken != null) {
             File(context.cacheDir, accessToken.getKeyString() + "/CachedStatuses.db").absolutePath
@@ -221,8 +221,10 @@ class CachedStatusesSQLiteOpenHelper(
                                             c.getBoolean(37),
                                             c.getBoolean(38),
                                             c.getInt(39),
-                                            c.getString(40).splitWithComma()?.map { URLDecoder.decode(it, "utf-8") }?: emptyList(),
-                                            c.getString(41).splitWithComma()?.map { it.toInt() }?: emptyList(),
+                                            c.getString(40).splitWithComma()?.map { URLDecoder.decode(it, "utf-8") }
+                                                    ?: emptyList(),
+                                            c.getString(41).splitWithComma()?.map { it.toInt() }
+                                                    ?: emptyList(),
                                             c.getBoolean(42)
                                     )
                                 } else {
@@ -334,7 +336,7 @@ class CachedStatusesSQLiteOpenHelper(
     private fun createStatusContentValues(status: StatusObject): ContentValues {
         val contentValues = ContentValues(TABLE_COLUMNS.size)
 
-        when(status) {
+        when (status) {
             is Status -> {
                 contentValues.put(TABLE_COLUMNS[0], status.createdAt.time)
                 contentValues.put(TABLE_COLUMNS[1], status.id)
@@ -483,10 +485,10 @@ class CachedStatusesSQLiteOpenHelper(
             starts: List<String>?,
             ends: List<String>?
     ): Array<Link>? = if (urls != null
-                && starts != null
-                && starts.size == urls.size
-                && ends != null
-                && ends.size == urls.size) {
+            && starts != null
+            && starts.size == urls.size
+            && ends != null
+            && ends.size == urls.size) {
         Array(urls.size) {
             Link(
                     url = urls[it],
