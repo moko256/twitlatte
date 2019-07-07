@@ -38,6 +38,16 @@ buildscript {
     }
 }
 
+allprojects{
+    repositories {
+        all { ArtifactRepository repo ->
+            if ((repo instanceof MavenArtifactRepository) && repo.url.toString() == 'https://repo.maven.apache.org/maven2/') {
+                repo.url = 'https://maven-central.storage-download.googleapis.com/repos/central/data/'
+            }
+        }
+    }
+}
+
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
