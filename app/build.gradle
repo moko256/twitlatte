@@ -115,6 +115,7 @@ repositories {
         content {
             includeGroup 'com.google.android.exoplayer'
             includeModule('jp.wasabeef', 'glide-transformations')
+            includeModule('org.jetbrains.trove4j', 'trove4j')
         }
     }
     maven {
