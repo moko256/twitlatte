@@ -111,12 +111,21 @@ dependencies {
 }
 
 repositories {
-    google()
-    mavenCentral()
+    jcenter {
+        content {
+            includeGroup 'com.google.android.exoplayer'
+            includeModule('jp.wasabeef', 'glide-transformations')
+        }
+    }
     maven {
         url 'https://jitpack.io'
+        content {
+            includeModule('com.github.chrisbanes', 'PhotoView')
+            includeModule('com.github.chuross', 'flinglayout')
+        }
     }
-    jcenter()
+    google()
+    mavenCentral()
 }
 
 buildscript {
