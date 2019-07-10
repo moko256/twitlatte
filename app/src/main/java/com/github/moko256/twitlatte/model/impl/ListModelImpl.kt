@@ -91,7 +91,7 @@ class ListModelImpl(
                     try {
                         api.request(Paging(count = client.statusLimit))
                                 .apply {
-                                    client.statusCache.addAll(this)
+                                    client.postCache.addAll(this)
                                 }
                                 .map { it.id }
                                 .let {
@@ -136,7 +136,7 @@ class ListModelImpl(
                                 count = client.statusLimit
                         )).apply {
                             if (isNotEmpty()) {
-                                client.statusCache.addAll(this, excludeId)
+                                client.postCache.addAll(this, excludeId)
 
                                 val ids = map { it.id }.toMutableList()
 
@@ -190,7 +190,7 @@ class ListModelImpl(
                                 count = client.statusLimit
                         )).apply {
                             if (isNotEmpty()) {
-                                client.statusCache.addAll(this)
+                                client.postCache.addAll(this)
 
                                 val ids = map { it.id }
 
@@ -243,7 +243,7 @@ class ListModelImpl(
                                 count = client.statusLimit
                         )).apply {
                             if (isNotEmpty()) {
-                                client.statusCache.addAll(this, excludeId)
+                                client.postCache.addAll(this, excludeId)
 
                                 val ids = map { it.id }.toMutableList()
 

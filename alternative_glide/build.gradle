@@ -22,11 +22,10 @@ android {
 
     defaultConfig {
         minSdkVersion 19
-        targetSdkVersion 28
     }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+
+    libraryVariants.all {
+        it.getGenerateBuildConfigProvider().configure { it.enabled = false }
     }
 }
 
@@ -35,7 +34,11 @@ dependencies {
 }
 
 repositories {
+    jcenter {
+        content {
+            includeModule('org.jetbrains.trove4j', 'trove4j')
+        }
+    }
     google()
     mavenCentral()
-    jcenter()
 }

@@ -16,10 +16,8 @@
 
 package com.github.moko256.twitlatte.cacheMap
 
-import com.github.moko256.latte.client.base.entity.Post
-import com.github.moko256.latte.client.base.entity.Repeat
-import com.github.moko256.latte.client.base.entity.Status
-import com.github.moko256.latte.client.base.entity.User
+import com.github.moko256.latte.client.base.entity.*
+import java.util.*
 
 /**
  * Created by moko256 on 2018/10/05.
@@ -30,7 +28,7 @@ class PostCache(
         private val statusCache: StatusCacheMap,
         private val userCache: UserCacheMap
 ) {
-    fun getPost(postId: Long): Post?{
+    fun getPost(postId: Long): Post? {
         return statusCache.get(postId)?.let { statusObject ->
             val repeat: Repeat?
             val repeatedUser: User?
@@ -75,6 +73,76 @@ class PostCache(
                     quotedRepeatingStatus = quotedStatus,
                     quotedRepeatingUser = quoteUser
             )
+        }
+    }
+
+    fun add(status: Post, incrementCount: Boolean) {
+        if (status.repeat == null && status.quotedRepeatingStatus == null) {
+            status.user?.let {
+                userCache.add(it)
+            }
+            status.status?.let {
+                statusCache.add(it, incrementCount)
+            }
+        } else {
+            addAll(listOf(status), incrementCount)
+        }
+    }
+
+    fun addAll(c: Collection<Post>, vararg excludeIncrementIds: Long) {
+        addAll(c, true, *excludeIncrementIds)
+    }
+
+    fun addAll(c: Collection<Post>, incrementCount: Boolean = true, vararg excludeIncrementIds: Long) {
+        if (c.isNotEmpty()) {
+            val statuses = ArrayList<StatusObject>(c.size * 3)
+            val repeats = ArrayList<Repeat>(c.size)
+            val quotes = ArrayList<Status>(c.size)
+
+            val users = ArrayList<User>(c.size * 3)
+
+            for (status in c) {
+
+                val mainStatus = status.status
+                if (mainStatus != null && !statuses.contains(mainStatus)) {
+                    statuses.add(mainStatus)
+                }
+
+                val user = status.user
+                if (user != null && !users.contains(user)) {
+                    users.add(user)
+                }
+
+                val repeatedUser = status.repeatedUser
+                if (repeatedUser != null && !users.contains(repeatedUser)) {
+                    users.add(repeatedUser)
+                }
+
+                val quotedRepeatingUser = status.quotedRepeatingUser
+                if (quotedRepeatingUser != null && !users.contains(quotedRepeatingUser)) {
+                    users.add(quotedRepeatingUser)
+                }
+
+                status.repeat?.let {
+                    repeats.add(it)
+                }
+
+                status.quotedRepeatingStatus?.let {
+                    quotes.add(it)
+                }
+            }
+
+            for (status in quotes) {
+                if (!statuses.contains(status)) {
+                    statuses.add(status)
+                }
+            }
+
+            statuses.addAll(repeats)
+
+            userCache.addAll(users)
+
+            statusCache.addAll(statuses, incrementCount, *excludeIncrementIds)
         }
     }
 }

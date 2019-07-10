@@ -45,7 +45,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.PermissionChecker;
@@ -112,7 +111,6 @@ public class PostActivity extends AppCompatActivity {
     private MenuItem postButton;
 
     private ViewGroup rootViewGroup;
-    private Toolbar toolbar;
     private ActionBar actionBar;
     private ImageView userIcon;
     private TextView counterTextView;
@@ -162,16 +160,19 @@ public class PostActivity extends AppCompatActivity {
         );
         disposable = new CompositeDisposable();
 
-        rootViewGroup= findViewById(R.id.activity_tweet_send_layout_root);
-
-        toolbar = findViewById(R.id.activity_tweet_send_toolbar);
-        setSupportActionBar(toolbar);
+        rootViewGroup= findViewById(android.R.id.content);
 
         actionBar = Objects.requireNonNull(getSupportActionBar());
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeAsUpIndicator(R.drawable.ic_clear_white_24dp);
+        actionBar.setDisplayShowCustomEnabled(true);
 
-        userIcon = findViewById(R.id.activity_tweet_send_user_icon);
+        userIcon = new ImageView(this);
+
+        final int dp36 = DpToPxKt.dpToPx(this, 36);
+        ActionBar.LayoutParams userIconParams = new ActionBar.LayoutParams(dp36, dp36);
+        userIconParams.setMarginStart(dp36 / 3 * 2);
+        actionBar.setCustomView(userIcon, userIconParams);
 
         disposable.add(
                 Single.create(
@@ -689,7 +690,6 @@ public class PostActivity extends AppCompatActivity {
         counterTextView = null;
         userIcon = null;
         actionBar = null;
-        toolbar = null;
         postButton = null;
         model = null;
         client = null;

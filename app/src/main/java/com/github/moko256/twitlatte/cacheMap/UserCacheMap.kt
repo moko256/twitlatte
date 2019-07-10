@@ -17,10 +17,10 @@
 package com.github.moko256.twitlatte.cacheMap
 
 import android.content.Context
-import androidx.collection.LruCache
 import com.github.moko256.latte.client.base.entity.AccessToken
 import com.github.moko256.latte.client.base.entity.User
 import com.github.moko256.twitlatte.LIMIT_OF_SIZE_OF_STATUSES_LIST
+import com.github.moko256.twitlatte.collections.LruCache
 import com.github.moko256.twitlatte.database.CachedUsersSQLiteOpenHelper
 
 /**
@@ -35,31 +35,20 @@ class UserCacheMap {
     private val cache = LruCache<Long, User>(LIMIT_OF_SIZE_OF_STATUSES_LIST / 4)
 
     fun prepare(context: Context, accessToken: AccessToken) {
-        if (diskCache != null) {
-            diskCache!!.close()
-        }
-        if (cache.size() > 0) {
-            cache.evictAll()
-        }
+        diskCache?.close()
+        cache.clearIfNotEmpty()
         diskCache = CachedUsersSQLiteOpenHelper(context, accessToken)
     }
 
     fun close() {
-        if (diskCache != null) {
-            diskCache!!.close()
-        }
-        if (cache.size() > 0) {
-            cache.evictAll()
-        }
-    }
-
-    fun size(): Int {
-        return cache.size()
+        diskCache?.close()
+        diskCache = null
+        cache.clearIfNotEmpty()
     }
 
     fun add(user: User) {
         cache.put(user.id, user)
-        diskCache!!.addCachedUser(user)
+        diskCache?.addCachedUser(user)
     }
 
     fun addAll(c: Collection<User>) {
@@ -67,14 +56,14 @@ class UserCacheMap {
             c.forEach {
                 cache.put(it.id, it)
             }
-            diskCache!!.addCachedUsers(c)
+            diskCache?.addCachedUsers(c)
         }
     }
 
-    operator fun get(id: Long): User? {
+    fun get(id: Long): User? {
         val memoryCache = cache.get(id)
         return if (memoryCache == null) {
-            val storageCache = diskCache!!.getCachedUser(id)
+            val storageCache = diskCache?.getCachedUser(id)
             if (storageCache != null) {
                 cache.put(storageCache.id, storageCache)
             }

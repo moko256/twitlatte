@@ -46,7 +46,7 @@
 
         <activity
             android:name=".LinkOpenWithActivity"
-            android:theme="@android:style/Theme.NoDisplay"
+            android:theme="@style/LinkOpenWithActivityTheme"
             android:noHistory="true"
             android:stateNotNeeded="true">
 
@@ -124,8 +124,7 @@
 
         <activity
             android:name=".PostActivity"
-            android:label="@string/create_post"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:label="@string/create_post"/>
 
         <activity
             android:name=".ShowTweetActivity"

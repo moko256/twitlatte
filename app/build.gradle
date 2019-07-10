@@ -107,16 +107,26 @@ dependencies {
     // Test
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+//  androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 }
 
 repositories {
-    google()
-    mavenCentral()
+    jcenter {
+        content {
+            includeGroup 'com.google.android.exoplayer'
+            includeModule('jp.wasabeef', 'glide-transformations')
+            includeModule('org.jetbrains.trove4j', 'trove4j')
+        }
+    }
     maven {
         url 'https://jitpack.io'
+        content {
+            includeModule('com.github.chrisbanes', 'PhotoView')
+            includeModule('com.github.chuross', 'flinglayout')
+        }
     }
-    jcenter()
+    google()
+    mavenCentral()
 }
 
 buildscript {

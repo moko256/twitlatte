@@ -91,7 +91,7 @@ public class ShowTweetActivity extends AppCompatActivity {
         requestManager = Glide.with(this);
         statusActionModel = new StatusActionModelImpl(
                 client.getApiClient(),
-                client.getStatusCache()
+                client.getPostCache()
         );
 
         ActionBar actionBar = getSupportActionBar();

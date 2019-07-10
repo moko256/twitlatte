@@ -21,6 +21,7 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.database.sqlite.SQLiteStatement
+import androidx.collection.ArraySet
 import com.github.moko256.latte.client.base.entity.*
 import com.github.moko256.latte.html.entity.Link
 import com.github.moko256.twitlatte.text.splitWithComma
@@ -39,7 +40,7 @@ import kotlin.collections.ArrayList
 class CachedStatusesSQLiteOpenHelper(
         context: Context,
         val accessToken: AccessToken?
-): SQLiteOpenHelper(
+) : SQLiteOpenHelper(
         context,
         if (accessToken != null) {
             File(context.cacheDir, accessToken.getKeyString() + "/CachedStatuses.db").absolutePath
@@ -220,8 +221,10 @@ class CachedStatusesSQLiteOpenHelper(
                                             c.getBoolean(37),
                                             c.getBoolean(38),
                                             c.getInt(39),
-                                            c.getString(40).splitWithComma()?.map { URLDecoder.decode(it, "utf-8") }?: emptyList(),
-                                            c.getString(41).splitWithComma()?.map { it.toInt() }?: emptyList(),
+                                            c.getString(40).splitWithComma()?.map { URLDecoder.decode(it, "utf-8") }
+                                                    ?: emptyList(),
+                                            c.getString(41).splitWithComma()?.map { it.toInt() }
+                                                    ?: emptyList(),
                                             c.getBoolean(42)
                                     )
                                 } else {
@@ -246,8 +249,8 @@ class CachedStatusesSQLiteOpenHelper(
         return status
     }
 
-    fun getIdsInUse(ids: List<Long>): List<Long> {
-        val result = ArrayList<Long>(ids.size * 5)
+    fun getIdsInUse(ids: Collection<Long>): Collection<Long> {
+        val result = ArraySet<Long>(ids.size * 5)
 
         synchronized(this) {
             val database = readableDatabase
@@ -263,11 +266,11 @@ class CachedStatusesSQLiteOpenHelper(
                     val repeatId = c.getLong(1)
                     val quotedId = c.getLong(2)
                     if (repeatId != -1L) {
-                        if (!result.contains(repeatId) && !ids.contains(repeatId)) {
+                        if (!ids.contains(repeatId)) {
                             result.add(repeatId)
                         }
                     } else if (quotedId != -1L) {
-                        if (!result.contains(quotedId) && !ids.contains(quotedId)) {
+                        if (!ids.contains(quotedId)) {
                             result.add(quotedId)
                         }
                     }
@@ -333,7 +336,7 @@ class CachedStatusesSQLiteOpenHelper(
     private fun createStatusContentValues(status: StatusObject): ContentValues {
         val contentValues = ContentValues(TABLE_COLUMNS.size)
 
-        when(status) {
+        when (status) {
             is Status -> {
                 contentValues.put(TABLE_COLUMNS[0], status.createdAt.time)
                 contentValues.put(TABLE_COLUMNS[1], status.id)
@@ -482,10 +485,10 @@ class CachedStatusesSQLiteOpenHelper(
             starts: List<String>?,
             ends: List<String>?
     ): Array<Link>? = if (urls != null
-                && starts != null
-                && starts.size == urls.size
-                && ends != null
-                && ends.size == urls.size) {
+            && starts != null
+            && starts.size == urls.size
+            && ends != null
+            && ends.size == urls.size) {
         Array(urls.size) {
             Link(
                     url = urls[it],

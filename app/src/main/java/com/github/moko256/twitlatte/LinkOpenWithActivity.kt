@@ -16,6 +16,7 @@
 
 package com.github.moko256.twitlatte
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
@@ -48,6 +49,7 @@ class LinkOpenWithActivity : Activity() {
             val toName = switchIntent.component?.className
             if (ShowUserActivity::class.java.name != toName && ShowTweetActivity::class.java.name != toName) {
                 startActivity(switchIntent)
+                finish()
             } else {
                 showDialog {
                     startActivity(switchIntent.setAccountKey(it))
@@ -60,11 +62,11 @@ class LinkOpenWithActivity : Activity() {
                             ),
                             Toast.LENGTH_SHORT
                     ).show()
+
+                    finish()
                 }
             }
         }
-
-        finish()
     }
 
     private fun switchIntent(): Intent? {
@@ -221,6 +223,7 @@ class LinkOpenWithActivity : Activity() {
         )
     }
 
+    @SuppressLint("SetTextI18n")
     private fun showDialog(callback: (AccessToken) -> Unit) {
         val accessTokens = getAccountsModel()
                 .getAccessTokensByType(CLIENT_TYPE_TWITTER)
@@ -246,7 +249,7 @@ class LinkOpenWithActivity : Activity() {
                     AlertDialog.Builder(this)
                             .setTitle(R.string.open_with_accounts)
                             .setView(TextView(this).apply {
-                                setText(R.string.settable_account_always_use_in_settings)
+                                text = getString(R.string.settable_account_always_use_in_settings) + "\n" + getString(R.string.app_name)
                                 TextViewCompat.setTextAppearance(this, R.style.TextAppearance_MaterialComponents_Subtitle1)
                                 setPadding(dp24, dp16, dp24, dp16)
                             })
