@@ -35,8 +35,8 @@ fun generateApiClient(accessToken: AccessToken): ApiClient {
     return when (accessToken.clientType) {
         CLIENT_TYPE_TWITTER ->
             TwitterApiClientImpl(
-                    String(BuildConfig.p, 1, 25),
-                    String(BuildConfig.p, 27, 50),
+                    accessToken.consumerKey ?: String(BuildConfig.p, 1, 25),
+                    accessToken.consumerSecret ?: String(BuildConfig.p, 27, 50),
                     accessToken.token,
                     accessToken.tokenSecret
             )

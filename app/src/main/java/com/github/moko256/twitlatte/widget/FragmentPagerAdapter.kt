@@ -16,7 +16,7 @@
 
 package com.github.moko256.twitlatte.widget
 
-import android.view.ViewGroup
+import androidx.viewpager.widget.ViewPager
 
 /**
  * Created by moko256 on 2018/02/25.
@@ -28,9 +28,9 @@ abstract class FragmentPagerAdapter(
         fm: androidx.fragment.app.FragmentManager
 ) : androidx.fragment.app.FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
-    private lateinit var viewGroup: ViewGroup
+    private lateinit var viewGroup: ViewPager
 
-    open fun initAdapter(viewPager: androidx.viewpager.widget.ViewPager) {
+    open fun initAdapter(viewPager: ViewPager) {
         viewGroup = viewPager
         viewPager.adapter = this
     }

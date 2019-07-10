@@ -88,9 +88,12 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
         synchronized (this) {
             SQLiteDatabase database = getWritableDatabase();
             database.beginTransaction();
-            addIdsInner(ids);
-            database.setTransactionSuccessful();
-            database.endTransaction();
+            try {
+                addIdsInner(ids);
+                database.setTransactionSuccessful();
+            } finally {
+                database.endTransaction();
+            }
             database.close();
         }
     }
@@ -113,11 +116,14 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
 
             SQLiteDatabase database = getWritableDatabase();
             database.beginTransaction();
-            deleteIdsInner(d);
-            addIdsInner(ids);
-            addIdsInner(d);
-            database.setTransactionSuccessful();
-            database.endTransaction();
+            try {
+                deleteIdsInner(d);
+                addIdsInner(ids);
+                addIdsInner(d);
+                database.setTransactionSuccessful();
+            } finally {
+                database.endTransaction();
+            }
             database.close();
         }
     }
@@ -126,9 +132,12 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
         synchronized (this) {
             SQLiteDatabase database = getWritableDatabase();
             database.beginTransaction();
-            deleteIdsInner(ids);
-            database.setTransactionSuccessful();
-            database.endTransaction();
+            try {
+                deleteIdsInner(ids);
+                database.setTransactionSuccessful();
+            } finally {
+                database.endTransaction();
+            }
             database.close();
         }
     }
@@ -160,16 +169,18 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
 
     public void setSeeingId(Long i) {
         synchronized (this) {
-            SQLiteDatabase database = getWritableDatabase();
-
             ContentValues contentValues = new ContentValues(1);
             contentValues.put("id", i);
 
+            SQLiteDatabase database = getWritableDatabase();
             database.beginTransaction();
-            database.delete(SEEING_ID_TABLE_NAME, null, null);
-            database.insert(SEEING_ID_TABLE_NAME, null, contentValues);
-            database.setTransactionSuccessful();
-            database.endTransaction();
+            try {
+                database.delete(SEEING_ID_TABLE_NAME, null, null);
+                database.insert(SEEING_ID_TABLE_NAME, null, contentValues);
+                database.setTransactionSuccessful();
+            } finally {
+                database.endTransaction();
+            }
             database.close();
         }
     }

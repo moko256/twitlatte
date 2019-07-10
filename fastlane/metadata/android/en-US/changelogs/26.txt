@@ -1,0 +1,3 @@
+Enable to use your consumer key when Twitter
+Step : "Log in" screen -> Open ⋮ menu in top bar -> ☑ Check "Use another consumer token" -> Authorize
+Note: Please get consumer key yourself, and don't make it public

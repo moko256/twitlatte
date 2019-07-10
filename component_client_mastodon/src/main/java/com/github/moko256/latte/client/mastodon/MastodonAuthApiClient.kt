@@ -34,7 +34,12 @@ import okhttp3.OkHttpClient
 class MastodonAuthApiClient(okHttpClient: OkHttpClient): AuthApiClient {
     private val okHttpClientBuilder = okHttpClient.newBuilder()
 
-    override fun getOAuthRequestToken(serverUrl: String, callbackUrl: String?): RequestToken {
+    override fun getOAuthRequestToken(
+            optionalConsumerKey: String?,
+            optionalConsumerSecret: String?,
+            serverUrl: String,
+            callbackUrl: String?
+    ): RequestToken {
         val apps = Apps(
                 MastodonClient.Builder(
                         serverUrl,
@@ -55,6 +60,8 @@ class MastodonAuthApiClient(okHttpClient: OkHttpClient): AuthApiClient {
                     serverUrl,
                     apps.getOAuthUrl(it.clientId, scopes, callbackUrlNonNull),
                     callbackUrlNonNull,
+                    null,
+                    null,
                     it.clientId,
                     it.clientSecret
             )
@@ -84,6 +91,8 @@ class MastodonAuthApiClient(okHttpClient: OkHttpClient): AuthApiClient {
                 requestToken.serverUrl,
                 account.id,
                 account.acct,
+                null,
+                null,
                 accessToken,
                 null
         )

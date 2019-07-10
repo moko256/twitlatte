@@ -41,6 +41,7 @@ const val KEY_USER_NAME_MUTE_PATTERN = "userNameMutePattern"
 const val KEY_IS_PATTERN_TWEET_SOURCE_MUTE = "patternTweetSourceMuteEnabled"
 const val KEY_TWEET_SOURCE_MUTE_PATTERN = "tweetSourceMutePattern"
 const val KEY_TIMELINE_IMAGE_LOAD_MODE = "timelineImageMode"
+const val KEY_ALWAYS_CLOSE_APP = "alwaysCloseApp"
 
 class PreferenceRepository(private val preferences: SharedPreferences) {
 

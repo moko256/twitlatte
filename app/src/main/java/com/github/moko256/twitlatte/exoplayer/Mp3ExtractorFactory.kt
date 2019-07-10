@@ -14,23 +14,16 @@
  * limitations under the License.
  */
 
-package com.github.moko256.latte.client.base
+package com.github.moko256.twitlatte.exoplayer
 
-import com.github.moko256.latte.client.base.entity.AccessToken
-import com.github.moko256.latte.client.base.entity.RequestToken
+import com.google.android.exoplayer2.extractor.ExtractorsFactory
+import com.google.android.exoplayer2.extractor.mp3.Mp3Extractor
 
 /**
- * Created by moko256 on 2018/12/06.
+ * Created by moko256 on 2018/11/04.
  *
  * @author moko256
  */
-interface AuthApiClient {
-    fun getOAuthRequestToken(
-            optionalConsumerKey: String?,
-            optionalConsumerSecret: String?,
-            serverUrl: String,
-            callbackUrl: String?
-    ): RequestToken
-
-    fun initializeToken(requestToken: RequestToken, key: String): AccessToken
+object Mp3ExtractorFactory: ExtractorsFactory {
+    override fun createExtractors() = arrayOf(Mp3Extractor())
 }

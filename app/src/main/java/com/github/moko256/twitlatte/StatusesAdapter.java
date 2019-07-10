@@ -142,9 +142,9 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             case R.layout.layout_list_muted_text:
                 return new MutedTweetViewHolder(child);
             case R.layout.layout_list_tweet_only_image:
-                return new ImagesOnlyTweetViewHolder(child, glideRequests);
+                return new ImagesOnlyTweetViewHolder(child, context);
             case R.layout.layout_post_card:
-                return new StatusViewHolder(child, glideRequests);
+                return new StatusViewHolder(child, context);
             default:
                 throw new RuntimeException("Invalid id");
         }
@@ -168,6 +168,9 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             if (post != null) {
                 if (viewHolder instanceof StatusViewHolder) {
                     ((StatusViewHolder) viewHolder).setStatus(
+                            client,
+                            statusActionModel,
+                            glideRequests,
                             post.getRepeatedUser(),
                             post.getRepeat(),
                             post.getUser(),
@@ -176,7 +179,11 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                             post.getQuotedRepeatingStatus()
                     );
                 } else if (viewHolder instanceof ImagesOnlyTweetViewHolder){
-                    ((ImagesOnlyTweetViewHolder) viewHolder).setStatus(post.getStatus());
+                    ((ImagesOnlyTweetViewHolder) viewHolder).setStatus(
+                            client,
+                            post.getStatus(),
+                            glideRequests
+                    );
                 }
             }
         }
@@ -187,7 +194,7 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         if (holder instanceof StatusViewHolder){
             ((StatusViewHolder) holder).clear();
         } else if (holder instanceof ImagesOnlyTweetViewHolder) {
-            ((ImagesOnlyTweetViewHolder) holder).setStatus(null);
+            ((ImagesOnlyTweetViewHolder) holder).close();
         }
     }
 
@@ -200,15 +207,27 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
     }
 
-    private class StatusViewHolder extends RecyclerView.ViewHolder {
+    private static class StatusViewHolder extends RecyclerView.ViewHolder {
         final StatusViewBinder statusViewBinder;
+        final Context context;
 
-        StatusViewHolder(ViewGroup itemView, RequestManager glideRequests) {
+        StatusViewHolder(ViewGroup itemView, Context context) {
             super(itemView);
-            statusViewBinder = new StatusViewBinder(client.getAccessToken(), glideRequests, client.getMediaUrlConverter(), itemView);
+            statusViewBinder = new StatusViewBinder(itemView);
+            this.context = context;
         }
 
-        void setStatus(User repeatedUser, Repeat repeat, User user, Status status, User quotedStatusUser, Status quotedStatus) {
+        void setStatus(
+                Client client,
+                StatusActionModel statusActionModel,
+                RequestManager glideRequests,
+                User repeatedUser,
+                Repeat repeat,
+                User user,
+                Status status,
+                User quotedStatusUser,
+                Status quotedStatus
+        ) {
             View.OnClickListener onContentClick = v -> {
                 ActivityOptionsCompat animation = ActivityOptionsCompat
                         .makeSceneTransitionAnimation(
@@ -295,7 +314,16 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                             )
             );
 
-            statusViewBinder.setStatus(repeatedUser, repeat, user, status, quotedStatusUser, quotedStatus);
+            statusViewBinder.setStatus(
+                    client,
+                    glideRequests,
+                    repeatedUser,
+                    repeat,
+                    user,
+                    status,
+                    quotedStatusUser,
+                    quotedStatus
+            );
         }
 
         void clear() {
@@ -303,11 +331,9 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
     }
 
-    private class MoreLoadViewHolder extends RecyclerView.ViewHolder {
+    private static class MoreLoadViewHolder extends RecyclerView.ViewHolder {
         final TextView text;
         final ProgressBar progressBar;
-
-        private boolean isLoading = false;
 
         MoreLoadViewHolder(ViewGroup viewGroup) {
             super(viewGroup);
@@ -316,55 +342,52 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
 
         void setIsLoading(boolean isLoading){
-            this.isLoading = isLoading;
             itemView.setClickable(!isLoading);
             text.setVisibility(isLoading? View.INVISIBLE: View.VISIBLE);
             progressBar.setVisibility(isLoading? View.VISIBLE: View.INVISIBLE);
         }
-
-        boolean getIsLoading(){
-            return isLoading;
-        }
     }
 
-    private class MutedTweetViewHolder extends RecyclerView.ViewHolder {
+    private static class MutedTweetViewHolder extends RecyclerView.ViewHolder {
         MutedTweetViewHolder(ViewGroup viewGroup) {
-            super(LayoutInflater.from(context).inflate(R.layout.layout_list_muted_text, viewGroup, false));
+            super(viewGroup);
         }
     }
 
-    private class ImagesOnlyTweetViewHolder extends RecyclerView.ViewHolder {
+    private static class ImagesOnlyTweetViewHolder extends RecyclerView.ViewHolder {
+        final Context context;
         final ImagesTableView imagesTableView;
         final String imageLoadMode = preferenceRepository.getString(KEY_TIMELINE_IMAGE_LOAD_MODE, "normal");
         final boolean isHideSensitiveMedia = preferenceRepository.getBoolean(KEY_HIDE_SENSITIVE_MEDIA, true);
 
-        ImagesOnlyTweetViewHolder(ViewGroup viewGroup, RequestManager glideRequests) {
+        ImagesOnlyTweetViewHolder(ViewGroup viewGroup, Context context) {
             super(viewGroup);
             imagesTableView = itemView.findViewById(R.id.list_tweet_image_container);
-            imagesTableView.glideRequests = glideRequests;
+            this.context = context;
         }
 
-        void setStatus(Status status) {
-            if (status != null) {
-                imagesTableView.setMedias(
-                        status.getMedias(),
-                        client.getAccessToken().getClientType(),
-                        status.isSensitive(),
-                        imageLoadMode,
-                        isHideSensitiveMedia
+        void setStatus(Client client, Status status, RequestManager glideRequests) {
+            imagesTableView.setMedias(
+                    glideRequests,
+                    status.getMedias(),
+                    client.getAccessToken().getClientType(),
+                    status.isSensitive(),
+                    imageLoadMode,
+                    isHideSensitiveMedia
+            );
+            imagesTableView.setOnLongClickListener(v -> {
+                context.startActivity(
+                        GlobalApplicationKt.setAccountKeyForActivity(
+                                ShowTweetActivity.getIntent(context, status.getId()),
+                                ((Activity) context)
+                        )
                 );
-                imagesTableView.setOnLongClickListener(v -> {
-                    context.startActivity(
-                            GlobalApplicationKt.setAccountKeyForActivity(
-                                    ShowTweetActivity.getIntent(context, status.getId()),
-                                    ((Activity) context)
-                            )
-                    );
-                    return true;
-                });
-            } else {
-                imagesTableView.clearImages();
-            }
+                return true;
+            });
+        }
+
+        void close() {
+            imagesTableView.clearImages();
         }
     }
 

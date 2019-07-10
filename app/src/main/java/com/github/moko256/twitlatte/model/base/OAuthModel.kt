@@ -29,7 +29,12 @@ interface OAuthModel {
     var isRestartable: Boolean
 
     fun restoreInstanceState(savedInstanceState: Bundle)
-    fun getAuthUrl(url: String, callbackUrl: String?): Single<String>
+    fun getAuthUrl(
+            optionalConsumerKey: String?,
+            optionalConsumerSecret: String?,
+            url: String,
+            callbackUrl: String?
+    ): Single<String>
 
     fun initToken(pin: String): Single<AccessToken>
 

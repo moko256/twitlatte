@@ -155,25 +155,19 @@ class CachedUsersSQLiteOpenHelper(context: Context, accessToken: AccessToken?) :
 
     fun addCachedUser(user: User) {
         synchronized(this) {
-            val database = writableDatabase
-            database.beginTransaction()
-            addCachedUserAtTransaction(database, user)
-            database.setTransactionSuccessful()
-            database.endTransaction()
-            database.close()
+            transaction {
+                addCachedUserAtTransaction(this, user)
+            }
         }
     }
 
     fun addCachedUsers(users: Collection<User>) {
         synchronized(this) {
-            val database = writableDatabase
-            database.beginTransaction()
-            for (user in users) {
-                addCachedUserAtTransaction(database, user)
+            transaction {
+                for (user in users) {
+                    addCachedUserAtTransaction(this, user)
+                }
             }
-            database.setTransactionSuccessful()
-            database.endTransaction()
-            database.close()
         }
     }
 
@@ -248,9 +242,9 @@ class CachedUsersSQLiteOpenHelper(context: Context, accessToken: AccessToken?) :
 
     fun deleteCachedUser(id: Long) {
         synchronized(this) {
-            val database = writableDatabase
-            database.delete(TABLE_NAME, "id=$id", null)
-            database.close()
+            write {
+                delete(TABLE_NAME, "id=$id", null)
+            }
         }
     }
 

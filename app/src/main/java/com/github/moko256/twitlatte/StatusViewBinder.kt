@@ -36,6 +36,7 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.github.moko256.latte.client.base.CLIENT_TYPE_NOTHING
 import com.github.moko256.latte.client.base.MediaUrlConverter
 import com.github.moko256.latte.client.base.entity.*
+import com.github.moko256.twitlatte.entity.Client
 import com.github.moko256.twitlatte.repository.KEY_HIDE_SENSITIVE_MEDIA
 import com.github.moko256.twitlatte.repository.KEY_TIMELINE_IMAGE_LOAD_MODE
 import com.github.moko256.twitlatte.text.TwitterStringUtils
@@ -51,9 +52,6 @@ import io.reactivex.disposables.Disposable
  * @author moko256
  */
 class StatusViewBinder(
-        private val accessToken: AccessToken,
-        private val glideRequests: RequestManager,
-        private val mediaUrlConverter: MediaUrlConverter,
         viewGroup: ViewGroup
 ) {
     private val disposable = CompositeDisposable()
@@ -117,14 +115,13 @@ class StatusViewBinder(
             additionalContentContext.breakStrategy = Layout.BREAK_STRATEGY_SIMPLE
         }
 
-        additionalContentImages.glideRequests = glideRequests
-        imageTableView.glideRequests = glideRequests
-
         pollList.adapter = pollAdapter
         pollList.layoutManager = LinearLayoutManager(viewGroup.context)
     }
 
     fun setStatus(
+            client: Client,
+            glideRequests: RequestManager,
             repeatedUser: User?,
             repeated: Repeat?,
             user: User?,
@@ -136,11 +133,24 @@ class StatusViewBinder(
             clear()
         }
 
-        updateView(repeatedUser, repeated, user, status, quotedStatusUser, quotedStatus)
+        updateView(
+                client.accessToken,
+                client.mediaUrlConverter,
+                glideRequests,
+                repeatedUser,
+                repeated,
+                user,
+                status,
+                quotedStatusUser,
+                quotedStatus
+        )
         hasStatus = true
     }
 
     private fun updateView(
+            accessToken: AccessToken,
+            mediaUrlConverter: MediaUrlConverter,
+            glideRequests: RequestManager,
             repeatedUser: User?,
             repeated: Repeat?,
             user: User?,
@@ -311,7 +321,14 @@ class StatusViewBinder(
             val qsMedias = quotedStatus.medias
             if (qsMedias?.isNotEmpty() == true) {
                 additionalContentImages.visibility = View.VISIBLE
-                additionalContentImages.setMedias(qsMedias, accessToken.clientType, quotedStatus.isSensitive, timelineImageLoadMode, isHideSensitiveMedia)
+                additionalContentImages.setMedias(
+                        glideRequests,
+                        qsMedias,
+                        accessToken.clientType,
+                        quotedStatus.isSensitive,
+                        timelineImageLoadMode,
+                        isHideSensitiveMedia
+                )
                 disposable.add(object : Disposable {
                     override fun isDisposed() = false
 
@@ -335,6 +352,7 @@ class StatusViewBinder(
             if (imageUrl != null) {
                 additionalContentImages.visibility = View.VISIBLE
                 additionalContentImages.setMedias(
+                        glideRequests,
                         arrayOf(
                                 Media(
                                         originalUrl = imageUrl,
@@ -365,7 +383,14 @@ class StatusViewBinder(
 
         if (medias?.isNotEmpty() == true) {
             imageTableView.visibility = View.VISIBLE
-            imageTableView.setMedias(medias, accessToken.clientType, status.isSensitive, timelineImageLoadMode, isHideSensitiveMedia)
+            imageTableView.setMedias(
+                    glideRequests,
+                    medias,
+                    accessToken.clientType,
+                    status.isSensitive,
+                    timelineImageLoadMode,
+                    isHideSensitiveMedia
+            )
 
             disposable.add(object : Disposable {
                 override fun isDisposed() = false

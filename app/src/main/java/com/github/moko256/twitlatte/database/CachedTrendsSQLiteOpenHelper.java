@@ -90,19 +90,24 @@ public class CachedTrendsSQLiteOpenHelper extends SQLiteOpenHelper {
         synchronized (this) {
             SQLiteDatabase database = getWritableDatabase();
             database.beginTransaction();
-            database.delete(TABLE_NAME, null, null);
 
-            for (int i = 0; i < trends.size(); i++) {
-                Trend item = trends.get(i);
-                ContentValues contentValues = new ContentValues(2);
-                contentValues.put("name", item.getName());
-                contentValues.put("volume", item.getVolume());
+            try {
+                database.delete(TABLE_NAME, null, null);
 
-                database.insert(TABLE_NAME, null, contentValues);
+                for (int i = 0; i < trends.size(); i++) {
+                    Trend item = trends.get(i);
+                    ContentValues contentValues = new ContentValues(2);
+                    contentValues.put("name", item.getName());
+                    contentValues.put("volume", item.getVolume());
+
+                    database.insert(TABLE_NAME, null, contentValues);
+                }
+
+                database.setTransactionSuccessful();
+            } finally {
+                database.endTransaction();
             }
 
-            database.setTransactionSuccessful();
-            database.endTransaction();
             database.close();
         }
     }

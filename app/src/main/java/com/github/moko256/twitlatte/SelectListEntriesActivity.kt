@@ -43,7 +43,7 @@ class SelectListEntriesActivity: AppCompatActivity(), SelectListsEntriesFragment
         }
     }
 
-    override fun onSelected(listEntry: ListEntry) {
+    override fun onListItemSelected(listEntry: ListEntry) {
         setResult(Activity.RESULT_OK, Intent().putExtra("listId", listEntry.listId))
         finish()
     }

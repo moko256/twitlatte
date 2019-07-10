@@ -51,6 +51,7 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.github.moko256.latte.client.base.MediaUrlConverter;
 import com.github.moko256.latte.client.base.entity.AccessToken;
 import com.github.moko256.latte.client.base.entity.Emoji;
+import com.github.moko256.latte.client.base.entity.ListEntry;
 import com.github.moko256.latte.client.base.entity.User;
 import com.github.moko256.twitlatte.database.CachedUsersSQLiteOpenHelper;
 import com.github.moko256.twitlatte.entity.Client;
@@ -62,6 +63,8 @@ import com.github.moko256.twitlatte.widget.FragmentPagerAdapter;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -72,13 +75,20 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 
 import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY_ACCOUNT_KEY;
+import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY_ALWAYS_CLOSE_APP;
 
 /**
  * Created by moko256 on 2015/11/08.
  *
  * @author moko256
  */
-public class MainActivity extends AppCompatActivity implements DrawerLayout.DrawerListener, TabLayout.OnTabSelectedListener, BaseListFragment.GetViewForSnackBar, BaseTweetListFragment.GetRecyclerViewPool, BaseUsersFragment.GetRecyclerViewPool {
+public class MainActivity extends AppCompatActivity implements
+        DrawerLayout.DrawerListener,
+        TabLayout.OnTabSelectedListener,
+        BaseListFragment.GetViewForSnackBar,
+        BaseTweetListFragment.GetRecyclerViewPool,
+        BaseUsersFragment.GetRecyclerViewPool,
+        SelectListsEntriesFragment.ListEntrySelectionListener {
 
     private static final int REQUEST_OAUTH = 2;
 
@@ -101,9 +111,9 @@ public class MainActivity extends AppCompatActivity implements DrawerLayout.Draw
     private TabLayout tabLayout;
 
     private boolean isDrawerAccountsSelection = false;
+    private boolean alwaysCloseApp;
 
-    private RecyclerView.RecycledViewPool tweetListViewPool;
-    private RecyclerView.RecycledViewPool userListViewPool;
+    private RecyclerView.RecycledViewPool recycledViewPool;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -130,7 +140,7 @@ public class MainActivity extends AppCompatActivity implements DrawerLayout.Draw
 
         if (drawer != null){
             ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-            drawer.addDrawerListener(toggle);
+            toggle.setDrawerSlideAnimationEnabled(false);
             toggle.syncState();
 
             drawer.addDrawerListener(this);
@@ -161,7 +171,7 @@ public class MainActivity extends AppCompatActivity implements DrawerLayout.Draw
                         replaceFragment(UserLikeFragment.Companion.newInstance(client.getAccessToken().getUserId()));
                         break;
                     case R.id.nav_lists:
-                        replaceFragment(ListsEntriesFragment.Companion.newInstance(client.getAccessToken().getUserId()));
+                        replaceFragment(SelectListsEntriesFragment.Companion.newInstance(client.getAccessToken().getUserId()));
                         break;
                     case R.id.nav_settings:
                         startActivity(new Intent(this,SettingsActivity.class));
@@ -254,8 +264,10 @@ public class MainActivity extends AppCompatActivity implements DrawerLayout.Draw
         tabLayout= findViewById(R.id.toolbar_tab);
         tabLayout.addOnTabSelectedListener(this);
 
-        tweetListViewPool = new RecyclerView.RecycledViewPool();
-        userListViewPool = new RecyclerView.RecycledViewPool();
+        alwaysCloseApp = GlobalApplicationKt.preferenceRepository.getBoolean(KEY_ALWAYS_CLOSE_APP, true);
+
+        recycledViewPool = new RecyclerView.RecycledViewPool();
+        recycledViewPool.setMaxRecycledViews(R.layout.layout_post_card, 16);
 
         getSupportFragmentManager().addOnBackStackChangedListener(() -> attachFragment(getMainFragment()));
 
@@ -274,6 +286,11 @@ public class MainActivity extends AppCompatActivity implements DrawerLayout.Draw
             }
         }
 
+    }
+
+    @Override
+    public void onListItemSelected(@NotNull ListEntry listEntry) {
+        replaceFragment(ListsTimelineFragment.Companion.newInstance(listEntry));
     }
 
     @Override
@@ -320,7 +337,7 @@ public class MainActivity extends AppCompatActivity implements DrawerLayout.Draw
                 updateAccountsList();
                 clearAndPrepareFragment();
             } else if (client == null) {
-                finish();
+                super.finish();
             }
         }
     }
@@ -345,6 +362,18 @@ public class MainActivity extends AppCompatActivity implements DrawerLayout.Draw
             drawer.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
+        }
+    }
+
+    @Override
+    public void finish() {
+        if (alwaysCloseApp) {
+            super.finish();
+        } else {
+            boolean result = moveTaskToBack(false);
+            if (!result) {
+                super.finish();
+            }
         }
     }
 
@@ -433,6 +462,8 @@ public class MainActivity extends AppCompatActivity implements DrawerLayout.Draw
         if (fragment != null) {
             if(fragment instanceof ToolbarTitleInterface){
                 setTitle(((ToolbarTitleInterface)fragment).getTitleResourceId());
+            } else if (fragment instanceof ToolbarStringTitleInterface) {
+                setTitle(((ToolbarStringTitleInterface) fragment).getTitleString());
             }
 
             if(fragment instanceof NavigationPositionInterface){
@@ -443,6 +474,7 @@ public class MainActivity extends AppCompatActivity implements DrawerLayout.Draw
                 tabLayout.setVisibility(View.VISIBLE);
                 tabLayout.setupWithViewPager(((UseTabsInterface)fragment).getTabsViewPager());
             } else{
+                tabLayout.setupWithViewPager(null);
                 tabLayout.setVisibility(View.GONE);
             }
         }
@@ -557,11 +589,11 @@ public class MainActivity extends AppCompatActivity implements DrawerLayout.Draw
     @Override
     @NonNull
     public RecyclerView.RecycledViewPool getTweetListViewPool() {
-        return tweetListViewPool;
+        return recycledViewPool;
     }
 
     @Override
     public RecyclerView.RecycledViewPool getUserListViewPool() {
-        return userListViewPool;
+        return recycledViewPool;
     }
 }

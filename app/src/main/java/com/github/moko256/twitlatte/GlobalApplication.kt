@@ -50,7 +50,7 @@ const val LIMIT_OF_SIZE_OF_STATUSES_LIST = 1000
 
 lateinit var preferenceRepository: PreferenceRepository
 
-private val apiClientCache = LruCache<String, ApiClient>(4)
+private val apiClientCache = LruCache<Int, ApiClient>(4)
 private val userCache = UserCacheMap()
 private val statusCache = StatusCacheMap()
 
@@ -109,9 +109,9 @@ class GlobalApplication : Application() {
     }
 
     fun createApiClientInstance(accessToken: AccessToken): ApiClient {
-        return apiClientCache.get(accessToken.getKeyString())
+        return apiClientCache.get(accessToken.getHash())
                 ?: generateApiClient(accessToken).also {
-                    apiClientCache.put(accessToken.getKeyString(), it)
+                    apiClientCache.put(accessToken.getHash(), it)
                 }
     }
 }

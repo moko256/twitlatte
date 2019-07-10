@@ -14,23 +14,13 @@
  * limitations under the License.
  */
 
-package com.github.moko256.latte.client.base
-
-import com.github.moko256.latte.client.base.entity.AccessToken
-import com.github.moko256.latte.client.base.entity.RequestToken
+package com.github.moko256.twitlatte
 
 /**
- * Created by moko256 on 2018/12/06.
+ * Created by moko256 on 2019/06/14.
  *
  * @author moko256
  */
-interface AuthApiClient {
-    fun getOAuthRequestToken(
-            optionalConsumerKey: String?,
-            optionalConsumerSecret: String?,
-            serverUrl: String,
-            callbackUrl: String?
-    ): RequestToken
-
-    fun initializeToken(requestToken: RequestToken, key: String): AccessToken
+interface ToolbarStringTitleInterface {
+    val titleString: String
 }

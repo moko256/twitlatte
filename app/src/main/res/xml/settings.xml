@@ -62,6 +62,12 @@
             app:title="@string/hide_sensitive_media"
             app:summaryOn="@string/hiding_sensitive_media"
             app:summaryOff="@string/showing_sensitive_media"/>
+        <SwitchPreferenceCompat
+            app:key="alwaysCloseApp"
+            app:defaultValue="true"
+            app:title="@string/back_button_behavior"
+            app:summaryOn="@string/always_close_app"
+            app:summaryOff="@string/keep_open_app"/>
         <PreferenceScreen
             app:title="@string/regex_mute"
             app:key="regexMute">
@@ -131,20 +137,11 @@
             app:key="license"
             app:title="@string/open_source_license">
             <Preference
-                app:key="license_lib_support_v4"
-                app:title="Android Compatibility Library v4"/>
+                app:key="license_lib_androidx"
+                app:title="AndroidX"/>
             <Preference
-                app:key="license_lib_support_v7"
-                app:title="Android Compatibility Library v7"/>
-            <Preference
-                app:key="license_lib_support_design"
-                app:title="Android Design Support Library"/>
-            <Preference
-                app:key="license_lib_support_custom_tabs"
-                app:title="Android Custom Tabs Support Library"/>
-            <Preference
-                app:key="license_lib_support_arch"
-                app:title="Android Architecture Components"/>
+                app:key="license_lib_material_components"
+                app:title="Material Components"/>
             <Preference
                 app:key="license_lib_exo_player"
                 app:title="ExoPlayer"/>

@@ -49,10 +49,21 @@ class OAuthModelImpl(private val client: AuthApiClient): OAuthModel {
         }
     }
 
-    override fun getAuthUrl(url: String, callbackUrl: String?): Single<String> {
+    override fun getAuthUrl(
+            optionalConsumerKey: String?,
+            optionalConsumerSecret: String?,
+            url: String,
+            callbackUrl: String?
+    ): Single<String> {
         return Single.create {
             try {
-                requestToken = client.getOAuthRequestToken(url, callbackUrl)
+                requestToken = client.getOAuthRequestToken(
+                        optionalConsumerKey,
+                        optionalConsumerSecret,
+                        url,
+                        callbackUrl
+                )
+
                 it.onSuccess(requestToken.authUrl)
                 isRestartable = true
             } catch (e: Throwable) {

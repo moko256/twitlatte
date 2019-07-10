@@ -289,19 +289,16 @@ class CachedStatusesSQLiteOpenHelper(
         val values = createStatusContentValues(status)
 
         synchronized(this) {
-            val database = writableDatabase
-            database.beginTransaction()
-            database.replace(TABLE_NAME, null, values)
-            if (incrementCount) {
-                database.execSQL("insert or ignore into $COUNTS_TABLE_NAME(id) values(${status.getId()})")
+            transaction {
+                replace(TABLE_NAME, null, values)
+                if (incrementCount) {
+                    execSQL("insert or ignore into $COUNTS_TABLE_NAME(id) values(${status.getId()})")
 
-                val statement = incrementCountStatement(database)
-                statement.bindLong(1, status.getId())
-                statement.execute()
+                    val statement = incrementCountStatement(this)
+                    statement.bindLong(1, status.getId())
+                    statement.execute()
+                }
             }
-            database.setTransactionSuccessful()
-            database.endTransaction()
-            database.close()
         }
     }
 
@@ -312,23 +309,20 @@ class CachedStatusesSQLiteOpenHelper(
         }
 
         synchronized(this) {
-            val database = writableDatabase
-            database.beginTransaction()
-            val statement = if (incrementCount) incrementCountStatement(database) else null
-            for (values in contentValues) {
-                database.replace(TABLE_NAME, null, values)
+            transaction {
+                val statement = if (incrementCount) incrementCountStatement(this) else null
+                for (values in contentValues) {
+                    replace(TABLE_NAME, null, values)
 
-                val id = values.getAsLong(TABLE_COLUMNS[1])
-                if (incrementCount && (excludeIncrementIds.isEmpty() || !excludeIncrementIds.contains(id))) {
-                    database.execSQL("insert or ignore into $COUNTS_TABLE_NAME(id) values($id)")
+                    val id = values.getAsLong(TABLE_COLUMNS[1])
+                    if (incrementCount && (excludeIncrementIds.isEmpty() || !excludeIncrementIds.contains(id))) {
+                        execSQL("insert or ignore into $COUNTS_TABLE_NAME(id) values($id)")
 
-                    statement!!.bindLong(1, id!!)
-                    statement.execute()
+                        statement!!.bindLong(1, id!!)
+                        statement.execute()
+                    }
                 }
             }
-            database.setTransactionSuccessful()
-            database.endTransaction()
-            database.close()
         }
     }
 
@@ -454,17 +448,14 @@ class CachedStatusesSQLiteOpenHelper(
 
     fun deleteCachedStatuses(ids: Collection<Long>) {
         synchronized(this) {
-            val database = writableDatabase
-            database.beginTransaction()
-            val sqLiteStatement = decrementCountStatement(database)
-            for (id in ids) {
-                sqLiteStatement.bindLong(1, id)
-                sqLiteStatement.execute()
+            transaction {
+                val sqLiteStatement = decrementCountStatement(this)
+                for (id in ids) {
+                    sqLiteStatement.bindLong(1, id)
+                    sqLiteStatement.execute()
+                }
+                delete(COUNTS_TABLE_NAME, "count=0", null)
             }
-            database.delete(COUNTS_TABLE_NAME, "count=0", null)
-            database.setTransactionSuccessful()
-            database.endTransaction()
-            database.close()
         }
     }
 

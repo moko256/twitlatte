@@ -27,7 +27,6 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 
 import java.util.ArrayList;
@@ -42,6 +41,7 @@ import java.util.List;
 public class AddedImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private final Context context;
+    private final RequestManager requestManager;
 
     public int limit = 4;
     private ArrayList<Uri> images = new ArrayList<>(4);
@@ -50,8 +50,9 @@ public class AddedImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     public ImageAction onDeleteButtonListener;
     public ImageAction onImageClickListener;
 
-    public AddedImagesAdapter(Context context){
+    public AddedImagesAdapter(Context context, RequestManager requestManager){
         this.context = context;
+        this.requestManager = requestManager;
         setHasStableIds(true);
     }
 
@@ -82,7 +83,7 @@ public class AddedImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             viewHolder.itemView.setOnClickListener(
                     v -> onImageClickListener.doAction(viewHolder.getLayoutPosition())
             );
-            viewHolder.requests.load(image).into(viewHolder.image);
+            requestManager.load(image).into(viewHolder.image);
         } else {
             holder.itemView.setOnClickListener(onAddButtonClickListener);
         }
@@ -147,13 +148,10 @@ public class AddedImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         final ImageView image;
         final ImageButton deleteButton;
 
-        final RequestManager requests;
-
         ImageChildViewHolder(View itemView) {
             super(itemView);
             image = itemView.findViewById(R.id.layout_images_adapter_image_child_image);
             deleteButton = itemView.findViewById(R.id.action_delete);
-            requests = Glide.with(itemView);
         }
     }
 

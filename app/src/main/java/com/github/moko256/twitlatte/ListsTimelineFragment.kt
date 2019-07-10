@@ -17,6 +17,7 @@
 package com.github.moko256.twitlatte
 
 import android.os.Bundle
+import com.github.moko256.latte.client.base.entity.ListEntry
 import com.github.moko256.latte.client.base.entity.Paging
 import com.github.moko256.latte.client.base.entity.Post
 
@@ -25,18 +26,22 @@ import com.github.moko256.latte.client.base.entity.Post
  *
  * @author moko256
  */
-class ListsTimelineFragment: BaseTweetListFragment(), ToolbarTitleInterface {
+class ListsTimelineFragment: BaseTweetListFragment(), ToolbarStringTitleInterface {
 
     private var listId = -1L
+    private lateinit var title: String
 
-    override val titleResourceId = R.string.lists
+    override val titleString: String
+        get() =  title
 
     override val cachedIdsDatabaseName: String
         get() = "ListsTimeline_$listId"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         if (listId == -1L) {
-            listId = arguments!!.getLong("listId", -1L)
+            val arguments = arguments!!
+            listId = arguments.getLong("listId", -1L)
+            title = arguments.getString("title", "")
         }
 
         super.onCreate(savedInstanceState)
@@ -47,10 +52,11 @@ class ListsTimelineFragment: BaseTweetListFragment(), ToolbarTitleInterface {
     }
 
     companion object {
-        fun newInstance(userId: Long): ListsTimelineFragment {
+        fun newInstance(listEntry: ListEntry): ListsTimelineFragment {
             return ListsTimelineFragment().apply {
                 arguments = Bundle().apply {
-                    putLong("listId", userId)
+                    putLong("listId", listEntry.listId)
+                    putString("title", listEntry.title)
                 }
             }
         }

@@ -28,6 +28,8 @@ data class RequestToken (
         val authUrl: String,
         val redirectUrl: String,
 
+        val consumerKey: String?,
+        val consumerSecret: String?,
         val token: String,
         val tokenSecret: String
 ): Serializable

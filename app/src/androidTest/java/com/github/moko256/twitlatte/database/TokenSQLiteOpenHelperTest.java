@@ -128,7 +128,7 @@ public class TokenSQLiteOpenHelperTest {
     }
 
     private AccessToken generateAccessToken(final long userId, final String screenName, final String token, final String tokenSecret){
-        return new AccessToken(1, "example.com", userId, screenName, token, tokenSecret);
+        return new AccessToken(1, "example.com", userId, screenName, "", "", token, tokenSecret);
     }
 
     private long getSize(){

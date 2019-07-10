@@ -14,23 +14,20 @@
  * limitations under the License.
  */
 
-package com.github.moko256.latte.client.base
+package com.github.moko256.twitlatte.mediaview
 
-import com.github.moko256.latte.client.base.entity.AccessToken
-import com.github.moko256.latte.client.base.entity.RequestToken
+import com.github.moko256.twitlatte.exoplayer.Mp3ExtractorFactory
+import com.google.android.exoplayer2.source.ProgressiveMediaSource
 
 /**
- * Created by moko256 on 2018/12/06.
+ * Created by moko256 on 2018/10/07.
  *
  * @author moko256
  */
-interface AuthApiClient {
-    fun getOAuthRequestToken(
-            optionalConsumerKey: String?,
-            optionalConsumerSecret: String?,
-            serverUrl: String,
-            callbackUrl: String?
-    ): RequestToken
+open class AudioFragment : AbstractVideoFragment() {
+    private companion object {
+        val factory = ProgressiveMediaSource.Factory(dataSourceFactory, Mp3ExtractorFactory)
+    }
 
-    fun initializeToken(requestToken: RequestToken, key: String): AccessToken
+    override fun getMediaSourceFactory() = factory
 }

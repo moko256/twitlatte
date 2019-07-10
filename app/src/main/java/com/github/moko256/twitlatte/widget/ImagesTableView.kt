@@ -61,6 +61,8 @@ class ImagesTableView @JvmOverloads constructor(
                 arrayOf(a0021, a0111, a1111, a0000),
                 arrayOf(a0011, a0111, a1011, a1111)
         )
+
+        private const val maxMediaSize = 4
     }
 
     private val drawable = AppCompatResources.getDrawable(context, R.drawable.ic_play_arrow_white_24dp)
@@ -71,9 +73,6 @@ class ImagesTableView @JvmOverloads constructor(
     private val markSize = dpToPx(48, dp)
 
     private val imageFilter = PorterDuffColorFilter(0x33000000, PorterDuff.Mode.SRC_ATOP)
-    private val maxMediaSize = 4
-
-    lateinit var glideRequests: RequestManager
 
     private var clientType = CLIENT_TYPE_NOTHING
 
@@ -81,8 +80,8 @@ class ImagesTableView @JvmOverloads constructor(
 
     private lateinit var imageLoadMode: String
 
-    private var medias: Array<Media>? = null
-    private var mediaSize = 0
+    private var imageTableData : ImageTableData? = null
+    private var displayingMediaSize = 0
 
     private var containerViews = arrayOfNulls<FrameLayout>(maxMediaSize)
 
@@ -121,7 +120,7 @@ class ImagesTableView @JvmOverloads constructor(
         container.setOnLongClickListener { this@ImagesTableView.performLongClick() }
 
         container.setOnClickListener {
-            medias?.let { medias ->
+            imageTableData?.medias?.let { medias ->
                 if (isOpen) {
                     context.startActivity(ShowMediasActivity.getIntent(context, medias, clientType, index))
                 } else {
@@ -134,12 +133,19 @@ class ImagesTableView @JvmOverloads constructor(
         return container
     }
 
-    fun setMedias(newMedias: Array<Media>, clientType: Int, sensitive: Boolean, imageLoadMode: String, isHideSensitiveMedia: Boolean) {
+    fun setMedias(
+            requestManager: RequestManager,
+            newMedias: Array<Media>,
+            clientType: Int,
+            sensitive: Boolean,
+            imageLoadMode: String,
+            isHideSensitiveMedia: Boolean
+    ) {
         this.imageLoadMode = imageLoadMode
         this.clientType = clientType
         isOpen = imageLoadMode != "none" && !(sensitive && isHideSensitiveMedia)
 
-        val oldSize = mediaSize
+        val oldSize = displayingMediaSize
         val newSize = newMedias.size
 
         if (oldSize < newSize) {
@@ -152,8 +158,8 @@ class ImagesTableView @JvmOverloads constructor(
             }
         }
 
-        medias = newMedias
-        mediaSize = Math.min(newSize, maxMediaSize)
+        imageTableData = ImageTableData(newMedias, requestManager)
+        displayingMediaSize = Math.min(newSize, maxMediaSize)
         invalidate()
         updateImages(newMedias)
     }
@@ -174,17 +180,17 @@ class ImagesTableView @JvmOverloads constructor(
         val markImage = view.getChildAt(2)
 
         if (isOpen) {
-            glideRequests
-                    .load(
+            imageTableData?.requestManager
+                    ?.load(
                             if (imageLoadMode == "normal")
                                 TwitterStringUtils.convertSmallImageUrl(clientType, url)
                             else
                                 TwitterStringUtils.convertThumbImageUrl(clientType, url)
                     )
-                    .transition(DrawableTransitionOptions.withCrossFade())
-                    .into(imageView)
+                    ?.transition(DrawableTransitionOptions.withCrossFade())
+                    ?.into(imageView)
             when (media.mediaType) {
-                "video_one", "video_multi" -> {
+                "audio", "video_one", "video_multi" -> {
                     imageView.setFilterIfNotExist()
                     playButton.visibility = View.VISIBLE
                     markImage.visibility = View.GONE
@@ -203,16 +209,16 @@ class ImagesTableView @JvmOverloads constructor(
         } else {
             val timelineImageLoadMode = imageLoadMode
             if (timelineImageLoadMode != "none") {
-                glideRequests
-                        .load(
+                imageTableData?.requestManager
+                        ?.load(
                                 if (timelineImageLoadMode == "normal")
                                     TwitterStringUtils.convertSmallImageUrl(clientType, url)
                                 else
                                     TwitterStringUtils.convertThumbImageUrl(clientType, url)
                         )
-                        .transform(BlurTransformation())
-                        .transition(DrawableTransitionOptions.withCrossFade())
-                        .into(imageView)
+                        ?.transform(BlurTransformation())
+                        ?.transition(DrawableTransitionOptions.withCrossFade())
+                        ?.into(imageView)
             } else {
                 imageView.setImageResource(R.drawable.border_frame)
             }
@@ -236,14 +242,17 @@ class ImagesTableView @JvmOverloads constructor(
     }
 
     fun clearImages() {
-        repeat(mediaSize) {
-            glideRequests.clear(getContainer(it).getChildAt(0) as ImageView)
+        imageTableData?.requestManager?.apply {
+            repeat(displayingMediaSize) {
+                clear(getContainer(it).getChildAt(0) as ImageView)
+            }
+            imageTableData = null
         }
     }
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
-        medias?.let { medias ->
-            for (i in 0 until mediaSize) {
+        imageTableData?.medias?.let { medias ->
+            repeat(displayingMediaSize) { i ->
                 val view = getContainer(i)
                 val param = params[medias.size - 1][i]
 
@@ -287,9 +296,10 @@ class ImagesTableView @JvmOverloads constructor(
                 MeasureSpec.makeMeasureSpec(heightSize + paddingTop + paddingBottom, MeasureSpec.EXACTLY)
         )
 
-        medias?.let { medias ->
-            for (i in 0 until mediaSize) {
-                val param = params[medias.size - 1][i]
+        imageTableData?.medias?.let { medias ->
+            val mediasSizesParams = params[medias.size - 1]
+            repeat(displayingMediaSize) { i ->
+                val param = mediasSizesParams[i]
                 val view = getContainer(i)
                 view.measure(generateChildSpec(widthSize, param[3]), generateChildSpec(heightSize, param[2]))
             }
@@ -306,4 +316,9 @@ class ImagesTableView @JvmOverloads constructor(
                 MeasureSpec.EXACTLY
         )
     }
+
+    class ImageTableData(
+            val medias: Array<Media>,
+            val requestManager: RequestManager
+    )
 }

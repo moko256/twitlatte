@@ -21,6 +21,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.text.TextUtils;
 
 import com.github.moko256.latte.client.base.entity.AccessToken;
 import com.github.moko256.latte.client.base.entity.AccessTokenKt;
@@ -38,8 +39,17 @@ import kotlin.Pair;
 public class TokenSQLiteOpenHelper extends SQLiteOpenHelper {
 
     private static final String TABLE_NAME = "AccountTokenList";
-    private static final int DATABASE_VERSION = 2;
-    private static final String[] TABLE_COLUMNS = new String[]{ "type", "url", "userId", "userName", "token", "tokenSecret"};
+    private static final int DATABASE_VERSION = 3;
+    private static final String[] TABLE_COLUMNS = new String[]{
+            "type",
+            "url",
+            "userId",
+            "userName",
+            "consumerKey",
+            "consumerSecret",
+            "token",
+            "tokenSecret"
+    };
 
     public static final String TWITTER_URL = "twitter.com";
 
@@ -55,7 +65,7 @@ public class TokenSQLiteOpenHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL(
-                "create table " + TABLE_NAME + "(type string , url string , userId integer , userName string , token string , tokenSecret string , primary key(url , userId))"
+                "create table " + TABLE_NAME + "(" + TextUtils.join(",", TABLE_COLUMNS) + ", primary key(url , userId))"
         );
         sqLiteDatabase.execSQL("create unique index idindex on " + TABLE_NAME + "(url , userId)");
     }
@@ -64,6 +74,10 @@ public class TokenSQLiteOpenHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
         if (oldVersion < 2) {
             sqLiteDatabase.execSQL("update " + TABLE_NAME + " set token='',tokenSecret='' where type=0");
+        }
+        if (oldVersion < 3) {
+            DBUtilKt.addColumn(sqLiteDatabase, TABLE_NAME, "consumerKey", null);
+            DBUtilKt.addColumn(sqLiteDatabase, TABLE_NAME, "consumerSecret", null);
         }
     }
 
@@ -119,7 +133,9 @@ public class TokenSQLiteOpenHelper extends SQLiteOpenHelper {
                 c.getLong(2),
                 c.getString(3),
                 c.getString(4),
-                c.getString(5)
+                c.getString(5),
+                c.getString(6),
+                c.getString(7)
         );
     }
 
@@ -132,6 +148,8 @@ public class TokenSQLiteOpenHelper extends SQLiteOpenHelper {
             contentValues.put("url", accessToken.getUrl());
             contentValues.put("userName", accessToken.getScreenName());
             contentValues.put("userId", String.valueOf(accessToken.getUserId()));
+            contentValues.put("consumerKey", accessToken.getConsumerKey());
+            contentValues.put("consumerSecret", accessToken.getConsumerSecret());
             contentValues.put("token", accessToken.getToken());
             contentValues.put("tokenSecret", accessToken.getTokenSecret());
 

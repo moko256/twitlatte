@@ -18,6 +18,7 @@ package com.github.moko256.twitlatte.database
 
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
+import android.database.sqlite.SQLiteOpenHelper
 
 /**
  * Created by moko256 on 2019/03/07.
@@ -33,3 +34,21 @@ fun SQLiteDatabase.addColumn(tableName: String, columnName: String, defaultValue
 }
 
 fun Cursor.getBoolean(index: Int) = getInt(index) == 1
+
+inline fun SQLiteOpenHelper.write(action: SQLiteDatabase.() -> Unit) {
+    writableDatabase.also {
+        action(it)
+    }.close()
+}
+
+inline fun SQLiteOpenHelper.transaction(action: SQLiteDatabase.() -> Unit) {
+    writableDatabase.apply {
+        beginTransaction()
+        try {
+            action()
+            setTransactionSuccessful()
+        } finally {
+            endTransaction()
+        }
+    }.close()
+}

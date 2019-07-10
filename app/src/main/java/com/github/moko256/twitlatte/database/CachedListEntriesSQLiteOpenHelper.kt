@@ -80,9 +80,9 @@ class CachedListEntriesSQLiteOpenHelper(
                 }
             } catch (e: Throwable) {
                 listEntries = mutableListOf()
-                val writableDatabase = writableDatabase
-                writableDatabase.delete(TABLE_NAME, null, null)
-                writableDatabase.close()
+                write {
+                    delete(TABLE_NAME, null, null)
+                }
             }
 
             c.close()
@@ -94,23 +94,19 @@ class CachedListEntriesSQLiteOpenHelper(
 
     fun setListEntries(listEntries: List<ListEntry>) {
         synchronized(this) {
-            val database = writableDatabase
-            database.beginTransaction()
-            database.delete(TABLE_NAME, null, null)
+            transaction {
+                delete(TABLE_NAME, null, null)
 
-            listEntries.forEach {
-                val contentValues = ContentValues(4)
-                contentValues.put(TABLE_COLUMNS[0], it.listId)
-                contentValues.put(TABLE_COLUMNS[1], it.title)
-                contentValues.put(TABLE_COLUMNS[2], it.description)
-                contentValues.put(TABLE_COLUMNS[3], it.isPublic)
+                listEntries.forEach {
+                    val contentValues = ContentValues(4)
+                    contentValues.put(TABLE_COLUMNS[0], it.listId)
+                    contentValues.put(TABLE_COLUMNS[1], it.title)
+                    contentValues.put(TABLE_COLUMNS[2], it.description)
+                    contentValues.put(TABLE_COLUMNS[3], it.isPublic)
 
-                database.insert(TABLE_NAME, null, contentValues)
+                    insert(TABLE_NAME, null, contentValues)
+                }
             }
-
-            database.setTransactionSuccessful()
-            database.endTransaction()
-            database.close()
         }
     }
 }

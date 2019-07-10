@@ -45,22 +45,22 @@ class ListsEntriesAdapter(private val context: Context, private val data: List<L
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if(data[position].description == null) {
+        return if (data[position].description == null) {
             R.layout.layout_material_list_item_single_line
         } else {
             R.layout.layout_material_list_item_two_line
         }
     }
 
-    override fun onCreateViewHolder(viewGroup: ViewGroup, i: Int): ListsEntriesAdapter.ViewHolder {
-        return ListsEntriesAdapter.ViewHolder(
+    override fun onCreateViewHolder(viewGroup: ViewGroup, i: Int): ViewHolder {
+        return ViewHolder(
                 LayoutInflater
                         .from(context)
                         .inflate(i, viewGroup, false)
         )
     }
 
-    override fun onBindViewHolder(viewHolder: ListsEntriesAdapter.ViewHolder, i: Int) {
+    override fun onBindViewHolder(viewHolder: ViewHolder, i: Int) {
         val entry = data[i]
 
         viewHolder.title.text = plusUserMarks(entry.title, viewHolder.title, !entry.isPublic, false)

@@ -27,8 +27,10 @@ data class AccessToken(
         val url: String,
         val userId: Long,
         val screenName: String,
+        val consumerKey: String?,
+        val consumerSecret: String?,
         val token: String,
-        val tokenSecret: String? = null
+        val tokenSecret: String?
 ) {
     fun getKeyString(): String {
         return "$url@$userId"
@@ -40,6 +42,18 @@ data class AccessToken(
 
     override fun hashCode(): Int {
         return getKeyString().hashCode()
+    }
+
+    fun getHash(): Int {
+        var result = clientType
+        result = 31 * result + url.hashCode()
+        result = 31 * result + userId.hashCode()
+        result = 31 * result + screenName.hashCode()
+        result = 31 * result + (consumerKey?.hashCode() ?: 0)
+        result = 31 * result + (consumerSecret?.hashCode() ?: 0)
+        result = 31 * result + token.hashCode()
+        result = 31 * result + (tokenSecret?.hashCode() ?: 0)
+        return result
     }
 }
 
