@@ -81,11 +81,11 @@ dependencies {
 
     implementation project(':japng-android:android_api')
 
-    implementation 'androidx.appcompat:appcompat:1.1.0-beta01'
+    implementation 'androidx.appcompat:appcompat:1.1.0-rc01'
     implementation 'com.google.android.material:material:1.1.0-alpha07'
-    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0-alpha01'
-    implementation 'androidx.recyclerview:recyclerview:1.1.0-alpha06'
-    implementation 'androidx.preference:preference:1.1.0-beta01'
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0-alpha02'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0-beta01'
+    implementation 'androidx.preference:preference:1.1.0-rc01'
     implementation 'androidx.browser:browser:1.0.0'
 
     implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
