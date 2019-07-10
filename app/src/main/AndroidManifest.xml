@@ -124,8 +124,7 @@
 
         <activity
             android:name=".PostActivity"
-            android:label="@string/create_post"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:label="@string/create_post"/>
 
         <activity
             android:name=".ShowTweetActivity"

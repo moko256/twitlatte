@@ -15,224 +15,202 @@
   ~ limitations under the License.
   -->
 
-<LinearLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/activity_tweet_send_layout_root"
-    android:orientation="vertical"
     tools:context=".PostActivity">
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/activity_tweet_send_toolbar"
+    <RelativeLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        android:elevation="4dp"
-        android:theme="@style/AppTheme.AppBarOverlay"
-        app:popupTheme="@style/AppTheme.PopupOverlay">
-        <ImageView
-            android:id="@+id/activity_tweet_send_user_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="36dp"
-            android:layout_marginStart="32dp"
-            tools:src="@mipmap/ic_launcher"/>
-    </androidx.appcompat.widget.Toolbar>
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <RelativeLayout
-            android:orientation="vertical"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:paddingBottom="@dimen/activity_vertical_margin">
+
+        <EditText
+            android:id="@+id/tweet_text_warning"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="@dimen/activity_horizontal_margin"
-            android:paddingRight="@dimen/activity_horizontal_margin"
-            android:paddingTop="@dimen/activity_vertical_margin"
-            android:paddingBottom="@dimen/activity_vertical_margin">
+            android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+            android:layout_marginBottom="8dp"
+            android:hint="@string/content_warning"
+            android:visibility="gone"
+            android:inputType="text"
+            tools:visibility="visible"/>
 
-            <EditText
-                android:id="@+id/tweet_text_warning"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-                android:layout_marginBottom="8dp"
-                android:hint="@string/content_warning"
-                android:visibility="gone"
-                android:inputType="text"
-                tools:visibility="visible"/>
+        <com.github.moko256.twitlatte.widget.ImageKeyboardEditText
+            android:id="@+id/tweet_text_edit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tweet_text_warning"
+            android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+            android:layout_marginBottom="8dp"
+            tools:hint="@string/post">
+            <requestFocus />
+        </com.github.moko256.twitlatte.widget.ImageKeyboardEditText>
 
-            <com.github.moko256.twitlatte.widget.ImageKeyboardEditText
-                android:id="@+id/tweet_text_edit"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/tweet_text_warning"
-                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-                android:layout_marginBottom="8dp"
-                tools:hint="@string/post">
-                <requestFocus />
-            </com.github.moko256.twitlatte.widget.ImageKeyboardEditText>
+        <TextView
+            android:id="@+id/tweet_text_edit_counter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tweet_text_edit"
+            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+            android:gravity="end"
+            tools:text="0 / 500"/>
 
-            <TextView
-                android:id="@+id/tweet_text_edit_counter"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/tweet_text_edit"
-                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-                android:gravity="end"
-                tools:text="0 / 500"/>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/suggestions_of_emoji"
+            android:layout_width="match_parent"
+            android:layout_height="32dp"
+            android:layout_marginTop="8dp"
+            android:layout_below="@id/tweet_text_edit_counter" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/suggestions_of_emoji"
-                android:layout_width="match_parent"
-                android:layout_height="32dp"
-                android:layout_marginTop="8dp"
-                android:layout_below="@id/tweet_text_edit_counter" />
-
-            <CheckBox
-                android:id="@+id/activity_tweet_add_content_warning"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/suggestions_of_emoji"
-                android:layout_marginTop="8dp"
-                android:text="@string/do_add_content_warning"/>
+        <CheckBox
+            android:id="@+id/activity_tweet_add_content_warning"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/suggestions_of_emoji"
+            android:layout_marginTop="8dp"
+            android:text="@string/do_add_content_warning"/>
 
 
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/activity_tweet_send_images_recycler_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/activity_tweet_add_content_warning"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="8dp"
-                tools:itemCount="1"
-                tools:listitem="@layout/layout_images_adapter_add_image" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/activity_tweet_send_images_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/activity_tweet_add_content_warning"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"
+            tools:itemCount="1"
+            tools:listitem="@layout/layout_images_adapter_add_image" />
 
 
-            <CheckBox
-                android:id="@+id/activity_tweet_is_possibly_sensitive"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/activity_tweet_send_images_recycler_view"
-                android:text="@string/possibly_sensitive"
-                android:layout_marginBottom="16dp"/>
+        <CheckBox
+            android:id="@+id/activity_tweet_is_possibly_sensitive"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/activity_tweet_send_images_recycler_view"
+            android:text="@string/possibly_sensitive"
+            android:layout_marginBottom="16dp"/>
 
 
-            <TextView
-                android:id="@+id/activity_tweet_visibility_description"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/activity_tweet_is_possibly_sensitive"
-                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
-                android:text="@string/post_privacy_is"/>
+        <TextView
+            android:id="@+id/activity_tweet_visibility_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/activity_tweet_is_possibly_sensitive"
+            android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:text="@string/post_privacy_is"/>
 
-            <Spinner
-                android:id="@+id/activity_tweet_visibility_spinner"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/activity_tweet_is_possibly_sensitive"
-                android:layout_alignEnd="@id/activity_tweet_visibility_description"
-                android:layout_marginBottom="16dp"
-                android:layout_alignParentEnd="true"
-                android:entries="@array/choose_visibility_entries"/>
-
-
-            <CheckBox
-                android:id="@+id/activity_tweet_add_location"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/activity_tweet_visibility_spinner"
-                android:text="@string/add_location"
-                android:layout_marginBottom="8dp"/>
-
-            <TextView
-                android:id="@+id/activity_tweet_location_result"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/activity_tweet_add_location"
-                android:layout_marginBottom="16dp"
-                tools:text="Latitude: 30, Longitude: 100"/>
+        <Spinner
+            android:id="@+id/activity_tweet_visibility_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/activity_tweet_is_possibly_sensitive"
+            android:layout_alignEnd="@id/activity_tweet_visibility_description"
+            android:layout_marginBottom="16dp"
+            android:layout_alignParentEnd="true"
+            android:entries="@array/choose_visibility_entries"/>
 
 
-            <CheckBox
-                android:id="@+id/activity_add_poll"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/activity_tweet_location_result"
-                android:text="@string/add_poll"
-                android:layout_marginBottom="8dp"/>
+        <CheckBox
+            android:id="@+id/activity_tweet_add_location"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/activity_tweet_visibility_spinner"
+            android:text="@string/add_location"
+            android:layout_marginBottom="8dp"/>
 
-            <EditText
-                android:id="@+id/edit_poll_0"
-                android:layout_below="@id/activity_add_poll"
-                android:layout_marginBottom="8dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:hint="Poll 1" />
+        <TextView
+            android:id="@+id/activity_tweet_location_result"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/activity_tweet_add_location"
+            android:layout_marginBottom="16dp"
+            tools:text="Latitude: 30, Longitude: 100"/>
 
-            <EditText
-                android:id="@+id/edit_poll_1"
-                android:layout_below="@id/edit_poll_0"
-                android:layout_marginBottom="8dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:hint="Poll 2" />
 
-            <EditText
-                android:id="@+id/edit_poll_2"
-                android:layout_below="@id/edit_poll_1"
-                android:layout_marginBottom="8dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:hint="Poll 3 (Optional)" />
+        <CheckBox
+            android:id="@+id/activity_add_poll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/activity_tweet_location_result"
+            android:text="@string/add_poll"
+            android:layout_marginBottom="8dp"/>
 
-            <EditText
-                android:id="@+id/edit_poll_3"
-                android:layout_below="@id/edit_poll_2"
-                android:layout_marginBottom="8dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:hint="Poll 4 (Optional)" />
+        <EditText
+            android:id="@+id/edit_poll_0"
+            android:layout_below="@id/activity_add_poll"
+            android:layout_marginBottom="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:hint="Poll 1" />
 
-            <TextView
-                android:id="@+id/edit_poll_expired_at_description"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/edit_poll_3"
-                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp"
-                android:text="@string/vote_expired_at"/>
+        <EditText
+            android:id="@+id/edit_poll_1"
+            android:layout_below="@id/edit_poll_0"
+            android:layout_marginBottom="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:hint="Poll 2" />
 
-            <Spinner
-                android:id="@+id/edit_poll_expired_at"
-                android:layout_below="@id/edit_poll_3"
-                android:layout_marginBottom="8dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignEnd="@id/edit_poll_expired_at_description"
-                android:layout_alignParentEnd="true"
-                android:entries="@array/choose_poll_expired_at_entries"/>
+        <EditText
+            android:id="@+id/edit_poll_2"
+            android:layout_below="@id/edit_poll_1"
+            android:layout_marginBottom="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:hint="Poll 3 (Optional)" />
 
-            <CheckBox
-                android:id="@+id/poll_multiple"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/edit_poll_expired_at_description"
-                android:text="@string/poll_able_to_choice_multiple"
-                android:layout_marginBottom="8dp"/>
+        <EditText
+            android:id="@+id/edit_poll_3"
+            android:layout_below="@id/edit_poll_2"
+            android:layout_marginBottom="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:hint="Poll 4 (Optional)" />
 
-            <CheckBox
-                android:id="@+id/hide_totals"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/poll_multiple"
-                android:text="@string/poll_hide_totals_until_the_poll_ends"
-                android:layout_marginBottom="16dp"/>
-        </RelativeLayout>
-    </ScrollView>
-</LinearLayout>
+        <TextView
+            android:id="@+id/edit_poll_expired_at_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/edit_poll_3"
+            android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:text="@string/vote_expired_at"/>
+
+        <Spinner
+            android:id="@+id/edit_poll_expired_at"
+            android:layout_below="@id/edit_poll_3"
+            android:layout_marginBottom="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@id/edit_poll_expired_at_description"
+            android:layout_alignParentEnd="true"
+            android:entries="@array/choose_poll_expired_at_entries"/>
+
+        <CheckBox
+            android:id="@+id/poll_multiple"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/edit_poll_expired_at_description"
+            android:text="@string/poll_able_to_choice_multiple"
+            android:layout_marginBottom="8dp"/>
+
+        <CheckBox
+            android:id="@+id/hide_totals"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/poll_multiple"
+            android:text="@string/poll_hide_totals_until_the_poll_ends"
+            android:layout_marginBottom="16dp"/>
+    </RelativeLayout>
+</ScrollView>
