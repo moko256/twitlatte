@@ -124,15 +124,19 @@ fun Activity.getClient(): Client? {
             .getStringExtra(INTENT_CLIENT_KEY)
             ?.let { getAccountsModel().get(it) }
             ?.let {
-                Client(
-                        it,
-                        application.createApiClientInstance(it),
-                        generateMediaUrlConverter(it.clientType),
-                        StatusCacheMap(),
-                        UserCacheMap()
-                ).apply {
-                    userCache.prepare(this@getClient, it)
-                    statusCache.prepare(this@getClient, it)
+                if (it == application.currentClient?.accessToken) {
+                    application.currentClient
+                } else {
+                    Client(
+                            it,
+                            application.createApiClientInstance(it),
+                            generateMediaUrlConverter(it.clientType),
+                            StatusCacheMap(),
+                            UserCacheMap()
+                    ).apply {
+                        userCache.prepare(this@getClient, it)
+                        statusCache.prepare(this@getClient, it)
+                    }
                 }
             }
             ?: application.currentClient

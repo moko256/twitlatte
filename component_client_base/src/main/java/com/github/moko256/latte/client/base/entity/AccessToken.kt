@@ -37,7 +37,11 @@ data class AccessToken(
     }
 
     override fun equals(other: Any?): Boolean {
-        return other != null && other is AccessToken && other.url == url && other.userId == userId
+        return if (other !== this) {
+            other != null && other is AccessToken && other.url == url && other.userId == userId
+        } else {
+            true
+        }
     }
 
     override fun hashCode(): Int {
