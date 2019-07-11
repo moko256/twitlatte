@@ -123,7 +123,7 @@ class CachedStatusesSQLiteOpenHelper(
             db.addColumn(TABLE_NAME, "card_url")
         }
         if (oldVersion < 6) {
-            db.addColumn(TABLE_NAME, "card_description", "")
+            db.addColumn(TABLE_NAME, "card_description", "\"\"")
             db.addColumn(TABLE_NAME, "card_image_url")
         }
         if (oldVersion < 7) {
