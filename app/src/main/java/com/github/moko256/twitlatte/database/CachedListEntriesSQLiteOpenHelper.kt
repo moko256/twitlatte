@@ -31,20 +31,19 @@ import java.util.*
  * @author moko256
  */
 
-class CachedListEntriesSQLiteOpenHelper(
-        context: Context,
-        accessToken: AccessToken?,
-        userId: Long
-) : SQLiteOpenHelper(
-        context,
-        if (accessToken != null) {
-            File(context.cacheDir, "${accessToken.getKeyString()}/$userId/ListEntries.db").absolutePath
-        } else {
-            null
-        },
-        null,
-        1
-) {
+class CachedListEntriesSQLiteOpenHelper : SQLiteOpenHelper {
+
+    constructor(context: Context, accessToken: AccessToken?, userId: Long) : this(
+            context,
+            if (accessToken != null) {
+                File(context.cacheDir, "${accessToken.getKeyString()}/$userId/ListEntries.db").absolutePath
+            } else {
+                null
+            }
+    )
+
+    constructor(context: Context, name: String?) : super(context, name, null, 1)
+
     private companion object {
         private const val TABLE_NAME = "ListEntries"
         private val TABLE_COLUMNS = arrayOf("listId", "title", "description", "isPublic")
