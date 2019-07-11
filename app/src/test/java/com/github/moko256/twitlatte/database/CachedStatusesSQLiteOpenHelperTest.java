@@ -29,7 +29,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 
+import static com.github.moko256.twitlatte.testutils.EmptyAccessTokenKt.emptyAccessToken;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 /**
  * Created by moko256 on 2017/03/17.
@@ -41,7 +43,7 @@ public class CachedStatusesSQLiteOpenHelperTest {
 
     private CachedStatusesSQLiteOpenHelper helper = new CachedStatusesSQLiteOpenHelper(
             ApplicationProvider.getApplicationContext(),
-            null
+            emptyAccessToken
     );
 
     private static final long TEST_DUMMY_STATUS_ID_1 = 1L;
@@ -78,7 +80,7 @@ public class CachedStatusesSQLiteOpenHelperTest {
     private void removeCacheTest(){
         helper.deleteCachedStatuses(Collections.singletonList(TEST_DUMMY_STATUS_ID_1));
 
-        assertEquals(helper.getCachedStatus(TEST_DUMMY_STATUS_ID_1), null);
+        assertNull(helper.getCachedStatus(TEST_DUMMY_STATUS_ID_1));
     }
 
     private void addStatusesTest(){

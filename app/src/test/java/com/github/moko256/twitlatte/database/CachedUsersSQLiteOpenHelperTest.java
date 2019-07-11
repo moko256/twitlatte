@@ -27,6 +27,7 @@ import org.junit.runner.RunWith;
 import java.util.Arrays;
 import java.util.Date;
 
+import static com.github.moko256.twitlatte.testutils.EmptyAccessTokenKt.emptyAccessToken;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
@@ -40,7 +41,7 @@ public class CachedUsersSQLiteOpenHelperTest {
 
     private CachedUsersSQLiteOpenHelper helper = new CachedUsersSQLiteOpenHelper(
             ApplicationProvider.getApplicationContext(),
-            null
+            emptyAccessToken
     );
 
     private static final long TEST_DUMMY_USER_ID_1 = 1L;

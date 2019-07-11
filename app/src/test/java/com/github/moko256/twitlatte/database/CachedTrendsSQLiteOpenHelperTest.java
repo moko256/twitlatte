@@ -28,6 +28,7 @@ import java.util.List;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
+import static com.github.moko256.twitlatte.testutils.EmptyAccessTokenKt.emptyAccessToken;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -40,7 +41,7 @@ public class CachedTrendsSQLiteOpenHelperTest {
 
     private CachedTrendsSQLiteOpenHelper helper = new CachedTrendsSQLiteOpenHelper(
             ApplicationProvider.getApplicationContext(),
-            null
+            emptyAccessToken
     );
 
     private String[] input0 = new String[]{"0", "1", "2"};

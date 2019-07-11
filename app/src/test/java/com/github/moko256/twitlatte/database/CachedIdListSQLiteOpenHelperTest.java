@@ -25,6 +25,7 @@ import org.junit.runner.RunWith;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.github.moko256.twitlatte.testutils.EmptyAccessTokenKt.emptyAccessToken;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
@@ -38,8 +39,8 @@ public class CachedIdListSQLiteOpenHelperTest {
 
     private CachedIdListSQLiteOpenHelper helper = new CachedIdListSQLiteOpenHelper(
             ApplicationProvider.getApplicationContext(),
-            null,
-            null
+            emptyAccessToken,
+            "testIdsDatabase"
     );
 
     private List<Long> addInput = Arrays.asList(0L,1L,2L);
