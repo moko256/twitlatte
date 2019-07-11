@@ -24,7 +24,8 @@ import com.github.moko256.latte.client.base.entity.AccessToken
  * @author moko256
  */
 
-@JvmField val emptyAccessToken = AccessToken(
+@JvmField
+val emptyAccessToken = AccessToken(
         Int.MAX_VALUE,
         "test.example.com",
         4423,

@@ -60,9 +60,9 @@ import static com.github.moko256.latte.client.twitter.TwitterApiClientImplKt.CLI
 public class TwitterStringUtils {
 
     @NonNull
-    public static StringBuilder plusAtMark(String... strings){
+    public static StringBuilder plusAtMark(String... strings) {
         StringBuilder stringBuilder = new StringBuilder();
-        for (String string: strings) {
+        for (String string : strings) {
             stringBuilder.append('@').append(string);
         }
         return stringBuilder;
@@ -87,7 +87,8 @@ public class TwitterStringUtils {
     private static int uRound(@FloatRange(from = 0f) float value) {
         return (int) (value + 0.5);
     }
-    public static CharSequence convertToSIUnitString(int num, int unitExponent, int back, char[] units){
+
+    public static CharSequence convertToSIUnitString(int num, int unitExponent, int back, char[] units) {
         if (num == 0) return "0";
         StringBuilder builder = new StringBuilder(unitExponent + 2);
         if (num < 0) {
@@ -117,7 +118,7 @@ public class TwitterStringUtils {
     @NonNull
     public static CharSequence convertToReplyTopString(@NonNull String userScreenName,
                                                        @NonNull String replyToScreenName,
-                                                       @Nullable String[] users){
+                                                       @Nullable String[] users) {
         StringBuilder userIdsStr = new StringBuilder();
 
         if (!userScreenName.equals(replyToScreenName)) {
@@ -134,7 +135,7 @@ public class TwitterStringUtils {
         return userIdsStr;
     }
 
-    public static CharSequence getLinkedSequence(Context context, AccessToken accessToken, String text, Link[] links){
+    public static CharSequence getLinkedSequence(Context context, AccessToken accessToken, String text, Link[] links) {
         if (links == null) {
             return text;
         }
@@ -233,7 +234,7 @@ public class TwitterStringUtils {
         }
     }
 
-    public static String convertThumbImageUrl(int clientType, String baseUrl){
+    public static String convertThumbImageUrl(int clientType, String baseUrl) {
         switch (clientType) {
             case CLIENT_TYPE_TWITTER:
                 return baseUrl + ":thumb";
@@ -244,7 +245,7 @@ public class TwitterStringUtils {
         }
     }
 
-    public static String convertSmallImageUrl(int clientType, String baseUrl){
+    public static String convertSmallImageUrl(int clientType, String baseUrl) {
         switch (clientType) {
             case CLIENT_TYPE_TWITTER:
                 return baseUrl + ":small";
@@ -255,20 +256,20 @@ public class TwitterStringUtils {
         }
     }
 
-    public static String convertOriginalImageUrl(int clientType, String baseUrl){
-        return (clientType == CLIENT_TYPE_TWITTER)?
-                baseUrl + ":orig":
+    public static String convertOriginalImageUrl(int clientType, String baseUrl) {
+        return (clientType == CLIENT_TYPE_TWITTER) ?
+                baseUrl + ":orig" :
                 baseUrl;
     }
 
-    public static String convertLargeImageUrl(int clientType, String baseUrl){
-        return (clientType == CLIENT_TYPE_TWITTER)?
-                baseUrl + ":large":
+    public static String convertLargeImageUrl(int clientType, String baseUrl) {
+        return (clientType == CLIENT_TYPE_TWITTER) ?
+                baseUrl + ":large" :
                 baseUrl;
     }
 
-    public static CharSequence plusUserMarks(String name, TextView textView, boolean isLocked, boolean isAuthorized){
-        if (!isLocked && !isAuthorized){
+    public static CharSequence plusUserMarks(String name, TextView textView, boolean isLocked, boolean isAuthorized) {
+        if (!isLocked && !isAuthorized) {
             return name;
         }
 
@@ -279,7 +280,7 @@ public class TwitterStringUtils {
         int textSize = uRound(textView.getLineHeight());
         int left = DpToPxKt.dpToPx(context, 4);
 
-        if (isLocked){
+        if (isLocked) {
             int length = result.length();
             result.append("\uFFFC");
 
@@ -296,7 +297,7 @@ public class TwitterStringUtils {
             ), length, length + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
 
-        if (isAuthorized){
+        if (isAuthorized) {
             int length = result.length();
             result.append("\uFFFC");
 
@@ -324,8 +325,8 @@ public class TwitterStringUtils {
     };
 
     @StringRes
-    public static int getDidActionStringRes(int clientType, StatusAction action){
-        switch (clientType){
+    public static int getDidActionStringRes(int clientType, StatusAction action) {
+        switch (clientType) {
             case CLIENT_TYPE_TWITTER:
                 return TWITTER_ACTION_ID[action.ordinal()];
 
@@ -338,8 +339,8 @@ public class TwitterStringUtils {
     }
 
     @StringRes
-    public static int getRepeatedByStringRes(int clientType){
-        switch (clientType){
+    public static int getRepeatedByStringRes(int clientType) {
+        switch (clientType) {
             case CLIENT_TYPE_TWITTER:
                 return R.string.retweeted_by;
 

@@ -40,8 +40,8 @@ public class CachedTrendsSQLiteOpenHelper extends SQLiteOpenHelper {
 
     private static final String TABLE_NAME = "Trends";
 
-    public CachedTrendsSQLiteOpenHelper(Context context, AccessToken accessToken){
-        super(context, accessToken != null? new File(context.getCacheDir(), accessToken.getKeyString() + "/" + "Trends.db").getAbsolutePath(): null, null, 2);
+    public CachedTrendsSQLiteOpenHelper(Context context, AccessToken accessToken) {
+        super(context, accessToken != null ? new File(context.getCacheDir(), accessToken.getKeyString() + "/" + "Trends.db").getAbsolutePath() : null, null, 2);
     }
 
     @Override
@@ -56,7 +56,7 @@ public class CachedTrendsSQLiteOpenHelper extends SQLiteOpenHelper {
         }
     }
 
-    public List<Trend> getTrends(){
+    public List<Trend> getTrends() {
         List<Trend> trends;
 
         synchronized (this) {
@@ -86,7 +86,7 @@ public class CachedTrendsSQLiteOpenHelper extends SQLiteOpenHelper {
         return trends;
     }
 
-    public void setTrends(List<Trend> trends){
+    public void setTrends(List<Trend> trends) {
         synchronized (this) {
             SQLiteDatabase database = getWritableDatabase();
             database.beginTransaction();

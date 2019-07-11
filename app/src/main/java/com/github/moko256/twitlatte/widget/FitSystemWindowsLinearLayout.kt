@@ -28,7 +28,7 @@ import androidx.core.view.ViewCompat
  *
  * @author moko256
  */
-class FitSystemWindowsLinearLayout: LinearLayoutCompat {
+class FitSystemWindowsLinearLayout : LinearLayoutCompat {
 
     constructor(context: Context, attrs: AttributeSet?, defStyle: Int) : super(context, attrs, defStyle) {
         ViewCompat.setOnApplyWindowInsetsListener(this) { v, insets ->
@@ -54,7 +54,6 @@ class FitSystemWindowsLinearLayout: LinearLayoutCompat {
     constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
 
     constructor(context: Context) : this(context, null)
-
 
 
 }

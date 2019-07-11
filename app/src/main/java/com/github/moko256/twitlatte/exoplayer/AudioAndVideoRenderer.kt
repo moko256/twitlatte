@@ -36,15 +36,14 @@ import com.google.android.exoplayer2.video.VideoRendererEventListener
  *
  * @author moko256
  */
-class AudioAndVideoRenderer(val context: Context): RenderersFactory {
+class AudioAndVideoRenderer(val context: Context) : RenderersFactory {
     override fun createRenderers(
             eventHandler: Handler?,
             videoRendererEventListener: VideoRendererEventListener?,
             audioRendererEventListener: AudioRendererEventListener?,
             textRendererOutput: TextOutput?, metadataRendererOutput: MetadataOutput?,
             drmSessionManager: DrmSessionManager<FrameworkMediaCrypto>?
-    ): Array<Renderer>
-            = arrayOf(
+    ): Array<Renderer> = arrayOf(
             MediaCodecVideoRenderer(
                     context,
                     MediaCodecSelector.DEFAULT,

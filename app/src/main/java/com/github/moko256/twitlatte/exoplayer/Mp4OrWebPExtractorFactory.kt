@@ -24,6 +24,6 @@ import com.google.android.exoplayer2.extractor.mp4.Mp4Extractor
  *
  * @author moko256
  */
-object Mp4OrWebPExtractorFactory: ExtractorsFactory {
+object Mp4OrWebPExtractorFactory : ExtractorsFactory {
     override fun createExtractors() = arrayOf(Mp4Extractor())
 }

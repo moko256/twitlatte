@@ -49,7 +49,7 @@ private const val FRAG_CLIENT_TYPE = "client_type"
 
 private const val REQUEST_CODE_PERMISSION_STORAGE = 1
 
-abstract class AbstractMediaFragment: Fragment() {
+abstract class AbstractMediaFragment : Fragment() {
 
     protected lateinit var media: Media
 
@@ -154,7 +154,8 @@ abstract class AbstractMediaFragment: Fragment() {
     }
 
     private fun startDownload() {
-        val path = media.downloadVideoUrl ?: TwitterStringUtils.convertOriginalImageUrl(clientType, media.originalUrl)
+        val path = media.downloadVideoUrl
+                ?: TwitterStringUtils.convertOriginalImageUrl(clientType, media.originalUrl)
 
         val manager: DownloadManager = activity?.getSystemService(DOWNLOAD_SERVICE) as DownloadManager
 

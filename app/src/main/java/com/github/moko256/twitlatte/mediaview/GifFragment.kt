@@ -21,7 +21,7 @@ package com.github.moko256.twitlatte.mediaview
  *
  * @author moko256
  */
-class GifFragment: OneVideoFragment() {
+class GifFragment : OneVideoFragment() {
     init {
         isLoop = true
     }

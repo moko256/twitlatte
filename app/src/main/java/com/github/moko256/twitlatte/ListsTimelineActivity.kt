@@ -38,10 +38,10 @@ class ListsTimelineActivity : AppCompatActivity(), BaseListFragment.GetViewForSn
 
         val intent = intent
 
-        listId = intent?.getLongExtra("listId", -1)?:-1
+        listId = intent?.getLongExtra("listId", -1) ?: -1
 
         supportActionBar?.let {
-            it.title = intent?.getCharSequenceExtra("title")?:""
+            it.title = intent?.getCharSequenceExtra("title") ?: ""
             it.setDisplayHomeAsUpEnabled(true)
             it.setHomeAsUpIndicator(R.drawable.ic_back_white_24dp)
         }

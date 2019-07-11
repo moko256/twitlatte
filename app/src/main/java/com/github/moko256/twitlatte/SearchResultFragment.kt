@@ -46,7 +46,7 @@ class SearchResultFragment : BaseTweetListFragment() {
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        searchText = activity?.intent?.getStringExtra(BUNDLE_KEY_SEARCH_QUERY)?:""
+        searchText = activity?.intent?.getStringExtra(BUNDLE_KEY_SEARCH_QUERY) ?: ""
 
         super.onCreate(savedInstanceState)
     }

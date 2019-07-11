@@ -63,27 +63,27 @@ public class CachedStatusesSQLiteOpenHelperTest {
         helper.close();
     }
 
-    private void addCacheTest(){
+    private void addCacheTest() {
         helper.addCachedStatus(generateStatus(TEST_DUMMY_STATUS_ID_1, TEST_DUMMY_STATUS_TEXT_0), false);
         StatusObject addedStatusResult = helper.getCachedStatus(TEST_DUMMY_STATUS_ID_1);
 
         assertEquals(((Status) addedStatusResult).getText(), TEST_DUMMY_STATUS_TEXT_0);
     }
 
-    private void updateCacheTest(){
+    private void updateCacheTest() {
         helper.addCachedStatus(generateStatus(TEST_DUMMY_STATUS_ID_1, TEST_DUMMY_STATUS_TEXT_1), false);
         StatusObject updatedStatusResult = helper.getCachedStatus(TEST_DUMMY_STATUS_ID_1);
 
         assertEquals(((Status) updatedStatusResult).getText(), TEST_DUMMY_STATUS_TEXT_1);
     }
 
-    private void removeCacheTest(){
+    private void removeCacheTest() {
         helper.deleteCachedStatuses(Collections.singletonList(TEST_DUMMY_STATUS_ID_1));
 
         assertNull(helper.getCachedStatus(TEST_DUMMY_STATUS_ID_1));
     }
 
-    private void addStatusesTest(){
+    private void addStatusesTest() {
         helper.addCachedStatuses(Arrays.asList(
                 generateStatus(TEST_DUMMY_STATUS_ID_1, TEST_DUMMY_STATUS_TEXT_0),
                 generateStatus(TEST_DUMMY_STATUS_ID_2, TEST_DUMMY_STATUS_TEXT_1)

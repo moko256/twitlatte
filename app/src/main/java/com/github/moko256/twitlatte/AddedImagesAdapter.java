@@ -50,7 +50,7 @@ public class AddedImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     public ImageAction onDeleteButtonListener;
     public ImageAction onImageClickListener;
 
-    public AddedImagesAdapter(Context context, RequestManager requestManager){
+    public AddedImagesAdapter(Context context, RequestManager requestManager) {
         this.context = context;
         this.requestManager = requestManager;
         setHasStableIds(true);
@@ -58,13 +58,13 @@ public class AddedImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     @Override
     public int getItemViewType(int position) {
-        return position < limit && position < images.size() ? R.layout.layout_images_adapter_image_child: R.layout.layout_images_adapter_add_image;
+        return position < limit && position < images.size() ? R.layout.layout_images_adapter_image_child : R.layout.layout_images_adapter_add_image;
     }
 
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        if (viewType == R.layout.layout_images_adapter_image_child){
+        if (viewType == R.layout.layout_images_adapter_image_child) {
             return new ImageChildViewHolder(LayoutInflater.from(context).inflate(viewType, parent, false));
         } else {
             return new AddImageViewHolder(LayoutInflater.from(context).inflate(viewType, parent, false));
@@ -73,7 +73,7 @@ public class AddedImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        if (holder instanceof ImageChildViewHolder){
+        if (holder instanceof ImageChildViewHolder) {
             ImageChildViewHolder viewHolder = (ImageChildViewHolder) holder;
             Uri image = images.get(position);
 
@@ -91,13 +91,13 @@ public class AddedImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     @Override
     public int getItemCount() {
-        return images.size() < limit? images.size() + 1: limit;
+        return images.size() < limit ? images.size() + 1 : limit;
     }
 
 
     @Override
     public long getItemId(int position) {
-        if (position < images.size()){
+        if (position < images.size()) {
             return images.get(position).hashCode();
         } else {
             return 0;
@@ -108,20 +108,20 @@ public class AddedImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         return images;
     }
 
-    public void addImageAndUpdateView(Uri uri){
+    public void addImageAndUpdateView(Uri uri) {
         int oldSize = images.size();
-        if (oldSize + 1 <= limit){
+        if (oldSize + 1 <= limit) {
             notifyItemRemoved(oldSize);
         }
         images.add(uri);
         notifyItemInserted(oldSize);
     }
 
-    public void addImagesAndUpdateView(List<Uri> uris){
+    public void addImagesAndUpdateView(List<Uri> uris) {
         int oldSize = images.size();
         int addedSize = uris.size();
 
-        if (oldSize + addedSize <= limit){
+        if (oldSize + addedSize <= limit) {
             notifyItemRemoved(oldSize);
         }
 
@@ -129,11 +129,11 @@ public class AddedImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         notifyItemRangeInserted(oldSize, addedSize);
     }
 
-    public void removeImageAndUpdateView(int position){
+    public void removeImageAndUpdateView(int position) {
         int size = images.size();
         images.remove(position);
         notifyItemRemoved(position);
-        if (size == limit){
+        if (size == limit) {
             notifyItemInserted(size - 1);
         }
     }
@@ -143,7 +143,7 @@ public class AddedImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         images = null;
     }
 
-    private final static class ImageChildViewHolder extends RecyclerView.ViewHolder{
+    private final static class ImageChildViewHolder extends RecyclerView.ViewHolder {
 
         final ImageView image;
         final ImageButton deleteButton;
@@ -155,14 +155,14 @@ public class AddedImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         }
     }
 
-    private final static class AddImageViewHolder extends RecyclerView.ViewHolder{
+    private final static class AddImageViewHolder extends RecyclerView.ViewHolder {
 
         AddImageViewHolder(View itemView) {
             super(itemView);
         }
     }
 
-    interface ImageAction{
+    interface ImageAction {
         void doAction(int position);
     }
 }

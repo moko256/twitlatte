@@ -40,7 +40,7 @@ class ListModelImpl(
         private val api: ListServerRepository<Post>,
         private val client: Client,
         private val database: CachedIdListSQLiteOpenHelper
-): ListModel {
+) : ListModel {
 
     private val nothingEvent = UpdateEvent(EventType.NOTHING, 0, 0)
     private val list = ArrayList<Long>()
@@ -126,7 +126,7 @@ class ListModelImpl(
             list[0]
         }
 
-        val excludeId = list.takeIf { it.size >= 2 }?.firstOrNull()?:0
+        val excludeId = list.takeIf { it.size >= 2 }?.firstOrNull() ?: 0
 
         requests.add(
                 Completable.create { status ->
@@ -232,7 +232,7 @@ class ListModelImpl(
             list[position + 1]
         }
 
-        val excludeId = list.takeIf { it.size >= position + 2 }?.get(position + 1)?:0
+        val excludeId = list.takeIf { it.size >= position + 2 }?.get(position + 1) ?: 0
 
         requests.add(
                 Completable.create { status ->

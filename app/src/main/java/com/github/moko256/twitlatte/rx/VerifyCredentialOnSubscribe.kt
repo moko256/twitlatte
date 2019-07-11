@@ -28,7 +28,7 @@ import io.reactivex.SingleOnSubscribe
  */
 class VerifyCredentialOnSubscribe(
         private val client: Client
-): SingleOnSubscribe<User> {
+) : SingleOnSubscribe<User> {
     override fun subscribe(emitter: SingleEmitter<User>) {
         try {
             var me = client.userCache.get(client.accessToken.userId)

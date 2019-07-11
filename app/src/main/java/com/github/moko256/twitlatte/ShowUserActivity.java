@@ -23,6 +23,17 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
+
 import com.github.moko256.latte.client.base.ApiClient;
 import com.github.moko256.latte.client.base.entity.User;
 import com.github.moko256.twitlatte.entity.Client;
@@ -35,16 +46,6 @@ import com.google.android.material.tabs.TabLayout;
 
 import java.util.Objects;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewpager.widget.ViewPager;
 import kotlin.Unit;
 
 import static com.github.moko256.latte.client.mastodon.MastodonApiClientImplKt.CLIENT_TYPE_MASTODON;
@@ -70,7 +71,7 @@ public class ShowUserActivity extends AppCompatActivity implements TabLayout.OnT
     private RecyclerView.RecycledViewPool recycledViewPool;
 
     @Override
-    public void onCreate(Bundle savedInstanceState){
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_user);
 
@@ -84,7 +85,7 @@ public class ShowUserActivity extends AppCompatActivity implements TabLayout.OnT
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeAsUpIndicator(R.drawable.ic_back_white_24dp);
 
-        viewPager= findViewById(R.id.show_user_view_pager);
+        viewPager = findViewById(R.id.show_user_view_pager);
         adapter = new ShowUserFragmentsPagerAdapter(
                 client.getAccessToken(),
                 getSupportFragmentManager(),
@@ -92,7 +93,7 @@ public class ShowUserActivity extends AppCompatActivity implements TabLayout.OnT
         );
         adapter.initAdapter(viewPager);
 
-        tabLayout= findViewById(R.id.tab_show_user);
+        tabLayout = findViewById(R.id.tab_show_user);
         tabLayout.setupWithViewPager(viewPager);
         tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
         tabLayout.addOnTabSelectedListener(this);
@@ -101,8 +102,8 @@ public class ShowUserActivity extends AppCompatActivity implements TabLayout.OnT
 
         findViewById(R.id.activity_show_user_fab).setOnClickListener(v -> {
             User user = viewModel.getUser().getValue();
-            if (user != null){
-                startActivity(PostActivity.getIntent(this, TwitterStringUtils.plusAtMark(user.getScreenName())+" "));
+            if (user != null) {
+                startActivity(PostActivity.getIntent(this, TwitterStringUtils.plusAtMark(user.getScreenName()) + " "));
             }
         });
 
@@ -160,15 +161,17 @@ public class ShowUserActivity extends AppCompatActivity implements TabLayout.OnT
     }
 
     @Override
-    public void onTabSelected(TabLayout.Tab tab) {}
+    public void onTabSelected(TabLayout.Tab tab) {
+    }
 
     @Override
-    public void onTabUnselected(TabLayout.Tab tab) {}
+    public void onTabUnselected(TabLayout.Tab tab) {
+    }
 
     @Override
     public void onTabReselected(TabLayout.Tab tab) {
         Fragment fragment = Objects.requireNonNull((FragmentPagerAdapter) viewPager.getAdapter()).getFragment(tab.getPosition());
-        if (fragment instanceof MovableTopInterface){
+        if (fragment instanceof MovableTopInterface) {
             ((MovableTopInterface) fragment).moveToTop();
         }
     }
@@ -178,25 +181,25 @@ public class ShowUserActivity extends AppCompatActivity implements TabLayout.OnT
         super.onDestroy();
         client = null;
 
-        tabLayout=null;
-        viewPager=null;
-        actionBar=null;
+        tabLayout = null;
+        viewPager = null;
+        actionBar = null;
 
     }
 
     @Override
-    public boolean onSupportNavigateUp(){
+    public boolean onSupportNavigateUp() {
         finish();
         return true;
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.fragment_show_user_toolbar,menu);
+        getMenuInflater().inflate(R.menu.fragment_show_user_toolbar, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
-    private String getShareUrl(){
+    private String getShareUrl() {
         String url;
         User user = viewModel.getUser().getValue();
 
@@ -204,10 +207,10 @@ public class ShowUserActivity extends AppCompatActivity implements TabLayout.OnT
             return "";
         }
 
-        if (client.getAccessToken().getClientType() == CLIENT_TYPE_MASTODON){
+        if (client.getAccessToken().getClientType() == CLIENT_TYPE_MASTODON) {
             String baseUrl;
             String userName;
-            if (user.getScreenName().matches(".*@.*")){
+            if (user.getScreenName().matches(".*@.*")) {
                 String[] split = user.getScreenName().split("@");
                 baseUrl = split[1];
                 userName = split[0];
@@ -237,7 +240,7 @@ public class ShowUserActivity extends AppCompatActivity implements TabLayout.OnT
         if (user == null) {
             return false;
         }
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.action_share:
                 startActivity(Intent.createChooser(
                         new Intent()
@@ -267,37 +270,37 @@ public class ShowUserActivity extends AppCompatActivity implements TabLayout.OnT
                 break;
 
             case R.id.action_create_follow:
-                throwableFunc=()->apiClient.createFriendship(user.getId());
+                throwableFunc = () -> apiClient.createFriendship(user.getId());
                 didAction = R.string.did_follow;
                 break;
 
             case R.id.action_destroy_follow:
-                throwableFunc=()->apiClient.destroyFriendship(user.getId());
+                throwableFunc = () -> apiClient.destroyFriendship(user.getId());
                 didAction = R.string.did_unfollow;
                 break;
 
             case R.id.action_create_mute:
-                throwableFunc=()->apiClient.createMute(user.getId());
+                throwableFunc = () -> apiClient.createMute(user.getId());
                 didAction = R.string.did_mute;
                 break;
 
             case R.id.action_destroy_mute:
-                throwableFunc=()->apiClient.destroyMute(user.getId());
+                throwableFunc = () -> apiClient.destroyMute(user.getId());
                 didAction = R.string.did_unmute;
                 break;
 
             case R.id.action_create_block:
-                throwableFunc=()->apiClient.createBlock(user.getId());
+                throwableFunc = () -> apiClient.createBlock(user.getId());
                 didAction = R.string.did_block;
                 break;
 
             case R.id.action_destroy_block:
-                throwableFunc=()->apiClient.destroyBlock(user.getId());
+                throwableFunc = () -> apiClient.destroyBlock(user.getId());
                 didAction = R.string.did_unblock;
                 break;
 
             case R.id.action_destroy_follow_follower:
-                throwableFunc=()->{
+                throwableFunc = () -> {
                     apiClient.createBlock(user.getId());
                     apiClient.destroyBlock(user.getId());
                 };
@@ -305,7 +308,7 @@ public class ShowUserActivity extends AppCompatActivity implements TabLayout.OnT
                 break;
 
             case R.id.action_spam_report:
-                throwableFunc=()->apiClient.reportSpam(user.getId());
+                throwableFunc = () -> apiClient.reportSpam(user.getId());
                 didAction = R.string.did_report_as_spam;
                 break;
         }
@@ -313,7 +316,7 @@ public class ShowUserActivity extends AppCompatActivity implements TabLayout.OnT
         if (throwableFunc != null && didAction != -1) {
             Func finalThrowableFunc = throwableFunc;
             int finalDidAction = didAction;
-            confirmDialog(item.getTitle(), getString(R.string.confirm_message),()->runAsWorkerThread(finalThrowableFunc, finalDidAction));
+            confirmDialog(item.getTitle(), getString(R.string.confirm_message), () -> runAsWorkerThread(finalThrowableFunc, finalDidAction));
         }
 
         return super.onOptionsItemSelected(item);
@@ -340,7 +343,7 @@ public class ShowUserActivity extends AppCompatActivity implements TabLayout.OnT
         }
     }
 
-    private void runAsWorkerThread(Func func, @StringRes int didAction){
+    private void runAsWorkerThread(Func func, @StringRes int didAction) {
         viewModel.doAction(
                 () -> {
                     func.call();
@@ -350,7 +353,7 @@ public class ShowUserActivity extends AppCompatActivity implements TabLayout.OnT
         );
     }
 
-    private void confirmDialog(CharSequence title, CharSequence message, Func func){
+    private void confirmDialog(CharSequence title, CharSequence message, Func func) {
         new AlertDialog.Builder(this)
                 .setTitle(title)
                 .setMessage(message)
@@ -359,11 +362,11 @@ public class ShowUserActivity extends AppCompatActivity implements TabLayout.OnT
                         android.R.string.ok,
                         (dialog, which) -> func.call()
                 )
-                .setNegativeButton(android.R.string.cancel,(dialog, which) -> dialog.cancel())
+                .setNegativeButton(android.R.string.cancel, (dialog, which) -> dialog.cancel())
                 .show();
     }
 
-    private interface Func{
+    private interface Func {
         void call();
     }
 
@@ -383,11 +386,11 @@ public class ShowUserActivity extends AppCompatActivity implements TabLayout.OnT
         return recycledViewPool;
     }
 
-    public static Intent getIntent(Context context, long userId){
+    public static Intent getIntent(Context context, long userId) {
         return new Intent(context, ShowUserActivity.class).putExtra("userId", userId);
     }
 
-    public static Intent getIntent(Context context, String userName){
+    public static Intent getIntent(Context context, String userName) {
         return new Intent(context, ShowUserActivity.class).putExtra("userScreenName", userName);
     }
 }

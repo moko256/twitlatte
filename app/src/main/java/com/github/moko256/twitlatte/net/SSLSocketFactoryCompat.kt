@@ -40,22 +40,23 @@ class SSLSocketFactoryCompat(trustManager: TrustManager) : SSLSocketFactory() {
 
     override fun getDefaultCipherSuites(): Array<String> = internal.defaultCipherSuites
 
-    override fun createSocket(s: Socket?, host: String?, port: Int, autoClose: Boolean): Socket
-            = internal.createSocket(s, host, port, autoClose).enableModernTls()
+    override fun createSocket(s: Socket?, host: String?, port: Int, autoClose: Boolean): Socket =
+            internal.createSocket(s, host, port, autoClose).enableModernTls()
 
-    override fun createSocket(host: String?, port: Int): Socket
-            = internal.createSocket(host, port).enableModernTls()
+    override fun createSocket(host: String?, port: Int): Socket =
+            internal.createSocket(host, port).enableModernTls()
 
-    override fun createSocket(host: String?, port: Int, localHost: InetAddress?, localPort: Int): Socket
-            = internal.createSocket(host, port, localHost, localPort).enableModernTls()
+    override fun createSocket(host: String?, port: Int, localHost: InetAddress?, localPort: Int): Socket =
+            internal.createSocket(host, port, localHost, localPort).enableModernTls()
 
-    override fun createSocket(host: InetAddress?, port: Int): Socket
-            = internal.createSocket(host, port).enableModernTls()
+    override fun createSocket(host: InetAddress?, port: Int): Socket =
+            internal.createSocket(host, port).enableModernTls()
 
-    override fun createSocket(address: InetAddress?, port: Int, localAddress: InetAddress?, localPort: Int): Socket
-            = internal.createSocket(address, port, localAddress, localPort).enableModernTls()
+    override fun createSocket(address: InetAddress?, port: Int, localAddress: InetAddress?, localPort: Int): Socket =
+            internal.createSocket(address, port, localAddress, localPort).enableModernTls()
 
-    override fun getSupportedCipherSuites(): Array<String>  = internal.supportedCipherSuites
+    override fun getSupportedCipherSuites(): Array<String> =
+            internal.supportedCipherSuites
 
     private fun Socket.enableModernTls(): Socket {
         if (this is SSLSocket) {

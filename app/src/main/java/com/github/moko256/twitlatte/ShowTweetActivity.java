@@ -132,7 +132,7 @@ public class ShowTweetActivity extends AppCompatActivity {
                         ).show()
                 ),
 
-                statusActionModel.getErrorObservable().subscribe(error ->{
+                statusActionModel.getErrorObservable().subscribe(error -> {
                     error.printStackTrace();
                     Toast.makeText(
                             this,
@@ -162,23 +162,23 @@ public class ShowTweetActivity extends AppCompatActivity {
     protected void onDestroy() {
         disposables.dispose();
         super.onDestroy();
-        disposables=null;
-        if (statusViewBinder != null){
+        disposables = null;
+        if (statusViewBinder != null) {
             statusViewBinder.clear();
         }
-        statusViewBinder=null;
+        statusViewBinder = null;
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.activity_show_tweet_toolbar,menu);
+        getMenuInflater().inflate(R.menu.activity_show_tweet_toolbar, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.action_quote:
                 startActivity(PostActivity.getIntent(
                         this,
@@ -196,24 +196,24 @@ public class ShowTweetActivity extends AppCompatActivity {
             case R.id.action_open_in_browser:
                 AppCustomTabsKt.launchChromeCustomTabs(this, shareUrl, true);
                 break;
-            }
+        }
         return super.onOptionsItemSelected(item);
     }
 
     @Override
-    public boolean onSupportNavigateUp(){
+    public boolean onSupportNavigateUp() {
         finish();
         return true;
     }
 
-    public static Intent getIntent(Context context, long statusId){
+    public static Intent getIntent(Context context, long statusId) {
         return new Intent(context, ShowTweetActivity.class).putExtra("statusId", statusId);
     }
 
-    private void updateView(Post item){
+    private void updateView(Post item) {
         shareUrl = item.getStatus().getUrl();
         long replyTweetId = item.getStatus().getInReplyToStatusId();
-        if (replyTweetId != -1){
+        if (replyTweetId != -1) {
             tweetIsReply.setVisibility(VISIBLE);
             tweetIsReply.setOnClickListener(v -> startActivity(
                     GlobalApplicationKt.setAccountKeyForActivity(

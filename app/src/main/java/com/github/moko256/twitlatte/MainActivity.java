@@ -131,14 +131,14 @@ public class MainActivity extends AppCompatActivity implements
 
         toolbar.getChildAt(0).setOnClickListener(v -> {
             Fragment fragment = getMainFragment();
-            if (fragment instanceof MovableTopInterface){
+            if (fragment instanceof MovableTopInterface) {
                 ((MovableTopInterface) fragment).moveToTop();
             }
         });
 
         drawer = findViewById(R.id.drawer_layout);
 
-        if (drawer != null){
+        if (drawer != null) {
             ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
             toggle.setDrawerSlideAnimationEnabled(false);
             toggle.syncState();
@@ -149,11 +149,11 @@ public class MainActivity extends AppCompatActivity implements
         }
 
         navigationView = findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(item-> {
+        navigationView.setNavigationItemSelectedListener(item -> {
             int id = item.getItemId();
 
-            if(!item.isChecked()){
-                switch(id){
+            if (!item.isChecked()) {
+                switch (id) {
                     case R.id.nav_timeline:
                         replaceFragment(new HomeTimeLineFragment());
                         break;
@@ -173,7 +173,7 @@ public class MainActivity extends AppCompatActivity implements
                         replaceFragment(SelectListsEntriesFragment.Companion.newInstance(client.getAccessToken().getUserId()));
                         break;
                     case R.id.nav_settings:
-                        startActivity(new Intent(this,SettingsActivity.class));
+                        startActivity(new Intent(this, SettingsActivity.class));
                         break;
                 }
             }
@@ -181,7 +181,7 @@ public class MainActivity extends AppCompatActivity implements
             if (drawer != null) {
                 drawer.closeDrawer(GravityCompat.START);
             }
-            return (id != R.id.nav_settings)&&(id != R.id.nav_account);
+            return (id != R.id.nav_settings) && (id != R.id.nav_account);
 
         });
 
@@ -260,7 +260,7 @@ public class MainActivity extends AppCompatActivity implements
 
         findViewById(R.id.fab).setOnClickListener(v -> startActivity(new Intent(this, PostActivity.class)));
 
-        tabLayout= findViewById(R.id.toolbar_tab);
+        tabLayout = findViewById(R.id.toolbar_tab);
         tabLayout.addOnTabSelectedListener(this);
 
         alwaysCloseApp = GlobalApplicationKt.preferenceRepository.getBoolean(KEY_ALWAYS_CLOSE_APP, true);
@@ -276,7 +276,7 @@ public class MainActivity extends AppCompatActivity implements
             updateDrawerImage();
             updateAccountsList();
 
-            if(savedInstanceState==null){
+            if (savedInstanceState == null) {
                 prepareFragment();
             }
 
@@ -293,10 +293,12 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onTabSelected(TabLayout.Tab tab) {}
+    public void onTabSelected(TabLayout.Tab tab) {
+    }
 
     @Override
-    public void onTabUnselected(TabLayout.Tab tab) {}
+    public void onTabUnselected(TabLayout.Tab tab) {
+    }
 
     @Override
     public void onTabReselected(TabLayout.Tab tab) {
@@ -306,7 +308,7 @@ public class MainActivity extends AppCompatActivity implements
                                 .getTabsViewPager()
                                 .getAdapter()
         ).getFragment(tab.getPosition());
-        if (fragment instanceof MovableTopInterface){
+        if (fragment instanceof MovableTopInterface) {
             ((MovableTopInterface) fragment).moveToTop();
         }
     }
@@ -343,13 +345,13 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.activity_main_toolbar,menu);
+        getMenuInflater().inflate(R.menu.activity_main_toolbar, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId()==R.id.action_search){
+        if (item.getItemId() == R.id.action_search) {
             startActivity(new Intent(this, TrendsActivity.class));
         }
         return true;
@@ -357,7 +359,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onBackPressed() {
-        if (drawer!= null && drawer.isDrawerOpen(GravityCompat.START)) {
+        if (drawer != null && drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
@@ -378,14 +380,14 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_N){
+        if (keyCode == KeyEvent.KEYCODE_N) {
             startActivity(new Intent(this, PostActivity.class));
-        } else if (event.isShiftPressed() && keyCode == KeyEvent.KEYCODE_SLASH){
+        } else if (event.isShiftPressed() && keyCode == KeyEvent.KEYCODE_SLASH) {
             new AlertDialog.Builder(this)
                     .setTitle("KeyBoard Shortcuts")
                     .setMessage("? : This Dialog\nn : New Post\nCtrl + Tab : Open Drawer\nCtrl + Enter : Post")
                     .show();
-        } else if (drawer != null && event.isCtrlPressed() && keyCode == KeyEvent.KEYCODE_TAB){
+        } else if (drawer != null && event.isCtrlPressed() && keyCode == KeyEvent.KEYCODE_TAB) {
             if (drawer.isDrawerOpen(GravityCompat.START)) {
                 drawer.closeDrawer(GravityCompat.START);
             } else {
@@ -397,27 +399,30 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {}
+    public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
+    }
 
     @Override
-    public void onDrawerOpened(@NonNull View drawerView) {}
+    public void onDrawerOpened(@NonNull View drawerView) {
+    }
 
     @Override
     public void onDrawerClosed(@NonNull View drawerView) {
-        if (isDrawerAccountsSelection){
+        if (isDrawerAccountsSelection) {
             changeIsDrawerAccountsSelection();
         }
     }
 
     @Override
-    public void onDrawerStateChanged(int newState) {}
+    public void onDrawerStateChanged(int newState) {
+    }
 
     private void changeIsDrawerAccountsSelection() {
         isDrawerAccountsSelection = !isDrawerAccountsSelection;
 
-        accountListView.setVisibility(isDrawerAccountsSelection? View.VISIBLE: View.GONE);
+        accountListView.setVisibility(isDrawerAccountsSelection ? View.VISIBLE : View.GONE);
 
-        userToggleImage.setRotation(isDrawerAccountsSelection? 180: 0);
+        userToggleImage.setRotation(isDrawerAccountsSelection ? 180 : 0);
 
         navigationView.getMenu().setGroupVisible(R.id.drawer_menu_main, !isDrawerAccountsSelection);
         navigationView.getMenu().setGroupVisible(R.id.drawer_menu_settings, !isDrawerAccountsSelection);
@@ -432,23 +437,23 @@ public class MainActivity extends AppCompatActivity implements
         startActivity(ShowUserActivity.getIntent(this, client.getAccessToken().getUserId()), animation.toBundle());
     }
 
-    private void addFragment(Fragment fragment){
+    private void addFragment(Fragment fragment) {
         getSupportFragmentManager()
                 .beginTransaction()
                 .add(R.id.mainLayout, fragment)
                 .commit();
     }
 
-    private void replaceFragment(Fragment fragment){
+    private void replaceFragment(Fragment fragment) {
         getSupportFragmentManager()
                 .beginTransaction()
                 .addToBackStack(null)
-                .setCustomAnimations(android.R.anim.fade_in,android.R.anim.fade_out,android.R.anim.fade_in,android.R.anim.fade_out)
+                .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out)
                 .replace(R.id.mainLayout, fragment)
                 .commit();
     }
 
-    private Fragment getMainFragment(){
+    private Fragment getMainFragment() {
         return getSupportFragmentManager().findFragmentById(R.id.mainLayout);
     }
 
@@ -457,36 +462,36 @@ public class MainActivity extends AppCompatActivity implements
         return findViewById(R.id.activity_main_coordinator_layout);
     }
 
-    private void attachFragment(Fragment fragment){
+    private void attachFragment(Fragment fragment) {
         if (fragment != null) {
-            if(fragment instanceof ToolbarTitleInterface){
-                setTitle(((ToolbarTitleInterface)fragment).getTitleResourceId());
+            if (fragment instanceof ToolbarTitleInterface) {
+                setTitle(((ToolbarTitleInterface) fragment).getTitleResourceId());
             } else if (fragment instanceof ToolbarStringTitleInterface) {
                 setTitle(((ToolbarStringTitleInterface) fragment).getTitleString());
             }
 
-            if(fragment instanceof NavigationPositionInterface){
-                navigationView.setCheckedItem(((NavigationPositionInterface)fragment).getNavigationPosition());
+            if (fragment instanceof NavigationPositionInterface) {
+                navigationView.setCheckedItem(((NavigationPositionInterface) fragment).getNavigationPosition());
             }
 
-            if(fragment instanceof UseTabsInterface) {
+            if (fragment instanceof UseTabsInterface) {
                 tabLayout.setVisibility(View.VISIBLE);
-                tabLayout.setupWithViewPager(((UseTabsInterface)fragment).getTabsViewPager());
-            } else{
+                tabLayout.setupWithViewPager(((UseTabsInterface) fragment).getTabsViewPager());
+            } else {
                 tabLayout.setupWithViewPager(null);
                 tabLayout.setVisibility(View.GONE);
             }
         }
     }
 
-    private void updateDrawerImage(){
+    private void updateDrawerImage() {
         disposable.add(
                 Single.create(new VerifyCredentialOnSubscribe(client))
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
                                 user -> {
-                                    RequestManager requests= Glide.with(this);
+                                    RequestManager requests = Glide.with(this);
 
                                     CharSequence userName = TwitterStringUtils.plusUserMarks(
                                             user.getName(),
@@ -528,11 +533,11 @@ public class MainActivity extends AppCompatActivity implements
                                 List<AccessToken> accessTokens = accountsModel.getAccessTokens();
 
                                 ArrayList<User> users = new ArrayList<>(accessTokens.size());
-                                for (AccessToken accessToken : accessTokens){
+                                for (AccessToken accessToken : accessTokens) {
                                     long id = accessToken.getUserId();
                                     CachedUsersSQLiteOpenHelper userHelper = new CachedUsersSQLiteOpenHelper(getApplicationContext(), accessToken);
                                     User user = userHelper.getCachedUser(id);
-                                    if (user == null){
+                                    if (user == null) {
                                         try {
                                             user = ((GlobalApplication) getApplication()).createApiClientInstance(accessToken).verifyCredentials();
                                             userHelper.addCachedUser(user);
@@ -566,14 +571,14 @@ public class MainActivity extends AppCompatActivity implements
         );
     }
 
-    private void prepareFragment(){
-        Fragment top=new HomeTimeLineFragment();
+    private void prepareFragment() {
+        Fragment top = new HomeTimeLineFragment();
         addFragment(top);
         attachFragment(top);
     }
 
-    private void clearAndPrepareFragment(){
-        Fragment top=new HomeTimeLineFragment();
+    private void clearAndPrepareFragment() {
+        Fragment top = new HomeTimeLineFragment();
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);

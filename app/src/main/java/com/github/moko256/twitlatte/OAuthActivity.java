@@ -71,8 +71,8 @@ public class OAuthActivity extends AppCompatActivity {
 
     private OAuthModel model;
 
-    private boolean requirePin=false;
-    private boolean useAnotherConsumerToken =false;
+    private boolean requirePin = false;
+    private boolean useAnotherConsumerToken = false;
 
     private Disposable pinDialog;
 
@@ -115,7 +115,7 @@ public class OAuthActivity extends AppCompatActivity {
             if (type != -1) {
                 initType(type);
                 model.restoreInstanceState(savedInstanceState);
-                if (requirePin){
+                if (requirePin) {
                     showPinDialog();
                 }
             } else {
@@ -192,7 +192,7 @@ public class OAuthActivity extends AppCompatActivity {
         }
     }
 
-    private void initType(int authClientType){
+    private void initType(int authClientType) {
         switch (authClientType) {
             case CLIENT_TYPE_TWITTER:
                 model = new OAuthModelImpl(
@@ -214,7 +214,7 @@ public class OAuthActivity extends AppCompatActivity {
         this.authClientType = authClientType;
     }
 
-    private void initToken(String verifier){
+    private void initToken(String verifier) {
         compositeDisposable.add(
                 model.initToken(verifier)
                         .subscribeOn(Schedulers.io())
@@ -226,7 +226,7 @@ public class OAuthActivity extends AppCompatActivity {
         );
     }
 
-    private void storeAccessToken(AccessToken accessToken){
+    private void storeAccessToken(AccessToken accessToken) {
         GlobalApplicationKt.getAccountsModel(this).add(accessToken);
 
         GlobalApplicationKt.preferenceRepository.putString(KEY_ACCOUNT_KEY, accessToken.getKeyString());
@@ -288,12 +288,12 @@ public class OAuthActivity extends AppCompatActivity {
                             true,
                             null,
                             new DialogContent(
-                                   "consumer key",
-                                   enteringConsumerKey,
+                                    "consumer key",
+                                    enteringConsumerKey,
                                     EditorInfo.TYPE_CLASS_TEXT,
                                     ck -> {
-                                       enteringConsumerKey = ck;
-                                       return Unit.INSTANCE;
+                                        enteringConsumerKey = ck;
+                                        return Unit.INSTANCE;
                                     }
                             ),
                             new DialogContent(
@@ -333,7 +333,7 @@ public class OAuthActivity extends AppCompatActivity {
         );
     }
 
-    private void showPinDialog(){
+    private void showPinDialog() {
         pinDialog = EditTextsDialogShowerKt.createEditTextsDialog(
                 this,
                 null,
@@ -351,13 +351,13 @@ public class OAuthActivity extends AppCompatActivity {
         ).subscribe(() -> initToken(enteringPin));
     }
 
-    private void closePinDialog(){
-        if (pinDialog != null){
+    private void closePinDialog() {
+        if (pinDialog != null) {
             pinDialog.dispose();
         }
     }
 
-    private void startBrowser(String url){
+    private void startBrowser(String url) {
         Uri uri = Uri.parse(url);
         AppCustomTabsKt.launchChromeCustomTabs(
                 this,
@@ -374,7 +374,7 @@ public class OAuthActivity extends AppCompatActivity {
         );
     }
 
-    private void onError(Throwable e){
+    private void onError(Throwable e) {
         initType(CLIENT_TYPE_NOTHING);
 
         e.printStackTrace();
@@ -387,7 +387,7 @@ public class OAuthActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.activity_oauth_toolbar,menu);
+        getMenuInflater().inflate(R.menu.activity_oauth_toolbar, menu);
         if (requirePin) {
             menu.findItem(R.id.action_use_auth_code).setChecked(true);
         }

@@ -37,11 +37,11 @@ class AccountsModel(private val context: Context) {
 
     fun getAccessTokens(): List<AccessToken> = tokens
 
-    fun get(key: String): AccessToken?
-            = tokens.find { accessToken -> accessToken.getKeyString() == key }
+    fun get(key: String): AccessToken? =
+            tokens.find { accessToken -> accessToken.getKeyString() == key }
 
-    fun getAccessTokensByType(clientType: Int): List<AccessToken>
-            = tokens.filter { accessToken -> accessToken.clientType == clientType }
+    fun getAccessTokensByType(clientType: Int): List<AccessToken> =
+            tokens.filter { accessToken -> accessToken.clientType == clientType }
 
     fun add(accessToken: AccessToken) {
         val helper = TokenSQLiteOpenHelper(context)

@@ -22,9 +22,9 @@ import com.github.moko256.latte.client.base.entity.ListEntry
 /**
  * Created by moko256 on 2019/01/12.
  */
-class ListsEntriesFragment: AbstractListsEntriesFragment() {
+class ListsEntriesFragment : AbstractListsEntriesFragment() {
     override fun onClickList(listEntry: ListEntry) {
-        context?.let{ context ->
+        context?.let { context ->
             context.startActivity(ListsTimelineActivity.getIntent(context, listEntry)
                     .setAccountKeyForActivity(requireActivity()))
         }

@@ -31,7 +31,7 @@ import io.reactivex.schedulers.Schedulers
  *
  * @author moko256
  */
-abstract class AbstractListsEntriesFragment: BaseListFragment(), ToolbarTitleInterface {
+abstract class AbstractListsEntriesFragment : BaseListFragment(), ToolbarTitleInterface {
 
     private var userId = -1L
 

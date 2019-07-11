@@ -24,7 +24,7 @@ import android.graphics.drawable.Drawable
  *
  * @author moko256
  */
-class PercentBarBackgroundDrawable: Drawable() {
+class PercentBarBackgroundDrawable : Drawable() {
     var percent: Int = 100 //0..100
     var lineSize = 4f
     var color = 0x000000

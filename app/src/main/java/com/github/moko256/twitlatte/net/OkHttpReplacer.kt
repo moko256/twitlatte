@@ -63,7 +63,7 @@ private fun systemDefaultTrustManager() =
                     init(null as KeyStore?)
                 }
                 .trustManagers
-                .find { it is X509TrustManager}
+                .find { it is X509TrustManager }
                 .let {
                     if (it != null) {
                         it as X509TrustManager

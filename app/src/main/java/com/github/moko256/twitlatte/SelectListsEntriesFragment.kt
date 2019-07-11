@@ -22,7 +22,7 @@ import com.github.moko256.latte.client.base.entity.ListEntry
 /**
  * Created by moko256 on 2019/01/12.
  */
-class SelectListsEntriesFragment: AbstractListsEntriesFragment() {
+class SelectListsEntriesFragment : AbstractListsEntriesFragment() {
     override fun onClickList(listEntry: ListEntry) {
 
         activity?.let {

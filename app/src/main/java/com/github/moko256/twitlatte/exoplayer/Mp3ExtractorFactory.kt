@@ -24,6 +24,6 @@ import com.google.android.exoplayer2.extractor.mp3.Mp3Extractor
  *
  * @author moko256
  */
-object Mp3ExtractorFactory: ExtractorsFactory {
+object Mp3ExtractorFactory : ExtractorsFactory {
     override fun createExtractors() = arrayOf(Mp3Extractor())
 }

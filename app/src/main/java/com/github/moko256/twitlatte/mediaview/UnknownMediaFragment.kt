@@ -29,7 +29,7 @@ import com.github.moko256.twitlatte.intent.launchChromeCustomTabs
  *
  * @author moko256
  */
-class UnknownMediaFragment: AbstractMediaFragment() {
+class UnknownMediaFragment : AbstractMediaFragment() {
 
     private lateinit var textView: AppCompatTextView
 

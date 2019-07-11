@@ -25,7 +25,7 @@ import com.github.moko256.twitlatte.model.base.StatusActionModel
  *
  * @author moko256
  */
-class ListViewModel: ViewModel() {
+class ListViewModel : ViewModel() {
     var initialized: Boolean = false
 
     lateinit var listModel: ListModel

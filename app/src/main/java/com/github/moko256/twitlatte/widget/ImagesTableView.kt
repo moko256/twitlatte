@@ -80,7 +80,7 @@ class ImagesTableView @JvmOverloads constructor(
 
     private lateinit var imageLoadMode: String
 
-    private var imageTableData : ImageTableData? = null
+    private var imageTableData: ImageTableData? = null
     private var displayingMediaSize = 0
 
     private var containerViews = arrayOfNulls<FrameLayout>(maxMediaSize)

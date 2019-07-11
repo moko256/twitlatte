@@ -24,7 +24,7 @@ import android.text.style.ClickableSpan
  *
  * @author moko256
  */
-abstract class ClickableNoLineSpan: ClickableSpan() {
+abstract class ClickableNoLineSpan : ClickableSpan() {
 
     override fun updateDrawState(ds: TextPaint) {
         ds.color = ds.linkColor

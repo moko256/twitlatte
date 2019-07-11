@@ -34,7 +34,7 @@ import io.reactivex.Single
 class PostStatusModelImpl(
         private val contentResolver: ContentResolver,
         private val apiClient: ApiClient
-): PostStatusModel {
+) : PostStatusModel {
     private val counter = apiClient.generateCounter()
 
     override val updateStatus: UpdateStatus = UpdateStatus(
@@ -77,7 +77,8 @@ class PostStatusModelImpl(
                     LongArray(uriList.size) {
                         val uri = uriList[it]
                         contentResolver.openInputStream(uri)?.let { image ->
-                            apiClient.uploadMedia(image, uri.lastPathSegment?:"media", contentResolver.getType(uri)?:"")
+                            apiClient.uploadMedia(image, uri.lastPathSegment
+                                    ?: "media", contentResolver.getType(uri) ?: "")
                         } ?: -1
                     }.toList()
                 } else {

@@ -43,7 +43,7 @@ public class CachedIdListSQLiteOpenHelperTest {
             "testIdsDatabase"
     );
 
-    private List<Long> addInput = Arrays.asList(0L,1L,2L);
+    private List<Long> addInput = Arrays.asList(0L, 1L, 2L);
     private List<Long> insertInput = Arrays.asList(100L, 101L);
 
     @Test
@@ -58,7 +58,7 @@ public class CachedIdListSQLiteOpenHelperTest {
     }
 
 
-    private void addIdTest(){
+    private void addIdTest() {
         helper.addIds(addInput);
 
         List<Long> result1 = helper.getIds();
@@ -66,7 +66,7 @@ public class CachedIdListSQLiteOpenHelperTest {
         assertArrayEquals(addInput.toArray(), result1.toArray());
     }
 
-    private void insertIdTest(){
+    private void insertIdTest() {
         helper.insertIds(1, insertInput);
 
         List<Long> result2 = helper.getIds();
@@ -74,14 +74,14 @@ public class CachedIdListSQLiteOpenHelperTest {
         assertArrayEquals(insertInput.toArray(), result2.subList(1, 3).toArray());
     }
 
-    private void deleteIdTest(){
+    private void deleteIdTest() {
         helper.deleteIds(addInput);
         helper.deleteIds(insertInput);
 
         assertEquals(helper.getIds().size(), 0);
     }
 
-    private void setListViewPositionTest(){
+    private void setListViewPositionTest() {
         helper.setSeeingId(100L);
         assertEquals(helper.getSeeingId(), 100);
 

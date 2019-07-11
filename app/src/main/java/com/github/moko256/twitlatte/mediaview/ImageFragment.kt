@@ -34,7 +34,7 @@ import com.github.moko256.twitlatte.text.TwitterStringUtils
  *
  * @author moko256
  */
-class ImageFragment: AbstractMediaFragment() {
+class ImageFragment : AbstractMediaFragment() {
 
     private lateinit var imageView: PhotoView
 

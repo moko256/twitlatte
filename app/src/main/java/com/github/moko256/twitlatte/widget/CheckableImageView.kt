@@ -32,7 +32,7 @@ class CheckableImageView @JvmOverloads constructor(
         context: Context,
         attrs: AttributeSet? = null,
         defStyleAttr: Int = 0
-): AppCompatImageView(context, attrs, defStyleAttr), Checkable {
+) : AppCompatImageView(context, attrs, defStyleAttr), Checkable {
 
     private companion object {
         private val CHECKED_STATE_SET = intArrayOf(android.R.attr.state_checked)

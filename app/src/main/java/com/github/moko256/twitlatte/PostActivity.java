@@ -160,7 +160,7 @@ public class PostActivity extends AppCompatActivity {
         );
         disposable = new CompositeDisposable();
 
-        rootViewGroup= findViewById(android.R.id.content);
+        rootViewGroup = findViewById(android.R.id.content);
 
         actionBar = Objects.requireNonNull(getSupportActionBar());
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -188,12 +188,13 @@ public class PostActivity extends AppCompatActivity {
                         )
         );
 
-        counterTextView= findViewById(R.id.tweet_text_edit_counter);
+        counterTextView = findViewById(R.id.tweet_text_edit_counter);
 
-        editText= findViewById(R.id.tweet_text_edit);
+        editText = findViewById(R.id.tweet_text_edit);
         editText.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -202,7 +203,8 @@ public class PostActivity extends AppCompatActivity {
             }
 
             @Override
-            public void afterTextChanged(Editable s) {}
+            public void afterTextChanged(Editable s) {
+            }
         });
         editText.setFilters(NoSpanInputFilterKt.getNoSpanInputFilter());
         editText.setImageAddedListener(imageUri -> {
@@ -217,7 +219,7 @@ public class PostActivity extends AppCompatActivity {
             }
         });
         editText.setOnKeyListener((v, keyCode, event) -> {
-            if (!isPosting && event.getAction() == KeyEvent.ACTION_DOWN && event.isCtrlPressed() && keyCode == KeyEvent.KEYCODE_ENTER){
+            if (!isPosting && event.getAction() == KeyEvent.ACTION_DOWN && event.isCtrlPressed() && keyCode == KeyEvent.KEYCODE_ENTER) {
                 postOrConfirmIfValid();
                 return true;
             }
@@ -341,7 +343,8 @@ public class PostActivity extends AppCompatActivity {
 
             contentWarningText.addTextChangedListener(new TextWatcher() {
                 @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                }
 
                 @Override
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -350,7 +353,8 @@ public class PostActivity extends AppCompatActivity {
                 }
 
                 @Override
-                public void afterTextChanged(Editable s) {}
+                public void afterTextChanged(Editable s) {
+                }
             });
             contentWarningEnabled.setOnCheckedChangeListener(
                     (buttonView, isChecked) -> {
@@ -385,7 +389,8 @@ public class PostActivity extends AppCompatActivity {
                 options.add("");
                 editText.addTextChangedListener(new TextWatcher() {
                     @Override
-                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                    }
 
                     @Override
                     public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -394,7 +399,8 @@ public class PostActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void afterTextChanged(Editable s) {}
+                    public void afterTextChanged(Editable s) {
+                    }
                 });
                 return Unit.INSTANCE;
             });
@@ -406,7 +412,8 @@ public class PostActivity extends AppCompatActivity {
                 }
 
                 @Override
-                public void onNothingSelected(AdapterView<?> parent) {}
+                public void onNothingSelected(AdapterView<?> parent) {
+                }
             });
             pollsMultiple.setOnCheckedChangeListener((buttonView, isChecked)
                     -> model.getUpdateStatus().setPollSelectableMultiple(isChecked));
@@ -448,9 +455,9 @@ public class PostActivity extends AppCompatActivity {
         if (client.getAccessToken().getClientType() == CLIENT_TYPE_TWITTER) {
             addLocation.setVisibility(View.VISIBLE);
             addLocation.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                if (isChecked){
+                if (isChecked) {
                     locationText.setVisibility(View.VISIBLE);
-                    if (PermissionChecker.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PermissionChecker.PERMISSION_GRANTED){
+                    if (PermissionChecker.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PermissionChecker.PERMISSION_GRANTED) {
                         updateLocation();
                     } else {
                         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE_PERMISSION_LOCATION);
@@ -469,7 +476,7 @@ public class PostActivity extends AppCompatActivity {
         locationText = findViewById(R.id.activity_tweet_location_result);
         locationText.setVisibility(View.GONE);
 
-        if (getIntent() != null){
+        if (getIntent() != null) {
             model.getUpdateStatus().setInReplyToStatusId(getIntent().getLongExtra(
                     INTENT_EXTRA_IN_REPLY_TO_STATUS_ID, -1
             ));
@@ -493,7 +500,7 @@ public class PostActivity extends AppCompatActivity {
             }
         }
 
-        editText.setHint(model.isReply()? R.string.reply: R.string.post);
+        editText.setHint(model.isReply() ? R.string.reply : R.string.post);
     }
 
     private void postOrConfirmIfValid() {
@@ -531,7 +538,7 @@ public class PostActivity extends AppCompatActivity {
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
                                 this::finish,
-                                e->{
+                                e -> {
                                     e.printStackTrace();
                                     postButton.setEnabled(true);
                                     isPosting = false;
@@ -545,8 +552,8 @@ public class PostActivity extends AppCompatActivity {
     private void updateCounter() {
         counterTextView.setText(model.getTweetLength() + " / " + model.getStatusTextLimit());
         counterTextView.setTextColor(
-                model.isValid()?
-                        COLOR_STABLE:
+                model.isValid() ?
+                        COLOR_STABLE :
                         COLOR_ERROR
         );
     }
@@ -599,7 +606,7 @@ public class PostActivity extends AppCompatActivity {
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        if (savedInstanceState != null){
+        if (savedInstanceState != null) {
             Parcelable[] l = savedInstanceState.getParcelableArray(OUT_STATE_EXTRA_IMAGE_URI_LIST);
             if (l != null) {
                 for (Parcelable p : l) {
@@ -617,7 +624,7 @@ public class PostActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
 
         int size = model.getUriList().size();
-        if (size > 0){
+        if (size > 0) {
             Uri[] uris = new Uri[size];
             model.getUriList().toArray(uris);
             outState.putParcelableArray(OUT_STATE_EXTRA_IMAGE_URI_LIST, uris);
@@ -626,8 +633,8 @@ public class PostActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_GET_IMAGE){
-            if (data != null){
+        if (requestCode == REQUEST_GET_IMAGE) {
+            if (data != null) {
                 Uri resultUri = data.getData();
                 ClipData resultUris = data.getClipData();
                 if (resultUri != null) {
@@ -638,7 +645,7 @@ public class PostActivity extends AppCompatActivity {
                 } else if (resultUris != null) {
                     int resultSize = resultUris.getItemCount();
                     int limit = model.getUriListSizeLimit() - model.getUriList().size();
-                    int itemCount = resultSize <= limit? resultSize: limit;
+                    int itemCount = resultSize <= limit ? resultSize : limit;
                     ArrayList<Uri> arrayList = new ArrayList<>(itemCount);
 
                     for (int i = 0; i < itemCount; i++) {
@@ -696,7 +703,7 @@ public class PostActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onSupportNavigateUp(){
+    public boolean onSupportNavigateUp() {
         if (editText.getText().length() > 0 || addedImagesAdapter.getImagesList().size() > 0) {
             new AlertDialog.Builder(this)
                     .setMessage(R.string.confirm_discard_post)
@@ -710,7 +717,7 @@ public class PostActivity extends AppCompatActivity {
         }
     }
 
-    private void updateLocation(){
+    private void updateLocation() {
         LocationManager locationManager = (LocationManager) getApplicationContext().getSystemService(LOCATION_SERVICE);
 
         disposable.add(
@@ -726,15 +733,15 @@ public class PostActivity extends AppCompatActivity {
         );
     }
 
-    public static Intent getIntent(Context context, String text){
+    public static Intent getIntent(Context context, String text) {
         return getIntent(context, -1, text, null);
     }
 
-    public static Intent getIntent(Context context, long inReplyToStatusId, String text){
+    public static Intent getIntent(Context context, long inReplyToStatusId, String text) {
         return getIntent(context, inReplyToStatusId, text, null);
     }
 
-    public static Intent getIntent(Context context, long inReplyToStatusId, String text, ArrayList<Uri> imageUri){
+    public static Intent getIntent(Context context, long inReplyToStatusId, String text, ArrayList<Uri> imageUri) {
         Intent intent = new Intent(context, PostActivity.class);
         if (text != null) {
             intent.putExtra(INTENT_EXTRA_TWEET_TEXT, text);

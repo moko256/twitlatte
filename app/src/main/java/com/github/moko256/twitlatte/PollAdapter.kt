@@ -33,7 +33,7 @@ import com.github.moko256.twitlatte.drawable.PercentBarBackgroundDrawable
  *
  * @author moko256
  */
-class PollAdapter(private val context: Context): RecyclerView.Adapter<PollAdapter.Holder>() {
+class PollAdapter(private val context: Context) : RecyclerView.Adapter<PollAdapter.Holder>() {
 
     private var poll: Poll? = null
 
@@ -56,7 +56,7 @@ class PollAdapter(private val context: Context): RecyclerView.Adapter<PollAdapte
                     R.layout.layout_material_list_item_one_line_radiobutton
                 }
             }
-        }?:0
+        } ?: 0
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
@@ -71,7 +71,7 @@ class PollAdapter(private val context: Context): RecyclerView.Adapter<PollAdapte
         }
 
         val poll = poll
-        if(poll != null && viewType != R.layout.layout_material_list_item_single_line) {
+        if (poll != null && viewType != R.layout.layout_material_list_item_single_line) {
             holder.itemView.setOnClickListener {
                 val position = holder.layoutPosition
 
@@ -97,12 +97,12 @@ class PollAdapter(private val context: Context): RecyclerView.Adapter<PollAdapte
     }
 
     override fun getItemCount(): Int {
-        return poll?.optionTitles?.size?:0
+        return poll?.optionTitles?.size ?: 0
     }
 
     override fun onBindViewHolder(holder: Holder, position: Int) {
         poll?.let { poll ->
-            val count = poll.optionCounts[position].takeIf { it != -1 }?:0
+            val count = poll.optionCounts[position].takeIf { it != -1 } ?: 0
             if (poll.expired || poll.voted) {
                 holder.bindResult(
                         poll.optionTitles[position],
@@ -118,7 +118,7 @@ class PollAdapter(private val context: Context): RecyclerView.Adapter<PollAdapte
         }
     }
 
-    class Holder(itemView: ViewGroup): RecyclerView.ViewHolder(itemView) {
+    class Holder(itemView: ViewGroup) : RecyclerView.ViewHolder(itemView) {
         private val textView = itemView.findViewById<TextView>(R.id.primary_text)!!
         private val selection = itemView.findViewById<CompoundButton>(R.id.selection)
 

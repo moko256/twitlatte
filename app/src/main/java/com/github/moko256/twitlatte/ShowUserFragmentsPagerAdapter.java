@@ -18,15 +18,15 @@ package com.github.moko256.twitlatte;
 
 import android.content.Context;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+
 import com.github.moko256.latte.client.base.entity.AccessToken;
 import com.github.moko256.twitlatte.widget.FragmentPagerAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 
 import static com.github.moko256.latte.client.mastodon.MastodonApiClientImplKt.CLIENT_TYPE_MASTODON;
 
@@ -70,12 +70,12 @@ public class ShowUserFragmentsPagerAdapter extends FragmentPagerAdapter {
             this.userId = userId;
 
             list.add(FRAGMENT_TIMELINE);
-            if (type == CLIENT_TYPE_MASTODON){
+            if (type == CLIENT_TYPE_MASTODON) {
                 list.add(FRAGMENT_MEDIA);
             }
             list.add(FRAGMENT_FOLLOW);
             list.add(FRAGMENT_FOLLOWER);
-            if (!(type == CLIENT_TYPE_MASTODON && userId != accountUserId)){
+            if (!(type == CLIENT_TYPE_MASTODON && userId != accountUserId)) {
                 list.add(list.size() - 2, FRAGMENT_LIKE);
                 list.add(FRAGMENT_LIST);
             }
@@ -87,7 +87,7 @@ public class ShowUserFragmentsPagerAdapter extends FragmentPagerAdapter {
     @NonNull
     @Override
     public Fragment getItem(int position) {
-        switch (list.get(position)){
+        switch (list.get(position)) {
             case FRAGMENT_INFO:
                 return new UserInfoFragment();
             case FRAGMENT_TIMELINE:
@@ -116,7 +116,7 @@ public class ShowUserFragmentsPagerAdapter extends FragmentPagerAdapter {
     public CharSequence getPageTitle(int position) {
         Fragment fragment = getFragment(position);
         if (fragment instanceof ToolbarTitleInterface) {
-            return context.getString(((ToolbarTitleInterface)fragment).getTitleResourceId());
+            return context.getString(((ToolbarTitleInterface) fragment).getTitleResourceId());
         } else {
             return null;
         }

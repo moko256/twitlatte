@@ -31,7 +31,7 @@ import io.reactivex.SingleEmitter
  */
 class LocationSingleBuilder(
         private val locationManager: LocationManager
-): LocationListener {
+) : LocationListener {
 
     private lateinit var emitter: SingleEmitter<Location>
 
@@ -78,7 +78,7 @@ class LocationSingleBuilder(
         locationManager.removeUpdates(this)
     }
 
-    override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?){} //Do nothing
+    override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {} //Do nothing
 
     override fun onProviderEnabled(provider: String?) {} //Do nothing
 

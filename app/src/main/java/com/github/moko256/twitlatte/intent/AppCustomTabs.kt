@@ -39,11 +39,11 @@ import com.github.moko256.twitlatte.repository.KEY_USE_CHROME_CUSTOM_TAB
  * @param context context that launch uri
  * @param uri uri string
  */
-fun launchChromeCustomTabs(context: Context, uri: String, excludeOwn: Boolean = false){
+fun launchChromeCustomTabs(context: Context, uri: String, excludeOwn: Boolean = false) {
     launchChromeCustomTabs(context, Uri.parse(uri), excludeOwn)
 }
 
-fun launchChromeCustomTabs(context: Context, url: Uri, excludeOwn: Boolean = false){
+fun launchChromeCustomTabs(context: Context, url: Uri, excludeOwn: Boolean = false) {
     launchChromeCustomTabs(context, url, excludeOwn) {
         CustomTabsIntent.Builder()
                 .setToolbarColor(ContextCompat.getColor(context, R.color.color_primary))
@@ -54,7 +54,7 @@ fun launchChromeCustomTabs(context: Context, url: Uri, excludeOwn: Boolean = fal
     }
 }
 
-fun launchChromeCustomTabs(context: Context, url: Uri, excludeOwn: Boolean = false, builder: () -> CustomTabsIntent.Builder){
+fun launchChromeCustomTabs(context: Context, url: Uri, excludeOwn: Boolean = false, builder: () -> CustomTabsIntent.Builder) {
     try {
         if (preferenceRepository.getBoolean(KEY_USE_CHROME_CUSTOM_TAB, true)) {
             builder().build().let {

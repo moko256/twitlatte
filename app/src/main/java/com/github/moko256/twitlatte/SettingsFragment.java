@@ -20,15 +20,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
 
-import com.github.moko256.latte.client.base.entity.AccessToken;
-import com.github.moko256.twitlatte.intent.AppCustomTabsKt;
-import com.github.moko256.twitlatte.model.AccountsModel;
-import com.github.moko256.twitlatte.text.ThemePreferenceConverterKt;
-import com.github.moko256.twitlatte.text.TwitterStringUtils;
-
-import java.util.List;
-import java.util.regex.PatternSyntaxException;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -38,6 +29,15 @@ import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceScreen;
+
+import com.github.moko256.latte.client.base.entity.AccessToken;
+import com.github.moko256.twitlatte.intent.AppCustomTabsKt;
+import com.github.moko256.twitlatte.model.AccountsModel;
+import com.github.moko256.twitlatte.text.ThemePreferenceConverterKt;
+import com.github.moko256.twitlatte.text.TwitterStringUtils;
+
+import java.util.List;
+import java.util.regex.PatternSyntaxException;
 
 import static android.app.Activity.RESULT_OK;
 import static com.github.moko256.latte.client.twitter.TwitterApiClientImplKt.CLIENT_TYPE_TWITTER;
@@ -60,7 +60,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     public void onCreatePreferences(Bundle bundle, String rootKey) {
         setPreferencesFromResource(R.xml.settings, rootKey);
 
-        if (rootKey == null){
+        if (rootKey == null) {
             AccountsModel accountsModel = GlobalApplicationKt.getAccountsModel(requireActivity());
             List<AccessToken> accessTokens = accountsModel.getAccessTokens();
 
@@ -74,24 +74,24 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 entryValues[i] = accessToken.getKeyString();
             }
 
-            entriesAccountList[entriesAccountList.length-1]=getString(R.string.login_with_another_account);
-            entryValues[entryValues.length-1]="-1";
+            entriesAccountList[entriesAccountList.length - 1] = getString(R.string.login_with_another_account);
+            entryValues[entryValues.length - 1] = "-1";
 
             ListPreference nowAccountList = findPreference(KEY_ACCOUNT_KEY);
             nowAccountList.setEntries(entriesAccountList);
             nowAccountList.setEntryValues(entryValues);
-            nowAccountList.setDefaultValue(GlobalApplicationKt.preferenceRepository.getString(KEY_ACCOUNT_KEY,"-1"));
+            nowAccountList.setDefaultValue(GlobalApplicationKt.preferenceRepository.getString(KEY_ACCOUNT_KEY, "-1"));
             nowAccountList.setOnPreferenceChangeListener(
                     (preference, newValue) -> {
-                        if (newValue.equals("-1")){
-                            startActivityForResult(new Intent(getContext(),OAuthActivity.class), REQUEST_OAUTH_OR_CANCEL);
+                        if (newValue.equals("-1")) {
+                            startActivityForResult(new Intent(getContext(), OAuthActivity.class), REQUEST_OAUTH_OR_CANCEL);
                             return false;
                         } else {
                             AccessToken accessToken = GlobalApplicationKt.getAccountsModel(requireActivity()).get((String) newValue);
 
                             ((GlobalApplication) requireActivity().getApplication()).initCurrentClient(accessToken);
                             startActivity(
-                                    new Intent(getContext(),MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
+                                    new Intent(getContext(), MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
                             );
                             return true;
                         }
@@ -110,8 +110,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 entriesLinkOpenValue[i] = accessToken.getKeyString();
             }
 
-            entriesLinkOpen[entriesLinkOpen.length-1]=getString(R.string.not_set);
-            entriesLinkOpenValue[entriesLinkOpenValue.length-1]="-1";
+            entriesLinkOpen[entriesLinkOpen.length - 1] = getString(R.string.not_set);
+            entriesLinkOpenValue[entriesLinkOpenValue.length - 1] = "-1";
 
             ListPreference linkOpenAccountList = findPreference(KEY_ACCOUNT_KEY_LINK_OPEN);
             linkOpenAccountList.setEntries(entriesLinkOpen);
@@ -125,7 +125,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                         .setPositiveButton(R.string.do_logout,
                                 (dialog, i) -> {
                                     accountsModel.delete(accountsModel.get(
-                                            GlobalApplicationKt.preferenceRepository.getString(KEY_ACCOUNT_KEY,"-1")
+                                            GlobalApplicationKt.preferenceRepository.getString(KEY_ACCOUNT_KEY, "-1")
                                     ));
 
                                     int point = accountsModel.size() - 1;
@@ -167,7 +167,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                     }
             );
 
-            Preference licenseThisApp=findPreference("license_at_this_app");
+            Preference licenseThisApp = findPreference("license_at_this_app");
             licenseThisApp.setOnPreferenceClickListener(preference -> {
                 requireContext().startActivity(
                         new Intent(getContext(), LicensesActivity.class)
@@ -177,13 +177,13 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 return true;
             });
 
-            Preference sourceCodeLink=findPreference("source_code_link");
+            Preference sourceCodeLink = findPreference("source_code_link");
             sourceCodeLink.setOnPreferenceClickListener(preference -> {
                 AppCustomTabsKt.launchChromeCustomTabs(requireContext(), "https://github.com/moko256/twitlatte", false);
                 return true;
             });
 
-            Preference version=findPreference("app_version");
+            Preference version = findPreference("app_version");
             version.setSummary(BuildConfig.VERSION_NAME);
             version.setOnPreferenceClickListener(preference -> {
                 eggCount--;
@@ -202,7 +202,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                     name.setOnPreferenceChangeListener((preference, newValue) -> {
                         try {
                             GlobalApplicationKt.preferenceRepository.updateRegex(preference.getKey(), (String) newValue);
-                        } catch (PatternSyntaxException e){
+                        } catch (PatternSyntaxException e) {
                             e.printStackTrace();
                             Toast.makeText(requireContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                         }

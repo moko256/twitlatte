@@ -25,7 +25,7 @@ import java.io.Closeable
  *
  * @author moko256
  */
-interface ListModel: Closeable {
+interface ListModel : Closeable {
 
     fun getIdsList(): List<Long>
     fun getListEventObservable(): Observable<UpdateEvent>

@@ -27,7 +27,7 @@ import android.text.Spanned
 
 val noSpanInputFilter: Array<InputFilter> = arrayOf(NoSpanInputFilter())
 
-private class NoSpanInputFilter: InputFilter {
+private class NoSpanInputFilter : InputFilter {
     override fun filter(source: CharSequence, start: Int, end: Int, dest: Spanned, dstart: Int, dend: Int): CharSequence {
         return if (source is Spanned
                 && source.getSpans(0, source.length - 1, Any::class.java)

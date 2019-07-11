@@ -26,7 +26,7 @@ import com.github.moko256.latte.client.base.entity.ListEntry
 /**
  * Created by moko256 on 2019/01/12.
  */
-class SelectListEntriesActivity: AppCompatActivity(), SelectListsEntriesFragment.ListEntrySelectionListener, BaseListFragment.GetViewForSnackBar {
+class SelectListEntriesActivity : AppCompatActivity(), SelectListsEntriesFragment.ListEntrySelectionListener, BaseListFragment.GetViewForSnackBar {
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 

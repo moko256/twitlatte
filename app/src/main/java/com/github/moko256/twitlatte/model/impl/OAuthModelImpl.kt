@@ -30,7 +30,7 @@ import io.reactivex.Single
  */
 private const val BUNDLE_REQUEST_TOKEN = "request_token"
 
-class OAuthModelImpl(private val client: AuthApiClient): OAuthModel {
+class OAuthModelImpl(private val client: AuthApiClient) : OAuthModel {
     override var isRestartable: Boolean = false
 
     private lateinit var requestToken: RequestToken

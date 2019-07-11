@@ -38,7 +38,7 @@ class LruCacheTest {
     }
 
 
-    private fun testMap(lruCache: LruCache<Int, String>){
+    private fun testMap(lruCache: LruCache<Int, String>) {
         lruCache.put(0, "zero")
         assertEquals(lruCache.get(0), "zero")
         assertEquals(lruCache.valueIterable().singleOrNull(), "zero")

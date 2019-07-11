@@ -21,12 +21,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
-import java.util.Objects;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.Objects;
 
 /**
  * Created by moko256 on 2017/01/26.
@@ -42,7 +42,7 @@ public class SearchResultActivity extends AppCompatActivity implements BaseListF
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        ActionBar actionBar= Objects.requireNonNull(getSupportActionBar());
+        ActionBar actionBar = Objects.requireNonNull(getSupportActionBar());
         actionBar.setTitle(getIntent().getStringExtra("query"));
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeAsUpIndicator(R.drawable.ic_back_white_24dp);
@@ -57,7 +57,7 @@ public class SearchResultActivity extends AppCompatActivity implements BaseListF
         }
     }
 
-    public static Intent getIntent(Context context, String query){
+    public static Intent getIntent(Context context, String query) {
         return new Intent(context, SearchResultActivity.class).putExtra("query", query);
     }
 

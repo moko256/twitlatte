@@ -16,9 +16,8 @@
 
 package com.github.moko256.twitlatte.view
 
+import org.junit.Assert.assertEquals
 import org.junit.Test
-
-import org.junit.Assert.*
 
 class DpToPxKtTest {
 

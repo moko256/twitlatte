@@ -61,27 +61,27 @@ public class CachedUsersSQLiteOpenHelperTest {
         helper.close();
     }
 
-    private void addCacheTest(){
+    private void addCacheTest() {
         helper.addCachedUser(generateUser(TEST_DUMMY_USER_ID_1, TEST_DUMMY_USER_NAME_0));
         User addedStatusResult = helper.getCachedUser(TEST_DUMMY_USER_ID_1);
 
         assertEquals(addedStatusResult.getName(), TEST_DUMMY_USER_NAME_0);
     }
 
-    private void updateCacheTest(){
+    private void updateCacheTest() {
         helper.addCachedUser(generateUser(TEST_DUMMY_USER_ID_1, TEST_DUMMY_USER_NAME_1));
         User updatedStatusResult = helper.getCachedUser(TEST_DUMMY_USER_ID_1);
 
         assertEquals(updatedStatusResult.getName(), TEST_DUMMY_USER_NAME_1);
     }
 
-    private void removeCacheTest(){
+    private void removeCacheTest() {
         helper.deleteCachedUser(TEST_DUMMY_USER_ID_1);
 
         assertNull(helper.getCachedUser(TEST_DUMMY_USER_ID_1));
     }
 
-    private void addUsersTest(){
+    private void addUsersTest() {
         helper.addCachedUsers(Arrays.asList(
                 generateUser(TEST_DUMMY_USER_ID_1, TEST_DUMMY_USER_NAME_0),
                 generateUser(TEST_DUMMY_USER_ID_2, TEST_DUMMY_USER_NAME_1))

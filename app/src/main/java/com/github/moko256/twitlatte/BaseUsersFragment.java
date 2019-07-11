@@ -18,6 +18,10 @@ package com.github.moko256.twitlatte;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
 import com.github.moko256.latte.client.base.entity.PageableResponse;
 import com.github.moko256.latte.client.base.entity.User;
@@ -27,9 +31,6 @@ import com.github.moko256.twitlatte.widget.MaterialListTopMarginDecoration;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.RecyclerView;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -55,17 +56,17 @@ public abstract class BaseUsersFragment extends BaseListFragment {
         super.onCreate(savedInstanceState);
 
         client = GlobalApplicationKt.getClient(requireActivity());
-        list=new ArrayList<>();
+        list = new ArrayList<>();
         disposable = new CompositeDisposable();
 
         if (savedInstanceState != null) {
             long[] l = savedInstanceState.getLongArray("list");
-            if(l != null){
+            if (l != null) {
                 for (long id : l) {
                     list.add(id);
                 }
             }
-            next_cursor=savedInstanceState.getLong("next_cursor",-1);
+            next_cursor = savedInstanceState.getLong("next_cursor", -1);
         }
     }
 
@@ -87,13 +88,13 @@ public abstract class BaseUsersFragment extends BaseListFragment {
                 client.getMediaUrlConverter()
         );
         recyclerView.setAdapter(adapter);
-        if(!isInitializedList()){
+        if (!isInitializedList()) {
             adapter.notifyDataSetChanged();
         }
     }
 
     @Override
-    public void onSaveInstanceState(@NonNull Bundle outState){
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         int size = list.size();
         long[] array = new long[size];
@@ -107,7 +108,7 @@ public abstract class BaseUsersFragment extends BaseListFragment {
     @Override
     public void onDestroyView() {
         recyclerView.swapAdapter(null, true);
-        adapter=null;
+        adapter = null;
         super.onDestroyView();
     }
 
@@ -115,7 +116,7 @@ public abstract class BaseUsersFragment extends BaseListFragment {
     public void onDestroy() {
         disposable.dispose();
         super.onDestroy();
-        list=null;
+        list = null;
     }
 
     @Override
@@ -127,7 +128,7 @@ public abstract class BaseUsersFragment extends BaseListFragment {
                         .observeOn(AndroidSchedulers.mainThread())
                         .doAfterTerminate(() -> setRefreshing(false))
                         .subscribe(
-                                result-> {
+                                result -> {
                                     int size = list.size();
                                     list.clear();
                                     list.addAll(
@@ -191,7 +192,7 @@ public abstract class BaseUsersFragment extends BaseListFragment {
 
     private Single<PageableResponse<User>> getResponseSingle(long cursor) {
         return Single.create(
-                subscriber->{
+                subscriber -> {
                     try {
                         PageableResponse<User> pageableResponseList = getResponseList(cursor);
                         next_cursor = pageableResponseList.getNextId();

@@ -63,7 +63,7 @@ public class SelectAccountsAdapter extends RecyclerView.Adapter<SelectAccountsAd
     private int selectionPosition = -1;
     private final int selectionColor;
 
-    public SelectAccountsAdapter(Context context){
+    public SelectAccountsAdapter(Context context) {
         this.context = context;
 
         TypedValue typedValue = new TypedValue();
@@ -73,20 +73,20 @@ public class SelectAccountsAdapter extends RecyclerView.Adapter<SelectAccountsAd
 
     @Override
     public int getItemViewType(int position) {
-        return (position < accessTokens.size())?
-                (position == selectionPosition)?
-                        VIEW_TYPE_IMAGE_SELECTED:
-                        VIEW_TYPE_IMAGE:
-                (position == accessTokens.size())?
-                        VIEW_TYPE_ADD:
+        return (position < accessTokens.size()) ?
+                (position == selectionPosition) ?
+                        VIEW_TYPE_IMAGE_SELECTED :
+                        VIEW_TYPE_IMAGE :
+                (position == accessTokens.size()) ?
+                        VIEW_TYPE_ADD :
                         VIEW_TYPE_REMOVE;
     }
 
     @NonNull
     @Override
     public SelectAccountsAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        int layout = viewType == VIEW_TYPE_IMAGE || viewType == VIEW_TYPE_IMAGE_SELECTED?
-                R.layout.layout_select_accounts_image_child:
+        int layout = viewType == VIEW_TYPE_IMAGE || viewType == VIEW_TYPE_IMAGE_SELECTED ?
+                R.layout.layout_select_accounts_image_child :
                 R.layout.layout_select_accounts_resource_image;
         return new ViewHolder(LayoutInflater.from(context).inflate(layout, parent, false));
     }
@@ -159,31 +159,31 @@ public class SelectAccountsAdapter extends RecyclerView.Adapter<SelectAccountsAd
         accessTokens.clear();
     }
 
-    public void addAndUpdate(List<User> userList, List<AccessToken> accessTokenList){
+    public void addAndUpdate(List<User> userList, List<AccessToken> accessTokenList) {
         users.addAll(userList);
         accessTokens.addAll(accessTokenList);
         notifyDataSetChanged();
     }
 
-    public void setSelectedPosition(AccessToken key){
+    public void setSelectedPosition(AccessToken key) {
         selectionPosition = accessTokens.indexOf(key);
     }
 
-    public void updateSelectedPosition(AccessToken key){
+    public void updateSelectedPosition(AccessToken key) {
         int old = selectionPosition;
         selectionPosition = accessTokens.indexOf(key);
         notifyItemChanged(old);
         notifyItemChanged(selectionPosition);
     }
 
-    public void removeAccessTokensAndUpdate(AccessToken accessToken){
+    public void removeAccessTokensAndUpdate(AccessToken accessToken) {
         int position = accessTokens.indexOf(accessToken);
         users.remove(position);
         accessTokens.remove(position);
         notifyItemRemoved(position);
     }
 
-    final static class ViewHolder extends RecyclerView.ViewHolder{
+    final static class ViewHolder extends RecyclerView.ViewHolder {
         final ImageView image;
         final TextView title;
 

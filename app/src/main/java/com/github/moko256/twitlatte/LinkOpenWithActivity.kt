@@ -85,13 +85,13 @@ class LinkOpenWithActivity : Activity() {
                                             data
                                                     .getQueryParameter("in_reply_to_status_id")
                                                     ?.toLong()
-                                                    ?:-1,
+                                                    ?: -1,
                                             data.getQueryParameter("message")
                                     )
                                 }
                                 "status" -> return ShowTweetActivity.getIntent(
                                         this,
-                                        data.getQueryParameter("id")?.toLong()?:-1
+                                        data.getQueryParameter("id")?.toLong() ?: -1
                                 )
                                 "user" -> {
                                     val userId = data.getQueryParameter("id")
@@ -194,7 +194,7 @@ class LinkOpenWithActivity : Activity() {
     }
 
     private fun generatePostIntent(data: Uri): Intent {
-        val tweet = StringBuilder(data.getQueryParameter("text")?:"")
+        val tweet = StringBuilder(data.getQueryParameter("text") ?: "")
 
         data.getQueryParameter("url")?.let {
             tweet.append(' ').append(it)
@@ -218,7 +218,7 @@ class LinkOpenWithActivity : Activity() {
 
         return PostActivity.getIntent(
                 this,
-                data.getQueryParameter("in-reply-to")?.toLong()?:-1,
+                data.getQueryParameter("in-reply-to")?.toLong() ?: -1,
                 tweet.toString()
         )
     }
@@ -243,7 +243,7 @@ class LinkOpenWithActivity : Activity() {
                             accessTokens.single { it.getKeyString() == this }
                         }
                 if (accountsLinkOpenWith == null) {
-                    val dp= resources.displayMetrics.density
+                    val dp = resources.displayMetrics.density
                     val dp16 = dpToPx(16, dp)
                     val dp24 = dpToPx(24, dp)
                     AlertDialog.Builder(this)

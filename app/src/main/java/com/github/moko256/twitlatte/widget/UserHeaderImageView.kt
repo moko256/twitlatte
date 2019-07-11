@@ -31,7 +31,7 @@ class UserHeaderImageView @JvmOverloads constructor(
         context: Context,
         attrs: AttributeSet? = null,
         defStyle: Int = 0
-): AppCompatImageView(context, attrs, defStyle) {
+) : AppCompatImageView(context, attrs, defStyle) {
     var widthPerHeight: Int = 1
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {

@@ -45,14 +45,14 @@ const val KEY_ALWAYS_CLOSE_APP = "alwaysCloseApp"
 
 class PreferenceRepository(private val preferences: SharedPreferences) {
 
-    fun getString(key: String, defaultValue: String): String
-            = preferences.getString(key, defaultValue)!!
+    fun getString(key: String, defaultValue: String): String =
+            preferences.getString(key, defaultValue)!!
 
-    fun getString(key: String): String?
-            = preferences.getString(key, null)
+    fun getString(key: String): String? =
+            preferences.getString(key, null)
 
-    fun getBoolean(key: String, defaultValue: Boolean): Boolean
-            = preferences.getBoolean(key, defaultValue)
+    fun getBoolean(key: String, defaultValue: Boolean): Boolean =
+            preferences.getBoolean(key, defaultValue)
 
 
     private val emptyPattern by lazy {
@@ -62,7 +62,7 @@ class PreferenceRepository(private val preferences: SharedPreferences) {
 
     fun getPattern(key: String): Pattern {
         val cachedPattern = patterns[key]
-        if (cachedPattern != null){
+        if (cachedPattern != null) {
             return cachedPattern
         }
 
@@ -72,7 +72,7 @@ class PreferenceRepository(private val preferences: SharedPreferences) {
                 val compiledPattern = Pattern.compile(patternString)
                 patterns[key] = compiledPattern
                 compiledPattern
-            } catch(e: PatternSyntaxException){
+            } catch (e: PatternSyntaxException) {
                 e.printStackTrace()
                 emptyPattern
             }
@@ -98,8 +98,8 @@ class PreferenceRepository(private val preferences: SharedPreferences) {
     fun updateRegex(key: String, value: String) {
         if (value.isNotEmpty()) {
             try {
-                patterns[key]= Pattern.compile(value)
-            } catch(e: PatternSyntaxException){
+                patterns[key] = Pattern.compile(value)
+            } catch (e: PatternSyntaxException) {
                 patterns.remove(key)
                 throw e
             }

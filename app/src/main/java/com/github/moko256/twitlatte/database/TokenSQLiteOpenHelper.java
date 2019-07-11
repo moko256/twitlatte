@@ -53,12 +53,12 @@ public class TokenSQLiteOpenHelper extends SQLiteOpenHelper {
 
     public static final String TWITTER_URL = "twitter.com";
 
-    public TokenSQLiteOpenHelper(Context context){
-        super(context,"AccountTokenList.db",null,DATABASE_VERSION);
+    public TokenSQLiteOpenHelper(Context context) {
+        super(context, "AccountTokenList.db", null, DATABASE_VERSION);
     }
 
     @TestOnly
-    TokenSQLiteOpenHelper(Context context, String fileName){
+    TokenSQLiteOpenHelper(Context context, String fileName) {
         super(context, fileName, null, DATABASE_VERSION);
     }
 
@@ -81,7 +81,7 @@ public class TokenSQLiteOpenHelper extends SQLiteOpenHelper {
         }
     }
 
-    public AccessToken[] getAccessTokens(){
+    public AccessToken[] getAccessTokens() {
         AccessToken[] accessTokens;
 
         synchronized (this) {
@@ -101,7 +101,7 @@ public class TokenSQLiteOpenHelper extends SQLiteOpenHelper {
         return accessTokens;
     }
 
-    public AccessToken getAccessToken(String key){
+    public AccessToken getAccessToken(String key) {
         Pair<String, Long> pair = AccessTokenKt.splitAccessTokenKey(key);
         AccessToken accessToken;
 
@@ -126,7 +126,7 @@ public class TokenSQLiteOpenHelper extends SQLiteOpenHelper {
         return accessToken;
     }
 
-    private AccessToken convertFromCursor(Cursor c){
+    private AccessToken convertFromCursor(Cursor c) {
         return new AccessToken(
                 c.getInt(0),
                 c.getString(1),
@@ -139,7 +139,7 @@ public class TokenSQLiteOpenHelper extends SQLiteOpenHelper {
         );
     }
 
-    public void addAccessToken(AccessToken accessToken){
+    public void addAccessToken(AccessToken accessToken) {
         synchronized (this) {
             SQLiteDatabase database = getWritableDatabase();
 
@@ -159,7 +159,7 @@ public class TokenSQLiteOpenHelper extends SQLiteOpenHelper {
         }
     }
 
-    public void deleteAccessToken(AccessToken accessToken){
+    public void deleteAccessToken(AccessToken accessToken) {
         synchronized (this) {
             SQLiteDatabase database = getWritableDatabase();
             database.delete(TABLE_NAME, "url = '" + accessToken.getUrl() + "' AND " + "userId = " + accessToken.getUserId(), null);

@@ -26,13 +26,13 @@ import com.github.moko256.latte.client.base.entity.Post
  *
  * @author moko256
  */
-class ListsTimelineFragment: BaseTweetListFragment(), ToolbarStringTitleInterface {
+class ListsTimelineFragment : BaseTweetListFragment(), ToolbarStringTitleInterface {
 
     private var listId = -1L
     private lateinit var title: String
 
     override val titleString: String
-        get() =  title
+        get() = title
 
     override val cachedIdsDatabaseName: String
         get() = "ListsTimeline_$listId"

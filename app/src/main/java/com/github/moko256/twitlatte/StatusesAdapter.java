@@ -99,23 +99,23 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     @Override
     public int getItemViewType(int position) {
-        if (data.get(position) == -1L ){
+        if (data.get(position) == -1L) {
             return R.layout.layout_list_load_more_text;
         }
         Post post = client.getPostCache().getPost(data.get(position));
 
-        if (!(post != null && post.getStatus() != null)){
+        if (!(post != null && post.getStatus() != null)) {
             return R.layout.layout_list_load_more_text;
         }
 
         Status item = post.getStatus();
         User user = post.getUser();
 
-        if((conf.getBoolean(KEY_IS_PATTERN_TWEET_MUTE, false) && conf.getPattern(KEY_TWEET_MUTE_PATTERN).matcher(item.getText()).find()) ||
+        if ((conf.getBoolean(KEY_IS_PATTERN_TWEET_MUTE, false) && conf.getPattern(KEY_TWEET_MUTE_PATTERN).matcher(item.getText()).find()) ||
                 (conf.getBoolean(KEY_IS_PATTERN_USER_SCREEN_NAME_MUTE, false) && conf.getPattern(KEY_USER_SCREEN_NAME_MUTE_PATTERN).matcher(user.getScreenName()).find()) ||
                 (conf.getBoolean(KEY_IS_PATTERN_USER_NAME_MUTE, false) && conf.getPattern(KEY_USER_NAME_MUTE_PATTERN).matcher(user.getName()).find()) ||
-                (conf.getBoolean(KEY_IS_PATTERN_TWEET_SOURCE_MUTE, false) && conf.getPattern(KEY_TWEET_SOURCE_MUTE_PATTERN).matcher((item.getSourceName() != null)?item.getSourceName():"").find())
-                ){
+                (conf.getBoolean(KEY_IS_PATTERN_TWEET_SOURCE_MUTE, false) && conf.getPattern(KEY_TWEET_SOURCE_MUTE_PATTERN).matcher((item.getSourceName() != null) ? item.getSourceName() : "").find())
+        ) {
             return R.layout.layout_list_muted_text;
         } else if (shouldShowMediaOnly || (conf.getBoolean(KEY_IS_PATTERN_TWEET_MUTE_SHOW_ONLY_IMAGE, false)
                 && item.getMedias() != null
@@ -178,7 +178,7 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                             post.getQuotedRepeatingUser(),
                             post.getQuotedRepeatingStatus()
                     );
-                } else if (viewHolder instanceof ImagesOnlyTweetViewHolder){
+                } else if (viewHolder instanceof ImagesOnlyTweetViewHolder) {
                     ((ImagesOnlyTweetViewHolder) viewHolder).setStatus(
                             client,
                             post.getStatus(),
@@ -191,7 +191,7 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     @Override
     public void onViewRecycled(@NonNull RecyclerView.ViewHolder holder) {
-        if (holder instanceof StatusViewHolder){
+        if (holder instanceof StatusViewHolder) {
             ((StatusViewHolder) holder).clear();
         } else if (holder instanceof ImagesOnlyTweetViewHolder) {
             ((ImagesOnlyTweetViewHolder) holder).close();
@@ -341,10 +341,10 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             progressBar = itemView.findViewById(R.id.layout_list_load_more_text_progress);
         }
 
-        void setIsLoading(boolean isLoading){
+        void setIsLoading(boolean isLoading) {
             itemView.setClickable(!isLoading);
-            text.setVisibility(isLoading? View.INVISIBLE: View.VISIBLE);
-            progressBar.setVisibility(isLoading? View.VISIBLE: View.INVISIBLE);
+            text.setVisibility(isLoading ? View.INVISIBLE : View.VISIBLE);
+            progressBar.setVisibility(isLoading ? View.VISIBLE : View.INVISIBLE);
         }
     }
 

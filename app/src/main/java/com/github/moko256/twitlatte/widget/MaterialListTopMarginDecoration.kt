@@ -27,7 +27,7 @@ import com.github.moko256.twitlatte.view.dpToPx
  *
  * @author moko256
  */
-class MaterialListTopMarginDecoration(resource: Resources): RecyclerView.ItemDecoration() {
+class MaterialListTopMarginDecoration(resource: Resources) : RecyclerView.ItemDecoration() {
     private val dp8 = resource.dpToPx(8)
 
     override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {

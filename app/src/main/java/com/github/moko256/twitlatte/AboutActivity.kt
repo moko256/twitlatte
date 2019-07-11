@@ -44,7 +44,7 @@ class AboutActivity : AppCompatActivity() {
         )
     }
 
-    fun onPictureClick(@Suppress("UNUSED_PARAMETER") view : View){
+    fun onPictureClick(@Suppress("UNUSED_PARAMETER") view: View) {
         Toast.makeText(
                 this,
                 getString(

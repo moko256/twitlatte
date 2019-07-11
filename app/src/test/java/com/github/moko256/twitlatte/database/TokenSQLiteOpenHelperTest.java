@@ -19,13 +19,13 @@ package com.github.moko256.twitlatte.database;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 
+import androidx.test.core.app.ApplicationProvider;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+
 import com.github.moko256.latte.client.base.entity.AccessToken;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import androidx.test.core.app.ApplicationProvider;
-import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import static org.junit.Assert.assertEquals;
 
@@ -66,7 +66,7 @@ public class TokenSQLiteOpenHelperTest {
         helper.close();
     }
 
-    private void addToken(){
+    private void addToken() {
         AccessToken accessToken = generateAccessToken(
                 TEST_USER_1_USER_ID,
                 TEST_USER_1_USER_SCREEN_NAME_1,
@@ -88,7 +88,7 @@ public class TokenSQLiteOpenHelperTest {
         assertEquals(addedAccessTokenResult.getTokenSecret(), TEST_USER_1_USER_TOKEN_SECRET_1);
     }
 
-    private void updateToken(){
+    private void updateToken() {
 
         AccessToken accessToken = generateAccessToken(
                 TEST_USER_1_USER_ID,
@@ -112,7 +112,7 @@ public class TokenSQLiteOpenHelperTest {
         assertEquals(updatedAccessTokenResult.getTokenSecret(), TEST_USER_1_USER_TOKEN_SECRET_2);
     }
 
-    private void deleteToken(){
+    private void deleteToken() {
         helper.deleteAccessToken(
                 generateAccessToken(
                         TEST_USER_1_USER_ID,
@@ -127,11 +127,11 @@ public class TokenSQLiteOpenHelperTest {
         assertEquals(deleteAccessTokenResult, 0);
     }
 
-    private AccessToken generateAccessToken(final long userId, final String screenName, final String token, final String tokenSecret){
+    private AccessToken generateAccessToken(final long userId, final String screenName, final String token, final String tokenSecret) {
         return new AccessToken(1, "example.com", userId, screenName, "", "", token, tokenSecret);
     }
 
-    private long getSize(){
+    private long getSize() {
         long count;
         synchronized (this) {
             SQLiteDatabase database = helper.getReadableDatabase();

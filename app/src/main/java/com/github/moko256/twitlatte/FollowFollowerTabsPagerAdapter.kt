@@ -30,7 +30,7 @@ internal class FollowFollowerTabsPagerAdapter(
         fm: FragmentManager,
         private val context: Context?,
         private val userId: Long
-): FragmentPagerAdapter(fm) {
+) : FragmentPagerAdapter(fm) {
 
     override fun getItem(position: Int): Fragment {
         return if (position == 0) {

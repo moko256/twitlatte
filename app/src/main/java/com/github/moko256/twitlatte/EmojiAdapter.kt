@@ -36,7 +36,7 @@ class EmojiAdapter(
         private val glideRequests: RequestManager,
         private val onEmojiClick: (Emoji) -> Unit,
         private val onLoadClick: () -> Unit
-): RecyclerView.Adapter<EmojiViewHolder>() {
+) : RecyclerView.Adapter<EmojiViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EmojiViewHolder {
         val imageView = ImageView(context)
@@ -72,7 +72,7 @@ class EmojiAdapter(
     }
 }
 
-class EmojiViewHolder(private val imageView: ImageView, private val glideRequests: RequestManager): RecyclerView.ViewHolder(imageView) {
+class EmojiViewHolder(private val imageView: ImageView, private val glideRequests: RequestManager) : RecyclerView.ViewHolder(imageView) {
     fun setImage(url: String) {
         glideRequests.load(url).into(imageView)
     }

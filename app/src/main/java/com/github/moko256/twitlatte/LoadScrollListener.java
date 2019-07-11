@@ -26,7 +26,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
  *
  * @author moko256
  */
-public class LoadScrollListener extends RecyclerView.OnScrollListener{
+public class LoadScrollListener extends RecyclerView.OnScrollListener {
 
     private int previousTotal = 0;
     private boolean loading = true;
@@ -41,7 +41,7 @@ public class LoadScrollListener extends RecyclerView.OnScrollListener{
 
     @Override
     public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-        super.onScrolled(recyclerView,dx,dy);
+        super.onScrolled(recyclerView, dx, dy);
 
         int visibleItemCount = recyclerView.getChildCount();
         int totalItemCount = layoutManager.getItemCount();

@@ -16,7 +16,9 @@
 
 package com.github.moko256.twitlatte.database;
 
-import com.github.moko256.latte.client.base.entity.AccessToken;
+import androidx.test.core.app.ApplicationProvider;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+
 import com.github.moko256.latte.client.base.entity.Trend;
 
 import org.junit.Test;
@@ -24,9 +26,6 @@ import org.junit.runner.RunWith;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import androidx.test.core.app.ApplicationProvider;
-import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import static com.github.moko256.twitlatte.testutils.EmptyAccessTokenKt.emptyAccessToken;
 import static org.junit.Assert.assertEquals;
@@ -57,24 +56,24 @@ public class CachedTrendsSQLiteOpenHelperTest {
     }
 
 
-    private void setTrendsTest(){
+    private void setTrendsTest() {
         helper.setTrends(createTestTrends(input0));
 
         List<Trend> result0 = helper.getTrends();
-        for (int i = 0; i < result0.size() ; i++) {
+        for (int i = 0; i < result0.size(); i++) {
             assertEquals(result0.get(i).getName(), input0[i]);
         }
     }
 
-    private void updateTrendsTest(){
+    private void updateTrendsTest() {
         helper.setTrends(createTestTrends(input1));
         List<Trend> result1 = helper.getTrends();
-        for (int i = 0; i < result1.size() ; i++) {
+        for (int i = 0; i < result1.size(); i++) {
             assertEquals(result1.get(i).getName(), input1[i]);
         }
     }
 
-    private List<Trend> createTestTrends(String[] names){
+    private List<Trend> createTestTrends(String[] names) {
         List<Trend> r = new ArrayList<>(names.length);
         for (String name : names) {
             r.add(new Trend(

@@ -66,12 +66,12 @@ class ImageKeyboardEditText : AppCompatEditText {
         }
     }
 
-    fun close(){
+    fun close() {
         permitInputContentInfo?.releasePermission()
         imageAddedListener = null
     }
 
-    interface OnImageAddedListener{
+    interface OnImageAddedListener {
         fun onAdded(imageUri: Uri): Boolean
     }
 }
