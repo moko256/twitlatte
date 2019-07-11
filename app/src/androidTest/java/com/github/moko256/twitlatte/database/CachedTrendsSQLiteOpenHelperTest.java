@@ -40,14 +40,7 @@ public class CachedTrendsSQLiteOpenHelperTest {
 
     private CachedTrendsSQLiteOpenHelper helper = new CachedTrendsSQLiteOpenHelper(
             ApplicationProvider.getApplicationContext(),
-            new AccessToken(
-                    -2,
-                    "example.com",
-                    0,
-                    "test",
-                    "",
-                    ""
-            )
+            null
     );
 
     private String[] input0 = new String[]{"0", "1", "2"};

@@ -16,7 +16,9 @@
 
 package com.github.moko256.twitlatte.database;
 
-import com.github.moko256.latte.client.base.entity.AccessToken;
+import androidx.test.core.app.ApplicationProvider;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+
 import com.github.moko256.latte.client.base.entity.User;
 
 import org.junit.Test;
@@ -24,9 +26,6 @@ import org.junit.runner.RunWith;
 
 import java.util.Arrays;
 import java.util.Date;
-
-import androidx.test.core.app.ApplicationProvider;
-import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -41,14 +40,7 @@ public class CachedUsersSQLiteOpenHelperTest {
 
     private CachedUsersSQLiteOpenHelper helper = new CachedUsersSQLiteOpenHelper(
             ApplicationProvider.getApplicationContext(),
-            new AccessToken(
-                    -2,
-                    "example.com",
-                    0,
-                    "test",
-                    "",
-                    ""
-            )
+            null
     );
 
     private static final long TEST_DUMMY_USER_ID_1 = 1L;
@@ -132,8 +124,7 @@ public class CachedUsersSQLiteOpenHelperTest {
                 false,
                 false,
                 null,
-                null,
-                false
+                null
         );
     }
 }

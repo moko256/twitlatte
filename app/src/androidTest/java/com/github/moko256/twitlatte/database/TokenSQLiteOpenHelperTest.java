@@ -39,7 +39,7 @@ public class TokenSQLiteOpenHelperTest {
 
     private TokenSQLiteOpenHelper helper = new TokenSQLiteOpenHelper(
             ApplicationProvider.getApplicationContext(),
-            "TestAccessTokenList.db"
+            null
     );
 
     private static final long TEST_USER_1_USER_ID = 1L;

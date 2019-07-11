@@ -16,16 +16,14 @@
 
 package com.github.moko256.twitlatte.database;
 
-import com.github.moko256.latte.client.base.entity.AccessToken;
+import androidx.test.core.app.ApplicationProvider;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.Arrays;
 import java.util.List;
-
-import androidx.test.core.app.ApplicationProvider;
-import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -40,15 +38,8 @@ public class CachedIdListSQLiteOpenHelperTest {
 
     private CachedIdListSQLiteOpenHelper helper = new CachedIdListSQLiteOpenHelper(
             ApplicationProvider.getApplicationContext(),
-            new AccessToken(
-                    -2,
-                    "example.com",
-                    0,
-                    "test",
-                    "",
-                    ""
-            ),
-            "testIdsDatabase"
+            null,
+            null
     );
 
     private List<Long> addInput = Arrays.asList(0L,1L,2L);
