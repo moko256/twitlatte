@@ -28,6 +28,14 @@ import static org.junit.Assert.assertEquals;
 
 public class TwitterStringUtilsTest {
 
+    @Test
+    public void plusAtMarkTest() {
+        assertEquals("@testuser120", TwitterStringUtils.plusAtMark("testuser120").toString());
+        assertEquals("@test@example.com", TwitterStringUtils.plusAtMark("test", "example.com").toString());
+        assertEquals("@a@b@c@d@e", TwitterStringUtils.plusAtMark("a", "b", "c", "d", "e").toString());
+    }
+
+
     private final char[] unitsEn = {'K', 'M', 'G'};
 
     private String testEn(int num) {
@@ -98,5 +106,40 @@ public class TwitterStringUtilsTest {
         assertEquals(testJa(-10000000), "-0.1億");
         assertEquals(testJa(-100000000), "-1億");
         assertEquals(testJa(-1000000000), "-10億");
+    }
+
+
+    @Test
+    public void convertToReplyTopStringTest() {
+        assertEquals(
+                "@target ",
+                TwitterStringUtils
+                        .convertToReplyTopString("user01", "target", null)
+                        .toString()
+        );
+        assertEquals(
+                "",
+                TwitterStringUtils
+                        .convertToReplyTopString("same", "same", null)
+                        .toString()
+        );
+        assertEquals(
+                "@target @tu1 @tu2 ",
+                TwitterStringUtils
+                        .convertToReplyTopString("user01", "target", new String[]{"tu1", "tu2"})
+                        .toString()
+        );
+        assertEquals(
+                "@tu1 @tu2 ",
+                TwitterStringUtils
+                        .convertToReplyTopString("same", "same", new String[]{"tu1", "tu2"})
+                        .toString()
+        );
+        assertEquals(
+                "@target @tu2 ",
+                TwitterStringUtils
+                        .convertToReplyTopString("tu1", "target", new String[]{"tu1", "tu2"})
+                        .toString()
+        );
     }
 }
