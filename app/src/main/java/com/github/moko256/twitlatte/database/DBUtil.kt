@@ -17,6 +17,7 @@
 package com.github.moko256.twitlatte.database
 
 import android.database.Cursor
+import android.database.SQLException
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 
@@ -25,6 +26,45 @@ import android.database.sqlite.SQLiteOpenHelper
  *
  * @author moko256
  */
+
+fun SQLiteDatabase.createTableWithUniqueKey(
+        tableName: String,
+        columns: Array<String>,
+        keyPosition: Int,
+        isIntKey: Boolean = false
+) {
+    val builder = StringBuilder(columns.size * 8 + 16)
+            .append("create table ")
+            .append(tableName)
+            .append("(")
+
+    columns.forEachIndexed { index, c ->
+        builder.append(c)
+        if (keyPosition == index) {
+            if (isIntKey) {
+                builder.append(" integer")
+            }
+            builder.append(" primary key")
+        }
+        if (index < columns.size - 1) {
+            builder.append(",")
+        }
+    }
+
+    builder.append(")")
+    if (isIntKey) {
+        execSQL(builder.toString())
+    } else {
+        try {
+            builder.append(" without rowId")
+            execSQL(builder.toString())
+        } catch (ignore: SQLException) {
+            ignore.printStackTrace()
+            builder.delete(builder.length - 14, builder.length)
+            execSQL(builder.toString())
+        }
+    }
+}
 
 fun SQLiteDatabase.addColumn(tableName: String, columnName: String, defaultValue: String? = null) {
     execSQL("alter table $tableName add column $columnName")

@@ -30,6 +30,7 @@ android {
         versionName '1.9.2'
 
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+        testInstrumentationRunnerArguments clearPackageData: 'true'
 
         Base64.Decoder e = Base64.decoder
 
@@ -61,6 +62,7 @@ android {
         unitTests {
             includeAndroidResources = true
         }
+        execution 'ANDROIDX_TEST_ORCHESTRATOR'
     }
 
     packagingOptions {
@@ -109,10 +111,15 @@ dependencies {
     implementation 'com.github.chrisbanes:PhotoView:2.3.0'
     implementation 'com.github.chuross:flinglayout:0.5.0'
 
-    // Test
+    // Local test
     testImplementation 'junit:junit:4.12'
     testImplementation "org.robolectric:robolectric:4.3"
     testImplementation 'androidx.test.ext:junit:1.1.1'
+
+    // Instrument test
+    androidTestUtil 'androidx.test:orchestrator:1.2.0'
+    androidTestImplementation 'androidx.test:runner:1.2.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
 //  androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 }
 
