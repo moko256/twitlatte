@@ -102,15 +102,8 @@ class CachedStatusesSQLiteOpenHelper(
     }
 
     override fun onCreate(db: SQLiteDatabase) {
-        db.execSQL(
-                "create table $TABLE_NAME(${TABLE_COLUMNS.joinToString(",")}, primary key(id))"
-        )
-        db.execSQL("create unique index IdIndex on $TABLE_NAME(id)")
-
-        db.execSQL(
-                "create table $COUNTS_TABLE_NAME(id integer primary key,count integer default 0)"
-        )
-        db.execSQL("create unique index CountsIdIndex on $TABLE_NAME(id)")
+        db.createTableWithUniqueIntKey(TABLE_NAME, TABLE_COLUMNS, 1 /*TABLE_COLUMNS.indexOf("id")*/)
+        db.createTableWithUniqueIntKey(COUNTS_TABLE_NAME, arrayOf("id", "count integer default 0"), 0)
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {

@@ -79,10 +79,7 @@ class CachedUsersSQLiteOpenHelper(context: Context, accessToken: AccessToken?) :
     }
 
     override fun onCreate(db: SQLiteDatabase) {
-        db.execSQL(
-                "create table " + TABLE_NAME + "(" + TABLE_COLUMNS.joinToString(",") + ", primary key(id))"
-        )
-        db.execSQL("create unique index idindex on $TABLE_NAME(id)")
+        db.createTableWithUniqueIntKey(TABLE_NAME, TABLE_COLUMNS, 0 /*TABLE_COLUMNS.indexOf("id")*/)
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
