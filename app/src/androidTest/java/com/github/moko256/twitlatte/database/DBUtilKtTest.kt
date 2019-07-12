@@ -22,6 +22,7 @@ import android.util.Log
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -31,39 +32,58 @@ import org.junit.runner.RunWith
  * @author moko256
  */
 
-private fun SQLiteDatabase.getTableQuery(tableName: String): String {
-    val query = rawQuery("select sql from sqlite_master where type='table' and name='$tableName'", null)
-    query.moveToLast()
-    val result = query.getString(0)
-    query.close()
-    return result
-}
-
 @RunWith(AndroidJUnit4::class)
 class DBUtilKtCreateTableWithUniqueKeyTest {
+
+    @Test
+    fun createTableWithUniqueIntKey() {
+        val helper = EmptyDBHelper(ApplicationProvider.getApplicationContext(), "createTableWithUniqueIntKey")
+
+        val db = helper.writableDatabase
+        db.createTableWithUniqueIntKey("test02", arrayOf("key", "c0", "c1"), 0)
+        assertEquals("CREATE TABLE test02(key integer primary key,c0,c1)", db.getTableQuery("test02"))
+
+        db.createTableWithUniqueIntKey("test03", arrayOf("c0", "key", "c1"), 1)
+        assertEquals("CREATE TABLE test03(c0,key integer primary key,c1)", db.getTableQuery("test03"))
+    }
 
     @Test
     fun createTableWithUniqueKey() {
         val helper = EmptyDBHelper(ApplicationProvider.getApplicationContext(), "createTableWithUniqueKey")
 
         val db = helper.writableDatabase
-        db.createTableWithUniqueKey("test01", arrayOf("key", "c0", "c1"), 0)
+        db.createTableWithUniqueKey("test01", arrayOf("key", "c0", "c1"), arrayOf("key"))
+
         val test01Query = db.getTableQuery("test01")
+        val test01Index = db.getIndexQuery("test01_index")
+
         if (Build.VERSION.SDK_INT >= 24) {
             Log.d("createTableWithUniqueKey", "Enable \"without rowId\"")
-            assertEquals("CREATE TABLE test01(key primary key,c0,c1) without rowId", test01Query)
+
+            assertEquals("CREATE TABLE test01(key,c0,c1,primary key(key)) without rowId", test01Query)
+            assertNull(test01Index)
         } else {
             Log.d("createTableWithUniqueKey", "Disable \"without rowId\"")
-            assertEquals("CREATE TABLE test01(key primary key,c0,c1)", test01Query)
+
+            assertEquals("CREATE TABLE test01(key,c0,c1,primary key(key))", test01Query)
+            assertEquals("CREATE UNIQUE INDEX test01_index on test01(key)", test01Index)
         }
         db.execSQL("delete from test01")
+    }
 
-        db.createTableWithUniqueKey("test02", arrayOf("key", "c0", "c1"), 0, true)
-        assertEquals("CREATE TABLE test02(key integer primary key,c0,c1)", db.getTableQuery("test02"))
-        db.execSQL("delete from test02")
+    private fun SQLiteDatabase.getTableQuery(tableName: String): String {
+        val query = rawQuery("select sql from sqlite_master where type='table' and name='$tableName'", null)
+        query.moveToLast()
+        val result = query.getString(0)
+        query.close()
+        return result
+    }
 
-        db.createTableWithUniqueKey("test03", arrayOf("c0", "key", "c1"), 1, true)
-        assertEquals("CREATE TABLE test03(c0,key integer primary key,c1)", db.getTableQuery("test03"))
-        db.execSQL("delete from test03")
+    private fun SQLiteDatabase.getIndexQuery(indexName: String): String? {
+        val query = rawQuery("select sql from sqlite_master where type='index' and name='$indexName'", null)
+        if (!query.moveToLast()) return null
+        val result = query.getString(0)
+        query.close()
+        return result
     }
 }

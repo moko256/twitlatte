@@ -27,11 +27,10 @@ import android.database.sqlite.SQLiteOpenHelper
  * @author moko256
  */
 
-fun SQLiteDatabase.createTableWithUniqueKey(
+fun SQLiteDatabase.createTableWithUniqueIntKey(
         tableName: String,
         columns: Array<String>,
-        keyPosition: Int,
-        isIntKey: Boolean = false
+        keyPosition: Int
 ) {
     val builder = StringBuilder(columns.size * 8 + 16)
             .append("create table ")
@@ -41,10 +40,7 @@ fun SQLiteDatabase.createTableWithUniqueKey(
     columns.forEachIndexed { index, c ->
         builder.append(c)
         if (keyPosition == index) {
-            if (isIntKey) {
-                builder.append(" integer")
-            }
-            builder.append(" primary key")
+            builder.append(" integer primary key")
         }
         if (index < columns.size - 1) {
             builder.append(",")
@@ -52,17 +48,31 @@ fun SQLiteDatabase.createTableWithUniqueKey(
     }
 
     builder.append(")")
-    if (isIntKey) {
+    execSQL(builder.toString())
+}
+
+fun SQLiteDatabase.createTableWithUniqueKey(
+        tableName: String,
+        columns: Array<String>,
+        keys: Array<String>
+) {
+    val builder = StringBuilder(columns.size * 8 + 28)
+            .append("create table ")
+            .append(tableName)
+            .append("(")
+
+    columns.joinTo(builder, ",")
+
+    builder.append(",primary key(")
+    keys.joinTo(builder, ",")
+    builder.append("))")
+    try {
+        builder.append(" without rowId")
         execSQL(builder.toString())
-    } else {
-        try {
-            builder.append(" without rowId")
-            execSQL(builder.toString())
-        } catch (ignore: SQLException) {
-            ignore.printStackTrace()
-            builder.delete(builder.length - 14, builder.length)
-            execSQL(builder.toString())
-        }
+    } catch (ignore: SQLException) {
+        builder.delete(builder.length - 14, builder.length)
+        execSQL(builder.toString())
+        execSQL("create unique index ${tableName}_index on $tableName(${keys.joinToString(",")})")
     }
 }
 
