@@ -38,7 +38,7 @@ import kotlin.Pair;
 public class TokenSQLiteOpenHelper extends SQLiteOpenHelper {
 
     private static final String TABLE_NAME = "AccountTokenList";
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 4;
     private static final String[] TABLE_COLUMNS = new String[]{
             "type",
             "url",
@@ -75,6 +75,15 @@ public class TokenSQLiteOpenHelper extends SQLiteOpenHelper {
             DBUtilKt.addColumn(sqLiteDatabase, TABLE_NAME, "consumerKey", null);
             DBUtilKt.addColumn(sqLiteDatabase, TABLE_NAME, "consumerSecret", null);
         }
+        if (oldVersion < 4) {
+            AccessToken[] accessTokens = getAccessTokenInternal(sqLiteDatabase);
+            sqLiteDatabase.execSQL("drop table if exists " + TABLE_NAME);
+            sqLiteDatabase.execSQL("drop index if exists idindex");
+            onCreate(sqLiteDatabase);
+            for (AccessToken accessToken : accessTokens) {
+                addAccessTokenInternal(sqLiteDatabase, accessToken);
+            }
+        }
     }
 
     public AccessToken[] getAccessTokens() {
@@ -82,18 +91,24 @@ public class TokenSQLiteOpenHelper extends SQLiteOpenHelper {
 
         synchronized (this) {
             SQLiteDatabase database = getReadableDatabase();
-            Cursor c = database.query(TABLE_NAME, TABLE_COLUMNS, null, null, null, null, null);
-
-            accessTokens = new AccessToken[c.getCount()];
-
-            while (c.moveToNext()) {
-                accessTokens[c.getPosition()] = convertFromCursor(c);
-            }
-
-            c.close();
+            accessTokens = getAccessTokenInternal(database);
             database.close();
         }
 
+        return accessTokens;
+    }
+
+    private AccessToken[] getAccessTokenInternal(SQLiteDatabase database) {
+        AccessToken[] accessTokens;
+        Cursor c = database.query(TABLE_NAME, TABLE_COLUMNS, null, null, null, null, null);
+
+        accessTokens = new AccessToken[c.getCount()];
+
+        while (c.moveToNext()) {
+            accessTokens[c.getPosition()] = convertFromCursor(c);
+        }
+
+        c.close();
         return accessTokens;
     }
 
@@ -138,21 +153,23 @@ public class TokenSQLiteOpenHelper extends SQLiteOpenHelper {
     public void addAccessToken(AccessToken accessToken) {
         synchronized (this) {
             SQLiteDatabase database = getWritableDatabase();
-
-            ContentValues contentValues = new ContentValues(TABLE_COLUMNS.length);
-            contentValues.put("type", accessToken.getClientType());
-            contentValues.put("url", accessToken.getUrl());
-            contentValues.put("userName", accessToken.getScreenName());
-            contentValues.put("userId", accessToken.getUserId());
-            contentValues.put("consumerKey", accessToken.getConsumerKey());
-            contentValues.put("consumerSecret", accessToken.getConsumerSecret());
-            contentValues.put("token", accessToken.getToken());
-            contentValues.put("tokenSecret", accessToken.getTokenSecret());
-
-            database.replace(TABLE_NAME, null, contentValues);
-
+            addAccessTokenInternal(database, accessToken);
             database.close();
         }
+    }
+
+    private void addAccessTokenInternal(SQLiteDatabase database, AccessToken accessToken) {
+        ContentValues contentValues = new ContentValues(TABLE_COLUMNS.length);
+        contentValues.put("type", accessToken.getClientType());
+        contentValues.put("url", accessToken.getUrl());
+        contentValues.put("userName", accessToken.getScreenName());
+        contentValues.put("userId", accessToken.getUserId());
+        contentValues.put("consumerKey", accessToken.getConsumerKey());
+        contentValues.put("consumerSecret", accessToken.getConsumerSecret());
+        contentValues.put("token", accessToken.getToken());
+        contentValues.put("tokenSecret", accessToken.getTokenSecret());
+
+        database.replace(TABLE_NAME, null, contentValues);
     }
 
     public void deleteAccessToken(AccessToken accessToken) {
