@@ -73,7 +73,6 @@
     <string name="create_block">Block</string>
     <string name="destroy_block">Cancel Block</string>
     <string name="destroy_follow_follower">Cancel f4f</string>
-    <string name="spam_report">Report this account as a spam</string>
     <string name="save_image">Save this image</string>
     <string name="save_video">Save this video</string>
     <string name="error_occurred">Error occurred</string>
@@ -137,7 +136,14 @@
     <string name="confirm_post_reply">Post this reply?</string>
     <string name="confirm_discard_post">Discard post?</string>
     <string name="confirm_send_invalid_post">Send post?\n\nContent is too much or empty and it may failure</string>
-    <string name="confirm_message">Do this action?</string>
+
+    <string name="confirm_follow">Follow this user?</string>
+    <string name="confirm_unfollow">Unfollow this user</string>
+    <string name="confirm_mute">Mute this user?</string>
+    <string name="confirm_unmute">Unmute this user?</string>
+    <string name="confirm_block">Block this user?</string>
+    <string name="confirm_unblock">Unblock this user?</string>
+    <string name="confirm_destroy_ff">Destroy follow-follower relation to this user?</string>
 
     <string name="did_post">Posted</string>
 
@@ -159,7 +165,6 @@
     <string name="did_block">Blocked</string>
     <string name="did_unblock">Unblocked</string>
     <string name="did_destroy_ff">Destroyed follow-follower</string>
-    <string name="did_report_as_spam">Reported as a spam</string>
     <string name="did_add_to_list">Added to list</string>
 
     <string name="did_copy">Copied to clip board.</string>

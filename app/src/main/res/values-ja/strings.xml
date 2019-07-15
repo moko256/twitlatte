@@ -69,7 +69,6 @@
     <string name="create_block">ブロック</string>
     <string name="destroy_block">ブロックを解除する</string>
     <string name="destroy_follow_follower">FF解除</string>
-    <string name="spam_report">スパムとして報告する</string>
     <string name="save_image">この画像を保存する</string>
     <string name="save_video">この動画を保存する</string>
     <string name="error_occurred">エラーが発生しました</string>
@@ -132,7 +131,14 @@
     <string name="confirm_post_reply">この返信を投稿しますか？</string>
     <string name="confirm_discard_post">投稿を破棄しますか？</string>
     <string name="confirm_send_invalid_post">投稿しますか?\n\n本文が多すぎるか空なので失敗するかもしれません</string>
-    <string name="confirm_message">実行しますか？</string>
+
+    <string name="confirm_follow">このユーザーをフォローしますか？</string>
+    <string name="confirm_unfollow">このユーザーをフォロー解除しますか？</string>
+    <string name="confirm_mute">このユーザーをミュートしますか？</string>
+    <string name="confirm_unmute">このユーザーをミュート解除しますか？</string>
+    <string name="confirm_block">このユーザーをブロックしますか？</string>
+    <string name="confirm_unblock">このユーザーをブロック解除しますか？</string>
+    <string name="confirm_destroy_ff">このユーザーとのFF関係を解除しますか?</string>
 
     <string name="did_post">投稿しました</string>
 
@@ -154,7 +160,6 @@
     <string name="did_block">ブロックしました</string>
     <string name="did_unblock">ブロック解除しました</string>
     <string name="did_destroy_ff">FF解除しました</string>
-    <string name="did_report_as_spam">スパムとして報告しました</string>
     <string name="did_add_to_list">リストに追加しました</string>
 
     <string name="did_copy">クリップボードにコピーしました</string>

@@ -237,56 +237,49 @@ public class ShowUserActivity extends AppCompatActivity implements TabLayout.OnT
 
             case R.id.action_create_follow:
                 confirmDialog(
-                        item.getTitle(),
-                        getString(R.string.confirm_message),
+                        getString(R.string.confirm_follow),
                         () -> viewModel.requestCreateFollow(getString(R.string.did_follow))
                 );
                 break;
 
             case R.id.action_destroy_follow:
                 confirmDialog(
-                        item.getTitle(),
-                        getString(R.string.confirm_message),
+                        getString(R.string.confirm_unfollow),
                         () -> viewModel.requestDestroyFollow(getString(R.string.did_unfollow))
                 );
                 break;
 
             case R.id.action_create_mute:
                 confirmDialog(
-                        item.getTitle(),
-                        getString(R.string.confirm_message),
+                        getString(R.string.confirm_mute),
                         () -> viewModel.requestCreateMute(getString(R.string.did_mute))
                 );
                 break;
 
             case R.id.action_destroy_mute:
                 confirmDialog(
-                        item.getTitle(),
-                        getString(R.string.confirm_message),
+                        getString(R.string.confirm_unmute),
                         () -> viewModel.requestDestroyMute(getString(R.string.did_unmute))
                 );
                 break;
 
             case R.id.action_create_block:
                 confirmDialog(
-                        item.getTitle(),
-                        getString(R.string.confirm_message),
+                        getString(R.string.confirm_block),
                         () -> viewModel.requestCreateBlock(getString(R.string.did_block))
                 );
                 break;
 
             case R.id.action_destroy_block:
                 confirmDialog(
-                        item.getTitle(),
-                        getString(R.string.confirm_message),
+                        getString(R.string.confirm_unblock),
                         () -> viewModel.requestDestroyBlock(getString(R.string.did_unblock))
                 );
                 break;
 
             case R.id.action_destroy_follow_follower:
                 confirmDialog(
-                        item.getTitle(),
-                        getString(R.string.confirm_message),
+                        getString(R.string.confirm_destroy_ff),
                         () -> viewModel.requestDestroyF2F(getString(R.string.did_destroy_ff))
                 );
                 break;
@@ -298,22 +291,17 @@ public class ShowUserActivity extends AppCompatActivity implements TabLayout.OnT
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (requestCode == 200 && resultCode == RESULT_OK && data != null) {
-            confirmDialog(
-                    getString(R.string.add_to_list),
-                    getString(R.string.confirm_message),
-                    () -> viewModel.requestAddToList(
-                            getString(R.string.did_add_to_list),
-                            data.getLongExtra("listId", -1)
-                    )
+            viewModel.requestAddToList(
+                    getString(R.string.did_add_to_list),
+                    data.getLongExtra("listId", -1)
             );
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
     }
 
-    private void confirmDialog(CharSequence title, CharSequence message, Func func) {
+    private void confirmDialog(CharSequence message, Func func) {
         new AlertDialog.Builder(this)
-                .setTitle(title)
                 .setMessage(message)
                 .setCancelable(true)
                 .setPositiveButton(
