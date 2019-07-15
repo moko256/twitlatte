@@ -27,6 +27,7 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.preference.EditTextPreference;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
+import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceScreen;
 
@@ -223,15 +224,18 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 });
             }
         } else if (rootKey.equals("contributors")) {
-            PreferenceScreen contributor = getPreferenceScreen();
-            for (int i = 0, length = contributor.getPreferenceCount(); i < length; i++) {
-                Preference name = contributor.getPreference(i);
-                String uri = "https://github.com/" + name.getKey();
-                name.setSummary(uri);
-                name.setOnPreferenceClickListener(preference -> {
-                    AppCustomTabsKt.launchChromeCustomTabs(requireContext(), uri, false);
-                    return true;
-                });
+            PreferenceScreen contributorCategory = getPreferenceScreen();
+            for (int c = 0, length = contributorCategory.getPreferenceCount(); c < length; c++) {
+                PreferenceCategory contributor = (PreferenceCategory) contributorCategory.getPreference(c);
+                for (int i = 0, l = contributor.getPreferenceCount(); i < l; i++) {
+                    Preference name = contributor.getPreference(i);
+                    String uri = "https://github.com/" + name.getKey();
+                    name.setSummary(uri);
+                    name.setOnPreferenceClickListener(preference -> {
+                        AppCustomTabsKt.launchChromeCustomTabs(requireContext(), uri, false);
+                        return true;
+                    });
+                }
             }
         }
     }

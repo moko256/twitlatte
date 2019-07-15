@@ -192,15 +192,27 @@
         <PreferenceScreen
             app:key="contributors"
             app:title="@string/contributors">
-            <Preference
-                app:key="moko256"
-                app:title="moko256"/>
-            <Preference
-                app:key="jiro-aqua"
-                app:title="jiro-aqua"/>
-            <Preference
-                app:key="Poussinou"
-                app:title="Poussinou"/>
+            <PreferenceCategory
+                app:title="@string/contributors">
+                <Preference
+                    app:key="moko256"
+                    app:title="moko256"/>
+                <Preference
+                    app:key="jiro-aqua"
+                    app:title="jiro-aqua"/>
+                <Preference
+                    app:key="Poussinou"
+                    app:title="Poussinou"/>
+            </PreferenceCategory>
+            <PreferenceCategory
+                app:title="F-Droid">
+                <Preference
+                    app:key="Poussinou"
+                    app:title="Poussinou"/>
+                <Preference
+                    app:key="IzzySoft"
+                    app:title="Izzy"/>
+            </PreferenceCategory>
         </PreferenceScreen>
         <Preference
             app:key="app_version"
