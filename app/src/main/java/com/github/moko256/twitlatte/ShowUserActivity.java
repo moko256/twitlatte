@@ -25,7 +25,6 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -34,7 +33,6 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
-import com.github.moko256.latte.client.base.ApiClient;
 import com.github.moko256.latte.client.base.entity.User;
 import com.github.moko256.twitlatte.entity.Client;
 import com.github.moko256.twitlatte.intent.AppCustomTabsKt;
@@ -45,9 +43,6 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.Objects;
-
-import kotlin.Unit;
-import kotlin.jvm.functions.Function0;
 
 import static com.github.moko256.latte.client.mastodon.MastodonApiClientImplKt.CLIENT_TYPE_MASTODON;
 
@@ -60,9 +55,6 @@ public class ShowUserActivity extends AppCompatActivity implements TabLayout.OnT
 
     private UserInfoViewModel viewModel;
     private Client client;
-
-    private String userScreenName;
-    private long userId;
 
     private ActionBar actionBar;
     private ViewPager viewPager;
@@ -109,33 +101,10 @@ public class ShowUserActivity extends AppCompatActivity implements TabLayout.OnT
         });
 
 
-        userScreenName = getIntent().getStringExtra("userScreenName");
-        userId = getIntent().getLongExtra("userId", -1);
+        viewModel.setUserName(getIntent().getStringExtra("userScreenName"));
+        viewModel.setUserId(getIntent().getLongExtra("userId", -1));
+        viewModel.client = client;
 
-        viewModel.readUserCacheRepo = () -> {
-            if (userId != -1) {
-                return client.getUserCache().get(userId);
-            } else {
-                return null;
-            }
-        };
-
-        viewModel.writeUserCacheRepo = user -> {
-            client.getUserCache().add(user);
-            return Unit.INSTANCE;
-        };
-
-        viewModel.remoteUserRepo = () -> {
-            if (userId != -1) {
-                return client.getApiClient().showUser(userId);
-            } else if (userScreenName != null) {
-                return client.getApiClient().showUser(userScreenName);
-            } else {
-                throw new IllegalStateException("Unreachable");
-            }
-        };
-
-        viewModel.remoteFriendshipRepo = () -> client.getApiClient().getFriendship(userId);
         viewModel.getUser().observe(this, user -> adapter.setUserId(user.getId()));
         viewModel.getAction().observe(
                 this,
@@ -158,7 +127,7 @@ public class ShowUserActivity extends AppCompatActivity implements TabLayout.OnT
         );
 
         if (savedInstanceState == null) {
-            viewModel.loadData();
+            viewModel.loadData(true);
         }
     }
 
@@ -234,12 +203,7 @@ public class ShowUserActivity extends AppCompatActivity implements TabLayout.OnT
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Function0<?> throwableFunc = null;
-        @StringRes int didAction = -1;
-        ApiClient apiClient = client.getApiClient();
-        User user = viewModel.getUser().getValue();
-
-        if (user == null) {
+        if (viewModel.getUser().getValue() == null) {
             return false;
         }
         switch (item.getItemId()) {
@@ -272,62 +236,60 @@ public class ShowUserActivity extends AppCompatActivity implements TabLayout.OnT
                 break;
 
             case R.id.action_create_follow:
-                throwableFunc = () -> apiClient.createFriendship(user.getId());
-                didAction = R.string.did_follow;
+                confirmDialog(
+                        item.getTitle(),
+                        getString(R.string.confirm_message),
+                        () -> viewModel.requestCreateFollow(getString(R.string.did_follow))
+                );
                 break;
 
             case R.id.action_destroy_follow:
-                throwableFunc = () -> apiClient.destroyFriendship(user.getId());
-                didAction = R.string.did_unfollow;
+                confirmDialog(
+                        item.getTitle(),
+                        getString(R.string.confirm_message),
+                        () -> viewModel.requestDestroyFollow(getString(R.string.did_unfollow))
+                );
                 break;
 
             case R.id.action_create_mute:
-                throwableFunc = () -> {
-                    apiClient.createMute(user.getId());
-                    return Unit.INSTANCE;
-                };
-                didAction = R.string.did_mute;
+                confirmDialog(
+                        item.getTitle(),
+                        getString(R.string.confirm_message),
+                        () -> viewModel.requestCreateMute(getString(R.string.did_mute))
+                );
                 break;
 
             case R.id.action_destroy_mute:
-                throwableFunc = () -> {
-                    apiClient.destroyMute(user.getId());
-                    return Unit.INSTANCE;
-                };
-                didAction = R.string.did_unmute;
+                confirmDialog(
+                        item.getTitle(),
+                        getString(R.string.confirm_message),
+                        () -> viewModel.requestDestroyMute(getString(R.string.did_unmute))
+                );
                 break;
 
             case R.id.action_create_block:
-                throwableFunc = () -> apiClient.createBlock(user.getId());
-                didAction = R.string.did_block;
+                confirmDialog(
+                        item.getTitle(),
+                        getString(R.string.confirm_message),
+                        () -> viewModel.requestCreateBlock(getString(R.string.did_block))
+                );
                 break;
 
             case R.id.action_destroy_block:
-                throwableFunc = () -> apiClient.destroyBlock(user.getId());
-                didAction = R.string.did_unblock;
+                confirmDialog(
+                        item.getTitle(),
+                        getString(R.string.confirm_message),
+                        () -> viewModel.requestDestroyBlock(getString(R.string.did_unblock))
+                );
                 break;
 
             case R.id.action_destroy_follow_follower:
-                throwableFunc = () -> {
-                    apiClient.createBlock(user.getId());
-                    return apiClient.destroyBlock(user.getId());
-                };
-                didAction = R.string.did_destroy_ff;
+                confirmDialog(
+                        item.getTitle(),
+                        getString(R.string.confirm_message),
+                        () -> viewModel.requestDestroyF2F(getString(R.string.did_destroy_ff))
+                );
                 break;
-
-            case R.id.action_spam_report:
-                throwableFunc = () -> {
-                    apiClient.reportSpam(user.getId());
-                    return Unit.INSTANCE;
-                };
-                didAction = R.string.did_report_as_spam;
-                break;
-        }
-
-        if (throwableFunc != null && didAction != -1) {
-            Function0<?> finalThrowableFunc = throwableFunc;
-            int finalDidAction = didAction;
-            confirmDialog(item.getTitle(), getString(R.string.confirm_message), () -> runAsWorkerThread(finalThrowableFunc, finalDidAction));
         }
 
         return super.onOptionsItemSelected(item);
@@ -339,29 +301,14 @@ public class ShowUserActivity extends AppCompatActivity implements TabLayout.OnT
             confirmDialog(
                     getString(R.string.add_to_list),
                     getString(R.string.confirm_message),
-                    () -> runAsWorkerThread(
-                            () -> {
-                                client
-                                        .getApiClient()
-                                        .addToLists(
-                                                data.getLongExtra("listId", -1),
-                                                userId
-                                        );
-                                return Unit.INSTANCE;
-                            },
-                            R.string.did_add_to_list
+                    () -> viewModel.requestAddToList(
+                            getString(R.string.did_add_to_list),
+                            data.getLongExtra("listId", -1)
                     )
             );
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
-    }
-
-    private void runAsWorkerThread(Function0<? extends Object> func, @StringRes int didAction) {
-        viewModel.doAction(
-                func,
-                getString(didAction)
-        );
     }
 
     private void confirmDialog(CharSequence title, CharSequence message, Func func) {

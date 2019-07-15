@@ -99,7 +99,7 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
 
         swipeRefreshLayout = view.findViewById(R.id.show_user_swipe_refresh);
         swipeRefreshLayout.setColorSchemeResources(R.color.color_primary);
-        swipeRefreshLayout.setOnRefreshListener(() -> viewModel.updateData());
+        swipeRefreshLayout.setOnRefreshListener(() -> viewModel.loadData(false));
 
         header = view.findViewById(R.id.show_user_bgimage);
         header.setWidthPerHeight((client.getAccessToken().getClientType() == CLIENT_TYPE_TWITTER) ? 3 : 2);

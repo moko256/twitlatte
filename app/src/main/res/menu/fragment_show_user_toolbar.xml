@@ -62,8 +62,4 @@
         android:id="@+id/action_destroy_follow_follower"
         android:title="@string/destroy_follow_follower"
         app:showAsAction="never" />
-    <item
-        android:id="@+id/action_spam_report"
-        android:title="@string/spam_report"
-        app:showAsAction="never" />
 </menu>
