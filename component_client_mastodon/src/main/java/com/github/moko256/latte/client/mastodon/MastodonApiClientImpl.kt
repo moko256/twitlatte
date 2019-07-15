@@ -168,20 +168,27 @@ class MastodonApiClientImpl(okHttpClient: OkHttpClient, url: String, token: Stri
         return Statuses(client).postUnreblog(statusId).executeAndConvertError().convertToCommonStatus()
     }
 
-    override fun createFriendship(userId: Long) {
-        Accounts(client).postFollow(userId).executeAndConvertError()
+    override fun getFriendship(userId: Long): Friendship {
+        return Accounts(client).getRelationships(listOf(userId))
+                .executeAndConvertError()
+                .single()
+                .convertToCommonFriendship()
     }
 
-    override fun destroyFriendship(userId: Long) {
-        Accounts(client).postUnFollow(userId).executeAndConvertError()
+    override fun createFriendship(userId: Long): Friendship {
+        return Accounts(client).postFollow(userId).executeAndConvertError().convertToCommonFriendship()
     }
 
-    override fun createBlock(userId: Long) {
-        Accounts(client).postBlock(userId).executeAndConvertError()
+    override fun destroyFriendship(userId: Long): Friendship {
+        return Accounts(client).postUnFollow(userId).executeAndConvertError().convertToCommonFriendship()
     }
 
-    override fun destroyBlock(userId: Long) {
-        Accounts(client).postUnblock(userId).executeAndConvertError()
+    override fun createBlock(userId: Long): Friendship {
+        return Accounts(client).postBlock(userId).executeAndConvertError().convertToCommonFriendship()
+    }
+
+    override fun destroyBlock(userId: Long): Friendship {
+        return Accounts(client).postUnblock(userId).executeAndConvertError().convertToCommonFriendship()
     }
 
     override fun createMute(userId: Long) {

@@ -55,11 +55,12 @@ interface ApiClient {
     fun createRepeat(statusId: Long): Post
     fun destroyRepeat(statusId: Long): Post
 
-    fun createFriendship(userId: Long)
-    fun destroyFriendship(userId: Long)
+    fun getFriendship(userId: Long): Friendship
+    fun createFriendship(userId: Long): Friendship
+    fun destroyFriendship(userId: Long): Friendship
 
-    fun createBlock(userId: Long)
-    fun destroyBlock(userId: Long)
+    fun createBlock(userId: Long): Friendship
+    fun destroyBlock(userId: Long): Friendship
 
     fun createMute(userId: Long)
     fun destroyMute(userId: Long)

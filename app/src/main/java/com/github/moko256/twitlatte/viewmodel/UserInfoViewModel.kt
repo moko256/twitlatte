@@ -18,8 +18,8 @@ package com.github.moko256.twitlatte.viewmodel
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.github.moko256.latte.client.base.entity.Friendship
 import com.github.moko256.latte.client.base.entity.User
-import io.reactivex.Completable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -37,24 +37,27 @@ class UserInfoViewModel : ViewModel() {
 
     private val disposable = CompositeDisposable()
 
-    lateinit var readCacheRepo: () -> User?
-    lateinit var writeCacheRepo: (User) -> Unit
-    lateinit var remoteRepo: () -> User
+    lateinit var readUserCacheRepo: () -> User?
+    lateinit var writeUserCacheRepo: (User) -> Unit
+    lateinit var remoteUserRepo: () -> User
+    lateinit var remoteFriendshipRepo: () -> Friendship
 
     val user: MutableLiveData<User> = MutableLiveData()
+    val friendship: MutableLiveData<Friendship> = MutableLiveData()
     val action: MutableLiveData<String> = MutableLiveData()
     val error: MutableLiveData<Throwable> = MutableLiveData()
 
-    fun loadUser() {
-        disposable.add(
+    fun loadData() {
+        disposable.addAll(
+                // get user
                 Single.create<User> { subscriber ->
                     try {
-                        val cachedUser = readCacheRepo()
+                        val cachedUser = readUserCacheRepo()
                         if (cachedUser != null) {
                             subscriber.onSuccess(cachedUser)
                         } else {
-                            val remoteUser = remoteRepo()
-                            writeCacheRepo(remoteUser)
+                            val remoteUser = remoteUserRepo()
+                            writeUserCacheRepo(remoteUser)
                             subscriber.onSuccess(remoteUser)
                         }
                     } catch (e: Throwable) {
@@ -65,16 +68,31 @@ class UserInfoViewModel : ViewModel() {
                         .subscribe(
                                 { user.setValue(it) },
                                 { error.setValue(it) }
+                        ),
+
+                // get friendship
+                Single.create<Friendship> { subscriber ->
+                    try {
+                        subscriber.onSuccess(remoteFriendshipRepo())
+                    } catch (e: Throwable) {
+                        subscriber.tryOnError(e)
+                    }
+                }.subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                                { friendship.setValue(it) },
+                                { error.setValue(it) }
                         )
         )
     }
 
-    fun updateUser() {
-        disposable.add(
+    fun updateData() {
+        disposable.addAll(
+                // refresh user
                 Single.create<User> { subscriber ->
                     try {
-                        val remoteUser = remoteRepo()
-                        writeCacheRepo(remoteUser)
+                        val remoteUser = remoteUserRepo()
+                        writeUserCacheRepo(remoteUser)
                         subscriber.onSuccess(remoteUser)
                     } catch (e: Throwable) {
                         subscriber.tryOnError(e)
@@ -84,23 +102,41 @@ class UserInfoViewModel : ViewModel() {
                         .subscribe(
                                 { user.setValue(it) },
                                 { error.setValue(it) }
+                        ),
+
+                // refresh friendship
+                Single.create<Friendship> { subscriber ->
+                    try {
+                        subscriber.onSuccess(remoteFriendshipRepo())
+                    } catch (e: Throwable) {
+                        subscriber.tryOnError(e)
+                    }
+                }.subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                                { friendship.setValue(it) },
+                                { error.setValue(it) }
                         )
         )
     }
 
-    fun doAction(actionFunc: () -> Unit, name: String) {
+    fun doAction(actionFunc: () -> Any, name: String) {
         disposable.add(
-                Completable.create {
+                Single.create<Any> {
                     try {
-                        actionFunc()
-                        it.onComplete()
+                        it.onSuccess(actionFunc())
                     } catch (e: Throwable) {
                         it.onError(e)
                     }
                 }.subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
-                                { action.setValue(name) },
+                                {
+                                    if (it is Friendship) {
+                                        friendship.setValue(it)
+                                    }
+                                    action.setValue(name)
+                                },
                                 { error.setValue(it) }
                         )
         )

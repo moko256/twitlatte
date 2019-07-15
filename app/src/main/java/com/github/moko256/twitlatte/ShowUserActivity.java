@@ -47,6 +47,7 @@ import com.google.android.material.tabs.TabLayout;
 import java.util.Objects;
 
 import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
 
 import static com.github.moko256.latte.client.mastodon.MastodonApiClientImplKt.CLIENT_TYPE_MASTODON;
 
@@ -111,7 +112,7 @@ public class ShowUserActivity extends AppCompatActivity implements TabLayout.OnT
         userScreenName = getIntent().getStringExtra("userScreenName");
         userId = getIntent().getLongExtra("userId", -1);
 
-        viewModel.readCacheRepo = () -> {
+        viewModel.readUserCacheRepo = () -> {
             if (userId != -1) {
                 return client.getUserCache().get(userId);
             } else {
@@ -119,12 +120,12 @@ public class ShowUserActivity extends AppCompatActivity implements TabLayout.OnT
             }
         };
 
-        viewModel.writeCacheRepo = user -> {
+        viewModel.writeUserCacheRepo = user -> {
             client.getUserCache().add(user);
             return Unit.INSTANCE;
         };
 
-        viewModel.remoteRepo = () -> {
+        viewModel.remoteUserRepo = () -> {
             if (userId != -1) {
                 return client.getApiClient().showUser(userId);
             } else if (userScreenName != null) {
@@ -134,6 +135,7 @@ public class ShowUserActivity extends AppCompatActivity implements TabLayout.OnT
             }
         };
 
+        viewModel.remoteFriendshipRepo = () -> client.getApiClient().getFriendship(userId);
         viewModel.getUser().observe(this, user -> adapter.setUserId(user.getId()));
         viewModel.getAction().observe(
                 this,
@@ -156,7 +158,7 @@ public class ShowUserActivity extends AppCompatActivity implements TabLayout.OnT
         );
 
         if (savedInstanceState == null) {
-            viewModel.loadUser();
+            viewModel.loadData();
         }
     }
 
@@ -232,7 +234,7 @@ public class ShowUserActivity extends AppCompatActivity implements TabLayout.OnT
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Func throwableFunc = null;
+        Function0<?> throwableFunc = null;
         @StringRes int didAction = -1;
         ApiClient apiClient = client.getApiClient();
         User user = viewModel.getUser().getValue();
@@ -280,12 +282,18 @@ public class ShowUserActivity extends AppCompatActivity implements TabLayout.OnT
                 break;
 
             case R.id.action_create_mute:
-                throwableFunc = () -> apiClient.createMute(user.getId());
+                throwableFunc = () -> {
+                    apiClient.createMute(user.getId());
+                    return Unit.INSTANCE;
+                };
                 didAction = R.string.did_mute;
                 break;
 
             case R.id.action_destroy_mute:
-                throwableFunc = () -> apiClient.destroyMute(user.getId());
+                throwableFunc = () -> {
+                    apiClient.destroyMute(user.getId());
+                    return Unit.INSTANCE;
+                };
                 didAction = R.string.did_unmute;
                 break;
 
@@ -302,19 +310,22 @@ public class ShowUserActivity extends AppCompatActivity implements TabLayout.OnT
             case R.id.action_destroy_follow_follower:
                 throwableFunc = () -> {
                     apiClient.createBlock(user.getId());
-                    apiClient.destroyBlock(user.getId());
+                    return apiClient.destroyBlock(user.getId());
                 };
                 didAction = R.string.did_destroy_ff;
                 break;
 
             case R.id.action_spam_report:
-                throwableFunc = () -> apiClient.reportSpam(user.getId());
+                throwableFunc = () -> {
+                    apiClient.reportSpam(user.getId());
+                    return Unit.INSTANCE;
+                };
                 didAction = R.string.did_report_as_spam;
                 break;
         }
 
         if (throwableFunc != null && didAction != -1) {
-            Func finalThrowableFunc = throwableFunc;
+            Function0<?> finalThrowableFunc = throwableFunc;
             int finalDidAction = didAction;
             confirmDialog(item.getTitle(), getString(R.string.confirm_message), () -> runAsWorkerThread(finalThrowableFunc, finalDidAction));
         }
@@ -329,12 +340,15 @@ public class ShowUserActivity extends AppCompatActivity implements TabLayout.OnT
                     getString(R.string.add_to_list),
                     getString(R.string.confirm_message),
                     () -> runAsWorkerThread(
-                            () -> client
-                                    .getApiClient()
-                                    .addToLists(
-                                            data.getLongExtra("listId", -1),
-                                            userId
-                                    ),
+                            () -> {
+                                client
+                                        .getApiClient()
+                                        .addToLists(
+                                                data.getLongExtra("listId", -1),
+                                                userId
+                                        );
+                                return Unit.INSTANCE;
+                            },
                             R.string.did_add_to_list
                     )
             );
@@ -343,12 +357,9 @@ public class ShowUserActivity extends AppCompatActivity implements TabLayout.OnT
         }
     }
 
-    private void runAsWorkerThread(Func func, @StringRes int didAction) {
+    private void runAsWorkerThread(Function0<? extends Object> func, @StringRes int didAction) {
         viewModel.doAction(
-                () -> {
-                    func.call();
-                    return Unit.INSTANCE;
-                },
+                func,
                 getString(didAction)
         );
     }

@@ -81,6 +81,7 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
     private TextView userTweetsCount;
     private TextView userFollowCount;
     private TextView userFollowerCount;
+    private TextView userFriendship;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -98,7 +99,7 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
 
         swipeRefreshLayout = view.findViewById(R.id.show_user_swipe_refresh);
         swipeRefreshLayout.setColorSchemeResources(R.color.color_primary);
-        swipeRefreshLayout.setOnRefreshListener(() -> viewModel.updateUser());
+        swipeRefreshLayout.setOnRefreshListener(() -> viewModel.updateData());
 
         header = view.findViewById(R.id.show_user_bgimage);
         header.setWidthPerHeight((client.getAccessToken().getClientType() == CLIENT_TYPE_TWITTER) ? 3 : 2);
@@ -114,6 +115,7 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
         userTweetsCount = view.findViewById(R.id.show_user_tweets_count);
         userFollowCount = view.findViewById(R.id.show_user_follow_count);
         userFollowerCount = view.findViewById(R.id.show_user_follower_count);
+        userFriendship = view.findViewById(R.id.show_user_friendship);
 
         return view;
     }
@@ -128,6 +130,22 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
         viewModel.getError().observe(
                 this,
                 throwable -> swipeRefreshLayout.setRefreshing(false)
+        );
+        viewModel.getFriendship().observe(
+                this,
+                friendship -> {
+                    StringBuilder builder = new StringBuilder(9);
+                    builder.append("You ");
+                    if (friendship.getFollowedBy()) {
+                        builder.append("<");
+                    }
+                    builder.append("=");
+                    if (friendship.getFollowing()) {
+                        builder.append(">");
+                    }
+                    builder.append(" They");
+                    userFriendship.setText(builder);
+                }
         );
     }
 

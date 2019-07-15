@@ -37,7 +37,7 @@ class TwitterApiClientImpl(
         consumerSecret: String,
         token: String,
         tokenSecret: String?
-): ApiClient {
+) : ApiClient {
 
     private val client = ConfigurationBuilder()
             .setTweetModeExtended(true)
@@ -141,20 +141,28 @@ class TwitterApiClientImpl(
         return client.unRetweetStatus(statusId).convertToPost()
     }
 
-    override fun createFriendship(userId: Long) {
+    override fun getFriendship(userId: Long): Friendship {
+        return client.lookupFriendships(userId).single().convertToCommonFriendship()
+    }
+
+    override fun createFriendship(userId: Long): Friendship {
         client.createFriendship(userId)
+        return getFriendship(userId)
     }
 
-    override fun destroyFriendship(userId: Long) {
+    override fun destroyFriendship(userId: Long): Friendship {
         client.destroyFriendship(userId)
+        return getFriendship(userId)
     }
 
-    override fun createBlock(userId: Long) {
+    override fun createBlock(userId: Long): Friendship {
         client.createBlock(userId)
+        return getFriendship(userId)
     }
 
-    override fun destroyBlock(userId: Long) {
+    override fun destroyBlock(userId: Long): Friendship {
         client.destroyBlock(userId)
+        return getFriendship(userId)
     }
 
     override fun createMute(userId: Long) {
