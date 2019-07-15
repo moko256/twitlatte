@@ -24,6 +24,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import com.bumptech.glide.GlideInitializer
 import com.github.moko256.latte.client.base.ApiClient
 import com.github.moko256.latte.client.base.entity.AccessToken
+import com.github.moko256.latte.client.base.entity.Friendship
 import com.github.moko256.latte.client.twitter.okhttp.replaceOkHttpClient
 import com.github.moko256.twitlatte.api.generateApiClient
 import com.github.moko256.twitlatte.api.generateMediaUrlConverter
@@ -53,6 +54,7 @@ lateinit var preferenceRepository: PreferenceRepository
 private val apiClientCache = LruCache<Int, ApiClient>(4)
 private val userCache = UserCacheMap()
 private val statusCache = StatusCacheMap()
+private val friendshipCache = LruCache<Long, Friendship>(20)
 
 class GlobalApplication : Application() {
 
@@ -93,12 +95,14 @@ class GlobalApplication : Application() {
     fun initCurrentClient(accessToken: AccessToken) {
         userCache.prepare(this, accessToken)
         statusCache.prepare(this, accessToken)
+        friendshipCache.clearIfNotEmpty()
         currentClient = Client(
                 accessToken,
                 createApiClientInstance(accessToken),
                 generateMediaUrlConverter(accessToken.clientType),
                 statusCache,
-                userCache
+                userCache,
+                friendshipCache
         )
     }
 
@@ -132,7 +136,8 @@ fun Activity.getClient(): Client? {
                             application.createApiClientInstance(it),
                             generateMediaUrlConverter(it.clientType),
                             StatusCacheMap(),
-                            UserCacheMap()
+                            UserCacheMap(),
+                            LruCache(20)
                     ).apply {
                         userCache.prepare(this@getClient, it)
                         statusCache.prepare(this@getClient, it)

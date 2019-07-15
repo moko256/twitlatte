@@ -21,6 +21,7 @@ import androidx.lifecycle.ViewModel
 import com.github.moko256.latte.client.base.entity.Friendship
 import com.github.moko256.latte.client.base.entity.User
 import com.github.moko256.twitlatte.entity.Client
+import io.reactivex.Completable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -48,9 +49,8 @@ class UserInfoViewModel : ViewModel() {
     val error: MutableLiveData<Throwable> = MutableLiveData()
 
     fun loadData(useCache: Boolean) {
-        disposable.addAll(
-                // get user
-                Single.create<User> { subscriber ->
+        disposable.add(
+                Completable.create {
                     try {
                         val cachedUser = if (useCache && userId != -1L) {
                             client.userCache.get(userId)
@@ -58,7 +58,7 @@ class UserInfoViewModel : ViewModel() {
                             null
                         }
                         if (cachedUser != null) {
-                            subscriber.onSuccess(cachedUser)
+                            user.postValue(cachedUser)
                         } else {
                             val name = userName
                             val remoteUser = when {
@@ -66,32 +66,29 @@ class UserInfoViewModel : ViewModel() {
                                 name != null -> client.apiClient.showUser(name)
                                 else -> throw IllegalStateException("Unreachable")
                             }
+                            userId = remoteUser.id
                             client.userCache.add(remoteUser)
-                            subscriber.onSuccess(remoteUser)
+                            user.postValue(remoteUser)
+                        }
+
+
+                        val cachedFriendship = if (useCache && userId != -1L) {
+                            client.friendshipCache.get(userId)
+                        } else {
+                            null
+                        }
+                        if (cachedFriendship != null) {
+                            friendship.postValue(cachedFriendship)
+                        } else {
+                            val remoteFriendship = client.apiClient.getFriendship(userId)
+                            client.friendshipCache.put(userId, remoteFriendship)
+                            friendship.postValue(remoteFriendship)
                         }
                     } catch (e: Throwable) {
-                        subscriber.tryOnError(e)
+                        error.postValue(e)
                     }
-                }.subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(
-                                { user.setValue(it) },
-                                { error.setValue(it) }
-                        ),
-
-                // get friendship
-                Single.create<Friendship> { subscriber ->
-                    try {
-                        subscriber.onSuccess(client.apiClient.getFriendship(userId))
-                    } catch (e: Throwable) {
-                        subscriber.tryOnError(e)
-                    }
-                }.subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(
-                                { friendship.setValue(it) },
-                                { error.setValue(it) }
-                        )
+                    it.onComplete()
+                }.subscribeOn(Schedulers.io()).subscribe()
         )
     }
 
@@ -99,6 +96,9 @@ class UserInfoViewModel : ViewModel() {
         disposable.add(
                 Single.create<Any> {
                     try {
+                        if (userId == -1L) {
+                            loadData(true)
+                        }
                         it.onSuccess(actionFunc())
                     } catch (e: Throwable) {
                         it.onError(e)
