@@ -38,7 +38,6 @@ import static com.github.moko256.latte.client.mastodon.MastodonApiClientImplKt.C
 
 public class ShowUserFragmentsPagerAdapter extends FragmentPagerAdapter {
 
-    private static final int FRAGMENT_INFO = 0;
     private static final int FRAGMENT_TIMELINE = 1;
     private static final int FRAGMENT_LIKE = 2;
     private static final int FRAGMENT_MEDIA = 3;
@@ -57,8 +56,7 @@ public class ShowUserFragmentsPagerAdapter extends FragmentPagerAdapter {
     ShowUserFragmentsPagerAdapter(AccessToken accessToken, FragmentManager fm, Context context) {
         super(fm);
 
-        list = new ArrayList<>(5);
-        list.add(FRAGMENT_INFO);
+        list = new ArrayList<>(4);
 
         this.type = accessToken.getClientType();
         this.accountUserId = accessToken.getUserId();
@@ -88,8 +86,6 @@ public class ShowUserFragmentsPagerAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
         switch (list.get(position)) {
-            case FRAGMENT_INFO:
-                return new UserInfoFragment();
             case FRAGMENT_TIMELINE:
                 return UserTimelineFragment.Companion.newInstance(userId);
             case FRAGMENT_LIKE:

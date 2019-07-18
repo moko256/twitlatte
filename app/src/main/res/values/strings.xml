@@ -58,9 +58,7 @@
     <string name="lat_and_lon">Latitude:%1$f Longitude: %2$f</string>
     <string name="location_is">Location: %s</string>
     <string name="url_is">URL: %s</string>
-    <string name="posts_counts_is">Posts: %d</string>
-    <string name="following_counts_is">Following: %d</string>
-    <string name="followers_counts_is">Followers: %d</string>
+    <string name="user_counts_is">%d Posts · %d Following · %d Followers</string>
     <string name="share">Share…</string>
     <string name="open_in_browser">Open in the browser</string>
     <string name="add_to_list">Add to list</string>

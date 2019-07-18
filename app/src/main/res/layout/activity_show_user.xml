@@ -15,50 +15,73 @@
   ~ limitations under the License.
   -->
 
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/activity_show_user_coordinator_layout"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_show_user_swipe_refresh_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appbar_show_user"
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/activity_show_user_coordinator_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:layout_height="match_parent">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar_show_user"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:minHeight="?attr/actionBarSize"
-            app:popupTheme="@style/AppTheme.PopupOverlay"
-            app:layout_collapseMode="pin"
-            app:layout_scrollFlags="scroll|enterAlways|snap"/>
-
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tab_show_user"
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appbar_show_user"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:tabIndicatorColor="#FFFFFF"
-            app:tabIndicatorHeight="2dp"/>
+            android:background="?android:colorBackground">
 
-    </com.google.android.material.appbar.AppBarLayout>
+            <com.google.android.material.appbar.CollapsingToolbarLayout
+                android:id="@+id/collapsing_toolbar_show_user"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:contentScrim="?colorPrimary"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed"
+                app:scrimAnimationDuration="200"
+                app:toolbarId="@id/toolbar_show_user">
 
-    <androidx.viewpager.widget.ViewPager
-        android:id="@+id/show_user_view_pager"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+                <fragment
+                    android:id="@+id/fragment_show_user"
+                    android:name="com.github.moko256.twitlatte.UserInfoFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    tools:layout="@layout/content_show_user" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/activity_show_user_fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
-        app:fabSize="normal"
-        app:srcCompat="@drawable/ic_reply_white_24dp"/>
+                <androidx.appcompat.widget.Toolbar
+                    android:id="@+id/toolbar_show_user"
+                    android:layout_width="match_parent"
+                    android:layout_height="?actionBarSize"
+                    android:minHeight="?actionBarSize"
+                    android:theme="@style/AppTheme.AppBarOverlay"
+                    app:layout_collapseMode="pin"
+                    app:popupTheme="@style/AppTheme.PopupOverlay" />
+            </com.google.android.material.appbar.CollapsingToolbarLayout>
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tab_show_user"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/show_user_view_pager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_anchor="@id/appbar_show_user"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/activity_show_user_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="@dimen/fab_margin"
+            app:fabSize="normal"
+            app:srcCompat="@drawable/ic_reply_white_24dp" />
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

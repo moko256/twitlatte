@@ -72,17 +72,19 @@ class UserInfoViewModel : ViewModel() {
                         }
 
 
-                        val cachedFriendship = if (useCache && userId != -1L) {
-                            client.friendshipCache.get(userId)
-                        } else {
-                            null
-                        }
-                        if (cachedFriendship != null) {
-                            friendship.postValue(cachedFriendship)
-                        } else {
-                            val remoteFriendship = client.apiClient.getFriendship(userId)
-                            client.friendshipCache.put(userId, remoteFriendship)
-                            friendship.postValue(remoteFriendship)
+                        if (client.accessToken.userId != userId) {
+                            val cachedFriendship = if (useCache && userId != -1L) {
+                                client.friendshipCache.get(userId)
+                            } else {
+                                null
+                            }
+                            if (cachedFriendship != null) {
+                                friendship.postValue(cachedFriendship)
+                            } else {
+                                val remoteFriendship = client.apiClient.getFriendship(userId)
+                                client.friendshipCache.put(userId, remoteFriendship)
+                                friendship.postValue(remoteFriendship)
+                            }
                         }
                     } catch (e: Throwable) {
                         error.postValue(e)

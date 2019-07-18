@@ -18,6 +18,7 @@ package com.github.moko256.twitlatte;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -31,6 +32,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.viewpager.widget.ViewPager;
 
 import com.github.moko256.latte.client.base.entity.User;
@@ -39,11 +41,16 @@ import com.github.moko256.twitlatte.intent.AppCustomTabsKt;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
 import com.github.moko256.twitlatte.viewmodel.UserInfoViewModel;
 import com.github.moko256.twitlatte.widget.FragmentPagerAdapter;
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Objects;
 
+import static androidx.viewpager.widget.ViewPager.SCROLL_STATE_IDLE;
 import static com.github.moko256.latte.client.mastodon.MastodonApiClientImplKt.CLIENT_TYPE_MASTODON;
 
 /**
@@ -51,12 +58,25 @@ import static com.github.moko256.latte.client.mastodon.MastodonApiClientImplKt.C
  *
  * @author moko256
  */
-public class ShowUserActivity extends AppCompatActivity implements TabLayout.OnTabSelectedListener, BaseListFragment.GetViewForSnackBar, BaseTweetListFragment.GetRecyclerViewPool, BaseUsersFragment.GetRecyclerViewPool {
+public class ShowUserActivity
+
+        extends
+        AppCompatActivity
+
+        implements
+        TabLayout.OnTabSelectedListener,
+        BaseListFragment.GetViewForSnackBar,
+        BaseTweetListFragment.GetRecyclerViewPool,
+        BaseUsersFragment.GetRecyclerViewPool,
+        HasRefreshLayoutInterface {
 
     private UserInfoViewModel viewModel;
     private Client client;
 
     private ActionBar actionBar;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private AppBarLayout appBarLayout;
+    private CollapsingToolbarLayout collapsingToolbarLayout;
     private ViewPager viewPager;
     private ShowUserFragmentsPagerAdapter adapter;
     private TabLayout tabLayout;
@@ -78,7 +98,17 @@ public class ShowUserActivity extends AppCompatActivity implements TabLayout.OnT
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeAsUpIndicator(R.drawable.ic_back_white_24dp);
 
+        swipeRefreshLayout = findViewById(R.id.activity_show_user_swipe_refresh_layout);
+        swipeRefreshLayout.setColorSchemeResources(R.color.color_primary);
+
+        appBarLayout = findViewById(R.id.appbar_show_user);
+        collapsingToolbarLayout = findViewById(R.id.collapsing_toolbar_show_user);
+        collapsingToolbarLayout.setTitleEnabled(true);
+        collapsingToolbarLayout.setCollapsedTitleTextColor(Color.WHITE);
         viewPager = findViewById(R.id.show_user_view_pager);
+
+        new ScrollListener(appBarLayout, viewPager, swipeRefreshLayout, collapsingToolbarLayout);
+
         adapter = new ShowUserFragmentsPagerAdapter(
                 client.getAccessToken(),
                 getSupportFragmentManager(),
@@ -105,7 +135,10 @@ public class ShowUserActivity extends AppCompatActivity implements TabLayout.OnT
         viewModel.setUserId(getIntent().getLongExtra("userId", -1));
         viewModel.client = client;
 
-        viewModel.getUser().observe(this, user -> adapter.setUserId(user.getId()));
+        viewModel.getUser().observe(this, user -> {
+            adapter.setUserId(user.getId());
+            collapsingToolbarLayout.setTitle(user.getName());
+        });
         viewModel.getAction().observe(
                 this,
                 message -> Snackbar.make(
@@ -131,6 +164,12 @@ public class ShowUserActivity extends AppCompatActivity implements TabLayout.OnT
         }
     }
 
+    @NotNull
+    @Override
+    public SwipeRefreshLayout get() {
+        return swipeRefreshLayout;
+    }
+
     @Override
     public void onTabSelected(TabLayout.Tab tab) {
     }
@@ -154,6 +193,8 @@ public class ShowUserActivity extends AppCompatActivity implements TabLayout.OnT
 
         tabLayout = null;
         viewPager = null;
+        appBarLayout = null;
+        swipeRefreshLayout = null;
         actionBar = null;
 
     }
@@ -338,5 +379,48 @@ public class ShowUserActivity extends AppCompatActivity implements TabLayout.OnT
 
     public static Intent getIntent(Context context, String userName) {
         return new Intent(context, ShowUserActivity.class).putExtra("userScreenName", userName);
+    }
+
+    private static class ScrollListener implements ViewPager.OnPageChangeListener, AppBarLayout.OnOffsetChangedListener {
+        private SwipeRefreshLayout swipeRefreshLayout;
+        private CollapsingToolbarLayout collapsingToolbarLayout;
+
+        ScrollListener(AppBarLayout appBarLayout, ViewPager viewPager, SwipeRefreshLayout swipeRefreshLayout, CollapsingToolbarLayout collapsingToolbarLayout) {
+            this.swipeRefreshLayout = swipeRefreshLayout;
+            this.collapsingToolbarLayout = collapsingToolbarLayout;
+
+            appBarLayout.addOnOffsetChangedListener(this);
+            viewPager.addOnPageChangeListener(this);
+        }
+
+        boolean appBarStopping = true;
+        boolean viewPagerStopping = true;
+
+        @Override
+        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+        }
+
+        @Override
+        public void onPageSelected(int position) {
+        }
+
+        @Override
+        public void onPageScrollStateChanged(int state) {
+            viewPagerStopping = state == SCROLL_STATE_IDLE;
+            updatePullToRefresh();
+        }
+
+        @Override
+        public void onOffsetChanged(AppBarLayout appBarLayout, int i) {
+            appBarStopping = i == 0;
+            updatePullToRefresh();
+            collapsingToolbarLayout.setTitleEnabled(Math.abs(i) >= appBarLayout.getTotalScrollRange());
+        }
+
+        private void updatePullToRefresh() {
+            if (!swipeRefreshLayout.isRefreshing()) {
+                swipeRefreshLayout.setEnabled(viewPagerStopping && appBarStopping);
+            }
+        }
     }
 }

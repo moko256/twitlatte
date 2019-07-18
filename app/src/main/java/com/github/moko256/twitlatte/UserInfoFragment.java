@@ -16,7 +16,13 @@
 
 package com.github.moko256.twitlatte;
 
+import android.content.DialogInterface;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.OvalShape;
 import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -25,14 +31,15 @@ import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
@@ -67,8 +74,6 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
 
     private RequestManager glideRequests;
 
-    private SwipeRefreshLayout swipeRefreshLayout;
-
     private UserHeaderImageView header;
     private ImageView icon;
 
@@ -78,10 +83,10 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
     private TextView userLocation;
     private TextView userUrl;
     private TextView userCreatedAt;
-    private TextView userTweetsCount;
-    private TextView userFollowCount;
-    private TextView userFollowerCount;
-    private TextView userFriendship;
+    private TextView userCounts;
+    private TextView userFollowedYou;
+    private Button userFollowButton;
+    private Button userUnfollowButton;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -93,17 +98,22 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_show_user_info, container, false);
+        View view = inflater.inflate(R.layout.content_show_user, container, false);
 
         glideRequests = Glide.with(this);
-
-        swipeRefreshLayout = view.findViewById(R.id.show_user_swipe_refresh);
-        swipeRefreshLayout.setColorSchemeResources(R.color.color_primary);
-        swipeRefreshLayout.setOnRefreshListener(() -> viewModel.loadData(false));
 
         header = view.findViewById(R.id.show_user_bgimage);
         header.setWidthPerHeight((client.getAccessToken().getClientType() == CLIENT_TYPE_TWITTER) ? 3 : 2);
         icon = view.findViewById(R.id.show_user_image);
+        ShapeDrawable iconBackground = new ShapeDrawable();
+        iconBackground.setColorFilter(
+                new PorterDuffColorFilter(
+                        ((ColorDrawable) requireActivity().getWindow().getDecorView().getBackground()).getColor(),
+                        PorterDuff.Mode.SRC_ATOP
+                )
+        );
+        iconBackground.setShape(new OvalShape());
+        icon.setBackground(iconBackground);
 
         userNameText = view.findViewById(R.id.show_user_name);
         userIdText = view.findViewById(R.id.show_user_id);
@@ -112,10 +122,10 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
         userLocation = view.findViewById(R.id.show_user_location);
         userUrl = view.findViewById(R.id.show_user_url);
         userCreatedAt = view.findViewById(R.id.show_user_created_at);
-        userTweetsCount = view.findViewById(R.id.show_user_tweets_count);
-        userFollowCount = view.findViewById(R.id.show_user_follow_count);
-        userFollowerCount = view.findViewById(R.id.show_user_follower_count);
-        userFriendship = view.findViewById(R.id.show_user_friendship);
+        userCounts = view.findViewById(R.id.show_user_counts);
+        userFollowedYou = view.findViewById(R.id.followed);
+        userFollowButton = view.findViewById(R.id.follow);
+        userUnfollowButton = view.findViewById(R.id.unfollow);
 
         return view;
     }
@@ -123,30 +133,45 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        viewModel.getUser().observe(this, user -> {
-            setShowUserInfo(user);
-            swipeRefreshLayout.setRefreshing(false);
-        });
-        viewModel.getError().observe(
-                this,
-                throwable -> swipeRefreshLayout.setRefreshing(false)
-        );
+        viewModel.getUser().observe(this, this::setShowUserInfo);
         viewModel.getFriendship().observe(
                 this,
                 friendship -> {
-                    StringBuilder builder = new StringBuilder(9);
-                    builder.append("You ");
                     if (friendship.getFollowedBy()) {
-                        builder.append("<");
+                        userFollowedYou.setVisibility(View.VISIBLE);
+                    } else {
+                        userFollowedYou.setVisibility(View.GONE);
                     }
-                    builder.append("=");
                     if (friendship.getFollowing()) {
-                        builder.append(">");
+                        userFollowButton.setVisibility(View.GONE);
+                        userUnfollowButton.setVisibility(View.VISIBLE);
+                    } else {
+                        userFollowButton.setVisibility(View.VISIBLE);
+                        userUnfollowButton.setVisibility(View.GONE);
                     }
-                    builder.append(" They");
-                    userFriendship.setText(builder);
                 }
         );
+        userFollowButton.setOnClickListener(
+                v -> confirmDialog(
+                        R.string.confirm_follow,
+                        (dialog, which) -> viewModel.requestCreateFollow(getString(R.string.did_follow))
+                )
+        );
+        userUnfollowButton.setOnClickListener(
+                v -> confirmDialog(
+                        R.string.confirm_unfollow,
+                        (dialog, which) -> viewModel.requestDestroyFollow(getString(R.string.did_unfollow))
+                )
+        );
+    }
+
+    private void confirmDialog(int message, DialogInterface.OnClickListener callback) {
+        new AlertDialog.Builder(requireContext())
+                .setMessage(message)
+                .setCancelable(true)
+                .setPositiveButton(android.R.string.ok, callback)
+                .setNegativeButton(android.R.string.cancel, (dialog, which) -> dialog.cancel())
+                .show();
     }
 
     @Override
@@ -238,7 +263,6 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
         }
 
         userIdText.setText(TwitterStringUtils.plusAtMark(user.getScreenName()));
-        requireActivity().setTitle(user.getName());
 
         if (!TextUtils.isEmpty(user.getLocation())) {
             userLocation.setText(getString(R.string.location_is, user.getLocation()));
@@ -263,9 +287,7 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
             userUrl.setVisibility(View.GONE);
         }
 
-        userCreatedAt.setText(DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.FULL).format(user.getCreatedAt()));
-        userTweetsCount.setText(getString(R.string.posts_counts_is, user.getStatusesCount()));
-        userFollowCount.setText(getString(R.string.following_counts_is, user.getFriendsCount()));
-        userFollowerCount.setText(getString(R.string.followers_counts_is, user.getFollowersCount()));
+        userCreatedAt.setText(DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.FULL).format(user.getCreatedAt()));
+        userCounts.setText(getString(R.string.user_counts_is, user.getStatusesCount(), user.getFriendsCount(), user.getFollowersCount()));
     }
 }
