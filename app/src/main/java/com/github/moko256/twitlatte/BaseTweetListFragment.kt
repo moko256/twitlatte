@@ -155,8 +155,8 @@ abstract class BaseTweetListFragment : BaseListFragment(), ListServerRepository<
                         .subscribe {
                             adapterObservableBinder!!.invoke(it)
 
-                            if (swipeRefreshLayout.isRefreshing) {
-                                setRefreshing(false)
+                            if (isRefreshing) {
+                                isRefreshing = false
                             }
                         },
 
@@ -167,8 +167,8 @@ abstract class BaseTweetListFragment : BaseListFragment(), ListServerRepository<
                         .subscribe {
                             notifyErrorBySnackBar(it).show()
 
-                            if (swipeRefreshLayout.isRefreshing) {
-                                setRefreshing(false)
+                            if (isRefreshing) {
+                                isRefreshing = false
                             }
                         },
 
@@ -215,7 +215,7 @@ abstract class BaseTweetListFragment : BaseListFragment(), ListServerRepository<
     }
 
     override fun onInitializeList() {
-        setRefreshing(true)
+        isRefreshing = true
         listViewModel.listModel.refreshFirst()
     }
 
@@ -228,7 +228,7 @@ abstract class BaseTweetListFragment : BaseListFragment(), ListServerRepository<
     }
 
     override fun isInitializedList(): Boolean {
-        return !listViewModel.listModel.getIdsList().isEmpty()
+        return listViewModel.listModel.getIdsList().isNotEmpty()
     }
 
     override fun initializeRecyclerViewLayoutManager(): RecyclerView.LayoutManager {

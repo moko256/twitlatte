@@ -124,6 +124,10 @@ public abstract class BaseListFragment extends Fragment implements LoadScrollLis
         return layoutManager;
     }
 
+    protected boolean isRefreshing() {
+        return isProgressCircleLoading;
+    }
+
     protected void setRefreshing(boolean b) {
         isProgressCircleLoading = b;
         if (swipeRefreshLayout != null) {
