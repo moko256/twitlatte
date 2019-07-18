@@ -37,10 +37,11 @@ import com.google.android.material.snackbar.Snackbar;
  *
  * @author moko256
  */
-public abstract class BaseListFragment extends Fragment implements LoadScrollListener.OnLoadListener, MovableTopInterface {
+public abstract class BaseListFragment extends Fragment implements LoadScrollListener.OnLoadListener, MovableTopInterface, SwipeRefreshLayout.OnRefreshListener {
 
     protected RecyclerView recyclerView;
-    protected SwipeRefreshLayout swipeRefreshLayout;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private boolean isRefreshAvailable;
 
     private boolean isProgressCircleLoading = false;
 
@@ -48,22 +49,19 @@ public abstract class BaseListFragment extends Fragment implements LoadScrollLis
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_base_list, container, false);
+        View view;
+
+        if (getActivity() instanceof HasRefreshLayoutInterface) {
+            view = inflater.inflate(R.layout.fragment_base_list, container, false);
+        } else {
+            view = inflater.inflate(R.layout.fragment_base_list_refreshable, container, false);
+            swipeRefreshLayout = view.findViewById(R.id.srl);
+            swipeRefreshLayout.setColorSchemeResources(R.color.color_primary);
+        }
 
         recyclerView = view.findViewById(R.id.TLlistView);
         recyclerView.setLayoutManager(initializeRecyclerViewLayoutManager());
         recyclerView.addOnScrollListener(new LoadScrollListener(recyclerView.getLayoutManager(), this));
-
-        swipeRefreshLayout = view.findViewById(R.id.srl);
-        swipeRefreshLayout.setColorSchemeResources(R.color.color_primary);
-        swipeRefreshLayout.setRefreshing(isProgressCircleLoading);
-        swipeRefreshLayout.setOnRefreshListener(() -> {
-            if (isInitializedList()) {
-                onUpdateList();
-            } else {
-                onInitializeList();
-            }
-        });
 
         return view;
     }
@@ -76,14 +74,27 @@ public abstract class BaseListFragment extends Fragment implements LoadScrollLis
         if (activity instanceof GetViewForSnackBar) {
             viewForSnackBar = ((GetViewForSnackBar) activity).getViewForSnackBar();
         }
+        if (activity instanceof HasRefreshLayoutInterface) {
+            swipeRefreshLayout = ((HasRefreshLayoutInterface) activity).get();
+        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        isRefreshAvailable = true;
+        swipeRefreshLayout.setRefreshing(isProgressCircleLoading);
+        swipeRefreshLayout.setOnRefreshListener(this);
+
         if (!isInitializedList()) {
             onInitializeList();
         }
+    }
+
+    @Override
+    public void onPause() {
+        isRefreshAvailable = false;
+        super.onPause();
     }
 
     @Override
@@ -110,6 +121,15 @@ public abstract class BaseListFragment extends Fragment implements LoadScrollLis
         }
     }
 
+    @Override
+    public void onRefresh() {
+        if (isInitializedList()) {
+            onUpdateList();
+        } else {
+            onInitializeList();
+        }
+    }
+
     protected abstract void onInitializeList();
 
     protected abstract void onUpdateList();
@@ -125,7 +145,7 @@ public abstract class BaseListFragment extends Fragment implements LoadScrollLis
     }
 
     protected boolean isRefreshing() {
-        if (swipeRefreshLayout == null) {
+        if (swipeRefreshLayout == null || !isRefreshAvailable) {
             return isProgressCircleLoading;
         } else {
             return swipeRefreshLayout.isRefreshing();
@@ -134,7 +154,7 @@ public abstract class BaseListFragment extends Fragment implements LoadScrollLis
 
     protected void setRefreshing(boolean b) {
         isProgressCircleLoading = b;
-        if (swipeRefreshLayout != null) {
+        if (swipeRefreshLayout != null && isRefreshAvailable) {
             swipeRefreshLayout.setRefreshing(b);
         }
     }
