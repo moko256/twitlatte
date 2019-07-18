@@ -124,6 +124,8 @@
     <string name="vote_expired_at">Expired at:</string>
     <string name="poll_able_to_choice_multiple">Able to choice multiple</string>
     <string name="poll_hide_totals_until_the_poll_ends">Hide totals until the poll ends</string>
+    <string name="follows_you">Follows you</string>
+    <string name="you">You</string>
 
     <string name="do_quote">Quote</string>
     <string name="do_logout">Logout</string>

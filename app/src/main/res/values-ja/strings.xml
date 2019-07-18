@@ -119,6 +119,8 @@
     <string name="vote_expired_at">期限切れまで:</string>
     <string name="poll_able_to_choice_multiple">複数選択可</string>
     <string name="poll_hide_totals_until_the_poll_ends">投票が終わるまで結果を非表示にする</string>
+    <string name="follows_you">フォローされています</string>
+    <string name="you">あなた</string>
 
     <string name="do_quote">引用する</string>
     <string name="do_logout">ログアウトする</string>

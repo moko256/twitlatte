@@ -84,7 +84,7 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
     private TextView userUrl;
     private TextView userCreatedAt;
     private TextView userCounts;
-    private TextView userFollowedYou;
+    private TextView userIsYouOrFollowedYou;
     private Button userFollowButton;
     private Button userUnfollowButton;
 
@@ -123,7 +123,7 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
         userUrl = view.findViewById(R.id.show_user_url);
         userCreatedAt = view.findViewById(R.id.show_user_created_at);
         userCounts = view.findViewById(R.id.show_user_counts);
-        userFollowedYou = view.findViewById(R.id.followed);
+        userIsYouOrFollowedYou = view.findViewById(R.id.followed_or_you);
         userFollowButton = view.findViewById(R.id.follow);
         userUnfollowButton = view.findViewById(R.id.unfollow);
 
@@ -138,10 +138,11 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
                 this,
                 friendship -> {
                     if (friendship.getFollowedBy()) {
-                        userFollowedYou.setVisibility(View.VISIBLE);
+                        userIsYouOrFollowedYou.setVisibility(View.VISIBLE);
                     } else {
-                        userFollowedYou.setVisibility(View.GONE);
+                        userIsYouOrFollowedYou.setVisibility(View.GONE);
                     }
+                    userIsYouOrFollowedYou.setText(R.string.follows_you);
                     if (friendship.getFollowing()) {
                         userFollowButton.setVisibility(View.GONE);
                         userUnfollowButton.setVisibility(View.VISIBLE);
@@ -187,6 +188,11 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
     }
 
     private void setShowUserInfo(User user) {
+        if (user.getId() == client.getAccessToken().getUserId()) {
+            userIsYouOrFollowedYou.setVisibility(View.VISIBLE);
+            userIsYouOrFollowedYou.setText(R.string.you);
+        }
+
         MediaUrlConverter mediaUrlConverter = client.getMediaUrlConverter();
 
         String headerUrl = mediaUrlConverter.convertProfileBannerLargeUrl(user);
