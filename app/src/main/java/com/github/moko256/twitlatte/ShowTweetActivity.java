@@ -26,7 +26,6 @@ import android.text.method.LinkMovementMethod;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -99,8 +98,7 @@ public class ShowTweetActivity extends AppCompatActivity {
         actionBar.setHomeAsUpIndicator(R.drawable.ic_back_white_24dp);
 
         tweetIsReply = findViewById(R.id.tweet_show_is_reply_text);
-        ViewGroup statusViewFrame = findViewById(R.id.tweet_show_tweet);
-        statusViewBinder = new StatusViewBinder(statusViewFrame);
+        statusViewBinder = new StatusViewBinder(findViewById(R.id.tweet_show_tweet));
         timestampText = findViewById(R.id.tweet_show_timestamp);
         viaText = findViewById(R.id.tweet_show_via);
         replyFab = findViewById(R.id.tweet_show_fab);

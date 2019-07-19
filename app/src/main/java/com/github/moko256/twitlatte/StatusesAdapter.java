@@ -129,7 +129,7 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        ViewGroup child = (ViewGroup) LayoutInflater
+        View child = LayoutInflater
                 .from(context)
                 .inflate(
                         i,
@@ -211,7 +211,7 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         final StatusViewBinder statusViewBinder;
         final Context context;
 
-        StatusViewHolder(ViewGroup itemView, Context context) {
+        StatusViewHolder(View itemView, Context context) {
             super(itemView);
             statusViewBinder = new StatusViewBinder(itemView);
             this.context = context;
@@ -335,8 +335,8 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         final TextView text;
         final ProgressBar progressBar;
 
-        MoreLoadViewHolder(ViewGroup viewGroup) {
-            super(viewGroup);
+        MoreLoadViewHolder(View view) {
+            super(view);
             text = itemView.findViewById(R.id.layout_list_load_more_text_view);
             progressBar = itemView.findViewById(R.id.layout_list_load_more_text_progress);
         }
@@ -349,8 +349,8 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     private static class MutedTweetViewHolder extends RecyclerView.ViewHolder {
-        MutedTweetViewHolder(ViewGroup viewGroup) {
-            super(viewGroup);
+        MutedTweetViewHolder(View view) {
+            super(view);
         }
     }
 
@@ -360,8 +360,8 @@ public class StatusesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         final String imageLoadMode = preferenceRepository.getString(KEY_TIMELINE_IMAGE_LOAD_MODE, "normal");
         final boolean isHideSensitiveMedia = preferenceRepository.getBoolean(KEY_HIDE_SENSITIVE_MEDIA, true);
 
-        ImagesOnlyTweetViewHolder(ViewGroup viewGroup, Context context) {
-            super(viewGroup);
+        ImagesOnlyTweetViewHolder(View view, Context context) {
+            super(view);
             imagesTableView = itemView.findViewById(R.id.list_tweet_image_container);
             this.context = context;
         }

@@ -23,7 +23,6 @@ import android.text.TextUtils
 import android.text.format.DateUtils
 import android.text.method.LinkMovementMethod
 import android.view.View
-import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.RelativeLayout
@@ -51,9 +50,8 @@ import io.reactivex.disposables.Disposable
  *
  * @author moko256
  */
-class StatusViewBinder(
-        viewGroup: ViewGroup
-) {
+class StatusViewBinder(viewGroup: View) {
+
     private val disposable = CompositeDisposable()
 
     private var hasStatus = false

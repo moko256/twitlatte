@@ -33,7 +33,6 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -110,7 +109,7 @@ public class PostActivity extends AppCompatActivity {
 
     private MenuItem postButton;
 
-    private ViewGroup rootViewGroup;
+    private View rootViewGroup;
     private ActionBar actionBar;
     private ImageView userIcon;
     private TextView counterTextView;

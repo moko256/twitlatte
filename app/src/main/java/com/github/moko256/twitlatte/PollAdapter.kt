@@ -19,6 +19,7 @@ package com.github.moko256.twitlatte
 import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.CompoundButton
 import android.widget.FrameLayout
@@ -63,7 +64,7 @@ class PollAdapter(private val context: Context) : RecyclerView.Adapter<PollAdapt
         val holder = Holder(
                 LayoutInflater
                         .from(context)
-                        .inflate(viewType, parent, false) as ViewGroup
+                        .inflate(viewType, parent, false)
         )
         holder.itemView.background = PercentBarBackgroundDrawable().also {
             it.lineSize = 2 * context.resources.displayMetrics.density
@@ -118,7 +119,7 @@ class PollAdapter(private val context: Context) : RecyclerView.Adapter<PollAdapt
         }
     }
 
-    class Holder(itemView: ViewGroup) : RecyclerView.ViewHolder(itemView) {
+    class Holder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val textView = itemView.findViewById<TextView>(R.id.primary_text)!!
         private val selection = itemView.findViewById<CompoundButton>(R.id.selection)
 
