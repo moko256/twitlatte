@@ -15,46 +15,46 @@
   ~ limitations under the License.
   -->
 
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:foreground="?android:attr/selectableItemBackground"
+    android:layout_height="72dp"
+    android:clickable="true"
     android:focusable="true"
-    android:clickable="true">
+    android:foreground="?android:attr/selectableItemBackground">
 
     <ImageView
         android:id="@+id/user_user_image"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_margin="16dp"
-        android:transitionName="icon_image"/>
+        android:transitionName="icon_image" />
 
     <TextView
         android:id="@+id/user_user_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toEndOf="@id/user_user_image"
-        android:ellipsize="end"
-        android:lines="1"
-        android:layout_marginTop="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="34dp"
+        android:layout_marginStart="72dp"
         android:layout_marginEnd="16dp"
+        android:ellipsize="end"
+        android:gravity="bottom"
+        android:lines="1"
         android:textSize="16sp"
         android:textColor="?android:textColorPrimary"
-        tools:text="User name"/>
+        tools:text="User name" />
 
     <TextView
-        android:id="@+id/user_user_id"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toEndOf="@id/user_user_image"
-        android:layout_below="@id/user_user_name"
-        android:ellipsize="end"
-        android:lines="1"
+        android:id="@+id/secondary_text"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginStart="72dp"
         android:layout_marginEnd="16dp"
+        android:ellipsize="end"
+        android:gravity="bottom"
+        android:lines="1"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
         android:textSize="16sp"
         android:textColor="?android:textColorSecondary"
-        tools:text="\@user_id"/>
+        tools:text="\@user_id" />
 
-</RelativeLayout>
+</FrameLayout>
