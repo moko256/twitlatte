@@ -89,7 +89,7 @@ class ListModelImpl(
         requests.add(
                 Completable.create { status ->
                     try {
-                        api.request(Paging(count = client.statusLimit))
+                        api.request(Paging(count = 10))
                                 .apply {
                                     client.postCache.addAll(this)
                                 }
