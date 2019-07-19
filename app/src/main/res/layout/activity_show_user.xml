@@ -39,8 +39,7 @@
                 android:layout_height="wrap_content"
                 app:contentScrim="?colorPrimary"
                 app:layout_scrollFlags="scroll|exitUntilCollapsed"
-                app:scrimAnimationDuration="200"
-                app:toolbarId="@id/toolbar_show_user">
+                app:scrimAnimationDuration="200">
 
                 <fragment
                     android:id="@+id/fragment_show_user"
@@ -70,7 +69,6 @@
             android:id="@+id/show_user_view_pager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_anchor="@id/appbar_show_user"
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
