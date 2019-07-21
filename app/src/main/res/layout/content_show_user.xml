@@ -25,6 +25,7 @@
         android:id="@+id/show_user_bgimage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        tools:layout_marginTop="-250dp"
         tools:src="@color/brown_800" />
 
     <ImageView
@@ -33,7 +34,7 @@
         android:layout_height="72dp"
         android:layout_below="@id/show_user_bgimage"
         android:layout_marginStart="10dp"
-        android:layout_marginTop="-44dp"
+        android:layout_marginTop="-32dp"
         android:padding="2dp"
         android:transitionName="icon_image"
         tools:background="?android:attr/colorBackground"
@@ -60,7 +61,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/show_user_bgimage"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="-2dp"
         android:layout_marginEnd="16dp"
         android:text="@string/create_follow"
         android:visibility="gone" />
@@ -72,7 +73,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/show_user_bgimage"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="-2dp"
         android:layout_marginEnd="16dp"
         android:text="@string/following"
         android:visibility="gone"
@@ -122,7 +123,7 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textColor="?android:textColorSecondary"
         android:textIsSelectable="true"
-        tools:text="📌  Tokyo, Japan" />
+        tools:text="@string/location_is" />
 
     <TextView
         android:id="@+id/show_user_url"
@@ -135,7 +136,7 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textColor="?android:textColorLink"
         android:textIsSelectable="true"
-        tools:text="🔗  github.com/moko256/t…" />
+        tools:text="URL: github.com/moko256/t…" />
 
     <TextView
         android:id="@+id/show_user_created_at"
@@ -147,7 +148,7 @@
         android:layout_marginEnd="16dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textColor="?android:textColorSecondary"
-        tools:text="🥡  Since: 2000-00-00 00:00:00 Z" />
+        tools:text="2000-00-00 00:00:00 Z" />
 
     <TextView
         android:id="@+id/show_user_counts"
@@ -160,5 +161,5 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textColor="?android:textColorSecondary"
         android:textIsSelectable="true"
-        tools:text="260 Tweets · 128 Follows · 256 Following" />
+        tools:text="@string/user_counts_is" />
 </RelativeLayout>
