@@ -20,9 +20,5 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/TLlistView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scrollbars="vertical" />
+    <include layout="@layout/fragment_base_list" />
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
