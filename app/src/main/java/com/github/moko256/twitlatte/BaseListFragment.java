@@ -40,6 +40,7 @@ import com.google.android.material.snackbar.Snackbar;
 public abstract class BaseListFragment extends Fragment implements LoadScrollListener.OnLoadListener, MovableTopInterface, SwipeRefreshLayout.OnRefreshListener {
 
     protected RecyclerView recyclerView;
+    private RecyclerView.AdapterDataObserver adapterDataObserver;
     private SwipeRefreshLayout swipeRefreshLayout;
     private boolean isRefreshAvailable;
 
@@ -51,12 +52,25 @@ public abstract class BaseListFragment extends Fragment implements LoadScrollLis
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view;
 
-        if (getActivity() instanceof HasRefreshLayoutInterface) {
+        FragmentActivity activity = getActivity();
+
+        if (activity instanceof HasRefreshLayoutInterface) {
             view = inflater.inflate(R.layout.fragment_base_list, container, false);
         } else {
             view = inflater.inflate(R.layout.fragment_base_list_refreshable, container, false);
             swipeRefreshLayout = view.findViewById(R.id.srl);
             swipeRefreshLayout.setColorSchemeResources(R.color.color_primary);
+        }
+
+        if (activity instanceof HasNotifiableAppBar) {
+            adapterDataObserver = new RecyclerView.AdapterDataObserver() {
+                @Override
+                public void onItemRangeInserted(int positionStart, int itemCount) {
+                    if (positionStart == 0) {
+                        ((HasNotifiableAppBar) requireActivity()).requestAppBarCollapsed();
+                    }
+                }
+            };
         }
 
         recyclerView = view.findViewById(R.id.TLlistView);
@@ -85,6 +99,9 @@ public abstract class BaseListFragment extends Fragment implements LoadScrollLis
         isRefreshAvailable = true;
         swipeRefreshLayout.setRefreshing(isProgressCircleLoading);
         swipeRefreshLayout.setOnRefreshListener(this);
+        if (adapterDataObserver != null) {
+            recyclerView.getAdapter().registerAdapterDataObserver(adapterDataObserver);
+        }
 
         if (!isInitializedList()) {
             onInitializeList();
@@ -93,6 +110,10 @@ public abstract class BaseListFragment extends Fragment implements LoadScrollLis
 
     @Override
     public void onPause() {
+        if (adapterDataObserver != null) {
+            recyclerView.getAdapter().unregisterAdapterDataObserver(adapterDataObserver);
+        }
+
         isRefreshAvailable = false;
         super.onPause();
     }

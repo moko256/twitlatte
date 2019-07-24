@@ -63,6 +63,8 @@ abstract class BaseTweetListFragment : BaseListFragment(), ListServerRepository<
     protected abstract val cachedIdsDatabaseName: String
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
+        val activity = requireActivity()
+
         val value = TypedValue()
         val context = requireContext()
         val toastTopPosition = if (context.theme.resolveAttribute(R.attr.actionBarSize, value, true)) {
@@ -71,7 +73,7 @@ abstract class BaseTweetListFragment : BaseListFragment(), ListServerRepository<
             0
         }
 
-        client = requireActivity().getClient()!!
+        client = activity.getClient()!!
         listViewModel = ViewModelProviders.of(this).get(ListViewModel::class.java)
         if (!listViewModel.initialized) {
             listViewModel.listModel = ListModelImpl(
@@ -127,7 +129,10 @@ abstract class BaseTweetListFragment : BaseListFragment(), ListServerRepository<
             adapter!!.notifyDataSetChanged()
         }
 
-        recyclerView.layoutManager!!.scrollToPosition(listViewModel.listModel.getSeeingPosition())
+        val seeingPosition = listViewModel.listModel.getSeeingPosition()
+        if (seeingPosition > 0 && !(activity is HasNotifiableAppBar && savedInstanceState == null)) {
+            recyclerView.layoutManager!!.scrollToPosition(seeingPosition)
+        }
 
         adapterObservableBinder = recyclerView.convertObservableConsumer()
 

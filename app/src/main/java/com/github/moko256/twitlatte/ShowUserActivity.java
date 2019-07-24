@@ -68,7 +68,8 @@ public class ShowUserActivity
         BaseListFragment.GetViewForSnackBar,
         BaseTweetListFragment.GetRecyclerViewPool,
         BaseUsersFragment.GetRecyclerViewPool,
-        HasRefreshLayoutInterface {
+        HasRefreshLayoutInterface,
+        HasNotifiableAppBar {
 
     private UserInfoViewModel viewModel;
     private Client client;
@@ -162,6 +163,11 @@ public class ShowUserActivity
         if (savedInstanceState == null) {
             viewModel.loadData(true);
         }
+    }
+
+    @Override
+    public void requestAppBarCollapsed() {
+        appBarLayout.setExpanded(false, true);
     }
 
     @NotNull
