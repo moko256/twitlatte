@@ -35,6 +35,7 @@ import com.github.moko256.twitlatte.ShowMediasActivity
 import com.github.moko256.twitlatte.text.TwitterStringUtils
 import com.github.moko256.twitlatte.view.dpToPx
 import jp.wasabeef.glide.transformations.BlurTransformation
+import kotlin.math.min
 
 /**
  * Created by moko256 on 2019/01/21.
@@ -120,12 +121,12 @@ class ImagesTableView @JvmOverloads constructor(
         container.setOnLongClickListener { this@ImagesTableView.performLongClick() }
 
         container.setOnClickListener {
-            imageTableData?.medias?.let { medias ->
+            imageTableData?.let { imageTableData ->
                 if (isOpen) {
-                    context.startActivity(ShowMediasActivity.getIntent(context, medias, clientType, index))
+                    context.startActivity(ShowMediasActivity.getIntent(context, imageTableData.medias, clientType, index))
                 } else {
                     isOpen = true
-                    updateImages(medias)
+                    updateImages(imageTableData)
                 }
             }
         }
@@ -158,19 +159,20 @@ class ImagesTableView @JvmOverloads constructor(
             }
         }
 
-        imageTableData = ImageTableData(newMedias, requestManager)
-        displayingMediaSize = Math.min(newSize, maxMediaSize)
+        val data = ImageTableData(newMedias, requestManager)
+        imageTableData = data
+        displayingMediaSize = min(newSize, maxMediaSize)
         invalidate()
-        updateImages(newMedias)
+        updateImages(data)
     }
 
-    private fun updateImages(medias: Array<Media>) {
-        medias.forEachIndexed { index, media ->
-            setMediaToView(media, getContainer(index))
+    private fun updateImages(imageTableData: ImageTableData) {
+        imageTableData.medias.forEachIndexed { index, media ->
+            setMediaToView(media, getContainer(index), imageTableData.requestManager)
         }
     }
 
-    private fun setMediaToView(media: Media, view: FrameLayout) {
+    private fun setMediaToView(media: Media, view: FrameLayout, requestManager: RequestManager) {
         val thumbnailUrl = media.thumbnailUrl
         val originalUrl = media.originalUrl
 
@@ -180,15 +182,15 @@ class ImagesTableView @JvmOverloads constructor(
         val markImage = view.getChildAt(2)
 
         if (isOpen) {
-            imageTableData?.requestManager
-                    ?.load(
+            requestManager
+                    .load(
                             if (imageLoadMode == "normal")
                                 TwitterStringUtils.convertSmallImageUrl(clientType, url)
                             else
                                 TwitterStringUtils.convertThumbImageUrl(clientType, url)
                     )
-                    ?.transition(DrawableTransitionOptions.withCrossFade())
-                    ?.into(imageView)
+                    .transition(DrawableTransitionOptions.withCrossFade())
+                    .into(imageView)
             when (media.mediaType) {
                 "audio", "video_one", "video_multi" -> {
                     imageView.setFilterIfNotExist()
@@ -209,16 +211,16 @@ class ImagesTableView @JvmOverloads constructor(
         } else {
             val timelineImageLoadMode = imageLoadMode
             if (timelineImageLoadMode != "none") {
-                imageTableData?.requestManager
-                        ?.load(
+                requestManager
+                        .load(
                                 if (timelineImageLoadMode == "normal")
                                     TwitterStringUtils.convertSmallImageUrl(clientType, url)
                                 else
                                     TwitterStringUtils.convertThumbImageUrl(clientType, url)
                         )
-                        ?.transform(BlurTransformation())
-                        ?.transition(DrawableTransitionOptions.withCrossFade())
-                        ?.into(imageView)
+                        .transform(BlurTransformation())
+                        .transition(DrawableTransitionOptions.withCrossFade())
+                        .into(imageView)
             } else {
                 imageView.setImageResource(R.drawable.border_frame)
             }
