@@ -17,18 +17,19 @@
 
 <!-- copied from ExoPlayer/library/ui/src/main/res/exo_player_control_view.xml -->
 
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.github.moko256.twitlatte.widget.FitSystemWindowsRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#33000000">
+    android:background="#33000000"
+    android:fitsSystemWindows="true">
 
     <ImageButton android:id="@id/exo_play"
         android:background="?android:attr/selectableItemBackground"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:layout_gravity="center"
+        android:layout_centerInParent="true"
         android:scaleType="fitCenter"
         app:srcCompat="@drawable/ic_play_circle_filled_white_24dp"
         android:contentDescription="@string/exo_controls_play_description"/>
@@ -37,49 +38,47 @@
         android:background="?android:attr/selectableItemBackground"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:layout_gravity="center"
+        android:layout_centerInParent="true"
         android:scaleType="fitCenter"
         app:srcCompat="@drawable/ic_pause_circle_filled_white_24dp"
         android:contentDescription="@string/exo_controls_pause_description"/>
 
-    <com.github.moko256.twitlatte.widget.FitSystemWindowsLinearLayout
-        android:id="@+id/trend_text"
-        android:layout_width="match_parent"
+    <TextView android:id="@id/exo_position"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:paddingBottom="16dp"
-        android:fitsSystemWindows="true"
-        android:orientation="horizontal">
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="20dp"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:paddingLeft="4dp"
+        android:paddingRight="4dp"
+        android:includeFontPadding="false"
+        android:textColor="#FFBEBEBE"
+        tools:text="00:00"/>
 
-        <TextView android:id="@id/exo_position"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:paddingLeft="4dp"
-            android:paddingRight="4dp"
-            android:includeFontPadding="false"
-            android:textColor="#FFBEBEBE"
-            tools:text="00:00"/>
+    <TextView android:id="@id/exo_duration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="20dp"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:paddingLeft="4dp"
+        android:paddingRight="4dp"
+        android:includeFontPadding="false"
+        android:textColor="#FFBEBEBE"
+        tools:text="10:00"/>
 
-        <com.google.android.exoplayer2.ui.DefaultTimeBar
-            android:id="@id/exo_progress"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="26dp"
-            app:played_color="@color/color_accent"/>
+    <com.google.android.exoplayer2.ui.DefaultTimeBar
+        android:id="@id/exo_progress"
+        android:layout_width="match_parent"
+        android:layout_height="26dp"
+        android:layout_toEndOf="@+id/exo_position"
+        android:layout_toStartOf="@+id/exo_duration"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="16dp"
+        app:played_color="@color/color_accent"/>
 
-        <TextView android:id="@id/exo_duration"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:paddingLeft="4dp"
-            android:paddingRight="4dp"
-            android:includeFontPadding="false"
-            android:textColor="#FFBEBEBE"
-            tools:text="10:00"/>
-
-    </com.github.moko256.twitlatte.widget.FitSystemWindowsLinearLayout>
-
-</FrameLayout>
+</com.github.moko256.twitlatte.widget.FitSystemWindowsRelativeLayout>
