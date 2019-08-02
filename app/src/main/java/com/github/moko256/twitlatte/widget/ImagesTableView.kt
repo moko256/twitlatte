@@ -90,7 +90,7 @@ class ImagesTableView @JvmOverloads constructor(
                 ?: generateChild(index)
                         .also {
                             containerViews[index] = it
-                            addView(it, index)
+                            addViewInLayout(it, index, generateDefaultLayoutParams())
                         }
     }
 
