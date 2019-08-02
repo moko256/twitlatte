@@ -41,7 +41,7 @@ class FitSystemWindowsRelativeLayout @JvmOverloads constructor(
                     insets.systemWindowInsetRight,
                     insets.systemWindowInsetBottom
             )
-            super.onApplyWindowInsets(insets)
+            insets.consumeSystemWindowInsets()
         } else {
             insets
         }
