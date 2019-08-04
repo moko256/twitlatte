@@ -76,7 +76,12 @@ public class TokenSQLiteOpenHelper extends SQLiteOpenHelper {
             DBUtilKt.addColumn(sqLiteDatabase, TABLE_NAME, "consumerSecret", null);
         }
         if (oldVersion < 4) {
-            AccessToken[] accessTokens = getAccessTokenInternal(sqLiteDatabase);
+            AccessToken[] accessTokens;
+            try {
+                accessTokens = getAccessTokenInternal(sqLiteDatabase);
+            } catch (Throwable throwable) {
+                accessTokens = new AccessToken[0];
+            }
             sqLiteDatabase.execSQL("drop table if exists " + TABLE_NAME);
             sqLiteDatabase.execSQL("drop index if exists idindex");
             onCreate(sqLiteDatabase);
