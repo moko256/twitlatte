@@ -16,6 +16,8 @@
 
 package com.github.moko256.twitlatte.mediaview
 
+import android.media.AudioManager.STREAM_MUSIC
+import android.media.AudioManager.USE_DEFAULT_STREAM_TYPE
 import android.net.Uri
 import android.os.Bundle
 import android.view.MenuItem
@@ -135,11 +137,13 @@ abstract class AbstractVideoFragment : AbstractMediaFragment(), Player.EventList
 
     override fun onResume() {
         super.onResume()
+        activity?.volumeControlStream = STREAM_MUSIC
         updatePlayingStatus(true)
     }
 
     override fun onPause() {
         updatePlayingStatus(false)
+        activity?.volumeControlStream = USE_DEFAULT_STREAM_TYPE
         super.onPause()
     }
 
