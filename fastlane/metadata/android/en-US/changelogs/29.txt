@@ -1,0 +1,6 @@
+Feature:
+- New profile UI
+
+Fixed problems:
+- Unable to scale images
+- Unable to open links of tweet/user via twitlatte in some case
