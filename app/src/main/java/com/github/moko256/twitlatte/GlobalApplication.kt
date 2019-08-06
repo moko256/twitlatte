@@ -19,6 +19,7 @@ package com.github.moko256.twitlatte
 import android.app.Activity
 import android.app.Application
 import android.content.Intent
+import android.os.Looper
 import android.preference.PreferenceManager
 import androidx.appcompat.app.AppCompatDelegate
 import com.bumptech.glide.GlideInitializer
@@ -39,6 +40,8 @@ import com.github.moko256.twitlatte.repository.KEY_ACCOUNT_KEY
 import com.github.moko256.twitlatte.repository.KEY_NIGHT_MODE
 import com.github.moko256.twitlatte.repository.PreferenceRepository
 import com.github.moko256.twitlatte.text.convertToAppCompatNightThemeMode
+import io.reactivex.android.plugins.RxAndroidPlugins
+import io.reactivex.android.schedulers.AndroidSchedulers
 
 /**
  * Created by moko256 on 2016/04/30.
@@ -63,6 +66,10 @@ class GlobalApplication : Application() {
     internal lateinit var accountsModel: AccountsModel
 
     override fun onCreate() {
+        RxAndroidPlugins.setInitMainThreadSchedulerHandler {
+            AndroidSchedulers.from(Looper.getMainLooper(), true)
+        }
+
         preferenceRepository = PreferenceRepository(
                 PreferenceManager.getDefaultSharedPreferences(this)
         )
