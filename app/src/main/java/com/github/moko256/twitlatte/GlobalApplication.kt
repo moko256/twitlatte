@@ -54,15 +54,14 @@ const val LIMIT_OF_SIZE_OF_STATUSES_LIST = 1000
 
 lateinit var preferenceRepository: PreferenceRepository
 
-private val apiClientCache = LruCache<Int, ApiClient>(4)
-private val userCache = UserCacheMap()
-private val statusCache = StatusCacheMap()
-private val friendshipCache = LruCache<Long, Friendship>(20)
-
 class GlobalApplication : Application() {
 
-    internal var currentClient: Client? = null
+    private val apiClientCache = LruCache<Int, ApiClient>(4)
+    private val userCache = UserCacheMap()
+    private val statusCache = StatusCacheMap()
+    private val friendshipCache = LruCache<Long, Friendship>(20)
 
+    internal var currentClient: Client? = null
     internal lateinit var accountsModel: AccountsModel
 
     override fun onCreate() {
