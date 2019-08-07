@@ -54,11 +54,11 @@ class TrendsFragment : BaseListFragment() {
         viewModel.trends.observe(this, Observer {
             adapter.data = it
             adapter.notifyDataSetChanged()
-            setRefreshing(false)
+            isRefreshing = false
         })
         viewModel.errors.observe(this, Observer {
             notifyErrorBySnackBar(it).show()
-            setRefreshing(false)
+            isRefreshing = false
         })
         viewModel.load(withoutCache = false)
     }
@@ -85,7 +85,7 @@ class TrendsFragment : BaseListFragment() {
     override fun onInitializeList() {}
 
     override fun onUpdateList() {
-        setRefreshing(true)
+        isRefreshing = true
         viewModel.load(withoutCache = true)
     }
 

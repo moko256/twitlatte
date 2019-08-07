@@ -204,7 +204,7 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
 
             header.setOnClickListener(v -> startActivity(
                     ShowMediasActivity.Companion.getIntent(
-                            getContext(),
+                            v.getContext(),
                             new Media[]{
                                     new Media(
                                             null,
@@ -231,7 +231,7 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
 
         icon.setOnClickListener(v -> startActivity(
                 ShowMediasActivity.Companion.getIntent(
-                        getContext(),
+                        v.getContext(),
                         new Media[]{
                                 new Media(
                                         null,

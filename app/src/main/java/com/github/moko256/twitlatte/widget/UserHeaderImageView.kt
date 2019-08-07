@@ -18,7 +18,6 @@ package com.github.moko256.twitlatte.widget
 
 import android.content.Context
 import android.util.AttributeSet
-import android.view.View
 import androidx.appcompat.widget.AppCompatImageView
 
 /**
@@ -35,13 +34,13 @@ class UserHeaderImageView @JvmOverloads constructor(
     var widthPerHeight: Int = 1
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        val modifiedWidthMeasureSpec = View.MeasureSpec.makeMeasureSpec(
-                View.MeasureSpec.getSize(widthMeasureSpec),
-                View.MeasureSpec.EXACTLY
+        val modifiedWidthMeasureSpec = MeasureSpec.makeMeasureSpec(
+                MeasureSpec.getSize(widthMeasureSpec),
+                MeasureSpec.EXACTLY
         )
-        val modifiedHeightMeasureSpec = View.MeasureSpec.makeMeasureSpec(
-                View.MeasureSpec.getSize(widthMeasureSpec) / widthPerHeight,
-                View.MeasureSpec.EXACTLY
+        val modifiedHeightMeasureSpec = MeasureSpec.makeMeasureSpec(
+                MeasureSpec.getSize(widthMeasureSpec) / widthPerHeight,
+                MeasureSpec.EXACTLY
         )
         setMeasuredDimension(modifiedWidthMeasureSpec, modifiedHeightMeasureSpec)
     }

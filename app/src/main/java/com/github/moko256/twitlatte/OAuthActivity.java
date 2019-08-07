@@ -40,6 +40,8 @@ import com.github.moko256.twitlatte.net.OkHttpHolderKt;
 import com.github.moko256.twitlatte.view.DialogContent;
 import com.github.moko256.twitlatte.view.EditTextsDialogShowerKt;
 
+import org.jetbrains.annotations.NotNull;
+
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -128,7 +130,7 @@ public class OAuthActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(@NotNull Bundle outState) {
         super.onSaveInstanceState(outState);
         if (requirePin) {
             outState.putBoolean(STATE_REQUIRE_PIN, true);
@@ -171,8 +173,8 @@ public class OAuthActivity extends AppCompatActivity {
         if (model != null
                 && !requirePin
                 && uri != null
-                && uri.getScheme().equals(getString(R.string.app_name))
-                && uri.getHost().equals("OAuthActivity")
+                && getString(R.string.app_name).equals(uri.getScheme())
+                && "OAuthActivity".equals(uri.getHost())
         ) {
 
             String string = uri.getQueryParameter("oauth_verifier");

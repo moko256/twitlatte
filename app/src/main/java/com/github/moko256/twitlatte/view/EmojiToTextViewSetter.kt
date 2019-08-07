@@ -43,6 +43,7 @@ import java.io.InputStream
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
+import kotlin.math.roundToInt
 
 /**
  * Created by moko256 on 2018/07/20.
@@ -151,14 +152,12 @@ class EmojiToTextViewSetter(
                         val aspect = drawable.intrinsicWidth / drawable.intrinsicHeight
                         drawable.setBounds(
                                 0, 0,
-                                Math.round(
-                                        if (aspect == 1) {
-                                            imageSize
-                                        } else {
-                                            imageSize * aspect
-                                        }
-                                ),
-                                Math.round(imageSize)
+                                if (aspect == 1) {
+                                    imageSize
+                                } else {
+                                    imageSize * aspect
+                                }.roundToInt(),
+                                imageSize.roundToInt()
                         )
 
                         map[emoji.shortCode]?.forEach {

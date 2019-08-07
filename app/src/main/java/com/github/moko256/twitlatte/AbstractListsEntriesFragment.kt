@@ -62,7 +62,7 @@ abstract class AbstractListsEntriesFragment : BaseListFragment(), ToolbarTitleIn
         val listEntries = helper.getListEntries()
         if (listEntries.isNotEmpty()) {
             list.addAll(listEntries)
-            setRefreshing(false)
+            isRefreshing = false
         }
     }
 
@@ -97,7 +97,7 @@ abstract class AbstractListsEntriesFragment : BaseListFragment(), ToolbarTitleIn
     }
 
     override fun onInitializeList() {
-        setRefreshing(true)
+        isRefreshing = true
         disposable.add(
                 getResponseSingle()
                         .subscribeOn(Schedulers.io())
@@ -107,12 +107,12 @@ abstract class AbstractListsEntriesFragment : BaseListFragment(), ToolbarTitleIn
                                     list.clear()
                                     list.addAll(result)
                                     adapter.notifyDataSetChanged()
-                                    setRefreshing(false)
+                                    isRefreshing = false
                                 },
                                 { e ->
                                     e.printStackTrace()
                                     notifyErrorBySnackBar(e).show()
-                                    setRefreshing(false)
+                                    isRefreshing = false
                                 }
                         )
         )

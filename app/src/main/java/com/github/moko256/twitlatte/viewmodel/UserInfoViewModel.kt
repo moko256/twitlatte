@@ -110,11 +110,11 @@ class UserInfoViewModel : ViewModel() {
                         .subscribe(
                                 {
                                     if (it is Friendship) {
-                                        friendship.setValue(it)
+                                        friendship.value = it
                                     }
-                                    action.setValue(name)
+                                    action.value = name
                                 },
-                                { error.setValue(it) }
+                                { error.value = it }
                         )
         )
     }

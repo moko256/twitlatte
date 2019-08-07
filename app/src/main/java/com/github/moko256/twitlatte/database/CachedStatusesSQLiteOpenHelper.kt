@@ -515,7 +515,7 @@ class CachedStatusesSQLiteOpenHelper(
     }
 }
 
-private fun String?.splitWithCommaAndReplaceEmptyWithNull(): List<String?>? {
+internal fun String?.splitWithCommaAndReplaceEmptyWithNull(): List<String?>? {
     return if (this != null && isNotEmpty()) {
         this.split(",")
                 .map {

@@ -31,7 +31,7 @@ class LruCache<K, V>(capacity: Int) {
 
     fun get(key: K): V? {
         synchronized(this) {
-            return map.get(key)
+            return map[key]
         }
     }
 

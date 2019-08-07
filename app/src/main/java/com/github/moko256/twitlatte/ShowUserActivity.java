@@ -388,8 +388,8 @@ public class ShowUserActivity
     }
 
     private static class ScrollListener implements ViewPager.OnPageChangeListener, AppBarLayout.OnOffsetChangedListener {
-        private SwipeRefreshLayout swipeRefreshLayout;
-        private CollapsingToolbarLayout collapsingToolbarLayout;
+        private final SwipeRefreshLayout swipeRefreshLayout;
+        private final CollapsingToolbarLayout collapsingToolbarLayout;
 
         ScrollListener(AppBarLayout appBarLayout, ViewPager viewPager, SwipeRefreshLayout swipeRefreshLayout, CollapsingToolbarLayout collapsingToolbarLayout) {
             this.swipeRefreshLayout = swipeRefreshLayout;

@@ -99,8 +99,10 @@ public abstract class BaseListFragment extends Fragment implements LoadScrollLis
         isRefreshAvailable = true;
         swipeRefreshLayout.setRefreshing(isProgressCircleLoading);
         swipeRefreshLayout.setOnRefreshListener(this);
-        if (adapterDataObserver != null) {
-            recyclerView.getAdapter().registerAdapterDataObserver(adapterDataObserver);
+
+        RecyclerView.Adapter adapter = recyclerView.getAdapter();
+        if (adapterDataObserver != null && adapter != null) {
+            adapter.registerAdapterDataObserver(adapterDataObserver);
         }
 
         if (!isInitializedList()) {
@@ -110,8 +112,9 @@ public abstract class BaseListFragment extends Fragment implements LoadScrollLis
 
     @Override
     public void onPause() {
-        if (adapterDataObserver != null) {
-            recyclerView.getAdapter().unregisterAdapterDataObserver(adapterDataObserver);
+        RecyclerView.Adapter adapter = recyclerView.getAdapter();
+        if (adapterDataObserver != null && adapter != null) {
+            adapter.unregisterAdapterDataObserver(adapterDataObserver);
         }
 
         isRefreshAvailable = false;

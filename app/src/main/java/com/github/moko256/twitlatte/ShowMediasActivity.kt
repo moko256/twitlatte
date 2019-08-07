@@ -24,7 +24,6 @@ import com.github.moko256.latte.client.base.CLIENT_TYPE_NOTHING
 import com.github.moko256.latte.client.base.entity.Media
 import com.github.moko256.twitlatte.widget.ViewPager
 import java.io.Serializable
-import java.util.*
 
 /**
  * Created by moko256 on 2016/06/26.
@@ -70,7 +69,7 @@ class ShowMediasActivity : AppCompatActivity() {
 
         fun getIntent(context: Context, entities: Array<Media>, clientType: Int, position: Int): Intent {
             return Intent(context, ShowMediasActivity::class.java)
-                    .putExtra(FRAG_MEDIA_ENTITIES, Arrays.asList(*entities) as Serializable)
+                    .putExtra(FRAG_MEDIA_ENTITIES, listOf(*entities) as Serializable)
                     .putExtra(FRAG_CLIENT_TYPE, clientType)
                     .putExtra(FRAG_POSITION, position)
         }

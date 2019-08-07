@@ -91,8 +91,8 @@ public class PostActivity extends AppCompatActivity {
     private static final String OUT_STATE_EXTRA_IMAGE_URI_LIST = "image_uri_list";
     private static final int REQUEST_GET_IMAGE = 10;
     private static final int REQUEST_CODE_PERMISSION_LOCATION = 400;
-    private static final String[] POST_VISIBILITY = {"Public", "Unlisted", "Private", "Direct"};
-    private static final long[] POLL_EXPIRED_AT = {
+    protected static final String[] POST_VISIBILITY = {"Public", "Unlisted", "Private", "Direct"};
+    protected static final long[] POLL_EXPIRED_AT = {
             5 * 60,
             30 * 60,
             60 * 60,
@@ -103,7 +103,7 @@ public class PostActivity extends AppCompatActivity {
     };
 
     private Client client;
-    private PostStatusModel model;
+    protected PostStatusModel model;
 
     private boolean isPosting = false;
 
@@ -137,6 +137,7 @@ public class PostActivity extends AppCompatActivity {
 
     private CompositeDisposable disposable;
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -312,10 +313,15 @@ public class PostActivity extends AppCompatActivity {
                     emoji -> {
                         int selectionEnd = editText.getSelectionEnd();
                         String shortCode = emoji.getShortCode();
-                        editText.getText()
-                                .insert(selectionEnd, ":")
-                                .insert(selectionEnd + 1, shortCode)
-                                .insert(selectionEnd + 1 + shortCode.length(), ": ");
+                        Editable text = editText.getText();
+                        if (text != null) {
+                            text
+                                    .insert(selectionEnd, ":")
+                                    .insert(selectionEnd + 1, shortCode)
+                                    .insert(selectionEnd + 1 + shortCode.length(), ": ");
+                        } else {
+                            editText.setText(":" + shortCode + ": ");
+                        }
                         editText.setSelection(selectionEnd + shortCode.length() + 3);
                         return Unit.INSTANCE;
                     },
@@ -548,7 +554,7 @@ public class PostActivity extends AppCompatActivity {
     }
 
     @SuppressLint("SetTextI18n")
-    private void updateCounter() {
+    protected void updateCounter() {
         counterTextView.setText(model.getTweetLength() + " / " + model.getStatusTextLimit());
         counterTextView.setTextColor(
                 model.isValid() ?
@@ -703,7 +709,8 @@ public class PostActivity extends AppCompatActivity {
 
     @Override
     public boolean onSupportNavigateUp() {
-        if (editText.getText().length() > 0 || addedImagesAdapter.getImagesList().size() > 0) {
+        Editable text = editText.getText();
+        if ((text != null && text.length() > 0) || addedImagesAdapter.getImagesList().size() > 0) {
             new AlertDialog.Builder(this)
                     .setMessage(R.string.confirm_discard_post)
                     .setPositiveButton(R.string.do_discard, (dialog, which) -> finish())

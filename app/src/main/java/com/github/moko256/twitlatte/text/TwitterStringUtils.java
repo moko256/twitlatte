@@ -171,24 +171,28 @@ public class TwitterStringUtils {
                         break;
                     case "user":
                         String name = uri.getLastPathSegment();
-                        if (name.split("@")[0].equals(accessToken.getScreenName())) {
-                            span = new ClickableBoldSpan() {
-                                @Override
-                                public void onClick(@NonNull View view) {
-                                    context.startActivity(
-                                            ShowUserActivity.getIntent(context, uri.getLastPathSegment())
-                                    );
-                                }
-                            };
+                        if (name != null) {
+                            if (name.split("@")[0].equals(accessToken.getScreenName())) {
+                                span = new ClickableBoldSpan() {
+                                    @Override
+                                    public void onClick(@NonNull View view) {
+                                        context.startActivity(
+                                                ShowUserActivity.getIntent(context, name)
+                                        );
+                                    }
+                                };
+                            } else {
+                                span = new ClickableNoLineSpan() {
+                                    @Override
+                                    public void onClick(@NonNull View view) {
+                                        context.startActivity(
+                                                ShowUserActivity.getIntent(context, name)
+                                        );
+                                    }
+                                };
+                            }
                         } else {
-                            span = new ClickableNoLineSpan() {
-                                @Override
-                                public void onClick(@NonNull View view) {
-                                    context.startActivity(
-                                            ShowUserActivity.getIntent(context, uri.getLastPathSegment())
-                                    );
-                                }
-                            };
+                            span = null;
                         }
                         break;
                     default:
