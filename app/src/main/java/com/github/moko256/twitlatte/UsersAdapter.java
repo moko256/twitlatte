@@ -35,6 +35,7 @@ import com.github.moko256.latte.client.base.entity.Emoji;
 import com.github.moko256.latte.client.base.entity.User;
 import com.github.moko256.twitlatte.cacheMap.UserCacheMap;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
+import com.github.moko256.twitlatte.view.DpToPxKt;
 import com.github.moko256.twitlatte.view.EmojiToTextViewSetter;
 
 import java.util.List;
@@ -87,7 +88,11 @@ class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> {
 
         if (item != null) {
             requestManager
-                    .load(converter.convertProfileIconLargeUrl(item))
+                    .load(
+                            converter.convertProfileIconUriBySize(
+                                    item, DpToPxKt.dpToPx(context, 40)
+                            )
+                    )
                     .circleCrop()
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .into(viewHolder.userUserImage);

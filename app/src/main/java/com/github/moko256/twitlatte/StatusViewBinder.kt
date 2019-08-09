@@ -40,6 +40,7 @@ import com.github.moko256.twitlatte.repository.KEY_HIDE_SENSITIVE_MEDIA
 import com.github.moko256.twitlatte.repository.KEY_TIMELINE_IMAGE_LOAD_MODE
 import com.github.moko256.twitlatte.text.TwitterStringUtils
 import com.github.moko256.twitlatte.view.EmojiToTextViewSetter
+import com.github.moko256.twitlatte.view.dpToPx
 import com.github.moko256.twitlatte.widget.CheckableImageView
 import com.github.moko256.twitlatte.widget.ImagesTableView
 import io.reactivex.disposables.CompositeDisposable
@@ -214,9 +215,12 @@ class StatusViewBinder(viewGroup: View) {
                     .load(
                             user?.let {
                                 if (timelineImageLoadMode == "normal")
-                                    mediaUrlConverter.convertProfileIconLargeUrl(it)
+                                    mediaUrlConverter.convertProfileIconUriBySize(
+                                            it,
+                                            resources.dpToPx(40)
+                                    )
                                 else
-                                    mediaUrlConverter.convertProfileIconSmallUrl(it)
+                                    mediaUrlConverter.convertProfileIconSmallestUrl(it)
                             }
                     )
                     .circleCrop()

@@ -34,6 +34,7 @@ import com.github.moko256.latte.client.base.entity.AccessToken;
 import com.github.moko256.latte.client.base.entity.User;
 import com.github.moko256.twitlatte.api.MediaUrlConverterGeneratorKt;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
+import com.github.moko256.twitlatte.view.DpToPxKt;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -102,7 +103,14 @@ public class SelectAccountsAdapter extends RecyclerView.Adapter<SelectAccountsAd
 
                 if (user != null) {
 
-                    Uri image = Uri.parse(MediaUrlConverterGeneratorKt.generateMediaUrlConverter(accessToken.getClientType()).convertProfileIconLargeUrl(user));
+                    Uri image = Uri.parse(
+                            MediaUrlConverterGeneratorKt.generateMediaUrlConverter(
+                                    accessToken.getClientType()
+                            ).convertProfileIconUriBySize(
+                                    user,
+                                    DpToPxKt.dpToPx(context, 40)
+                            )
+                    );
                     holder.title.setText(TwitterStringUtils.plusAtMark(user.getScreenName(), accessToken.getUrl()));
                     Glide
                             .with(holder.itemView)

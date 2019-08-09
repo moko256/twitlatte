@@ -181,7 +181,13 @@ public class PostActivity extends AppCompatActivity {
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
                                 user -> requestManager
-                                        .load(client.getMediaUrlConverter().convertProfileIconLargeUrl(user))
+                                        .load(
+                                                client.getMediaUrlConverter()
+                                                        .convertProfileIconUriBySize(
+                                                                user,
+                                                                dp36
+                                                        )
+                                        )
                                         .circleCrop()
                                         .into(userIcon),
                                 Throwable::printStackTrace

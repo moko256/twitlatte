@@ -20,8 +20,8 @@ import com.github.moko256.latte.client.base.entity.User
 
 interface MediaUrlConverter {
 
-    fun convertProfileIconSmallUrl(user: User): String
-    fun convertProfileIconLargeUrl(user: User): String
+    fun convertProfileIconSmallestUrl(user: User): String
+    fun convertProfileIconUriBySize(user: User, sizePx: Int): String
     fun convertProfileIconOriginalUrl(user: User): String
 
     fun convertProfileBannerSmallUrl(user: User): String?

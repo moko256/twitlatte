@@ -58,6 +58,7 @@ import com.github.moko256.twitlatte.entity.Client;
 import com.github.moko256.twitlatte.model.AccountsModel;
 import com.github.moko256.twitlatte.rx.VerifyCredentialOnSubscribe;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
+import com.github.moko256.twitlatte.view.DpToPxKt;
 import com.github.moko256.twitlatte.view.EmojiToTextViewSetter;
 import com.github.moko256.twitlatte.widget.FragmentPagerAdapter;
 import com.google.android.material.navigation.NavigationView;
@@ -510,7 +511,13 @@ public class MainActivity extends AppCompatActivity implements
                                     userImage.setOnClickListener(v -> startMyUserActivity());
 
                                     MediaUrlConverter mediaUrlConverter = client.getMediaUrlConverter();
-                                    requests.load(mediaUrlConverter.convertProfileIconLargeUrl(user))
+                                    requests
+                                            .load(
+                                                    mediaUrlConverter.convertProfileIconUriBySize(
+                                                            user,
+                                                            DpToPxKt.dpToPx(this, 64)
+                                                    )
+                                            )
                                             .circleCrop()
                                             .transition(DrawableTransitionOptions.withCrossFade())
                                             .into(userImage);

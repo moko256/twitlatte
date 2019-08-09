@@ -52,6 +52,7 @@ import com.github.moko256.twitlatte.entity.Client;
 import com.github.moko256.twitlatte.intent.AppCustomTabsKt;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
 import com.github.moko256.twitlatte.text.style.ClickableNoLineSpan;
+import com.github.moko256.twitlatte.view.DpToPxKt;
 import com.github.moko256.twitlatte.view.EmojiToTextViewSetter;
 import com.github.moko256.twitlatte.viewmodel.UserInfoViewModel;
 import com.github.moko256.twitlatte.widget.UserHeaderImageView;
@@ -224,7 +225,12 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
             }
         }
         glideRequests
-                .load(mediaUrlConverter.convertProfileIconLargeUrl(user))
+                .load(
+                        mediaUrlConverter.convertProfileIconUriBySize(
+                                user,
+                                DpToPxKt.dpToPx(this, 68)
+                        )
+                )
                 .circleCrop()
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .into(icon);
