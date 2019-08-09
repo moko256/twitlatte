@@ -104,7 +104,6 @@ public class ShowUserActivity
 
         appBarLayout = findViewById(R.id.appbar_show_user);
         collapsingToolbarLayout = findViewById(R.id.collapsing_toolbar_show_user);
-        collapsingToolbarLayout.setTitleEnabled(true);
         collapsingToolbarLayout.setCollapsedTitleTextColor(Color.WHITE);
         viewPager = findViewById(R.id.show_user_view_pager);
 
@@ -420,7 +419,10 @@ public class ShowUserActivity
         public void onOffsetChanged(AppBarLayout appBarLayout, int i) {
             appBarStopping = i == 0;
             updatePullToRefresh();
-            collapsingToolbarLayout.setTitleEnabled(Math.abs(i) >= appBarLayout.getTotalScrollRange());
+            boolean enabled = Math.abs(i) >= appBarLayout.getTotalScrollRange();
+            if (enabled != collapsingToolbarLayout.isTitleEnabled()) {
+                collapsingToolbarLayout.setTitleEnabled(enabled);
+            }
         }
 
         private void updatePullToRefresh() {

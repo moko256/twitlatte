@@ -37,8 +37,9 @@
                 android:id="@+id/collapsing_toolbar_show_user"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:contentScrim="?colorPrimary"
                 app:layout_scrollFlags="scroll|exitUntilCollapsed"
+                app:contentScrim="?colorPrimary"
+                app:titleEnabled="false"
                 app:scrimAnimationDuration="200">
 
                 <fragment
