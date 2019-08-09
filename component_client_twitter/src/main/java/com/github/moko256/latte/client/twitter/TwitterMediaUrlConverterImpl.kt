@@ -38,22 +38,34 @@ object TwitterMediaUrlConverterImpl : MediaUrlConverter {
     override fun convertProfileIconOriginalUrl(user: User) = user.profileImageURLHttps.toResizedURL("")
 
     private fun String.toResizedURL(sizeSuffix: String): String {
-        if (isNotEmpty()) {
+        return if (isNotEmpty()) {
+            val sizeSuffixLength = sizeSuffix.length
+            val characters = CharArray(length + sizeSuffixLength)
             val index = lastIndexOf('_')
             val suffixIndex = lastIndexOf('.')
             val slashIndex = lastIndexOf('/')
-            var url = substring(0, index) + sizeSuffix
+            var size = 0
+            characters.append(this, size, 0, index)
+            size += index
+            characters.append(sizeSuffix, size, 0, sizeSuffixLength)
+            size+=sizeSuffixLength
             if (suffixIndex > slashIndex) {
-                url += substring(suffixIndex)
+                characters.append(this, size, suffixIndex, length)
+                size += length - suffixIndex
             }
-            return url
+            String(characters, 0, size)
+        } else {
+            this
         }
-        return this
     }
 
-    override fun convertProfileBannerSmallUrl(user: User)
-            = user.profileBannerImageUrl?.let { "$it/web_retina" }
+    private fun CharArray.append(s: String, size: Int, start: Int, end: Int) {
+        s.toCharArray(this, size, start, end)
+    }
 
-    override fun convertProfileBannerLargeUrl(user: User)
-            = user.profileBannerImageUrl?.let { "$it/1500x500" }
+    override fun convertProfileBannerSmallUrl(user: User) =
+            user.profileBannerImageUrl?.let { "$it/web_retina" }
+
+    override fun convertProfileBannerLargeUrl(user: User) =
+            user.profileBannerImageUrl?.let { "$it/1500x500" }
 }
