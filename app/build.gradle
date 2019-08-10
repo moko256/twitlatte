@@ -95,8 +95,8 @@ dependencies {
     implementation 'androidx.preference:preference:1.1.0-rc01'
     implementation 'androidx.browser:browser:1.0.0'
 
-    implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel:2.0.0'
+    //noinspection GradleDependency
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.1.0-rc01'
 
     implementation "com.google.android.exoplayer:exoplayer-core:$exoplayerVersion"
     implementation "com.google.android.exoplayer:exoplayer-hls:$exoplayerVersion"
