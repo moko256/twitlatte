@@ -17,6 +17,7 @@
 package com.github.moko256.twitlatte.cacheMap
 
 import com.github.moko256.latte.client.base.entity.*
+import io.reactivex.subjects.BehaviorSubject
 import java.util.*
 
 /**
@@ -28,6 +29,8 @@ class PostCache(
         private val statusCache: StatusCacheMap,
         private val userCache: UserCacheMap
 ) {
+    val updatedEntities = BehaviorSubject.create<UpdatedEntities>()
+
     fun getPost(postId: Long): Post? {
         return statusCache.get(postId)?.let { statusObject ->
             val repeat: Repeat?
@@ -78,12 +81,25 @@ class PostCache(
 
     fun add(status: Post, incrementCount: Boolean) {
         if (status.repeat == null && status.quotedRepeatingStatus == null) {
-            status.user?.let {
-                userCache.add(it)
+            val users: List<User>
+            val statuses: List<StatusObject>
+
+            val user = status.user
+            if (user != null) {
+                userCache.add(user)
+                users = listOf(user)
+            } else {
+                users = emptyList()
             }
-            status.status?.let {
-                statusCache.add(it, incrementCount)
+            val statusObject = status.status
+            if (statusObject != null) {
+                statusCache.add(statusObject, incrementCount)
+                statuses = listOf(statusObject)
+            } else {
+                statuses = emptyList()
             }
+
+            updatedEntities.onNext(UpdatedEntities(statuses, users))
         } else {
             addAll(listOf(status), incrementCount)
         }
@@ -143,6 +159,13 @@ class PostCache(
             userCache.addAll(users)
 
             statusCache.addAll(statuses, incrementCount, *excludeIncrementIds)
+
+            updatedEntities.onNext(UpdatedEntities(statuses, users))
         }
     }
+
+    data class UpdatedEntities(
+            val statuses: List<StatusObject>,
+            val users: List<User>
+    )
 }
