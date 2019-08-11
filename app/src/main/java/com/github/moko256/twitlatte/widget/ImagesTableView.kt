@@ -16,16 +16,19 @@
 
 package com.github.moko256.twitlatte.widget
 
+import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Canvas
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
+import android.graphics.drawable.Drawable
 import android.util.AttributeSet
-import android.view.Gravity
 import android.view.View
+import android.view.View.OnLongClickListener
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.appcompat.widget.AppCompatImageView
 import com.bumptech.glide.RequestManager
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.github.moko256.latte.client.base.CLIENT_TYPE_NOTHING
@@ -64,16 +67,23 @@ class ImagesTableView @JvmOverloads constructor(
         )
 
         private const val maxMediaSize = 4
-    }
 
-    private val drawable = AppCompatResources.getDrawable(context, R.drawable.ic_play_arrow_white_24dp)
-    private val gifMark = AppCompatResources.getDrawable(context, R.drawable.ic_gif_white_24dp)
+        private val imageFilter = PorterDuffColorFilter(0x33000000, PorterDuff.Mode.SRC_ATOP)
+    }
 
     private val dp = context.resources.displayMetrics.density
     private val dividerSize = dpToPx(4, dp)
     private val markSize = dpToPx(48, dp)
 
-    private val imageFilter = PorterDuffColorFilter(0x33000000, PorterDuff.Mode.SRC_ATOP)
+    private val drawable = AppCompatResources.getDrawable(context, R.drawable.ic_play_arrow_white_24dp)!!
+            .apply {
+                setBounds(0, 0, markSize, markSize)
+            }
+
+    private val gifMark = AppCompatResources.getDrawable(context, R.drawable.ic_gif_white_24dp)!!
+            .apply {
+                setBounds(0, 0, markSize, markSize)
+            }
 
     private var clientType = CLIENT_TYPE_NOTHING
 
@@ -84,9 +94,11 @@ class ImagesTableView @JvmOverloads constructor(
     private var imageTableData: ImageTableData? = null
     private var displayingMediaSize = 0
 
-    private var containerViews = arrayOfNulls<FrameLayout>(maxMediaSize)
+    private val longClickListener = OnLongClickListener { this.performLongClick() }
 
-    private fun getContainer(index: Int): FrameLayout {
+    private var containerViews = arrayOfNulls<ImageTableImageView>(maxMediaSize)
+
+    private fun getContainer(index: Int): ImageTableImageView {
         return containerViews[index]
                 ?: generateChild(index)
                         .also {
@@ -95,32 +107,17 @@ class ImagesTableView @JvmOverloads constructor(
                         }
     }
 
-    private fun generateChild(index: Int): FrameLayout {
-        val imageView = ImageView(context).apply {
-            layoutParams = FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
-            scaleType = ImageView.ScaleType.CENTER_CROP
-        }
+    private fun generateChild(index: Int): ImageTableImageView {
+        val imageView = ImageTableImageView(
+                context,
+                drawable,
+                gifMark,
+                markSize
+        )
 
-        val playButton = ImageView(context)
-        val playButtonParams = FrameLayout.LayoutParams(markSize, markSize)
-        playButtonParams.gravity = Gravity.CENTER
-        playButton.layoutParams = playButtonParams
-        playButton.setImageDrawable(drawable)
-
-        val markImage = ImageView(context)
-        val markImageParams = FrameLayout.LayoutParams(markSize, markSize)
-        markImageParams.gravity = Gravity.BOTTOM or Gravity.START
-        markImage.layoutParams = markImageParams
-        markImage.setImageDrawable(gifMark)
-
-        val container = FrameLayout(context)
-        container.visibility = View.GONE
-        container.addView(imageView)
-        container.addView(playButton)
-        container.addView(markImage)
-        container.setOnLongClickListener { this@ImagesTableView.performLongClick() }
-
-        container.setOnClickListener {
+        imageView.scaleType = ImageView.ScaleType.CENTER_CROP
+        imageView.setOnLongClickListener(longClickListener)
+        imageView.setOnClickListener {
             imageTableData?.let { imageTableData ->
                 if (isOpen) {
                     context.startActivity(ShowMediasActivity.getIntent(context, imageTableData.medias, clientType, index))
@@ -131,7 +128,7 @@ class ImagesTableView @JvmOverloads constructor(
             }
         }
 
-        return container
+        return imageView
     }
 
     fun setMedias(
@@ -172,14 +169,11 @@ class ImagesTableView @JvmOverloads constructor(
         }
     }
 
-    private fun setMediaToView(media: Media, view: FrameLayout, requestManager: RequestManager) {
+    private fun setMediaToView(media: Media, imageView: ImageTableImageView, requestManager: RequestManager) {
         val thumbnailUrl = media.thumbnailUrl
         val originalUrl = media.originalUrl
 
         val url = thumbnailUrl ?: originalUrl
-        val imageView = view.getChildAt(0) as ImageView
-        val playButton = view.getChildAt(1)
-        val markImage = view.getChildAt(2)
 
         if (isOpen) {
             requestManager
@@ -194,18 +188,18 @@ class ImagesTableView @JvmOverloads constructor(
             when (media.mediaType) {
                 "audio", "video_one", "video_multi" -> {
                     imageView.setFilterIfNotExist()
-                    playButton.visibility = View.VISIBLE
-                    markImage.visibility = View.GONE
+                    imageView.drawPlay = true
+                    imageView.drawGif = false
                 }
                 "gif" -> {
                     imageView.setFilterIfNotExist()
-                    playButton.visibility = View.VISIBLE
-                    markImage.visibility = View.VISIBLE
+                    imageView.drawPlay = true
+                    imageView.drawGif = true
                 }
                 else -> {
                     imageView.removeFilterIfExist()
-                    playButton.visibility = View.GONE
-                    markImage.visibility = View.GONE
+                    imageView.drawPlay = false
+                    imageView.drawGif = false
                 }
             }
         } else {
@@ -226,8 +220,8 @@ class ImagesTableView @JvmOverloads constructor(
             }
 
             imageView.removeFilterIfExist()
-            playButton.visibility = View.GONE
-            markImage.visibility = View.GONE
+            imageView.drawPlay = false
+            imageView.drawGif = false
         }
     }
 
@@ -246,7 +240,7 @@ class ImagesTableView @JvmOverloads constructor(
     fun clearImages() {
         imageTableData?.requestManager?.apply {
             repeat(displayingMediaSize) {
-                clear(getContainer(it).getChildAt(0) as ImageView)
+                clear(getContainer(it))
             }
             imageTableData = null
         }
@@ -323,4 +317,49 @@ class ImagesTableView @JvmOverloads constructor(
             val medias: Array<Media>,
             val requestManager: RequestManager
     )
+
+    @SuppressLint("ViewConstructor")
+    class ImageTableImageView(
+            context: Context,
+            private val play: Drawable,
+            private val gif: Drawable,
+            private val drawableSize: Int
+    ) : AppCompatImageView(context) {
+        var drawPlay = false
+        var drawGif = false
+
+        private var playWidth = 0f
+        private var playHeight = 0f
+        private var gifHeight = 0f
+
+        override fun onDraw(canvas: Canvas) {
+            super.onDraw(canvas)
+            if (drawGif) {
+                canvas.translate(0f, gifHeight)
+                gif.draw(canvas)
+                canvas.translate(0f, -gifHeight)
+            }
+
+            if (drawPlay) {
+                canvas.translate(playWidth, playHeight)
+                play.draw(canvas)
+            }
+        }
+
+        override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+            super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+
+            val width = measuredWidth
+            val height = measuredHeight
+
+            val diffWidthAndSize = width - drawableSize
+            val diffHeightAndSize = height - drawableSize
+            val halfDiffWidthAndSize = diffWidthAndSize / 2
+            val halfDiffHeightAndSize = diffHeightAndSize / 2
+
+            playWidth = halfDiffWidthAndSize.toFloat()
+            playHeight = halfDiffHeightAndSize.toFloat()
+            gifHeight = diffHeightAndSize.toFloat()
+        }
+    }
 }
