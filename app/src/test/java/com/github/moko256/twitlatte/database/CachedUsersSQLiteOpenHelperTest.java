@@ -20,12 +20,12 @@ import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.github.moko256.latte.client.base.entity.User;
+import com.github.moko256.twitlatte.testdata.TestEntityCreatorKt;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.Arrays;
-import java.util.Date;
 
 import static com.github.moko256.twitlatte.testutils.EmptyAccessTokenKt.emptyAccessToken;
 import static org.junit.Assert.assertEquals;
@@ -92,40 +92,6 @@ public class CachedUsersSQLiteOpenHelperTest {
     }
 
     private static User generateUser(final long testId, final String testName) {
-        return new User(
-                testId,
-                testName,
-                "",
-                "",
-                "",
-                false,
-                "",
-                false,
-                "",
-                false,
-                0,
-                "",
-                "",
-                "",
-                "",
-                "",
-                false,
-                false,
-                0,
-                new Date(),
-                0,
-                0,
-                "",
-                "",
-                "",
-                false,
-                "",
-                0,
-                false,
-                false,
-                false,
-                null,
-                null
-        );
+        return TestEntityCreatorKt.testUser(testId, testName);
     }
 }

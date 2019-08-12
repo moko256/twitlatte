@@ -21,13 +21,13 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.github.moko256.latte.client.base.entity.Status;
 import com.github.moko256.latte.client.base.entity.StatusObject;
+import com.github.moko256.twitlatte.testdata.TestEntityCreatorKt;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 
 import static com.github.moko256.twitlatte.testutils.EmptyAccessTokenKt.emptyAccessToken;
 import static org.junit.Assert.assertEquals;
@@ -95,33 +95,6 @@ public class CachedStatusesSQLiteOpenHelperTest {
     }
 
     private static Status generateStatus(final long testId, final String testText) {
-        return new Status(
-                new Date(),
-                testId,
-                0,
-                testText,
-                null,
-                null,
-                0,
-                0,
-                "",
-                false,
-                false,
-                0,
-                0,
-                0,
-                false,
-                "",
-                null,
-                null,
-                null,
-                0,
-                "",
-                "",
-                null,
-                "",
-                null,
-                null
-        );
+        return TestEntityCreatorKt.testStatus(testId, testText, 0);
     }
 }
