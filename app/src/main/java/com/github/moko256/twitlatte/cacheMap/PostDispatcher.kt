@@ -21,7 +21,6 @@ import com.github.moko256.latte.client.base.ApiClient
 import com.github.moko256.latte.client.base.entity.Post
 import io.reactivex.Maybe
 import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
 
@@ -92,7 +91,7 @@ class PostDispatcher(
             disposable.dispose()
             callbacks.get(postId)?.onComplete()
             callbacks.remove(postId)
-        }.observeOn(AndroidSchedulers.mainThread())
+        }
 
     }
 

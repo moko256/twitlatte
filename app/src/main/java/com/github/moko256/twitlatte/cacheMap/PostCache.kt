@@ -81,22 +81,20 @@ class PostCache(
 
     fun add(status: Post, incrementCount: Boolean) {
         if (status.repeat == null && status.quotedRepeatingStatus == null) {
-            val users: List<User>
-            val statuses: List<StatusObject>
-
             val user = status.user
-            if (user != null) {
+            val users = if (user != null) {
                 userCache.add(user)
-                users = listOf(user)
+                listOf(user)
             } else {
-                users = emptyList()
+                emptyList()
             }
+
             val statusObject = status.status
-            if (statusObject != null) {
+            val statuses = if (statusObject != null) {
                 statusCache.add(statusObject, incrementCount)
-                statuses = listOf(statusObject)
+                listOf(statusObject)
             } else {
-                statuses = emptyList()
+                emptyList()
             }
 
             updatedEntities.onNext(UpdatedEntities(statuses, users))
