@@ -21,6 +21,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteStatement;
 
 import com.github.moko256.latte.client.base.entity.AccessToken;
 
@@ -41,6 +42,9 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
     private static final String[] COLUMNS = new String[]{"id"};
 
     private static final String SEEING_ID_TABLE_NAME = "SeeingId";
+
+    private static final String insertIdListStatement = "insert into " + ID_LIST_TABLE_NAME + " values(?)";
+    private static final String deleteIdListStatement = "delete from " + ID_LIST_TABLE_NAME + " where id=?";
 
     public CachedIdListSQLiteOpenHelper(Context context, AccessToken accessToken, String name) {
         super(context, accessToken != null ? new File(context.getCacheDir(), accessToken.getKeyString() + "/" + name + ".db").getAbsolutePath() : null, null, 2);
@@ -88,24 +92,22 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
         synchronized (this) {
             SQLiteDatabase database = getWritableDatabase();
             database.beginTransaction();
+            SQLiteStatement insert = database.compileStatement(insertIdListStatement);
             try {
-                addIdsInner(ids);
+                addIdsInner(insert, ids);
                 database.setTransactionSuccessful();
             } finally {
                 database.endTransaction();
             }
+            insert.close();
             database.close();
         }
     }
 
-    private void addIdsInner(List<Long> ids) {
-        SQLiteDatabase database = getWritableDatabase();
-
+    private void addIdsInner(SQLiteStatement statement, List<Long> ids) {
         for (int i = ids.size() - 1; i >= 0; i--) {
-            ContentValues contentValues = new ContentValues(1);
-            contentValues.put("id", ids.get(i));
-
-            database.insert(ID_LIST_TABLE_NAME, "", contentValues);
+            statement.bindLong(1, ids.get(i));
+            statement.execute();
         }
     }
 
@@ -116,14 +118,18 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
 
             SQLiteDatabase database = getWritableDatabase();
             database.beginTransaction();
+            SQLiteStatement insert = database.compileStatement(insertIdListStatement);
+            SQLiteStatement delete = database.compileStatement(deleteIdListStatement);
             try {
-                deleteIdsInner(d);
-                addIdsInner(ids);
-                addIdsInner(d);
+                deleteIdsInner(delete, d);
+                addIdsInner(insert, ids);
+                addIdsInner(insert, d);
                 database.setTransactionSuccessful();
             } finally {
                 database.endTransaction();
             }
+            delete.close();
+            insert.close();
             database.close();
         }
     }
@@ -132,20 +138,22 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
         synchronized (this) {
             SQLiteDatabase database = getWritableDatabase();
             database.beginTransaction();
+            SQLiteStatement delete = database.compileStatement(deleteIdListStatement);
             try {
-                deleteIdsInner(ids);
+                deleteIdsInner(delete, ids);
                 database.setTransactionSuccessful();
             } finally {
                 database.endTransaction();
             }
+            delete.close();
             database.close();
         }
     }
 
-    private void deleteIdsInner(List<Long> ids) {
-        SQLiteDatabase database = getWritableDatabase();
+    private void deleteIdsInner(SQLiteStatement statement, List<Long> ids) {
         for (Long id : ids) {
-            database.delete(ID_LIST_TABLE_NAME, "id=" + id, null);
+            statement.bindLong(1, id);
+            statement.execute();
         }
     }
 
