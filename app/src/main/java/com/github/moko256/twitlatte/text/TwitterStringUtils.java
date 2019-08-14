@@ -241,7 +241,7 @@ public class TwitterStringUtils {
     public static String convertThumbImageUrl(int clientType, String baseUrl) {
         switch (clientType) {
             case CLIENT_TYPE_TWITTER:
-                return baseUrl + ":thumb";
+                return convertTwitterImageUrl(baseUrl, "thumb");
             case CLIENT_TYPE_MASTODON:
                 return baseUrl.replace("original", "small");
             default:
@@ -252,7 +252,7 @@ public class TwitterStringUtils {
     public static String convertSmallImageUrl(int clientType, String baseUrl) {
         switch (clientType) {
             case CLIENT_TYPE_TWITTER:
-                return baseUrl + ":small";
+                return convertTwitterImageUrl(baseUrl, "small");
             case CLIENT_TYPE_MASTODON:
                 return baseUrl.replace("original", "small");
             default:
@@ -262,14 +262,23 @@ public class TwitterStringUtils {
 
     public static String convertOriginalImageUrl(int clientType, String baseUrl) {
         return (clientType == CLIENT_TYPE_TWITTER) ?
-                baseUrl + ":orig" :
+                baseUrl + ":orig" : // Do not use convertTwitterImageUrl() because :orig is not supported
                 baseUrl;
     }
 
     public static String convertLargeImageUrl(int clientType, String baseUrl) {
         return (clientType == CLIENT_TYPE_TWITTER) ?
-                baseUrl + ":large" :
+                convertTwitterImageUrl(baseUrl, "large") :
                 baseUrl;
+    }
+
+    private static String convertTwitterImageUrl(String baseUrl, String mode) {
+        int baseLength = baseUrl.length();
+        return new StringBuilder(baseLength + mode.length() + 14)
+                .append(baseUrl)
+                .replace(baseLength - 4, baseLength, "?format=webp&name=")
+                .append(mode)
+                .toString();
     }
 
     public static CharSequence plusUserMarks(String name, TextView textView, boolean isLocked, boolean isAuthorized) {
