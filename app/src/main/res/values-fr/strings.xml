@@ -35,7 +35,7 @@
     <string name="lat_and_lon">Latitude :%1$f Longitude : %2$f</string>
     <string name="location_is">Emplacement : %s</string>
     <string name="url_is">URL : %s</string>
-    <string name="user_counts_is">%d Publications · %d Abonnements · %d Abonné·e·s</string>
+    <string name="user_counts_is">%1$d Publications · %2$d Abonnements · %3$d Abonné·e·s</string>
     <string name="share">Partager …</string>
     <string name="open_in_browser">Ouvrir dans le navigateur</string>
     <string name="add_to_list">Ajouter à la liste</string>
