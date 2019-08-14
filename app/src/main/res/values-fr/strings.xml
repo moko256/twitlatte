@@ -53,8 +53,7 @@
     <string name="load_timeline_image_mode">Qualité des vignettes sur les fils</string>
     <string name="version_text">Version</string>
     <string name="about">À propos</string>
-    <string name="birthday_of_this_app_is">Anniversaire de cette application :
-\n%1$TF %1$TT %1$TZ</string>
+    <string name="birthday_of_this_app_is">Anniversaire de cette application:\n%1$TF %1$TT %1$TZ</string>
     <string name="age_of_this_app_is">L’âge de cette application est de %d</string>
     <string name="license_at_this_app">Licence de cette application</string>
     <string name="open_source_license">Licence Open Source</string>
@@ -68,15 +67,14 @@
     <string name="back_button_behavior">Comportement du bouton retour</string>
     <string name="always_close_app">Fermer cette application lorsque le bouton retour est enfoncé</string>
     <string name="keep_open_app">Garder cette app ouverte</string>
-    <string name="post_privacy_is">Confidentialité de la publication :</string>
+    <string name="post_privacy_is">Confidentialité de la publication: </string>
     <string name="content_warning">Avertissement de contenu</string>
     <string name="do_add_content_warning">Ajouter un avertissement de contenu</string>
     <string name="no_app_can_open">Aucune application ne peut l’ouvrir</string>
     <string name="tweet_per_last_24_hours">%d tweets / dernières 24 heures</string>
     <string name="do_see_source_code">Voir le code source de cette application</string>
     <string name="description_see_source_code">Hébergé sur GitHub</string>
-    <string name="please_re_login">twitlatte met à jour quelques clés API
-\nVeuillez vous reconnecter avec ce compte</string>
+    <string name="please_re_login">twitlatte met à jour quelques clés API\nVeuillez vous reconnecter avec ce compte</string>
     <string name="add_poll">Ajouter un sondage</string>
     <string name="vote_opening_status">%1$d voix - %2$s</string>
     <string name="vote_closed_status">%d voix - fermé</string>
