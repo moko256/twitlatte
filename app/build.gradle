@@ -36,7 +36,7 @@ android {
 
         buildConfigField 'byte[]', 'p', "{${e.decode(e.decode(d+a+c+b+"=")).join(",")}}"
         vectorDrawables.useSupportLibrary = true
-        resConfigs 'en', 'ja', 'ldltr'
+        resConfigs 'en', 'ja', 'fr', 'ldltr'
     }
     buildTypes {
         release {
