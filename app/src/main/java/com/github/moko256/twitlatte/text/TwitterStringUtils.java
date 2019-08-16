@@ -241,7 +241,8 @@ public class TwitterStringUtils {
     public static String convertThumbImageUrl(int clientType, String baseUrl) {
         switch (clientType) {
             case CLIENT_TYPE_TWITTER:
-                return convertTwitterImageUrl(baseUrl, "thumb");
+                // Do not use convertTwitterImageUrl() because :thumb is not supported in video
+                return baseUrl + ":thumb";
             case CLIENT_TYPE_MASTODON:
                 return baseUrl.replace("original", "small");
             default:
