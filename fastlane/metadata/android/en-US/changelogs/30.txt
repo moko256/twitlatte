@@ -1,0 +1,6 @@
+Feature:
+- Translated to French
+
+Note:
+ Via this app, you can't tweet, like, and retweet because Twitter has restricted twitlatte.
+ I am solving this issue. Sorry for your inconvenience.
