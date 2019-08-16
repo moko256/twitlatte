@@ -205,6 +205,12 @@
                     app:title="Poussinou"/>
             </PreferenceCategory>
             <PreferenceCategory
+                app:title="i18n">
+                <Preference
+                    app:key="BoFFire"
+                    app:title="ButterflyOfFire - fr"/>
+            </PreferenceCategory>
+            <PreferenceCategory
                 app:title="F-Droid">
                 <Preference
                     app:key="Poussinou"
