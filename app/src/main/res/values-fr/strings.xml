@@ -2,7 +2,7 @@
 <resources>
     <string name="login">Connexion</string>
     <string name="login_description">Sélectionnez le service avec lequel vous désirez vous connecter :</string>
-    <string name="instance_domain">Domaine de l\'instance</string>
+    <string name="instance_domain">Domaine de l’instance</string>
     <string name="action_settings">Paramètres…</string>
     <string name="action_change_quality">Changer la qualité</string>
     <string name="use_only_movie_loaded">Utiliser seulement une fois la vidéo chargée</string>
@@ -13,7 +13,7 @@
     <string name="create_post">Créer une publication</string>
     <string name="reply">Répondre</string>
     <string name="mention">Mention</string>
-    <string name="following">Abonnements</string>
+    <string name="following">Abonné·e</string>
     <string name="follower">Abonné·e·s</string>
     <string name="like">Favoris</string>
     <string name="lists">Listes</string>
@@ -23,7 +23,7 @@
     <string name="add_media">Ajouter un média</string>
     <string name="open_media">Ouvrir ce média</string>
     <string name="add_location">Ajouter une localisation</string>
-    <string name="following_and_followers">Abonnements et abonné·e·s</string>
+    <string name="following_and_followers">Abonné·e·s et Abonnements</string>
     <string name="retweeted_by">Retweeté par %1$s(%2$s)</string>
     <string name="boosted_by">Boosté par %1$s(%2$s)</string>
     <string name="reply_to">Réponse à %s</string>
@@ -42,11 +42,11 @@
     <string name="show_list">Afficher les listes</string>
     <string name="load_more">Charger plus …</string>
     <string name="create_follow">S’abonner</string>
-    <string name="destroy_follow">Annuler l’abonnement</string>
+    <string name="destroy_follow">Se désabonner</string>
     <string name="create_mute">Mettre en sourdine</string>
     <string name="destroy_mute">Annuler la sourdine</string>
     <string name="create_block">Bloquer</string>
-    <string name="destroy_block">Ne plus bloquer</string>
+    <string name="destroy_block">Débloquer</string>
     <string name="save_image">Enregistrer cette image</string>
     <string name="save_video">Enregistrer cette vidéo</string>
     <string name="error_occurred">Une erreur s’est produite</string>
@@ -67,7 +67,7 @@
     <string name="back_button_behavior">Comportement du bouton retour</string>
     <string name="always_close_app">Fermer cette application lorsque le bouton retour est enfoncé</string>
     <string name="keep_open_app">Garder cette app ouverte</string>
-    <string name="post_privacy_is">Confidentialité de la publication: </string>
+    <string name="post_privacy_is">Confidentialité de la publication :</string>
     <string name="content_warning">Avertissement de contenu</string>
     <string name="do_add_content_warning">Ajouter un avertissement de contenu</string>
     <string name="no_app_can_open">Aucune application ne peut l’ouvrir</string>
@@ -116,4 +116,22 @@
     <string name="mode_poll_expired_at_1_day">1 jour</string>
     <string name="mode_poll_expired_at_3_days">3 jours</string>
     <string name="mode_poll_expired_at_7_days">7 jours</string>
+    <string name="mode_image_level_lowest">Réduite</string>
+    <string name="use_another_consumer_token">Utiliser un autre jeton client</string>
+    <string name="did_unblock">Débloqué</string>
+    <string name="did_block">Bloqué</string>
+    <string name="did_unmute">N’est plus masqué</string>
+    <string name="did_mute">Masqué</string>
+    <string name="did_follow">Est suivi</string>
+    <string name="did_vote">Voté</string>
+    <string name="did_unboost">Boost annulé</string>
+    <string name="did_boost">Boosté</string>
+    <string name="did_retweet">Retweeté</string>
+    <string name="did_like">Ajouté aux favoris</string>
+    <string name="confirm_mute">Mettre ce compte en sourdine \?</string>
+    <string name="muted_post">Publication masquée</string>
+    <string name="regex_mute">Expression régulière de sourdine</string>
+    <string name="showing_sensitive_media">Ne pas flouter les médias sensibles sur le fil</string>
+    <string name="hiding_sensitive_media">Flouter les médias sensibles sur le fil</string>
+    <string name="possibly_sensitive">Médias sensibles</string>
 </resources>
