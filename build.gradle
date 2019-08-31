@@ -18,7 +18,7 @@
 
 buildscript {
     ext {
-        kotlinVersion = '1.3.41'
+        kotlinVersion = '1.3.50'
         exoplayerVersion = '2.10.3'
         glideVersion = '4.9.0'
         rxJavaVersion = '2.2.6'
@@ -27,11 +27,16 @@ buildscript {
     }
 
     repositories {
+        jcenter {
+            content {
+                includeModule('org.jetbrains.trove4j', 'trove4j')
+            }
+        }
         google()
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.4.2'
+        classpath 'com.android.tools.build:gradle:3.5.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
