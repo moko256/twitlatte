@@ -87,15 +87,13 @@ dependencies {
 
     implementation project(':japng-android:android_api')
 
-    implementation 'androidx.appcompat:appcompat:1.1.0-rc01'
+    implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'com.google.android.material:material:1.0.0'
-    implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
-    implementation 'androidx.preference:preference:1.1.0-rc01'
+    implementation 'androidx.preference:preference:1.1.0'
     implementation 'androidx.browser:browser:1.0.0'
 
-    //noinspection GradleDependency
-    implementation 'androidx.lifecycle:lifecycle-extensions:2.1.0-rc01'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.1.0'
 
     implementation "com.google.android.exoplayer:exoplayer-core:$exoplayerVersion"
     implementation "com.google.android.exoplayer:exoplayer-hls:$exoplayerVersion"
@@ -105,7 +103,7 @@ dependencies {
     implementation project(':alternative_glide')
     implementation "com.github.bumptech.glide:okhttp3-integration:$glideVersion"
 
-    implementation 'jp.wasabeef:glide-transformations:4.0.1'
+    implementation 'jp.wasabeef:glide-transformations:4.1.0'
 
     implementation 'com.github.chrisbanes:PhotoView:2.3.0'
     implementation 'com.github.chuross:flinglayout:0.5.0'
