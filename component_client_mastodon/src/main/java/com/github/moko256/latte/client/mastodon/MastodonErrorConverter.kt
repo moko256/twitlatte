@@ -28,18 +28,22 @@ import com.sys1yagi.mastodon4j.api.exception.Mastodon4jRequestException
  * @author moko256
  */
 
-internal fun <T: Any> MastodonRequest<T>.executeAndConvertError(): T {
+internal fun <T : Any> MastodonRequest<T>.executeAndConvertError(): T {
     try {
         return execute()
     } catch (e: Mastodon4jRequestException) {
         throw Exception(
-                e.response?.use {
-                    try {
-                        gson.fromJson(it.body()!!.charStream(), Error::class.java).error
-                    } catch (e: JsonParseException) {
-                        it.message() ?: it.toString()
-                    }
-                }?:e.toString(), e
+                e.response?.use { response ->
+
+                    response.body()?.use { body ->
+                        try {
+                            gson.fromJson(body.charStream(), Error::class.java).error
+                        } catch (e: JsonParseException) {
+                            body.string()
+                        }
+                    } ?: response.message()
+
+                } ?: e.toString(), e
         )
     }
 }
