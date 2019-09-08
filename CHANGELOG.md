@@ -1,5 +1,9 @@
 # Change Log
 
+## Version next
+* Fix crash when error has no body (Mastodon).
+* Use stable-version AndroidX libraries.
+
 ## Version 1.10.1 (30)
 * Use webp thumbnails (Twitter).
 * Add French translation (Thanks [@Boffire](https://github.com/BoFFire)).
