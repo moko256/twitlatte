@@ -1,6 +1,7 @@
 # Change Log
 
 ## Version next
+* Update French translation (Thanks [@Boffire](https://github.com/BoFFire)).
 * Fix crash when error has no body (Mastodon).
 * Use stable-version AndroidX libraries.
 
