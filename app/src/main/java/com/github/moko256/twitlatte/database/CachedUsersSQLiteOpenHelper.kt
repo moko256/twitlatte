@@ -44,32 +44,16 @@ class CachedUsersSQLiteOpenHelper(context: Context, accessToken: AccessToken?) :
                 "screenName",
                 "location",
                 "description",
-                "isContributorsEnabled",
                 "profileImageURLHttps",
-                "isDefaultProfileImage",
                 "url",
                 "isProtected",
                 "followersCount",
-                "profileBackgroundColor",
-                "profileTextColor",
-                "profileLinkColor",
-                "profileSidebarFillColor",
-                "profileSidebarBorderColor",
-                "isProfileUseBackgroundImage",
-                "isDefaultProfile",
                 "friendsCount",
                 "createdAt",
                 "favoritesCount",
-                "utcOffset",
-                "timeZone",
-                "profileBackgroundImageURLHttps",
                 "profileBannerImageUrl",
-                "isProfileBackgroundTiled",
-                "lang",
                 "statusesCount",
                 "isVerified",
-                "isTranslator",
-                "isFollowRequestSent",
                 "urls_urls",
                 "urls_starts",
                 "urls_ends",
@@ -105,40 +89,24 @@ class CachedUsersSQLiteOpenHelper(context: Context, accessToken: AccessToken?) :
                     screenName = c.getString(2),
                     location = c.getString(3),
                     description = c.getString(4),
-                    isContributorsEnabled = c.getBoolean(5),
-                    profileImageURLHttps = c.getString(6),
-                    isDefaultProfileImage = c.getBoolean(7),
-                    url = c.getString(8),
-                    isProtected = c.getBoolean(9),
-                    followersCount = c.getInt(10),
-                    profileBackgroundColor = c.getString(11),
-                    profileTextColor = c.getString(12),
-                    profileLinkColor = c.getString(13),
-                    profileSidebarFillColor = c.getString(14),
-                    profileSidebarBorderColor = c.getString(15),
-                    isProfileUseBackgroundImage = c.getBoolean(16),
-                    isDefaultProfile = c.getBoolean(17),
-                    favoritesCount = c.getInt(18),
-                    friendsCount = c.getInt(19),
-                    createdAt = Date(c.getLong(20)),
-                    utcOffset = c.getInt(21),
-                    timeZone = c.getString(22),
-                    profileBackgroundImageURLHttps = c.getString(23),
-                    profileBannerImageUrl = c.getString(24),
-                    isProfileBackgroundTiled = c.getBoolean(25),
-                    lang = c.getString(26),
-                    statusesCount = c.getInt(27),
-                    isVerified = c.getBoolean(28),
-                    isTranslator = c.getBoolean(29),
-                    isFollowRequestSent = c.getBoolean(30),
+                    profileImageURLHttps = c.getString(5),
+                    url = c.getString(6),
+                    isProtected = c.getBoolean(7),
+                    followersCount = c.getInt(8),
+                    favoritesCount = c.getInt(9),
+                    friendsCount = c.getInt(10),
+                    createdAt = Date(c.getLong(11)),
+                    profileBannerImageUrl = c.getString(12),
+                    statusesCount = c.getInt(13),
+                    isVerified = c.getBoolean(14),
                     descriptionLinks = restoreLinks(
-                            c.getString(31).splitWithComma(),
-                            c.getString(32).splitWithComma(),
-                            c.getString(33).splitWithComma()
+                            c.getString(15).splitWithComma(),
+                            c.getString(16).splitWithComma(),
+                            c.getString(17).splitWithComma()
                     ),
                     emojis = restoreEmojis(
-                            c.getString(34).splitWithComma(),
-                            c.getString(35).splitWithComma()
+                            c.getString(18).splitWithComma(),
+                            c.getString(19).splitWithComma()
                     )
             )
         }
@@ -169,32 +137,16 @@ class CachedUsersSQLiteOpenHelper(context: Context, accessToken: AccessToken?) :
         contentValues.put(TABLE_COLUMNS[2], user.screenName)
         contentValues.put(TABLE_COLUMNS[3], user.location)
         contentValues.put(TABLE_COLUMNS[4], user.description)
-        contentValues.put(TABLE_COLUMNS[5], user.isContributorsEnabled)
-        contentValues.put(TABLE_COLUMNS[6], user.profileImageURLHttps)
-        contentValues.put(TABLE_COLUMNS[7], user.isDefaultProfileImage)
-        contentValues.put(TABLE_COLUMNS[8], user.url)
-        contentValues.put(TABLE_COLUMNS[9], user.isProtected)
-        contentValues.put(TABLE_COLUMNS[10], user.followersCount)
-        contentValues.put(TABLE_COLUMNS[11], user.profileBackgroundColor)
-        contentValues.put(TABLE_COLUMNS[12], user.profileTextColor)
-        contentValues.put(TABLE_COLUMNS[13], user.profileLinkColor)
-        contentValues.put(TABLE_COLUMNS[14], user.profileSidebarFillColor)
-        contentValues.put(TABLE_COLUMNS[15], user.profileSidebarBorderColor)
-        contentValues.put(TABLE_COLUMNS[16], user.isProfileUseBackgroundImage)
-        contentValues.put(TABLE_COLUMNS[17], user.isDefaultProfile)
-        contentValues.put(TABLE_COLUMNS[18], user.favoritesCount)
-        contentValues.put(TABLE_COLUMNS[19], user.friendsCount)
-        contentValues.put(TABLE_COLUMNS[20], user.createdAt.time)
-        contentValues.put(TABLE_COLUMNS[21], user.utcOffset)
-        contentValues.put(TABLE_COLUMNS[22], user.timeZone)
-        contentValues.put(TABLE_COLUMNS[23], user.profileBackgroundImageURLHttps)
-        contentValues.put(TABLE_COLUMNS[24], user.profileBannerImageUrl)
-        contentValues.put(TABLE_COLUMNS[25], user.isProfileBackgroundTiled)
-        contentValues.put(TABLE_COLUMNS[26], user.lang)
-        contentValues.put(TABLE_COLUMNS[27], user.statusesCount)
-        contentValues.put(TABLE_COLUMNS[28], user.isVerified)
-        contentValues.put(TABLE_COLUMNS[29], user.isTranslator)
-        contentValues.put(TABLE_COLUMNS[30], user.isFollowRequestSent)
+        contentValues.put(TABLE_COLUMNS[5], user.profileImageURLHttps)
+        contentValues.put(TABLE_COLUMNS[6], user.url)
+        contentValues.put(TABLE_COLUMNS[7], user.isProtected)
+        contentValues.put(TABLE_COLUMNS[8], user.followersCount)
+        contentValues.put(TABLE_COLUMNS[9], user.favoritesCount)
+        contentValues.put(TABLE_COLUMNS[10], user.friendsCount)
+        contentValues.put(TABLE_COLUMNS[11], user.createdAt.time)
+        contentValues.put(TABLE_COLUMNS[12], user.profileBannerImageUrl)
+        contentValues.put(TABLE_COLUMNS[13], user.statusesCount)
+        contentValues.put(TABLE_COLUMNS[14], user.isVerified)
 
         val descriptionLinks = user.descriptionLinks
         if (descriptionLinks != null) {
@@ -208,9 +160,9 @@ class CachedUsersSQLiteOpenHelper(context: Context, accessToken: AccessToken?) :
                 starts[i] = entity.start.toString()
                 ends[i] = entity.end.toString()
             }
-            contentValues.put(TABLE_COLUMNS[31], urls.joinToString(","))
-            contentValues.put(TABLE_COLUMNS[32], starts.joinToString(","))
-            contentValues.put(TABLE_COLUMNS[33], ends.joinToString(","))
+            contentValues.put(TABLE_COLUMNS[15], urls.joinToString(","))
+            contentValues.put(TABLE_COLUMNS[16], starts.joinToString(","))
+            contentValues.put(TABLE_COLUMNS[17], ends.joinToString(","))
         }
 
         val emojis = user.emojis
@@ -223,8 +175,8 @@ class CachedUsersSQLiteOpenHelper(context: Context, accessToken: AccessToken?) :
                 shortCodes[i] = emoji.shortCode
                 urls[i] = emoji.url
             }
-            contentValues.put(TABLE_COLUMNS[34], shortCodes.joinToString(","))
-            contentValues.put(TABLE_COLUMNS[35], urls.joinToString(","))
+            contentValues.put(TABLE_COLUMNS[18], shortCodes.joinToString(","))
+            contentValues.put(TABLE_COLUMNS[19], urls.joinToString(","))
         }
 
         database.replace(TABLE_NAME, null, contentValues)

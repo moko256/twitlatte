@@ -17,7 +17,6 @@
 package com.github.moko256.twitlatte;
 
 import android.content.DialogInterface;
-import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.ColorDrawable;
@@ -218,11 +217,6 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
                             0
                     )
             ));
-        } else {
-            String colorStr = user.getProfileBackgroundColor();
-            if (!TextUtils.isEmpty(colorStr)) {
-                header.setBackgroundColor(Color.parseColor("#" + colorStr));
-            }
         }
         glideRequests
                 .load(

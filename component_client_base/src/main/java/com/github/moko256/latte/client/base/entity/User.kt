@@ -26,38 +26,28 @@ import java.util.*
  */
 data class User(
         val id: Long,
+
         val name: String,
         val screenName: String,
-        val location: String?,
+
         val description: String,
-        val isContributorsEnabled: Boolean,
-        val profileImageURLHttps: String,
-        val isDefaultProfileImage: Boolean,
-        val url: String?,
-        val isProtected: Boolean,
-        val followersCount: Int,
-        val profileBackgroundColor: String?,
-        val profileTextColor: String?,
-        val profileLinkColor: String?,
-        val profileSidebarFillColor: String?,
-        val profileSidebarBorderColor: String?,
-        val isProfileUseBackgroundImage: Boolean,
-        val isDefaultProfile: Boolean,
-        val friendsCount: Int,
-        val createdAt: Date,
-        val favoritesCount: Int,
-        val utcOffset: Int,
-        val timeZone: String?,
-        val profileBackgroundImageURLHttps: String?,
-        val profileBannerImageUrl: String?,
-        val isProfileBackgroundTiled: Boolean,
-        val lang: String?,
-        val statusesCount: Int,
-        val isVerified: Boolean,
-        val isTranslator: Boolean,
-        val isFollowRequestSent: Boolean,
         val descriptionLinks: Array<Link>?,
-        val emojis: Array<Emoji>?
+        val emojis: Array<Emoji>?,
+
+        val location: String?,
+        val createdAt: Date,
+        val url: String?,
+
+        val isProtected: Boolean,
+        val isVerified: Boolean,
+
+        val statusesCount: Int,
+        val favoritesCount: Int,
+        val followersCount: Int,
+        val friendsCount: Int,
+
+        val profileBannerImageUrl: String?,
+        val profileImageURLHttps: String
 ) {
 
     override fun hashCode(): Int {
