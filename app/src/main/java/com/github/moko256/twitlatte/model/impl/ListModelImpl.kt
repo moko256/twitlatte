@@ -294,5 +294,6 @@ class ListModelImpl(
 
     override fun close() {
         requests.dispose()
+        database.close()
     }
 }
