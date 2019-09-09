@@ -414,11 +414,11 @@ class StatusViewBinder(viewGroup: View) {
 
         if (status.visibility != null) {
             when {
-                status.visibility == Visibility.Private.value -> {
+                status.visibility == Visibility.Private -> {
                     isRepeatEnabled = false
                     repeatIconResourceId = R.drawable.stateful_lock_button
                 }
-                status.visibility == Visibility.Direct.value -> {
+                status.visibility == Visibility.Direct -> {
                     isRepeatEnabled = false
                     repeatIconResourceId = R.drawable.stateful_dm_button
                 }

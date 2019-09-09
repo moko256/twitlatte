@@ -21,9 +21,11 @@ package com.github.moko256.latte.client.base.entity
  *
  * @author moko256
  */
-enum class Visibility(val value: String) {
-    Public("public"),
-    Unlisted("unlisted"),
-    Private("private"),
-    Direct("direct")
+class Visibility {
+    companion object {
+        const val Public = "public"
+        const val Unlisted = "unlisted"
+        const val Private = "private"
+        const val Direct = "direct"
+    }
 }
