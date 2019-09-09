@@ -59,56 +59,48 @@ public class CachedTrendsSQLiteOpenHelper extends SQLiteOpenHelper {
     public List<Trend> getTrends() {
         List<Trend> trends;
 
-        synchronized (this) {
-            SQLiteDatabase database = getReadableDatabase();
-            Cursor c = database.query(TABLE_NAME, new String[]{"name", "volume"}, null, null, null, null, null);
+        Cursor c = getReadableDatabase()
+                .query(TABLE_NAME, new String[]{"name", "volume"}, null, null, null, null, null);
 
-            try {
-                trends = new ArrayList<>(c.getCount());
+        try {
+            trends = new ArrayList<>(c.getCount());
 
-                while (c.moveToNext()) {
-                    trends.add(new Trend(
-                            c.getString(0),
-                            c.getInt(1)
-                    ));
-                }
-            } catch (Throwable e) {
-                trends = Collections.emptyList();
-                SQLiteDatabase writableDatabase = getWritableDatabase();
-                writableDatabase.delete(TABLE_NAME, null, null);
-                writableDatabase.close();
+            while (c.moveToNext()) {
+                trends.add(new Trend(
+                        c.getString(0),
+                        c.getInt(1)
+                ));
             }
-
-            c.close();
-            database.close();
+        } catch (Throwable e) {
+            trends = Collections.emptyList();
+            SQLiteDatabase writableDatabase = getWritableDatabase();
+            writableDatabase.delete(TABLE_NAME, null, null);
         }
+
+        c.close();
 
         return trends;
     }
 
     public void setTrends(List<Trend> trends) {
-        synchronized (this) {
-            SQLiteDatabase database = getWritableDatabase();
-            database.beginTransaction();
+        SQLiteDatabase database = getWritableDatabase();
+        database.beginTransaction();
 
-            try {
-                database.delete(TABLE_NAME, null, null);
+        try {
+            database.delete(TABLE_NAME, null, null);
 
-                for (int i = 0; i < trends.size(); i++) {
-                    Trend item = trends.get(i);
-                    ContentValues contentValues = new ContentValues(2);
-                    contentValues.put("name", item.getName());
-                    contentValues.put("volume", item.getVolume());
+            for (int i = 0; i < trends.size(); i++) {
+                Trend item = trends.get(i);
+                ContentValues contentValues = new ContentValues(2);
+                contentValues.put("name", item.getName());
+                contentValues.put("volume", item.getVolume());
 
-                    database.insert(TABLE_NAME, null, contentValues);
-                }
-
-                database.setTransactionSuccessful();
-            } finally {
-                database.endTransaction();
+                database.insert(TABLE_NAME, null, contentValues);
             }
 
-            database.close();
+            database.setTransactionSuccessful();
+        } finally {
+            database.endTransaction();
         }
     }
 }

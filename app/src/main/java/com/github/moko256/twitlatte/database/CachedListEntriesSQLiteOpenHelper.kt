@@ -59,52 +59,46 @@ class CachedListEntriesSQLiteOpenHelper : SQLiteOpenHelper {
     fun getListEntries(): List<ListEntry> {
         var listEntries: MutableList<ListEntry>
 
-        synchronized(this) {
-            val database = readableDatabase
-            val c = database.query(
-                    TABLE_NAME,
-                    TABLE_COLUMNS,
-                    null, null, null, null, null)
+        val c = readableDatabase.query(
+                TABLE_NAME,
+                TABLE_COLUMNS,
+                null, null, null, null, null)
 
-            try {
-                listEntries = ArrayList(c.count)
+        try {
+            listEntries = ArrayList(c.count)
 
-                while (c.moveToNext()) {
-                    listEntries.add(ListEntry(
-                            c.getLong(0),
-                            c.getString(1),
-                            c.getString(2),
-                            c.getBoolean(3)
-                    ))
-                }
-            } catch (e: Throwable) {
-                listEntries = mutableListOf()
-                write {
-                    delete(TABLE_NAME, null, null)
-                }
+            while (c.moveToNext()) {
+                listEntries.add(ListEntry(
+                        c.getLong(0),
+                        c.getString(1),
+                        c.getString(2),
+                        c.getBoolean(3)
+                ))
             }
-
-            c.close()
-            database.close()
+        } catch (e: Throwable) {
+            listEntries = mutableListOf()
+            write {
+                delete(TABLE_NAME, null, null)
+            }
         }
+
+        c.close()
 
         return listEntries
     }
 
     fun setListEntries(listEntries: List<ListEntry>) {
-        synchronized(this) {
-            transaction {
-                delete(TABLE_NAME, null, null)
+        transaction {
+            delete(TABLE_NAME, null, null)
 
-                listEntries.forEach {
-                    val contentValues = ContentValues(4)
-                    contentValues.put(TABLE_COLUMNS[0], it.listId)
-                    contentValues.put(TABLE_COLUMNS[1], it.title)
-                    contentValues.put(TABLE_COLUMNS[2], it.description)
-                    contentValues.put(TABLE_COLUMNS[3], it.isPublic)
+            listEntries.forEach {
+                val contentValues = ContentValues(4)
+                contentValues.put(TABLE_COLUMNS[0], it.listId)
+                contentValues.put(TABLE_COLUMNS[1], it.title)
+                contentValues.put(TABLE_COLUMNS[2], it.description)
+                contentValues.put(TABLE_COLUMNS[3], it.isPublic)
 
-                    insert(TABLE_NAME, null, contentValues)
-                }
+                insert(TABLE_NAME, null, contentValues)
             }
         }
     }

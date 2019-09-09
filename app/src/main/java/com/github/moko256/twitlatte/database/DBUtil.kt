@@ -88,7 +88,7 @@ fun Cursor.getBoolean(index: Int) = getInt(index) == 1
 inline fun SQLiteOpenHelper.write(action: SQLiteDatabase.() -> Unit) {
     writableDatabase.also {
         action(it)
-    }.close()
+    }
 }
 
 inline fun SQLiteOpenHelper.transaction(action: SQLiteDatabase.() -> Unit) {
@@ -100,5 +100,5 @@ inline fun SQLiteOpenHelper.transaction(action: SQLiteDatabase.() -> Unit) {
         } finally {
             endTransaction()
         }
-    }.close()
+    }
 }

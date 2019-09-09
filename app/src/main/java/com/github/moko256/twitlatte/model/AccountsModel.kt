@@ -25,12 +25,12 @@ import com.github.moko256.twitlatte.database.TokenSQLiteOpenHelper
  *
  * @author moko256
  */
-class AccountsModel(private val context: Context) {
+class AccountsModel(context: Context) {
+
+    private val helper = TokenSQLiteOpenHelper(context)
 
     private val tokens: ArrayList<AccessToken> by lazy {
-        val helper = TokenSQLiteOpenHelper(context)
         val list = helper.accessTokens.asList()
-        helper.close()
         ArrayList(list)
     }
 
@@ -44,9 +44,7 @@ class AccountsModel(private val context: Context) {
             tokens.filter { accessToken -> accessToken.clientType == clientType }
 
     fun add(accessToken: AccessToken) {
-        val helper = TokenSQLiteOpenHelper(context)
         helper.addAccessToken(accessToken)
-        helper.close()
         val i = tokens.indexOf(accessToken)
         if (i >= 0) {
             tokens.removeAt(i)
@@ -56,9 +54,7 @@ class AccountsModel(private val context: Context) {
 
     fun delete(accessToken: AccessToken?) {
         if (accessToken != null) {
-            val helper = TokenSQLiteOpenHelper(context)
             helper.deleteAccessToken(accessToken)
-            helper.close()
             tokens.remove(accessToken)
         }
     }

@@ -138,106 +138,102 @@ class CachedStatusesSQLiteOpenHelper(
     fun getCachedStatus(id: Long): StatusObject? {
         var status: StatusObject? = null
 
-        synchronized(this) {
-            val database = readableDatabase
-            val c = database.query(
-                    TABLE_NAME,
-                    TABLE_COLUMNS,
-                    "id=$id", null, null, null, null, "1"
-            )
-            if (c.moveToLast()) {
-                val createdAt = Date(c.getLong(0))
-                val statusId = c.getLong(1)
-                val userId = c.getLong(2)
-                val repeatedStatusId = c.getLong(3)
-                if (repeatedStatusId == -1L) {
-                    status = Status(
-                            createdAt = createdAt,
-                            id = statusId,
-                            userId = userId,
-                            text = c.getString(4),
-                            sourceName = c.getString(5),
-                            sourceWebsite = c.getString(6),
-                            inReplyToStatusId = c.getLong(7),
-                            inReplyToUserId = c.getLong(8),
-                            isFavorited = c.getBoolean(9),
-                            isRepeated = c.getBoolean(10),
-                            favoriteCount = c.getInt(11),
-                            repeatCount = c.getInt(12),
-                            repliesCount = c.getInt(13),
-                            inReplyToScreenName = c.getString(14),
-                            isSensitive = c.getBoolean(15),
-                            lang = c.getString(16),
-                            mentions = c.getString(17).splitWithComma()?.toTypedArray(),
-                            urls = restoreLinks(
-                                    c.getString(18).splitWithComma(),
-                                    c.getString(19).splitWithComma(),
-                                    c.getString(20).splitWithComma()
-                            ),
-                            medias = restoreMedias(
-                                    c.getString(21).splitWithCommaAndReplaceEmptyWithNull(),
-                                    c.getString(22).splitWithComma(),
-                                    c.getString(23).splitWithCommaAndReplaceEmptyWithNull(),
-                                    c.getString(24).splitWithComma()
-                            ),
-                            quotedStatusId = c.getLong(25),
-                            url = c.getString(26),
-                            emojis = restoreEmojis(
-                                    c.getString(27).splitWithComma(),
-                                    c.getString(28).splitWithComma()
-                            ),
-                            spoilerText = c.getString(29),
-                            visibility = c.getString(30),
-                            card = c.let {
-                                val title = it.getString(31)
-                                val description = it.getString(32)
-                                val url = it.getString(33)
-                                val imageUrl = it.getString(34)
+        val c = readableDatabase.query(
+                TABLE_NAME,
+                TABLE_COLUMNS,
+                "id=$id", null, null, null, null, "1"
+        )
+        if (c.moveToLast()) {
+            val createdAt = Date(c.getLong(0))
+            val statusId = c.getLong(1)
+            val userId = c.getLong(2)
+            val repeatedStatusId = c.getLong(3)
+            if (repeatedStatusId == -1L) {
+                status = Status(
+                        createdAt = createdAt,
+                        id = statusId,
+                        userId = userId,
+                        text = c.getString(4),
+                        sourceName = c.getString(5),
+                        sourceWebsite = c.getString(6),
+                        inReplyToStatusId = c.getLong(7),
+                        inReplyToUserId = c.getLong(8),
+                        isFavorited = c.getBoolean(9),
+                        isRepeated = c.getBoolean(10),
+                        favoriteCount = c.getInt(11),
+                        repeatCount = c.getInt(12),
+                        repliesCount = c.getInt(13),
+                        inReplyToScreenName = c.getString(14),
+                        isSensitive = c.getBoolean(15),
+                        lang = c.getString(16),
+                        mentions = c.getString(17).splitWithComma()?.toTypedArray(),
+                        urls = restoreLinks(
+                                c.getString(18).splitWithComma(),
+                                c.getString(19).splitWithComma(),
+                                c.getString(20).splitWithComma()
+                        ),
+                        medias = restoreMedias(
+                                c.getString(21).splitWithCommaAndReplaceEmptyWithNull(),
+                                c.getString(22).splitWithComma(),
+                                c.getString(23).splitWithCommaAndReplaceEmptyWithNull(),
+                                c.getString(24).splitWithComma()
+                        ),
+                        quotedStatusId = c.getLong(25),
+                        url = c.getString(26),
+                        emojis = restoreEmojis(
+                                c.getString(27).splitWithComma(),
+                                c.getString(28).splitWithComma()
+                        ),
+                        spoilerText = c.getString(29),
+                        visibility = c.getString(30),
+                        card = c.let {
+                            val title = it.getString(31)
+                            val description = it.getString(32)
+                            val url = it.getString(33)
+                            val imageUrl = it.getString(34)
 
-                                if (title != null && description != null && url != null) {
-                                    Card(
-                                            title = title,
-                                            description = description,
-                                            url = url,
-                                            imageUrl = imageUrl
-                                    )
-                                } else {
-                                    null
-                                }
-                            },
-                            poll = let {
-                                val pollId = c.getLong(35)
-                                if (pollId != -1L) {
-                                    Poll(
-                                            pollId,
-                                            Date(c.getLong(36)),
-                                            c.getBoolean(37),
-                                            c.getBoolean(38),
-                                            c.getInt(39),
-                                            c.getString(40).splitWithComma()?.map { URLDecoder.decode(it, "utf-8") }
-                                                    ?: emptyList(),
-                                            c.getString(41).splitWithComma()?.map { it.toInt() }
-                                                    ?: emptyList(),
-                                            c.getBoolean(42)
-                                    )
-                                } else {
-                                    null
-                                }
+                            if (title != null && description != null && url != null) {
+                                Card(
+                                        title = title,
+                                        description = description,
+                                        url = url,
+                                        imageUrl = imageUrl
+                                )
+                            } else {
+                                null
                             }
-                    )
-                } else {
-                    status = Repeat(
-                            id = statusId,
-                            userId = userId,
-                            createdAt = createdAt,
-                            repeatedStatusId = repeatedStatusId
-                    )
-                }
+                        },
+                        poll = let {
+                            val pollId = c.getLong(35)
+                            if (pollId != -1L) {
+                                Poll(
+                                        pollId,
+                                        Date(c.getLong(36)),
+                                        c.getBoolean(37),
+                                        c.getBoolean(38),
+                                        c.getInt(39),
+                                        c.getString(40).splitWithComma()?.map { URLDecoder.decode(it, "utf-8") }
+                                                ?: emptyList(),
+                                        c.getString(41).splitWithComma()?.map { it.toInt() }
+                                                ?: emptyList(),
+                                        c.getBoolean(42)
+                                )
+                            } else {
+                                null
+                            }
+                        }
+                )
+            } else {
+                status = Repeat(
+                        id = statusId,
+                        userId = userId,
+                        createdAt = createdAt,
+                        repeatedStatusId = repeatedStatusId
+                )
             }
-
-            c.close()
-            database.close()
         }
+
+        c.close()
 
         return status
     }
@@ -245,34 +241,28 @@ class CachedStatusesSQLiteOpenHelper(
     fun getIdsInUse(ids: Collection<Long>): Collection<Long> {
         val result = ArraySet<Long>(ids.size * 5)
 
-        synchronized(this) {
-            val database = readableDatabase
+        ids.forEach { id ->
+            val c = readableDatabase.query(
+                    TABLE_NAME,
+                    arrayOf(TABLE_COLUMNS[1], TABLE_COLUMNS[3], TABLE_COLUMNS[25]),
+                    "id=$id", null, null, null, null
+            )
 
-            ids.forEach { id ->
-                val c = database.query(
-                        TABLE_NAME,
-                        arrayOf(TABLE_COLUMNS[1], TABLE_COLUMNS[3], TABLE_COLUMNS[25]),
-                        "id=$id", null, null, null, null
-                )
-
-                while (c.moveToNext()) {
-                    val repeatId = c.getLong(1)
-                    val quotedId = c.getLong(2)
-                    if (repeatId != -1L) {
-                        if (!ids.contains(repeatId)) {
-                            result.add(repeatId)
-                        }
-                    } else if (quotedId != -1L) {
-                        if (!ids.contains(quotedId)) {
-                            result.add(quotedId)
-                        }
+            while (c.moveToNext()) {
+                val repeatId = c.getLong(1)
+                val quotedId = c.getLong(2)
+                if (repeatId != -1L) {
+                    if (!ids.contains(repeatId)) {
+                        result.add(repeatId)
+                    }
+                } else if (quotedId != -1L) {
+                    if (!ids.contains(quotedId)) {
+                        result.add(quotedId)
                     }
                 }
-
-                c.close()
             }
 
-            database.close()
+            c.close()
         }
 
         if (result.isNotEmpty()) {
@@ -284,16 +274,14 @@ class CachedStatusesSQLiteOpenHelper(
     fun addCachedStatus(status: StatusObject, incrementCount: Boolean) {
         val values = createStatusContentValues(status)
 
-        synchronized(this) {
-            transaction {
-                replace(TABLE_NAME, null, values)
-                if (incrementCount) {
-                    execSQL("insert or ignore into $COUNTS_TABLE_NAME(id) values(${status.getId()})")
+        transaction {
+            replace(TABLE_NAME, null, values)
+            if (incrementCount) {
+                execSQL("insert or ignore into $COUNTS_TABLE_NAME(id) values(${status.getId()})")
 
-                    val statement = incrementCountStatement(this)
-                    statement.bindLong(1, status.getId())
-                    statement.execute()
-                }
+                val statement = incrementCountStatement(this)
+                statement.bindLong(1, status.getId())
+                statement.execute()
             }
         }
     }
@@ -304,19 +292,17 @@ class CachedStatusesSQLiteOpenHelper(
             contentValues.add(createStatusContentValues(status))
         }
 
-        synchronized(this) {
-            transaction {
-                val statement = if (incrementCount) incrementCountStatement(this) else null
-                for (values in contentValues) {
-                    replace(TABLE_NAME, null, values)
+        transaction {
+            val statement = if (incrementCount) incrementCountStatement(this) else null
+            for (values in contentValues) {
+                replace(TABLE_NAME, null, values)
 
-                    val id = values.getAsLong(TABLE_COLUMNS[1])
-                    if (incrementCount && (excludeIncrementIds.isEmpty() || !excludeIncrementIds.contains(id))) {
-                        execSQL("insert or ignore into $COUNTS_TABLE_NAME(id) values($id)")
+                val id = values.getAsLong(TABLE_COLUMNS[1])
+                if (incrementCount && (excludeIncrementIds.isEmpty() || !excludeIncrementIds.contains(id))) {
+                    execSQL("insert or ignore into $COUNTS_TABLE_NAME(id) values($id)")
 
-                        statement!!.bindLong(1, id!!)
-                        statement.execute()
-                    }
+                    statement!!.bindLong(1, id!!)
+                    statement.execute()
                 }
             }
         }
@@ -443,15 +429,13 @@ class CachedStatusesSQLiteOpenHelper(
     }
 
     fun deleteCachedStatuses(ids: Collection<Long>) {
-        synchronized(this) {
-            transaction {
-                val sqLiteStatement = decrementCountStatement(this)
-                for (id in ids) {
-                    sqLiteStatement.bindLong(1, id)
-                    sqLiteStatement.execute()
-                }
-                delete(COUNTS_TABLE_NAME, "count=0", null)
+        transaction {
+            val sqLiteStatement = decrementCountStatement(this)
+            for (id in ids) {
+                sqLiteStatement.bindLong(1, id)
+                sqLiteStatement.execute()
             }
+            delete(COUNTS_TABLE_NAME, "count=0", null)
         }
     }
 

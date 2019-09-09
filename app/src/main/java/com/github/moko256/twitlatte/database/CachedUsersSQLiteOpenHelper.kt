@@ -92,78 +92,72 @@ class CachedUsersSQLiteOpenHelper(context: Context, accessToken: AccessToken?) :
 
     fun getCachedUser(id: Long): User? {
         var user: User? = null
-        synchronized(this) {
-            val database = readableDatabase
-            val c = database.query(
-                    TABLE_NAME,
-                    TABLE_COLUMNS,
-                    "id=$id", null, null, null, null, "1"
-            )
-            if (c.moveToLast()) {
-                user = User(
-                        id = c.getLong(0),
-                        name = c.getString(1),
-                        screenName = c.getString(2),
-                        location = c.getString(3),
-                        description = c.getString(4),
-                        isContributorsEnabled = c.getBoolean(5),
-                        profileImageURLHttps = c.getString(6),
-                        isDefaultProfileImage = c.getBoolean(7),
-                        url = c.getString(8),
-                        isProtected = c.getBoolean(9),
-                        followersCount = c.getInt(10),
-                        profileBackgroundColor = c.getString(11),
-                        profileTextColor = c.getString(12),
-                        profileLinkColor = c.getString(13),
-                        profileSidebarFillColor = c.getString(14),
-                        profileSidebarBorderColor = c.getString(15),
-                        isProfileUseBackgroundImage = c.getBoolean(16),
-                        isDefaultProfile = c.getBoolean(17),
-                        favoritesCount = c.getInt(18),
-                        friendsCount = c.getInt(19),
-                        createdAt = Date(c.getLong(20)),
-                        utcOffset = c.getInt(21),
-                        timeZone = c.getString(22),
-                        profileBackgroundImageURLHttps = c.getString(23),
-                        profileBannerImageUrl = c.getString(24),
-                        isProfileBackgroundTiled = c.getBoolean(25),
-                        lang = c.getString(26),
-                        statusesCount = c.getInt(27),
-                        isVerified = c.getBoolean(28),
-                        isTranslator = c.getBoolean(29),
-                        isFollowRequestSent = c.getBoolean(30),
-                        descriptionLinks = restoreLinks(
-                                c.getString(31).splitWithComma(),
-                                c.getString(32).splitWithComma(),
-                                c.getString(33).splitWithComma()
-                        ),
-                        emojis = restoreEmojis(
-                                c.getString(34).splitWithComma(),
-                                c.getString(35).splitWithComma()
-                        )
-                )
-            }
 
-            c.close()
-            database.close()
+        val c = readableDatabase.query(
+                TABLE_NAME,
+                TABLE_COLUMNS,
+                "id=$id", null, null, null, null, "1"
+        )
+        if (c.moveToLast()) {
+            user = User(
+                    id = c.getLong(0),
+                    name = c.getString(1),
+                    screenName = c.getString(2),
+                    location = c.getString(3),
+                    description = c.getString(4),
+                    isContributorsEnabled = c.getBoolean(5),
+                    profileImageURLHttps = c.getString(6),
+                    isDefaultProfileImage = c.getBoolean(7),
+                    url = c.getString(8),
+                    isProtected = c.getBoolean(9),
+                    followersCount = c.getInt(10),
+                    profileBackgroundColor = c.getString(11),
+                    profileTextColor = c.getString(12),
+                    profileLinkColor = c.getString(13),
+                    profileSidebarFillColor = c.getString(14),
+                    profileSidebarBorderColor = c.getString(15),
+                    isProfileUseBackgroundImage = c.getBoolean(16),
+                    isDefaultProfile = c.getBoolean(17),
+                    favoritesCount = c.getInt(18),
+                    friendsCount = c.getInt(19),
+                    createdAt = Date(c.getLong(20)),
+                    utcOffset = c.getInt(21),
+                    timeZone = c.getString(22),
+                    profileBackgroundImageURLHttps = c.getString(23),
+                    profileBannerImageUrl = c.getString(24),
+                    isProfileBackgroundTiled = c.getBoolean(25),
+                    lang = c.getString(26),
+                    statusesCount = c.getInt(27),
+                    isVerified = c.getBoolean(28),
+                    isTranslator = c.getBoolean(29),
+                    isFollowRequestSent = c.getBoolean(30),
+                    descriptionLinks = restoreLinks(
+                            c.getString(31).splitWithComma(),
+                            c.getString(32).splitWithComma(),
+                            c.getString(33).splitWithComma()
+                    ),
+                    emojis = restoreEmojis(
+                            c.getString(34).splitWithComma(),
+                            c.getString(35).splitWithComma()
+                    )
+            )
         }
+
+        c.close()
+
         return user
     }
 
     fun addCachedUser(user: User) {
-        synchronized(this) {
-            transaction {
-                addCachedUserAtTransaction(this, user)
-            }
+        transaction {
+            addCachedUserAtTransaction(this, user)
         }
     }
 
     fun addCachedUsers(users: Collection<User>) {
-        synchronized(this) {
-            transaction {
-                for (user in users) {
-                    addCachedUserAtTransaction(this, user)
-                }
+        transaction {
+            for (user in users) {
+                addCachedUserAtTransaction(this, user)
             }
         }
     }
@@ -238,10 +232,8 @@ class CachedUsersSQLiteOpenHelper(context: Context, accessToken: AccessToken?) :
 
 
     fun deleteCachedUser(id: Long) {
-        synchronized(this) {
-            write {
-                delete(TABLE_NAME, "id=$id", null)
-            }
+        write {
+            delete(TABLE_NAME, "id=$id", null)
         }
     }
 

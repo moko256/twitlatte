@@ -69,39 +69,32 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
     public List<Long> getIds() {
         final long[] ids;
 
-        synchronized (this) {
-            final SQLiteDatabase database = getReadableDatabase();
-            final Cursor c = database.query(ID_LIST_TABLE_NAME, COLUMNS, null, null, null, null, null);
-            final int count = c.getCount();
-            ids = new long[count];
+        final Cursor c = getReadableDatabase().query(ID_LIST_TABLE_NAME, COLUMNS, null, null, null, null, null);
+        final int count = c.getCount();
+        ids = new long[count];
 
-            int i = 1;
-            while (c.moveToNext()) {
-                ids[count - i] = c.getLong(0);
-                i++;
-            }
-
-            c.close();
-            database.close();
+        int i = 1;
+        while (c.moveToNext()) {
+            ids[count - i] = c.getLong(0);
+            i++;
         }
+
+        c.close();
 
         return ArraysKt.asList(ids);
     }
 
     public void addIds(List<Long> ids) {
-        synchronized (this) {
-            SQLiteDatabase database = getWritableDatabase();
-            database.beginTransaction();
-            SQLiteStatement insert = database.compileStatement(insertIdListStatement);
-            try {
-                addIdsInner(insert, ids);
-                database.setTransactionSuccessful();
-            } finally {
-                database.endTransaction();
-            }
-            insert.close();
-            database.close();
+        SQLiteDatabase database = getWritableDatabase();
+        database.beginTransaction();
+        SQLiteStatement insert = database.compileStatement(insertIdListStatement);
+        try {
+            addIdsInner(insert, ids);
+            database.setTransactionSuccessful();
+        } finally {
+            database.endTransaction();
         }
+        insert.close();
     }
 
     private void addIdsInner(SQLiteStatement statement, List<Long> ids) {
@@ -112,42 +105,36 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
     }
 
     public void insertIds(int bottomPosition, List<Long> ids) {
-        synchronized (this) {
-            List<Long> n = getIds();
-            List<Long> d = n.subList(0, bottomPosition);
+        List<Long> n = getIds();
+        List<Long> d = n.subList(0, bottomPosition);
 
-            SQLiteDatabase database = getWritableDatabase();
-            database.beginTransaction();
-            SQLiteStatement insert = database.compileStatement(insertIdListStatement);
-            SQLiteStatement delete = database.compileStatement(deleteIdListStatement);
-            try {
-                deleteIdsInner(delete, d);
-                addIdsInner(insert, ids);
-                addIdsInner(insert, d);
-                database.setTransactionSuccessful();
-            } finally {
-                database.endTransaction();
-            }
-            delete.close();
-            insert.close();
-            database.close();
+        SQLiteDatabase database = getWritableDatabase();
+        database.beginTransaction();
+        SQLiteStatement insert = database.compileStatement(insertIdListStatement);
+        SQLiteStatement delete = database.compileStatement(deleteIdListStatement);
+        try {
+            deleteIdsInner(delete, d);
+            addIdsInner(insert, ids);
+            addIdsInner(insert, d);
+            database.setTransactionSuccessful();
+        } finally {
+            database.endTransaction();
         }
+        delete.close();
+        insert.close();
     }
 
     public void deleteIds(List<Long> ids) {
-        synchronized (this) {
-            SQLiteDatabase database = getWritableDatabase();
-            database.beginTransaction();
-            SQLiteStatement delete = database.compileStatement(deleteIdListStatement);
-            try {
-                deleteIdsInner(delete, ids);
-                database.setTransactionSuccessful();
-            } finally {
-                database.endTransaction();
-            }
-            delete.close();
-            database.close();
+        SQLiteDatabase database = getWritableDatabase();
+        database.beginTransaction();
+        SQLiteStatement delete = database.compileStatement(deleteIdListStatement);
+        try {
+            deleteIdsInner(delete, ids);
+            database.setTransactionSuccessful();
+        } finally {
+            database.endTransaction();
         }
+        delete.close();
     }
 
     private void deleteIdsInner(SQLiteStatement statement, List<Long> ids) {
@@ -160,36 +147,30 @@ public class CachedIdListSQLiteOpenHelper extends SQLiteOpenHelper {
     public long getSeeingId() {
         long r;
 
-        synchronized (this) {
-            SQLiteDatabase database = getReadableDatabase();
-            Cursor c = database.query(SEEING_ID_TABLE_NAME, COLUMNS, null, null, null, null, null);
-            if (c.moveToNext()) {
-                r = c.getLong(0);
-            } else {
-                r = 0L;
-            }
-            c.close();
-            database.close();
+        Cursor c = getReadableDatabase()
+                .query(SEEING_ID_TABLE_NAME, COLUMNS, null, null, null, null, null);
+        if (c.moveToNext()) {
+            r = c.getLong(0);
+        } else {
+            r = 0L;
         }
+        c.close();
 
         return r;
     }
 
     public void setSeeingId(Long i) {
-        synchronized (this) {
-            ContentValues contentValues = new ContentValues(1);
-            contentValues.put("id", i);
+        ContentValues contentValues = new ContentValues(1);
+        contentValues.put("id", i);
 
-            SQLiteDatabase database = getWritableDatabase();
-            database.beginTransaction();
-            try {
-                database.delete(SEEING_ID_TABLE_NAME, null, null);
-                database.insert(SEEING_ID_TABLE_NAME, null, contentValues);
-                database.setTransactionSuccessful();
-            } finally {
-                database.endTransaction();
-            }
-            database.close();
+        SQLiteDatabase database = getWritableDatabase();
+        database.beginTransaction();
+        try {
+            database.delete(SEEING_ID_TABLE_NAME, null, null);
+            database.insert(SEEING_ID_TABLE_NAME, null, contentValues);
+            database.setTransactionSuccessful();
+        } finally {
+            database.endTransaction();
         }
     }
 

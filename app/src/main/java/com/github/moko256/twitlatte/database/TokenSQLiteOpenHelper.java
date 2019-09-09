@@ -92,15 +92,7 @@ public class TokenSQLiteOpenHelper extends SQLiteOpenHelper {
     }
 
     public AccessToken[] getAccessTokens() {
-        AccessToken[] accessTokens;
-
-        synchronized (this) {
-            SQLiteDatabase database = getReadableDatabase();
-            accessTokens = getAccessTokenInternal(database);
-            database.close();
-        }
-
-        return accessTokens;
+        return getAccessTokenInternal(getReadableDatabase());
     }
 
     private AccessToken[] getAccessTokenInternal(SQLiteDatabase database) {
@@ -121,23 +113,20 @@ public class TokenSQLiteOpenHelper extends SQLiteOpenHelper {
         Pair<String, Long> pair = AccessTokenKt.splitAccessTokenKey(key);
         AccessToken accessToken;
 
-        synchronized (this) {
-            SQLiteDatabase database = getReadableDatabase();
-            Cursor c = database.query(
-                    TABLE_NAME,
-                    TABLE_COLUMNS,
-                    "url = '" + pair.getFirst() + "' AND " + "userId = " + pair.getSecond(),
-                    null, null, null, null, "1");
+        Cursor c = getReadableDatabase().query(
+                TABLE_NAME,
+                TABLE_COLUMNS,
+                "url = '" + pair.getFirst() + "' AND " + "userId = " + pair.getSecond(),
+                null, null, null, null, "1"
+        );
 
 
-            if (c.moveToNext()) {
-                accessToken = convertFromCursor(c);
-            } else {
-                accessToken = null;
-            }
-            c.close();
-            database.close();
+        if (c.moveToNext()) {
+            accessToken = convertFromCursor(c);
+        } else {
+            accessToken = null;
         }
+        c.close();
 
         return accessToken;
     }
@@ -156,11 +145,7 @@ public class TokenSQLiteOpenHelper extends SQLiteOpenHelper {
     }
 
     public void addAccessToken(AccessToken accessToken) {
-        synchronized (this) {
-            SQLiteDatabase database = getWritableDatabase();
-            addAccessTokenInternal(database, accessToken);
-            database.close();
-        }
+        addAccessTokenInternal(getWritableDatabase(), accessToken);
     }
 
     private void addAccessTokenInternal(SQLiteDatabase database, AccessToken accessToken) {
@@ -178,11 +163,12 @@ public class TokenSQLiteOpenHelper extends SQLiteOpenHelper {
     }
 
     public void deleteAccessToken(AccessToken accessToken) {
-        synchronized (this) {
-            SQLiteDatabase database = getWritableDatabase();
-            database.delete(TABLE_NAME, "url = '" + accessToken.getUrl() + "' AND " + "userId = " + accessToken.getUserId(), null);
-            database.close();
-        }
+        getWritableDatabase()
+                .delete(
+                        TABLE_NAME,
+                        "url = '" + accessToken.getUrl() + "' AND " + "userId = " + accessToken.getUserId(),
+                        null
+                );
     }
 
 }
