@@ -24,6 +24,7 @@ import com.github.moko256.latte.client.base.entity.AccessToken
 import com.github.moko256.latte.client.base.entity.Emoji
 import com.github.moko256.latte.client.base.entity.User
 import com.github.moko256.latte.html.entity.Link
+import com.github.moko256.twitlatte.database.utils.*
 import com.github.moko256.twitlatte.text.splitWithComma
 import java.io.File
 import java.util.*
@@ -75,45 +76,38 @@ class CachedUsersSQLiteOpenHelper(context: Context, accessToken: AccessToken?) :
     }
 
     fun getCachedUser(id: Long): User? {
-        var user: User? = null
-
-        val c = readableDatabase.query(
+        return selectSingleOrNull(
                 TABLE_NAME,
                 TABLE_COLUMNS,
-                "id=$id", null, null, null, null, "1"
-        )
-        if (c.moveToLast()) {
-            user = User(
-                    id = c.getLong(0),
-                    name = c.getString(1),
-                    screenName = c.getString(2),
-                    location = c.getString(3),
-                    description = c.getString(4),
-                    profileImageURLHttps = c.getString(5),
-                    url = c.getString(6),
-                    isProtected = c.getBoolean(7),
-                    followersCount = c.getInt(8),
-                    favoritesCount = c.getInt(9),
-                    friendsCount = c.getInt(10),
-                    createdAt = Date(c.getLong(11)),
-                    profileBannerImageUrl = c.getString(12),
-                    statusesCount = c.getInt(13),
-                    isVerified = c.getBoolean(14),
+                "id=$id"
+        ) {
+            User(
+                    id = getLong(0),
+                    name = getString(1),
+                    screenName = getString(2),
+                    location = getString(3),
+                    description = getString(4),
+                    profileImageURLHttps = getString(5),
+                    url = getString(6),
+                    isProtected = getBoolean(7),
+                    followersCount = getInt(8),
+                    favoritesCount = getInt(9),
+                    friendsCount = getInt(10),
+                    createdAt = Date(getLong(11)),
+                    profileBannerImageUrl = getString(12),
+                    statusesCount = getInt(13),
+                    isVerified = getBoolean(14),
                     descriptionLinks = restoreLinks(
-                            c.getString(15).splitWithComma(),
-                            c.getString(16).splitWithComma(),
-                            c.getString(17).splitWithComma()
+                            getString(15).splitWithComma(),
+                            getString(16).splitWithComma(),
+                            getString(17).splitWithComma()
                     ),
                     emojis = restoreEmojis(
-                            c.getString(18).splitWithComma(),
-                            c.getString(19).splitWithComma()
+                            getString(18).splitWithComma(),
+                            getString(19).splitWithComma()
                     )
             )
         }
-
-        c.close()
-
-        return user
     }
 
     fun addCachedUser(user: User) {

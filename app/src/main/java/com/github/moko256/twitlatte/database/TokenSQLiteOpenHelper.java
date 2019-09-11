@@ -24,6 +24,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import com.github.moko256.latte.client.base.entity.AccessToken;
 import com.github.moko256.latte.client.base.entity.AccessTokenKt;
+import com.github.moko256.twitlatte.database.utils.TableDBUtilKt;
 
 import org.jetbrains.annotations.TestOnly;
 
@@ -63,7 +64,7 @@ public class TokenSQLiteOpenHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        DBUtilKt.createTableWithUniqueKey(sqLiteDatabase, TABLE_NAME, TABLE_COLUMNS, new String[]{"url", "userId"});
+        TableDBUtilKt.createTableWithUniqueKey(sqLiteDatabase, TABLE_NAME, TABLE_COLUMNS, new String[]{"url", "userId"});
     }
 
     @Override
@@ -72,8 +73,8 @@ public class TokenSQLiteOpenHelper extends SQLiteOpenHelper {
             sqLiteDatabase.execSQL("update " + TABLE_NAME + " set token='',tokenSecret='' where type=0");
         }
         if (oldVersion < 3) {
-            DBUtilKt.addColumn(sqLiteDatabase, TABLE_NAME, "consumerKey", null);
-            DBUtilKt.addColumn(sqLiteDatabase, TABLE_NAME, "consumerSecret", null);
+            TableDBUtilKt.addColumn(sqLiteDatabase, TABLE_NAME, "consumerKey", null);
+            TableDBUtilKt.addColumn(sqLiteDatabase, TABLE_NAME, "consumerSecret", null);
         }
         if (oldVersion < 4) {
             AccessToken[] accessTokens;

@@ -22,8 +22,11 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import com.github.moko256.latte.client.base.entity.AccessToken
 import com.github.moko256.latte.client.base.entity.ListEntry
+import com.github.moko256.twitlatte.database.utils.getBoolean
+import com.github.moko256.twitlatte.database.utils.selectMultipleAsList
+import com.github.moko256.twitlatte.database.utils.transaction
+import com.github.moko256.twitlatte.database.utils.write
 import java.io.File
-import java.util.*
 
 /**
  * Created by moko256 on 2019/01/02.
@@ -57,34 +60,24 @@ class CachedListEntriesSQLiteOpenHelper : SQLiteOpenHelper {
     }
 
     fun getListEntries(): List<ListEntry> {
-        var listEntries: MutableList<ListEntry>
-
-        val c = readableDatabase.query(
-                TABLE_NAME,
-                TABLE_COLUMNS,
-                null, null, null, null, null)
-
         try {
-            listEntries = ArrayList(c.count)
-
-            while (c.moveToNext()) {
-                listEntries.add(ListEntry(
-                        c.getLong(0),
-                        c.getString(1),
-                        c.getString(2),
-                        c.getBoolean(3)
-                ))
+            return selectMultipleAsList(
+                    TABLE_NAME,
+                    TABLE_COLUMNS
+            ) {
+                ListEntry(
+                        getLong(0),
+                        getString(1),
+                        getString(2),
+                        getBoolean(3)
+                )
             }
         } catch (e: Throwable) {
-            listEntries = mutableListOf()
             write {
                 delete(TABLE_NAME, null, null)
             }
+            return listOf()
         }
-
-        c.close()
-
-        return listEntries
     }
 
     fun setListEntries(listEntries: List<ListEntry>) {

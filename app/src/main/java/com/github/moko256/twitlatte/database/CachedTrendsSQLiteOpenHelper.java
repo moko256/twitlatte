@@ -24,6 +24,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import com.github.moko256.latte.client.base.entity.AccessToken;
 import com.github.moko256.latte.client.base.entity.Trend;
+import com.github.moko256.twitlatte.database.utils.TableDBUtilKt;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -52,7 +53,7 @@ public class CachedTrendsSQLiteOpenHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         if (oldVersion == 1) {
-            DBUtilKt.addColumn(db, TABLE_NAME, "volume", "-1");
+            TableDBUtilKt.addColumn(db, TABLE_NAME, "volume", "-1");
         }
     }
 

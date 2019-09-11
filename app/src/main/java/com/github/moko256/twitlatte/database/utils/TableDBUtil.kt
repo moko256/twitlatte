@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-package com.github.moko256.twitlatte.database
+package com.github.moko256.twitlatte.database.utils
 
-import android.database.Cursor
 import android.database.SQLException
 import android.database.sqlite.SQLiteDatabase
-import android.database.sqlite.SQLiteOpenHelper
 
 /**
  * Created by moko256 on 2019/03/07.
@@ -51,6 +49,7 @@ fun SQLiteDatabase.createTableWithUniqueIntKey(
     execSQL(builder.toString())
 }
 
+
 fun SQLiteDatabase.createTableWithUniqueKey(
         tableName: String,
         columns: Array<String>,
@@ -80,25 +79,5 @@ fun SQLiteDatabase.addColumn(tableName: String, columnName: String, defaultValue
     execSQL("alter table $tableName add column $columnName")
     defaultValue?.let {
         execSQL("update $tableName set $columnName=$defaultValue")
-    }
-}
-
-fun Cursor.getBoolean(index: Int) = getInt(index) == 1
-
-inline fun SQLiteOpenHelper.write(action: SQLiteDatabase.() -> Unit) {
-    writableDatabase.also {
-        action(it)
-    }
-}
-
-inline fun SQLiteOpenHelper.transaction(action: SQLiteDatabase.() -> Unit) {
-    writableDatabase.apply {
-        beginTransaction()
-        try {
-            action()
-            setTransactionSuccessful()
-        } finally {
-            endTransaction()
-        }
     }
 }

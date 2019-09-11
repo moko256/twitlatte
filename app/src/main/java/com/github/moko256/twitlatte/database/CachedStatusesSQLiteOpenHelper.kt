@@ -18,12 +18,14 @@ package com.github.moko256.twitlatte.database
 
 import android.content.ContentValues
 import android.content.Context
+import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.database.sqlite.SQLiteStatement
 import androidx.collection.ArraySet
 import com.github.moko256.latte.client.base.entity.*
 import com.github.moko256.latte.html.entity.Link
+import com.github.moko256.twitlatte.database.utils.*
 import com.github.moko256.twitlatte.text.splitWithComma
 import java.io.File
 import java.net.URLDecoder
@@ -136,121 +138,116 @@ class CachedStatusesSQLiteOpenHelper(
     }
 
     fun getCachedStatus(id: Long): StatusObject? {
-        var status: StatusObject? = null
-
-        val c = readableDatabase.query(
+        return selectSingleOrNull(
                 TABLE_NAME,
                 TABLE_COLUMNS,
-                "id=$id", null, null, null, null, "1"
-        )
-        if (c.moveToLast()) {
-            val createdAt = Date(c.getLong(0))
-            val statusId = c.getLong(1)
-            val userId = c.getLong(2)
-            val repeatedStatusId = c.getLong(3)
-            if (repeatedStatusId == -1L) {
-                status = Status(
-                        createdAt = createdAt,
-                        id = statusId,
-                        userId = userId,
-                        text = c.getString(4),
-                        sourceName = c.getString(5),
-                        sourceWebsite = c.getString(6),
-                        inReplyToStatusId = c.getLong(7),
-                        inReplyToUserId = c.getLong(8),
-                        isFavorited = c.getBoolean(9),
-                        isRepeated = c.getBoolean(10),
-                        favoriteCount = c.getInt(11),
-                        repeatCount = c.getInt(12),
-                        repliesCount = c.getInt(13),
-                        inReplyToScreenName = c.getString(14),
-                        isSensitive = c.getBoolean(15),
-                        lang = c.getString(16),
-                        mentions = c.getString(17).splitWithComma()?.toTypedArray(),
-                        urls = restoreLinks(
-                                c.getString(18).splitWithComma(),
-                                c.getString(19).splitWithComma(),
-                                c.getString(20).splitWithComma()
-                        ),
-                        medias = restoreMedias(
-                                c.getString(21).splitWithCommaAndReplaceEmptyWithNull(),
-                                c.getString(22).splitWithComma(),
-                                c.getString(23).splitWithCommaAndReplaceEmptyWithNull(),
-                                c.getString(24).splitWithComma()
-                        ),
-                        quotedStatusId = c.getLong(25),
-                        url = c.getString(26),
-                        emojis = restoreEmojis(
-                                c.getString(27).splitWithComma(),
-                                c.getString(28).splitWithComma()
-                        ),
-                        spoilerText = c.getString(29),
-                        visibility = c.getString(30),
-                        card = c.let {
-                            val title = it.getString(31)
-                            val description = it.getString(32)
-                            val url = it.getString(33)
-                            val imageUrl = it.getString(34)
-
-                            if (title != null && description != null && url != null) {
-                                Card(
-                                        title = title,
-                                        description = description,
-                                        url = url,
-                                        imageUrl = imageUrl
-                                )
-                            } else {
-                                null
-                            }
-                        },
-                        poll = let {
-                            val pollId = c.getLong(35)
-                            if (pollId != -1L) {
-                                Poll(
-                                        pollId,
-                                        Date(c.getLong(36)),
-                                        c.getBoolean(37),
-                                        c.getBoolean(38),
-                                        c.getInt(39),
-                                        c.getString(40).splitWithComma()?.map { URLDecoder.decode(it, "utf-8") }
-                                                ?: emptyList(),
-                                        c.getString(41).splitWithComma()?.map { it.toInt() }
-                                                ?: emptyList(),
-                                        c.getBoolean(42)
-                                )
-                            } else {
-                                null
-                            }
-                        }
-                )
-            } else {
-                status = Repeat(
-                        id = statusId,
-                        userId = userId,
-                        createdAt = createdAt,
-                        repeatedStatusId = repeatedStatusId
-                )
-            }
+                "id=$id"
+        ) {
+            convertCursorToStatusObject(this)
         }
+    }
 
-        c.close()
+    private fun convertCursorToStatusObject(c: Cursor): StatusObject {
+        val createdAt = Date(c.getLong(0))
+        val statusId = c.getLong(1)
+        val userId = c.getLong(2)
+        val repeatedStatusId = c.getLong(3)
+        return if (repeatedStatusId == -1L) {
+            Status(
+                    createdAt = createdAt,
+                    id = statusId,
+                    userId = userId,
+                    text = c.getString(4),
+                    sourceName = c.getString(5),
+                    sourceWebsite = c.getString(6),
+                    inReplyToStatusId = c.getLong(7),
+                    inReplyToUserId = c.getLong(8),
+                    isFavorited = c.getBoolean(9),
+                    isRepeated = c.getBoolean(10),
+                    favoriteCount = c.getInt(11),
+                    repeatCount = c.getInt(12),
+                    repliesCount = c.getInt(13),
+                    inReplyToScreenName = c.getString(14),
+                    isSensitive = c.getBoolean(15),
+                    lang = c.getString(16),
+                    mentions = c.getString(17).splitWithComma()?.toTypedArray(),
+                    urls = restoreLinks(
+                            c.getString(18).splitWithComma(),
+                            c.getString(19).splitWithComma(),
+                            c.getString(20).splitWithComma()
+                    ),
+                    medias = restoreMedias(
+                            c.getString(21).splitWithCommaAndReplaceEmptyWithNull(),
+                            c.getString(22).splitWithComma(),
+                            c.getString(23).splitWithCommaAndReplaceEmptyWithNull(),
+                            c.getString(24).splitWithComma()
+                    ),
+                    quotedStatusId = c.getLong(25),
+                    url = c.getString(26),
+                    emojis = restoreEmojis(
+                            c.getString(27).splitWithComma(),
+                            c.getString(28).splitWithComma()
+                    ),
+                    spoilerText = c.getString(29),
+                    visibility = c.getString(30),
+                    card = c.let {
+                        val title = it.getString(31)
+                        val description = it.getString(32)
+                        val url = it.getString(33)
+                        val imageUrl = it.getString(34)
 
-        return status
+                        if (title != null && description != null && url != null) {
+                            Card(
+                                    title = title,
+                                    description = description,
+                                    url = url,
+                                    imageUrl = imageUrl
+                            )
+                        } else {
+                            null
+                        }
+                    },
+                    poll = let {
+                        val pollId = c.getLong(35)
+                        if (pollId != -1L) {
+                            Poll(
+                                    pollId,
+                                    Date(c.getLong(36)),
+                                    c.getBoolean(37),
+                                    c.getBoolean(38),
+                                    c.getInt(39),
+                                    c.getString(40).splitWithComma()?.map { URLDecoder.decode(it, "utf-8") }
+                                            ?: emptyList(),
+                                    c.getString(41).splitWithComma()?.map { it.toInt() }
+                                            ?: emptyList(),
+                                    c.getBoolean(42)
+                            )
+                        } else {
+                            null
+                        }
+                    }
+            )
+        } else {
+            Repeat(
+                    id = statusId,
+                    userId = userId,
+                    createdAt = createdAt,
+                    repeatedStatusId = repeatedStatusId
+            )
+        }
     }
 
     fun getIdsInUse(ids: Collection<Long>): Collection<Long> {
         val result = ArraySet<Long>(ids.size * 5)
 
         ids.forEach { id ->
-            val c = readableDatabase.query(
+            selectMultiple(
                     TABLE_NAME,
                     arrayOf(TABLE_COLUMNS[1], TABLE_COLUMNS[3], TABLE_COLUMNS[25]),
-                    "id=$id", null, null, null, null
-            )
-
-            while (c.moveToNext()) {
-                val repeatId = c.getLong(1)
-                val quotedId = c.getLong(2)
+                    "id=$id"
+            ) {
+                val repeatId = getLong(1)
+                val quotedId = getLong(2)
                 if (repeatId != -1L) {
                     if (!ids.contains(repeatId)) {
                         result.add(repeatId)
@@ -261,8 +258,6 @@ class CachedStatusesSQLiteOpenHelper(
                     }
                 }
             }
-
-            c.close()
         }
 
         if (result.isNotEmpty()) {

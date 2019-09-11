@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package com.github.moko256.twitlatte.database
+package com.github.moko256.twitlatte.database.utils
 
 import android.database.sqlite.SQLiteDatabase
 import android.os.Build
 import android.util.Log
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.github.moko256.twitlatte.database.EmptyDBHelper
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
@@ -33,7 +34,7 @@ import org.junit.runner.RunWith
  */
 
 @RunWith(AndroidJUnit4::class)
-class DBUtilKtCreateTableWithUniqueKeyTest {
+class TableDBUtilKtCreateTableWithUniqueKeyTest {
 
     @Test
     fun createTableWithUniqueIntKey() {
