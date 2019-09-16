@@ -16,7 +16,7 @@
 
 package com.github.moko256.twitlatte.mediaview
 
-import com.github.moko256.twitlatte.exoplayer.Mp3ExtractorFactory
+import com.google.android.exoplayer2.extractor.mp3.Mp3Extractor
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 
 /**
@@ -26,7 +26,7 @@ import com.google.android.exoplayer2.source.ProgressiveMediaSource
  */
 open class AudioFragment : AbstractVideoFragment() {
     private companion object {
-        val factory = ProgressiveMediaSource.Factory(dataSourceFactory, Mp3ExtractorFactory)
+        val factory = ProgressiveMediaSource.Factory(dataSourceFactory, Mp3Extractor.FACTORY)
     }
 
     override fun getMediaSourceFactory() = factory

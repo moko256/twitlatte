@@ -16,7 +16,7 @@
 
 package com.github.moko256.twitlatte.mediaview
 
-import com.github.moko256.twitlatte.exoplayer.Mp4OrWebPExtractorFactory
+import com.google.android.exoplayer2.extractor.mp4.Mp4Extractor
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 
 /**
@@ -26,7 +26,7 @@ import com.google.android.exoplayer2.source.ProgressiveMediaSource
  */
 open class OneVideoFragment : AbstractVideoFragment() {
     private companion object {
-        val factory = ProgressiveMediaSource.Factory(dataSourceFactory, Mp4OrWebPExtractorFactory)
+        val factory = ProgressiveMediaSource.Factory(dataSourceFactory, Mp4Extractor.FACTORY)
     }
 
     override fun getMediaSourceFactory() = factory
