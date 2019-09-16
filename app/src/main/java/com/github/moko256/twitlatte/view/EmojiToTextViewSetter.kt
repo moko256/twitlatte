@@ -25,6 +25,7 @@ import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.ImageSpan
 import android.widget.TextView
+import androidx.collection.ArrayMap
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -42,7 +43,6 @@ import net.ellerton.japng.android.api.PngAndroid
 import java.io.InputStream
 import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 import kotlin.math.roundToInt
 
 /**
@@ -80,7 +80,7 @@ class EmojiToTextViewSetter(
         } else {
             var find = matcher.find()
             if (find) {
-                HashMap<String, ArrayList<Int>>(emojis.size * 2).also { map ->
+                ArrayMap<String, ArrayList<Int>>(emojis.size * 2).also { map ->
                     while (find) {
                         val shortCode = matcher.group(1)
 

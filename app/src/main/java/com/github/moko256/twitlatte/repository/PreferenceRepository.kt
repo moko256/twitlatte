@@ -17,6 +17,7 @@
 package com.github.moko256.twitlatte.repository
 
 import android.content.SharedPreferences
+import androidx.collection.SimpleArrayMap
 import java.util.regex.Pattern
 import java.util.regex.PatternSyntaxException
 
@@ -58,7 +59,7 @@ class PreferenceRepository(private val preferences: SharedPreferences) {
     private val emptyPattern by lazy {
         Pattern.compile("")
     }
-    private val patterns = HashMap<String, Pattern>(5)
+    private val patterns = SimpleArrayMap<String, Pattern>(5)
 
     fun getPattern(key: String): Pattern {
         val cachedPattern = patterns[key]
@@ -70,7 +71,7 @@ class PreferenceRepository(private val preferences: SharedPreferences) {
         return if (patternString != null && patternString.isNotEmpty()) {
             try {
                 val compiledPattern = Pattern.compile(patternString)
-                patterns[key] = compiledPattern
+                patterns.put(key, compiledPattern)
                 compiledPattern
             } catch (e: PatternSyntaxException) {
                 e.printStackTrace()
@@ -98,7 +99,7 @@ class PreferenceRepository(private val preferences: SharedPreferences) {
     fun updateRegex(key: String, value: String) {
         if (value.isNotEmpty()) {
             try {
-                patterns[key] = Pattern.compile(value)
+                patterns.put(key, Pattern.compile(value))
             } catch (e: PatternSyntaxException) {
                 patterns.remove(key)
                 throw e
