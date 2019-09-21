@@ -19,7 +19,7 @@ package com.github.moko256.twitlatte.cacheMap
 import android.content.Context
 import com.github.moko256.latte.client.base.entity.AccessToken
 import com.github.moko256.latte.client.base.entity.User
-import com.github.moko256.twitlatte.LIMIT_OF_SIZE_OF_STATUSES_LIST
+import com.github.moko256.twitlatte.LIMIT_OF_SIZE_OF_OBJECT_CACHE
 import com.github.moko256.twitlatte.collections.LruCache
 import com.github.moko256.twitlatte.database.CachedUsersSQLiteOpenHelper
 
@@ -32,7 +32,7 @@ import com.github.moko256.twitlatte.database.CachedUsersSQLiteOpenHelper
 class UserCacheMap {
 
     private var diskCache: CachedUsersSQLiteOpenHelper? = null
-    private val cache = LruCache<Long, User>(LIMIT_OF_SIZE_OF_STATUSES_LIST / 4)
+    private val cache = LruCache<Long, User>(LIMIT_OF_SIZE_OF_OBJECT_CACHE)
 
     fun prepare(context: Context, accessToken: AccessToken) {
         diskCache?.close()

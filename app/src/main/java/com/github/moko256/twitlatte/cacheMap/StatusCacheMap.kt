@@ -22,7 +22,7 @@ import com.github.moko256.latte.client.base.entity.AccessToken
 import com.github.moko256.latte.client.base.entity.Status
 import com.github.moko256.latte.client.base.entity.StatusObject
 import com.github.moko256.latte.client.base.entity.getId
-import com.github.moko256.twitlatte.LIMIT_OF_SIZE_OF_STATUSES_LIST
+import com.github.moko256.twitlatte.LIMIT_OF_SIZE_OF_OBJECT_CACHE
 import com.github.moko256.twitlatte.collections.LruCache
 import com.github.moko256.twitlatte.database.CachedStatusesSQLiteOpenHelper
 
@@ -34,7 +34,7 @@ import com.github.moko256.twitlatte.database.CachedStatusesSQLiteOpenHelper
 
 class StatusCacheMap {
 
-    private val cache = LruCache<Long, StatusObject>(LIMIT_OF_SIZE_OF_STATUSES_LIST / 4)
+    private val cache = LruCache<Long, StatusObject>(LIMIT_OF_SIZE_OF_OBJECT_CACHE)
     private var diskCache: CachedStatusesSQLiteOpenHelper? = null
 
     fun prepare(context: Context, accessToken: AccessToken) {
