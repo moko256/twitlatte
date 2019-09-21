@@ -51,7 +51,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 
 private const val INTENT_CLIENT_KEY = "intent_client_key"
 const val LIMIT_OF_SIZE_OF_STATUSES_LIST = 1000
-const val LIMIT_OF_SIZE_OF_OBJECT_CACHE = 200
+const val LIMIT_OF_SIZE_OF_OBJECT_CACHE = 250
 
 lateinit var preferenceRepository: PreferenceRepository
 
