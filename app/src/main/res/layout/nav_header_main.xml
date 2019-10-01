@@ -32,15 +32,16 @@
     <com.github.moko256.twitlatte.widget.WideRatioRelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fitsSystemWindows="true">
+        android:fitsSystemWindows="true"
+        android:layout_marginTop="@dimen/nav_header_vertical_margin"
+        android:layout_marginBottom="@dimen/nav_header_vertical_margin"
+        android:layout_marginLeft="@dimen/nav_header_horizontal_margin"
+        android:layout_marginRight="@dimen/nav_header_horizontal_margin">
 
         <ImageView
             android:id="@+id/user_image"
             android:layout_width="64dp"
             android:layout_height="64dp"
-            android:layout_marginTop="@dimen/nav_header_vertical_margin"
-            android:layout_marginLeft="@dimen/nav_header_horizontal_margin"
-            android:layout_marginRight="@dimen/nav_header_horizontal_margin"
             android:transitionName="icon_image"
             tools:src="@android:color/white" />
 
@@ -48,9 +49,6 @@
             android:id="@+id/user_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/nav_header_horizontal_margin"
-            android:layout_marginRight="@dimen/nav_header_horizontal_margin"
-            android:layout_marginTop="16dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
             android:textColor="#FFFFFF"
             android:lines="1"
@@ -63,9 +61,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:layout_marginLeft="@dimen/nav_header_horizontal_margin"
-            android:layout_marginRight="@dimen/nav_header_horizontal_margin"
-            android:layout_marginBottom="@dimen/nav_header_vertical_margin"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:textColor="#deFFFFFF"
             android:lines="1"
@@ -79,8 +74,6 @@
             android:id="@+id/toggle_account"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:layout_marginRight="@dimen/nav_header_horizontal_margin"
-            android:layout_marginBottom="@dimen/nav_header_vertical_margin"
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
             app:srcCompat="@drawable/ic_arrow_drop_down_white_24dp" />

@@ -26,7 +26,7 @@
         android:id="@+id/layout_images_adapter_image"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:layout_gravity="center_vertical"
+        android:layout_marginTop="16dp"
         android:layout_marginStart="16dp"
         app:tint="?android:attr/textColorSecondary"
         tools:srcCompat="@drawable/ic_add_white_24dp" />
