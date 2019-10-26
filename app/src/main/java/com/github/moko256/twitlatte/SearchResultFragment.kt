@@ -18,7 +18,8 @@ package com.github.moko256.twitlatte
 
 import android.os.Bundle
 import com.github.moko256.latte.client.base.entity.Paging
-import com.github.moko256.latte.client.base.entity.Post
+import com.github.moko256.twitlatte.entity.Client
+import com.github.moko256.twitlatte.viewmodel.ListViewModel
 
 /**
  * Created by moko256 on 2016/07/27.
@@ -30,10 +31,14 @@ private const val BUNDLE_KEY_SEARCH_QUERY = "query"
 
 class SearchResultFragment : BaseTweetListFragment() {
 
-    private var searchText: String = ""
+    override val listRepository = object : ListViewModel.ListRepository() {
+        lateinit var searchText: String
+        override fun onCreate(client: Client, bundle: Bundle) {
+            super.onCreate(client, bundle)
+            searchText = bundle.getString(BUNDLE_KEY_SEARCH_QUERY) ?: ""
+        }
 
-    override val cachedIdsDatabaseName: String
-        get() = searchText.toByteArray().let { bytes ->
+        override fun name() = searchText.toByteArray().let { bytes ->
             StringBuilder("Search_").apply {
                 bytes.forEach {
                     if (it < 0) {
@@ -45,15 +50,7 @@ class SearchResultFragment : BaseTweetListFragment() {
             }.toString()
         }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        searchText = activity?.intent?.getStringExtra(BUNDLE_KEY_SEARCH_QUERY) ?: ""
-
-        super.onCreate(savedInstanceState)
-    }
-
-    @Throws(Throwable::class)
-    override fun request(paging: Paging): List<Post> {
-        return if (searchText.isNotEmpty()) {
+        override fun request(paging: Paging) = if (searchText.isNotEmpty()) {
             client.apiClient.getPostByQuery(searchText, paging)
         } else {
             emptyList()

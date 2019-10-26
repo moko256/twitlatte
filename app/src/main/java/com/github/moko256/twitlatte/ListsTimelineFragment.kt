@@ -19,7 +19,8 @@ package com.github.moko256.twitlatte
 import android.os.Bundle
 import com.github.moko256.latte.client.base.entity.ListEntry
 import com.github.moko256.latte.client.base.entity.Paging
-import com.github.moko256.latte.client.base.entity.Post
+import com.github.moko256.twitlatte.entity.Client
+import com.github.moko256.twitlatte.viewmodel.ListViewModel
 
 /**
  * Created by moko256 on 2019/01/02.
@@ -28,27 +29,17 @@ import com.github.moko256.latte.client.base.entity.Post
  */
 class ListsTimelineFragment : BaseTweetListFragment(), ToolbarStringTitleInterface {
 
-    private var listId = -1L
-    private lateinit var title: String
+    override val titleString by lazy { arguments?.getString("title", "") ?: "" }
 
-    override val titleString: String
-        get() = title
-
-    override val cachedIdsDatabaseName: String
-        get() = "ListsTimeline_$listId"
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        if (listId == -1L) {
-            val arguments = arguments!!
-            listId = arguments.getLong("listId", -1L)
-            title = arguments.getString("title", "")
+    override val listRepository = object : ListViewModel.ListRepository() {
+        var listId = 0L
+        override fun onCreate(client: Client, bundle: Bundle) {
+            super.onCreate(client, bundle)
+            listId = bundle.getLong("listId")
         }
 
-        super.onCreate(savedInstanceState)
-    }
-
-    override fun request(paging: Paging): List<Post> {
-        return client.apiClient.getListTimeline(listId, paging)
+        override fun name() = "ListsTimeline_$listId"
+        override fun request(paging: Paging) = client.apiClient.getListTimeline(listId, paging)
     }
 
     companion object {

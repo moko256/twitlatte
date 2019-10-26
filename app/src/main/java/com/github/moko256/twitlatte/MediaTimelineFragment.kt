@@ -18,7 +18,8 @@ package com.github.moko256.twitlatte
 
 import android.os.Bundle
 import com.github.moko256.latte.client.base.entity.Paging
-import com.github.moko256.latte.client.base.entity.Post
+import com.github.moko256.twitlatte.entity.Client
+import com.github.moko256.twitlatte.viewmodel.ListViewModel
 
 /**
  * Created by moko256 on 2018/03/10.
@@ -27,26 +28,21 @@ import com.github.moko256.latte.client.base.entity.Post
  */
 class MediaTimelineFragment : BaseTweetListFragment(), ToolbarTitleInterface {
 
-    private var userId = -1L
+    override val listRepository = object : ListViewModel.ListRepository() {
+        var userId = 0L
+        override fun onCreate(client: Client, bundle: Bundle) {
+            super.onCreate(client, bundle)
+            userId = bundle.getLong("userId")
+        }
 
-    override val cachedIdsDatabaseName: String
-        get() = "MediaTimeline_$userId"
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        userId = arguments!!.getLong("userId", -1)
-
-        super.onCreate(savedInstanceState)
+        override fun name() = "MediaTimeline_$userId"
+        override fun request(paging: Paging) = client.apiClient.getMediasTimeline(userId, paging)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
         adapter!!.shouldShowMediaOnly = true
-    }
-
-    @Throws(Throwable::class)
-    override fun request(paging: Paging): List<Post> {
-        return client.apiClient.getMediasTimeline(userId, paging)
     }
 
     override val titleResourceId = R.string.media

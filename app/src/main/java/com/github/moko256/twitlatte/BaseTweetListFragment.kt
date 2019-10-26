@@ -16,6 +16,7 @@
 
 package com.github.moko256.twitlatte
 
+import android.app.Application
 import android.content.Context
 import android.graphics.Point
 import android.graphics.Rect
@@ -25,19 +26,16 @@ import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.bumptech.glide.Glide
-import com.github.moko256.latte.client.base.entity.Post
-import com.github.moko256.twitlatte.database.CachedIdListSQLiteOpenHelper
 import com.github.moko256.twitlatte.entity.Client
 import com.github.moko256.twitlatte.entity.EventType
 import com.github.moko256.twitlatte.entity.UpdateEvent
-import com.github.moko256.twitlatte.model.impl.ListModelImpl
-import com.github.moko256.twitlatte.model.impl.StatusActionModelImpl
-import com.github.moko256.twitlatte.repository.server.base.ListServerRepository
 import com.github.moko256.twitlatte.text.TwitterStringUtils
 import com.github.moko256.twitlatte.view.dpToPx
 import com.github.moko256.twitlatte.viewmodel.ListViewModel
@@ -50,17 +48,17 @@ import io.reactivex.disposables.CompositeDisposable
  *
  * @author moko256
  */
-abstract class BaseTweetListFragment : BaseListFragment(), ListServerRepository<Post> {
+abstract class BaseTweetListFragment : BaseListFragment() {
 
     protected var adapter: StatusesAdapter? = null
-    protected lateinit var client: Client
+    private lateinit var client: Client
 
     private lateinit var disposable: CompositeDisposable
     private lateinit var listViewModel: ListViewModel
 
     private var adapterObservableBinder: ((UpdateEvent) -> Unit)? = null
 
-    protected abstract val cachedIdsDatabaseName: String
+    protected abstract val listRepository: ListViewModel.ListRepository
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         val activity = requireActivity()
@@ -74,23 +72,11 @@ abstract class BaseTweetListFragment : BaseListFragment(), ListServerRepository<
         }
 
         client = activity.getClient()!!
-        listViewModel = ViewModelProviders.of(this).get(ListViewModel::class.java)
-        if (!listViewModel.initialized) {
-            listViewModel.listModel = ListModelImpl(
-                    this,
-                    client,
-                    CachedIdListSQLiteOpenHelper(
-                            context.applicationContext,
-                            client.accessToken,
-                            cachedIdsDatabaseName
-                    )
-            )
-            listViewModel.statusActionModel = StatusActionModelImpl(
-                    client.apiClient,
-                    client.postCache
-            )
-            listViewModel.start()
-        }
+        listViewModel = ViewModelProviders.of(
+                this,
+                ListViewModelFactory(client, arguments
+                        ?: Bundle.EMPTY, activity.application, listRepository)
+        ).get(ListViewModel::class.java)
 
         val dp4 = dpToPx(4)
 
@@ -258,6 +244,19 @@ abstract class BaseTweetListFragment : BaseListFragment(), ListServerRepository<
                     StaggeredGridLayoutManager.VERTICAL
             )
         }
+    }
+
+    private class ListViewModelFactory(
+            private val client: Client,
+            private val bundle: Bundle,
+            private val application: Application,
+            private val repo: ListViewModel.ListRepository
+    ) : ViewModelProvider.Factory {
+
+        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+            return ListViewModel(application, client, bundle, repo) as T
+        }
+
     }
 
     internal interface GetRecyclerViewPool {

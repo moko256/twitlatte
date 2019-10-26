@@ -130,10 +130,8 @@ class GlobalApplication : Application() {
 
 fun Activity.getClient(): Client? {
     val application = application as GlobalApplication
-
-    return intent
-            .getStringExtra(INTENT_CLIENT_KEY)
-            ?.let { getAccountsModel().get(it) }
+    return intent.getStringExtra(INTENT_CLIENT_KEY)
+            ?.let { application.accountsModel.get(it) }
             ?.let {
                 if (it == application.currentClient?.accessToken) {
                     application.currentClient
@@ -146,12 +144,12 @@ fun Activity.getClient(): Client? {
                             UserCacheMap(),
                             LruCache(20)
                     ).apply {
-                        userCache.prepare(this@getClient, it)
-                        statusCache.prepare(this@getClient, it)
+                        val context = application.applicationContext
+                        userCache.prepare(context, it)
+                        statusCache.prepare(context, it)
                     }
                 }
-            }
-            ?: application.currentClient
+            } ?: application.currentClient
 }
 
 fun Intent.setAccountKey(accessToken: AccessToken) = apply {

@@ -18,7 +18,8 @@ package com.github.moko256.twitlatte
 
 import android.os.Bundle
 import com.github.moko256.latte.client.base.entity.Paging
-import com.github.moko256.latte.client.base.entity.Post
+import com.github.moko256.twitlatte.entity.Client
+import com.github.moko256.twitlatte.viewmodel.ListViewModel
 
 /**
  * Created by moko256 on 2017/03/04.
@@ -27,24 +28,17 @@ import com.github.moko256.latte.client.base.entity.Post
  */
 class UserLikeFragment : BaseTweetListFragment(), ToolbarTitleInterface {
 
-    private var userId: Long = -1L
-
     override val titleResourceId = R.string.like
 
-    override val cachedIdsDatabaseName: String
-        get() = "UserLike_$userId"
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        if (userId == -1L) {
-            userId = arguments!!.getLong("userId", -1L)
+    override val listRepository = object : ListViewModel.ListRepository() {
+        var userId = 0L
+        override fun onCreate(client: Client, bundle: Bundle) {
+            super.onCreate(client, bundle)
+            userId = bundle.getLong("userId")
         }
 
-        super.onCreate(savedInstanceState)
-    }
-
-    @Throws(Throwable::class)
-    override fun request(paging: Paging): List<Post> {
-        return client.apiClient.getFavorites(userId, paging)
+        override fun name() = "UserLike_$userId"
+        override fun request(paging: Paging) = client.apiClient.getFavorites(userId, paging)
     }
 
     companion object {

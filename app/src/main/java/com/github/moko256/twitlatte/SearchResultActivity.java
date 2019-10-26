@@ -50,9 +50,11 @@ public class SearchResultActivity extends AppCompatActivity implements BaseListF
         tweetListViewPool = new RecyclerView.RecycledViewPool();
 
         if (savedInstanceState == null) {
+            SearchResultFragment fragment = new SearchResultFragment();
+            fragment.setArguments(getIntent().getExtras());
             getSupportFragmentManager()
                     .beginTransaction()
-                    .add(android.R.id.content, new SearchResultFragment())
+                    .add(android.R.id.content, fragment)
                     .commit();
         }
     }

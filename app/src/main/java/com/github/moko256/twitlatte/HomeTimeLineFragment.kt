@@ -17,7 +17,7 @@
 package com.github.moko256.twitlatte
 
 import com.github.moko256.latte.client.base.entity.Paging
-import com.github.moko256.latte.client.base.entity.Post
+import com.github.moko256.twitlatte.viewmodel.ListViewModel
 
 /**
  * Created by moko256 on 2016/03/23.
@@ -30,10 +30,8 @@ class HomeTimeLineFragment : BaseTweetListFragment(), ToolbarTitleInterface, Nav
 
     override val navigationPosition = R.id.nav_timeline
 
-    override val cachedIdsDatabaseName = "HomeTimeline"
-
-    @Throws(Throwable::class)
-    override fun request(paging: Paging): List<Post> {
-        return client.apiClient.getHomeTimeline(paging)
+    override val listRepository = object : ListViewModel.ListRepository() {
+        override fun name() = "HomeTimeline"
+        override fun request(paging: Paging) = client.apiClient.getHomeTimeline(paging)
     }
 }
