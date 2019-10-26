@@ -21,10 +21,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.Objects;
 
@@ -34,9 +32,7 @@ import java.util.Objects;
  * @author moko256
  */
 
-public class SearchResultActivity extends AppCompatActivity implements BaseListFragment.GetViewForSnackBar, BaseTweetListFragment.GetRecyclerViewPool {
-
-    private RecyclerView.RecycledViewPool tweetListViewPool;
+public class SearchResultActivity extends AppCompatActivity implements BaseListFragment.GetViewForSnackBar {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -46,8 +42,6 @@ public class SearchResultActivity extends AppCompatActivity implements BaseListF
         actionBar.setTitle(getIntent().getStringExtra("query"));
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeAsUpIndicator(R.drawable.ic_back_white_24dp);
-
-        tweetListViewPool = new RecyclerView.RecycledViewPool();
 
         if (savedInstanceState == null) {
             SearchResultFragment fragment = new SearchResultFragment();
@@ -74,9 +68,4 @@ public class SearchResultActivity extends AppCompatActivity implements BaseListF
         return findViewById(android.R.id.content);
     }
 
-    @Override
-    @NonNull
-    public RecyclerView.RecycledViewPool getTweetListViewPool() {
-        return tweetListViewPool;
-    }
 }
