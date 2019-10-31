@@ -430,6 +430,7 @@ class CachedStatusesSQLiteOpenHelper(
                 sqLiteStatement.bindLong(1, id)
                 sqLiteStatement.execute()
             }
+            delete(TABLE_NAME, "id not in (select id from $COUNTS_TABLE_NAME where count>0)", null)
             delete(COUNTS_TABLE_NAME, "count=0", null)
         }
     }
