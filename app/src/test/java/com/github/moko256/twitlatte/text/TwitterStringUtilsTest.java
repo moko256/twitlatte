@@ -39,7 +39,7 @@ public class TwitterStringUtilsTest {
     private final char[] unitsEn = {'K', 'M', 'G'};
 
     private void testEn(int num, String expected) {
-        assertEquals(expected, TwitterStringUtils.convertToSIUnitString(num, 3, 0, unitsEn).toString());
+        assertEquals(expected, TwitterStringUtils.formatIntInCompactForm(num, 3, 0, unitsEn).toString());
     }
 
     @Test
@@ -77,7 +77,7 @@ public class TwitterStringUtilsTest {
     private final char[] unitsJa = {'万', '億'};
 
     private void testJa(int num, String expected) {
-        assertEquals(expected, TwitterStringUtils.convertToSIUnitString(num, 4, 1, unitsJa).toString());
+        assertEquals(expected, TwitterStringUtils.formatIntInCompactForm(num, 4, 1, unitsJa).toString());
     }
 
     @Test

@@ -88,19 +88,19 @@ public class TwitterStringUtils {
         return (int) (value + 0.5);
     }
 
-    public static CharSequence convertToSIUnitString(int num, int unitExponent, int back, char[] units) {
+    public static CharSequence formatIntInCompactForm(int num, int digitPer1Unit, int back, char[] units) {
         if (num == 0) return "0";
-        StringBuilder builder = new StringBuilder(unitExponent + 2);
+        StringBuilder builder = new StringBuilder(digitPer1Unit + 2);
         if (num < 0) {
             num *= -1;
             builder.append('-');
         }
         int exponent = uLog10(num);
-        int e = (exponent + back) / unitExponent;
-        if (exponent < unitExponent) {
+        if (exponent < digitPer1Unit) {
             builder.append(num);
         } else {
-            int m = uPow10(e * unitExponent);
+            int e = (exponent + back) / digitPer1Unit;
+            int m = uPow10(e * digitPer1Unit);
             if (num < m) {
                 char[] zeros = new char[back + 1];
                 Arrays.fill(zeros, '0');

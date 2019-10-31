@@ -439,9 +439,9 @@ class StatusViewBinder(viewGroup: View) {
         repeatButton.isEnabled = isRepeatEnabled
         repeatButton.setImageDrawable(ContextCompat.getDrawable(context, repeatIconResourceId))
 
-        likeCount.text = if (status.favoriteCount != 0) TwitterStringUtils.convertToSIUnitString(status.favoriteCount, unitsExponent, unitsBack, units) else ""
-        repeatCount.text = if (status.repeatCount != 0) TwitterStringUtils.convertToSIUnitString(status.repeatCount, unitsExponent, unitsBack, units) else ""
-        repliesCount.text = if (status.repliesCount != 0) TwitterStringUtils.convertToSIUnitString(status.repliesCount, unitsExponent, unitsBack, units) else ""
+        likeCount.text = if (status.favoriteCount != 0) TwitterStringUtils.formatIntInCompactForm(status.favoriteCount, unitsExponent, unitsBack, units) else ""
+        repeatCount.text = if (status.repeatCount != 0) TwitterStringUtils.formatIntInCompactForm(status.repeatCount, unitsExponent, unitsBack, units) else ""
+        repliesCount.text = if (status.repliesCount != 0) TwitterStringUtils.formatIntInCompactForm(status.repliesCount, unitsExponent, unitsBack, units) else ""
     }
 
     fun clear() {
