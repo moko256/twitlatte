@@ -31,6 +31,7 @@ import java.util.Date;
 
 import static com.github.moko256.twitlatte.testutils.EmptyAccessTokenKt.emptyAccessToken;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 /**
@@ -60,6 +61,7 @@ public class CachedStatusesSQLiteOpenHelperTest {
         updateCacheTest();
         removeCacheTest();
         addStatusesTest();
+        addStatusTestWithIncrement();
         helper.close();
     }
 
@@ -92,6 +94,28 @@ public class CachedStatusesSQLiteOpenHelperTest {
 
         assertEquals(((Status) helper.getCachedStatus(TEST_DUMMY_STATUS_ID_1)).getText(), TEST_DUMMY_STATUS_TEXT_0);
         assertEquals(((Status) helper.getCachedStatus(TEST_DUMMY_STATUS_ID_2)).getText(), TEST_DUMMY_STATUS_TEXT_1);
+    }
+
+    private void addStatusTestWithIncrement() {
+        helper.addCachedStatus(generateStatus(3, "3"), true);
+        helper.addCachedStatus(generateStatus(4, "3"), true);
+        helper.addCachedStatus(generateStatus(4, "3"), true);
+
+        assertNotNull(helper.getCachedStatus(TEST_DUMMY_STATUS_ID_1));
+        assertNotNull(helper.getCachedStatus(TEST_DUMMY_STATUS_ID_2));
+        assertNotNull(helper.getCachedStatus(3));
+        assertNotNull(helper.getCachedStatus(4));
+
+        helper.deleteCachedStatuses(Arrays.asList(3L, 4L));
+
+        assertNull(helper.getCachedStatus(TEST_DUMMY_STATUS_ID_1));
+        assertNull(helper.getCachedStatus(TEST_DUMMY_STATUS_ID_2));
+        assertNull(helper.getCachedStatus(3));
+        assertNotNull(helper.getCachedStatus(4));
+
+        helper.deleteCachedStatuses(Collections.singletonList(4L));
+
+        assertNull(helper.getCachedStatus(4));
     }
 
     private static Status generateStatus(final long testId, final String testText) {

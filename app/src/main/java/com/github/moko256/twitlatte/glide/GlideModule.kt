@@ -39,7 +39,6 @@ import java.io.InputStream
  * @author moko256
  */
 
-@Suppress("unused")
 @com.bumptech.glide.annotation.GlideModule
 class GlideModule : AppGlideModule() {
 

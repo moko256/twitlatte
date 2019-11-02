@@ -31,7 +31,6 @@ import java.io.File
 import java.net.URLDecoder
 import java.net.URLEncoder
 import java.util.*
-import kotlin.collections.ArrayList
 
 /**
  * Created by moko256 on 2017/03/17.
@@ -272,35 +271,47 @@ class CachedStatusesSQLiteOpenHelper(
         transaction {
             replace(TABLE_NAME, null, values)
             if (incrementCount) {
-                execSQL("insert or ignore into $COUNTS_TABLE_NAME(id) values(${status.getId()})")
+                val id = status.getId()
+                val insertIfNeeded = insertOrIgnoreCountStatement(this)
+                val increment = incrementCountStatement(this)
 
-                val statement = incrementCountStatement(this)
-                statement.bindLong(1, status.getId())
-                statement.execute()
+                insertIfNeeded.bindLong(1, id)
+                insertIfNeeded.execute()
+
+                increment.bindLong(1, id)
+                increment.execute()
             }
         }
     }
 
     fun addCachedStatuses(statuses: Collection<StatusObject>, incrementCount: Boolean, vararg excludeIncrementIds: Long) {
-        val contentValues = ArrayList<ContentValues>(statuses.size)
-        for (status in statuses) {
-            contentValues.add(createStatusContentValues(status))
-        }
+        val contentValues = statuses.map { createStatusContentValues(it) }
 
         transaction {
-            val statement = if (incrementCount) incrementCountStatement(this) else null
-            for (values in contentValues) {
-                replace(TABLE_NAME, null, values)
+            contentValues.forEach {
+                replace(TABLE_NAME, null, it)
+            }
 
-                val id = values.getAsLong(TABLE_COLUMNS[1])
-                if (incrementCount && (excludeIncrementIds.isEmpty() || !excludeIncrementIds.contains(id))) {
-                    execSQL("insert or ignore into $COUNTS_TABLE_NAME(id) values($id)")
+            if (incrementCount) {
+                val insertIfNeeded = insertOrIgnoreCountStatement(this)
+                val increment = incrementCountStatement(this)
 
-                    statement!!.bindLong(1, id!!)
-                    statement.execute()
+                statuses.forEach {
+                    val id = it.getId()
+                    if (excludeIncrementIds.isEmpty() || !excludeIncrementIds.contains(id)) {
+                        insertIfNeeded.bindLong(1, id)
+                        insertIfNeeded.execute()
+
+                        increment.bindLong(1, id)
+                        increment.execute()
+                    }
                 }
             }
         }
+    }
+
+    private fun insertOrIgnoreCountStatement(database: SQLiteDatabase): SQLiteStatement {
+        return database.compileStatement("insert or ignore into $COUNTS_TABLE_NAME(id) values(?)")
     }
 
     private fun incrementCountStatement(database: SQLiteDatabase): SQLiteStatement {
