@@ -285,34 +285,35 @@ class ListModelImpl(
     }
 
     override fun removeOldCache(position: Int) {
-        requests.add(
-                Completable.create {
-                    try {
-                        val parentSize = list.size
-                        if (parentSize - position > LIMIT_OF_SIZE_OF_STATUSES_LIST * 11 / 10) {
-                            val targetFirst = position + LIMIT_OF_SIZE_OF_STATUSES_LIST
+        val parentSize = list.size
+        if (parentSize - position > LIMIT_OF_SIZE_OF_STATUSES_LIST * 11 / 10) {
+            val targetFirst = position + LIMIT_OF_SIZE_OF_STATUSES_LIST
 
-                            val targetToRemove = list.subList(targetFirst, parentSize)
+            val targetToRemove = list.subList(targetFirst, parentSize)
+
+            requests.add(
+                    Completable.create {
+                        try {
                             database.deleteIds(targetToRemove)
                             client.statusCache.delete(targetToRemove)
                             targetToRemove.clear() //Clear this range from parent's list
 
                             updateObserver.onNext(UpdateEvent(EventType.REMOVE, targetFirst, parentSize))
+                        } catch (e: Throwable) {
+                            it.tryOnError(e)
                         }
-                    } catch (e: Throwable) {
-                        it.tryOnError(e)
-                    }
-                    it.onComplete()
-                }.subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(
-                                {},
-                                {
-                                    it.printStackTrace()
-                                    errorObserver.onNext(it)
-                                }
-                        )
-        )
+                        it.onComplete()
+                    }.subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(
+                                    {},
+                                    {
+                                        it.printStackTrace()
+                                        errorObserver.onNext(it)
+                                    }
+                            )
+            )
+        }
     }
 
     override fun close() {
