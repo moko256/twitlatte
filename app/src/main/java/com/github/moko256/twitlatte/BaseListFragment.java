@@ -123,7 +123,7 @@ public abstract class BaseListFragment extends Fragment implements LoadScrollLis
 
     @Override
     public void moveToTop() {
-        if (getFirstVisibleItemPosition(recyclerView.getLayoutManager()) < 5) {
+        if (firstVisibleItemPosition() < 5) {
             recyclerView.smoothScrollToPosition(0);
         } else {
             recyclerView.scrollToPosition(0);
@@ -199,8 +199,9 @@ public abstract class BaseListFragment extends Fragment implements LoadScrollLis
         );
     }
 
-    protected int getFirstVisibleItemPosition(RecyclerView.LayoutManager layoutManager) {
+    protected int firstVisibleItemPosition() {
         int position;
+        RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
         if (layoutManager instanceof StaggeredGridLayoutManager) {
             position = ((StaggeredGridLayoutManager) layoutManager).findFirstVisibleItemPositions(null)[0];
         } else {

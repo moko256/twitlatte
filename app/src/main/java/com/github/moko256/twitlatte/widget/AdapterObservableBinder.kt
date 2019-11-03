@@ -27,35 +27,38 @@ import com.github.moko256.twitlatte.entity.UpdateEvent
  *
  * @author moko256
  */
-fun RecyclerView.convertObservableConsumer(): (UpdateEvent) -> Unit = {
+fun convertObservableConsumer(
+        recyclerView: RecyclerView,
+        adapter: RecyclerView.Adapter<in RecyclerView.ViewHolder>,
+        layoutManager: RecyclerView.LayoutManager
+): (UpdateEvent) -> Unit = {
     when (it.type) {
-        EventType.ADD_FIRST -> adapter!!.notifyDataSetChanged()
+        EventType.ADD_FIRST -> adapter.notifyDataSetChanged()
 
-        EventType.ADD_TOP -> adapter!!.notifyItemRangeInserted(it.position, it.size)
+        EventType.ADD_TOP -> adapter.notifyItemRangeInserted(it.position, it.size)
 
-        EventType.ADD_BOTTOM -> adapter!!.notifyItemRangeInserted(it.position, it.size)
+        EventType.ADD_BOTTOM -> adapter.notifyItemRangeInserted(it.position, it.size)
 
-        EventType.REMOVE -> adapter!!.notifyItemRangeRemoved(it.position, it.size)
+        EventType.REMOVE -> adapter.notifyItemRangeRemoved(it.position, it.size)
 
         EventType.INSERT -> {
-            val startView = layoutManager!!.findViewByPosition(it.position)
+            val startView = layoutManager.findViewByPosition(it.position)
             val offset = if (startView == null) {
                 0
             } else {
-                startView.top - paddingTop
+                startView.top - recyclerView.paddingTop
             }
 
-            val layoutManager = layoutManager
             if (layoutManager is LinearLayoutManager) {
-                adapter!!.notifyItemRangeInserted(it.position, it.size)
+                adapter.notifyItemRangeInserted(it.position, it.size)
                 layoutManager.scrollToPositionWithOffset(it.position + it.size, offset)
             } else {
                 (layoutManager as StaggeredGridLayoutManager).scrollToPositionWithOffset(it.position + it.size, offset)
-                adapter!!.notifyItemRangeChanged(it.position, it.size)
+                adapter.notifyItemRangeChanged(it.position, it.size)
             }
         }
 
-        EventType.UPDATE -> adapter!!.notifyItemRangeChanged(it.position, it.size)
+        EventType.UPDATE -> adapter.notifyItemRangeChanged(it.position, it.size)
 
         else -> {
 

@@ -35,7 +35,6 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.bumptech.glide.Glide
 import com.github.moko256.twitlatte.entity.Client
 import com.github.moko256.twitlatte.entity.EventType
-import com.github.moko256.twitlatte.entity.UpdateEvent
 import com.github.moko256.twitlatte.text.TwitterStringUtils
 import com.github.moko256.twitlatte.view.dpToPx
 import com.github.moko256.twitlatte.viewmodel.ListViewModel
@@ -50,13 +49,8 @@ import io.reactivex.disposables.CompositeDisposable
  */
 abstract class BaseTweetListFragment : BaseListFragment() {
 
-    protected var adapter: StatusesAdapter? = null
-    private lateinit var client: Client
-
     private lateinit var disposable: CompositeDisposable
-    private lateinit var listViewModel: ListViewModel
-
-    private var adapterObservableBinder: ((UpdateEvent) -> Unit)? = null
+    lateinit var listViewModel: ListViewModel
 
     protected abstract val listRepository: ListViewModel.ListRepository
 
@@ -71,7 +65,7 @@ abstract class BaseTweetListFragment : BaseListFragment() {
             0
         }
 
-        client = activity.getClient()!!
+        val client = activity.getClient()!!
         listViewModel = ViewModelProviders.of(
                 this,
                 ListViewModelFactory(client, arguments
@@ -99,7 +93,7 @@ abstract class BaseTweetListFragment : BaseListFragment() {
             recyclerView.setRecycledViewPool((activity as GetRecyclerViewPool).tweetListViewPool)
         }
 
-        adapter = StatusesAdapter(
+        val adapter = StatusesAdapter(
                 client,
                 listViewModel.statusActionModel,
                 preferenceRepository,
@@ -112,15 +106,20 @@ abstract class BaseTweetListFragment : BaseListFragment() {
 
         recyclerView.adapter = adapter
         if (!isInitializedList) {
-            adapter!!.notifyDataSetChanged()
+            adapter.notifyDataSetChanged()
         }
 
         val seeingPosition = listViewModel.listModel.getSeeingPosition()
+        val layoutManager = recyclerView.layoutManager!!
         if (seeingPosition > 0 && !(activity is HasNotifiableAppBar && savedInstanceState == null)) {
-            recyclerView.layoutManager!!.scrollToPosition(seeingPosition)
+            layoutManager.scrollToPosition(seeingPosition)
         }
 
-        adapterObservableBinder = recyclerView.convertObservableConsumer()
+        val adapterObservableBinder = convertObservableConsumer(
+                recyclerView,
+                adapter,
+                layoutManager
+        )
 
         disposable = CompositeDisposable(
                 listViewModel
@@ -144,7 +143,7 @@ abstract class BaseTweetListFragment : BaseListFragment() {
                         .getListEventObservable()
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe {
-                            adapterObservableBinder!!.invoke(it)
+                            adapterObservableBinder.invoke(it)
 
                             if (isRefreshing) {
                                 isRefreshing = false
@@ -164,7 +163,7 @@ abstract class BaseTweetListFragment : BaseListFragment() {
                         },
 
                 listViewModel.statusActionModel.getStatusObservable().subscribe {
-                    adapter!!.notifyItemChanged(listViewModel.listModel.getIdsList().indexOf(it))
+                    adapter.notifyItemChanged(listViewModel.listModel.getIdsList().indexOf(it))
                 },
 
                 listViewModel.statusActionModel.getDidActionObservable().subscribe {
@@ -188,18 +187,14 @@ abstract class BaseTweetListFragment : BaseListFragment() {
 
     override fun onDestroyView() {
         disposable.dispose()
-        adapterObservableBinder = null
-        val layoutManager = recyclerView.layoutManager
-        val position = getFirstVisibleItemPosition(layoutManager)
-        listViewModel.listModel.removeOldCache(position)
+        listViewModel.listModel.removeOldCache(firstVisibleItemPosition())
         recyclerView.swapAdapter(null, true)
-        adapter = null
         super.onDestroyView()
     }
 
     override fun onStop() {
         super.onStop()
-        val position = getFirstVisibleItemPosition(recyclerView.layoutManager)
+        val position = firstVisibleItemPosition()
         if (position >= 0) {
             listViewModel.listModel.updateSeeingPosition(position)
         }
@@ -235,9 +230,9 @@ abstract class BaseTweetListFragment : BaseListFragment() {
         val count = (3 * size.x / size.y / 4) + 1
 
         return if (count == 1) {
-            val layoutManager = LinearLayoutManager(context)
-            layoutManager.recycleChildrenOnDetach = true
-            layoutManager
+            LinearLayoutManager(context).apply {
+                recycleChildrenOnDetach = true
+            }
         } else {
             StaggeredGridLayoutManager(
                     count,

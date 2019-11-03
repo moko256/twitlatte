@@ -42,7 +42,7 @@ class MediaTimelineFragment : BaseTweetListFragment(), ToolbarTitleInterface {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        adapter!!.shouldShowMediaOnly = true
+        (recyclerView.adapter as StatusesAdapter).shouldShowMediaOnly = true
     }
 
     override val titleResourceId = R.string.media
