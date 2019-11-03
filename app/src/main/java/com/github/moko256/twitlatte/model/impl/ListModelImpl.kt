@@ -27,6 +27,7 @@ import com.github.moko256.twitlatte.model.base.ListModel
 import com.github.moko256.twitlatte.repository.server.base.ListServerRepository
 import io.reactivex.Completable
 import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
@@ -284,12 +285,34 @@ class ListModelImpl(
     }
 
     override fun removeOldCache(position: Int) {
-        if (list.size - position > LIMIT_OF_SIZE_OF_STATUSES_LIST * 11 / 10) {
-            val subList = list.subList(position + LIMIT_OF_SIZE_OF_STATUSES_LIST, list.size)
-            database.deleteIds(subList)
+        requests.add(
+                Completable.create {
+                    try {
+                        val parentSize = list.size
+                        if (parentSize - position > LIMIT_OF_SIZE_OF_STATUSES_LIST * 11 / 10) {
+                            val targetFirst = position + LIMIT_OF_SIZE_OF_STATUSES_LIST
 
-            client.statusCache.delete(subList)
-        }
+                            val targetToRemove = list.subList(targetFirst, parentSize)
+                            database.deleteIds(targetToRemove)
+                            client.statusCache.delete(targetToRemove)
+                            targetToRemove.clear() //Clear this range from parent's list
+
+                            updateObserver.onNext(UpdateEvent(EventType.REMOVE, targetFirst, parentSize))
+                        }
+                    } catch (e: Throwable) {
+                        it.tryOnError(e)
+                    }
+                    it.onComplete()
+                }.subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                                {},
+                                {
+                                    it.printStackTrace()
+                                    errorObserver.onNext(it)
+                                }
+                        )
+        )
     }
 
     override fun close() {
