@@ -299,10 +299,10 @@ class ListModelImpl(
                             targetToRemove.clear() //Clear this range from parent's list
 
                             updateObserver.onNext(UpdateEvent(EventType.REMOVE, targetFirst, parentSize))
+                            it.onComplete()
                         } catch (e: Throwable) {
                             it.tryOnError(e)
                         }
-                        it.onComplete()
                     }.subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe(
