@@ -6,8 +6,6 @@
 
 -dontwarn org.ccil.cowan.tagsoup.Parser
 
--dontwarn com.fasterxml.jackson.databind.**
-
 -assumevalues class android.os.Build$VERSION {
     int SDK_INT return 19..2147483647;
 }
@@ -36,7 +34,7 @@
     private static void throwIncorrectGlideModule(java.lang.Exception);
 }
 
-##---------------Begin: proguard configuration for twitter4j  ----------
+## Twitter4J
 -dontwarn twitter4j.**
 -keepclassmembers class twitter4j.AlternativeHttpClientImpl {
     public <init>(twitter4j.HttpClientConfiguration);
@@ -74,14 +72,13 @@
     void methodCalled(java.lang.String, long, boolean);
 }
 
-##---------------End: proguard configuration for twitter4j  ----------
 
-##---------------Begin: proguard configuration for Gson  ----------
+## Gson
 -keepattributes Signature
 -dontwarn sun.misc.**
-##---------------End: proguard configuration for Gson  ----------
 
-##---------------Begin: proguard configuration for OkHttp  ----------
+
+## OkHttp
 -assumenosideeffects class okhttp3.internal.platform.ConscryptPlatform {
     public static okhttp3.internal.platform.ConscryptPlatform buildIfSupported() return null;
 }
@@ -91,4 +88,3 @@
 -assumenosideeffects class okhttp3.internal.platform.JdkWithJettyBootPlatform {
     public static okhttp3.internal.platform.Platform buildIfSupported() return null;
 }
-##---------------End: proguard configuration for OkHttp  ----------
