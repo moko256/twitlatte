@@ -41,7 +41,7 @@ class CheckableImageView @JvmOverloads constructor(
     init {
         setOnClickListener {
             toggle()
-            onCheckedChangeListener?.invoke(this, mChecked)
+            onCheckedChangeListener?.invoke(this, isChecked)
         }
     }
 
@@ -63,10 +63,10 @@ class CheckableImageView @JvmOverloads constructor(
     }
 
     override fun onCreateDrawableState(extraSpace: Int): IntArray {
-        val drawableState = super.onCreateDrawableState(extraSpace + 1)
-        if (mChecked) {
-            View.mergeDrawableStates(drawableState, CHECKED_STATE_SET)
+        return if (mChecked) {
+            View.mergeDrawableStates(super.onCreateDrawableState(extraSpace + 1), CHECKED_STATE_SET)
+        } else {
+            super.onCreateDrawableState(extraSpace)
         }
-        return drawableState
     }
 }
