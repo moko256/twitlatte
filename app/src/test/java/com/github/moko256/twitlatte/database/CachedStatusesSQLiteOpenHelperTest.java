@@ -16,6 +16,10 @@
 
 package com.github.moko256.twitlatte.database;
 
+import android.database.DatabaseUtils;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteStatement;
+
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
@@ -26,10 +30,17 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Map;
+
+import kotlin.Pair;
+import kotlin.collections.ArraysKt;
+import kotlin.collections.MapsKt;
 
 import static com.github.moko256.twitlatte.testutils.EmptyAccessTokenKt.emptyAccessToken;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -62,6 +73,7 @@ public class CachedStatusesSQLiteOpenHelperTest {
         removeCacheTest();
         addStatusesTest();
         addStatusTestWithIncrement();
+        getIdInUseTest();
         helper.close();
     }
 
@@ -116,6 +128,35 @@ public class CachedStatusesSQLiteOpenHelperTest {
         helper.deleteCachedStatuses(Collections.singletonList(4L));
 
         assertNull(helper.getCachedStatus(4));
+    }
+
+    private static Map<Long, Pair<Long, Long>> data = MapsKt.mapOf(
+            new Pair<>(1L, new Pair<>(-1L, -1L)),
+            new Pair<>(2L, new Pair<>(-1L, 1L)),
+            new Pair<>(3L, new Pair<>(2L, -1L)),
+            new Pair<>(4L, new Pair<>(-1L, 3L)),
+            new Pair<>(5L, new Pair<>(4L, -1L)),
+            new Pair<>(6L, new Pair<>(-1L, 6L)),
+            new Pair<>(7L, new Pair<>(-1L, 3L)),
+            new Pair<>(8L, new Pair<>(-1L, -1L))
+    );
+
+    private void getIdInUseTest() {
+        SQLiteDatabase database = helper.getReadableDatabase();
+        assertEquals(0, DatabaseUtils.queryNumEntries(database, "CachedStatuses"));
+        SQLiteStatement statement = database.compileStatement(
+                "insert into CachedStatuses(id,repeatedStatusId,quotedStatusId) values(?,?,?)"
+        );
+        data.forEach((t, u) -> {
+            statement.bindLong(1, t);
+            statement.bindLong(2, u.getFirst());
+            statement.bindLong(3, u.getSecond());
+            statement.execute();
+        });
+        database.close();
+
+        Collection<Long> result = helper.getIdsInUse(Arrays.asList(5L, 6L, 7L, 9L));
+        assertArrayEquals(new long[]{1L, 2L, 3L, 4L}, ArraysKt.toLongArray(result.toArray(new Long[0])));
     }
 
     private static Status generateStatus(final long testId, final String testText) {

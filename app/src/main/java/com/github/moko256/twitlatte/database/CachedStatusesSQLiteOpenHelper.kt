@@ -238,22 +238,25 @@ class CachedStatusesSQLiteOpenHelper(
 
     fun getIdsInUse(ids: Collection<Long>): Collection<Long> {
         val result = ArraySet<Long>(ids.size * 5)
+        val columns = arrayOf(TABLE_COLUMNS[3], TABLE_COLUMNS[25])
 
         ids.forEach { id ->
             selectMultiple(
                     TABLE_NAME,
-                    arrayOf(TABLE_COLUMNS[1], TABLE_COLUMNS[3], TABLE_COLUMNS[25]),
+                    columns,
                     "id=$id"
             ) {
-                val repeatId = getLong(1)
-                val quotedId = getLong(2)
+                val repeatId = getLong(0)
                 if (repeatId != -1L) {
                     if (!ids.contains(repeatId)) {
                         result.add(repeatId)
                     }
-                } else if (quotedId != -1L) {
-                    if (!ids.contains(quotedId)) {
-                        result.add(quotedId)
+                } else {
+                    val quotedId = getLong(1)
+                    if (quotedId != -1L) {
+                        if (!ids.contains(quotedId)) {
+                            result.add(quotedId)
+                        }
                     }
                 }
             }
