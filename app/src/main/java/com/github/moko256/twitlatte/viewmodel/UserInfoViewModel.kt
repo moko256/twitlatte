@@ -22,8 +22,7 @@ import com.github.moko256.latte.client.base.entity.Friendship
 import com.github.moko256.latte.client.base.entity.User
 import com.github.moko256.twitlatte.entity.Client
 import io.reactivex.Completable
-import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.CompletableOnSubscribe
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 
@@ -43,79 +42,81 @@ class UserInfoViewModel : ViewModel() {
     var userName: String? = null
     lateinit var client: Client
 
-    val user: MutableLiveData<User> = MutableLiveData()
-    val friendship: MutableLiveData<Friendship> = MutableLiveData()
-    val action: MutableLiveData<String> = MutableLiveData()
-    val error: MutableLiveData<Throwable> = MutableLiveData()
+    val user = MutableLiveData<User>()
+    val friendship = MutableLiveData<Friendship>()
+    val action = MutableLiveData<String>()
+    val error = MutableLiveData<Throwable>()
 
     fun loadData(useCache: Boolean) {
-        disposable.add(
-                Completable.create {
-                    try {
-                        val cachedUser = if (useCache && userId != -1L) {
-                            client.userCache.get(userId)
-                        } else {
-                            null
-                        }
-                        if (cachedUser != null) {
-                            user.postValue(cachedUser)
-                        } else {
-                            val name = userName
-                            val remoteUser = when {
-                                userId != -1L -> client.apiClient.showUser(userId)
-                                name != null -> client.apiClient.showUser(name)
-                                else -> throw IllegalStateException("Unreachable")
-                            }
-                            userId = remoteUser.id
-                            client.userCache.add(remoteUser)
-                            user.postValue(remoteUser)
-                        }
-
-
-                        if (client.accessToken.userId != userId) {
-                            val cachedFriendship = if (useCache && userId != -1L) {
-                                client.friendshipCache.get(userId)
-                            } else {
-                                null
-                            }
-                            if (cachedFriendship != null) {
-                                friendship.postValue(cachedFriendship)
-                            } else {
-                                val remoteFriendship = client.apiClient.getFriendship(userId)
-                                client.friendshipCache.put(userId, remoteFriendship)
-                                friendship.postValue(remoteFriendship)
-                            }
-                        }
-                    } catch (e: Throwable) {
-                        error.postValue(e)
-                    }
-                    it.onComplete()
-                }.subscribeOn(Schedulers.io()).subscribe()
-        )
+        execute(CompletableOnSubscribe {
+            loadDataInternal(useCache)
+            it.onComplete()
+        })
     }
 
-    private fun doAction(name: String, actionFunc: () -> Any) {
+    private fun loadDataInternal(useCache: Boolean) {
+        try {
+            val cachedUser = if (useCache && userId != -1L) {
+                client.userCache.get(userId)
+            } else {
+                null
+            }
+            if (cachedUser != null) {
+                user.postValue(cachedUser)
+            } else {
+                val name = userName
+                val remoteUser = when {
+                    userId != -1L -> client.apiClient.showUser(userId)
+                    name != null -> client.apiClient.showUser(name)
+                    else -> error("Unreachable")
+                }
+                userId = remoteUser.id
+                client.userCache.add(remoteUser)
+                user.postValue(remoteUser)
+            }
+
+
+            if (client.accessToken.userId != userId) {
+                val cachedFriendship = if (useCache && userId != -1L) {
+                    client.friendshipCache.get(userId)
+                } else {
+                    null
+                }
+                if (cachedFriendship != null) {
+                    friendship.postValue(cachedFriendship)
+                } else {
+                    val remoteFriendship = client.apiClient.getFriendship(userId)
+                    client.friendshipCache.put(userId, remoteFriendship)
+                    friendship.postValue(remoteFriendship)
+                }
+            }
+        } catch (e: Throwable) {
+            error.postValue(e)
+        }
+    }
+
+    private inline fun doAction(name: String, crossinline actionFunc: () -> Any) {
+        execute(CompletableOnSubscribe {
+            try {
+                if (userId == -1L) {
+                    loadDataInternal(true)
+                }
+                val result = actionFunc()
+                if (result is Friendship) {
+                    friendship.postValue(result)
+                }
+                action.postValue(name)
+            } catch (e: Throwable) {
+                e.printStackTrace()
+                error.postValue(e)
+            }
+            it.onComplete()
+        })
+    }
+
+    private fun execute(s: CompletableOnSubscribe) {
         disposable.add(
-                Single.create<Any> {
-                    try {
-                        if (userId == -1L) {
-                            loadData(true)
-                        }
-                        it.onSuccess(actionFunc())
-                    } catch (e: Throwable) {
-                        it.onError(e)
-                    }
-                }.subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(
-                                {
-                                    if (it is Friendship) {
-                                        friendship.value = it
-                                    }
-                                    action.value = name
-                                },
-                                { error.value = it }
-                        )
+                Completable.create(s).subscribeOn(Schedulers.io()).subscribe()
         )
     }
 

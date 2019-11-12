@@ -27,7 +27,6 @@ import com.github.moko256.twitlatte.model.base.ListModel
 import com.github.moko256.twitlatte.repository.server.base.ListServerRepository
 import io.reactivex.Completable
 import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
@@ -99,20 +98,14 @@ class ListModelImpl(
                                     list.addAll(it)
                                     database.addIds(it)
                                     updateObserver.onNext(UpdateEvent(EventType.ADD_FIRST, 0, it.size))
-
-                                    status.onComplete()
                                 }
                     } catch (e: Throwable) {
-                        status.tryOnError(e)
+                        e.printStackTrace()
+                        errorObserver.onNext(e)
                     }
+                    status.onComplete()
                 }.subscribeOn(Schedulers.io())
-                        .subscribe(
-                                {},
-                                {
-                                    it.printStackTrace()
-                                    errorObserver.onNext(it)
-                                }
-                        )
+                        .subscribe()
         )
     }
 
@@ -157,20 +150,14 @@ class ListModelImpl(
                             } else {
                                 updateObserver.onNext(nothingEvent)
                             }
-
-                            status.onComplete()
                         }
                     } catch (e: Throwable) {
-                        status.tryOnError(e)
+                        e.printStackTrace()
+                        errorObserver.onNext(e)
                     }
+                    status.onComplete()
                 }.subscribeOn(Schedulers.io())
-                        .subscribe(
-                                {},
-                                {
-                                    it.printStackTrace()
-                                    errorObserver.onNext(it)
-                                }
-                        )
+                        .subscribe()
         )
     }
 
@@ -205,20 +192,14 @@ class ListModelImpl(
                             } else {
                                 updateObserver.onNext(nothingEvent)
                             }
-
-                            status.onComplete()
                         }
                     } catch (e: Throwable) {
-                        status.tryOnError(e)
+                        e.printStackTrace()
+                        errorObserver.onNext(e)
                     }
+                    status.onComplete()
                 }.subscribeOn(Schedulers.io())
-                        .subscribe(
-                                {},
-                                {
-                                    it.printStackTrace()
-                                    errorObserver.onNext(it)
-                                }
-                        )
+                        .subscribe()
         )
     }
 
@@ -267,20 +248,14 @@ class ListModelImpl(
                                 database.deleteIds(listOf(-1L))
                                 updateObserver.onNext(UpdateEvent(EventType.REMOVE, position, 1))
                             }
-
-                            status.onComplete()
                         }
                     } catch (e: Throwable) {
-                        status.tryOnError(e)
+                        e.printStackTrace()
+                        errorObserver.onNext(e)
                     }
+                    status.onComplete()
                 }.subscribeOn(Schedulers.io())
-                        .subscribe(
-                                {},
-                                {
-                                    it.printStackTrace()
-                                    errorObserver.onNext(it)
-                                }
-                        )
+                        .subscribe()
         )
     }
 
@@ -299,19 +274,13 @@ class ListModelImpl(
                             targetToRemove.clear() //Clear this range from parent's list
 
                             updateObserver.onNext(UpdateEvent(EventType.REMOVE, targetFirst, parentSize))
-                            it.onComplete()
                         } catch (e: Throwable) {
-                            it.tryOnError(e)
+                            e.printStackTrace()
+                            errorObserver.onNext(e)
                         }
+                        it.onComplete()
                     }.subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(
-                                    {},
-                                    {
-                                        it.printStackTrace()
-                                        errorObserver.onNext(it)
-                                    }
-                            )
+                            .subscribe()
             )
         }
     }

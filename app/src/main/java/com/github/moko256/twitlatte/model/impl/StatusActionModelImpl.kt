@@ -23,6 +23,7 @@ import com.github.moko256.latte.client.base.entity.StatusAction
 import com.github.moko256.twitlatte.cacheMap.PostCache
 import com.github.moko256.twitlatte.model.base.StatusActionModel
 import io.reactivex.Completable
+import io.reactivex.CompletableOnSubscribe
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
@@ -83,16 +84,21 @@ class StatusActionModelImpl(
     }
 
     @SuppressLint("CheckResult")
-    private fun doAction(targetId: Long, actionType: StatusAction, action: () -> Post) {
+    private inline fun doAction(targetId: Long, actionType: StatusAction, crossinline action: () -> Post) {
+        executeAction(targetId, actionType, CompletableOnSubscribe {
+            try {
+                database.add(action(), false)
+                it.onComplete()
+            } catch (e: Throwable) {
+                it.tryOnError(e)
+            }
+        })
+    }
+
+    @SuppressLint("CheckResult")
+    private fun executeAction(targetId: Long, actionType: StatusAction, s: CompletableOnSubscribe) {
         Completable
-                .create {
-                    try {
-                        database.add(action(), false)
-                        it.onComplete()
-                    } catch (e: Throwable) {
-                        it.tryOnError(e)
-                    }
-                }
+                .create(s)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -108,7 +114,7 @@ class StatusActionModelImpl(
     }
 
     @SuppressLint("CheckResult")
-    private fun doAction(targetId: Long, action: () -> Post) {
+    private inline fun doAction(targetId: Long, crossinline action: () -> Post) {
         Completable
                 .create {
                     try {
