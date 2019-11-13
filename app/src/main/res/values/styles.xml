@@ -16,14 +16,11 @@
 
 <resources>
 
-    <style name="BaseAppTheme" parent="Theme.AppCompat.DayNight">
+    <style name="BaseAppTheme" parent="Theme.AppCompat.DayNight.DarkActionBar">
 
         <item name="colorPrimary">@color/color_primary</item>
         <item name="colorPrimaryDark">@color/color_primary_dark</item>
         <item name="colorAccent">@color/color_accent</item>
-
-        <item name="actionBarTheme">@style/AppTheme.AppBarOverlay</item>
-        <item name="popupTheme">@style/AppTheme.PopupOverlay</item>
 
     </style>
 
@@ -63,9 +60,6 @@
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowAnimationStyle">@android:style/Animation</item>
     </style>
-
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
     <style name="ExpandAndCloseToggleBackgroundColor">
         <item name="colorControlActivated">?attr/colorControlNormal</item>

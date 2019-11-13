@@ -52,11 +52,10 @@
                 <androidx.appcompat.widget.Toolbar
                     android:id="@+id/toolbar_show_user"
                     android:layout_width="match_parent"
-                    android:layout_height="?actionBarSize"
+                    android:layout_height="wrap_content"
                     android:minHeight="?actionBarSize"
-                    android:theme="@style/AppTheme.AppBarOverlay"
-                    app:layout_collapseMode="pin"
-                    app:popupTheme="@style/AppTheme.PopupOverlay" />
+                    android:theme="?actionBarTheme"
+                    app:layout_collapseMode="pin" />
             </com.google.android.material.appbar.CollapsingToolbarLayout>
 
             <com.google.android.material.tabs.TabLayout
