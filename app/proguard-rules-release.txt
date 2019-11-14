@@ -5,6 +5,7 @@
 -keepattributes SourceFile,LineNumberTable
 
 -dontwarn org.ccil.cowan.tagsoup.Parser
+-dontwarn javax.management.**
 
 -assumevalues class android.os.Build$VERSION {
     int SDK_INT return 19..2147483647;
