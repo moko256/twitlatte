@@ -137,13 +137,13 @@
             app:key="license"
             app:title="@string/open_source_license">
             <Preference
-                app:key="license_lib_androidx"
+                app:key="license_lib_aosp"
                 app:title="AndroidX"/>
             <Preference
-                app:key="license_lib_material_components"
+                app:key="license_lib_aosp"
                 app:title="Material Components"/>
             <Preference
-                app:key="license_lib_exo_player"
+                app:key="license_lib_aosp"
                 app:title="ExoPlayer"/>
             <Preference
                 app:key="license_lib_glide"
