@@ -135,7 +135,7 @@ public class TwitterStringUtils {
         return userIdsStr;
     }
 
-    public static CharSequence getLinkedSequence(Context context, AccessToken accessToken, String text, Link[] links) {
+    public static CharSequence getLinkedSequence(AccessToken accessToken, String text, Link[] links) {
         if (links == null) {
             return text;
         }
@@ -152,6 +152,7 @@ public class TwitterStringUtils {
                         span = new ClickableNoLineSpan() {
                             @Override
                             public void onClick(@NonNull View view) {
+                                Context context = view.getContext();
                                 context.startActivity(
                                         SearchResultActivity.getIntent(context, "$" + uri.getLastPathSegment())
                                 );
@@ -163,6 +164,7 @@ public class TwitterStringUtils {
                         span = new ClickableNoLineSpan() {
                             @Override
                             public void onClick(@NonNull View view) {
+                                Context context = view.getContext();
                                 context.startActivity(
                                         SearchResultActivity.getIntent(context, "#" + uri.getLastPathSegment())
                                 );
@@ -176,6 +178,7 @@ public class TwitterStringUtils {
                                 span = new ClickableBoldSpan() {
                                     @Override
                                     public void onClick(@NonNull View view) {
+                                        Context context = view.getContext();
                                         context.startActivity(
                                                 ShowUserActivity.getIntent(context, name)
                                         );
@@ -185,6 +188,7 @@ public class TwitterStringUtils {
                                 span = new ClickableNoLineSpan() {
                                     @Override
                                     public void onClick(@NonNull View view) {
+                                        Context context = view.getContext();
                                         context.startActivity(
                                                 ShowUserActivity.getIntent(context, name)
                                         );
@@ -199,6 +203,7 @@ public class TwitterStringUtils {
                         span = new ClickableNoLineSpan() {
                             @Override
                             public void onClick(@NonNull View view) {
+                                Context context = view.getContext();
                                 context.startActivity(SearchResultActivity.getIntent(context, uri.getLastPathSegment()));
                             }
                         };
@@ -208,6 +213,7 @@ public class TwitterStringUtils {
                 span = new ClickableNoLineSpan() {
                     @Override
                     public void onClick(@NonNull View view) {
+                        Context context = view.getContext();
                         AppCustomTabsKt.launchChromeCustomTabs(context, uri, false);
                     }
                 };
@@ -222,7 +228,7 @@ public class TwitterStringUtils {
         return spannableString;
     }
 
-    public static CharSequence appendLinkAtViaText(Context context, String name, String url) {
+    public static CharSequence appendLinkAtViaText(String name, String url) {
         if (url == null) {
             return name;
         } else {
@@ -231,7 +237,7 @@ public class TwitterStringUtils {
                     new ClickableNoLineSpan() {
                         @Override
                         public void onClick(@NonNull View view) {
-                            AppCustomTabsKt.launchChromeCustomTabs(context, url, false);
+                            AppCustomTabsKt.launchChromeCustomTabs(view.getContext(), url, false);
                         }
                     }, 4, name.length() + 4, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             return spannableString;

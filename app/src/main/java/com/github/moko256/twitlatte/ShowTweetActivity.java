@@ -324,7 +324,7 @@ public class ShowTweetActivity extends AppCompatActivity {
         );
 
         if (item.getStatus().getSourceName() != null) {
-            viaText.setText(TwitterStringUtils.appendLinkAtViaText(this, item.getStatus().getSourceName(), item.getStatus().getSourceWebsite()));
+            viaText.setText(TwitterStringUtils.appendLinkAtViaText(item.getStatus().getSourceName(), item.getStatus().getSourceWebsite()));
             viaText.setMovementMethod(new LinkMovementMethod());
         } else {
             viaText.setVisibility(GONE);

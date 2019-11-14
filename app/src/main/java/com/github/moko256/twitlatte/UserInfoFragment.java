@@ -252,7 +252,6 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
                 user.isVerified()
         );
         CharSequence userBio = TwitterStringUtils.getLinkedSequence(
-                getContext(),
                 client.getAccessToken(),
                 user.getDescription(),
                 user.getDescriptionLinks()
@@ -284,7 +283,7 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
             spannableString.setSpan(new ClickableNoLineSpan() {
                 @Override
                 public void onClick(@NonNull View widget) {
-                    AppCustomTabsKt.launchChromeCustomTabs(requireContext(), url, false);
+                    AppCustomTabsKt.launchChromeCustomTabs(widget.getContext(), url, false);
                 }
             }, start, start + url.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             userUrl.setText(spannableString);

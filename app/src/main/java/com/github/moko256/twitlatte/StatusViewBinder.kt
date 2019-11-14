@@ -250,7 +250,7 @@ class StatusViewBinder(viewGroup: View) {
         }
         userId.text = TwitterStringUtils.plusAtMark(user?.screenName)
 
-        val linkedSequence = TwitterStringUtils.getLinkedSequence(context, accessToken, status.text, status.urls)
+        val linkedSequence = TwitterStringUtils.getLinkedSequence(accessToken, status.text, status.urls)
 
         tweetContext.text = linkedSequence
 
