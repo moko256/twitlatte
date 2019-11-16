@@ -27,9 +27,6 @@ import android.text.style.ImageSpan
 import android.widget.TextView
 import androidx.collection.ArrayMap
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.LifecycleOwner
 import com.bumptech.glide.RequestManager
 import com.github.moko256.latte.client.base.entity.Emoji
 import com.github.moko256.twitlatte.R
@@ -56,7 +53,7 @@ class EmojiToTextViewSetter(
         private val textView: TextView,
         text: CharSequence,
         emojis: Array<Emoji>
-) : Disposable, LifecycleEventObserver, Drawable.Callback {
+) : Disposable, Drawable.Callback {
 
     private companion object {
         private val containsEmoji = ":([a-zA-Z0-9_]{2,}):".toPattern()
@@ -214,13 +211,4 @@ class EmojiToTextViewSetter(
         handler.removeCallbacksAndMessages(null)
     }
 
-    override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
-        if (event == Lifecycle.Event.ON_DESTROY) {
-            dispose()
-        }
-    }
-
-    fun bindToLifecycle(owner: LifecycleOwner) {
-        owner.lifecycle.addObserver(this)
-    }
 }

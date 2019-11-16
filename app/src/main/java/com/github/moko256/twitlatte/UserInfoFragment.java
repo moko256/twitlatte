@@ -38,6 +38,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleEventObserver;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.bumptech.glide.Glide;
@@ -176,10 +179,11 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
     }
 
     @Override
-    public void onDestroy() {
+    public void onDestroyView() {
         glideRequests.clear(icon);
         glideRequests.clear(header);
-        super.onDestroy();
+        glideRequests = null;
+        super.onDestroyView();
     }
 
     @Override
@@ -260,11 +264,18 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
         userBioText.setText(userBio);
         Emoji[] userNameEmojis = user.getEmojis();
         if (userNameEmojis != null) {
-            new EmojiToTextViewSetter(glideRequests, userNameText, userName, userNameEmojis)
-                    .bindToLifecycle(this);
-
-            new EmojiToTextViewSetter(glideRequests, userBioText, userBio, userNameEmojis)
-                    .bindToLifecycle(this);
+            EmojiToTextViewSetter nameSetter = new EmojiToTextViewSetter(glideRequests, userNameText, userName, userNameEmojis);
+            EmojiToTextViewSetter bioSetter = new EmojiToTextViewSetter(glideRequests, userBioText, userBio, userNameEmojis);
+            getLifecycle().addObserver(new LifecycleEventObserver() {
+                @Override
+                public void onStateChanged(@NonNull LifecycleOwner source, @NonNull Lifecycle.Event event) {
+                    if (event == Lifecycle.Event.ON_DESTROY) {
+                        nameSetter.dispose();
+                        bioSetter.dispose();
+                        getLifecycle().removeObserver(this);
+                    }
+                }
+            });
         }
 
         userIdText.setText(TwitterStringUtils.plusAtMark(user.getScreenName()));
