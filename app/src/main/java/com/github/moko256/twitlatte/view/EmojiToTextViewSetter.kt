@@ -37,7 +37,6 @@ import io.reactivex.functions.Cancellable
 import io.reactivex.internal.disposables.CancellableDisposable
 import io.reactivex.schedulers.Schedulers
 import net.ellerton.japng.android.api.PngAndroid
-import java.io.InputStream
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.math.roundToInt
@@ -49,10 +48,10 @@ import kotlin.math.roundToInt
  */
 
 class EmojiToTextViewSetter(
-        glideRequests: RequestManager,
-        private val textView: TextView,
-        text: CharSequence,
-        emojis: Array<Emoji>
+    glideRequests: RequestManager,
+    private val textView: TextView,
+    text: CharSequence,
+    emojis: Array<Emoji>
 ) : Disposable, Drawable.Callback {
 
     private companion object {
@@ -107,76 +106,78 @@ class EmojiToTextViewSetter(
             }
 
             disposable.add(Observable
-                    .create<Pair<Emoji, Drawable>> {
-                        containedEmoji.forEach { emoji ->
-                            var inputStream: InputStream? = null
-                            try {
-                                inputStream = glideRequests
-                                        .asFile()
-                                        .load(emoji.url)
-                                        .submit()
-                                        .get()
-                                        .inputStream()
-                                it.onNext(emoji to PngAndroid.readDrawable(textView.context, inputStream))
-                                inputStream.close()
-                            } catch (e: Throwable) {
-                                inputStream?.close()
-                                it.onNext(
-                                        emoji to
-                                                try {
-                                                    glideRequests
-                                                            .load(emoji.url)
-                                                            .submit()
-                                                            .get()
-                                                } catch (e: Throwable) {
-                                                    e.printStackTrace()
-                                                    ContextCompat.getDrawable(
-                                                            textView.context,
-                                                            R.drawable.ic_cloud_off_black_24dp
-                                                    )!!
-                                                }
-                                )
-                            }
-                        }
-                        it.onComplete()
-                    }
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe { pair ->
-                        val emoji = pair.first
-                        val drawable = pair.second.mutate()
-
-                        val aspect = drawable.intrinsicWidth / drawable.intrinsicHeight
-                        drawable.setBounds(
-                                0, 0,
-                                if (aspect == 1) {
-                                    imageSize
-                                } else {
-                                    imageSize * aspect
-                                }.roundToInt(),
-                                imageSize.roundToInt()
+                .create<Pair<Emoji, Drawable>> {
+                    containedEmoji.forEach { emoji ->
+                        it.onNext(
+                            emoji to
+                                    try {
+                                        glideRequests
+                                            .asFile()
+                                            .load(emoji.url)
+                                            .submit()
+                                            .get()
+                                            .inputStream()
+                                            .use { inputStream ->
+                                                PngAndroid.readDrawable(
+                                                    textView.context,
+                                                    inputStream
+                                                )
+                                            }
+                                    } catch (e: Throwable) {
+                                        try {
+                                            glideRequests
+                                                .load(emoji.url)
+                                                .submit()
+                                                .get()
+                                        } catch (e: Throwable) {
+                                            e.printStackTrace()
+                                            ContextCompat.getDrawable(
+                                                textView.context,
+                                                R.drawable.ic_cloud_off_black_24dp
+                                            )!!
+                                        }
+                                    }
                         )
+                    }
+                    it.onComplete()
+                }
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { pair ->
+                    val emoji = pair.first
+                    val drawable = pair.second.mutate()
 
-                        map[emoji.shortCode]?.forEach {
-                            builder.setSpan(
-                                    ImageSpan(drawable),
-                                    it,
-                                    it + emoji.shortCode.length + 2,
-                                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-                            )
-                        }
+                    val aspect = drawable.intrinsicWidth / drawable.intrinsicHeight
+                    drawable.setBounds(
+                        0, 0,
+                        if (aspect == 1) {
+                            imageSize
+                        } else {
+                            imageSize * aspect
+                        }.roundToInt(),
+                        imageSize.roundToInt()
+                    )
 
-                        if (drawable is Animatable) {
-                            drawable.callback = this
-                            disposable.add(CancellableDisposable(Cancellable {
-                                drawable.stop()
-                                drawable.callback = null
-                            }))
-                            drawable.start()
-                        }
+                    map[emoji.shortCode]?.forEach {
+                        builder.setSpan(
+                            ImageSpan(drawable),
+                            it,
+                            it + emoji.shortCode.length + 2,
+                            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                        )
+                    }
 
-                        textView.text = builder
-                    })
+                    if (drawable is Animatable) {
+                        drawable.callback = this
+                        disposable.add(CancellableDisposable(Cancellable {
+                            drawable.stop()
+                            drawable.callback = null
+                        }))
+                        drawable.start()
+                    }
+
+                    textView.text = builder
+                })
             disposable
         } else {
             null
