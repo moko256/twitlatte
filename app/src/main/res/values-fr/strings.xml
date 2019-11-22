@@ -38,7 +38,7 @@
     <string name="user_counts_is">%1$d Publications · %2$d Abonnements · %3$d Abonné·e·s</string>
     <string name="share">Partager …</string>
     <string name="open_in_browser">Ouvrir dans le navigateur</string>
-    <string name="add_to_list">Ajouter à la liste</string>
+    <string name="add_to_list">Ajouter à une liste</string>
     <string name="show_list">Afficher les listes</string>
     <string name="load_more">Charger plus …</string>
     <string name="create_follow">S’abonner</string>
@@ -134,4 +134,14 @@
     <string name="showing_sensitive_media">Ne pas flouter les médias sensibles sur le fil</string>
     <string name="hiding_sensitive_media">Flouter les médias sensibles sur le fil</string>
     <string name="possibly_sensitive">Médias sensibles</string>
+    <string name="do_view_reply_to">Afficher la conversation</string>
+    <string name="did_unfollow">Désabonné</string>
+    <string name="did_unfavorite">A été retiré des favoris</string>
+    <string name="did_favorite">Ajouté aux favoris</string>
+    <string name="did_unretweet">Retweet annulé</string>
+    <string name="confirm_unmute">Ne plus masquer cet·te utilisateur·rice \?</string>
+    <string name="confirm_discard_post">Abandonner la publication \?</string>
+    <string name="do_discard">Abandonner</string>
+    <string name="post_mute_regex_pattern_show_only_image">Le motif est appliqué au contexte pour afficher l’image uniquement</string>
+    <string name="post_mute_regex_pattern">Le motif est appliqué au contexte</string>
 </resources>
