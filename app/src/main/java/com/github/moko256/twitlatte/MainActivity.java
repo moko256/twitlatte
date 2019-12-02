@@ -64,8 +64,6 @@ import com.github.moko256.twitlatte.widget.FragmentPagerAdapter;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -289,7 +287,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onListItemSelected(@NotNull ListEntry listEntry) {
+    public void onListItemSelected(@NonNull ListEntry listEntry) {
         replaceFragment(ListsTimelineFragment.Companion.newInstance(listEntry));
     }
 

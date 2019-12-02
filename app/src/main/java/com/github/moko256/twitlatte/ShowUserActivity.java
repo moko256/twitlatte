@@ -46,8 +46,6 @@ import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Objects;
 
 import static androidx.viewpager.widget.ViewPager.SCROLL_STATE_IDLE;
@@ -169,7 +167,7 @@ public class ShowUserActivity
         appBarLayout.setExpanded(false, true);
     }
 
-    @NotNull
+    @NonNull
     @Override
     public SwipeRefreshLayout get() {
         return swipeRefreshLayout;

@@ -40,8 +40,6 @@ import com.github.moko256.twitlatte.net.OkHttpHolderKt;
 import com.github.moko256.twitlatte.view.DialogContent;
 import com.github.moko256.twitlatte.view.EditTextsDialogShowerKt;
 
-import org.jetbrains.annotations.NotNull;
-
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -130,7 +128,7 @@ public class OAuthActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onSaveInstanceState(@NotNull Bundle outState) {
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         if (requirePin) {
             outState.putBoolean(STATE_REQUIRE_PIN, true);
