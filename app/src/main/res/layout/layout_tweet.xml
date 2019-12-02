@@ -274,7 +274,7 @@
         android:layout_marginEnd="2dp"
         android:background="?attr/controlBackground"
         android:padding="6dp"
-        tools:srcCompat="@drawable/stateful_repeat_button"
+        tools:srcCompat="@drawable/ic_repeat_black_24dp"
         app:tint="@color/stateful_toggle_button_color"
         tools:ignore="PrivateResource" />
 

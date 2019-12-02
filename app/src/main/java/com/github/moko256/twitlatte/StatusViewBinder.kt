@@ -413,27 +413,27 @@ class StatusViewBinder(viewGroup: View) {
         val repeatIconResourceId: Int
 
         if (status.visibility != null) {
-            when {
-                status.visibility == Visibility.Private -> {
+            when (status.visibility) {
+                Visibility.Private -> {
                     isRepeatEnabled = false
-                    repeatIconResourceId = R.drawable.stateful_lock_button
+                    repeatIconResourceId = R.drawable.ic_lock_black_24dp
                 }
-                status.visibility == Visibility.Direct -> {
+                Visibility.Direct -> {
                     isRepeatEnabled = false
-                    repeatIconResourceId = R.drawable.stateful_dm_button
+                    repeatIconResourceId = R.drawable.ic_email_black_24dp
                 }
                 else -> {
                     isRepeatEnabled = true
-                    repeatIconResourceId = R.drawable.stateful_repeat_button
+                    repeatIconResourceId = R.drawable.ic_repeat_black_24dp
                 }
             }
         } else {
             if (user != null && (!user.isProtected || user.id == accessToken.userId)) {
                 isRepeatEnabled = true
-                repeatIconResourceId = R.drawable.stateful_repeat_button
+                repeatIconResourceId = R.drawable.ic_repeat_black_24dp
             } else {
                 isRepeatEnabled = false
-                repeatIconResourceId = R.drawable.stateful_lock_button
+                repeatIconResourceId = R.drawable.ic_lock_black_24dp
             }
         }
         repeatButton.isEnabled = isRepeatEnabled
