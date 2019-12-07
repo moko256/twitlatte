@@ -252,6 +252,7 @@ class ListModelImpl(
                     } catch (e: Throwable) {
                         e.printStackTrace()
                         errorObserver.onNext(e)
+                        updateObserver.onNext(UpdateEvent(EventType.UPDATE, position, 1))
                     }
                     status.onComplete()
                 }.subscribeOn(Schedulers.io())
