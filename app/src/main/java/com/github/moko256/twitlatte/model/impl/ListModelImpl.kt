@@ -52,8 +52,8 @@ class ListModelImpl(
     private val errorObserver = PublishSubject.create<Throwable>()
 
     init {
-        val c = database.ids
-        if (c.size > 0) {
+        val c = database.getIds()
+        if (c.isNotEmpty()) {
             list.addAll(c)
         }
     }
@@ -72,7 +72,7 @@ class ListModelImpl(
 
     override fun getSeeingPosition(): Int {
         if (seeingId == -1L) {
-            seeingId = database.seeingId
+            seeingId = database.getSeeingId()
         }
         return list.indexOf(seeingId)
     }
@@ -81,7 +81,7 @@ class ListModelImpl(
         val id = getIdsList()[position]
         if (id != seeingId) {
             seeingId = id
-            database.seeingId = id
+            database.setSeeingId(id)
         }
     }
 
@@ -96,7 +96,7 @@ class ListModelImpl(
                                 .map { it.id }
                                 .let {
                                     list.addAll(it)
-                                    database.addIds(it)
+                                    database.insertIdsAtFirst(it)
                                     updateObserver.onNext(UpdateEvent(EventType.ADD_FIRST, 0, it.size))
                                 }
                     } catch (e: Throwable) {
@@ -142,7 +142,7 @@ class ListModelImpl(
 
                                 if (ids.size > 0) {
                                     list.addAll(0, ids)
-                                    database.insertIds(0, ids)
+                                    database.insertIdsAtFirst(ids)
                                     updateObserver.onNext(UpdateEvent(EventType.ADD_TOP, 0, ids.size))
                                 } else {
                                     updateObserver.onNext(nothingEvent)
@@ -165,7 +165,7 @@ class ListModelImpl(
         val bottomPos = list.size - 1
 
         if (list[bottomPos] == -1L) {
-            database.deleteIds(listOf(-1L))
+            database.removeAt(bottomPos)
             list.removeAt(bottomPos)
             updateObserver.onNext(UpdateEvent(EventType.REMOVE, bottomPos, 1))
         }
@@ -181,12 +181,12 @@ class ListModelImpl(
                                 client.postCache.addAll(this)
 
                                 val ids = map { it.id }
-
+                                val sizeBeforeAdded = list.size
                                 list.addAll(ids)
-                                database.insertIds(list.size - size, ids)
+                                database.insertIdsAtLast(ids)
                                 updateObserver.onNext(UpdateEvent(
                                         EventType.ADD_BOTTOM,
-                                        list.size - size,
+                                        sizeBeforeAdded,
                                         size
                                 ))
                             } else {
@@ -233,19 +233,19 @@ class ListModelImpl(
                                 if (noGap) {
                                     ids.removeAt(ids.size - 1)
                                     list.removeAt(position)
-                                    database.deleteIds(listOf(-1L))
+                                    database.removeAt(position)
                                     updateObserver.onNext(UpdateEvent(EventType.REMOVE, position, 1))
                                 } else {
                                     updateObserver.onNext(UpdateEvent(EventType.UPDATE, position, 1))
                                 }
 
                                 list.addAll(position, ids)
-                                database.insertIds(position, ids)
+                                database.insertIdsAt(position, ids)
 
                                 updateObserver.onNext(UpdateEvent(EventType.INSERT, position, ids.size))
                             } else {
                                 list.removeAt(position)
-                                database.deleteIds(listOf(-1L))
+                                database.removeAt(position)
                                 updateObserver.onNext(UpdateEvent(EventType.REMOVE, position, 1))
                             }
                         }
@@ -269,7 +269,7 @@ class ListModelImpl(
             requests.add(
                     Completable.create {
                         try {
-                            database.deleteIds(targetToRemove)
+                            database.removeFromLast(targetToRemove.size)
                             client.statusCache.delete(targetToRemove)
                             targetToRemove.clear() //Clear this range from parent's list
 
