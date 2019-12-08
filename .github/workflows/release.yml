@@ -26,7 +26,9 @@ jobs:
         chmod +x gradlew
         sed -i s/-all./-bin./ gradle/wrapper/gradle-wrapper.properties
         echo $ks | base64 -d - >> ks
-        sed -i s/release {/release {\\nstoreFile file(\"ks\")\\nstorePassword System.getenv(\'ks_p\')\\nkeyAlias System.getenv(\'ka\')\\nkeyPassword System.getenv(\'k_p\')/ app/build.gradle
+        sed -i \
+            s/release {/release {\\nstoreFile file(\"ks\")\\nstorePassword System.getenv(\'ks_p\')\\nkeyAlias System.getenv(\'ka\')\\nkeyPassword System.getenv(\'k_p\')/ \
+            app/build.gradle
         ./gradlew assembleRelease
 
     - uses: actions/upload-artifact@master
@@ -37,6 +39,10 @@ jobs:
     - uses: actions/setup-ruby@v1.0.0
 
     - name: upload to Play Store
+      env:
+        gk: $${{ secrets.play_key }}
       run: |
-        exit 1
+        echo $gk | base64 -d - >> gk
         gem install fastlane -N
+        fastlane supply --metadata_path fastlane/metadata/android --skip_upload_images true --skip_upload_screenshots true --apk app/release/app-release.apk \
+                        --mapping app/build/outputs/mapping/release/mapping.txt --json_key gk --package_name com.github.moko256.twitlatte --validate_only
