@@ -22,6 +22,8 @@
     <drawable name="exo_controls_repeat_one">#000</drawable>
     <drawable name="exo_controls_repeat_all">#000</drawable>
     <drawable name="exo_controls_shuffle">#000</drawable>
+    <drawable name="exo_controls_shuffle_off">#000</drawable>
+    <drawable name="exo_controls_shuffle_on">#000</drawable>
     <drawable name="exo_edit_mode_logo">#000</drawable>
     <drawable name="exo_icon_fastforward">#000</drawable>
     <drawable name="exo_icon_next">#000</drawable>
