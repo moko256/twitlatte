@@ -79,6 +79,8 @@
         android:layout_toStartOf="@+id/exo_duration"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="16dp"
-        app:played_color="@color/color_accent"/>
+        app:played_color="@color/color_accent"
+        app:scrubber_color="@color/color_accent"
+        app:buffered_color="#88ffffff"/>
 
 </com.github.moko256.twitlatte.widget.FitSystemWindowsRelativeLayout>
