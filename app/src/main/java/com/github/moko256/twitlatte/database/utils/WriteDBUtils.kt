@@ -32,13 +32,14 @@ inline fun SQLiteOpenHelper.write(action: SQLiteDatabase.() -> Unit) {
 }
 
 inline fun SQLiteOpenHelper.transaction(action: SQLiteDatabase.() -> Unit) {
-    write {
+    writableDatabase.apply {
         beginTransaction()
         try {
             action(this)
             setTransactionSuccessful()
         } finally {
             endTransaction()
+            close()
         }
     }
 }
