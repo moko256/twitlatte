@@ -35,7 +35,7 @@
     <string name="lat_and_lon">Latitude :%1$f Longitude : %2$f</string>
     <string name="location_is">Emplacement : %s</string>
     <string name="url_is">URL : %s</string>
-    <string name="user_counts_is">%1$d Publications · %2$d Abonnements · %3$d Abonné·e·s</string>
+    <string name="user_counts_is">%1$,d Publications · %2$,d Abonnements · %3$,d Abonné·e·s</string>
     <string name="share">Partager …</string>
     <string name="open_in_browser">Ouvrir dans le navigateur</string>
     <string name="add_to_list">Ajouter à une liste</string>
@@ -71,7 +71,7 @@
     <string name="content_warning">Avertissement de contenu</string>
     <string name="do_add_content_warning">Ajouter un avertissement de contenu</string>
     <string name="no_app_can_open">Aucune application ne peut l’ouvrir</string>
-    <string name="tweet_per_last_24_hours">%d tweets / dernières 24 heures</string>
+    <string name="tweet_per_last_24_hours">%,d tweets / dernières 24 heures</string>
     <string name="do_see_source_code">Voir le code source de cette application</string>
     <string name="description_see_source_code">Hébergé sur GitHub</string>
     <string name="please_re_login">twitlatte met à jour quelques clés API\nVeuillez vous reconnecter avec ce compte</string>

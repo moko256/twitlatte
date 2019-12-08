@@ -58,7 +58,7 @@
     <string name="lat_and_lon">Latitude:%1$f Longitude: %2$f</string>
     <string name="location_is">Location: %s</string>
     <string name="url_is">URL: %s</string>
-    <string name="user_counts_is">%1$d Posts · %2$d Following · %3$d Followers</string>
+    <string name="user_counts_is">%1$,d Posts · %2$,d Following · %3$,d Followers</string>
     <string name="share">Share…</string>
     <string name="open_in_browser">Open in the browser</string>
     <string name="add_to_list">Add to list</string>
@@ -112,7 +112,7 @@
     <string name="content_warning">Content warning</string>
     <string name="do_add_content_warning">Add content warning</string>
     <string name="no_app_can_open">No app can open</string>
-    <string name="tweet_per_last_24_hours">%d tweets / last 24 hours</string>
+    <string name="tweet_per_last_24_hours">%,d tweets / last 24 hours</string>
     <string name="do_see_source_code">See source codes of this app</string>
     <string name="description_see_source_code">Hosted on GitHub</string>
     <string name="please_re_login">twitlatte updated some API keys\nPlease login with this account again</string>

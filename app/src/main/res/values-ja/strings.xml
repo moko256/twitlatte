@@ -54,7 +54,7 @@
     <string name="lat_and_lon">緯度:%1$f 経度:%2$f</string>
     <string name="location_is">所在地: %s</string>
     <string name="url_is">URL: %s</string>
-    <string name="user_counts_is">%1$d 投稿 · %2$d フォロー · %3$d フォロワー</string>
+    <string name="user_counts_is">%1$,d 投稿 · %2$,d フォロー · %3$,d フォロワー</string>
     <string name="share">共有する</string>
     <string name="open_in_browser">ブラウザで開く</string>
     <string name="add_to_list">リストに追加</string>
@@ -107,7 +107,7 @@
     <string name="content_warning">内容への警告</string>
     <string name="do_add_content_warning">内容への警告を追加する</string>
     <string name="no_app_can_open">開けるアプリがありません</string>
-    <string name="tweet_per_last_24_hours">直近24時間以内で%dツイート</string>
+    <string name="tweet_per_last_24_hours">%,dツイート / 直近24時間</string>
     <string name="do_see_source_code">このアプリのソースコードを見る</string>
     <string name="description_see_source_code">GitHubで公開されています</string>
     <string name="please_re_login">twitlatteはいくつかのAPIキーをアップデートしました\nこのアカウントで再度ログインしてください</string>
