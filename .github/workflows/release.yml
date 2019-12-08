@@ -25,8 +25,8 @@ jobs:
       run: |
         chmod +x gradlew
         echo $ks | base64 -d - >> ks.jks
-        sed -i \
-            s/"release {"/"release {\\nstoreFile file\(\"ks.jks\"\)\\nstorePassword System.getenv\(\'ks_p\'\)\\nkeyAlias System.getenv\(\'ka\'\)\\nkeyPassword System.getenv\(\'k_p\'\)"/ \
+        sed -i s/"release {"/"release{signingConfig signingConfigs.release"/ app/build.gradle
+        sed -i s/"android {"/"android{signingConfigs{release{storeFile file\(\"ks.jks\"\);storePassword System.getenv\(\'ks_p\'\);keyAlias System.getenv\(\'ka\'\);keyPassword System.getenv\(\'k_p\'\)}}"/ \
             app/build.gradle
         ./gradlew assembleRelease
 
@@ -34,6 +34,11 @@ jobs:
       with:
         name: debug-apk
         path: app/build/outputs/apk/debug/app-debug.apk
+
+    - uses: actions/upload-artifact@master
+      with:
+        name: mapping.txt
+        path: app/build/outputs/mapping/release/mapping.txt
 
     - uses: actions/setup-ruby@v1.0.0
 
