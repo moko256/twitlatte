@@ -60,7 +60,8 @@ public class CachedTrendsSQLiteOpenHelper extends SQLiteOpenHelper {
     public List<Trend> getTrends() {
         List<Trend> trends;
 
-        Cursor c = getReadableDatabase()
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor c = db
                 .query(TABLE_NAME, new String[]{"name", "volume"}, null, null, null, null, null);
 
         try {
@@ -76,9 +77,11 @@ public class CachedTrendsSQLiteOpenHelper extends SQLiteOpenHelper {
             trends = Collections.emptyList();
             SQLiteDatabase writableDatabase = getWritableDatabase();
             writableDatabase.delete(TABLE_NAME, null, null);
+            writableDatabase.close();
         }
 
         c.close();
+        db.close();
 
         return trends;
     }
@@ -102,6 +105,7 @@ public class CachedTrendsSQLiteOpenHelper extends SQLiteOpenHelper {
             database.setTransactionSuccessful();
         } finally {
             database.endTransaction();
+            database.close();
         }
     }
 }

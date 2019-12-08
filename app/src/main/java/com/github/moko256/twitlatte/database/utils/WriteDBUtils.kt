@@ -26,11 +26,13 @@ import android.database.sqlite.SQLiteOpenHelper
  */
 
 inline fun SQLiteOpenHelper.write(action: SQLiteDatabase.() -> Unit) {
-    action(writableDatabase)
+    val db = writableDatabase
+    action(db)
+    db.close()
 }
 
 inline fun SQLiteOpenHelper.transaction(action: SQLiteDatabase.() -> Unit) {
-    writableDatabase.apply {
+    write {
         beginTransaction()
         try {
             action(this)

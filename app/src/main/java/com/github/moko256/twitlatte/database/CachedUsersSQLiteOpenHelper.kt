@@ -76,12 +76,13 @@ class CachedUsersSQLiteOpenHelper(context: Context, accessToken: AccessToken?) :
     }
 
     fun getCachedUser(id: Long): User? {
-        return selectSingleOrNull(
+        return read {
+            selectSingleOrNull(
                 TABLE_NAME,
                 TABLE_COLUMNS,
                 "id=$id"
-        ) {
-            User(
+            ) {
+                User(
                     id = getLong(0),
                     name = getString(1),
                     screenName = getString(2),
@@ -98,15 +99,16 @@ class CachedUsersSQLiteOpenHelper(context: Context, accessToken: AccessToken?) :
                     statusesCount = getInt(13),
                     isVerified = getBoolean(14),
                     descriptionLinks = restoreLinks(
-                            getString(15).splitWithComma(),
-                            getString(16).splitWithComma(),
-                            getString(17).splitWithComma()
+                        getString(15).splitWithComma(),
+                        getString(16).splitWithComma(),
+                        getString(17).splitWithComma()
                     ),
                     emojis = restoreEmojis(
-                            getString(18).splitWithComma(),
-                            getString(19).splitWithComma()
+                        getString(18).splitWithComma(),
+                        getString(19).splitWithComma()
                     )
-            )
+                )
+            }
         }
     }
 

@@ -137,12 +137,14 @@ class CachedStatusesSQLiteOpenHelper(
     }
 
     fun getCachedStatus(id: Long): StatusObject? {
-        return selectSingleOrNull(
+        return read {
+            selectSingleOrNull(
                 TABLE_NAME,
                 TABLE_COLUMNS,
                 "id=$id"
-        ) {
-            convertCursorToStatusObject(this)
+            ) {
+                convertCursorToStatusObject(this)
+            }
         }
     }
 
@@ -236,15 +238,22 @@ class CachedStatusesSQLiteOpenHelper(
         }
     }
 
+
     fun getIdsInUse(ids: Collection<Long>): Collection<Long> {
+        return read {
+            getIdsInUseInner(this, ids)
+        }
+    }
+
+    private fun getIdsInUseInner(db: SQLiteDatabase, ids: Collection<Long>): Collection<Long> {
         val result = ArraySet<Long>(ids.size * 5)
         val columns = arrayOf(TABLE_COLUMNS[3], TABLE_COLUMNS[25])
 
         ids.forEach { id ->
-            selectMultiple(
-                    TABLE_NAME,
-                    columns,
-                    "id=$id"
+            db.selectMultiple(
+                TABLE_NAME,
+                columns,
+                "id=$id"
             ) {
                 val repeatId = getLong(0)
                 if (repeatId != -1L) {
@@ -263,7 +272,7 @@ class CachedStatusesSQLiteOpenHelper(
         }
 
         if (result.isNotEmpty()) {
-            result.addAll(getIdsInUse(result))
+            result.addAll(getIdsInUseInner(db, result))
         }
         return result
     }

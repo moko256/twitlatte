@@ -22,6 +22,7 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.database.sqlite.SQLiteStatement
 import com.github.moko256.latte.client.base.entity.AccessToken
+import com.github.moko256.twitlatte.database.utils.read
 import com.github.moko256.twitlatte.database.utils.transaction
 import com.github.moko256.twitlatte.database.utils.write
 import java.io.File
@@ -71,7 +72,13 @@ class CachedIdListSQLiteOpenHelper(
     }
 
     fun getIds(): List<Long> {
-        val c = readableDatabase.query(ID_LIST_TABLE_NAME, COLUMNS, null, null, null, null, null)
+        return read {
+            getIdsInner(this)
+        }
+    }
+
+    private fun getIdsInner(db: SQLiteDatabase): List<Long> {
+        val c = db.query(ID_LIST_TABLE_NAME, COLUMNS, null, null, null, null, null)
         val count = c.count
         val ids = LongArray(count)
 
@@ -96,9 +103,9 @@ class CachedIdListSQLiteOpenHelper(
     }
 
     fun insertIdsAtLast(ids: List<Long>) {
-        val n = getIds()
-
         transaction {
+            val n = getIdsInner(this)
+
             val insert = compileStatement(insertIdListStatement)
 
             deleteAllIds(this)
@@ -110,10 +117,10 @@ class CachedIdListSQLiteOpenHelper(
     }
 
     fun insertIdsAt(index: Int, ids: List<Long>) {
-        val n = getIds()
-        val d = n.subList(0, index)
-
         transaction {
+            val n = getIdsInner(this)
+            val d = n.subList(0, index)
+
             val insert = compileStatement(insertIdListStatement)
 
             deleteTopIds(this, n.size, index)
@@ -161,14 +168,16 @@ class CachedIdListSQLiteOpenHelper(
 
 
     fun getSeeingId(): Long {
-        val c = readableDatabase.query(SEEING_ID_TABLE_NAME, COLUMNS, null, null, null, null, null)
-        val r = if (c.moveToNext()) {
-            c.getLong(0)
-        } else {
-            0L
+        return read {
+            val c = query(SEEING_ID_TABLE_NAME, COLUMNS, null, null, null, null, null)
+            val r = if (c.moveToNext()) {
+                c.getLong(0)
+            } else {
+                0L
+            }
+            c.close()
+            r
         }
-        c.close()
-        return r
     }
 
     fun setSeeingId(id: Long?) {

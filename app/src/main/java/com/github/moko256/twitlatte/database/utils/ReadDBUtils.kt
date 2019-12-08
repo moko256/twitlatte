@@ -17,6 +17,7 @@
 package com.github.moko256.twitlatte.database.utils
 
 import android.database.Cursor
+import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 
 /**
@@ -27,21 +28,28 @@ import android.database.sqlite.SQLiteOpenHelper
 
 fun Cursor.getBoolean(index: Int) = getInt(index) == 1
 
-inline fun <T> SQLiteOpenHelper.selectSingleOrNull(
-        tableName: String,
-        columns: Array<String>,
-        selection: String,
-        action: Cursor.() -> T
+inline fun <T> SQLiteOpenHelper.read(action: SQLiteDatabase.() -> T): T {
+    val db = readableDatabase
+    val result = action(db)
+    db.close()
+    return result
+}
+
+inline fun <T> SQLiteDatabase.selectSingleOrNull(
+    tableName: String,
+    columns: Array<String>,
+    selection: String,
+    action: Cursor.() -> T
 ): T? {
-    val cursor = readableDatabase.query(
-            tableName,
-            columns,
-            selection,
-            null,
-            null,
-            null,
-            null,
-            "1"
+    val cursor = query(
+        tableName,
+        columns,
+        selection,
+        null,
+        null,
+        null,
+        null,
+        "1"
     )
     val result = if (cursor.moveToFirst()) {
         action(cursor)
@@ -52,21 +60,21 @@ inline fun <T> SQLiteOpenHelper.selectSingleOrNull(
     return result
 }
 
-inline fun <reified T> SQLiteOpenHelper.selectMultipleAsList(
-        tableName: String,
-        columns: Array<String>,
-        selection: String? = null,
-        action: Cursor.() -> T
+inline fun <reified T> SQLiteDatabase.selectMultipleAsList(
+    tableName: String,
+    columns: Array<String>,
+    selection: String? = null,
+    action: Cursor.() -> T
 ): List<T> {
-    val cursor = readableDatabase.query(
-            tableName,
-            columns,
-            selection,
-            null,
-            null,
-            null,
-            null,
-            null
+    val cursor = query(
+        tableName,
+        columns,
+        selection,
+        null,
+        null,
+        null,
+        null,
+        null
     )
     val results = Array(cursor.count) {
         cursor.moveToPosition(it)
@@ -76,21 +84,21 @@ inline fun <reified T> SQLiteOpenHelper.selectMultipleAsList(
     return results.toList()
 }
 
-inline fun SQLiteOpenHelper.selectMultiple(
-        tableName: String,
-        columns: Array<String>,
-        selection: String? = null,
-        action: Cursor.() -> Unit
+inline fun SQLiteDatabase.selectMultiple(
+    tableName: String,
+    columns: Array<String>,
+    selection: String? = null,
+    action: Cursor.() -> Unit
 ) {
-    val cursor = readableDatabase.query(
-            tableName,
-            columns,
-            selection,
-            null,
-            null,
-            null,
-            null,
-            null
+    val cursor = query(
+        tableName,
+        columns,
+        selection,
+        null,
+        null,
+        null,
+        null,
+        null
     )
     while (cursor.moveToNext()) {
         action(cursor)

@@ -22,10 +22,7 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import com.github.moko256.latte.client.base.entity.AccessToken
 import com.github.moko256.latte.client.base.entity.ListEntry
-import com.github.moko256.twitlatte.database.utils.getBoolean
-import com.github.moko256.twitlatte.database.utils.selectMultipleAsList
-import com.github.moko256.twitlatte.database.utils.transaction
-import com.github.moko256.twitlatte.database.utils.write
+import com.github.moko256.twitlatte.database.utils.*
 import java.io.File
 
 /**
@@ -61,16 +58,18 @@ class CachedListEntriesSQLiteOpenHelper : SQLiteOpenHelper {
 
     fun getListEntries(): List<ListEntry> {
         try {
-            return selectMultipleAsList(
+            return read {
+                selectMultipleAsList(
                     TABLE_NAME,
                     TABLE_COLUMNS
-            ) {
-                ListEntry(
+                ) {
+                    ListEntry(
                         getLong(0),
                         getString(1),
                         getString(2),
                         getBoolean(3)
-                )
+                    )
+                }
             }
         } catch (e: Throwable) {
             write {

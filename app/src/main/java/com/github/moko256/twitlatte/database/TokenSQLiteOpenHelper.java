@@ -93,7 +93,10 @@ public class TokenSQLiteOpenHelper extends SQLiteOpenHelper {
     }
 
     public AccessToken[] getAccessTokens() {
-        return getAccessTokenInternal(getReadableDatabase());
+        SQLiteDatabase db = getReadableDatabase();
+        AccessToken[] result = getAccessTokenInternal(db);
+        db.close();
+        return result;
     }
 
     private AccessToken[] getAccessTokenInternal(SQLiteDatabase database) {
@@ -114,7 +117,8 @@ public class TokenSQLiteOpenHelper extends SQLiteOpenHelper {
         Pair<String, Long> pair = AccessTokenKt.splitAccessTokenKey(key);
         AccessToken accessToken;
 
-        Cursor c = getReadableDatabase().query(
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor c = db.query(
                 TABLE_NAME,
                 TABLE_COLUMNS,
                 "url = '" + pair.getFirst() + "' AND " + "userId = " + pair.getSecond(),
@@ -128,6 +132,7 @@ public class TokenSQLiteOpenHelper extends SQLiteOpenHelper {
             accessToken = null;
         }
         c.close();
+        db.close();
 
         return accessToken;
     }
@@ -146,7 +151,9 @@ public class TokenSQLiteOpenHelper extends SQLiteOpenHelper {
     }
 
     public void addAccessToken(AccessToken accessToken) {
-        addAccessTokenInternal(getWritableDatabase(), accessToken);
+        SQLiteDatabase db = getWritableDatabase();
+        addAccessTokenInternal(db, accessToken);
+        db.close();
     }
 
     private void addAccessTokenInternal(SQLiteDatabase database, AccessToken accessToken) {
@@ -164,12 +171,13 @@ public class TokenSQLiteOpenHelper extends SQLiteOpenHelper {
     }
 
     public void deleteAccessToken(AccessToken accessToken) {
-        getWritableDatabase()
-                .delete(
-                        TABLE_NAME,
-                        "url = '" + accessToken.getUrl() + "' AND " + "userId = " + accessToken.getUserId(),
-                        null
-                );
+        SQLiteDatabase db = getWritableDatabase();
+        db.delete(
+                TABLE_NAME,
+                "url = '" + accessToken.getUrl() + "' AND " + "userId = " + accessToken.getUserId(),
+                null
+        );
+        db.close();
     }
 
 }
