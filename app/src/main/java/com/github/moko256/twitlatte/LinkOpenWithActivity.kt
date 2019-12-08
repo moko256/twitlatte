@@ -28,7 +28,6 @@ import androidx.core.widget.TextViewCompat
 import com.github.moko256.latte.client.base.entity.AccessToken
 import com.github.moko256.latte.client.twitter.CLIENT_TYPE_TWITTER
 import com.github.moko256.twitlatte.intent.excludeOwnApp
-import com.github.moko256.twitlatte.model.AccountsModel
 import com.github.moko256.twitlatte.repository.KEY_ACCOUNT_KEY_LINK_OPEN
 import com.github.moko256.twitlatte.text.TwitterStringUtils
 import com.github.moko256.twitlatte.view.dpToPx
@@ -45,34 +44,28 @@ class LinkOpenWithActivity : Activity() {
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val accountsModel = getAccountsModel()
-        if (accountsModel.size() > 0) {
-            val switchIntent = switchIntent()
-            if (switchIntent != null) {
-                val toName = switchIntent.component?.className
-                if (ShowUserActivity::class.java.name != toName && ShowTweetActivity::class.java.name != toName) {
-                    startActivity(switchIntent)
-                    finish()
-                } else {
-                    showDialog(accountsModel) {
-                        startActivity(switchIntent.setAccountKey(it))
+        val switchIntent = switchIntent()
+        if (switchIntent != null) {
+            val toName = switchIntent.component?.className
+            if (ShowUserActivity::class.java.name != toName && ShowTweetActivity::class.java.name != toName) {
+                startActivity(switchIntent)
+                finish()
+            } else {
+                showDialog {
+                    startActivity(switchIntent.setAccountKey(it))
 
-                        Toast.makeText(
+                    Toast.makeText(
                             this@LinkOpenWithActivity,
                             TwitterStringUtils.plusAtMark(
-                                it.screenName,
-                                it.url
+                                    it.screenName,
+                                    it.url
                             ),
                             Toast.LENGTH_SHORT
-                        ).show()
+                    ).show()
 
-                        finish()
-                    }
+                    finish()
                 }
             }
-        } else {
-            startActivity(Intent(this, MainActivity::class.java))
-            finish()
         }
     }
 
@@ -231,8 +224,9 @@ class LinkOpenWithActivity : Activity() {
     }
 
     @SuppressLint("SetTextI18n")
-    private fun showDialog(accountsModel: AccountsModel, callback: (AccessToken) -> Unit) {
-        val accessTokens = accountsModel.getAccessTokensByType(CLIENT_TYPE_TWITTER)
+    private fun showDialog(callback: (AccessToken) -> Unit) {
+        val accessTokens = getAccountsModel()
+                .getAccessTokensByType(CLIENT_TYPE_TWITTER)
         when {
             accessTokens.isEmpty() -> {
                 startActivity(generateAlterIntent(intent.data!!))
