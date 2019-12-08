@@ -60,16 +60,18 @@ abstract class AbstractVideoFragment : AbstractMediaFragment(), Player.EventList
     private var wasFragmentShowing = false
     private var canPlayNext = true
 
-    protected var isLoop = false
+    protected open val isLoop = false
+    protected open val isVideoOnly = false
 
     private val trackSelector = DefaultTrackSelector()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        val context = requireContext()
         player = ExoPlayerFactory.newSimpleInstance(
                 context,
-                AudioAndVideoRenderer(requireContext()),
+                AudioAndVideoRenderer(context, isVideoOnly),
                 trackSelector
         ).also {
             it.prepare(

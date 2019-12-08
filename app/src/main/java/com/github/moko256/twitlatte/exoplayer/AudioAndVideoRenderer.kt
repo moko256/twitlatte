@@ -36,25 +36,35 @@ import com.google.android.exoplayer2.video.VideoRendererEventListener
  *
  * @author moko256
  */
-class AudioAndVideoRenderer(val context: Context) : RenderersFactory {
+class AudioAndVideoRenderer(private val context: Context, private val videoOnly: Boolean) : RenderersFactory {
     override fun createRenderers(
-            eventHandler: Handler?,
-            videoRendererEventListener: VideoRendererEventListener?,
-            audioRendererEventListener: AudioRendererEventListener?,
-            textRendererOutput: TextOutput?, metadataRendererOutput: MetadataOutput?,
-            drmSessionManager: DrmSessionManager<FrameworkMediaCrypto>?
-    ): Array<Renderer> = arrayOf(
-            MediaCodecVideoRenderer(
+        eventHandler: Handler?,
+        videoRendererEventListener: VideoRendererEventListener?,
+        audioRendererEventListener: AudioRendererEventListener?,
+        textRendererOutput: TextOutput?, metadataRendererOutput: MetadataOutput?,
+        drmSessionManager: DrmSessionManager<FrameworkMediaCrypto>?
+    ): Array<Renderer> {
+        val videoRenderer = MediaCodecVideoRenderer(
+            context,
+            MediaCodecSelector.DEFAULT,
+            DEFAULT_ALLOWED_VIDEO_JOINING_TIME_MS,
+            eventHandler,
+            videoRendererEventListener,
+            -1
+        )
+
+        return if (videoOnly) {
+            arrayOf(videoRenderer)
+        } else {
+            arrayOf(
+                videoRenderer,
+                MediaCodecAudioRenderer(
                     context,
                     MediaCodecSelector.DEFAULT,
-                    DEFAULT_ALLOWED_VIDEO_JOINING_TIME_MS,
                     eventHandler,
-                    videoRendererEventListener,
-                    -1),
-            MediaCodecAudioRenderer(
-                    context,
-                    MediaCodecSelector.DEFAULT,
-                    eventHandler,
-                    audioRendererEventListener)
-    )
+                    audioRendererEventListener
+                )
+            )
+        }
+    }
 }

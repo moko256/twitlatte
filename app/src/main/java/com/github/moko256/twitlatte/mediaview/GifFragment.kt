@@ -22,7 +22,6 @@ package com.github.moko256.twitlatte.mediaview
  * @author moko256
  */
 class GifFragment : OneVideoFragment() {
-    init {
-        isLoop = true
-    }
+    override val isLoop = true
+    override val isVideoOnly = true
 }
