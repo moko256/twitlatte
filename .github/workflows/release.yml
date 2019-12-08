@@ -29,6 +29,7 @@ jobs:
         sed -i \
             s/release {/release {\\nstoreFile file(\"ks\")\\nstorePassword System.getenv(\'ks_p\')\\nkeyAlias System.getenv(\'ka\')\\nkeyPassword System.getenv(\'k_p\')/ \
             app/build.gradle
+        set -v
         ./gradlew assembleRelease
 
     - uses: actions/upload-artifact@master
