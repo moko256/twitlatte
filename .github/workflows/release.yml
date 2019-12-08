@@ -2,8 +2,8 @@ name: Build release apk and publish
 
 on:
   push:
-    tags:
-      - v*.*.*
+#    tags:
+#      - v*.*.*
 
 jobs:
   release:
@@ -17,15 +17,26 @@ jobs:
         java-version: 1.8
 
     - name: build with Gradle
+      env:
+        ks: ${{ secrets.keystore }}
+        ks_p: ${{ secrets.keystore_pass }}
+        ka: ${{ secrets.key_alias }}
+        k_p: ${{ secrets.key_pass }}
       run: |
         chmod +x gradlew
         sed -i s/-all./-bin./ gradle/wrapper/gradle-wrapper.properties
-        exit 1 //TODO: add release key
+        echo $ks | base64 -d - >> ks
+        sed -i s/release {/release {\\nstoreFile file(\"ks\")\\nstorePassword System.getenv(\'ks_p\')\\nkeyAlias System.getenv(\'ka\')\\nkeyPassword System.getenv(\'k_p\')/ app/build.gradle
         ./gradlew assembleRelease
+
+    - uses: actions/upload-artifact@master
+      with:
+        name: debug-apk
+        path: app/build/outputs/apk/debug/app-debug.apk
 
     - uses: actions/setup-ruby@v1.0.0
 
     - name: upload to Play Store
       run: |
+        exit 1
         gem install fastlane -N
-        exit 1 //TODO: upload
