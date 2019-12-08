@@ -1,10 +1,14 @@
 # Change Log
 
-## Version next
-* Remove unnecessary syncing and closing when using db.
+## Version 1.11.0 (31)
 * Update French translation (Thanks [@Boffire](https://github.com/BoFFire)).
-* Fix crash when error has no body (Mastodon).
-* Use stable-version AndroidX libraries.
+* Refactor some codes.
+* Fix load button couldn't tap after error occurred.
+* Fix cache database didn't clear older statuses.
+* Fix tab color in user details.
+* Fix some memory leaks.
+* Fix crashing when error has no body (Mastodon).
+* Update libraries.
 
 ## Version 1.10.1 (30)
 * Use webp thumbnails (Twitter).
