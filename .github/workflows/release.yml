@@ -27,7 +27,7 @@ jobs:
         sed -i s/-all./-bin./ gradle/wrapper/gradle-wrapper.properties
         echo $ks | base64 -d - >> ks
         sed -i \
-            s/release {/release {\\nstoreFile file\(\"ks\"\)\\nstorePassword System.getenv\(\'ks_p\'\)\\nkeyAlias System.getenv\(\'ka\'\)\\nkeyPassword System.getenv\(\'k_p\'\)/ \
+            s/"release {"/"release {\\nstoreFile file\(\"ks\"\)\\nstorePassword System.getenv\(\'ks_p\'\)\\nkeyAlias System.getenv\(\'ka\'\)\\nkeyPassword System.getenv\(\'k_p\'\)"/ \
             app/build.gradle
         ./gradlew assembleRelease
 
