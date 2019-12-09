@@ -1,0 +1,6 @@
+v1.11.1
+- Fixed some bugs
+
+v1.11.0
+- Translated to French
+- Fixed some bugs

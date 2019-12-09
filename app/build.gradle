@@ -26,8 +26,8 @@ android {
         targetSdkVersion 28
 
         applicationId 'com.github.moko256.twitlatte'
-        versionCode 31
-        versionName '1.11.0'
+        versionCode 32
+        versionName '1.11.1'
 
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         testInstrumentationRunnerArguments clearPackageData: 'true'
