@@ -30,6 +30,7 @@ import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
+import java.lang.IllegalStateException
 
 /**
  * Created by moko256 on 2018/10/11.
@@ -278,17 +279,19 @@ class ListModelImpl(
 
             requests.add(
                 Completable.create {
-                    database.removeFromLast(targetToRemove.size)
-                    client.statusCache.delete(targetToRemove)
-                    targetToRemove.clear() //Clear this range from parent's list
+                    try {
+                        client.statusCache.delete(targetToRemove)
+                        database.removeFromLast(targetToRemove.size)
+                        targetToRemove.clear() //Clear this range from parent's list
 
-                    updateObserver.onNext(
-                        UpdateEvent(
-                            EventType.REMOVE,
-                            targetFirst,
-                            parentSize
+                        updateObserver.onNext(
+                            UpdateEvent(
+                                EventType.REMOVE,
+                                targetFirst,
+                                parentSize
+                            )
                         )
-                    )
+                    } catch (ignore: IllegalStateException) {}
                     it.onComplete()
                 }.subscribeOn(Schedulers.io())
                     .subscribe()

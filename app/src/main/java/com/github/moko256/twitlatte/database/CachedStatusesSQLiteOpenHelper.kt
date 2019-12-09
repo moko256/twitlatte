@@ -240,8 +240,11 @@ class CachedStatusesSQLiteOpenHelper(
 
 
     fun getIdsInUse(ids: Collection<Long>): Collection<Long> {
-        return read {
-            getIdsInUseInner(this, ids)
+        read {
+            acquireReference()
+            val result = getIdsInUseInner(this, ids)
+            releaseReference()
+            return result
         }
     }
 
