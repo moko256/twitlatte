@@ -1,5 +1,8 @@
 # Change Log
 
+## Version 1.11.1 (32)
+* Fix crashing after app was closed.
+
 ## Version 1.11.0 (31)
 * Update French translation (Thanks [@Boffire](https://github.com/BoFFire)).
 * Refactor some codes.
