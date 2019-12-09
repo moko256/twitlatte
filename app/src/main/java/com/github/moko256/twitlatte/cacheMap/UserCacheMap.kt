@@ -29,26 +29,19 @@ import com.github.moko256.twitlatte.database.CachedUsersSQLiteOpenHelper
  * @author moko256
  */
 
-class UserCacheMap {
+class UserCacheMap(base: UserCacheMap?, context: Context, accessToken: AccessToken) {
 
-    private var diskCache: CachedUsersSQLiteOpenHelper? = null
-    private val cache = LruCache<Long, User>(LIMIT_OF_SIZE_OF_OBJECT_CACHE)
-
-    fun prepare(context: Context, accessToken: AccessToken) {
-        diskCache?.close()
-        cache.clearIfNotEmpty()
-        diskCache = CachedUsersSQLiteOpenHelper(context, accessToken)
-    }
+    private val cache: LruCache<Long, User> = base?.cache ?: LruCache(LIMIT_OF_SIZE_OF_OBJECT_CACHE)
+    private val diskCache = CachedUsersSQLiteOpenHelper(context, accessToken)
 
     fun close() {
-        diskCache?.close()
-        diskCache = null
+        diskCache.close()
         cache.clearIfNotEmpty()
     }
 
     fun add(user: User) {
         cache.put(user.id, user)
-        diskCache?.addCachedUser(user)
+        diskCache.addCachedUser(user)
     }
 
     fun addAll(c: Collection<User>) {
@@ -56,14 +49,14 @@ class UserCacheMap {
             c.forEach {
                 cache.put(it.id, it)
             }
-            diskCache?.addCachedUsers(c)
+            diskCache.addCachedUsers(c)
         }
     }
 
     fun get(id: Long): User? {
         val memoryCache = cache.get(id)
         return if (memoryCache == null) {
-            val storageCache = diskCache?.getCachedUser(id)
+            val storageCache = diskCache.getCachedUser(id)
             if (storageCache != null) {
                 cache.put(storageCache.id, storageCache)
             }

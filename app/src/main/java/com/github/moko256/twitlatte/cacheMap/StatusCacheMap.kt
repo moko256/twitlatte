@@ -32,27 +32,22 @@ import com.github.moko256.twitlatte.database.CachedStatusesSQLiteOpenHelper
  * @author moko256
  */
 
-class StatusCacheMap {
+class StatusCacheMap(base: StatusCacheMap?, context: Context, accessToken: AccessToken) {
 
-    private val cache = LruCache<Long, StatusObject>(LIMIT_OF_SIZE_OF_OBJECT_CACHE)
-    private var diskCache: CachedStatusesSQLiteOpenHelper? = null
+    private val cache: LruCache<Long, StatusObject> =
+        base?.cache ?: LruCache(LIMIT_OF_SIZE_OF_OBJECT_CACHE)
 
-    fun prepare(context: Context, accessToken: AccessToken) {
-        diskCache?.close()
-        cache.clearIfNotEmpty()
-        diskCache = CachedStatusesSQLiteOpenHelper(context, accessToken)
-    }
+    private val diskCache = CachedStatusesSQLiteOpenHelper(context, accessToken)
 
     fun close() {
-        diskCache?.close()
-        diskCache = null
+        diskCache.close()
         cache.clearIfNotEmpty()
     }
 
     fun get(id: Long): StatusObject? {
         val memoryCache = cache.get(id)
         return memoryCache ?: try {
-            val storageCache = diskCache?.getCachedStatus(id)
+            val storageCache = diskCache.getCachedStatus(id)
             if (storageCache != null) {
                 cache.put(storageCache.getId(), storageCache)
             }
@@ -65,15 +60,19 @@ class StatusCacheMap {
 
     fun add(c: Status, incrementCount: Boolean) {
         cache.put(c.id, c)
-        diskCache?.addCachedStatus(c, incrementCount)
+        diskCache.addCachedStatus(c, incrementCount)
     }
 
-    fun addAll(c: Collection<StatusObject>, incrementCount: Boolean, vararg excludeIncrementIds: Long) {
+    fun addAll(
+        c: Collection<StatusObject>,
+        incrementCount: Boolean,
+        vararg excludeIncrementIds: Long
+    ) {
         c.forEach {
             cache.put(it.getId(), it)
         }
 
-        diskCache?.addCachedStatuses(c, incrementCount, *excludeIncrementIds)
+        diskCache.addCachedStatuses(c, incrementCount, *excludeIncrementIds)
     }
 
     fun delete(ids: List<Long>) {
@@ -83,12 +82,12 @@ class StatusCacheMap {
                 list.add(id)
             }
         }
-        val use = diskCache?.getIdsInUse(list)
+        val use = diskCache.getIdsInUse(list)
 
-        if (use != null && use.isNotEmpty()) {
+        if (use.isNotEmpty()) {
             list.addAll(use)
         }
-        diskCache?.deleteCachedStatuses(list)
+        diskCache.deleteCachedStatuses(list)
     }
 
 }
