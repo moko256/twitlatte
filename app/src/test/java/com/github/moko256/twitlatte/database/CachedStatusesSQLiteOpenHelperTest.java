@@ -101,7 +101,7 @@ public class CachedStatusesSQLiteOpenHelperTest {
         helper.addCachedStatuses(Arrays.asList(
                 generateStatus(TEST_DUMMY_STATUS_ID_1, TEST_DUMMY_STATUS_TEXT_0),
                 generateStatus(TEST_DUMMY_STATUS_ID_2, TEST_DUMMY_STATUS_TEXT_1)
-                ), false
+                ), false, new long[0]
         );
 
         assertEquals(((Status) helper.getCachedStatus(TEST_DUMMY_STATUS_ID_1)).getText(), TEST_DUMMY_STATUS_TEXT_0);

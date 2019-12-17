@@ -66,13 +66,13 @@ class StatusCacheMap(base: StatusCacheMap?, context: Context, accessToken: Acces
     fun addAll(
         c: Collection<StatusObject>,
         incrementCount: Boolean,
-        vararg excludeIncrementIds: Long
+        excludeIncrementIds: LongArray
     ) {
         c.forEach {
             cache.put(it.getId(), it)
         }
 
-        diskCache.addCachedStatuses(c, incrementCount, *excludeIncrementIds)
+        diskCache.addCachedStatuses(c, incrementCount, excludeIncrementIds)
     }
 
     fun delete(ids: List<Long>) {

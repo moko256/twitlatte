@@ -32,10 +32,13 @@ private const val BUNDLE_KEY_SEARCH_QUERY = "query"
 class SearchResultFragment : BaseTweetListFragment() {
 
     override val listRepository = object : ListViewModel.ListRepository() {
-        lateinit var searchText: String
+        private var searchText: String = ""
         override fun onCreate(client: Client, bundle: Bundle) {
             super.onCreate(client, bundle)
-            searchText = bundle.getString(BUNDLE_KEY_SEARCH_QUERY) ?: ""
+            val query = bundle.getString(BUNDLE_KEY_SEARCH_QUERY)
+            if (query != null) {
+                searchText = query
+            }
         }
 
         override fun name() = searchText.toByteArray().let { bytes ->

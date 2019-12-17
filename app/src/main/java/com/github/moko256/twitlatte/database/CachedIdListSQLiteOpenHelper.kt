@@ -182,7 +182,7 @@ class CachedIdListSQLiteOpenHelper(
 
     fun setSeeingId(id: Long?) {
         transaction {
-            execSQL("delete from $SEEING_ID_TABLE_NAME")
+            delete(SEEING_ID_TABLE_NAME, null, null)
             execSQL("insert into $SEEING_ID_TABLE_NAME values($id)")
         }
     }

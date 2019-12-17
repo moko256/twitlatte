@@ -299,7 +299,7 @@ class CachedStatusesSQLiteOpenHelper(
         }
     }
 
-    fun addCachedStatuses(statuses: Collection<StatusObject>, incrementCount: Boolean, vararg excludeIncrementIds: Long) {
+    fun addCachedStatuses(statuses: Collection<StatusObject>, incrementCount: Boolean, excludeIncrementIds: LongArray) {
         val contentValues = statuses.map { createStatusContentValues(it) }
 
         transaction {
@@ -457,7 +457,7 @@ class CachedStatusesSQLiteOpenHelper(
                 sqLiteStatement.execute()
             }
             delete(TABLE_NAME, "id not in (select id from $COUNTS_TABLE_NAME where count>0)", null)
-            delete(COUNTS_TABLE_NAME, "count=0", null)
+            delete(COUNTS_TABLE_NAME, "count<=0", null)
         }
     }
 

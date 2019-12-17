@@ -85,15 +85,15 @@ class PostCache(
                 statusCache.add(it, incrementCount)
             }
         } else {
-            addAll(listOf(status), incrementCount)
+            addAll(listOf(status), incrementCount, longArrayOf())
         }
     }
 
     fun addAll(c: Collection<Post>, vararg excludeIncrementIds: Long) {
-        addAll(c, true, *excludeIncrementIds)
+        addAll(c, true, excludeIncrementIds)
     }
 
-    fun addAll(c: Collection<Post>, incrementCount: Boolean = true, vararg excludeIncrementIds: Long) {
+    fun addAll(c: Collection<Post>, incrementCount: Boolean = true, excludeIncrementIds: LongArray) {
         if (c.isNotEmpty()) {
             val statuses = ArrayList<StatusObject>(c.size * 3)
             val repeats = ArrayList<Repeat>(c.size)
@@ -142,7 +142,7 @@ class PostCache(
 
             userCache.addAll(users)
 
-            statusCache.addAll(statuses, incrementCount, *excludeIncrementIds)
+            statusCache.addAll(statuses, incrementCount, excludeIncrementIds)
         }
     }
 }
