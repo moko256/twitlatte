@@ -16,12 +16,14 @@
 
 package com.github.moko256.twitlatte.database.utils
 
+import android.content.Context
+import android.database.DatabaseUtils
 import android.database.sqlite.SQLiteDatabase
+import android.database.sqlite.SQLiteDoneException
 import android.os.Build
 import android.util.Log
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.github.moko256.twitlatte.database.EmptyDBHelper
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
@@ -38,53 +40,66 @@ class TableDBUtilKtCreateTableWithUniqueKeyTest {
 
     @Test
     fun createTableWithUniqueIntKey() {
-        val helper = EmptyDBHelper(ApplicationProvider.getApplicationContext(), "createTableWithUniqueIntKey")
+        val testName = "createTableWithUniqueIntKey"
 
-        val db = helper.writableDatabase
+        val db = ApplicationProvider.getApplicationContext<Context>()
+            .openOrCreateDatabase(testName, 0, null)
+
         db.createTableWithUniqueIntKey("test02", arrayOf("key", "c0", "c1"), 0)
-        assertEquals("CREATE TABLE test02(key integer primary key,c0,c1)", db.getTableQuery("test02"))
+        assertEquals(
+            "CREATE TABLE test02(key integer primary key,c0,c1)",
+            db.tableQuery("test02")
+        )
 
         db.createTableWithUniqueIntKey("test03", arrayOf("c0", "key", "c1"), 1)
-        assertEquals("CREATE TABLE test03(c0,key integer primary key,c1)", db.getTableQuery("test03"))
+        assertEquals(
+            "CREATE TABLE test03(c0,key integer primary key,c1)",
+            db.tableQuery("test03")
+        )
     }
 
     @Test
     fun createTableWithUniqueKey() {
-        val helper = EmptyDBHelper(ApplicationProvider.getApplicationContext(), "createTableWithUniqueKey")
+        val testName = "createTableWithUniqueKey"
 
-        val db = helper.writableDatabase
+        val db = ApplicationProvider.getApplicationContext<Context>()
+            .openOrCreateDatabase(testName, 0, null)
+
         db.createTableWithUniqueKey("test01", arrayOf("key", "c0", "c1"), arrayOf("key"))
 
-        val test01Query = db.getTableQuery("test01")
-        val test01Index = db.getIndexQuery("test01_index")
+        val test01Query = db.tableQuery("test01")
+        val test01Index = db.indexQuery("test01_index")
 
         if (Build.VERSION.SDK_INT >= 24) {
-            Log.d("createTableWithUniqueKey", "Enable \"without rowId\"")
+            Log.d(testName, "Enable \"without rowId\"")
 
-            assertEquals("CREATE TABLE test01(key,c0,c1,primary key(key)) without rowId", test01Query)
+            assertEquals(
+                "CREATE TABLE test01(key,c0,c1,primary key(key)) without rowId",
+                test01Query
+            )
             assertNull(test01Index)
         } else {
-            Log.d("createTableWithUniqueKey", "Disable \"without rowId\"")
+            Log.d(testName, "Disable \"without rowId\"")
 
             assertEquals("CREATE TABLE test01(key,c0,c1,primary key(key))", test01Query)
             assertEquals("CREATE UNIQUE INDEX test01_index on test01(key)", test01Index)
         }
-        db.execSQL("delete from test01")
     }
 
-    private fun SQLiteDatabase.getTableQuery(tableName: String): String {
-        val query = rawQuery("select sql from sqlite_master where type='table' and name='$tableName'", null)
-        query.moveToLast()
-        val result = query.getString(0)
-        query.close()
-        return result
-    }
 
-    private fun SQLiteDatabase.getIndexQuery(indexName: String): String? {
-        val query = rawQuery("select sql from sqlite_master where type='index' and name='$indexName'", null)
-        if (!query.moveToLast()) return null
-        val result = query.getString(0)
-        query.close()
-        return result
+    private fun SQLiteDatabase.tableQuery(tableName: String) = selectFromMaster("table", tableName)
+    private fun SQLiteDatabase.indexQuery(indexName: String) = selectFromMaster("index", indexName)
+
+    private fun SQLiteDatabase.selectFromMaster(type: String, name: String): String? {
+        return try {
+            DatabaseUtils.stringForQuery(
+                this,
+                //language=RoomSql
+                "select sql from sqlite_master where type=? and name=?",
+                arrayOf(type, name)
+            )
+        } catch (ignore: SQLiteDoneException) {
+            null
+        }
     }
 }
