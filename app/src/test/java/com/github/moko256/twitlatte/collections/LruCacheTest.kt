@@ -41,23 +41,23 @@ class LruCacheTest {
     private fun testMap(lruCache: LruCache<Int, String>) {
         lruCache.put(0, "zero")
         assertEquals(lruCache.get(0), "zero")
-        assertEquals(lruCache.valueIterable().singleOrNull(), "zero")
+        assertEquals(lruCache.values().single(), "zero")
 
         lruCache.put(1, "one")
-        assertArrayEquals(lruCache.valueIterable().toList().toTypedArray(), arrayOf("zero", "one"))
+        assertArrayEquals(lruCache.values().toTypedArray(), arrayOf("zero", "one"))
 
         lruCache.put(2, "two")
-        assertArrayEquals(lruCache.valueIterable().toList().toTypedArray(), arrayOf("one", "two"))
+        assertArrayEquals(lruCache.values().toTypedArray(), arrayOf("one", "two"))
 
         assertEquals(lruCache.get(1), "one")
 
         lruCache.put(3, "three")
-        assertArrayEquals(lruCache.valueIterable().toList().toTypedArray(), arrayOf("one", "three"))
+        assertArrayEquals(lruCache.values().toTypedArray(), arrayOf("one", "three"))
 
         lruCache.put(1, "one")
-        assertArrayEquals(lruCache.valueIterable().toList().toTypedArray(), arrayOf("three", "one"))
+        assertArrayEquals(lruCache.values().toTypedArray(), arrayOf("three", "one"))
 
         lruCache.put(3, "THREE")
-        assertArrayEquals(lruCache.valueIterable().toList().toTypedArray(), arrayOf("one", "THREE"))
+        assertArrayEquals(lruCache.values().toTypedArray(), arrayOf("one", "THREE"))
     }
 }

@@ -27,7 +27,7 @@ class LruCache<K, V>(capacity: Int) {
     private val map = LimitedLinkedHashMap<K, V>(capacity)
 
     @TestOnly
-    fun valueIterable() = map.values.asIterable()
+    fun values() = map.values
 
     fun get(key: K): V? {
         synchronized(this) {
