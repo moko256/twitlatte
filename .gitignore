@@ -4,7 +4,6 @@
 
 /.idea/*
 !/.idea/copyright
-!/.idea/dictionaries
 !/.idea/scopes
 
 .DS_Store
