@@ -49,7 +49,6 @@ import kotlin.Unit;
 import static com.github.moko256.latte.client.base.ApiClientKt.CLIENT_TYPE_NOTHING;
 import static com.github.moko256.latte.client.mastodon.MastodonApiClientImplKt.CLIENT_TYPE_MASTODON;
 import static com.github.moko256.latte.client.twitter.TwitterApiClientImplKt.CLIENT_TYPE_TWITTER;
-import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY_ACCOUNT_KEY;
 
 /**
  * Created by moko256 on 2016/04/29.
@@ -227,11 +226,7 @@ public class OAuthActivity extends AppCompatActivity {
     }
 
     private void storeAccessToken(AccessToken accessToken) {
-        GlobalApplicationKt.getAccountsModel(this).add(accessToken);
-
-        GlobalApplicationKt.preferenceRepository.putString(KEY_ACCOUNT_KEY, accessToken.getKeyString());
-
-        ((GlobalApplication) getApplication()).initCurrentClient(accessToken);
+        GlobalApplicationKt.getClientsRepository(this).addAndSwitchCurrentClient(accessToken);
 
         setResult(RESULT_OK);
         finish();

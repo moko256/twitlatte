@@ -16,52 +16,105 @@
 
 package com.github.moko256.twitlatte.model
 
+import android.annotation.SuppressLint
 import android.content.Context
+import androidx.lifecycle.MutableLiveData
 import com.github.moko256.latte.client.base.entity.AccessToken
-import com.github.moko256.twitlatte.database.TokenSQLiteOpenHelper
+import com.github.moko256.latte.client.base.entity.User
+import com.github.moko256.twitlatte.database.CachedUsersSQLiteOpenHelper
+import io.reactivex.Completable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
+import io.reactivex.subjects.PublishSubject
 
 /**
- * Created by moko256 on 2018/03/29.
+ * Created by moko256 on 2020/01/21.
  *
  * @author moko256
  */
-class AccountsModel(private val context: Context) {
+class AccountsModel(
+    private val context: Context,
+    private val clientModel: ClientModel
+) {
+    private val usersCache = HashMap<String, User>()
 
-    private val tokens: ArrayList<AccessToken> by lazy {
-        val helper = TokenSQLiteOpenHelper(context)
-        val list = helper.accessTokens.asList()
-        helper.close()
-        ArrayList(list)
-    }
+    data class Accounts(
+        val accessTokens: List<AccessToken>,
+        val users: List<User?>,
+        val currentAccessToken: AccessToken?
+    )
 
+    val accounts = MutableLiveData<Accounts>()
+    val currentUser = MutableLiveData<User>()
+    val userChanged = PublishSubject.create<User>()
 
-    fun getAccessTokens(): List<AccessToken> = tokens
+    @SuppressLint("CheckResult")
+    fun updateAccounts(networkOnly: Boolean = false) {
+        val accessTokens = clientModel.getAccessTokens()
+        if (accessTokens.isEmpty()) {
+            accounts.value = Accounts(emptyList(), emptyList(), null)
+        } else if (networkOnly) {
+            accounts.value = Accounts(
+                accessTokens,
+                accessTokens.map { usersCache[it.getKeyString()] },
+                clientModel.currentClient?.accessToken
+            )
+        } else {
+            Completable.create {
+                val currentAccessToken = clientModel.currentClient?.accessToken
 
-    fun get(key: String): AccessToken? =
-            tokens.find { accessToken -> accessToken.getKeyString() == key }
+                val users = ArrayList<User?>(accessTokens.size)
 
-    fun getAccessTokensByType(clientType: Int): List<AccessToken> =
-            tokens.filter { accessToken -> accessToken.clientType == clientType }
+                for (accessToken in accessTokens) {
+                    val keyString = accessToken.getKeyString()
+                    var user = usersCache[keyString]
+                    val currentKey = currentAccessToken?.getKeyString()
 
-    fun add(accessToken: AccessToken) {
-        val helper = TokenSQLiteOpenHelper(context)
-        helper.addAccessToken(accessToken)
-        helper.close()
-        val i = tokens.indexOf(accessToken)
-        if (i >= 0) {
-            tokens.removeAt(i)
+                    if (user == null) {
+                        val id = accessToken.userId
+                        val userHelper = CachedUsersSQLiteOpenHelper(context, accessToken)
+                        try {
+                            user = userHelper.getCachedUser(id)
+                            if (user == null) {
+                                user =
+                                    clientModel.createApiClientInstance(accessToken)
+                                        .verifyCredentials()
+                                userHelper.addCachedUser(user)
+                            }
+                            usersCache[keyString] = user
+                        } catch (e: Throwable) {
+                            e.printStackTrace()
+                        } finally {
+                            userHelper.close()
+                        }
+                    }
+                    if (keyString == currentKey) {
+                        currentUser.postValue(user)
+                        userChanged.onNext(user!!)
+                    }
+                    users.add(user)
+                }
+                accounts.postValue(Accounts(accessTokens, users, currentAccessToken))
+                it.onComplete()
+            }.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe()
         }
-        tokens.add(accessToken)
     }
 
-    fun delete(accessToken: AccessToken?) {
-        if (accessToken != null) {
-            val helper = TokenSQLiteOpenHelper(context)
-            helper.deleteAccessToken(accessToken)
-            helper.close()
-            tokens.remove(accessToken)
+    fun switchAccount(accessToken: AccessToken) {
+        clientModel.switchCurrentClient(accessToken)
+        val cachedUser = usersCache[accessToken.getKeyString()]
+        if (cachedUser != null) {
+            currentUser.value = cachedUser
+            userChanged.onNext(cachedUser)
+        } else {
+            updateAccounts(true)
         }
     }
 
-    fun size(): Int = tokens.size
+    fun logout() {
+        clientModel.logoutAndSwitchCurrentClient()
+        updateAccounts()
+    }
 }

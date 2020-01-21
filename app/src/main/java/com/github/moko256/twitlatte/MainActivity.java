@@ -19,7 +19,6 @@ package com.github.moko256.twitlatte;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,7 +27,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -42,6 +40,7 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -49,31 +48,24 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.github.moko256.latte.client.base.MediaUrlConverter;
-import com.github.moko256.latte.client.base.entity.AccessToken;
 import com.github.moko256.latte.client.base.entity.Emoji;
 import com.github.moko256.latte.client.base.entity.ListEntry;
 import com.github.moko256.latte.client.base.entity.User;
-import com.github.moko256.twitlatte.database.CachedUsersSQLiteOpenHelper;
 import com.github.moko256.twitlatte.entity.Client;
 import com.github.moko256.twitlatte.model.AccountsModel;
-import com.github.moko256.twitlatte.rx.VerifyCredentialOnSubscribe;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
 import com.github.moko256.twitlatte.view.DpToPxKt;
 import com.github.moko256.twitlatte.view.EmojiToTextViewSetter;
+import com.github.moko256.twitlatte.viewmodel.MainViewModel;
 import com.github.moko256.twitlatte.widget.FragmentPagerAdapter;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
-import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.schedulers.Schedulers;
 
-import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY_ACCOUNT_KEY;
 import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY_ALWAYS_CLOSE_APP;
 
 /**
@@ -92,8 +84,7 @@ public class MainActivity extends AppCompatActivity implements
     private static final int REQUEST_OAUTH = 2;
 
     private CompositeDisposable disposable;
-    private Client client;
-    private AccountsModel accountsModel;
+    private MainViewModel viewModel;
 
     @Nullable
     private DrawerLayout drawer;
@@ -122,8 +113,21 @@ public class MainActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_main);
 
         disposable = new CompositeDisposable();
-        client = GlobalApplicationKt.getClient(this);
-        accountsModel = GlobalApplicationKt.getAccountsModel(this);
+        viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+
+        AccountsModel accountsModel = viewModel.getAccountsModel();
+        accountsModel.getAccounts().observe(this, accounts -> {
+                    adapter.updateAccounts(accounts.getUsers(), accounts.getAccessTokens(), accounts.getCurrentAccessToken());
+                    if (accounts.getAccessTokens().isEmpty()) {
+                        startActivityForResult(new Intent(this, OAuthActivity.class), REQUEST_OAUTH);
+                    }
+                }
+        );
+        accountsModel.getCurrentUser().observe(this, user -> updateDrawerImage(user, viewModel.currentClient()));
+        disposable.add(
+                accountsModel.getUserChanged().observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(ignore -> clearAndPrepareFragment())
+        );
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -160,16 +164,16 @@ public class MainActivity extends AppCompatActivity implements
                         replaceFragment(new MentionsFragment());
                         break;
                     case R.id.nav_account:
-                        startMyUserActivity();
+                        startMyUserActivity(viewModel.currentClient());
                         break;
                     case R.id.nav_follow_and_follower:
                         replaceFragment(new MyFollowFollowerFragment());
                         break;
                     case R.id.nav_like:
-                        replaceFragment(UserLikeFragment.Companion.newInstance(client.getAccessToken().getUserId()));
+                        replaceFragment(UserLikeFragment.Companion.newInstance(viewModel.currentClient().getAccessToken().getUserId()));
                         break;
                     case R.id.nav_lists:
-                        replaceFragment(SelectListsEntriesFragment.Companion.newInstance(client.getAccessToken().getUserId()));
+                        replaceFragment(SelectListsEntriesFragment.Companion.newInstance(viewModel.currentClient().getAccessToken().getUserId()));
                         break;
                     case R.id.nav_settings:
                         startActivity(new Intent(this, SettingsActivity.class));
@@ -203,55 +207,23 @@ public class MainActivity extends AppCompatActivity implements
         navigationView.addHeaderView(accountListView);
 
         adapter = new SelectAccountsAdapter(this);
-        adapter.onImageButtonClickListener = accessToken -> {
-            if (accessToken.getUserId() != client.getAccessToken().getUserId()) {
-                changeIsDrawerAccountsSelection();
-                if (drawer != null) {
-                    drawer.closeDrawer(GravityCompat.START);
-                }
-
-                GlobalApplicationKt.preferenceRepository.putString(
-                        KEY_ACCOUNT_KEY, accessToken.getKeyString()
-                );
-                ((GlobalApplication) getApplication()).initCurrentClient(accessToken);
-                client = GlobalApplicationKt.getClient(this);
-                adapter.updateSelectedPosition(accessToken);
-                updateDrawerImage();
-                clearAndPrepareFragment();
+        adapter.onSelectionChangedListener = accessToken -> {
+            changeIsDrawerAccountsSelection();
+            if (drawer != null) {
+                drawer.closeDrawer(GravityCompat.START);
             }
+
+            viewModel.getAccountsModel().switchAccount(accessToken);
+            adapter.updateSelectedPosition(accessToken);
+            clearAndPrepareFragment();
         };
         adapter.onAddButtonClickListener = v -> startActivityForResult(new Intent(this, OAuthActivity.class), REQUEST_OAUTH);
         adapter.onRemoveButtonClickListener = v -> new AlertDialog.Builder(this)
                 .setMessage(R.string.confirm_logout)
                 .setCancelable(true)
-                .setPositiveButton(R.string.do_logout,
-                        (dialog, i) -> {
-                            AccessToken token = accountsModel.get(
-                                    GlobalApplicationKt.preferenceRepository.getString(KEY_ACCOUNT_KEY, "-1")
-                            );
-                            accountsModel.delete(token);
-                            adapter.removeAccessTokensAndUpdate(token);
-
-                            int point = accountsModel.size() - 1;
-                            if (point != -1) {
-                                AccessToken accessToken = accountsModel.getAccessTokens().get(point);
-                                GlobalApplicationKt.preferenceRepository.putString(
-                                        KEY_ACCOUNT_KEY, accessToken.getKeyString()
-                                );
-                                ((GlobalApplication) getApplication()).initCurrentClient(accessToken);
-                                client = GlobalApplicationKt.getClient(this);
-                                adapter.updateSelectedPosition(accessToken);
-                                updateDrawerImage();
-                                updateAccountsList();
-                                clearAndPrepareFragment();
-                            } else {
-                                GlobalApplicationKt.preferenceRepository.putString(
-                                        KEY_ACCOUNT_KEY, "-1"
-                                );
-                                ((GlobalApplication) getApplication()).clearCurrentClient();
-                                startActivityForResult(new Intent(this, OAuthActivity.class), REQUEST_OAUTH);
-                            }
-                        }
+                .setPositiveButton(
+                        R.string.do_logout,
+                        (dialog, i) -> accountsModel.logout()
                 )
                 .setNegativeButton(android.R.string.cancel, null)
                 .show();
@@ -269,18 +241,9 @@ public class MainActivity extends AppCompatActivity implements
 
         getSupportFragmentManager().addOnBackStackChangedListener(() -> attachFragment(getMainFragment()));
 
-        if (client == null) {
-            startActivityForResult(new Intent(this, OAuthActivity.class), REQUEST_OAUTH);
-        } else {
-            updateDrawerImage();
-            updateAccountsList();
-
+        if (viewModel.currentClient() != null) {
             if (savedInstanceState == null) {
                 prepareFragment();
-            }
-
-            if (client.getAccessToken().getToken().isEmpty()) {
-                Toast.makeText(this, R.string.please_re_login, Toast.LENGTH_LONG).show();
             }
         }
 
@@ -330,13 +293,9 @@ public class MainActivity extends AppCompatActivity implements
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == REQUEST_OAUTH) {
-            client = GlobalApplicationKt.getClient(this);
-
             if (resultCode == RESULT_OK) {
-                updateDrawerImage();
-                updateAccountsList();
-                clearAndPrepareFragment();
-            } else if (client == null) {
+                viewModel.getAccountsModel().updateAccounts(false);
+            } else if (viewModel.currentClient() == null) {
                 super.finish();
             }
         }
@@ -427,7 +386,7 @@ public class MainActivity extends AppCompatActivity implements
         navigationView.getMenu().setGroupVisible(R.id.drawer_menu_settings, !isDrawerAccountsSelection);
     }
 
-    private void startMyUserActivity() {
+    private void startMyUserActivity(Client client) {
         ActivityOptionsCompat animation = ActivityOptionsCompat.makeSceneTransitionAnimation(
                 this,
                 userImage,
@@ -483,97 +442,41 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    private void updateDrawerImage() {
-        disposable.add(
-                Single.create(new VerifyCredentialOnSubscribe(client))
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(
-                                user -> {
-                                    RequestManager requests = Glide.with(this);
+    private void updateDrawerImage(User user, Client client) {
+        RequestManager requests = Glide.with(this);
 
-                                    CharSequence userName = TwitterStringUtils.plusUserMarks(
-                                            user.getName(),
-                                            userNameText,
-                                            user.isProtected(),
-                                            user.isVerified()
-                                    );
-
-                                    userNameText.setText(userName);
-                                    Emoji[] userNameEmojis = user.getEmojis();
-                                    if (userNameEmojis != null) {
-                                        disposable.add(new EmojiToTextViewSetter(requests, userNameText, userName, userNameEmojis));
-                                    }
-                                    userIdText.setText(TwitterStringUtils.plusAtMark(user.getScreenName(), client.getAccessToken().getUrl()));
-
-                                    userImage.setOnClickListener(v -> startMyUserActivity());
-
-                                    MediaUrlConverter mediaUrlConverter = client.getMediaUrlConverter();
-                                    requests
-                                            .load(
-                                                    mediaUrlConverter.convertProfileIconUriBySize(
-                                                            user,
-                                                            DpToPxKt.dpToPx(this, 64)
-                                                    )
-                                            )
-                                            .circleCrop()
-                                            .transition(DrawableTransitionOptions.withCrossFade())
-                                            .into(userImage);
-                                    requests.load(mediaUrlConverter.convertProfileBannerSmallUrl(user))
-                                            .centerCrop()
-                                            .transition(DrawableTransitionOptions.withCrossFade())
-                                            .into(userBackgroundImage);
-                                },
-                                Throwable::printStackTrace
-                        )
+        CharSequence userName = TwitterStringUtils.plusUserMarks(
+                user.getName(),
+                userNameText,
+                user.isProtected(),
+                user.isVerified()
         );
 
-    }
+        userNameText.setText(userName);
+        Emoji[] userNameEmojis = user.getEmojis();
+        if (userNameEmojis != null) {
+            disposable.add(new EmojiToTextViewSetter(requests, userNameText, userName, userNameEmojis));
+        }
+        userIdText.setText(TwitterStringUtils.plusAtMark(user.getScreenName(), client.getAccessToken().getUrl()));
 
-    private void updateAccountsList() {
-        disposable.add(
-                Single.create(
-                        singleSubscriber -> {
-                            try {
-                                List<AccessToken> accessTokens = accountsModel.getAccessTokens();
+        userImage.setOnClickListener(v -> startMyUserActivity(client));
 
-                                ArrayList<User> users = new ArrayList<>(accessTokens.size());
-                                for (AccessToken accessToken : accessTokens) {
-                                    long id = accessToken.getUserId();
-                                    CachedUsersSQLiteOpenHelper userHelper = new CachedUsersSQLiteOpenHelper(getApplicationContext(), accessToken);
-                                    User user = userHelper.getCachedUser(id);
-                                    if (user == null) {
-                                        try {
-                                            user = ((GlobalApplication) getApplication()).createApiClientInstance(accessToken).verifyCredentials();
-                                            userHelper.addCachedUser(user);
-                                        } catch (Throwable e) {
-                                            e.printStackTrace();
-                                        } finally {
-                                            userHelper.close();
-                                        }
-                                    }
-                                    users.add(user);
-                                }
-                                singleSubscriber.onSuccess(new Pair<>(users, accessTokens));
-                            } catch (Throwable e) {
-                                singleSubscriber.tryOnError(e);
-                            }
-                        })
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(
-                                o -> {
-                                    @SuppressWarnings("unchecked")
-                                    Pair<ArrayList<User>, ArrayList<AccessToken>> pairs = (Pair<ArrayList<User>, ArrayList<AccessToken>>) o;
-
-                                    adapter.clearImages();
-                                    adapter.addAndUpdate(pairs.first, pairs.second);
-                                    adapter.setSelectedPosition(client.getAccessToken());
-                                    adapter.notifyDataSetChanged();
-                                },
-                                Throwable::printStackTrace
+        MediaUrlConverter mediaUrlConverter = client.getMediaUrlConverter();
+        requests
+                .load(
+                        mediaUrlConverter.convertProfileIconUriBySize(
+                                user,
+                                DpToPxKt.dpToPx(this, 64)
                         )
-        );
+                )
+                .circleCrop()
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .into(userImage);
+        requests.load(mediaUrlConverter.convertProfileBannerSmallUrl(user))
+                .centerCrop()
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .into(userBackgroundImage);
+
     }
 
     private void prepareFragment() {

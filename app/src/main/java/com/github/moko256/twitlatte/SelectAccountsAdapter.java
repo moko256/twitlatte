@@ -17,7 +17,6 @@
 package com.github.moko256.twitlatte;
 
 import android.content.Context;
-import android.net.Uri;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,7 +35,7 @@ import com.github.moko256.twitlatte.api.MediaUrlConverterGeneratorKt;
 import com.github.moko256.twitlatte.text.TwitterStringUtils;
 import com.github.moko256.twitlatte.view.DpToPxKt;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -54,10 +53,10 @@ public class SelectAccountsAdapter extends RecyclerView.Adapter<SelectAccountsAd
 
     private final Context context;
 
-    private final ArrayList<User> users = new ArrayList<>();
-    private final ArrayList<AccessToken> accessTokens = new ArrayList<>();
+    private List<User> users = Collections.emptyList();
+    private List<AccessToken> accessTokens = Collections.emptyList();
 
-    public OnImageClickListener onImageButtonClickListener;
+    public OnImageClickListener onSelectionChangedListener;
     public View.OnClickListener onAddButtonClickListener;
     public View.OnClickListener onRemoveButtonClickListener;
 
@@ -102,43 +101,34 @@ public class SelectAccountsAdapter extends RecyclerView.Adapter<SelectAccountsAd
                 AccessToken accessToken = accessTokens.get(position);
 
                 if (user != null) {
-
-                    Uri image = Uri.parse(
+                    String uri =
                             MediaUrlConverterGeneratorKt.generateMediaUrlConverter(
                                     accessToken.getClientType()
                             ).convertProfileIconUriBySize(
                                     user,
                                     DpToPxKt.dpToPx(context, 40)
-                            )
-                    );
+                            );
+
                     holder.title.setText(TwitterStringUtils.plusAtMark(user.getScreenName(), accessToken.getUrl()));
                     Glide
                             .with(holder.itemView)
-                            .load(image)
+                            .load(uri)
                             .circleCrop()
                             .transition(DrawableTransitionOptions.withCrossFade())
                             .into(holder.image);
-                    holder.itemView.setOnClickListener(v -> {
-                        if (onImageButtonClickListener != null) {
-                            onImageButtonClickListener.onClick(accessToken);
-                        }
-                    });
-
                 } else {
-
                     holder.title.setText(TwitterStringUtils.plusAtMark(accessToken.getScreenName(), accessToken.getUrl()));
-                    holder.itemView.setOnClickListener(v -> {
-                        if (onImageButtonClickListener != null) {
-                            onImageButtonClickListener.onClick(accessToken);
-                        }
-                    });
-
                 }
 
                 if (type == VIEW_TYPE_IMAGE_SELECTED) {
                     holder.itemView.setBackgroundResource(selectionColor);
                 } else {
                     holder.itemView.setBackground(null);
+                    holder.itemView.setOnClickListener(v -> {
+                        if (onSelectionChangedListener != null) {
+                            onSelectionChangedListener.onClick(accessToken);
+                        }
+                    });
                 }
                 break;
             }
@@ -162,19 +152,11 @@ public class SelectAccountsAdapter extends RecyclerView.Adapter<SelectAccountsAd
         return accessTokens.size() + 2;
     }
 
-    public void clearImages() {
-        users.clear();
-        accessTokens.clear();
-    }
-
-    public void addAndUpdate(List<User> userList, List<AccessToken> accessTokenList) {
-        users.addAll(userList);
-        accessTokens.addAll(accessTokenList);
+    public void updateAccounts(List<User> userList, List<AccessToken> accessTokenList, AccessToken current) {
+        users = userList;
+        accessTokens = accessTokenList;
+        selectionPosition = accessTokenList.indexOf(current);
         notifyDataSetChanged();
-    }
-
-    public void setSelectedPosition(AccessToken key) {
-        selectionPosition = accessTokens.indexOf(key);
     }
 
     public void updateSelectedPosition(AccessToken key) {
@@ -182,13 +164,6 @@ public class SelectAccountsAdapter extends RecyclerView.Adapter<SelectAccountsAd
         selectionPosition = accessTokens.indexOf(key);
         notifyItemChanged(old);
         notifyItemChanged(selectionPosition);
-    }
-
-    public void removeAccessTokensAndUpdate(AccessToken accessToken) {
-        int position = accessTokens.indexOf(accessToken);
-        users.remove(position);
-        accessTokens.remove(position);
-        notifyItemRemoved(position);
     }
 
     final static class ViewHolder extends RecyclerView.ViewHolder {

@@ -225,7 +225,7 @@ class LinkOpenWithActivity : Activity() {
 
     @SuppressLint("SetTextI18n")
     private fun showDialog(callback: (AccessToken) -> Unit) {
-        val accessTokens = getAccountsModel()
+        val accessTokens = getClientsRepository()
                 .getAccessTokensByType(CLIENT_TYPE_TWITTER)
         when {
             accessTokens.isEmpty() -> {

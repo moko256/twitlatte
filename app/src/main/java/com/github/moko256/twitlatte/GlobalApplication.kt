@@ -23,20 +23,13 @@ import android.os.Looper
 import android.preference.PreferenceManager
 import androidx.appcompat.app.AppCompatDelegate
 import com.bumptech.glide.GlideInitializer
-import com.github.moko256.latte.client.base.ApiClient
 import com.github.moko256.latte.client.base.entity.AccessToken
-import com.github.moko256.latte.client.base.entity.Friendship
 import com.github.moko256.latte.client.twitter.okhttp.replaceOkHttpClient
-import com.github.moko256.twitlatte.api.generateApiClient
-import com.github.moko256.twitlatte.api.generateMediaUrlConverter
-import com.github.moko256.twitlatte.cacheMap.StatusCacheMap
-import com.github.moko256.twitlatte.cacheMap.UserCacheMap
-import com.github.moko256.twitlatte.collections.LruCache
 import com.github.moko256.twitlatte.entity.Client
 import com.github.moko256.twitlatte.glide.GlideModule
-import com.github.moko256.twitlatte.model.AccountsModel
+import com.github.moko256.twitlatte.model.ClientModel
 import com.github.moko256.twitlatte.net.appOkHttpClientInstance
-import com.github.moko256.twitlatte.repository.KEY_ACCOUNT_KEY
+import com.github.moko256.twitlatte.repository.AccountsRepository
 import com.github.moko256.twitlatte.repository.KEY_NIGHT_MODE
 import com.github.moko256.twitlatte.repository.PreferenceRepository
 import com.github.moko256.twitlatte.text.convertToAppCompatNightThemeMode
@@ -57,11 +50,7 @@ lateinit var preferenceRepository: PreferenceRepository
 
 class GlobalApplication : Application() {
 
-    private val apiClientCache = LruCache<Int, ApiClient>(4)
-    private val friendshipCache = LruCache<Long, Friendship>(20)
-
-    internal var currentClient: Client? = null
-    internal lateinit var accountsModel: AccountsModel
+    internal lateinit var clientModel: ClientModel
 
     override fun onCreate() {
         RxAndroidPlugins.setInitMainThreadSchedulerHandler {
@@ -69,85 +58,37 @@ class GlobalApplication : Application() {
         }
 
         preferenceRepository = PreferenceRepository(
-                PreferenceManager.getDefaultSharedPreferences(this)
+            PreferenceManager.getDefaultSharedPreferences(this)
         )
-        accountsModel = AccountsModel(this)
 
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
         AppCompatDelegate.setDefaultNightMode(
-                preferenceRepository
-                        .getString(KEY_NIGHT_MODE, "mode_night_no_value")
-                        .convertToAppCompatNightThemeMode()
+            preferenceRepository
+                .getString(KEY_NIGHT_MODE, "mode_night_no_value")
+                .convertToAppCompatNightThemeMode()
         )
 
         replaceOkHttpClient(appOkHttpClientInstance)
 
-        preferenceRepository
-                .getString(KEY_ACCOUNT_KEY, "-1")
-                .takeIf { it != "-1" }
-                ?.let {
-                    accountsModel.get(it)
-                }
-                ?.let {
-                    initCurrentClient(it)
-                }
+        clientModel = ClientModel(
+            this,
+            AccountsRepository(this),
+            preferenceRepository
+        )
 
         GlideInitializer.setGlideModule(this, GlideModule())
 
         super.onCreate()
     }
 
-    fun initCurrentClient(accessToken: AccessToken) {
-        friendshipCache.clearIfNotEmpty()
-        val context = applicationContext
-        val statusCache = currentClient?.statusCache?.apply { close() }
-        val userCache = currentClient?.userCache?.apply { close() }
-        currentClient = Client(
-                accessToken,
-                createApiClientInstance(accessToken),
-                generateMediaUrlConverter(accessToken.clientType),
-                StatusCacheMap(statusCache, context, accessToken),
-                UserCacheMap(userCache, context, accessToken),
-                friendshipCache
-        )
-    }
-
-    fun clearCurrentClient() {
-        currentClient?.apply {
-            statusCache.close()
-            userCache.close()
-        }
-        currentClient = null
-    }
-
-    fun createApiClientInstance(accessToken: AccessToken): ApiClient {
-        val hash = accessToken.getHash()
-        return apiClientCache.get(hash)
-                ?: generateApiClient(accessToken).also {
-                    apiClientCache.put(hash, it)
-                }
-    }
 }
 
+fun Activity.getClientsRepository() = (application as GlobalApplication).clientModel
+
+fun Activity.getCurrentClient() = getClientsRepository().currentClient
+
 fun Activity.getClient(): Client? {
-    val application = application as GlobalApplication
-    return intent.getStringExtra(INTENT_CLIENT_KEY)
-            ?.let { application.accountsModel.get(it) }
-            ?.let {
-                if (it == application.currentClient?.accessToken) {
-                    application.currentClient
-                } else {
-                    val context = application.applicationContext
-                    Client(
-                            it,
-                            application.createApiClientInstance(it),
-                            generateMediaUrlConverter(it.clientType),
-                            StatusCacheMap(null, context, it),
-                            UserCacheMap(null, context, it),
-                            LruCache(20)
-                    )
-                }
-            } ?: application.currentClient
+    return getClientsRepository().getClient(intent.getStringExtra(INTENT_CLIENT_KEY))
 }
 
 fun Intent.setAccountKey(accessToken: AccessToken) = apply {
@@ -160,7 +101,3 @@ fun Intent.setAccountKeyForActivity(activity: Activity): Intent {
     }
     return this
 }
-
-fun Activity.getCurrentClient() = (application as GlobalApplication).currentClient
-
-fun Activity.getAccountsModel() = (application as GlobalApplication).accountsModel
