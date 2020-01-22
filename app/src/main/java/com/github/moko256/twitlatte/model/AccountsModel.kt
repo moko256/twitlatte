@@ -25,7 +25,6 @@ import com.github.moko256.twitlatte.database.CachedUsersSQLiteOpenHelper
 import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import io.reactivex.subjects.PublishSubject
 
 /**
  * Created by moko256 on 2020/01/21.
@@ -46,7 +45,6 @@ class AccountsModel(
 
     val accounts = MutableLiveData<Accounts>()
     val currentUser = MutableLiveData<User>()
-    val userChanged = PublishSubject.create<User>()
 
     @SuppressLint("CheckResult")
     fun updateAccounts(networkOnly: Boolean = false) {
@@ -90,7 +88,6 @@ class AccountsModel(
                     }
                     if (keyString == currentKey) {
                         currentUser.postValue(user)
-                        userChanged.onNext(user!!)
                     }
                     users.add(user)
                 }
@@ -107,14 +104,14 @@ class AccountsModel(
         val cachedUser = usersCache[accessToken.getKeyString()]
         if (cachedUser != null) {
             currentUser.value = cachedUser
-            userChanged.onNext(cachedUser)
         } else {
             updateAccounts(true)
         }
     }
 
-    fun logout() {
-        clientModel.logoutAndSwitchCurrentClient()
+    fun logout(): Boolean {
+        val result = clientModel.logoutAndSwitchCurrentClient()
         updateAccounts()
+        return result
     }
 }

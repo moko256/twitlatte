@@ -63,7 +63,6 @@ import com.google.android.material.tabs.TabLayout;
 
 import java.util.Objects;
 
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 
 import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY_ALWAYS_CLOSE_APP;
@@ -124,10 +123,6 @@ public class MainActivity extends AppCompatActivity implements
                 }
         );
         accountsModel.getCurrentUser().observe(this, user -> updateDrawerImage(user, viewModel.currentClient()));
-        disposable.add(
-                accountsModel.getUserChanged().observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(ignore -> clearAndPrepareFragment())
-        );
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -223,7 +218,11 @@ public class MainActivity extends AppCompatActivity implements
                 .setCancelable(true)
                 .setPositiveButton(
                         R.string.do_logout,
-                        (dialog, i) -> accountsModel.logout()
+                        (dialog, i) -> {
+                            if (accountsModel.logout()) {
+                                clearAndPrepareFragment();
+                            }
+                        }
                 )
                 .setNegativeButton(android.R.string.cancel, null)
                 .show();
@@ -295,6 +294,7 @@ public class MainActivity extends AppCompatActivity implements
         if (requestCode == REQUEST_OAUTH) {
             if (resultCode == RESULT_OK) {
                 viewModel.getAccountsModel().updateAccounts(false);
+                clearAndPrepareFragment();
             } else if (viewModel.currentClient() == null) {
                 super.finish();
             }
