@@ -1,6 +1,13 @@
 twitlatte
 ====
 
+<br>
+
+### **This app was suspended by Twitter. Please use other app. (Details: [#54](https://github.com/moko256/twitlatte/issues/54#issuecomment-574955039))**
+
+<br>
+<br>
+
 This application is the SNS client for Android\.
 
 <img src="app/src/main/ic_launcher-web.png"
