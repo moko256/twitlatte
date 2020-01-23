@@ -28,7 +28,7 @@ import com.github.moko256.twitlatte.widget.FragmentPagerAdapter
  */
 internal class FollowFollowerTabsPagerAdapter(
         fm: FragmentManager,
-        private val context: Context?,
+        private val context: Context,
         private val userId: Long
 ) : FragmentPagerAdapter(fm) {
 
@@ -40,14 +40,12 @@ internal class FollowFollowerTabsPagerAdapter(
         }
     }
 
-    override fun getCount(): Int {
-        return 2
-    }
+    override fun getCount() = 2
 
     override fun getPageTitle(position: Int): CharSequence? {
         val fragment = getFragment(position)
         return if (fragment is ToolbarTitleInterface) {
-            context!!.getString(fragment.titleResourceId)
+            context.getString(fragment.titleResourceId)
         } else {
             null
         }

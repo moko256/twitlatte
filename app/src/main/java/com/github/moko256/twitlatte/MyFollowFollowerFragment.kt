@@ -36,10 +36,11 @@ class MyFollowFollowerFragment : Fragment(R.layout.fragment_follow_follower), To
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         tabsViewPager = view.findViewById(R.id.follow_follower_pager)
 
+        val activity = requireActivity()
         FollowFollowerTabsPagerAdapter(
                 childFragmentManager,
-                context,
-                requireActivity().requireClient().accessToken.userId
+                activity,
+                activity.requireClient().accessToken.userId
         ).initAdapter(tabsViewPager)
     }
 }

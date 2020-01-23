@@ -23,14 +23,14 @@
     android:foreground="?attr/selectableItemBackground">
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/layout_images_adapter_add_image_icon"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:layout_margin="48dp"
         app:srcCompat="@drawable/ic_add_to_photos_black_24dp"
         app:tint="@color/image_toggle_enable"/>
     <TextView
         android:id="@+id/layout_images_adapter_add_image_title"
-        android:layout_width="match_parent"
+        android:layout_width="144dp"
         android:layout_height="48dp"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"

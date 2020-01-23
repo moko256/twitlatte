@@ -22,22 +22,22 @@
     android:layout_height="56dp"
     android:foreground="?android:attr/selectableItemBackground"
     android:focusable="true"
-    android:clickable="true"
-    android:paddingLeft="16dp"
-    android:paddingRight="16dp">
+    android:clickable="true">
 
     <RadioButton
         android:id="@+id/selection"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginStart="16dp"
         android:focusable="false"
         android:clickable="false" />
 
     <TextView
         android:id="@+id/primary_text"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginStart="56dp"
+        android:layout_height="56dp"
+        android:layout_marginStart="72dp"
+        android:layout_marginEnd="16dp"
         android:gravity="center_vertical"
         android:ellipsize="end"
         android:lines="1"

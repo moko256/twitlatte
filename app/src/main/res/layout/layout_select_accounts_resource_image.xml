@@ -32,9 +32,9 @@
         tools:srcCompat="@drawable/ic_add_white_24dp" />
     <TextView
         android:id="@+id/layout_images_adapter_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:gravity="center_vertical"
         android:layout_marginStart="72dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         tools:text="@string/login_with_another_account"/>
