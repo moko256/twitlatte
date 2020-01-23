@@ -39,7 +39,7 @@ class TrendsActivity : AppCompatActivity(), BaseListFragment.GetViewForSnackBar 
             it.setHomeAsUpIndicator(R.drawable.ic_back_white_24dp)
         }
 
-        if (savedInstanceState == null && getClient()?.accessToken?.clientType == CLIENT_TYPE_TWITTER) {
+        if (savedInstanceState == null && requireClient().accessToken.clientType == CLIENT_TYPE_TWITTER) {
             supportFragmentManager
                     .beginTransaction()
                     .add(android.R.id.content, TrendsFragment())

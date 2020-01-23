@@ -64,7 +64,7 @@ abstract class BaseTweetListFragment : BaseListFragment() {
             0
         }
 
-        val client = activity.getClient()!!
+        val client = activity.requireClient()
         listViewModel = ViewModelProvider(
                 this,
                 ListViewModelFactory(client, arguments

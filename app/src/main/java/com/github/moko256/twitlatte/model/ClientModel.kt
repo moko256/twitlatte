@@ -106,7 +106,7 @@ class ClientModel(
         currentClient = null
     }
 
-    fun getClient(key: String?): Client? {
+    fun requireClient(key: String?): Client {
         return key?.let { accountsRepository.get(it) }
             ?.let {
                 if (it == currentClient?.accessToken) {
@@ -121,7 +121,7 @@ class ClientModel(
                         LruCache(20)
                     )
                 }
-            } ?: currentClient
+            } ?: currentClient!!
     }
 
     fun createApiClientInstance(accessToken: AccessToken): ApiClient {

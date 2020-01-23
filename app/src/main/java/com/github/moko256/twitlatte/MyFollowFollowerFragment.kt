@@ -39,7 +39,7 @@ class MyFollowFollowerFragment : Fragment(R.layout.fragment_follow_follower), To
         FollowFollowerTabsPagerAdapter(
                 childFragmentManager,
                 context,
-                requireActivity().getClient()!!.accessToken.userId
+                requireActivity().requireClient().accessToken.userId
         ).initAdapter(tabsViewPager)
     }
 }

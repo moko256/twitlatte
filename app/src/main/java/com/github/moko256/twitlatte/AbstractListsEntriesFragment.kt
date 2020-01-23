@@ -53,7 +53,7 @@ abstract class AbstractListsEntriesFragment : BaseListFragment(), ToolbarTitleIn
         super.onCreate(savedInstanceState)
 
         disposable = CompositeDisposable()
-        client = requireActivity().getClient()!!
+        client = requireActivity().requireClient()
         helper = CachedListEntriesSQLiteOpenHelper(
                 requireContext().applicationContext,
                 client.accessToken,

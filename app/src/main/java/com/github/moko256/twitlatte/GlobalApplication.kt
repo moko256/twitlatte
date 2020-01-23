@@ -87,8 +87,8 @@ fun Activity.getClientsRepository() = (application as GlobalApplication).clientM
 
 fun Activity.getCurrentClient() = getClientsRepository().currentClient
 
-fun Activity.getClient(): Client? {
-    return getClientsRepository().getClient(intent.getStringExtra(INTENT_CLIENT_KEY))
+fun Activity.requireClient(): Client {
+    return getClientsRepository().requireClient(intent.getStringExtra(INTENT_CLIENT_KEY))
 }
 
 fun Intent.setAccountKey(accessToken: AccessToken) = apply {

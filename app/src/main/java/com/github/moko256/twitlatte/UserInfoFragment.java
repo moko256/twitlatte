@@ -94,7 +94,7 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        client = GlobalApplicationKt.getClient(requireActivity());
+        client = GlobalApplicationKt.requireClient(requireActivity());
         viewModel = new ViewModelProvider(requireActivity()).get(UserInfoViewModel.class);
     }
 

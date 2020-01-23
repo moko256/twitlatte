@@ -55,7 +55,7 @@ public abstract class BaseUsersFragment extends BaseListFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        client = GlobalApplicationKt.getClient(requireActivity());
+        client = GlobalApplicationKt.requireClient(requireActivity());
         list = new ArrayList<>();
         disposable = new CompositeDisposable();
 

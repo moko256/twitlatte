@@ -87,7 +87,7 @@ public class ShowUserActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_user);
 
-        client = GlobalApplicationKt.getClient(this);
+        client = GlobalApplicationKt.requireClient(this);
 
         viewModel = new ViewModelProvider(this).get(UserInfoViewModel.class);
 

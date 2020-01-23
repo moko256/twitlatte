@@ -42,10 +42,10 @@ class TrendsFragment : BaseListFragment() {
 
         viewModel = ViewModelProvider(this).get(TrendsViewModel::class.java)
 
-        val client = requireActivity().getClient()
+        val client = requireActivity().requireClient()
         helper = CachedTrendsSQLiteOpenHelper(
             requireContext().applicationContext,
-            client!!.accessToken
+            client.accessToken
         )
         viewModel.database = helper
         viewModel.apiClient = client.apiClient

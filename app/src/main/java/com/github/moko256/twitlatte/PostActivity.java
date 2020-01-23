@@ -153,7 +153,7 @@ public class PostActivity extends AppCompatActivity {
 
         RequestManager requestManager = Glide.with(this);
 
-        client = GlobalApplicationKt.getClient(this);
+        client = GlobalApplicationKt.requireClient(this);
         model = new PostStatusModelImpl(
                 getContentResolver(),
                 client.getApiClient()

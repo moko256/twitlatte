@@ -86,7 +86,7 @@ public class ShowTweetActivity extends AppCompatActivity {
 
         statusId = getIntent().getLongExtra("statusId", -1);
 
-        client = GlobalApplicationKt.getClient(this);
+        client = GlobalApplicationKt.requireClient(this);
         requestManager = Glide.with(this);
         statusActionModel = new StatusActionModelImpl(
                 client.getApiClient(),
