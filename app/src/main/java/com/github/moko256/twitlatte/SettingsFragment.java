@@ -44,7 +44,7 @@ import java.util.regex.PatternSyntaxException;
 import kotlin.collections.ArraysKt;
 
 import static android.app.Activity.RESULT_OK;
-import static com.github.moko256.latte.client.twitter.TwitterApiClientImplKt.CLIENT_TYPE_TWITTER;
+import static com.github.moko256.latte.client.twitter.TwitterApiClientKt.CLIENT_TYPE_TWITTER;
 import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY_ACCOUNT_KEY;
 import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY_ACCOUNT_KEY_LINK_OPEN;
 import static com.github.moko256.twitlatte.repository.PreferenceRepositoryKt.KEY_NIGHT_MODE;

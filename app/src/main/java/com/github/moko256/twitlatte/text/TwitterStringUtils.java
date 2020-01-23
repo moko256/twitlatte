@@ -48,8 +48,8 @@ import com.github.moko256.twitlatte.view.DpToPxKt;
 import java.util.Arrays;
 import java.util.Objects;
 
-import static com.github.moko256.latte.client.mastodon.MastodonApiClientImplKt.CLIENT_TYPE_MASTODON;
-import static com.github.moko256.latte.client.twitter.TwitterApiClientImplKt.CLIENT_TYPE_TWITTER;
+import static com.github.moko256.latte.client.mastodon.MastodonApiClientKt.CLIENT_TYPE_MASTODON;
+import static com.github.moko256.latte.client.twitter.TwitterApiClientKt.CLIENT_TYPE_TWITTER;
 
 /**
  * Created by moko256 on 2016/08/06.

@@ -28,7 +28,7 @@ import com.github.moko256.twitlatte.widget.FragmentPagerAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.github.moko256.latte.client.mastodon.MastodonApiClientImplKt.CLIENT_TYPE_MASTODON;
+import static com.github.moko256.latte.client.mastodon.MastodonApiClientKt.CLIENT_TYPE_MASTODON;
 
 /**
  * Created by moko256 on 2017/01/15.

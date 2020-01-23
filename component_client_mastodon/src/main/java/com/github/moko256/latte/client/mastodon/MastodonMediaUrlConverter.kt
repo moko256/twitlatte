@@ -19,7 +19,7 @@ package com.github.moko256.latte.client.mastodon
 import com.github.moko256.latte.client.base.MediaUrlConverter
 import com.github.moko256.latte.client.base.entity.User
 
-object MastodonMediaUrlConverterImpl : MediaUrlConverter {
+object MastodonMediaUrlConverter : MediaUrlConverter {
     override fun convertProfileIconSmallestUrl(user: User) = user.profileImageURLHttps
     override fun convertProfileIconUriBySize(user: User, sizePx: Int) = user.profileImageURLHttps
     override fun convertProfileIconOriginalUrl(user: User) = user.profileImageURLHttps

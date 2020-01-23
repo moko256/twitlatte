@@ -25,4 +25,4 @@ import com.sys1yagi.mastodon4j.api.entity.Relationship
  * @author moko256
  */
 
-fun Relationship.convertToCommonFriendship() = Friendship(id, isFollowing, isFollowedBy)
+internal fun Relationship.convertToCommonFriendship() = Friendship(id, isFollowing, isFollowedBy)

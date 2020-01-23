@@ -37,7 +37,7 @@ import java.io.InputStream
  */
 const val CLIENT_TYPE_MASTODON = 1
 
-class MastodonApiClientImpl(okHttpClient: OkHttpClient, url: String, token: String) : ApiClient {
+class MastodonApiClient(okHttpClient: OkHttpClient, url: String, token: String) : ApiClient {
 
     private val client: MastodonClient = MastodonClient
             .Builder(url, okHttpClient.newBuilder(), gson)

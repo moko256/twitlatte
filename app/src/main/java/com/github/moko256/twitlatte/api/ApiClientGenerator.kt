@@ -19,9 +19,9 @@ package com.github.moko256.twitlatte.api
 import com.github.moko256.latte.client.base.ApiClient
 import com.github.moko256.latte.client.base.entity.AccessToken
 import com.github.moko256.latte.client.mastodon.CLIENT_TYPE_MASTODON
-import com.github.moko256.latte.client.mastodon.MastodonApiClientImpl
+import com.github.moko256.latte.client.mastodon.MastodonApiClient
 import com.github.moko256.latte.client.twitter.CLIENT_TYPE_TWITTER
-import com.github.moko256.latte.client.twitter.TwitterApiClientImpl
+import com.github.moko256.latte.client.twitter.TwitterApiClient
 import com.github.moko256.twitlatte.BuildConfig
 import com.github.moko256.twitlatte.net.appOkHttpClientInstance
 
@@ -34,14 +34,14 @@ import com.github.moko256.twitlatte.net.appOkHttpClientInstance
 fun generateApiClient(accessToken: AccessToken): ApiClient {
     return when (accessToken.clientType) {
         CLIENT_TYPE_TWITTER ->
-            TwitterApiClientImpl(
+            TwitterApiClient(
                     accessToken.consumerKey ?: String(BuildConfig.p, 1, 25),
                     accessToken.consumerSecret ?: String(BuildConfig.p, 27, 50),
                     accessToken.token,
                     accessToken.tokenSecret
             )
         CLIENT_TYPE_MASTODON ->
-            MastodonApiClientImpl(
+            MastodonApiClient(
                     appOkHttpClientInstance,
                     accessToken.url,
                     accessToken.token

@@ -24,4 +24,4 @@ import com.github.moko256.latte.client.base.entity.Friendship
  * @author moko256
  */
 
-fun twitter4j.Friendship.convertToCommonFriendship() = Friendship(id, isFollowing, isFollowedBy)
+internal fun twitter4j.Friendship.convertToCommonFriendship() = Friendship(id, isFollowing, isFollowedBy)

@@ -18,9 +18,9 @@ package com.github.moko256.twitlatte.api
 
 import com.github.moko256.latte.client.base.MediaUrlConverter
 import com.github.moko256.latte.client.mastodon.CLIENT_TYPE_MASTODON
-import com.github.moko256.latte.client.mastodon.MastodonMediaUrlConverterImpl
+import com.github.moko256.latte.client.mastodon.MastodonMediaUrlConverter
 import com.github.moko256.latte.client.twitter.CLIENT_TYPE_TWITTER
-import com.github.moko256.latte.client.twitter.TwitterMediaUrlConverterImpl
+import com.github.moko256.latte.client.twitter.TwitterMediaUrlConverter
 
 /**
  * Created by moko256 on 2019/04/07.
@@ -30,8 +30,8 @@ import com.github.moko256.latte.client.twitter.TwitterMediaUrlConverterImpl
 
 fun generateMediaUrlConverter(clientType: Int): MediaUrlConverter {
     return when (clientType) {
-        CLIENT_TYPE_TWITTER -> TwitterMediaUrlConverterImpl
-        CLIENT_TYPE_MASTODON -> MastodonMediaUrlConverterImpl
+        CLIENT_TYPE_TWITTER -> TwitterMediaUrlConverter
+        CLIENT_TYPE_MASTODON -> MastodonMediaUrlConverter
         else -> error("Invalid clientType: $clientType")
     }
 }

@@ -62,7 +62,7 @@ import com.github.moko256.twitlatte.widget.UserHeaderImageView;
 import java.text.DateFormat;
 
 import static com.github.moko256.latte.client.base.ApiClientKt.CLIENT_TYPE_NOTHING;
-import static com.github.moko256.latte.client.twitter.TwitterApiClientImplKt.CLIENT_TYPE_TWITTER;
+import static com.github.moko256.latte.client.twitter.TwitterApiClientKt.CLIENT_TYPE_TWITTER;
 
 /**
  * Created by moko256 on 2017/01/15.

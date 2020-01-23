@@ -32,7 +32,7 @@ import java.io.InputStream
  */
 const val CLIENT_TYPE_TWITTER = 0
 
-class TwitterApiClientImpl(
+class TwitterApiClient(
         consumerKey: String,
         consumerSecret: String,
         token: String,

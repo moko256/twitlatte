@@ -49,7 +49,7 @@ import com.google.android.material.tabs.TabLayout;
 import java.util.Objects;
 
 import static androidx.viewpager.widget.ViewPager.SCROLL_STATE_IDLE;
-import static com.github.moko256.latte.client.mastodon.MastodonApiClientImplKt.CLIENT_TYPE_MASTODON;
+import static com.github.moko256.latte.client.mastodon.MastodonApiClientKt.CLIENT_TYPE_MASTODON;
 
 /**
  * Created by moko256 on 2016/03/11.
