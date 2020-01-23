@@ -41,7 +41,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleEventObserver;
 import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
@@ -95,7 +95,7 @@ public class UserInfoFragment extends Fragment implements ToolbarTitleInterface 
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         client = GlobalApplicationKt.getClient(requireActivity());
-        viewModel = ViewModelProviders.of(requireActivity()).get(UserInfoViewModel.class);
+        viewModel = new ViewModelProvider(requireActivity()).get(UserInfoViewModel.class);
     }
 
     @Nullable

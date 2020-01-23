@@ -19,7 +19,7 @@ package com.github.moko256.twitlatte
 import android.location.Geocoder
 import android.os.Bundle
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import com.github.moko256.twitlatte.database.CachedTrendsSQLiteOpenHelper
 import com.github.moko256.twitlatte.viewmodel.TrendsViewModel
 import com.github.moko256.twitlatte.widget.MaterialListTopMarginDecoration
@@ -40,12 +40,12 @@ class TrendsFragment : BaseListFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        viewModel = ViewModelProviders.of(this).get(TrendsViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(TrendsViewModel::class.java)
 
         val client = requireActivity().getClient()
         helper = CachedTrendsSQLiteOpenHelper(
-                requireContext().applicationContext,
-                client!!.accessToken
+            requireContext().applicationContext,
+            client!!.accessToken
         )
         viewModel.database = helper
         viewModel.apiClient = client.apiClient

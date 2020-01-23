@@ -30,7 +30,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.viewpager.widget.ViewPager;
@@ -89,7 +89,7 @@ public class ShowUserActivity
 
         client = GlobalApplicationKt.getClient(this);
 
-        viewModel = ViewModelProviders.of(this).get(UserInfoViewModel.class);
+        viewModel = new ViewModelProvider(this).get(UserInfoViewModel.class);
 
         setSupportActionBar(findViewById(R.id.toolbar_show_user));
 

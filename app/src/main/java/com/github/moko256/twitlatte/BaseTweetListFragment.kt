@@ -28,7 +28,6 @@ import android.view.WindowManager
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
@@ -66,7 +65,7 @@ abstract class BaseTweetListFragment : BaseListFragment() {
         }
 
         val client = activity.getClient()!!
-        listViewModel = ViewModelProviders.of(
+        listViewModel = ViewModelProvider(
                 this,
                 ListViewModelFactory(client, arguments
                         ?: Bundle.EMPTY, activity.application, listRepository)
