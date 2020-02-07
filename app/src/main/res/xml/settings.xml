@@ -155,9 +155,6 @@
                 app:key="license_lib_photo_view"
                 app:title="PhotoView"/>
             <Preference
-                app:key="license_lib_fling_layout"
-                app:title="FlingLayout"/>
-            <Preference
                 app:key="license_lib_japng"
                 app:title="japng"/>
             <Preference

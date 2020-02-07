@@ -23,11 +23,11 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.target.Target.SIZE_ORIGINAL
 import com.github.chrisbanes.photoview.PhotoView
-import com.github.chuross.flinglayout.FlingLayout
 import com.github.moko256.twitlatte.R
 import com.github.moko256.twitlatte.preferenceRepository
 import com.github.moko256.twitlatte.repository.KEY_TIMELINE_IMAGE_LOAD_MODE
 import com.github.moko256.twitlatte.text.TwitterStringUtils
+import com.github.moko256.twitlatte.widget.FlingToCloseLayout
 
 /**
  * Created by moko256 on 2018/10/07.
@@ -41,7 +41,7 @@ class ImageFragment : AbstractMediaFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val flingLayout = view as FlingLayout
+        val flingLayout = view as FlingToCloseLayout
 
         setSystemUIVisibilityListener { visibility ->
             if (visibility and SYSTEM_UI_FLAG_FULLSCREEN == 0) {
@@ -58,7 +58,7 @@ class ImageFragment : AbstractMediaFragment() {
             }
         }
         imageView.setOnScaleChangeListener { _: Float, _: Float, _: Float ->
-            flingLayout.isDragEnabled = imageView.scale <= 1.1f
+            flingLayout.canDrag = imageView.scale <= 1.1f
         }
         val requests = Glide.with(this)
         val url = media.originalUrl

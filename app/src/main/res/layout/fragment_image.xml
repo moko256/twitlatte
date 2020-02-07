@@ -15,11 +15,11 @@
   ~ limitations under the License.
   -->
 
-<com.github.chuross.flinglayout.FlingLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.github.moko256.twitlatte.widget.FlingToCloseLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <com.github.chrisbanes.photoview.PhotoView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/fragment_image_pager_image" />
-</com.github.chuross.flinglayout.FlingLayout>
+</com.github.moko256.twitlatte.widget.FlingToCloseLayout>

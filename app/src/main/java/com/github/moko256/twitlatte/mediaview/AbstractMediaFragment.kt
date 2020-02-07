@@ -33,11 +33,11 @@ import androidx.annotation.LayoutRes
 import androidx.annotation.MenuRes
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import com.github.chuross.flinglayout.FlingLayout
 import com.github.moko256.latte.client.base.CLIENT_TYPE_NOTHING
 import com.github.moko256.latte.client.base.entity.Media
 import com.github.moko256.twitlatte.R
 import com.github.moko256.twitlatte.text.TwitterStringUtils
+import com.github.moko256.twitlatte.widget.FlingToCloseLayout
 
 /**
  * Created by moko256 on 2018/10/07.
@@ -75,12 +75,12 @@ abstract class AbstractMediaFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(returnLayoutId(), container, false) as FlingLayout
+        val view = inflater.inflate(returnLayoutId(), container, false) as FlingToCloseLayout
 
-        view.dismissListener = {
+        view.onClose = {
             activity?.finish()
         }
-        view.positionChangeListener = { _, _, _ ->
+        view.onTouchedListener = {
             if (!isShowingSystemUI()) {
                 showSystemUI()
             }

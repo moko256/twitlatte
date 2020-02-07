@@ -75,7 +75,6 @@ This application is built using these libraries\:
 * Glide Transformations
 * google-gson
 * PhotoView
-* FlingLayout
 * japng
 * japng_android
 * OkHttp
