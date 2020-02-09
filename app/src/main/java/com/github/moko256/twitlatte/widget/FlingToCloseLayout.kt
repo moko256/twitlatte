@@ -97,13 +97,24 @@ class FlingToCloseLayout @JvmOverloads constructor(
 
             val v = 0.05
 
+            val t = top + halfC <= halfD
             if (
-                if (top + halfC <= halfD) {
+                if (t) {
                     (top <= (halfD * (1 - v)).toInt() - halfC)
                 } else {
                     (top >= (halfD * (1 + v)).toInt() - halfC)
                 }
             ) {
+                helper?.smoothSlideViewTo(
+                    releasedChild,
+                    0,
+                    if (t) {
+                        -releasedChild.measuredHeight
+                    } else {
+                        releasedChild.measuredHeight
+                    }
+                )
+                parent.invalidate()
                 onClose?.invoke()
             } else {
                 helper?.smoothSlideViewTo(
