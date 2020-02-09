@@ -81,10 +81,12 @@ class FlingToCloseLayout @JvmOverloads constructor(
             val halfD = parent.measuredHeight / 2
             val halfC = child.measuredHeight / 2
 
+            val v = 0.3
+
             return if (top + halfC <= halfD) {
-                max(top, (halfD * (1 - rangeT)).toInt() - halfC)
+                max(top, (halfD * (1 - v)).toInt() - halfC)
             } else {
-                min(top, (halfD * (1 + rangeT)).toInt() - halfC)
+                min(top, (halfD * (1 + v)).toInt() - halfC)
             }
         }
 
@@ -93,11 +95,13 @@ class FlingToCloseLayout @JvmOverloads constructor(
             val halfD = parent.measuredHeight / 2
             val halfC = releasedChild.measuredHeight / 2
 
+            val v = 0.05
+
             if (
                 if (top + halfC <= halfD) {
-                    (top <= (halfD * (1 - rangeT)).toInt() - halfC)
+                    (top <= (halfD * (1 - v)).toInt() - halfC)
                 } else {
-                    (top >= (halfD * (1 + rangeT)).toInt() - halfC)
+                    (top >= (halfD * (1 + v)).toInt() - halfC)
                 }
             ) {
                 onClose?.invoke()
@@ -112,7 +116,4 @@ class FlingToCloseLayout @JvmOverloads constructor(
         }
     }
 
-    private companion object {
-        private const val rangeT = 0.5
-    }
 }
