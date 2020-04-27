@@ -1,4 +1,4 @@
-This application is the SNS client specialized to read in chronorogical order.
+This application is the SNS client specialized to read in chronological order.
 You can access Twitter, Mastodon and Pleroma with API.
 
 (This is the third-party client)
