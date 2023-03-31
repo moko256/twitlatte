@@ -5,7 +5,7 @@ twitlatte
 > This app hasn't maintained over years. This repository will be archived.
 >
 > Because of these reasons, this application is hard to use now:
-> - Twitter suspended the usage of this app. ([#54](https://github.com/moko256/twitlatte/issues/54#issuecomment-574955039))
+> - Twitter suspended the API usage of this app. ([#54](https://github.com/moko256/twitlatte/issues/54#issuecomment-574955039))
 > - This app doesn't support new features, and new Android version.
 >
 > Thank all users having used/helped this app for their contribution and patience.
