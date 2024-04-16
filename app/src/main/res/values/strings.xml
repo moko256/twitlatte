@@ -70,7 +70,7 @@
     <string name="destroy_mute">Cancel Mute</string>
     <string name="create_block">Block</string>
     <string name="destroy_block">Cancel Block</string>
-    <string name="destroy_follow_follower">Cancel f4f</string>
+    <string name="destroy_follow_follower">Softblock</string>
     <string name="save_image">Save this image</string>
     <string name="save_video">Save this video</string>
     <string name="error_occurred">Error occurred</string>
